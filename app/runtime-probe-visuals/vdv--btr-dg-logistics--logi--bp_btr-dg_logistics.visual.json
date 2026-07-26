@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/vdv--btr-dg-logistics--logi--bp_btr-dg_logistics.visual.json.recipe.json",
+  "visualRecipeSha256": "54aac84e28c3f5d1273a64f9010571f3e86f1fc83b80658533e46b7564d72261",
+  "cardId": "vdv--btr-dg-logistics--logi",
+  "factionId": "VDV",
+  "targetKey": "vdv-btr-dg-logistics-logi-bp-btr-dg-logistics",
+  "rawName": "BP_BTR-DG_Logistics",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/BTR-D/BP_BTR-DG_Logistics.BP_BTR-DG_Logistics_C",
+  "vehicleId": "vehicle-44754903887805d169b13ebbbd40a9927212153e30d3b6a068b9365adac25757",
+  "identitySha256": "44754903887805d169b13ebbbd40a9927212153e30d3b6a068b9365adac25757",
+  "packageSha256": "d2692c8c1cd35f516c7c1ec9f7e5055e0b10236314436efb9a59c2dd23d45ed7",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 1,
+  "totalBytes": 26436152,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 68,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-2401670891ca9508ea49773797fc2f3a8bea2e135a090c63e23adfbcb181d958",
+      "name": "Vehicle Mesh",
+      "actor": "BP_BTR-DG_Logistics_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d2692c8c1cd35f516c7c1ec9f7e5055e0b10236314436efb9a59c2dd23d45ed7/asset-9f39a0b749fa2df0cb092aba/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-D/mesh/BTRDG.BTRDG",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f60f0241b45ea609b345e7264a06865d81e629e1d884761674cfb37d0972fac6",
+      "runtimeBonePoseJointCount": 68,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 69,
+        "sourceNodeStructureSha256": "d7291da00ed843e3d3f21890b3ac42a33352c0583922a1373324053fb8fecd43",
+        "sourceSkinStructureSha256": "5cabb574d48e079eeaa5e5dc695856a6fcb94638ca162d1ffbb6bf60d9ecd173",
+        "sourceInverseBindStructureSha256": "3d6624dc2daa06c59b7b19ac05a7b0f6a9eb6c90664cc56ae2b8819c1bdb74d5"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 68
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/vdv-btr-dg-logistics-logi-bp-btr-dg-logistics-six-view-qa.json",
+    "sha256": "33a9af4d147e87992e2d402583e620ecf46917f28838c056b296a5b7d1a7f4ee",
+    "reviewedAt": "2026-07-21T16:16:57.603265Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

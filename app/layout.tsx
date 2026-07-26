@@ -1,0 +1,39 @@
+import type { Metadata } from "next";
+import "./globals.css";
+import { DailyActiveProvider } from "./DailyActiveBeacon";
+
+export const metadata: Metadata = {
+  title: {
+    default: "丝瓜：铁皮大饭堂",
+    template: "%s｜丝瓜：铁皮大饭堂",
+  },
+  description:
+    "《战术小队》国际版载具百科、武器资料与交互式防护分析。",
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="zh-CN">
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/sigua-unbounded-site-c713f53e766643c6.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
+      <body>
+        <DailyActiveProvider>{children}</DailyActiveProvider>
+      </body>
+    </html>
+  );
+}

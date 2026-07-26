@@ -1,0 +1,446 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1126-crows-m2--apc--bp_m1126.visual.json.recipe.json",
+  "visualRecipeSha256": "7f85269358f74c57b8a5c11038687265851b195acd2097ce37cb351b914cc3af",
+  "cardId": "usa--m1126-crows-m2--apc",
+  "factionId": "USA",
+  "targetKey": "usa-m1126-crows-m2-apc-bp-m1126",
+  "rawName": "BP_M1126",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/M1126/BP_M1126.BP_M1126_C",
+  "vehicleId": "vehicle-9704a949d399f2f12d80ddab199b00f7e9b9ceb755087889629a7bb0f6389a98",
+  "identitySha256": "9704a949d399f2f12d80ddab199b00f7e9b9ceb755087889629a7bb0f6389a98",
+  "packageSha256": "a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 58451329,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 80,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-519e04b16f1e075fcaf34e6bb398b5b6cb301874b7c8ac1881837cbabee534ce",
+      "name": "WeaponMesh3P",
+      "actor": "BP_M1126_CROWS_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6/asset-ba4c6d07f741bc77eff97e13/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.117516022,
+        2.952181396,
+        0.458734016,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.11751602172851557,
+          2.9521813964843755,
+          0.45873401641845696
+        ],
+        "observedGltfTranslationM": [
+          0.117516022,
+          2.952181396,
+          0.458734016
+        ],
+        "errorMByAxis": [
+          2.7148443215718743e-10,
+          4.843756507000307e-10,
+          4.184569357690293e-10
+        ],
+        "maxErrorCm": 4.8437565070003075e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "63b3a54a62d5ced45cebb76ed3848012df90a93315bbcca87d7289a574bfddd7",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "0b44af30ee313dc8e9932d70b89ef8b5a7a2a047a518fe9c40ac07bf1a300d9d",
+        "sourceSkinStructureSha256": "502b411dfafe07a9cde0ac3cc5f0f3e84d97a1c17c387c1b072cf012c18fdcf5",
+        "sourceInverseBindStructureSha256": "d1416fc0d25103f1d25a025c20b9eb3dde83023c4bf2dc3ba42f2489dbd8359a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-09879c413cca313c87c623534981deccb5816f929b2834955398bf7ac124bde2",
+      "name": "crows_turret_static_mesh",
+      "actor": "BP_M1126_CROWS_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6/asset-525d7c7f82f9756734402027/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.117516022,
+        2.358410034,
+        0.458734016,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.1175160217285156,
+          2.3584100341796876,
+          0.45873401641845696
+        ],
+        "observedGltfTranslationM": [
+          0.117516022,
+          2.358410034,
+          0.458734016
+        ],
+        "errorMByAxis": [
+          2.714844044016118e-10,
+          1.7968782017874219e-10,
+          4.184569357690293e-10
+        ],
+        "maxErrorCm": 4.184569357690293e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1126/Meshes/SM_M1126_CROWS_Turret_Static.SM_M1126_CROWS_Turret_Static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7acce220b545bb92fdb5356603a89441d079e4af9ada4a192606222baba0cdc6",
+      "name": "Vehicle Mesh",
+      "actor": "BP_M1126_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6/asset-e9a2de81bba0133aa48d4b14/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1126/Meshes/SK_M1126.SK_M1126",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "0831c03c7bd426c5194e42d9c4517602d0e6109cdc0a0d3ba0a5d274cfb095c3",
+      "runtimeBonePoseJointCount": 70,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 71,
+        "sourceNodeStructureSha256": "3467b36510a927fe0232ffa03517a7215812dfe23653ad6fed87c4230b412496",
+        "sourceSkinStructureSha256": "14a7f15f340b672cef20d46c711342dbb9c63e50d73e7337d297e45c7d47ddf3",
+        "sourceInverseBindStructureSha256": "4c7d42a6d8e3e290bf82289ef1a280f4144e083cff7975103f8de84acbebb99a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 70
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-c352c16457e8028cd35b928d51f20138c0da3764cb8cfb006dd9b104244ba5cc",
+      "name": "WheelDecor",
+      "actor": "BP_M1126_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6/asset-b5a8dd4c9aa1c192410c4491/source.gltf",
+      "matrix": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.999964022,
+        -0.008482599,
+        0.0,
+        0.0,
+        0.008482599,
+        0.999964022,
+        0.0,
+        0.0,
+        0.778604813,
+        2.314549103,
+        -0.691133957,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.7786048126220705,
+          2.3145491027832032,
+          -0.6911339569091798
+        ],
+        "observedGltfTranslationM": [
+          0.778604813,
+          2.314549103,
+          -0.691133957
+        ],
+        "errorMByAxis": [
+          3.7792946550041506e-10,
+          2.1679680273223312e-10,
+          9.082024021722646e-11
+        ],
+        "maxErrorCm": 3.7792946550041506e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1126/Wreck/Stryker_wreck_wheel.Stryker_wreck_wheel",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-94b9eed9c9aebad7ed1ac854b9cdea20d212a284ae813ba87596dc58d44c8805",
+      "name": "HullDecoration",
+      "actor": "BP_M1126_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6/asset-7f5682a32b7cef7c695d1574/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1126/Meshes/SM_M1126_Decoration_Desert.SM_M1126_Decoration_Desert",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e90d4273ca6ee8676ce5d73762744c5fb766ec934b0a071b6e7881226f19394f",
+      "name": "SQArmorMeshCrowsBase",
+      "actor": "BP_M1126_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6/asset-bfbaf7564d3e7f1a938e3aeb/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.117516022,
+        2.358410034,
+        0.458734016,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.1175160217285156,
+          2.3584100341796876,
+          0.45873401641845696
+        ],
+        "observedGltfTranslationM": [
+          0.117516022,
+          2.358410034,
+          0.458734016
+        ],
+        "errorMByAxis": [
+          2.714844044016118e-10,
+          1.7968782017874219e-10,
+          4.184569357690293e-10
+        ],
+        "maxErrorCm": 4.184569357690293e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_base.crows_base",
+      "componentClassPath": "/Script/Squad.SQArmorMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-5ad49fd8e3749dc0741187341a1d2ae5bebddb74325885da1f21361a7dc1d14b",
+      "name": "WeaponMesh3P",
+      "actor": "BP_M1126_Smoke_Launcher_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6/asset-073800967d03aec71f563f7e/source.gltf",
+      "matrix": [
+        0.99996827,
+        0.007965435,
+        0.000105188,
+        0.0,
+        -0.007965434,
+        0.999968276,
+        -8.467e-06,
+        0.0,
+        -0.000105252,
+        7.629e-06,
+        0.999999995,
+        0.0,
+        -0.724807299,
+        0.935877133,
+        -0.000660709,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.7248072986566667,
+          0.9358771331828675,
+          -0.0006607087135064732
+        ],
+        "observedGltfTranslationM": [
+          -0.724807299,
+          0.935877133,
+          -0.000660709
+        ],
+        "errorMByAxis": [
+          3.4333325071855825e-10,
+          1.8286749892126863e-10,
+          2.8649352681875406e-10
+        ],
+        "maxErrorCm": 3.4333325071855825e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "40dad2a4faad8c9266bd15c2b3267362b9f1cd7d28c9d097924aab77f417a78a",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "0b44af30ee313dc8e9932d70b89ef8b5a7a2a047a518fe9c40ac07bf1a300d9d",
+        "sourceSkinStructureSha256": "502b411dfafe07a9cde0ac3cc5f0f3e84d97a1c17c387c1b072cf012c18fdcf5",
+        "sourceInverseBindStructureSha256": "d1416fc0d25103f1d25a025c20b9eb3dde83023c4bf2dc3ba42f2489dbd8359a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usa-m1126-crows-m2-apc-bp-m1126-six-view-qa.json",
+    "sha256": "a047471f48460c7265ddbcb27ff5a957ada4954554094beae7cc0031fe0ebf62",
+    "reviewedAt": "2026-07-21T16:15:56.516230Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

@@ -1,0 +1,530 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--mt-lbm-6mb--ifv--bp_mtlbm_6mb_rus_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "e9228f9f06ffb561e50306c7899f28072b2f265160cbf1ca5c873e65b18040d7",
+  "cardId": "rgf--mt-lbm-6mb--ifv",
+  "factionId": "RGF",
+  "targetKey": "rgf-mt-lbm-6mb-ifv-bp-mtlbm-6mb-rus-desert",
+  "rawName": "BP_MTLBM_6MB_RUS_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/MTLB/BP_MTLBM_6MB_RUS_Desert.BP_MTLBM_6MB_RUS_Desert_C",
+  "vehicleId": "vehicle-dc2d1cab7d8e82451e1c991132cc5f1ecb9296b671a897cb35572ff195566708",
+  "identitySha256": "dc2d1cab7d8e82451e1c991132cc5f1ecb9296b671a897cb35572ff195566708",
+  "packageSha256": "036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 8,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 41545321,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 56,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-9fc90296cb27517251e22fd52795a77c2e9e79d298a6b0feec1abc6815b94eac",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MTLB30mm_PKT_desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-61f47db1dc0b9a5e648247b6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.236086426,
+        0.467904487,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.23608642578125,
+          0.46790448731913464,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          -1.236086426,
+          0.467904487,
+          0.0
+        ],
+        "errorMByAxis": [
+          2.187499070771537e-10,
+          3.1913466314037464e-10,
+          0.0
+        ],
+        "maxErrorCm": 3.1913466314037464e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "60b1f0bc775abe577a72a0e423712d6925cbe8e1579138d217176ef3bd40aa26",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-2ca66eba082fde7b5a0de679199df4c4af58f6435f86c9e51a02957e23b2af68",
+      "name": "Vehicle Mesh",
+      "actor": "BP_MTLBM_6MB_RUS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-8c6d8681c9e3e22afe7742f2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SK_MTLB_30mm_body.SK_MTLB_30mm_body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "385b3b4adccf232989bfa8e3475d3891a2eab51b4e85f8a8d5f312f77027d550",
+      "runtimeBonePoseJointCount": 48,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 49,
+        "sourceNodeStructureSha256": "24168f798b631eceaedfbaf21d80db1fd43ef39e7559de7a1ba9c84e04deb0bb",
+        "sourceSkinStructureSha256": "5d217fef6e8ad4b185e6dcaa1ff30b67c7293006cdda60e88d61da8ab10547e9",
+        "sourceInverseBindStructureSha256": "2667f0f1c23cacb115548cedc2823125eda7318a669c483bbe9f0a9e73e72a72"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 48
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-dca6b378739b70c4a6e048b3489e5d6863bfe138989d4551233f2032be4d6fa1",
+      "name": "HullDecoration",
+      "actor": "BP_MTLBM_6MB_RUS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-2fbf4ab2800c933fd4e5fea2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SM_mtlb_rus_decoration.SM_mtlb_rus_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-b2124faf1710299241ca0c9a1753a70bbf6c260121ee243af93eeb757ef47cf9",
+      "name": "Razorwire",
+      "actor": "BP_MTLBM_6MB_RUS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        1.5297817,
+        -0.349586293,
+        -0.010143723,
+        0.0,
+        0.154651353,
+        0.678260737,
+        -0.052036684,
+        0.0,
+        0.035938889,
+        0.111861648,
+        1.564845325,
+        0.0,
+        3.224506226,
+        1.411398773,
+        0.135794535,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          3.2245062255859374,
+          1.4113987731933593,
+          0.13579453468322755
+        ],
+        "observedGltfTranslationM": [
+          3.224506226,
+          1.411398773,
+          0.135794535
+        ],
+        "errorMByAxis": [
+          4.140625620152605e-10,
+          1.933593285485813e-10,
+          3.167724416108797e-10
+        ],
+        "maxErrorCm": 4.140625620152605e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-04ca2f862d80dc94cc727019bf15930176dbf8efca7df64e1c59bf0d27337573",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MTLB_30mm_AP_gun_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-36e854341f8c7a0875e98b8e/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.771739807,
+        2.461764679,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7717398071289063,
+          2.4617646789550784,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          -1.771739807,
+          2.461764679,
+          0.0
+        ],
+        "errorMByAxis": [
+          1.2890621903238753e-10,
+          4.4921399933173234e-11,
+          0.0
+        ],
+        "maxErrorCm": 1.2890621903238753e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "365cd9fb61986545e91c6bafe46d371d23f79e34819edb68278e06846fba33ff",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-3a2c40c31648c09a88545e2635aa54100acf3331de66690cbce7decc6b150b91",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MTLB_30mm_HE_gun_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-61f47db1dc0b9a5e648247b6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.236086426,
+        0.467904487,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.23608642578125,
+          0.46790448731913464,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          -1.236086426,
+          0.467904487,
+          0.0
+        ],
+        "errorMByAxis": [
+          2.187499070771537e-10,
+          3.1913466314037464e-10,
+          0.0
+        ],
+        "maxErrorCm": 3.1913466314037464e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "60b1f0bc775abe577a72a0e423712d6925cbe8e1579138d217176ef3bd40aa26",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-23a6729b19227892ad6510e81c8d438a78256f35ba932968b8d801485dd9f639",
+      "name": "MTLB_30mm_turret_static_mesh",
+      "actor": "BP_MTLB_30mm_turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-ec182696f9865ee11d537671/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.255653381,
+        1.876511688,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.2556533813476562,
+          1.876511688232422,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          -1.255653381,
+          1.876511688,
+          0.0
+        ],
+        "errorMByAxis": [
+          3.4765634815414614e-10,
+          2.3242208158080757e-10,
+          0.0
+        ],
+        "maxErrorCm": 3.4765634815414614e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_turret_static_mesh.MTLB_30mm_turret_static_mesh",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-20ab39963b36694d1e79abe1797d9c150faffe6a79df912b829c0cd870115eca",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Smoke_Launcher_MTLB30mm_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612/asset-61f47db1dc0b9a5e648247b6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.236086426,
+        0.467904487,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.23608642578125,
+          0.46790448731913464,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          -1.236086426,
+          0.467904487,
+          0.0
+        ],
+        "errorMByAxis": [
+          2.187499070771537e-10,
+          3.1913466314037464e-10,
+          0.0
+        ],
+        "maxErrorCm": 3.1913466314037464e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "60b1f0bc775abe577a72a0e423712d6925cbe8e1579138d217176ef3bd40aa26",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/rgf-mt-lbm-6mb-ifv-bp-mtlbm-6mb-rus-desert-six-view-qa.json",
+    "sha256": "3bfe8bdf4bc2c6c10eff7d065d2951630163ef632b4099da11c2e6436d906202",
+    "reviewedAt": "2026-07-21T16:15:02.001077Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

@@ -1,0 +1,596 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/mei--t-62--mbt--bp_t62.visual.json.recipe.json",
+  "visualRecipeSha256": "193387ead72e0cabb8b6b7e949e7f64c54b45de1f02a31223e2580e8b114be19",
+  "cardId": "mei--t-62--mbt",
+  "factionId": "MEI",
+  "targetKey": "mei-t-62-mbt-bp-t62",
+  "rawName": "BP_T62",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/T62/BP_T62.BP_T62_C",
+  "vehicleId": "vehicle-a0b739d1849313fbf553b43dc0be188c747386faac7f520fff5f0e066f178ec8",
+  "identitySha256": "a0b739d1849313fbf553b43dc0be188c747386faac7f520fff5f0e066f178ec8",
+  "packageSha256": "f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9",
+  "requiredOccurrences": 9,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 9,
+  "totalBytes": 91201158,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 6,
+  "runtimeBonePoseJointCount": 77,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 5,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-edeb421e64e6e797ee0a56164a363da4241d81e1d74c07977c340d4c8e2fc6b7",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Cupola_Dshk_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-ed917632c5120e047da105d5/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.165458673,
+        2.587882682,
+        0.487739039,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.1654586726427077,
+          2.5878826820850365,
+          0.48773903947771763
+        ],
+        "observedGltfTranslationM": [
+          0.165458673,
+          2.587882682,
+          0.487739039
+        ],
+        "errorMByAxis": [
+          3.5729230685177527e-10,
+          8.503642234813924e-11,
+          4.777176432213537e-10
+        ],
+        "maxErrorCm": 4.777176432213537e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T62/Meshes/DshK_Cupola/Dshk_Cupola_Gun.Dshk_Cupola_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6bc341a298e57d7767820435f402b1a71caa962bc8bdd25e80e815c7030273da",
+      "runtimeBonePoseJointCount": 28,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 29,
+        "sourceNodeStructureSha256": "b6e55b98968b1571dbcb03a226abf4120e5f89ab07671a7edeadc94fc7e8b421",
+        "sourceSkinStructureSha256": "ddc99d2ee6d029fee652b999230aa6a61e9f30b6d12d45eaa3e8bc5edf50a3da",
+        "sourceInverseBindStructureSha256": "deb874df18d565d977b95b75e72e37799c552184f3b5eb68ca621b85a6f2a823"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 28
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-f5ae01597ce0c509594376a5e89d3dffa834efa8d56189c677e54911cca0811f",
+      "name": "Shield",
+      "actor": "BP_Cupola_Dshk_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-68bd43b28c8a4f377c5ed41c/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.682907937,
+        2.354014159,
+        0.487738811,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.682907937169075,
+          2.3540141594409945,
+          0.48773881059588164
+        ],
+        "observedGltfTranslationM": [
+          0.682907937,
+          2.354014159,
+          0.487738811
+        ],
+        "errorMByAxis": [
+          1.6907508726404785e-10,
+          4.4099435214661753e-10,
+          4.041183498948442e-10
+        ],
+        "maxErrorCm": 4.409943521466175e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/dshk_turret_shield_nobottom.dshk_turret_shield_nobottom",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6bddf50f248e869d45cb1bd19eb7395475f528523f273fdc108214c242eedde0",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_Cupola_Dshk_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-3283741a48e0c80fc2e402c4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.07177159,
+        2.285021831,
+        0.503007523,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.0717715901136399,
+          2.2850218307971955,
+          0.5030075228214264
+        ],
+        "observedGltfTranslationM": [
+          -0.07177159,
+          2.285021831,
+          0.503007523
+        ],
+        "errorMByAxis": [
+          1.1363990304325e-10,
+          2.0280443990827735e-10,
+          1.7857360035122838e-10
+        ],
+        "maxErrorCm": 2.0280443990827735e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T62/Meshes/DshK_Cupola/Dshk_Cupola_Turret.Dshk_Cupola_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1f7402d37fe89674422d807cc75fda9d1af045119aab23ca4246c3be3ae955cc",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "06b71a556fe7f4bd08720c5fa178be4b183fdcb1cc9ee6ae10d0052406641e19",
+        "sourceSkinStructureSha256": "c24bf9689f2abbae2d61b9641bfda03838ae69bd941ba4e415cbebe6d0c20e4e",
+        "sourceInverseBindStructureSha256": "a78d2beb138ab998bd76723ae0aa2e079088d71da2cff06abdc8b42c7a6fe87b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-746dfd78dc63ad61c321d1d20f0b2a0d17be6c97782692e9a9c9acfe14e94fed",
+      "name": "Vehicle Mesh",
+      "actor": "BP_T62_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-21216ed55cdb46f50afa4eea/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T62/Meshes/T62_hull.T62_hull",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "0a40884903922f5cfa4fddfafb4355a792d40986b8d28fdf0090d1bd11fa8352",
+      "runtimeBonePoseJointCount": 33,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 34,
+        "sourceNodeStructureSha256": "b15da3ac69dd3aa274475c38c9e31be9453b7dea48aabf90698b557bb1c41f7a",
+        "sourceSkinStructureSha256": "c2e78a20f52bd65339858497bf74f014974c8f59e89aa0c448771ae9bba344d6",
+        "sourceInverseBindStructureSha256": "52e90125c781fb60f7f0d1c729d40a8b074db0eaabbdd44c08d057c15b27b914"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 33
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-ad3a8b3143970449e8a375587b7b5e5b52fc98d14cf5a6d57fa23e91eb2d293b",
+      "name": "HullDecoration",
+      "actor": "BP_T62_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-5028dbccaf06a0ab309d90b6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.644947205,
+        1.322018738,
+        -1.471298065,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.6449472045898441,
+          1.322018737792969,
+          -1.471298065185547
+        ],
+        "observedGltfTranslationM": [
+          1.644947205,
+          1.322018738,
+          -1.471298065
+        ],
+        "errorMByAxis": [
+          4.101559092362095e-10,
+          2.070308369184204e-10,
+          1.8554691116889899e-10
+        ],
+        "maxErrorCm": 4.101559092362095e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T62/Meshes/T62_Decoration.T62_Decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-cbe0b3433cb9744fd4b59b90c21d44522edba990e17906921c5f9b7b8b3e9bb5",
+      "name": "Decoration_Ammo",
+      "actor": "BP_T62_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-6bf1d3c1fddae42d1b9bb114/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.789020691,
+        1.470383606,
+        -1.364356384,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.7890206909179684,
+          1.4703836059570312,
+          -1.3643563842773434
+        ],
+        "observedGltfTranslationM": [
+          1.789020691,
+          1.470383606,
+          -1.364356384
+        ],
+        "errorMByAxis": [
+          8.203149270968879e-11,
+          4.296873967746251e-11,
+          2.773434815139808e-10
+        ],
+        "maxErrorCm": 2.773434815139808e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T62/Meshes/T62_Ammocrates_Decoration.T62_Ammocrates_Decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-78ba3ed969c8e559e50bed4ea2a3d7a1c3a65d4fdd146bb66a75126fadd5541a",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_T62_Commander_Periscope_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-d8cced7ef9358ee92ec30990/source.gltf",
+      "matrix": [
+        1.450000048,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.450000048,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.450000048,
+        0.0,
+        0.491313508,
+        2.107092296,
+        -0.824889435,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.4913135081529617,
+          2.107092295885086,
+          -0.8248894345760344
+        ],
+        "observedGltfTranslationM": [
+          0.491313508,
+          2.107092296,
+          -0.824889435
+        ],
+        "errorMByAxis": [
+          1.5296169886269695e-10,
+          1.1491385620843175e-10,
+          4.239656403726144e-10
+        ],
+        "maxErrorCm": 4.239656403726144e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/legacy/brdm2_periscope.brdm2_periscope",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "e131deccef4983187390aba0ba953f890e1cc1427950d743fd63937eb2004a9f",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "5f9216c1cc8d4acbb997175656cc31328d2e4c30c57329e89bc99e0e124fcdfe",
+        "sourceSkinStructureSha256": "455aec0c139253dc1b7f1c2e1dde38703ac0797e3f9c819a8729cc835f3642d9",
+        "sourceInverseBindStructureSha256": "c57da39427d83e7270b1aabb144395608c7950f2ffe150dcd520a3eb6ec19554"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-0c341cebc8df8b756179ea9ae7e7b8f5bc45143e6b7426eea9d9150a09744363",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_T62_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-95b011621bda760289e83289/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.199647179,
+        1.559731903,
+        -0.091732063,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.1996471786499023,
+          1.5597319030761723,
+          -0.09173206329345703
+        ],
+        "observedGltfTranslationM": [
+          0.199647179,
+          1.559731903,
+          -0.091732063
+        ],
+        "errorMByAxis": [
+          3.5009770082972125e-10,
+          7.617217967492707e-11,
+          2.934570225709976e-10
+        ],
+        "maxErrorCm": 3.5009770082972125e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T62/Meshes/T62_turret.T62_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "effdbadafd5c90ee877daa0bfe754d4981fda2eadc3f5d759180ef8b1cd529ee",
+      "runtimeBonePoseJointCount": 8,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 9,
+        "sourceNodeStructureSha256": "5a7f02f91c40f6854c9fbfdccd41729bb8273b26e82cdf9d433fe716cdd962e9",
+        "sourceSkinStructureSha256": "8c99b4dc7014a0fa91805b5f73c9fd01d93f67d1557cfaeec4b6588ac11c4beb",
+        "sourceInverseBindStructureSha256": "98f35d2f2264fc1bdf21abe824d0b7cca5970f8205770957f80603bb47daa619"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 8
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-15f9032535d0f56c27501d3584b9b693b2fbd1c66aaa05a72b70ac6fb027315e",
+      "name": "SkeletalMesh",
+      "actor": "BP_T62_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3142b881ef2e238aae502fffc7dda8567786bbcc0a3873a8e5d64c4e29458d9/asset-0917b8f5c3b6f1a4c07455a5/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.299754041,
+        1.784345561,
+        -0.087103409,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.2997540408372878,
+          1.7843455612659453,
+          -0.08710340857505798
+        ],
+        "observedGltfTranslationM": [
+          1.299754041,
+          1.784345561,
+          -0.087103409
+        ],
+        "errorMByAxis": [
+          1.627120660430137e-10,
+          2.6594526580936417e-10,
+          4.24942026011621e-10
+        ],
+        "maxErrorCm": 4.24942026011621e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T62/Meshes/T62_gun.T62_gun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "fdfe233dac84c42d9428d77e05017206c5b58a8917e400af13c4e73629bb1095",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "b180828e44f3b82e16347b103ad9896d967ab1f4b48bf740c3bc9b217df54fd0",
+        "sourceSkinStructureSha256": "fa223b25fa0c083b1d2a7f4df708139e052b7f4a51943992b00d83aaf38cd307",
+        "sourceInverseBindStructureSha256": "be3abb3dd89eaa47c8631bc5583c5c57e765c4512bf88af86bb2e6c8b0ccc63b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/mei/mei-t-62-mbt-bp-t62-six-view-qa.json",
+    "sha256": "17f472019594e0aef76bcebc9ebf3211305687652fcc006b984b4ae9474c8cfb",
+    "reviewedAt": "2026-07-21T09:34:28.987548Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

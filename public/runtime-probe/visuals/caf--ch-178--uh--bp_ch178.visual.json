@@ -1,0 +1,974 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--ch-178--uh--bp_ch178.visual.json.recipe.json",
+  "visualRecipeSha256": "ab0b1d53ab5e8204dff844be852f4b522ff126617ba12e8560c6d75edc277fd4",
+  "cardId": "caf--ch-178--uh",
+  "factionId": "CAF",
+  "targetKey": "caf-ch-178-uh-v0-041337106c",
+  "rawName": "BP_CH178",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/MI17/BP_CH178.BP_CH178_C",
+  "vehicleId": "vehicle-a2db8eac48163c1e9e75db09949586b637b3e0b5252451b6dcb696ac8f673081",
+  "identitySha256": "a2db8eac48163c1e9e75db09949586b637b3e0b5252451b6dcb696ac8f673081",
+  "packageSha256": "0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33",
+  "requiredOccurrences": 18,
+  "capturedVisibleOccurrences": 18,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 96658921,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 84,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-f082a84516e437c97c106c5c774155023c29ae0ad8577079b6a693d4db6c725a",
+      "name": "WeaponMesh3P",
+      "actor": "BP_C6A1_DoorGun_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-ba387bed13754d92eaaa266c/source.gltf",
+      "matrix": [
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        2.912728508,
+        1.774003067,
+        -0.983357124,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.9127285079658107,
+          1.7740030670166018,
+          -0.9833571243286134
+        ],
+        "observedGltfTranslationM": [
+          2.912728508,
+          1.774003067,
+          -0.983357124
+        ],
+        "errorMByAxis": [
+          3.418909599872677e-11,
+          1.660183102103474e-11,
+          3.2861346976886807e-10
+        ],
+        "maxErrorCm": 3.286134697688681e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/CH146/Weapons/C6A1_DoorGun/C6A1_Doorgun.C6A1_Doorgun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "57a9075a911d7b9cab26bb8fa1cb2c0d8be5f14f46dc76b28ac5958d9389bac6",
+      "runtimeBonePoseJointCount": 18,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 19,
+        "sourceNodeStructureSha256": "c52f043dd60d19480b425dccc563bf5d1fa0c82727eb419f85b4bc73e3faac3d",
+        "sourceSkinStructureSha256": "7ef0473665f2107c2400f36be11130c861f53de47e11f6448858ceb2ce3fa845",
+        "sourceInverseBindStructureSha256": "e125021fd3a4bc13f1f940d4708673d3c62e38808fbb535cb345c40668b91881"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 18
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-355f97018c8df6d55198d22d51e861de1b16ab8be18d81f27af4f05565e2cb91",
+      "name": "WeaponMesh3P",
+      "actor": "BP_C6A1_DoorGun_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-ecc3550e06a0d232dda137dc/source.gltf",
+      "matrix": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        2.909190132,
+        1.774003067,
+        0.985298729,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.9091901321709135,
+          1.7740030670166014,
+          0.9852987289428651
+        ],
+        "observedGltfTranslationM": [
+          2.909190132,
+          1.774003067,
+          0.985298729
+        ],
+        "errorMByAxis": [
+          1.7091350557052465e-10,
+          1.660138693182489e-11,
+          5.713496342707458e-11
+        ],
+        "maxErrorCm": 1.7091350557052465e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/CH146/Weapons/C6A1_DoorGun/C6A1_Doorgun.C6A1_Doorgun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "7aee92771e011155a87329ae56b19e6b7720aab0a7e1b0e6581150276ea752ca",
+      "runtimeBonePoseJointCount": 18,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 19,
+        "sourceNodeStructureSha256": "c52f043dd60d19480b425dccc563bf5d1fa0c82727eb419f85b4bc73e3faac3d",
+        "sourceSkinStructureSha256": "7ef0473665f2107c2400f36be11130c861f53de47e11f6448858ceb2ce3fa845",
+        "sourceInverseBindStructureSha256": "e125021fd3a4bc13f1f940d4708673d3c62e38808fbb535cb345c40668b91881"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 18
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-c94867f0da8f6e712f1c6d36a816edcc7693057b18d8d6fc73fd2a3fe86c9fc5",
+      "name": "Vehicle Mesh",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-5d91aa5085e89282ac4f7c21/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MI17/CH178/CH178.CH178",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "231f8209a227e314bc097be84352c8ec624f3ffd261a485486eaf9c18e666ab1",
+      "runtimeBonePoseJointCount": 48,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 49,
+        "sourceNodeStructureSha256": "6d8c655565c43a923231f9f9638310aea423354b2bac60c45e2b7df2c666bf96",
+        "sourceSkinStructureSha256": "57c631d02165b5d53e8b6c1f137ffe1e982e22043e7fb6c3c9b334eba3883e88",
+        "sourceInverseBindStructureSha256": "2c760f9322178c6d8ec276ff889df76953861b5773b04dd40a4595824867fcea"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 48
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-70bde95f9c484658b67ee3b7d8304ee473e372e90d46b22f041e2ba1f75346ba",
+      "name": "StaticMesh",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-6a02a841fbe55e5bd6e299ec/source.gltf",
+      "matrix": [
+        -0.899999977,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.899999976,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.899999976,
+        0.0,
+        1.695160828,
+        1.037704544,
+        -0.089942894,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.695160827636724,
+          1.0377045440673827,
+          -0.08994289398193332
+        ],
+        "observedGltfTranslationM": [
+          1.695160828,
+          1.037704544,
+          -0.089942894
+        ],
+        "errorMByAxis": [
+          3.6327585384299255e-10,
+          6.738276603357463e-11,
+          1.806667315751298e-11
+        ],
+        "maxErrorCm": 3.6327585384299255e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/GFI/GFI_SupplyCrate_Small.GFI_SupplyCrate_Small",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-04d870460a058bdf3b7f413e2494214ad0abe3baa49bd8e5defcbcaac26bffe4",
+      "name": "StaticMesh6",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-6a02a841fbe55e5bd6e299ec/source.gltf",
+      "matrix": [
+        0.598971844,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.899999977,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.899999976,
+        0.0,
+        0.817924576,
+        1.037736053,
+        -0.244211578,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.8179245758056571,
+          1.037736053466797,
+          -0.24421157836914437
+        ],
+        "observedGltfTranslationM": [
+          0.817924576,
+          1.037736053,
+          -0.244211578
+        ],
+        "errorMByAxis": [
+          1.9434287512609671e-10,
+          4.667970454619308e-10,
+          3.6914435397328305e-10
+        ],
+        "maxErrorCm": 4.667970454619308e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/GFI/GFI_SupplyCrate_Small.GFI_SupplyCrate_Small",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-45a59378906c4eff2b0d185c9b60d3b0bf611d14f5662ec9bdc9cf197f254bf3",
+      "name": "Main Plane",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        2.256e-06,
+        -2.11e-07,
+        0.192505792,
+        0.0,
+        -0.170018887,
+        0.045492613,
+        2.042e-06,
+        0.0,
+        -0.036299771,
+        -0.13566261,
+        2.76e-07,
+        0.0,
+        4.805447693,
+        1.818668365,
+        0.480285225,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.8054476928710965,
+          1.8186683654785156,
+          0.4802852249145523
+        ],
+        "observedGltfTranslationM": [
+          4.805447693,
+          1.818668365,
+          0.480285225
+        ],
+        "errorMByAxis": [
+          1.2890311040791858e-10,
+          4.785156715314542e-10,
+          8.544770446761163e-11
+        ],
+        "maxErrorCm": 4.7851567153145425e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-169eb7cf0183145bdb30527717f724a61a05539335be4434960575c6b49259ef",
+      "name": "Copilot Plane",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        2.256e-06,
+        -2.12e-07,
+        0.192499995,
+        0.0,
+        -0.170018887,
+        0.045492613,
+        2.042e-06,
+        0.0,
+        -0.036309835,
+        -0.135700224,
+        2.76e-07,
+        0.0,
+        4.805432434,
+        1.818670502,
+        -0.480506439,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.8054324340820305,
+          1.8186705017089841,
+          -0.48050643920897995
+        ],
+        "observedGltfTranslationM": [
+          4.805432434,
+          1.818670502,
+          -0.480506439
+        ],
+        "errorMByAxis": [
+          8.203038248666417e-11,
+          2.910158780622396e-10,
+          2.0897994446045232e-10
+        ],
+        "maxErrorCm": 2.910158780622396e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-2ffc9dd92adc6eea6b60566697d5017f7ba4bcd37bf63a3383f1e4486ee14300",
+      "name": "Compass Plane",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        9.58e-07,
+        4.5e-07,
+        0.050303336,
+        0.0,
+        -0.095282509,
+        0.030351997,
+        1.543e-06,
+        0.0,
+        -0.008138231,
+        -0.025547943,
+        3.83e-07,
+        0.0,
+        4.835528259,
+        1.904797821,
+        0.073853188,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.8355282592773445,
+          1.904797821044922,
+          0.07385318756103582
+        ],
+        "observedGltfTranslationM": [
+          4.835528259,
+          1.904797821,
+          0.073853188
+        ],
+        "errorMByAxis": [
+          2.773443696924005e-10,
+          4.4921844022383084e-11,
+          4.3896418444600016e-10
+        ],
+        "maxErrorCm": 4.3896418444600016e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-cc2b6393cbbb4a1bc2cc93a7625678b1cbcc7ec8c588c16d3c2f90e6954c86c7",
+      "name": "Map Plane",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        1.871e-06,
+        -1.35e-07,
+        0.192499995,
+        0.0,
+        -0.17001882,
+        0.045492861,
+        1.685e-06,
+        0.0,
+        -0.03631927,
+        -0.13573469,
+        2.59e-07,
+        0.0,
+        4.80986084,
+        1.81683075,
+        0.238754444,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.809860839843758,
+          1.8168307495117184,
+          0.2387544441223172
+        ],
+        "observedGltfTranslationM": [
+          4.80986084,
+          1.81683075,
+          0.238754444
+        ],
+        "errorMByAxis": [
+          1.5624213034470813e-10,
+          4.88281637345267e-10,
+          1.223171841591153e-10
+        ],
+        "maxErrorCm": 4.88281637345267e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-102273e2a8d26a0bef6d5c6ceee95150ca5b0566b01c4b104b6725bd3b1603cd",
+      "name": "Engine Stats Plane",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        -3.54e-07,
+        6.8e-08,
+        0.095003002,
+        0.0,
+        -0.030561571,
+        0.173326254,
+        -2.37e-07,
+        0.0,
+        -0.108240147,
+        -0.019085331,
+        -3.89e-07,
+        0.0,
+        4.667268066,
+        1.6205867,
+        0.144204721,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.6672680664062485,
+          1.6205867004394532,
+          0.1442047214508079
+        ],
+        "observedGltfTranslationM": [
+          4.667268066,
+          1.6205867,
+          0.144204721
+        ],
+        "errorMByAxis": [
+          4.062483682787388e-10,
+          4.394531405438329e-10,
+          4.5080789101703544e-10
+        ],
+        "maxErrorCm": 4.5080789101703544e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f73e4302d3794da9ef43ffcc14d52b67d88681acff37ac9c47b0764faaf17911",
+      "name": "Camera Plane",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        1.949e-06,
+        1.216e-06,
+        0.192499995,
+        0.0,
+        -0.159507822,
+        0.074385848,
+        1.144e-06,
+        0.0,
+        -0.055155417,
+        -0.118271429,
+        1.305e-06,
+        0.0,
+        3.629608459,
+        1.549548645,
+        -0.245932693,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          3.629608459472648,
+          1.5495486450195313,
+          -0.24593269348144106
+        ],
+        "observedGltfTranslationM": [
+          3.629608459,
+          1.549548645,
+          -0.245932693
+        ],
+        "errorMByAxis": [
+          4.726481428463103e-10,
+          1.953126549381068e-11,
+          4.814410536901903e-10
+        ],
+        "maxErrorCm": 4.814410536901903e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-b216599472722b889f9bdd818b4db2a90992c8f42948a1825e22374134466f53",
+      "name": "Direction Plane",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        5.59e-07,
+        3.49e-07,
+        0.055252317,
+        0.0,
+        -0.170001501,
+        0.045557539,
+        1.433e-06,
+        0.0,
+        -0.013054267,
+        -0.048713014,
+        4.4e-07,
+        0.0,
+        4.832442627,
+        1.908387604,
+        -0.004210639,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.8324426269531315,
+          1.9083876037597656,
+          -0.004210638999937646
+        ],
+        "observedGltfTranslationM": [
+          4.832442627,
+          1.908387604,
+          -0.004210639
+        ],
+        "errorMByAxis": [
+          4.686828702915591e-11,
+          2.4023449896048987e-10,
+          6.235463534398633e-14
+        ],
+        "maxErrorCm": 2.4023449896048987e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-352dfa0215063d45cad81edcc623515e576a6fb563f05248ca40fafc1f0932fc",
+      "name": "Engine Stats Plane 2",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        -4.18e-07,
+        -4e-08,
+        0.095003002,
+        0.0,
+        -0.030562279,
+        0.173326128,
+        -6.1e-08,
+        0.0,
+        -0.108240195,
+        -0.019085795,
+        -4.83e-07,
+        0.0,
+        4.667268372,
+        1.620582581,
+        -0.144080811,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.667268371582028,
+          1.6205825805664065,
+          -0.1440808105468763
+        ],
+        "observedGltfTranslationM": [
+          4.667268372,
+          1.620582581,
+          -0.144080811
+        ],
+        "errorMByAxis": [
+          4.1797143524036073e-10,
+          4.3359360546446624e-10,
+          4.5312370522410106e-10
+        ],
+        "maxErrorCm": 4.5312370522410106e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-bff128799ecac91a24eac47e416bae6e9f9de87c0530c971b7d4c52f8d45e0e0",
+      "name": "Unused Plane 1",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        2.37e-06,
+        -2.22e-07,
+        0.202183053,
+        0.0,
+        -0.170018886,
+        0.045492613,
+        2.042e-06,
+        0.0,
+        -0.036309835,
+        -0.135700223,
+        2.76e-07,
+        0.0,
+        4.805717773,
+        1.819736938,
+        -0.240044193,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.805717773437507,
+          1.8197369384765627,
+          -0.24004419326782156
+        ],
+        "observedGltfTranslationM": [
+          4.805717773,
+          1.819736938,
+          -0.240044193
+        ],
+        "errorMByAxis": [
+          4.375078077600847e-10,
+          4.765627892311386e-10,
+          2.678215704765563e-10
+        ],
+        "maxErrorCm": 4.765627892311386e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6971e9bbd495a33c9f47b6973e4f22aa517691e95da873121940dd7740d4f23f",
+      "name": "Unused Plane 2",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        2.369e-06,
+        -2.22e-07,
+        0.20222728,
+        0.0,
+        -0.170018887,
+        0.045492613,
+        2.043e-06,
+        0.0,
+        -0.036309835,
+        -0.135700223,
+        2.77e-07,
+        0.0,
+        4.78701355,
+        1.749817657,
+        0.000903026,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.787013549804691,
+          1.7498176574707034,
+          0.000903026461600553
+        ],
+        "observedGltfTranslationM": [
+          4.78701355,
+          1.749817657,
+          0.000903026
+        ],
+        "errorMByAxis": [
+          1.9530954631363784e-10,
+          4.707034761963769e-10,
+          4.6160055302852526e-10
+        ],
+        "maxErrorCm": 4.707034761963769e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-591879092da0b7f657ac8b93f1186cca7aca2ceec70eda9618dd5147011f0eed",
+      "name": "R_GunMount",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-ecc94f7f674d7c6bc2754f57/source.gltf",
+      "matrix": [
+        -0.490629623,
+        0.0,
+        0.871368219,
+        0.0,
+        -7e-09,
+        1.0,
+        -4e-09,
+        0.0,
+        -0.871368219,
+        -9e-09,
+        -0.490629622,
+        0.0,
+        2.910887756,
+        1.774651337,
+        1.040727386,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.910887756347659,
+          1.7746513366699217,
+          1.0407273864746065
+        ],
+        "observedGltfTranslationM": [
+          2.910887756,
+          1.774651337,
+          1.040727386
+        ],
+        "errorMByAxis": [
+          3.476587906448003e-10,
+          3.3007840904986097e-10,
+          4.746065762617491e-10
+        ],
+        "maxErrorCm": 4.746065762617491e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/UH60M/Weapons/M240H_Doorgun/M240H_Doorgun_Mount.M240H_Doorgun_Mount",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-89e15b316531f4a87b7749304384dfbdc9041f77941d97707a6e2520cc5cbb26",
+      "name": "L_GunMount",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-ecc94f7f674d7c6bc2754f57/source.gltf",
+      "matrix": [
+        0.662195343,
+        0.0,
+        -0.749331253,
+        0.0,
+        3e-09,
+        1.0,
+        3e-09,
+        0.0,
+        0.749331253,
+        -5e-09,
+        0.662195344,
+        0.0,
+        2.911030884,
+        1.774651337,
+        -1.038785782,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.911030883789071,
+          1.774651336669922,
+          -1.038785781860348
+        ],
+        "observedGltfTranslationM": [
+          2.911030884,
+          1.774651337,
+          -1.038785782
+        ],
+        "errorMByAxis": [
+          2.1092905200248424e-10,
+          3.3007818700525604e-10,
+          1.396518456431295e-10
+        ],
+        "maxErrorCm": 3.3007818700525604e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/UH60M/Weapons/M240H_Doorgun/M240H_Doorgun_Mount.M240H_Doorgun_Mount",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-1e7e1f6a6e1f26eea8a821d541606195cf6595ede67c11c76003b70283ddb425",
+      "name": "M240H_Doorgun_Mount1",
+      "actor": "BP_CH178_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d83dbfabb0347cc1dfb1698597d4d714fc205efdbfdc2ee6d0f881bd771df33/asset-ecc94f7f674d7c6bc2754f57/source.gltf",
+      "matrix": [
+        -0.76603965,
+        0.0,
+        0.642793322,
+        0.0,
+        -1.3e-08,
+        1.0,
+        -1.6e-08,
+        0.0,
+        -0.642793322,
+        -2e-08,
+        -0.76603965,
+        0.0,
+        2.418254852,
+        1.961560974,
+        1.190968857,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.4182548522949228,
+          1.961560974121094,
+          1.190968856811523
+        ],
+        "observedGltfTranslationM": [
+          2.418254852,
+          1.961560974,
+          1.190968857
+        ],
+        "errorMByAxis": [
+          2.9492275288589553e-10,
+          1.2109402369731015e-10,
+          1.884770117754897e-10
+        ],
+        "maxErrorCm": 2.9492275288589553e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/UH60M/Weapons/M240H_Doorgun/M240H_Doorgun_Mount.M240H_Doorgun_Mount",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/caf-ch-178-uh-v0-041337106c-six-view-qa.json",
+    "sha256": "527804a1122d19ce7e3f9bc338c2b18422b94fc6a95368dcfafb5c856327d669",
+    "reviewedAt": "2026-07-21T16:14:28.852748Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

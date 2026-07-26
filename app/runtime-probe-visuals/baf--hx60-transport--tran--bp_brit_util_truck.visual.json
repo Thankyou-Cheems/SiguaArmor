@@ -1,0 +1,506 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--hx60-transport--tran--bp_brit_util_truck.visual.json.recipe.json",
+  "visualRecipeSha256": "ad6d7c1f027e9ea8c69aa72b9e88f12acb0372e8a8090c3b565d1d19b30d5a46",
+  "cardId": "baf--hx60-transport--tran",
+  "factionId": "BAF",
+  "targetKey": "baf-hx60-transport-tran-bp-brit-util-truck",
+  "rawName": "BP_Brit_Util_Truck",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/British_Util_Truck/BP_Brit_Util_Truck.BP_Brit_Util_Truck_C",
+  "vehicleId": "vehicle-00ff862ab54c11fd44ad661e631840e508f31c9064e4087b32b985d37ab37ec6",
+  "identitySha256": "00ff862ab54c11fd44ad661e631840e508f31c9064e4087b32b985d37ab37ec6",
+  "packageSha256": "bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f",
+  "requiredOccurrences": 9,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 3,
+  "totalBytes": 30714414,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 32,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-691c62da3714dd97c527f91f9875bb6a87d0b4e117338ee384f80a490d2ff7cc",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-16d28c99e76375070998f94d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/British_Util_Truck/Meshes/Brit_Util_Truck.Brit_Util_Truck",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "dd78bf0467ca4a344aed9c5604ea056f5065454022b5ecd81a66b03451a5d0c1",
+      "runtimeBonePoseJointCount": 32,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 33,
+        "sourceNodeStructureSha256": "6561e179e57df6eb423a0d86033e2b7213eec0a1ffe5faddfcb5585bb2aa6bbc",
+        "sourceSkinStructureSha256": "47daa5fe1bd5751953817e5b786cdcb92902a82d4ddc92c32560d6c836fd66c0",
+        "sourceInverseBindStructureSha256": "110f665a34b29686f78b482ef663322fe4b0c6a56bf26fa344727afa658532ac"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 32
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-920732abd09d0e68fd7f069ed4cc98ca395d5e79fc90827d92f564b822727bef",
+      "name": "StaticMesh",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-6fce1ebd6cdc43adf5e9d401/source.gltf",
+      "matrix": [
+        2.976629734,
+        -7.928e-06,
+        6.683e-06,
+        0.0,
+        5.781e-06,
+        2.17072463,
+        0.0,
+        0.0,
+        -3.043e-06,
+        0.0,
+        1.355255962,
+        0.0,
+        0.450043068,
+        1.52015564,
+        -0.874052048,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.450043067932129,
+          1.5201556396484373,
+          -0.8740520477294922
+        ],
+        "observedGltfTranslationM": [
+          0.450043068,
+          1.52015564,
+          -0.874052048
+        ],
+        "errorMByAxis": [
+          6.787098660865354e-11,
+          3.515627788885922e-10,
+          2.705078383513637e-10
+        ],
+        "maxErrorCm": 3.515627788885922e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/weaponcrate.weaponcrate",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6f741159a7617ffbe1f493ca4e726cf5c17f6ab6aedf888355cbb544bb584cc9",
+      "name": "StaticMesh1",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-e87ec49180ecdf4f9b4b2ae7/source.gltf",
+      "matrix": [
+        1.0,
+        -4.261e-06,
+        2.109e-06,
+        0.0,
+        -2.101e-06,
+        -0.492988706,
+        2.494e-06,
+        0.0,
+        1.352e-06,
+        -3.244e-06,
+        -0.641047239,
+        0.0,
+        -0.640422516,
+        1.922845459,
+        -0.878084259,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.6404225158691407,
+          1.9228454589843753,
+          -0.8780842590332031
+        ],
+        "observedGltfTranslationM": [
+          -0.640422516,
+          1.922845459,
+          -0.878084259
+        ],
+        "errorMByAxis": [
+          1.308593233773081e-10,
+          1.5624612714759678e-11,
+          3.320310693055717e-11
+        ],
+        "maxErrorCm": 1.308593233773081e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Afghan/Props/Crate1.Crate1",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6829d16615713e479bfe060193aabe3a74c73a3a2b814783310d4ef6a423f7f1",
+      "name": "StaticMesh2",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-e87ec49180ecdf4f9b4b2ae7/source.gltf",
+      "matrix": [
+        1.634993672,
+        -6.967e-06,
+        3.448e-06,
+        0.0,
+        -2.11e-06,
+        -0.495046765,
+        2.505e-06,
+        0.0,
+        1.479e-06,
+        -3.55e-06,
+        -0.701452136,
+        0.0,
+        -1.738083801,
+        1.920305939,
+        -0.858896103,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7380838012695312,
+          1.920305938720703,
+          -0.8588961029052736
+        ],
+        "observedGltfTranslationM": [
+          -1.738083801,
+          1.920305939,
+          -0.858896103
+        ],
+        "errorMByAxis": [
+          2.6953128617890343e-10,
+          2.792968079035063e-10,
+          9.472633788476514e-11
+        ],
+        "maxErrorCm": 2.792968079035063e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Afghan/Props/Crate1.Crate1",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e48e24487e59f2e5f8536a9f7b2e589ad74829a608052a2a0ea24f741ae398b2",
+      "name": "StaticMesh3",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-6fce1ebd6cdc43adf5e9d401/source.gltf",
+      "matrix": [
+        2.785834551,
+        -7.419e-06,
+        6.254e-06,
+        0.0,
+        5.934e-06,
+        2.228108883,
+        0.0,
+        0.0,
+        -3.043e-06,
+        0.0,
+        1.355255961,
+        0.0,
+        -3.048294983,
+        1.515388489,
+        -0.874063644,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -3.048294982910156,
+          1.5153884887695312,
+          -0.8740636444091797
+        ],
+        "observedGltfTranslationM": [
+          -3.048294983,
+          1.515388489,
+          -0.874063644
+        ],
+        "errorMByAxis": [
+          8.984368804476617e-11,
+          2.3046875519128207e-10,
+          4.091796901306566e-10
+        ],
+        "maxErrorCm": 4.091796901306566e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/weaponcrate.weaponcrate",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-93d1124b42ef6b94fb2b9d68236e6826906c91363abbce577a0995b8feceffc2",
+      "name": "StaticMesh4",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-6fce1ebd6cdc43adf5e9d401/source.gltf",
+      "matrix": [
+        3.177508116,
+        -8.463e-06,
+        7.134e-06,
+        0.0,
+        5.833e-06,
+        2.189954996,
+        0.0,
+        0.0,
+        -3.042e-06,
+        0.0,
+        1.355255961,
+        0.0,
+        0.367204208,
+        1.51898819,
+        0.876043549,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.3672042083740233,
+          1.518988189697266,
+          0.8760435485839844
+        ],
+        "observedGltfTranslationM": [
+          0.367204208,
+          1.51898819,
+          0.876043549
+        ],
+        "errorMByAxis": [
+          3.7402331232172514e-10,
+          3.027340600425532e-10,
+          4.1601566636018106e-10
+        ],
+        "maxErrorCm": 4.1601566636018106e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/weaponcrate.weaponcrate",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-53a4742df03899a19c148459c707e4fce4c3034d8e928b4c463e2fed363e698a",
+      "name": "StaticMesh5",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-e87ec49180ecdf4f9b4b2ae7/source.gltf",
+      "matrix": [
+        1.190049887,
+        -5.071e-06,
+        2.51e-06,
+        0.0,
+        -2.088e-06,
+        -0.490070373,
+        2.48e-06,
+        0.0,
+        1.352e-06,
+        -3.244e-06,
+        -0.641047239,
+        0.0,
+        -0.891449738,
+        1.922837372,
+        0.888743591,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8914497375488282,
+          1.9228373718261722,
+          0.8887435913085937
+        ],
+        "observedGltfTranslationM": [
+          -0.891449738,
+          1.922837372,
+          0.888743591
+        ],
+        "errorMByAxis": [
+          4.511718776356588e-10,
+          1.7382784101016568e-10,
+          3.085937061442223e-10
+        ],
+        "maxErrorCm": 4.511718776356588e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Afghan/Props/Crate1.Crate1",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-300ca5f55b56890d6638c7feb6d59162ce72bc6f636a4193bac1310c019258bc",
+      "name": "StaticMesh6",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-e87ec49180ecdf4f9b4b2ae7/source.gltf",
+      "matrix": [
+        1.634993673,
+        -6.967e-06,
+        3.448e-06,
+        0.0,
+        -2.159e-06,
+        -0.506736994,
+        2.564e-06,
+        0.0,
+        1.48e-06,
+        -3.55e-06,
+        -0.701452136,
+        0.0,
+        -3.059537659,
+        1.939589844,
+        0.863624573,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -3.059537658691406,
+          1.93958984375,
+          0.8636245727539062
+        ],
+        "observedGltfTranslationM": [
+          -3.059537659,
+          1.939589844,
+          0.863624573
+        ],
+        "errorMByAxis": [
+          3.085940392111297e-10,
+          2.499997986404878e-10,
+          2.4609370097294914e-10
+        ],
+        "maxErrorCm": 3.085940392111297e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Afghan/Props/Crate1.Crate1",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-b08a2325b569784fb68262fad6365799720b0ba68b97482eb5e93711df437a1b",
+      "name": "StaticMesh7",
+      "actor": "BP_Brit_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bf571b847152244a8dfe4a3c6b71e5a657c79bb43dadda2758dc130d6845046f/asset-6fce1ebd6cdc43adf5e9d401/source.gltf",
+      "matrix": [
+        -2.186369419,
+        5.212e-06,
+        9.316e-06,
+        0.0,
+        5.293e-06,
+        2.220104217,
+        -2.39e-07,
+        0.0,
+        -5.775e-06,
+        -1.46e-07,
+        -1.355255961,
+        0.0,
+        -1.879786987,
+        1.519895325,
+        0.8788694,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.8797869873046875,
+          1.5198953247070313,
+          0.8788694000244139
+        ],
+        "observedGltfTranslationM": [
+          -1.879786987,
+          1.519895325,
+          0.8788694
+        ],
+        "errorMByAxis": [
+          3.0468760847668364e-10,
+          2.9296876036255526e-10,
+          2.4413915333809655e-11
+        ],
+        "maxErrorCm": 3.0468760847668364e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/weaponcrate.weaponcrate",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/baf/baf-hx60-transport-tran-bp-brit-util-truck-six-view-qa.json",
+    "sha256": "66b88be40f83976f7de0cf704fd4e0f2f00b6dd6dc82d001de1da9e746cbad3a",
+    "reviewedAt": "2026-07-21T09:31:03.138156Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

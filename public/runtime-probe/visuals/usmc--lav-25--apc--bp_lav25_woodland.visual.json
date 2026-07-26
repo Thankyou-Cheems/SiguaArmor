@@ -1,0 +1,824 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--lav-25--apc--bp_lav25_woodland.visual.json.recipe.json",
+  "visualRecipeSha256": "e2996b30db1a7fc8f82a400b0c501b16841db47c6c09156b372b23150f284167",
+  "cardId": "usmc--lav-25--apc",
+  "factionId": "USMC",
+  "targetKey": "usmc-lav-25-apc-bp-lav25-woodland",
+  "rawName": "BP_LAV25_Woodland",
+  "variant": "Woodland",
+  "generatedClass": "/Game/Vehicles/LAV25/BP_LAV25_Woodland.BP_LAV25_Woodland_C",
+  "vehicleId": "vehicle-f220faed043361a603f0268adf15ddf9b09bd0d8d6899481d1a5a536d648b429",
+  "identitySha256": "f220faed043361a603f0268adf15ddf9b09bd0d8d6899481d1a5a536d648b429",
+  "packageSha256": "f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d",
+  "requiredOccurrences": 13,
+  "capturedVisibleOccurrences": 13,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 11,
+  "totalBytes": 104477334,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 8,
+  "runtimeBonePoseJointCount": 92,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 1,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-3693c9768fbe92c0e0ef567ee9f1ae2f0e469867598546fbce2d5547ae118318",
+      "name": "LAV25_turret",
+      "actor": "BP_LAV25_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-08d636d37c86b02b630d14ed/source.gltf",
+      "matrix": [
+        1.0,
+        -2.2e-08,
+        -3e-08,
+        0.0,
+        2.2e-08,
+        1.0,
+        3e-09,
+        0.0,
+        2.9e-08,
+        -4e-09,
+        1.0,
+        0.0,
+        -0.867391052,
+        1.802120056,
+        -0.185797037,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8673910522460937,
+          1.802120056152344,
+          -0.18579703740831177
+        ],
+        "observedGltfTranslationM": [
+          -0.867391052,
+          1.802120056,
+          -0.185797037
+        ],
+        "errorMByAxis": [
+          2.4609370097294914e-10,
+          1.523441373052492e-10,
+          4.0831177328115587e-10
+        ],
+        "maxErrorCm": 4.0831177328115587e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Turret.LAV25_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f06fce7ac1db1f859e266241d09607927881361fae12157f9ae9713b70e67a30",
+      "runtimeBonePoseJointCount": 12,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": true,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 13,
+        "sourceNodeStructureSha256": "f117e25b2b1f6764a7fb1af1cfed4f7ab847a07e46b02ceb0278aabcd6c17502",
+        "sourceSkinStructureSha256": "ab6d02f8c8bd22d6bc864dbf14db6a2fff3e63e0d3606904ee90931e42538b05",
+        "sourceInverseBindStructureSha256": "e7e9612b66e7dd58ce68d5eb0ddf9b3d3ebc39ddf0bd1147087d3bbe5e7858b2"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 12
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-2f081a5c6dff1fd810e60af5d69a1061e21eca2bdb5593e0e42f86e41799208f",
+      "name": "SkeletalMesh",
+      "actor": "BP_LAV25_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-44c42ce91ba33ffdd25ad79e/source.gltf",
+      "matrix": [
+        1.0,
+        -2.3e-08,
+        -3e-08,
+        0.0,
+        2.3e-08,
+        1.0,
+        3e-09,
+        0.0,
+        3e-08,
+        -4e-09,
+        1.0,
+        0.0,
+        -0.720508994,
+        2.486259533,
+        -0.015291763,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.7205089937961753,
+          2.4862595328249126,
+          -0.01529176347660281
+        ],
+        "observedGltfTranslationM": [
+          -0.720508994,
+          2.486259533,
+          -0.015291763
+        ],
+        "errorMByAxis": [
+          2.0382473486790786e-10,
+          1.750875000539054e-10,
+          4.766028093017294e-10
+        ],
+        "maxErrorCm": 4.766028093017294e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Weapons/M240G_MGO_Commander/LAV25_Pintle_Mount.LAV25_Pintle_Mount",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "8afcb3222566145cf58911c46e34e9d6268a2b73b094329708bd7d5eb3862b41",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "4ed59c53f33cbf77c40ff2c45e55d583e5cdfe930e71c42528cdef777683f127",
+        "sourceSkinStructureSha256": "fc415c449c0e9c19b7975472f80a7d3e988ca92ca41b65923cd4a99ff6f813af",
+        "sourceInverseBindStructureSha256": "5a8dc439ff75229228f761a7948c5c48522608aaa26f104f961a7d99bc6f522e"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-eaf673155ae2d332ec81ef04ad5ffe5f73c667fb194ce879a564a9d6561f0122",
+      "name": "Decoration",
+      "actor": "BP_LAV25_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-72a487b1972bc3ef9623ad71/source.gltf",
+      "matrix": [
+        1.0,
+        -2.2e-08,
+        -3e-08,
+        0.0,
+        2.2e-08,
+        1.0,
+        3e-09,
+        0.0,
+        2.9e-08,
+        -4e-09,
+        1.0,
+        0.0,
+        -0.867391052,
+        1.802120056,
+        -0.185797037,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8673910522460937,
+          1.802120056152344,
+          -0.18579703740831177
+        ],
+        "observedGltfTranslationM": [
+          -0.867391052,
+          1.802120056,
+          -0.185797037
+        ],
+        "errorMByAxis": [
+          2.4609370097294914e-10,
+          1.523441373052492e-10,
+          4.0831177328115587e-10
+        ],
+        "maxErrorCm": 4.0831177328115587e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Turret_Deco.LAV25_Turret_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-86b5f1dd2b47a4020c7b476d542dda72d19018d486fd6341265aca112d485dc6",
+      "name": "CamoNet",
+      "actor": "BP_LAV25_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-ed5468fdbc985673d81b0936/source.gltf",
+      "matrix": [
+        1.0,
+        -2.2e-08,
+        -3e-08,
+        0.0,
+        2.2e-08,
+        1.0,
+        3e-09,
+        0.0,
+        2.9e-08,
+        -4e-09,
+        1.0,
+        0.0,
+        -0.867391052,
+        1.802120056,
+        -0.185797037,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8673910522460937,
+          1.802120056152344,
+          -0.18579703740831177
+        ],
+        "observedGltfTranslationM": [
+          -0.867391052,
+          1.802120056,
+          -0.185797037
+        ],
+        "errorMByAxis": [
+          2.4609370097294914e-10,
+          1.523441373052492e-10,
+          4.0831177328115587e-10
+        ],
+        "maxErrorCm": 4.0831177328115587e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Turret_Camo.LAV25_Turret_Camo",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-3b713c4c3406542cad938de2d0f6f989967bea804a1ef598f732cc38f1e8b348",
+      "name": "Vehicle Mesh",
+      "actor": "BP_LAV25_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-7d24185721c265ec4337d27b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25.LAV25",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "8eea12d408f95b23cbf370750f4e181ec92dc79f84078587b9e5a9bdb54eea2f",
+      "runtimeBonePoseJointCount": 40,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 41,
+        "sourceNodeStructureSha256": "d5080ed483fef0fc4aee913fc100885b7debbb5ca7e889f6d64bc10276e211a3",
+        "sourceSkinStructureSha256": "505efa824ff00b43ad4512b69400180df5f8dfa5dddf46b3c55fe6662808fc5a",
+        "sourceInverseBindStructureSha256": "2ba26466fafa394e362066ccfcad48d3747a12a3ee223365c6e6e27ca80a5a28"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 40
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-2e7e30a61d285af6aae41ca737e19c2ac2ade38583a53fe0ebf40e5589e8391d",
+      "name": "HullDecoration",
+      "actor": "BP_LAV25_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-91e04a0783bfcb90c9397a86/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        5e-09,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.5490606933674965e-17,
+          -2.6894414716356798e-17,
+          5.438367907115541e-09
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          5e-09
+        ],
+        "errorMByAxis": [
+          4.5490606933674965e-17,
+          2.6894414716356798e-17,
+          4.3836790711554097e-10
+        ],
+        "maxErrorCm": 4.3836790711554094e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Hull_Deco_Woodland.LAV25_Hull_Deco_Woodland",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-fd498cd3afb35707c9c9d0afa76a60ced0ee5b20db0e4561d44e2dff30d13952",
+      "name": "StaticMesh",
+      "actor": "BP_LAV25_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-9c466d1088cccf4959d9121e/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        5e-09,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          4.5490606933674965e-17,
+          -2.6894414716356798e-17,
+          5.438367907115541e-09
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          5e-09
+        ],
+        "errorMByAxis": [
+          4.5490606933674965e-17,
+          2.6894414716356798e-17,
+          4.3836790711554097e-10
+        ],
+        "maxErrorCm": 4.3836790711554094e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Hull_Camo.LAV25_Hull_Camo",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7ab6a76aefd7d345a955542a99f1bef8adb778e6e3b780a862c9566f591038db",
+      "name": "WeaponMesh3P",
+      "actor": "BP_M240G_MGO_Turret_Weapon_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-0e8555e3c59dd83341f786bd/source.gltf",
+      "matrix": [
+        1.0,
+        -2.3e-08,
+        -2.9e-08,
+        0.0,
+        2.3e-08,
+        1.0,
+        4e-09,
+        0.0,
+        3e-08,
+        -4e-09,
+        1.0,
+        0.0,
+        -0.538611,
+        2.822049276,
+        0.089575518,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.538610999638792,
+          2.8220492756066746,
+          0.08957551848176286
+        ],
+        "observedGltfTranslationM": [
+          -0.538611,
+          2.822049276,
+          0.089575518
+        ],
+        "errorMByAxis": [
+          3.6120795243732573e-10,
+          3.9332537227210196e-10,
+          4.817628518338779e-10
+        ],
+        "maxErrorCm": 4.817628518338779e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Weapons/M240G_MGO_Commander/Pintle_M240G_Weapon.Pintle_M240G_Weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d89855a4fb84866809ac5cefa1ca8573a8d6064eb0844d1799c9a8a27b89176d",
+      "runtimeBonePoseJointCount": 27,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 28,
+        "sourceNodeStructureSha256": "5cfb1a198376188fe01bb9c04851640f98aceb8fdb1966f249d55909ba568aeb",
+        "sourceSkinStructureSha256": "0b9169874bd7831455d569316accf28daa27ea3984fd158020070f878fee64ac",
+        "sourceInverseBindStructureSha256": "e34a27daebe296c7b1beae1623afbd59ced4c92d3c6f2ecc6aa0472d7ff828d6"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 27
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-95eff9da6b2ec95d6d7733035e8e3ee8ddcf35beae04b01b500cb84570fa22c8",
+      "name": "MGO",
+      "actor": "BP_M240G_MGO_Turret_Weapon_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-65d5b533fb5f288940396ec9/source.gltf",
+      "matrix": [
+        1.0,
+        -2.3e-08,
+        -2.9e-08,
+        0.0,
+        2.3e-08,
+        1.0,
+        -1.004e-06,
+        0.0,
+        3e-08,
+        1.004e-06,
+        1.0,
+        0.0,
+        -0.705787577,
+        2.970557304,
+        0.086974116,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.7057875768253784,
+          2.970557303568084,
+          0.08697411647101377
+        ],
+        "observedGltfTranslationM": [
+          -0.705787577,
+          2.970557304,
+          0.086974116
+        ],
+        "errorMByAxis": [
+          1.7462165047277267e-10,
+          4.3191628051886255e-10,
+          4.710137696539718e-10
+        ],
+        "maxErrorCm": 4.710137696539718e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/Attachments/Acog6x/Acog6x.Acog6x",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-ce11b2855a5bcfe4377279bd69ac963dcff4d6b883bbff3a4bec4bec92565496",
+      "name": "WeaponMesh3P",
+      "actor": "LAV25_762_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-f7dde481374f9fe17005b021/source.gltf",
+      "matrix": [
+        0.999952647,
+        0.0097316,
+        3.598e-06,
+        0.0,
+        -0.0097316,
+        0.999952645,
+        5.9021e-05,
+        0.0,
+        -3.023e-06,
+        -5.9054e-05,
+        0.999999998,
+        0.0,
+        -0.186628504,
+        0.809307978,
+        0.113475899,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.18662850384231772,
+          0.8093079778481161,
+          0.11347589898462292
+        ],
+        "observedGltfTranslationM": [
+          -0.186628504,
+          0.809307978,
+          0.113475899
+        ],
+        "errorMByAxis": [
+          1.5768228389667627e-10,
+          1.5188383883923962e-10,
+          1.53770884914195e-11
+        ],
+        "maxErrorCm": 1.5768228389667627e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Gun.LAV25_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1aaf70a4a6b157712c15d9019526e194708434c36e11e5c2b4ae9264d406fa6d",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "670d4cba336ae779ad2ed737b1a854a0c173fddc8211f2fc0387f3fdf8b29aa2",
+        "sourceSkinStructureSha256": "461a16dec7d19e63700cd9f6ba42e0f0017f880fce441a11477bdf90d86b5bf3",
+        "sourceInverseBindStructureSha256": "9bedf71e95727b226f15c9b8a46663e579dc27e9627ce4246256f4d920560438"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-d4749c658feafe97e070b41d106b6efd2c74e13a89c77960d10e3933908e2a16",
+      "name": "WeaponMesh3P",
+      "actor": "LAV25_M252_AP_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-60e37c87a9c6f295707a32fa/source.gltf",
+      "matrix": [
+        1.0,
+        -2.3e-08,
+        -3e-08,
+        0.0,
+        2.3e-08,
+        1.0,
+        4e-09,
+        0.0,
+        3e-08,
+        -4e-09,
+        1.0,
+        0.0,
+        -0.330381037,
+        2.245320041,
+        -0.072357034,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.3303810368492081,
+          2.24532004067488,
+          -0.07235703393618087
+        ],
+        "observedGltfTranslationM": [
+          -0.330381037,
+          2.245320041,
+          -0.072357034
+        ],
+        "errorMByAxis": [
+          1.5079187898336954e-10,
+          3.251199309772801e-10,
+          6.381913053576938e-11
+        ],
+        "maxErrorCm": 3.251199309772801e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Gun.LAV25_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6ee40d046192834f02b8659f8969e0e114d462aa83df2a6b8bae24358d8449b6",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "670d4cba336ae779ad2ed737b1a854a0c173fddc8211f2fc0387f3fdf8b29aa2",
+        "sourceSkinStructureSha256": "461a16dec7d19e63700cd9f6ba42e0f0017f880fce441a11477bdf90d86b5bf3",
+        "sourceInverseBindStructureSha256": "9bedf71e95727b226f15c9b8a46663e579dc27e9627ce4246256f4d920560438"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-575b2b3b8360bebf32090aa3d377e75360bc45f4ea2bf9d79b68baaa18ae9aae",
+      "name": "WeaponMesh3P",
+      "actor": "LAV25_M252_HE_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-f7dde481374f9fe17005b021/source.gltf",
+      "matrix": [
+        0.999952647,
+        0.0097316,
+        3.598e-06,
+        0.0,
+        -0.0097316,
+        0.999952645,
+        5.9021e-05,
+        0.0,
+        -3.023e-06,
+        -5.9054e-05,
+        0.999999998,
+        0.0,
+        -0.186628504,
+        0.809307978,
+        0.113475899,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.18662850384231772,
+          0.8093079778481161,
+          0.11347589898462292
+        ],
+        "observedGltfTranslationM": [
+          -0.186628504,
+          0.809307978,
+          0.113475899
+        ],
+        "errorMByAxis": [
+          1.5768228389667627e-10,
+          1.5188383883923962e-10,
+          1.53770884914195e-11
+        ],
+        "maxErrorCm": 1.5768228389667627e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Gun.LAV25_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1aaf70a4a6b157712c15d9019526e194708434c36e11e5c2b4ae9264d406fa6d",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "670d4cba336ae779ad2ed737b1a854a0c173fddc8211f2fc0387f3fdf8b29aa2",
+        "sourceSkinStructureSha256": "461a16dec7d19e63700cd9f6ba42e0f0017f880fce441a11477bdf90d86b5bf3",
+        "sourceInverseBindStructureSha256": "9bedf71e95727b226f15c9b8a46663e579dc27e9627ce4246256f4d920560438"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-bd60bebdc4bdf3b8c45f720794b6f5072551e9a7fcbbe27fff1a54bb61328163",
+      "name": "WeaponMesh3P",
+      "actor": "Smoke_Launcher_LAV25_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d/asset-f7dde481374f9fe17005b021/source.gltf",
+      "matrix": [
+        0.999952647,
+        0.0097316,
+        3.598e-06,
+        0.0,
+        -0.0097316,
+        0.999952645,
+        5.9021e-05,
+        0.0,
+        -3.023e-06,
+        -5.9054e-05,
+        0.999999998,
+        0.0,
+        -0.186628504,
+        0.809307978,
+        0.113475899,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.18662850384231772,
+          0.8093079778481161,
+          0.11347589898462292
+        ],
+        "observedGltfTranslationM": [
+          -0.186628504,
+          0.809307978,
+          0.113475899
+        ],
+        "errorMByAxis": [
+          1.5768228389667627e-10,
+          1.5188383883923962e-10,
+          1.53770884914195e-11
+        ],
+        "maxErrorCm": 1.5768228389667627e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Gun.LAV25_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1aaf70a4a6b157712c15d9019526e194708434c36e11e5c2b4ae9264d406fa6d",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "670d4cba336ae779ad2ed737b1a854a0c173fddc8211f2fc0387f3fdf8b29aa2",
+        "sourceSkinStructureSha256": "461a16dec7d19e63700cd9f6ba42e0f0017f880fce441a11477bdf90d86b5bf3",
+        "sourceInverseBindStructureSha256": "9bedf71e95727b226f15c9b8a46663e579dc27e9627ce4246256f4d920560438"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usmc-lav-25-apc-bp-lav25-woodland-six-view-qa.json",
+    "sha256": "190c8538a7022effce829f4863bd29a3cc75a4ba6d31b906b023018fe5deadbf",
+    "reviewedAt": "2026-07-21T16:16:30.363017Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

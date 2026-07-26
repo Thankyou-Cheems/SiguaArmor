@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--minsk-400--ultv--bp_minsk_green.visual.json.recipe.json",
+  "visualRecipeSha256": "5280a9b5e0032e748bb131f92d539234d530b577ddc4d75c2fca8a5a9468538d",
+  "cardId": "imf--minsk-400--ultv",
+  "factionId": "IMF",
+  "targetKey": "imf-minsk-400-ultv-bp-minsk-green",
+  "rawName": "BP_Minsk_green",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/Minsk_motorbike/BP_Minsk_green.BP_Minsk_green_C",
+  "vehicleId": "vehicle-81e921e358a51edc41928f7547ddbf4160c306163698771603d163b3cba9f81c",
+  "identitySha256": "81e921e358a51edc41928f7547ddbf4160c306163698771603d163b3cba9f81c",
+  "packageSha256": "c690d880cd0607e7c67b340cfa34246971b1d34ead19d13af896cb56fe547dcf",
+  "requiredOccurrences": 2,
+  "capturedVisibleOccurrences": 2,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 2,
+  "totalBytes": 6702422,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 17,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-ba3cc7ecbb30f042137e6daea476896564c4a9b62a9b960b2e7a3433259a8d69",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Minsk_green_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c690d880cd0607e7c67b340cfa34246971b1d34ead19d13af896cb56fe547dcf/asset-de57f5da4607a19c6e48bc84/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Minsk_motorbike/Meshes/SK_Minsk.SK_Minsk",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d7367f93546531910319e896d48c84f843bd483b92cdc623c366776bef63caad",
+      "runtimeBonePoseJointCount": 17,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 18,
+        "sourceNodeStructureSha256": "7e4b975951ba73879fdf0de8fa5da4065f9017d2d62291212c971b704ab33657",
+        "sourceSkinStructureSha256": "37ef509d0e9a423f13f3df8fe6a3d842c5d6621f1f3fe10008ac29bccfc5f6cb",
+        "sourceInverseBindStructureSha256": "572279a962e435b94de418c6b60541cd55b6b6aa304007a6bd825313bc14f7cf"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 17
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a790c18a5583b5f0b2c255971074833900e4dc587af8b19862239e5249fdb6ec",
+      "name": "Decoration",
+      "actor": "BP_Minsk_green_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c690d880cd0607e7c67b340cfa34246971b1d34ead19d13af896cb56fe547dcf/asset-7d2d0d1eae6aace47487d83a/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.845875778,
+        0.668397293,
+        0.086233473,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8458757781982423,
+          0.6683972930908203,
+          0.0862334728240967
+        ],
+        "observedGltfTranslationM": [
+          -0.845875778,
+          0.668397293,
+          0.086233473
+        ],
+        "errorMByAxis": [
+          1.9824231145548765e-10,
+          9.082035123952892e-11,
+          1.7590330581018776e-10
+        ],
+        "maxErrorCm": 1.9824231145548765e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Minsk_motorbike/Meshes/SM_Minsk_decoration.SM_Minsk_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/imf/imf-minsk-400-ultv-bp-minsk-green-six-view-qa.json",
+    "sha256": "113bf458ff39cc74a9b9fded5a3b0cdebe16806672ccb6eae5d13935409888a9",
+    "reviewedAt": "2026-07-21T09:40:15.203347Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

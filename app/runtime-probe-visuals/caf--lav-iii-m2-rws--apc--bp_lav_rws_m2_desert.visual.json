@@ -1,0 +1,578 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--lav-iii-m2-rws--apc--bp_lav_rws_m2_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "da26df328082eb4f9f960ec51c9c082ea27dc9c3a3ab30008375bc131d16f800",
+  "cardId": "caf--lav-iii-m2-rws--apc",
+  "factionId": "CAF",
+  "targetKey": "caf-lav-iii-m2-rws-apc-bp-lav-rws-m2-desert",
+  "rawName": "BP_LAV_RWS_M2_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/LAV_RWS/BP_LAV_RWS_M2_Desert.BP_LAV_RWS_M2_Desert_C",
+  "vehicleId": "vehicle-9b3ba159461df29e43ae088df1694be805bec6e20d7b22ac12a503c792d3dbe4",
+  "identitySha256": "9b3ba159461df29e43ae088df1694be805bec6e20d7b22ac12a503c792d3dbe4",
+  "packageSha256": "d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535",
+  "requiredOccurrences": 9,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 9,
+  "totalBytes": 105797593,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 122,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-98aca6b337573c7c2092d87922d963cab7dc9da616c6b95e4766ed68496344e4",
+      "name": "WeaponMesh3P",
+      "actor": "BP_C6_LAV_Manned_Turret_C_2",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-4f7a5af29eee38c103fe3d4c/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.63e-07,
+        1.0,
+        0.0,
+        0.101654739,
+        2.458172406,
+        0.463582382,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.10165473937988281,
+          2.458172406383515,
+          0.4635823816621889
+        ],
+        "observedGltfTranslationM": [
+          0.101654739,
+          2.458172406,
+          0.463582382
+        ],
+        "errorMByAxis": [
+          3.798828196455162e-10,
+          3.835149975373042e-10,
+          3.378111124163752e-10
+        ],
+        "maxErrorCm": 3.835149975373042e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A2/Meshes/M240_Loaders_Turret/M240_Loaders_Turret_Weapon.M240_Loaders_Turret_Weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "b8fce428b09de8a46206755cc9b25c6a1d82e8406a528a5e03c30462200f48f0",
+      "runtimeBonePoseJointCount": 27,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 28,
+        "sourceNodeStructureSha256": "5cfb1a198376188fe01bb9c04851640f98aceb8fdb1966f249d55909ba568aeb",
+        "sourceSkinStructureSha256": "cb38684a57cbf1563acd925609fca425be3372aab1b58f774a73d8a6c53c298e",
+        "sourceInverseBindStructureSha256": "bdd5cd92a832a2d01686880c649d0065b6d20b6780f172f9eab2c1a250eef8ab"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 27
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-91d36c1bde676c8ed73f69d4b51c2098b642dc188fd39236ae641fd4c99ab912",
+      "name": "WeaponMesh3P",
+      "actor": "BP_CROWS_M2_Nanuk_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-6af6361cc8100b2a692a0fbd/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.63e-07,
+        1.0,
+        0.0,
+        0.117516003,
+        2.952180406,
+        -0.457666916,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.1175160026550293,
+          2.952180406393663,
+          -0.45766691621295924
+        ],
+        "observedGltfTranslationM": [
+          0.117516003,
+          2.952180406,
+          -0.457666916
+        ],
+        "errorMByAxis": [
+          3.449706909020023e-10,
+          3.93662880071588e-10,
+          2.1295926133646503e-10
+        ],
+        "maxErrorCm": 3.93662880071588e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "865a8405a9cf6796c894e0e3817e52b986981a79dc9d7cfffab2db8396ec2b9f",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "0b44af30ee313dc8e9932d70b89ef8b5a7a2a047a518fe9c40ac07bf1a300d9d",
+        "sourceSkinStructureSha256": "502b411dfafe07a9cde0ac3cc5f0f3e84d97a1c17c387c1b072cf012c18fdcf5",
+        "sourceInverseBindStructureSha256": "d1416fc0d25103f1d25a025c20b9eb3dde83023c4bf2dc3ba42f2489dbd8359a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-bcc0bb10d63d3de3190233fad6c860cdd5fa1c47413317d6717432a4a036054d",
+      "name": "crows_turret_static_mesh",
+      "actor": "BP_CROWS_Nanuk_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-5ea504cdb192f4a2f1a7a1d1/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.63e-07,
+        1.0,
+        0.0,
+        0.117516003,
+        2.358409044,
+        -0.457666819,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.11751600265502926,
+          2.358409044088983,
+          -0.4576668194753223
+        ],
+        "observedGltfTranslationM": [
+          0.117516003,
+          2.358409044,
+          -0.457666819
+        ],
+        "errorMByAxis": [
+          3.449707325353657e-10,
+          8.898304315607675e-11,
+          4.753222815345737e-10
+        ],
+        "maxErrorCm": 4.753222815345737e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1126/Meshes/SM_M1126_CROWS_Turret_Static.SM_M1126_CROWS_Turret_Static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-96e83dad223e43bf8c2097ada4ec844677067dfe43e6bf94d564946da26ac5a5",
+      "name": "Vehicle Mesh",
+      "actor": "BP_LAV_RWS_M2_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-25ed493b9856dcceeada4df7/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV_RWS/Meshes/nanuk_body.nanuk_body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1da1b083149db7ea22edc88bd23ddbd11bd8ae1937577c68e0d103e94108aeb1",
+      "runtimeBonePoseJointCount": 81,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 82,
+        "sourceNodeStructureSha256": "785db350134794ace38ec69f6c936c1d9001b4af04b204b055020b09ed93a440",
+        "sourceSkinStructureSha256": "2d8d7fb7b001c0e2471a6e4e54e4dd364fabc9af9812c81ed02ade2a23894d4b",
+        "sourceInverseBindStructureSha256": "1d3df26528b2e1813e07876387a8193baa861409db68c52f28bb98d42d97b18d"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 81
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-97a771adb2a0b37d2624eaa899ec3795558260a65cde6ad60a85291aba5893fd",
+      "name": "WheelDecor",
+      "actor": "BP_LAV_RWS_M2_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-e2f759533c95e468008cfa97/source.gltf",
+      "matrix": [
+        0.0,
+        1.63e-07,
+        1.0,
+        0.0,
+        0.999964022,
+        -0.008482599,
+        1e-09,
+        0.0,
+        0.008482599,
+        0.999964022,
+        -1.63e-07,
+        0.0,
+        0.778604813,
+        2.31454899,
+        -0.691134334,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.7786048126220705,
+          2.314548990183155,
+          -0.6911343339970958
+        ],
+        "observedGltfTranslationM": [
+          0.778604813,
+          2.31454899,
+          -0.691134334
+        ],
+        "errorMByAxis": [
+          3.7792946550041506e-10,
+          1.8315482464004162e-10,
+          2.904232410116947e-12
+        ],
+        "maxErrorCm": 3.7792946550041506e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1126/Wreck/Stryker_wreck_wheel.Stryker_wreck_wheel",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f30c3c75df157c4ded2de23cd454f46a2b691e15ff6449024fd08c647aed2d69",
+      "name": "HullDecoration",
+      "actor": "BP_LAV_RWS_M2_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-ed6b604a7e1e86172131a7d6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV_RWS/Meshes/nanuk_body_decoration.nanuk_body_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-a3d4b07a6ca800bfbd1e20a27aa3b66dcecf68d68414cd79fce88749c225390a",
+      "name": "SQArmorMeshCrowsBase",
+      "actor": "BP_LAV_RWS_M2_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-bfbaf7564d3e7f1a938e3aeb/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.63e-07,
+        1.0,
+        0.0,
+        0.117516003,
+        2.358409044,
+        -0.457666819,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.11751600265502926,
+          2.358409044088983,
+          -0.4576668194753223
+        ],
+        "observedGltfTranslationM": [
+          0.117516003,
+          2.358409044,
+          -0.457666819
+        ],
+        "errorMByAxis": [
+          3.449707325353657e-10,
+          8.898304315607675e-11,
+          4.753222815345737e-10
+        ],
+        "maxErrorCm": 4.753222815345737e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_base.crows_base",
+      "componentClassPath": "/Script/Squad.SQArmorMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-187292123020d9cff55e01b31cbfc0576352ce79eade6e054770abd7bfe65c3d",
+      "name": "C6_Base",
+      "actor": "BP_LAV_RWS_M2_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-88c58bd214b6ca50ac48c4bd/source.gltf",
+      "matrix": [
+        1.00000012,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.000000119,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.053659821,
+        2.143999939,
+        0.462100029,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.053659820556640675,
+          2.1439999389648436,
+          0.4621000289916992
+        ],
+        "observedGltfTranslationM": [
+          -0.053659821,
+          2.143999939,
+          0.462100029
+        ],
+        "errorMByAxis": [
+          4.4335932841699233e-10,
+          3.515632229778021e-11,
+          8.300804488214908e-12
+        ],
+        "maxErrorCm": 4.433593284169923e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV_RWS/Meshes/c6_lav_mount.c6_lav_mount",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "fc09e8d8c32b2aa3693c2dd13fd4be373649274fab95c72f563fe6ab218ad0cb",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "e0675ece4d4b10776325b77869db77f375180e3152ab5843ee0fe404dafa333c",
+        "sourceSkinStructureSha256": "c212cce7d0a2540abab7175bea07e76e946ec646e0d6071ae2b6cef1d525c66e",
+        "sourceInverseBindStructureSha256": "89bdab8086e234e6c161e4b41a2ef90f6aae1e2a560222428f71491906d6749b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-06f2b5b7cb2d0f8b1c72f6af0b2f6e8dee5a26e6647ef3f6fc2b88ed36c5bf87",
+      "name": "WeaponMesh3P",
+      "actor": "Smoke_Launcher_Nanuk_M2_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535/asset-7bade62b356354fd98e4a296/source.gltf",
+      "matrix": [
+        0.999977675,
+        0.006681912,
+        1.66e-06,
+        0.0,
+        -0.006681912,
+        0.999977658,
+        -0.000188738,
+        0.0,
+        -2.921e-06,
+        0.000188724,
+        0.999999983,
+        0.0,
+        -0.723851682,
+        0.923325698,
+        -0.000400954,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.723851682324992,
+          0.9233256983857652,
+          -0.00040095358473362486
+        ],
+        "observedGltfTranslationM": [
+          -0.723851682,
+          0.923325698,
+          -0.000400954
+        ],
+        "errorMByAxis": [
+          3.249919222625408e-10,
+          3.857651975636145e-10,
+          4.1526637516034817e-10
+        ],
+        "maxErrorCm": 4.152663751603482e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "40dad2a4faad8c9266bd15c2b3267362b9f1cd7d28c9d097924aab77f417a78a",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "0b44af30ee313dc8e9932d70b89ef8b5a7a2a047a518fe9c40ac07bf1a300d9d",
+        "sourceSkinStructureSha256": "502b411dfafe07a9cde0ac3cc5f0f3e84d97a1c17c387c1b072cf012c18fdcf5",
+        "sourceInverseBindStructureSha256": "d1416fc0d25103f1d25a025c20b9eb3dde83023c4bf2dc3ba42f2489dbd8359a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/caf/caf-lav-iii-m2-rws-apc-bp-lav-rws-m2-desert-six-view-qa.json",
+    "sha256": "881ea0efb758517bb17caef67053767fb79d331a57cbda0a8b62504cb075c537",
+    "reviewedAt": "2026-07-21T09:30:31.206444Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

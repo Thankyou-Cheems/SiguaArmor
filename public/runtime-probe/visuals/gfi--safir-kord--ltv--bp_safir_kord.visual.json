@@ -1,0 +1,446 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/gfi--safir-kord--ltv--bp_safir_kord.visual.json.recipe.json",
+  "visualRecipeSha256": "9177da38a1b5b3298120e7217b9d7da00f4f39abfb734921a6c4f65655553b80",
+  "cardId": "gfi--safir-kord--ltv",
+  "factionId": "GFI",
+  "targetKey": "gfi-safir-kord-ltv-bp-safir-kord",
+  "rawName": "BP_Safir_Kord",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/Safir/BP_Safir_Kord.BP_Safir_Kord_C",
+  "vehicleId": "vehicle-30a47c461549473e9d2db75c81abb4b60d11c0a8c7b69ca37103cc7436a78ebc",
+  "identitySha256": "30a47c461549473e9d2db75c81abb4b60d11c0a8c7b69ca37103cc7436a78ebc",
+  "packageSha256": "f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 44452292,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 65,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-75ca69baca832feb16bd3a76bde7e95f0a38626dddc17ce1e4ff6c3ea529be8b",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Kord_Safir_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-d84acdd79424c70de73b9063/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.777955642,
+        1.917739185,
+        2.8463e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.777955641746521,
+          1.917739185094833,
+          2.846345305449595e-05
+        ],
+        "observedGltfTranslationM": [
+          -0.777955642,
+          1.917739185,
+          2.8463e-05
+        ],
+        "errorMByAxis": [
+          2.5347901555505814e-10,
+          9.483303031743162e-11,
+          4.530544959509145e-10
+        ],
+        "maxErrorCm": 4.530544959509145e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_Kord/Kord/Kord_Gun.Kord_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "820b2b8550dfd8561aa7c87ede131dafbb6fc3d90fdbca5a362bfc46b73540db",
+      "runtimeBonePoseJointCount": 28,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 29,
+        "sourceNodeStructureSha256": "cd57051696f4b9d648decd5c824f9eec72332d8cf6d3afd10eedfd04b401a60e",
+        "sourceSkinStructureSha256": "ced6de42bcb20d1da451d7983b49796193d510bff521c209995a11991a0377fd",
+        "sourceInverseBindStructureSha256": "e52a23453a084cf060de823d049107eaff9290ff768dabebc6c9be6565693533"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 28
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-d5260ba6f1915b56f2dee929db35733c77b94aa4acf1fa030fc63273bef9da9d",
+      "name": "Shield",
+      "actor": "BP_Kord_Safir_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-e867cf9cda1bb896741b8e32/source.gltf",
+      "matrix": [
+        1.0,
+        -4e-09,
+        0.0,
+        0.0,
+        3e-09,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.787799644,
+        1.78141662,
+        2.8425e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.7877996443549911,
+          1.7814166200323946,
+          2.8425306081831304e-05
+        ],
+        "observedGltfTranslationM": [
+          -0.787799644,
+          1.78141662,
+          2.8425e-05
+        ],
+        "errorMByAxis": [
+          3.5499103656633224e-10,
+          3.239475354632759e-11,
+          3.060818313045568e-10
+        ],
+        "maxErrorCm": 3.5499103656633224e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/dshk_turret_shield.dshk_turret_shield",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-89a462f4048d4ea2059e80d4ec13c22d9d151904e3ea5d14c05fc80cea2d3d8b",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Safir_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-b0af072a7c00ed6616c68ef4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Safir/Meshes/Safir.Safir",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "0140a0cce5e42317b9dcd29db2ff965480305ba5058e4b0fd5a74f164028b244",
+      "runtimeBonePoseJointCount": 35,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 36,
+        "sourceNodeStructureSha256": "eb9f8be4f38ac14f711528db4ddb4cb9a33b8ce258f527d1369bdb4a5915e1d8",
+        "sourceSkinStructureSha256": "6c4cef951aa3f74402094c2c92be2932493d456314adfeccc1a55400d01c4723",
+        "sourceInverseBindStructureSha256": "d5e47723717c336070e41f908dca0f34348736e1bc1e5e3944877aa659344e7b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 35
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-6fc40bb4f6d0ff5619533308c31b8c7ebb2cbc2bcd3f7dd4a3e9cd41d56eead6",
+      "name": "Mount",
+      "actor": "BP_Safir_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-3bc735dd4b04980618c2f22c/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.783651428,
+        0.801472321,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.7836514282226561,
+          0.8014723205566406,
+          2.0383000842727482e-19
+        ],
+        "observedGltfTranslationM": [
+          -0.783651428,
+          0.801472321,
+          0.0
+        ],
+        "errorMByAxis": [
+          2.2265611576699484e-10,
+          4.4335934923367404e-10,
+          2.0383000842727482e-19
+        ],
+        "maxErrorCm": 4.4335934923367404e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/technical_mount.technical_mount",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ed41aef2530e519192efe17a74a7c388445d6a698805a038198586c481266dcd",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "f842d1278d7cdbe2c4ff25dd290c459e68871d68aa75259ccd907991b80911ee",
+        "sourceSkinStructureSha256": "fa09795d6bdb6437451fde62fd81ed546e14b3b0014ba0e37c4563054798dde9",
+        "sourceInverseBindStructureSha256": "70acb6b4ffb3d34b984af1f0f7d1a5cf85889c96418510214c7fdc353d0de866"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-5a3a8082c47344acd0310b62220432c02ea0a990e6f64514e403c2c93be752d8",
+      "name": "StaticMesh",
+      "actor": "BP_Safir_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-b61b4e7a966a40bb1e4f9aa3/source.gltf",
+      "matrix": [
+        -0.07924405,
+        -1.497101137,
+        0.049077157,
+        0.0,
+        -0.036059463,
+        0.051038181,
+        1.498697708,
+        0.0,
+        -1.497471234,
+        0.077995453,
+        -0.03868609,
+        0.0,
+        0.39399336,
+        1.111778872,
+        0.834383552,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.3939933600144976,
+          1.1117788717755845,
+          0.8343835521387405
+        ],
+        "observedGltfTranslationM": [
+          0.39399336,
+          1.111778872,
+          0.834383552
+        ],
+        "errorMByAxis": [
+          1.449756981131145e-11,
+          2.2441537517181587e-10,
+          1.387404635622147e-10
+        ],
+        "maxErrorCm": 2.2441537517181587e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Soldier2/GFI/SoldierGear/T_GFI_pouch3_static.T_GFI_pouch3_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-058b871aa3a05f816bd69220cd1fda256c224ab32ab0ce0a3bee3324e1c7023c",
+      "name": "StaticMesh1",
+      "actor": "BP_Safir_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-f6b6a094a1e8f710ff723b14/source.gltf",
+      "matrix": [
+        -0.207760594,
+        -2.489966911,
+        -0.083068157,
+        0.0,
+        0.048445769,
+        0.07930296,
+        -2.498272213,
+        0.0,
+        2.490881078,
+        -0.209226728,
+        0.041660932,
+        0.0,
+        -1.542435835,
+        1.149909256,
+        -0.845715808,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.5424358345130245,
+          1.1499092558260717,
+          -0.8457158084777864
+        ],
+        "observedGltfTranslationM": [
+          -1.542435835,
+          1.149909256,
+          -0.845715808
+        ],
+        "errorMByAxis": [
+          4.869755709790979e-10,
+          1.739282051715918e-10,
+          4.77786366026578e-10
+        ],
+        "maxErrorCm": 4.8697557097909794e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Soldier2/GFI/SoldierGear/T_GFI_pouch2_static.T_GFI_pouch2_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-9cf7248fcf39dbf1b59520e227a0819f5a5225ccd0b99b037df7ad893c20e624",
+      "name": "StaticMesh2",
+      "actor": "BP_Safir_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-f6b6a094a1e8f710ff723b14/source.gltf",
+      "matrix": [
+        -0.131683683,
+        -1.994553012,
+        -0.0664657,
+        0.0,
+        0.037657162,
+        0.06411495,
+        -1.998617325,
+        0.0,
+        1.995304826,
+        -0.1328441,
+        0.033333157,
+        0.0,
+        0.385080303,
+        1.16966072,
+        -0.85881177,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.3850803032735047,
+          1.169660720021644,
+          -0.8588117701080058
+        ],
+        "observedGltfTranslationM": [
+          0.385080303,
+          1.16966072,
+          -0.85881177
+        ],
+        "errorMByAxis": [
+          2.735046633617344e-10,
+          2.1644019909672352e-11,
+          1.080058265046091e-10
+        ],
+        "maxErrorCm": 2.735046633617344e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Soldier2/GFI/SoldierGear/T_GFI_pouch2_static.T_GFI_pouch2_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/gfi/gfi-safir-kord-ltv-bp-safir-kord-six-view-qa.json",
+    "sha256": "b152a155bf510942acd912b3405d61413464975d46774edaf7a4e3639ee6b83b",
+    "reviewedAt": "2026-07-21T09:27:14.148502Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

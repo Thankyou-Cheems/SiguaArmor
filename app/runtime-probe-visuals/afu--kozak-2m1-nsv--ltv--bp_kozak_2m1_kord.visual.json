@@ -1,0 +1,590 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/afu--kozak-2m1-nsv--ltv--bp_kozak_2m1_kord.visual.json.recipe.json",
+  "visualRecipeSha256": "132782d78df1e49ea41a353aceec218b6a9bf9c14abb322acb8f0a7bc38047c8",
+  "cardId": "afu--kozak-2m1-nsv--ltv",
+  "factionId": "AFU",
+  "targetKey": "afu-kozak-2m1-nsv-ltv-bp-kozak-2m1-kord",
+  "rawName": "BP_Kozak_2M1_Kord",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/Kozak_2M1_AFU/BP_Kozak_2M1_Kord.BP_Kozak_2M1_Kord_C",
+  "vehicleId": "vehicle-d90bce35b7eacb69811866839585b96107536c7af7cef3aa853d7791ec956cc7",
+  "identitySha256": "d90bce35b7eacb69811866839585b96107536c7af7cef3aa853d7791ec956cc7",
+  "packageSha256": "8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04",
+  "requiredOccurrences": 10,
+  "capturedVisibleOccurrences": 10,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 10,
+  "totalBytes": 73556251,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 80,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-e722a08c03290a47ee60cbe92116cf4e9b9c3102a95c1ba6d5b3d90c21debaa5",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Kord_Kozak_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-47470da690bb44ce8055cbaa/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        0.485778808,
+        2.995960617,
+        0.002789477,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.4857788081392929,
+          2.995960617065429,
+          0.0027894773516741393
+        ],
+        "observedGltfTranslationM": [
+          0.485778808,
+          2.995960617,
+          0.002789477
+        ],
+        "errorMByAxis": [
+          1.3929291053926818e-10,
+          6.542899555483928e-11,
+          3.5167413946213255e-10
+        ],
+        "maxErrorCm": 3.5167413946213255e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Weapons/Kord/SK_Kord_Kozak.SK_Kord_Kozak",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ec10b57e499d1e7c43f4b1a6c76a82f18b116d3ea69fc1858b8ee7e062b1d5b3",
+      "runtimeBonePoseJointCount": 28,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 29,
+        "sourceNodeStructureSha256": "cd57051696f4b9d648decd5c824f9eec72332d8cf6d3afd10eedfd04b401a60e",
+        "sourceSkinStructureSha256": "3e9d713d1c2be82fb2d7877be7c7fbdc4938da124a212c63ba5fceab961bc52e",
+        "sourceInverseBindStructureSha256": "e07b3f84db36f857d80bc42b696ab461515802fb69efe9df8e9827727a7563b6"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 28
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-639cf951253a6a37de157e41468fb7383e0b031ec49ac4336b8259c25ec46f01",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-2a73f5096e0e3507c71f5772/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Meshes/SK_Kozak_Body.SK_Kozak_Body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "94ad2bd7dac474c7c6197334adf43777f54a94a82ee30db0178e221b2b15aee3",
+      "runtimeBonePoseJointCount": 48,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 49,
+        "sourceNodeStructureSha256": "7f593afdece8ba61e9ca39a587b6bdffc640651bb30950daec9496a815679f77",
+        "sourceSkinStructureSha256": "dfa3283502e9e445a09583dd0a68acf155066e674079e254d883269c1d5d6af3",
+        "sourceInverseBindStructureSha256": "cd2dfdf55f9f9c3a0223244c8c12818493a7f170c1f0b20763ca25fa0fa6f9f7"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 48
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-eb9c900e0ce8a887ddc011afcc4222a6eb3683eead7cf432d9befec4d42a9bcd",
+      "name": "Body",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-128f88c9071a3b0dcd3cd29f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Meshes/Separated/SM_Kozak_Body_Ext.SM_Kozak_Body_Ext",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-89c0270d28972ced97fb7c565675da45e0486fbaace325d6a3be2def265843bb",
+      "name": "SM_Kozak_Body_Glass",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-49a6dae7d74f6975dfa9f7f4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Meshes/SM_Kozak_Body_Glass.SM_Kozak_Body_Glass",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-2cfe782af65144fa75294e019f9a7138df5571bcc503c6f338191f8b0c02b2a9",
+      "name": "SM_Kozak_Body_Int",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-785ab490cbf8d61b3fa028cb/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Meshes/Separated/SM_Kozak_Body_Int.SM_Kozak_Body_Int",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f2a2dd16727ead56e198fce3a7833b1ffd82a10c8bb1a6aa91f0e3d011ebbb13",
+      "name": "SM_Kozak_Body_Int_Parts",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-ecf2f8d291fe9d5de111a86d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Meshes/Separated/SM_Kozak_Body_Int_Parts.SM_Kozak_Body_Int_Parts",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-0fd5b08a91376080bc521a0e480cc659ff4a9d2975e04d458b95e325374fc752",
+      "name": "SM_Kozak_Body_Int_Parts - NoShadow",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-afe406bed58a46c39dce54c1/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Meshes/Separated/SM_Kozak_Body_Int_Parts_Small.SM_Kozak_Body_Int_Parts_Small",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-431c9c41af0fd3e37f831bcc26789335510e81e21704d0ec516ee7dcdeb5aee2",
+      "name": "Main Plane",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        -3.739e-06,
+        4.829e-06,
+        0.18,
+        0.0,
+        -0.999525173,
+        -0.030812805,
+        -1.9933e-05,
+        0.0,
+        0.002988842,
+        -0.096953942,
+        2.663e-06,
+        0.0,
+        0.868299536,
+        2.052592385,
+        -0.000355573,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.8682995358679166,
+          2.052592385002731,
+          -0.00035557312008924224
+        ],
+        "observedGltfTranslationM": [
+          0.868299536,
+          2.052592385,
+          -0.000355573
+        ],
+        "errorMByAxis": [
+          1.3208334426195734e-10,
+          2.730704551368035e-12,
+          1.2008924226130507e-10
+        ],
+        "maxErrorCm": 1.3208334426195734e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6542a46287151a7c9e5c787546899cc185afe40314c3db4c2e8178442ee0d6e6",
+      "name": "SM_Kozak_Ammoboxes",
+      "actor": "BP_Kozak_2M1_Kord_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-8410217b68f72374d9fb7eaa/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.375294,
+        1.47565,
+        -0.022725,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.375294,
+          1.4756500000000004,
+          -0.022725
+        ],
+        "observedGltfTranslationM": [
+          -0.375294,
+          1.47565,
+          -0.022725
+        ],
+        "errorMByAxis": [
+          0.0,
+          4.440892098500626e-16,
+          0.0
+        ],
+        "maxErrorCm": 4.440892098500626e-14,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Meshes/SM_Kozak_Ammoboxes.SM_Kozak_Ammoboxes",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-5f25155bcf348ac87872dbde14dcf5c15c6c84ddaaacfd957cc0f8ca50888cd5",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_Kozak_Kord_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/8b8751d40bf1875b47e4bd6c3f999eb152c88632309dbee72ef26e2603f71c04/asset-84ef5c4b2bce000b76fc4f9e/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        -0.432953263,
+        2.406160278,
+        0.002100397,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.4329532626713054,
+          2.4061602783203124,
+          0.002100397144844999
+        ],
+        "observedGltfTranslationM": [
+          -0.432953263,
+          2.406160278,
+          0.002100397
+        ],
+        "errorMByAxis": [
+          3.2869457156081694e-10,
+          3.203122211914433e-10,
+          1.4484499884226398e-10
+        ],
+        "maxErrorCm": 3.2869457156081694e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kozak_2M1_AFU/Weapons/Kord/SK_Kozak2M1_Turret_Kord.SK_Kozak2M1_Turret_Kord",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "769ec1dc46211189cff384228a0354f23731a45801018ff82004b92d12938845",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "484533b1503ff0e449f5a3a03a10430b15dc0c60c2441cde8f8f53ee65eebd6a",
+        "sourceSkinStructureSha256": "7c1a8ad7a376ff60865f5b7fd39f9857c73c4252d2816a4d67de106bf44ddc13",
+        "sourceInverseBindStructureSha256": "23410232d847d016158fe25cc5fd0817408a8e1e6ae0bcab3c03e5daed85299c"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/afu/afu-kozak-2m1-nsv-ltv-bp-kozak-2m1-kord-six-view-qa.json",
+    "sha256": "f0c116bfcce53e2a27d96a6e7468c3ac9ef3eb219dcdcf3945660246208dd7af",
+    "reviewedAt": "2026-07-21T09:24:47.335453Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

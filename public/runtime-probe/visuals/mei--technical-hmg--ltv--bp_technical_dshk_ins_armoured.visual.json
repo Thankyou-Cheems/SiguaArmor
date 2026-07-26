@@ -1,0 +1,542 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/mei--technical-hmg--ltv--bp_technical_dshk_ins_armoured.visual.json.recipe.json",
+  "visualRecipeSha256": "5df810ef2b729e3b1f55603a43bd371193b99e47e5812bd966c54c569a3d3a00",
+  "cardId": "mei--technical-hmg--ltv",
+  "factionId": "MEI",
+  "targetKey": "mei-technical-hmg-ltv-bp-technical-dshk-ins-armoured",
+  "rawName": "BP_Technical_Dshk_INS_Armoured",
+  "variant": "Red",
+  "generatedClass": "/Game/Vehicles/Technical_Armoured/BP_Technical_Dshk_INS_Armoured.BP_Technical_Dshk_INS_Armoured_C",
+  "vehicleId": "vehicle-e4370a8565622cfba0f241018fd108185672c929bfdc7208f6370542e68a65bf",
+  "identitySha256": "e4370a8565622cfba0f241018fd108185672c929bfdc7208f6370542e68a65bf",
+  "packageSha256": "24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474",
+  "requiredOccurrences": 9,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 9,
+  "totalBytes": 87418641,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 72,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-6a4d6d722935fa124c8de7cf6e08181641adebeac82cb3f2415ae2a2f82bed24",
+      "name": "WeaponMesh3P",
+      "actor": "BP_DShK_Technical_Shield_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-501b551740dd9166cfde34e3/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.74177629,
+        1.670579529,
+        2.8226e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7417762899398803,
+          1.6705795288085938,
+          2.8225507358121297e-05
+        ],
+        "observedGltfTranslationM": [
+          -1.74177629,
+          1.670579529,
+          2.8226e-05
+        ],
+        "errorMByAxis": [
+          6.011968700647685e-11,
+          1.9140622420366071e-10,
+          4.926418787036394e-10
+        ],
+        "maxErrorCm": 4.926418787036394e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/Dshk/dshk_vehicle_base.dshk_vehicle_base",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "073ad92171727d7fac54a344c4837d61388b5819608385253b69cfbb534ac4a2",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "26090504a3f85ebc72d4897cfb91feb8a0d17c2b3e4dfc959da62d01292aa1a4",
+        "sourceSkinStructureSha256": "3d2eb14c7885817713ef45d62f78934e25ed47ee216a7e1ae66b3f6476475dff",
+        "sourceInverseBindStructureSha256": "18ba41bf6ca414e0cbaabee725c404de450555f5377c26f4d702aa8a3be9bcc0"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-9ad0200f31dc7b07c9bf14104346df79a8c38c1c50011615840b377d720910e6",
+      "name": "Shield",
+      "actor": "BP_DShK_Technical_Shield_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-e867cf9cda1bb896741b8e32/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.741776285,
+        1.670579529,
+        2.8226e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7417762851715088,
+          1.6705795288085938,
+          2.8225507358121304e-05
+        ],
+        "observedGltfTranslationM": [
+          -1.741776285,
+          1.670579529,
+          2.8226e-05
+        ],
+        "errorMByAxis": [
+          1.7150880715632866e-10,
+          1.9140622420366071e-10,
+          4.926418786968631e-10
+        ],
+        "maxErrorCm": 4.9264187869686314e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/dshk_turret_shield.dshk_turret_shield",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-033af7126e42a055b97d4b2d8e090d326fb0eb3812eb771e808723bca5c3c72d",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Technical_Dshk_INS_Armoured_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-8e8945462cea5f49c71b4fc3/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/Meshes/vehicle_technical_nodoors.vehicle_technical_nodoors",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "051999f9ecdab169aed1e48942d445c8dd223716452d93098f271d173d0ffbcd",
+      "runtimeBonePoseJointCount": 40,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 41,
+        "sourceNodeStructureSha256": "477545a9f72b2e36cadd8f26629157d3b8ad72eed309fd1239bc58244820ec6d",
+        "sourceSkinStructureSha256": "f9c30f42d509b5fff5c57673951ab9e8183faa40fac41ce5c0756ceb70025d54",
+        "sourceInverseBindStructureSha256": "44be49dad78cc5ec98af3c1d841cd1b80070b8efab9462a6844a408874995740"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 40
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-23ec484cc82ac6ac5bd8145cbae6191fb19fece61685d938b48b6975d3764b35",
+      "name": "Technical_Mount",
+      "actor": "BP_Technical_Dshk_INS_Armoured_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-f3cb42e9c1b32b7dc88c44ca/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.747472076,
+        0.563810959,
+        -2.38e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7474720764160157,
+          0.5638109588623047,
+          -2.3794569644208583e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.747472076,
+          0.563810959,
+          -2.38e-07
+        ],
+        "errorMByAxis": [
+          4.1601566636018106e-10,
+          1.3769529960683258e-10,
+          5.430355791415474e-11
+        ],
+        "maxErrorCm": 4.1601566636018106e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/technical_mount.technical_mount",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "cf94cc1521af423b5557e86363d96899b15e0b2c5995c62cfa3b5f2470ef1402",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "f842d1278d7cdbe2c4ff25dd290c459e68871d68aa75259ccd907991b80911ee",
+        "sourceSkinStructureSha256": "fa09795d6bdb6437451fde62fd81ed546e14b3b0014ba0e37c4563054798dde9",
+        "sourceInverseBindStructureSha256": "70acb6b4ffb3d34b984af1f0f7d1a5cf85889c96418510214c7fdc353d0de866"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-7c775e93c52928658c48f286f2ae4aac691454fa4ce94bbfa41284e19ae2cb53",
+      "name": "HullDecoration",
+      "actor": "BP_Technical_Dshk_INS_Armoured_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-3bcacf35195df54b61a4ec61/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.186338882,
+        0.614863739,
+        -0.860267334,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.186338882446289,
+          0.6148637390136719,
+          -0.860267333984375
+        ],
+        "observedGltfTranslationM": [
+          -1.186338882,
+          0.614863739,
+          -0.860267334
+        ],
+        "errorMByAxis": [
+          4.462890057510549e-10,
+          1.367184143674649e-11,
+          1.5624945781667066e-11
+        ],
+        "maxErrorCm": 4.462890057510549e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/Meshes/technical_decoration_dshk.technical_decoration_dshk",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-68cfdfa3138ec17aeee99a6611a23fd34840f3acf629ada47f0126da5402d20f",
+      "name": "SQArmorMesh1",
+      "actor": "BP_Technical_Dshk_INS_Armoured_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-18f31ca5dfd4d17f7ba38aa0/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical_Armoured/Meshes/technical_armour_front.technical_armour_front",
+      "componentClassPath": "/Script/Squad.SQArmorMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-80c596928ece7dfe9438ace1a891d2834363428f122d15acc383eea3ef56dd38",
+      "name": "SQArmorMesh2",
+      "actor": "BP_Technical_Dshk_INS_Armoured_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-f04e7fce5ce561f60291bd0f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical_Armoured/Meshes/technical_armour_doors.technical_armour_doors",
+      "componentClassPath": "/Script/Squad.SQArmorMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-ba07b21b07cba3863bc61c57216f743521c078e1ff15a52b21a2f48610b8f5f1",
+      "name": "SQArmorMesh3",
+      "actor": "BP_Technical_Dshk_INS_Armoured_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-6d4606d0926b80105cf0ef36/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical_Armoured/Meshes/technical_armour_rear.technical_armour_rear",
+      "componentClassPath": "/Script/Squad.SQArmorMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-00cd2f89dea6d9630af466b1b1fa2475301255da05a551f8a070efc142800722",
+      "name": "SQArmorMesh4",
+      "actor": "BP_Technical_Dshk_INS_Armoured_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/24c4c3f736c303b834f815c2d2e96d35262cd3e5c015c813c489aa2e6df8d474/asset-905a134c406063d8f90e52c1/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical_Armoured/Meshes/technical_armour_top.technical_armour_top",
+      "componentClassPath": "/Script/Squad.SQArmorMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/mei/mei-technical-hmg-ltv-bp-technical-dshk-ins-armoured-six-view-qa.json",
+    "sha256": "f20183924f3d8164a530e02fd7a30cb44ef3bf75197d1dc6f49093a8b508748d",
+    "reviewedAt": "2026-07-21T09:34:33.121088Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

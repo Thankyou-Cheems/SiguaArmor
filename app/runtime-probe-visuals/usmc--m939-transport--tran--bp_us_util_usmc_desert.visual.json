@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--m939-transport--tran--bp_us_util_usmc_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "79a473b7eda6cb51449ebc5586976747ff094365ce784e204f11e137ff8312ce",
+  "cardId": "usmc--m939-transport--tran",
+  "factionId": "USMC",
+  "targetKey": "usmc-m939-transport-tran-bp-us-util-usmc-desert",
+  "rawName": "BP_US_Util_USMC_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/US_Util_Truck/BP_US_Util_USMC_Desert.BP_US_Util_USMC_Desert_C",
+  "vehicleId": "vehicle-71a5cd39f35dbba04919f4f769eaceb08e6c2dc86228c574371da2edcd72b103",
+  "identitySha256": "71a5cd39f35dbba04919f4f769eaceb08e6c2dc86228c574371da2edcd72b103",
+  "packageSha256": "98a5a3c7d973bfbbad81a5148434cd790397e814becfea0da166b731e86d5c81",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 1,
+  "totalBytes": 46948881,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 44,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-a2e328e9da210ce4af7baba1ec5639e7428f3863974757092e093445b8e6d151",
+      "name": "Vehicle Mesh",
+      "actor": "BP_US_Util_USMC_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/98a5a3c7d973bfbbad81a5148434cd790397e814becfea0da166b731e86d5c81/asset-2e40e699d1b30f07bd39a9f5/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/US_Util_Truck/Meshes/US_Util_Truck.US_Util_Truck",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "41d48609eaf4eb4c29506b60a6e802bbae7bf17ed27e8714a35a4a419c67436a",
+      "runtimeBonePoseJointCount": 44,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 45,
+        "sourceNodeStructureSha256": "cae6ecdb7d4d0f139124dbf95e779207f8cdf85debb74de3d3aa84471e5624d2",
+        "sourceSkinStructureSha256": "64b6592e624a886ea882fa3300a25a8961bb080b4973fc85d58175917696cf10",
+        "sourceInverseBindStructureSha256": "de65f6d258967f88ca05866f64a585081eacaaf9fafcab47161b89581af5a049"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 44
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usmc-m939-transport-tran-bp-us-util-usmc-desert-six-view-qa.json",
+    "sha256": "928cd4c531fa51434423d1c2293bf152ff5308b8c1d5f24ad1321903d91e4546",
+    "reviewedAt": "2026-07-21T16:16:39.670288Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

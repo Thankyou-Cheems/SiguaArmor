@@ -1,0 +1,254 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/vdv--btr-d--apc--bp_btr-d_transport_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "9a999e21ce7ef6241d61b81e6e1a63baaf74896f996ef84cf420d47e8c40e051",
+  "cardId": "vdv--btr-d--apc",
+  "factionId": "VDV",
+  "targetKey": "vdv-btr-d-apc-bp-btr-d-transport-desert",
+  "rawName": "BP_BTR-D_Transport_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/BTR-D/BP_BTR-D_Transport_Desert.BP_BTR-D_Transport_Desert_C",
+  "vehicleId": "vehicle-ad641d72de0757b2b3f28fa7dfa4b47d9fc0ac23702e6d0c5fd3c4ac9bb1aea4",
+  "identitySha256": "ad641d72de0757b2b3f28fa7dfa4b47d9fc0ac23702e6d0c5fd3c4ac9bb1aea4",
+  "packageSha256": "371072c5007236af675fd1f7b005049e2a87a34149048d2e77ae88d1bed39a54",
+  "requiredOccurrences": 3,
+  "capturedVisibleOccurrences": 3,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 3,
+  "totalBytes": 35358829,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 74,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-e427b94906d5050fabfecff5f4576dcc8d4edb76290920a6cbc34ed6c826e0b9",
+      "name": "Vehicle Mesh",
+      "actor": "BP_BTR-D_Transport_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/371072c5007236af675fd1f7b005049e2a87a34149048d2e77ae88d1bed39a54/asset-3038a9a35c48baea16570c70/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-D/mesh/BTRD.BTRD",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "2206a119a1c803a7dcfc7292bb8ba8c7ebd5f591e14182f9e17bb3436da4a6b9",
+      "runtimeBonePoseJointCount": 68,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 69,
+        "sourceNodeStructureSha256": "d7291da00ed843e3d3f21890b3ac42a33352c0583922a1373324053fb8fecd43",
+        "sourceSkinStructureSha256": "2285e84846b0473a8a102b2c98c7170266ea204e06c2cedeb720078509b6b0e3",
+        "sourceInverseBindStructureSha256": "b96452fadb404c7118f7407b6f1fe34ee9994965f4d253333a4b8f8555a9ad57"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 68
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-381b73b70f96fbc784caf0fdf3f2e6635e6850c355740414aa1527194b18467c",
+      "name": "bmd1m_bowgun_l",
+      "actor": "BP_BTRD_Bowgun_L_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/371072c5007236af675fd1f7b005049e2a87a34149048d2e77ae88d1bed39a54/asset-e765889fa622a330ec5cb064/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        2.421963487,
+        1.243174896,
+        -0.850684267,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.4219634869827673,
+          1.2431748962402343,
+          -0.8506842672772956
+        ],
+        "observedGltfTranslationM": [
+          2.421963487,
+          1.243174896,
+          -0.850684267
+        ],
+        "errorMByAxis": [
+          1.723288178823168e-11,
+          2.4023427691588495e-10,
+          2.7729563090161946e-10
+        ],
+        "maxErrorCm": 2.7729563090161946e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-D/mesh/btrd_bowgun_l.btrd_bowgun_l",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "cb6ce7f1e4cc7ad7adf8b40066d30c4728aac8688e70421ef5279b39ac214479",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "759509a7baa6bdc2b7eeb16ed8971b8c52cb69cec436b265938deba98b02c40c",
+        "sourceSkinStructureSha256": "570374a13cd7313d910ebc5979f09b6f9bd556b1587e0227e5108087c3e4d1ec",
+        "sourceInverseBindStructureSha256": "a6341f5e61ad4d5660b4bcc7595e82888d906545eb15a81a0f8c3d111f3e88fe"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a50e5cc38d14953c2aec058abd17e3bbdeb732f6a18f1e5f48b2832113f31249",
+      "name": "bmd1m_bowgun_l",
+      "actor": "BP_BTRD_Bowgun_R_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/371072c5007236af675fd1f7b005049e2a87a34149048d2e77ae88d1bed39a54/asset-b46e75e2039a580fb9d9c5f2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        2.421963515,
+        1.243174896,
+        0.850685896,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.421963514970157,
+          1.2431748962402345,
+          0.8506858956865987
+        ],
+        "observedGltfTranslationM": [
+          2.421963515,
+          1.243174896,
+          0.850685896
+        ],
+        "errorMByAxis": [
+          2.984279490192421e-11,
+          2.4023449896048987e-10,
+          3.1340130490775664e-10
+        ],
+        "maxErrorCm": 3.1340130490775664e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-D/mesh/btrd_bowgun_r.btrd_bowgun_r",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6a55d17e741611dcd0556d723ff04d4dbf8d22a58419ac9904aa3c2cc27d3e4d",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "759509a7baa6bdc2b7eeb16ed8971b8c52cb69cec436b265938deba98b02c40c",
+        "sourceSkinStructureSha256": "159f4d8d8b0729ba4fdf317a4cf40f252d09c3219a4f7116cc6537fa19098ea2",
+        "sourceInverseBindStructureSha256": "23ad56de061498e5e1dc69265ae0260da8fd01b011f49344e47e124bfdaff0ab"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/vdv-btr-d-apc-bp-btr-d-transport-desert-six-view-qa.json",
+    "sha256": "dc788c2e5edaf102f5d54b1339303ebcac8872b5a7c1c99bcf03a8999aac7395",
+    "reviewedAt": "2026-07-21T16:16:51.617825Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

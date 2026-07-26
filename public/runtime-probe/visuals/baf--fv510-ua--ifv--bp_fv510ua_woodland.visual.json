@@ -1,0 +1,548 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv510-ua--ifv--bp_fv510ua_woodland.visual.json.recipe.json",
+  "visualRecipeSha256": "b5eff31ab030381daaa14f3a9bbe6eb4dde47dde85cfcafae7b6ce615ff960fc",
+  "cardId": "baf--fv510-ua--ifv",
+  "factionId": "BAF",
+  "targetKey": "baf-fv510-ua-ifv-bp-fv510ua-woodland",
+  "rawName": "BP_FV510UA_Woodland",
+  "variant": "Woodland",
+  "generatedClass": "/Game/Vehicles/FV510/BP_FV510UA_Woodland.BP_FV510UA_Woodland_C",
+  "vehicleId": "vehicle-7541ab2e3417f27567c0f647fe51c35c4a66c824809d16aa7cbe71d2b725aee1",
+  "identitySha256": "7541ab2e3417f27567c0f647fe51c35c4a66c824809d16aa7cbe71d2b725aee1",
+  "packageSha256": "5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 8,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 63242293,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 6,
+  "runtimeBonePoseJointCount": 70,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 3,
+  "runtimeBonePoseDynamicOccurrenceCount": 1,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-14c4e137e3383b1eaf9c49e6548c982c5bf62482ce839610228ca121598d9ee7",
+      "name": "Vehicle Mesh",
+      "actor": "BP_FV510UA_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-192bd82edeb98dde071f3fb3/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510UA.FV510UA",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "3c860ff7273f555e6a038f69db21c7f73e117795ebf39007f37badc12fc075f4",
+      "runtimeBonePoseJointCount": 52,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 53,
+        "sourceNodeStructureSha256": "09bfdda9e70edb2a00df046b7d098a10d31ac27bd68db2478a2d0a47baed4592",
+        "sourceSkinStructureSha256": "5e6a2a23f363dc13f59d33085d6cfee3a6525fb5abc627deb5cd422714106bd0",
+        "sourceInverseBindStructureSha256": "4c83b134afd3d09f829c03760d984b5d21889526371cae5fe2ce3659dd9d6220"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 52
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-fe60121306db7281400ec62a075039c14dba4e69d3be93978249b200471c27d1",
+      "name": "HullDecoration",
+      "actor": "BP_FV510UA_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-88064da5b843bdb5dfddb38e/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/SM_FV510UA_Decoration_Woodland.SM_FV510UA_Decoration_Woodland",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e178ec6f6ae698c164d39015a98eebbb93fcb8b219f22c2e79145f84164d4390",
+      "name": "FV510_turret",
+      "actor": "BP_FV510_Turret_Woodland_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-4781a50b919cdc4896989e81/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.193685532,
+        1.873410721,
+        -0.257320366,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.19368553161621097,
+          1.873410720825195,
+          -0.2573203659057616
+        ],
+        "observedGltfTranslationM": [
+          -0.193685532,
+          1.873410721,
+          -0.257320366
+        ],
+        "errorMByAxis": [
+          3.8378902833535733e-10,
+          1.7480483727183582e-10,
+          9.423839486544239e-11
+        ],
+        "maxErrorCm": 3.837890283353573e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_turret.FV510_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "769e1ede3054058c39964095347b9ce8f3b2a7c025f15030ae1e93b474c9e30d",
+      "runtimeBonePoseJointCount": 10,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": true,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 11,
+        "sourceNodeStructureSha256": "762b1e5cdacc992b3ecba18295f48e45a5c4f466ee02bc6d4628777fd5875d70",
+        "sourceSkinStructureSha256": "13eb2c65b4dcf43eb6ec53957128e2cea9f2f782716539a67e4c7d63084e7119",
+        "sourceInverseBindStructureSha256": "a16222f562a84c8ee110e60cc59d38a842f7912ea53d7c3e93ea1851de650f66"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 10
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a0a485994199e8a03a9514267e17d841c3d1d249f77b7d74dbc74ea5c8c5a952",
+      "name": "StaticMesh",
+      "actor": "BP_FV510_Turret_Woodland_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-8bcc17296c467387a78e755a/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.193685532,
+        1.873410721,
+        -0.257320366,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.19368553161621097,
+          1.873410720825195,
+          -0.2573203659057616
+        ],
+        "observedGltfTranslationM": [
+          -0.193685532,
+          1.873410721,
+          -0.257320366
+        ],
+        "errorMByAxis": [
+          3.8378902833535733e-10,
+          1.7480483727183582e-10,
+          9.423839486544239e-11
+        ],
+        "maxErrorCm": 3.837890283353573e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/SM_FV510_Decoration_Turret.SM_FV510_Decoration_Turret",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-73e3369a44f0b0512330d79d91c9f9b9ff621a63b6ec1ea54de8dd90060d5859",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Warrior_762_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-f2e99808cd512e3f5218bc50/source.gltf",
+      "matrix": [
+        0.999985611,
+        0.005363969,
+        8.1258e-05,
+        0.0,
+        -0.005363967,
+        0.999985613,
+        -2.5423e-05,
+        0.0,
+        -8.1393e-05,
+        2.4986e-05,
+        0.999999996,
+        0.0,
+        0.009981299,
+        0.831330237,
+        3.023e-06,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.00998129922193395,
+          0.8313302366508561,
+          3.022689124780405e-06
+        ],
+        "observedGltfTranslationM": [
+          0.009981299,
+          0.831330237,
+          3.023e-06
+        ],
+        "errorMByAxis": [
+          2.2193394864922222e-10,
+          3.4914382496253893e-10,
+          3.1087521959496426e-10
+        ],
+        "maxErrorCm": 3.491438249625389e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6bb7938da5d0b2e90fef33abbd7882c7b3e6060563d7ab1556d543b2478806c9",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "f01287b3a69200ff6f0a60e293ebfce74a8e0d0aa1e6cf4e1734089516e69b40",
+        "sourceInverseBindStructureSha256": "982cb7c2a11fe671bd78c96cdc0be93ea23f343fd67c6337e79ca5c3afcf07d4"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-7cdceff2a257f75d18c4b94b4ba89e237264c9e4bc1fc3975400449441449eeb",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Warrior_Rarden_AP_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-0604ccb17ee3b70cdbcd8964/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.540224762,
+        2.202301102,
+        -0.257320366,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.5402247619628906,
+          2.20230110168457,
+          -0.2573203659057616
+        ],
+        "observedGltfTranslationM": [
+          0.540224762,
+          2.202301102,
+          -0.257320366
+        ],
+        "errorMByAxis": [
+          3.710942664270078e-11,
+          3.154299044183517e-10,
+          9.423839486544239e-11
+        ],
+        "maxErrorCm": 3.154299044183517e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "777758b3bd70a0ed3d50330a7e3867e56397a93ce2af1883e5115a6ecf51873a",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "f01287b3a69200ff6f0a60e293ebfce74a8e0d0aa1e6cf4e1734089516e69b40",
+        "sourceInverseBindStructureSha256": "982cb7c2a11fe671bd78c96cdc0be93ea23f343fd67c6337e79ca5c3afcf07d4"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8b29c6265aa2e70cf53e057e50a6632ed860eba17302598a15a5e1b721765e47",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Warrior_Rarden_HE_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-f2e99808cd512e3f5218bc50/source.gltf",
+      "matrix": [
+        0.999985611,
+        0.005363969,
+        8.1258e-05,
+        0.0,
+        -0.005363967,
+        0.999985613,
+        -2.5423e-05,
+        0.0,
+        -8.1393e-05,
+        2.4986e-05,
+        0.999999996,
+        0.0,
+        0.009981299,
+        0.831330237,
+        3.023e-06,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.00998129922193395,
+          0.8313302366508561,
+          3.022689124780405e-06
+        ],
+        "observedGltfTranslationM": [
+          0.009981299,
+          0.831330237,
+          3.023e-06
+        ],
+        "errorMByAxis": [
+          2.2193394864922222e-10,
+          3.4914382496253893e-10,
+          3.1087521959496426e-10
+        ],
+        "maxErrorCm": 3.491438249625389e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6bb7938da5d0b2e90fef33abbd7882c7b3e6060563d7ab1556d543b2478806c9",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "f01287b3a69200ff6f0a60e293ebfce74a8e0d0aa1e6cf4e1734089516e69b40",
+        "sourceInverseBindStructureSha256": "982cb7c2a11fe671bd78c96cdc0be93ea23f343fd67c6337e79ca5c3afcf07d4"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-1ec254e820c10e71ba8db48f10603b76ef39847c82a4d41758e32e897e699ca2",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Warrior_Smoke_Launcher_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d/asset-f2e99808cd512e3f5218bc50/source.gltf",
+      "matrix": [
+        0.999985611,
+        0.005363969,
+        8.1258e-05,
+        0.0,
+        -0.005363967,
+        0.999985613,
+        -2.5423e-05,
+        0.0,
+        -8.1393e-05,
+        2.4986e-05,
+        0.999999996,
+        0.0,
+        0.009981299,
+        0.831330237,
+        3.023e-06,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.00998129922193395,
+          0.8313302366508561,
+          3.022689124780405e-06
+        ],
+        "observedGltfTranslationM": [
+          0.009981299,
+          0.831330237,
+          3.023e-06
+        ],
+        "errorMByAxis": [
+          2.2193394864922222e-10,
+          3.4914382496253893e-10,
+          3.1087521959496426e-10
+        ],
+        "maxErrorCm": 3.491438249625389e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6bb7938da5d0b2e90fef33abbd7882c7b3e6060563d7ab1556d543b2478806c9",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "f01287b3a69200ff6f0a60e293ebfce74a8e0d0aa1e6cf4e1734089516e69b40",
+        "sourceInverseBindStructureSha256": "982cb7c2a11fe671bd78c96cdc0be93ea23f343fd67c6337e79ca5c3afcf07d4"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/baf/baf-fv510-ua-ifv-bp-fv510ua-woodland-six-view-qa.json",
+    "sha256": "7323625e3dcd8cbb5827b69fe4bc35ffae9e8446875dd7d702524bc998c4bbfd",
+    "reviewedAt": "2026-07-21T09:31:00.172940Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

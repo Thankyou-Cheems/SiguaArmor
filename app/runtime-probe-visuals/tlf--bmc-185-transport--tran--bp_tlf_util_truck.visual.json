@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--bmc-185-transport--tran--bp_tlf_util_truck.visual.json.recipe.json",
+  "visualRecipeSha256": "57153eda3d2325c3ee7ebb094a12992ac6f4081a6e6559bbd0a82574f0c80f05",
+  "cardId": "tlf--bmc-185-transport--tran",
+  "factionId": "TLF",
+  "targetKey": "tlf-bmc-185-transport-tran-bp-tlf-util-truck",
+  "rawName": "BP_TLF_Util_Truck",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/BMC_185_Truck/BP_TLF_Util_Truck.BP_TLF_Util_Truck_C",
+  "vehicleId": "vehicle-1d3b5c3e34937e1fe32cc55b8b0ef0102359e753a0beb50948812ff3064614ad",
+  "identitySha256": "1d3b5c3e34937e1fe32cc55b8b0ef0102359e753a0beb50948812ff3064614ad",
+  "packageSha256": "ba4c4e577e79f747ee5edcb8cccbbcae49cf11d5727ca4c1758eeea54e4ba097",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 1,
+  "totalBytes": 30486748,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 21,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-89770cad1aae39200825e3f6f69a9f6097fffe7d21cf4a7a563d546737428703",
+      "name": "Vehicle Mesh",
+      "actor": "BP_TLF_Util_Truck_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ba4c4e577e79f747ee5edcb8cccbbcae49cf11d5727ca4c1758eeea54e4ba097/asset-b8d59bbe7f9829b313982353/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMC_185_Truck/Meshes/SK_BMC-185-09C_TarpFolded.SK_BMC-185-09C_TarpFolded",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "8130dfe746e0a39f154f362cdcc133ddaa4ecffde268d8228ddfe04be67e6fc2",
+      "runtimeBonePoseJointCount": 21,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 22,
+        "sourceNodeStructureSha256": "155e51bc1425061fabfbb4a72c88fcd15003d46a3513ec40ff758296d89d0612",
+        "sourceSkinStructureSha256": "b7e6c3874afd367267b02d46b48010180a577df4eb99da0e9a8d93afc3be0e6d",
+        "sourceInverseBindStructureSha256": "adf479d58ef8a3dad64bf4213a478cc1e6279a131d241a6725c727f7609644b3"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 21
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/tlf-bmc-185-transport-tran-bp-tlf-util-truck-six-view-qa.json",
+    "sha256": "d87115d6f8f07d44df38738a2425d12dab57e8f7727627ea19f83664001bb263",
+    "reviewedAt": "2026-07-21T16:15:19.345386Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

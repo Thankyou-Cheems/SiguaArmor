@@ -1,0 +1,542 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m-atv-tow--td--bp_matv_tow.visual.json.recipe.json",
+  "visualRecipeSha256": "fdd46f57dbc1188c26a093978dd64e6e7b429bf3a5ead48e2c6dd2e6004b1d2a",
+  "cardId": "usa--m-atv-tow--td",
+  "factionId": "USA",
+  "targetKey": "usa-m-atv-tow-td-bp-matv-tow",
+  "rawName": "BP_MATV_TOW",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/MATV/BP_MATV_TOW.BP_MATV_TOW_C",
+  "vehicleId": "vehicle-aefa99d95ad1bb785ba7deb00d7ebacf369727555b926812d9fda357c8f2c68d",
+  "identitySha256": "aefa99d95ad1bb785ba7deb00d7ebacf369727555b926812d9fda357c8f2c68d",
+  "packageSha256": "2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3",
+  "requiredOccurrences": 9,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 5,
+  "totalBytes": 75471822,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 60,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-f3abe41bbc50ef02efa368052935d8b41b58dcf96f0f3de00449634dc34b86a3",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BGM71TOW_MATV_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-20f67685a4051ce0e4625942/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.310121002,
+        2.880077,
+        0.230923967,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.3101210021972657,
+          2.8800769996643054,
+          0.23092396736145024
+        ],
+        "observedGltfTranslationM": [
+          -0.310121002,
+          2.880077,
+          0.230923967
+        ],
+        "errorMByAxis": [
+          1.9726570377187613e-10,
+          3.356945832422298e-10,
+          3.6145023085687455e-10
+        ],
+        "maxErrorCm": 3.6145023085687455e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_BGM71TOW/BGM71TOW/Bgm71Tow_Launcher.Bgm71Tow_Launcher",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "87c1ff6ad70d91ca4839f179120fb9857fa1de003711d364eb957d5dc582bd98",
+      "runtimeBonePoseJointCount": 11,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 12,
+        "sourceNodeStructureSha256": "8e56d735311899bb25ad2e3f74c8662e58d50c58dc6c56f591fbec972e60d076",
+        "sourceSkinStructureSha256": "d73ff81d4225d909713e45297c7bc0878ebaab95ae30880f6d389eb855be1672",
+        "sourceInverseBindStructureSha256": "0a9003eab5bb468d3bb6470e71e630b9aba7dfed5026a5ff210dc5fd3256bf86"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 11
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-2efc171b4b7ffa06900c416793d7b7c24d3f90bcb4a638abf00b8c0bad47a6b3",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_M1151_TOW_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-4c5718f796256daaf3b13455/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.551104431,
+        2.717619934,
+        0.000891762,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.5511044311523436,
+          2.717619934082031,
+          0.0008917617797851563
+        ],
+        "observedGltfTranslationM": [
+          -0.551104431,
+          2.717619934,
+          0.000891762
+        ],
+        "errorMByAxis": [
+          1.5234369321603936e-10,
+          8.203082657587402e-11,
+          2.2021484375606137e-10
+        ],
+        "maxErrorCm": 2.2021484375606137e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/M1151_Bgm71Tow_Turret.M1151_Bgm71Tow_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ae6f254db16586313ad684cd8b3ee78470671f86d893d337d56de27e530fdc82",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "7c9181501164fda02eda6c645e5020149460524dc4afb023c00547ed5774fe69",
+        "sourceSkinStructureSha256": "feda8254d34b74a6be6e214c448fd2091b412c5556e51dd8ed997788a662dc2e",
+        "sourceInverseBindStructureSha256": "480da7c80594cfb09fcfceeb5bec5b6ec90a0f64ada03a08baa41375bc89195f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-fc87e6c729293f6d5a25fa06d203130d84ad7a560d0e73f149c5e03e942b2204",
+      "name": "Vehicle Mesh",
+      "actor": "BP_MATV_TOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3987a649e84ccedab5f21138/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Meshes/MATV.MATV",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "75c98a58488a0457205a88a6f6f65ba5d52db52e983cae901aa09c91981df3a0",
+      "runtimeBonePoseJointCount": 46,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 47,
+        "sourceNodeStructureSha256": "fa4acc4d9509206d5941cb0444a6c2b24d7b2784d273f2d933505f930f59aef2",
+        "sourceSkinStructureSha256": "36fa7127eab01d9352a9a1ddb1f388bfd4f2e50e3d92c527d3f98cb2db9aabd8",
+        "sourceInverseBindStructureSha256": "b08b950a568834a04cff9d43a28cacbb91994902cabe508f6701762ef955ac6c"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 46
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-6cf1348d44deb507985023b95d5925ae64525baa462031fd9c1acf0424c1f298",
+      "name": "HullDecoration",
+      "actor": "BP_MATV_TOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-913fa3aed51c2a218db7259c/source.gltf",
+      "matrix": [
+        1.0,
+        2.38e-07,
+        0.0,
+        0.0,
+        -2.39e-07,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.97370369,
+        1.324278107,
+        0.196775322,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.973703689575195,
+          1.3242781066894531,
+          0.19677532196044922
+        ],
+        "observedGltfTranslationM": [
+          0.97370369,
+          1.324278107,
+          0.196775322
+        ],
+        "errorMByAxis": [
+          4.2480496897923103e-10,
+          3.1054692151144536e-10,
+          3.9550779318275886e-11
+        ],
+        "maxErrorCm": 4.2480496897923103e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Meshes/matv_interior_decoration_addedrear.matv_interior_decoration_addedrear",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e3c10ce60191996acfbad561d8d5e30f0b748dea4bfc6fbca6bf70500cafb9c2",
+      "name": "StaticMesh",
+      "actor": "BP_MATV_TOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3c5e740e536573d60fa9cc28/source.gltf",
+      "matrix": [
+        -0.005074765,
+        0.0,
+        0.999987123,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.999987123,
+        0.0,
+        -0.005074765,
+        0.0,
+        -1.474104462,
+        2.086942902,
+        0.00114563,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.4741044616699222,
+          2.0869429016113283,
+          0.0011456298828125002
+        ],
+        "observedGltfTranslationM": [
+          -1.474104462,
+          2.086942902,
+          0.00114563
+        ],
+        "errorMByAxis": [
+          3.300777429160462e-10,
+          3.8867176144208315e-10,
+          1.1718749972147724e-10
+        ],
+        "maxErrorCm": 3.8867176144208315e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_BGM71TOW/BGM71TOW/Bgm71Tow_missiletube_static.Bgm71Tow_missiletube_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-8b6c520f18e8cec46c506801ba737435f87cf90404d7b3e6b8252d383f8e091d",
+      "name": "StaticMesh1",
+      "actor": "BP_MATV_TOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3c5e740e536573d60fa9cc28/source.gltf",
+      "matrix": [
+        -0.005072102,
+        -5.96e-07,
+        0.999987136,
+        0.0,
+        0.850022527,
+        0.526728689,
+        0.00431177,
+        0.0,
+        -0.526721917,
+        0.850033462,
+        -0.002671115,
+        0.0,
+        -1.69849823,
+        2.086942902,
+        1.53e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.698498229980469,
+          2.086942901611328,
+          1.52587890625e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.69849823,
+          2.086942902,
+          1.53e-07
+        ],
+        "errorMByAxis": [
+          1.9531043449205754e-11,
+          3.88672205531293e-10,
+          4.1210937500000366e-10
+        ],
+        "maxErrorCm": 4.1210937500000366e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_BGM71TOW/BGM71TOW/Bgm71Tow_missiletube_static.Bgm71Tow_missiletube_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-707c7736a215c751849fc8300ff8136e98c08f343749639dc5e6c8f44404aff1",
+      "name": "StaticMesh2",
+      "actor": "BP_MATV_TOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3c5e740e536573d60fa9cc28/source.gltf",
+      "matrix": [
+        -0.005072102,
+        -5.33e-07,
+        0.999987136,
+        0.0,
+        0.850022457,
+        0.526728802,
+        0.004311736,
+        0.0,
+        -0.52672203,
+        0.850033392,
+        -0.00267117,
+        0.0,
+        -1.925861664,
+        2.086942902,
+        1.53e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.9258616638183594,
+          2.0869429016113283,
+          1.5258789062500434e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.925861664,
+          2.086942902,
+          1.53e-07
+        ],
+        "errorMByAxis": [
+          1.816404804344529e-10,
+          3.8867176144208315e-10,
+          4.121093749956626e-10
+        ],
+        "maxErrorCm": 4.121093749956626e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_BGM71TOW/BGM71TOW/Bgm71Tow_missiletube_static.Bgm71Tow_missiletube_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-83b2dfa8e21520adc4aac50240e3f4f6261315e2d88dc2125164656146996a20",
+      "name": "StaticMesh3",
+      "actor": "BP_MATV_TOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3c5e740e536573d60fa9cc28/source.gltf",
+      "matrix": [
+        -0.002819993,
+        -0.004210445,
+        0.99998716,
+        0.0,
+        0.036183094,
+        0.999335885,
+        0.004309741,
+        0.0,
+        -0.999341199,
+        0.036194784,
+        -0.002665772,
+        0.0,
+        -1.586018524,
+        2.273759155,
+        -1.53e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.5860185241699216,
+          2.2737591552734373,
+          -1.5258789062500869e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.586018524,
+          2.273759155,
+          -1.53e-07
+        ],
+        "errorMByAxis": [
+          1.6992163232032453e-10,
+          2.7343727282413965e-10,
+          4.121093749913216e-10
+        ],
+        "maxErrorCm": 4.121093749913216e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_BGM71TOW/BGM71TOW/Bgm71Tow_missiletube_static.Bgm71Tow_missiletube_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-24403df1587aae4e894d0d557cf8dfbfab40823ae694918856092db5332619d0",
+      "name": "StaticMesh4",
+      "actor": "BP_MATV_TOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3c5e740e536573d60fa9cc28/source.gltf",
+      "matrix": [
+        -0.002819992,
+        -0.004210445,
+        0.999987159,
+        0.0,
+        0.036183095,
+        0.999335884,
+        0.00430974,
+        0.0,
+        -0.999341198,
+        0.036194783,
+        -0.002665773,
+        0.0,
+        -1.809266968,
+        2.283711548,
+        1.53e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.8092669677734374,
+          2.2837115478515626,
+          1.5258789062502602e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.809266968,
+          2.283711548,
+          1.53e-07
+        ],
+        "errorMByAxis": [
+          2.2656254650144092e-10,
+          1.4843726248159328e-10,
+          4.1210937497398387e-10
+        ],
+        "maxErrorCm": 4.121093749739839e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_BGM71TOW/BGM71TOW/Bgm71Tow_missiletube_static.Bgm71Tow_missiletube_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usa-m-atv-tow-td-bp-matv-tow-six-view-qa.json",
+    "sha256": "a94f219a55fb15acb4866f728382cf29a30706ed9a07a4edeb45046f37d2289c",
+    "reviewedAt": "2026-07-21T16:15:53.098003Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

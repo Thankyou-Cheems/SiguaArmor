@@ -1,0 +1,452 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--leopard-2a6m-can--mbt--bp_2a6_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "4120690e7dc7142476e2d62af06c9397e37457b9e3b34a0396f0bd6db454305b",
+  "cardId": "caf--leopard-2a6m-can--mbt",
+  "factionId": "CAF",
+  "targetKey": "caf-leopard-2a6m-can-mbt-v0-e54f76150c",
+  "rawName": "BP_2A6_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/Leopard2/BP_2A6_Desert.BP_2A6_Desert_C",
+  "vehicleId": "vehicle-673f8909918fddd20fe528a695f14819df1d56a7df9fd14a4ac252146edb0c48",
+  "identitySha256": "673f8909918fddd20fe528a695f14819df1d56a7df9fd14a4ac252146edb0c48",
+  "packageSha256": "e89394018b1388d824f96937da372de3eae841d079f5d1ddb18ad1a0e0959626",
+  "requiredOccurrences": 6,
+  "capturedVisibleOccurrences": 6,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 432346154,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 6,
+  "runtimeBonePoseJointCount": 152,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 3,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-625ba5332a3c3a88a3891345f26ebaebc3c50019bf95f8522de77809febd9b58",
+      "name": "WeaponMesh3P",
+      "actor": "BP_2A6_C6_Loaders_Weapon_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e89394018b1388d824f96937da372de3eae841d079f5d1ddb18ad1a0e0959626/asset-ee51fbdb891b3e96d5aa5755/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -5.07e-07,
+        0.0,
+        0.0,
+        5.06e-07,
+        1.0,
+        0.0,
+        0.063411961,
+        2.67651925,
+        -0.385188382,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.06341196060182362,
+          2.6765192496446075,
+          -0.3851883823608919
+        ],
+        "observedGltfTranslationM": [
+          0.063411961,
+          2.67651925,
+          -0.385188382
+        ],
+        "errorMByAxis": [
+          3.981763807558991e-10,
+          3.5539260423433916e-10,
+          3.608919274533662e-10
+        ],
+        "maxErrorCm": 3.981763807558991e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Leopard2/Meshes/LoadersTurret/C6_Loaders_Turret_Weapon.C6_Loaders_Turret_Weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "517e418210883e7d73103d2d5d7c5701eda5816c7157e6ffd5db615393e4077c",
+      "runtimeBonePoseJointCount": 27,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 28,
+        "sourceNodeStructureSha256": "5cfb1a198376188fe01bb9c04851640f98aceb8fdb1966f249d55909ba568aeb",
+        "sourceSkinStructureSha256": "6602363abd3496a8993253dc697c020a0e11ab981bca4fe7f3a574bb893aa2f1",
+        "sourceInverseBindStructureSha256": "c1786e06e45413b5e9385eb00190f8f22883927047dae62446a39dedb28e11aa"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 27
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8415a1e1ba153a56968ee67ecd3042cef86447b92090f424c9efa08a75c84b91",
+      "name": "Vehicle Mesh",
+      "actor": "BP_2A6_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e89394018b1388d824f96937da372de3eae841d079f5d1ddb18ad1a0e0959626/asset-cc9ffe4838a1da0f684a8e0e/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Leopard2/Meshes/2a6_body.2a6_body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d3c266778eece76302678f7a998b671050234e8c61e81b77768555d1a6ab2210",
+      "runtimeBonePoseJointCount": 95,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 96,
+        "sourceNodeStructureSha256": "e656a9085deefca622457493221f834f3c51c7c77acc60b56b9244e12359b4d7",
+        "sourceSkinStructureSha256": "f15d3b75469a3b266c0591f987ab76e4c6b195946e99e672664491c3ed7ed636",
+        "sourceInverseBindStructureSha256": "35b80d5445d3a7064146adaf38a022a8cd85358a20b8393ef00c67bd4cb4362c"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 95
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-ff54a50a5fa95557be7cc40fc6fc66f157322dcb8fb5f4496174d219c879799b",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_2A6_Loaders_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e89394018b1388d824f96937da372de3eae841d079f5d1ddb18ad1a0e0959626/asset-74735143f89df6444ed1025b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -3.44e-07,
+        0.0,
+        0.0,
+        3.44e-07,
+        1.0,
+        0.0,
+        -0.418247433,
+        2.615756504,
+        -0.542268074,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.41824743270873715,
+          2.615756504481283,
+          -0.5422680744831908
+        ],
+        "observedGltfTranslationM": [
+          -0.418247433,
+          2.615756504,
+          -0.542268074
+        ],
+        "errorMByAxis": [
+          2.9126284717406747e-10,
+          4.812830134426349e-10,
+          4.831908206881508e-10
+        ],
+        "maxErrorCm": 4.831908206881508e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Leopard2/Meshes/LoadersTurret/Mag58_Loaders_Turret.Mag58_Loaders_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "7a60716f177c1aed690d66ff7aad05e455e5254a5e045513c35333a8ba897c88",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "0e42664450c2c67144a8f2879e6d12e55c9183a6f9f828af5802cfc17223fd8e",
+        "sourceSkinStructureSha256": "a9be31ba9e3765d533273b142a8f4d9c2ac534d82583d46d1b1ff5e06465b932",
+        "sourceInverseBindStructureSha256": "d0a1579997c256567f7708f98819d70d501e545d51b5cdd048511cab7e26eeb6"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8ba539ce113dc3e7a10b7c8ceca1e58464110cfdeef3bd2d04ed9f28e1d55675",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_2A6_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e89394018b1388d824f96937da372de3eae841d079f5d1ddb18ad1a0e0959626/asset-537195d570f5048d49f62524/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.62e-07,
+        1.0,
+        0.0,
+        0.236783543,
+        1.669770663,
+        0.013350215,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.2367835426330453,
+          1.6697706625754387,
+          0.013350214715193154
+        ],
+        "observedGltfTranslationM": [
+          0.236783543,
+          1.669770663,
+          0.013350215
+        ],
+        "errorMByAxis": [
+          3.669547166129661e-10,
+          4.245612750253258e-10,
+          2.8480684650944443e-10
+        ],
+        "maxErrorCm": 4.245612750253258e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Leopard2/Meshes/turret/2a6_turret.2a6_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "83a624c109e337e719c4738a8339c696164925c56466ebe26b2c636377be66fc",
+      "runtimeBonePoseJointCount": 22,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 23,
+        "sourceNodeStructureSha256": "27e5322098aec34d2bc75e95b35e1a93a2208db25272771c72c847a55fcb8c7c",
+        "sourceSkinStructureSha256": "9c23c0fa3bd23f6c381253ffa831ac7adae91f4ba46b7383c3061d314683800d",
+        "sourceInverseBindStructureSha256": "9ad37a300766c3159154284cc72cbf8c417d380dc99fd4bd0572bba855851c6b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 22
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-d6b12a7515d26398d3d48d60714072ea26939fa17f90e1bd637d1be5d53aca61",
+      "name": "SkeletalMesh",
+      "actor": "BP_2A6_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e89394018b1388d824f96937da372de3eae841d079f5d1ddb18ad1a0e0959626/asset-a88b14dacce4a756318d7156/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -3.26e-07,
+        0.0,
+        0.0,
+        3.26e-07,
+        1.0,
+        0.0,
+        1.403246326,
+        1.99702408,
+        0.013108018,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.4032463264465065,
+          1.9970240804652886,
+          0.01310801808079276
+        ],
+        "observedGltfTranslationM": [
+          1.403246326,
+          1.99702408,
+          0.013108018
+        ],
+        "errorMByAxis": [
+          4.465063874192765e-10,
+          4.6528847441607013e-10,
+          8.07927596352398e-11
+        ],
+        "maxErrorCm": 4.652884744160701e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Leopard2/Meshes/2a6_gun.2a6_gun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "96f543656effe49f40026cf45bfe1f830a0d6b70fd29e37f0eab5cafdb0b5fa0",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "535fb2e2e2d978e24c9fe1c630664632c9d22e1e96e9d79a76db26491fa6887e",
+        "sourceSkinStructureSha256": "cc5de33ec92f246f0e440c26e31932920f10d5df7cf07c3c88935c38e7fa7966",
+        "sourceInverseBindStructureSha256": "eb9e8c3476aeb089d5169fe3572be5eabbbf8de9ad4e36b75eff432be5a520d7"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-4dbfbb04a72c4b846d472db88b2d109adc94a05c80c316d07e66df8f0f7621d9",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_2a6_Commander_Periscope_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e89394018b1388d824f96937da372de3eae841d079f5d1ddb18ad1a0e0959626/asset-c235399d9ca28dd000b35917/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -3.25e-07,
+        0.0,
+        0.0,
+        3.26e-07,
+        1.0,
+        0.0,
+        -0.889732647,
+        2.605921359,
+        0.344520678,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8897326469421551,
+          2.6059213594737844,
+          0.3445206784163827
+        ],
+        "observedGltfTranslationM": [
+          -0.889732647,
+          2.605921359,
+          0.344520678
+        ],
+        "errorMByAxis": [
+          5.7844840029019906e-11,
+          4.737845671343166e-10,
+          4.163826505809709e-10
+        ],
+        "maxErrorCm": 4.737845671343166e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Leopard2/Meshes/cmdrscope/2a6_cmdr_scope.2a6_cmdr_scope",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "12311eceb48e87a8b1bf9881901db9b1cd4d536b54fa258dbbc2c15e1dfdb109",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "87d125c3524f3a67bcfee6c86d392f4b9ed499e50810ee643943eaea7c93283f",
+        "sourceSkinStructureSha256": "315a20093d52d1ac151fb121c2607d4978a93e18a2b45249a4e396835c9b9687",
+        "sourceInverseBindStructureSha256": "a97530e533b2b8aa1c2dcd16075c616c81af8460685108b79c18ae64e913f0d6"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/caf-leopard-2a6m-can-mbt-v0-e54f76150c-six-view-qa.json",
+    "sha256": "451548879e2dcb114dd9add08b247ded4c0041990f918aec9bb5be8a6226c8a8",
+    "reviewedAt": "2026-07-21T16:14:29.606944Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--kamaz-5350-transport--tran--bp_kamaz_5350.visual.json.recipe.json",
+  "visualRecipeSha256": "4a52431ccfa825d477303ec793c615261401def238a7d92c770a9788d6db20c8",
+  "cardId": "rgf--kamaz-5350-transport--tran",
+  "factionId": "RGF",
+  "targetKey": "rgf-kamaz-5350-transport-tran-bp-kamaz-5350",
+  "rawName": "BP_Kamaz_5350",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/Kamaz_5350/BP_Kamaz_5350.BP_Kamaz_5350_C",
+  "vehicleId": "vehicle-793bc37d723bfaae90933445c9b1bdb4036e117abf9f4cb863933dda5e7261ae",
+  "identitySha256": "793bc37d723bfaae90933445c9b1bdb4036e117abf9f4cb863933dda5e7261ae",
+  "packageSha256": "f1862d5f9db2191c0fbd8caf82efdafe1705bfb2d97da33035e05af2359ba02d",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 1,
+  "totalBytes": 26481533,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 40,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-bf1eddc4b16ca65d4256b200039cfeca98ef59182efd9c6ec1528d10d932d750",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Kamaz_5350_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f1862d5f9db2191c0fbd8caf82efdafe1705bfb2d97da33035e05af2359ba02d/asset-e3603a249ee002c04e5ab1d2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kamaz_5350/Meshes/5350.5350",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d4e501b08b8b291488f0085eb4420781d8c68e4f92f726d62984727d478a4594",
+      "runtimeBonePoseJointCount": 40,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 41,
+        "sourceNodeStructureSha256": "c971cc2ef15e9c48d093534d54c3928fcd5a5c55a7c104a4ebb5879d54c283ba",
+        "sourceSkinStructureSha256": "7af99521478eadf847e60c098d780eb374d88d3d339e601807cf73be326d4914",
+        "sourceInverseBindStructureSha256": "56c22725ecd512e56fa41e46e6c81de8bcb5eedd9319b003ad899d555f5b3d0b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 40
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/rgf-kamaz-5350-transport-tran-bp-kamaz-5350-six-view-qa.json",
+    "sha256": "d30f188327abab528ce4e930cc132554a0edf20b346145022a18520cdca2e111",
+    "reviewedAt": "2026-07-21T16:14:52.198128Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

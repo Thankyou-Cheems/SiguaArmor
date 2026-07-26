@@ -1,0 +1,494 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/pla--csk131-qlz87--mrap--bp_csk131_qlz87_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "1d1f6f1f87ccdab54014cb8b1de68ce83885a34ca8481d21c9d06688780634c8",
+  "cardId": "pla--csk131-qlz87--mrap",
+  "factionId": "PLA",
+  "targetKey": "pla-csk131-qlz87-mrap-bp-csk131-qlz87-desert",
+  "rawName": "BP_CSK131_QLZ87_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/CSK131/BP_CSK131_QLZ87_Desert.BP_CSK131_QLZ87_Desert_C",
+  "vehicleId": "vehicle-ff508e56e593973edf0b8ba04827d6f6852713acbfa0fb0f34523eea574f1f08",
+  "identitySha256": "ff508e56e593973edf0b8ba04827d6f6852713acbfa0fb0f34523eea574f1f08",
+  "packageSha256": "e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 8,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 86793685,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 80,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-6e8d348560851a2da110422e88835f59582b64154e46da7bdc81977d35d6d975",
+      "name": "Vehicle Mesh",
+      "actor": "BP_CSK131_QLZ87_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-56f1ef6ac79cd9228a7f5d00/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/CSK131/Meshes/CSK_Body.CSK_Body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "38161ca9050cca99cb6c3e436e94f3a221995daba27a24438b2c09141d1993d7",
+      "runtimeBonePoseJointCount": 59,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 60,
+        "sourceNodeStructureSha256": "9e817323590971e0ebed957eefdf3b2a3058374bcfcaa709e1846a245fc69629",
+        "sourceSkinStructureSha256": "d3724f201d63ca7977015e73d908d0c7c0fce27ceeece3952d229f06ff921414",
+        "sourceInverseBindStructureSha256": "40dfffc5103d5753705de5c44aba7b3482124d7862ce3feebcd3f814b24bd12d"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 59
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-34177183d13c0a112a762d1c05c88240509b0880016598bf162408efe604f4c6",
+      "name": "HullDecoration",
+      "actor": "BP_CSK131_QLZ87_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-ffeb785e933dde3e77327db2/source.gltf",
+      "matrix": [
+        1.0,
+        2.38e-07,
+        0.0,
+        0.0,
+        -2.38e-07,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.128774338,
+        1.553272858,
+        1.086673889,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.1287743377685546,
+          1.5532728576660155,
+          1.0866738891601562
+        ],
+        "observedGltfTranslationM": [
+          -1.128774338,
+          1.553272858,
+          1.086673889
+        ],
+        "errorMByAxis": [
+          2.3144530736374236e-10,
+          3.339843956950972e-10,
+          1.6015611059572166e-10
+        ],
+        "maxErrorCm": 3.339843956950972e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/CSK131/Meshes/CSK_Deco.CSK_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-56c7438dab032a17065fe85b668a5d92f2387760813f294d78cb435e399278be",
+      "name": "QJZAmmo",
+      "actor": "BP_CSK131_QLZ87_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-3ea827fbf5f77e0226212d00/source.gltf",
+      "matrix": [
+        -0.999848429,
+        0.0,
+        -0.017410335,
+        0.0,
+        0.0,
+        1.0,
+        -1.2e-08,
+        0.0,
+        0.017410335,
+        -1.2e-08,
+        -0.999848428,
+        0.0,
+        -1.432805023,
+        1.128897864,
+        0.564858194,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.4328050231933593,
+          1.1288978643996517,
+          0.5648581942451223
+        ],
+        "observedGltfTranslationM": [
+          -1.432805023,
+          1.128897864,
+          0.564858194
+        ],
+        "errorMByAxis": [
+          1.933593285485813e-10,
+          3.99651645111021e-10,
+          2.451222558264021e-10
+        ],
+        "maxErrorCm": 3.99651645111021e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_QJZ-89/Meshes/SM_QJZ-89_Box.SM_QJZ-89_Box",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7818629aa07e8541ebba2d811821262079787269c56c4dccafcfcc30f20d1f58",
+      "name": "QJZAmmo1",
+      "actor": "BP_CSK131_QLZ87_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-3ea827fbf5f77e0226212d00/source.gltf",
+      "matrix": [
+        -0.999999446,
+        0.0,
+        0.001052735,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.001052735,
+        0.0,
+        -0.999999446,
+        0.0,
+        -1.610978694,
+        1.128897864,
+        0.561876033,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.6109786942985473,
+          1.1288978643996515,
+          0.5618760326518584
+        ],
+        "observedGltfTranslationM": [
+          -1.610978694,
+          1.128897864,
+          0.561876033
+        ],
+        "errorMByAxis": [
+          2.9854740901669174e-10,
+          3.996514230664161e-10,
+          3.481416266382098e-10
+        ],
+        "maxErrorCm": 3.996514230664161e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_QJZ-89/Meshes/SM_QJZ-89_Box.SM_QJZ-89_Box",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-22edbf47ed54a6a8677114f3f9d5d710ec38898f022c44b0b1b8c44700506f13",
+      "name": "QJZAmmo2",
+      "actor": "BP_CSK131_QLZ87_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-3ea827fbf5f77e0226212d00/source.gltf",
+      "matrix": [
+        0.999995613,
+        0.0,
+        -0.00296223,
+        0.0,
+        0.0,
+        1.0,
+        -2.4e-08,
+        0.0,
+        0.00296223,
+        2.4e-08,
+        0.999995613,
+        0.0,
+        -1.79719863,
+        1.128897864,
+        0.562073147,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7971986299351324,
+          1.128897864399651,
+          0.5620731470722882
+        ],
+        "observedGltfTranslationM": [
+          -1.79719863,
+          1.128897864,
+          0.562073147
+        ],
+        "errorMByAxis": [
+          6.48676667935888e-11,
+          3.9965097897720625e-10,
+          7.228817544557842e-11
+        ],
+        "maxErrorCm": 3.9965097897720625e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_QJZ-89/Meshes/SM_QJZ-89_Box.SM_QJZ-89_Box",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-961d54a54431c69bfc6b65d3defc945c6cb4b421bfc7f03ef16100ee98435d3a",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_QLZ87_CSK_OpenTop_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-e87ea2c9fd044dca62217642/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.319123993,
+        1.966801453,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.3191239929199219,
+          1.966801452636745,
+          -1.1384453526729813e-10
+        ],
+        "observedGltfTranslationM": [
+          -0.319123993,
+          1.966801453,
+          0.0
+        ],
+        "errorMByAxis": [
+          8.007811080901206e-11,
+          3.632549816501296e-10,
+          1.1384453526729813e-10
+        ],
+        "maxErrorCm": 3.632549816501296e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/CSK131/Weapons/Qjz89_OpenTop/Mesh/CSK_OpenedHatch.CSK_OpenedHatch",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ccd7ba7e8dd370526fa9c9bd8351136d1f7bcadbc6f217e7b0ab4ed2e3619c5e",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "3a83df73b164ac477f7ddff13cda219225bbc757dd74405f05a834be9260527a",
+        "sourceSkinStructureSha256": "bb776a0920b342bf4428fe884b11b35e41b6ab0e1f31f9a6d2cf8b3da1131110",
+        "sourceInverseBindStructureSha256": "f36e3148804147cc4f12e9233ca93a83e42f49e35a1c0fcf842b5cc980c503d3"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-48ef8181522c549a8196f5cbd23883125fdfd987411774025625fc276c24c8fe",
+      "name": "WeaponMesh3P",
+      "actor": "BP_QLZ87_OpenTurret_Weapon_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-aa2a97f7feea310d02768a07/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.382375412,
+        2.27475769,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.3823754119873046,
+          2.2747576904297135,
+          -1.6903238045915848e-14
+        ],
+        "observedGltfTranslationM": [
+          0.382375412,
+          2.27475769,
+          0.0
+        ],
+        "errorMByAxis": [
+          1.2695400286588665e-11,
+          4.2971359803800624e-10,
+          1.6903238045915848e-14
+        ],
+        "maxErrorCm": 4.2971359803800624e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_QLZ87/Meshes/SK_QLZ87_Weapon_Turret.SK_QLZ87_Weapon_Turret",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "95065763de1feb4348e324b57b4abca5f28c9257adf6539e6fd6fba791f5113b",
+      "runtimeBonePoseJointCount": 16,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 17,
+        "sourceNodeStructureSha256": "07136698442a0cef343a01a69540ae53a9bd679fe2db6f349a4c2c2bbdb4415f",
+        "sourceSkinStructureSha256": "754eb66b1d92814552cda2a01afb9b6514b9cb908c215e652e968b55687d73e6",
+        "sourceInverseBindStructureSha256": "710bcc6ffdb59b6380bd23ec4fdb7262372bb0ff5ba29c92545a782a3347ff18"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 16
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-08e5207f9ecee5e9768762c8e23dc506b6ce14af1d7740d17a1eb1df994747c6",
+      "name": "SM_QLZ87_Scope",
+      "actor": "BP_QLZ87_OpenTurret_Weapon_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-25392073d415197f6718c1e4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.416034016,
+        2.501890938,
+        -0.08666,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.4160340159988403,
+          2.5018909381103778,
+          -0.08666000000001692
+        ],
+        "observedGltfTranslationM": [
+          0.416034016,
+          2.501890938,
+          -0.08666
+        ],
+        "errorMByAxis": [
+          1.1596834603722073e-12,
+          1.1037792901902321e-10,
+          1.6917023337725823e-14
+        ],
+        "maxErrorCm": 1.1037792901902321e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_QLZ87/Meshes/SM_QLZ87_Scope.SM_QLZ87_Scope",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pla/pla-csk131-qlz87-mrap-bp-csk131-qlz87-desert-six-view-qa.json",
+    "sha256": "207e572a76b0ef739e195370863c458dc8d2d19bf32192379139f888ab66c4bc",
+    "reviewedAt": "2026-07-21T09:44:34.091010Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

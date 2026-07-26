@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/crf--light-transport--mrap--bp_luvw_crf.visual.json.recipe.json",
+  "visualRecipeSha256": "93836f9446881030102c150a0a1932ca7db44c5c165d2e41d0c2647a87b8ed51",
+  "cardId": "crf--light-transport--mrap",
+  "factionId": "CRF",
+  "targetKey": "crf-light-transport-mrap-bp-luvw-crf",
+  "rawName": "BP_LUVW_CRF",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/LUVW_CRF/BP_LUVW_CRF.BP_LUVW_CRF_C",
+  "vehicleId": "vehicle-f765356ef8f7cba25df579f5d29b294c63faa12d9b52a60d6b507bfce29a7364",
+  "identitySha256": "f765356ef8f7cba25df579f5d29b294c63faa12d9b52a60d6b507bfce29a7364",
+  "packageSha256": "c3d392cc1465b666e06d2dade12a584975fdeedfc6e5ad6d0f5930ef322e6f5e",
+  "requiredOccurrences": 3,
+  "capturedVisibleOccurrences": 3,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 3,
+  "totalBytes": 44488531,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 47,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-5b34cc884a1d25d02ca8bd6a6174c44ddbf4746e6de1ff59eb4ae6d72532c025",
+      "name": "Vehicle Mesh",
+      "actor": "BP_LUVW_CRF_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c3d392cc1465b666e06d2dade12a584975fdeedfc6e5ad6d0f5930ef322e6f5e/asset-66902ce5dd5f27d91049efc0/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LUVW/Meshes/LUVW_Body_Transport.LUVW_Body_Transport",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "5e56dbeee858e72584b12ae4a8f57dd17701b4414660b90fcbbadd0c9d016cbc",
+      "runtimeBonePoseJointCount": 47,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 48,
+        "sourceNodeStructureSha256": "61c4ab1ed2c106e092ddc3bfbcc9b88abb3aaeaf4b39f048320ffa6865c17d60",
+        "sourceSkinStructureSha256": "4b1e04408bb3bc25bcc2542d6f5a25afc0d6c982f1808b196f6945cfbe66f14c",
+        "sourceInverseBindStructureSha256": "e17d16557267a3c9bcce537762cbbcaf1c77669996d44a25d504c1964d897db7"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 47
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8c6bdbe6d2d6cab327527c9b190d39fdfb274b33495c947cf1aa016ad9462470",
+      "name": "RazorWire",
+      "actor": "BP_LUVW_CRF_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c3d392cc1465b666e06d2dade12a584975fdeedfc6e5ad6d0f5930ef322e6f5e/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        1.495492019,
+        -0.116205082,
+        0.0,
+        0.0,
+        0.077470055,
+        0.996994679,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.5,
+        0.0,
+        1.503674774,
+        1.236090317,
+        0.016442776,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.5036747741699217,
+          1.2360903167724608,
+          0.016442775726318363
+        ],
+        "observedGltfTranslationM": [
+          1.503674774,
+          1.236090317,
+          0.016442776
+        ],
+        "errorMByAxis": [
+          1.6992163232032453e-10,
+          2.275390986739012e-10,
+          2.736816363813066e-10
+        ],
+        "maxErrorCm": 2.736816363813066e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-2132a1a05557146b918056121e02c0defe0886553f6baa10b66b16bfb206a8c4",
+      "name": "LUVW_Cup",
+      "actor": "BP_LUVW_CRF_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c3d392cc1465b666e06d2dade12a584975fdeedfc6e5ad6d0f5930ef322e6f5e/asset-d268c5ece03d1108e4835ffc/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.04,
+        0.95,
+        0.03,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.040000000000000056,
+          0.9500000000000002,
+          0.030000000000000006
+        ],
+        "observedGltfTranslationM": [
+          0.04,
+          0.95,
+          0.03
+        ],
+        "errorMByAxis": [
+          5.551115123125783e-17,
+          2.220446049250313e-16,
+          6.938893903907228e-18
+        ],
+        "maxErrorCm": 2.220446049250313e-14,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LUVW/Meshes/LUVW_Cup.LUVW_Cup",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/crf/crf-light-transport-mrap-bp-luvw-crf-six-view-qa.json",
+    "sha256": "4f69d052cfbf5fe710fa1f0b3fb7570d998055e98bc4319cb258afb70ec42878",
+    "reviewedAt": "2026-07-21T09:43:17.995160Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

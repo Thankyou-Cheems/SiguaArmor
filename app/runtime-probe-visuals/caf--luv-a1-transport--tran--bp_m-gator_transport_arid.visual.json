@@ -1,0 +1,410 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--luv-a1-transport--tran--bp_m-gator_transport_arid.visual.json.recipe.json",
+  "visualRecipeSha256": "9bb6bd829483d2ae99884692a46d1f3ad4ce99f9c08c5f194bf4bbdd3d917655",
+  "cardId": "caf--luv-a1-transport--tran",
+  "factionId": "CAF",
+  "targetKey": "caf-luv-a1-transport-tran-bp-m-gator-transport-arid",
+  "rawName": "BP_M-Gator_Transport_ARID",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/M-Gator/BP_M-Gator_Transport_ARID.BP_M-Gator_Transport_ARID_C",
+  "vehicleId": "vehicle-0fcaa969d00879ffe33abc2360c49341e9fc6b034f0ce92d76d9a4ee372b02d7",
+  "identitySha256": "0fcaa969d00879ffe33abc2360c49341e9fc6b034f0ce92d76d9a4ee372b02d7",
+  "packageSha256": "5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 2,
+  "totalBytes": 20775748,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 14,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-a6a13d5dbde4df7fd3d4bcf4264f34a20eb949c3504d85d6a54348a91ad5176a",
+      "name": "Vehicle Mesh",
+      "actor": "BP_M-Gator_Transport_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726/asset-d6da4e312672c98ca72ed0ec/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M-Gator/Meshes/SK_M-Gator.SK_M-Gator",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "e0792c9e31f5df40cb6bd9ad1fdf1fc446153a823cdeceed23443ce421b21cbb",
+      "runtimeBonePoseJointCount": 14,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 15,
+        "sourceNodeStructureSha256": "3fce6123c0020a36ec12d555c3a484243e0cecb3bd8c173aac2083157fdeeba4",
+        "sourceSkinStructureSha256": "1c84e8902bc61c0689115d66d040e4ed90cf2911db28e3b3f7af6d8ae3f5db0e",
+        "sourceInverseBindStructureSha256": "506a467101e97b708f0ad91af3a9902d2dfa04f0469df832f7734c1cdbe25491"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 14
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-86b3e6cc365ab4f9bae51ca9a082d46a2845e0f475af87c337675493d471a564",
+      "name": "StaticMesh",
+      "actor": "BP_M-Gator_Transport_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726/asset-e5efaccc2777ba3dfa3e4a7f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.559425163,
+        0.886336594,
+        -0.885988159,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.5594251632690429,
+          0.8863365936279295,
+          -0.8859881591796877
+        ],
+        "observedGltfTranslationM": [
+          -0.559425163,
+          0.886336594,
+          -0.885988159
+        ],
+        "errorMByAxis": [
+          2.690428990703708e-10,
+          3.720704855325607e-10,
+          1.7968759813413726e-10
+        ],
+        "maxErrorCm": 3.720704855325607e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MergedMeshes/SM_NATO_Weaponcrate_Stack.SM_NATO_Weaponcrate_Stack",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-85719fe147eacb9a09c0b2c8f7cffc367a4b53161701b0814363fb4f27e25b02",
+      "name": "StaticMesh1",
+      "actor": "BP_M-Gator_Transport_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726/asset-e5efaccc2777ba3dfa3e4a7f/source.gltf",
+      "matrix": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.899999977,
+        0.0,
+        0.0,
+        0.0,
+        -1.420606689,
+        0.886338043,
+        -0.863257065,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.420606689453125,
+          0.8863380432128907,
+          -0.863257064819336
+        ],
+        "observedGltfTranslationM": [
+          -1.420606689,
+          0.886338043,
+          -0.863257065
+        ],
+        "errorMByAxis": [
+          4.5312509300288184e-10,
+          2.1289070506469443e-10,
+          1.8066403928429509e-10
+        ],
+        "maxErrorCm": 4.5312509300288184e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MergedMeshes/SM_NATO_Weaponcrate_Stack.SM_NATO_Weaponcrate_Stack",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-c27d0360de87d8e84b9f9b1310415fed344da66061e578e748fdf359f4e429ff",
+      "name": "StaticMesh2",
+      "actor": "BP_M-Gator_Transport_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726/asset-e5efaccc2777ba3dfa3e4a7f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.018627853,
+        0.886336594,
+        -0.885988159,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.0186278533935549,
+          0.8863365936279297,
+          -0.8859881591796875
+        ],
+        "observedGltfTranslationM": [
+          -1.018627853,
+          0.886336594,
+          -0.885988159
+        ],
+        "errorMByAxis": [
+          3.9355496639359444e-10,
+          3.720702634879558e-10,
+          1.796874871118348e-10
+        ],
+        "maxErrorCm": 3.9355496639359444e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MergedMeshes/SM_NATO_Weaponcrate_Stack.SM_NATO_Weaponcrate_Stack",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-ab0c08c6417c0c3aee9e0a4db4e0243de8ca1c1507060c4a7357e1b65be3bf91",
+      "name": "StaticMesh7",
+      "actor": "BP_M-Gator_Transport_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726/asset-e5efaccc2777ba3dfa3e4a7f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.559425163,
+        0.886336594,
+        0.885988159,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.559425163269043,
+          0.8863365936279297,
+          0.8859881591796873
+        ],
+        "observedGltfTranslationM": [
+          -0.559425163,
+          0.886336594,
+          0.885988159
+        ],
+        "errorMByAxis": [
+          2.690430100926733e-10,
+          3.720702634879558e-10,
+          1.7968726506722987e-10
+        ],
+        "maxErrorCm": 3.720702634879558e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MergedMeshes/SM_NATO_Weaponcrate_Stack.SM_NATO_Weaponcrate_Stack",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e2e3011cd29996c744f66183d9f1b96a4c96dd34b82762b2bb9179fb2506b76a",
+      "name": "StaticMesh10",
+      "actor": "BP_M-Gator_Transport_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726/asset-e5efaccc2777ba3dfa3e4a7f/source.gltf",
+      "matrix": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.899999977,
+        0.0,
+        0.0,
+        0.0,
+        -1.420606689,
+        0.886338043,
+        0.863257065,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.4206066894531253,
+          0.8863380432128904,
+          0.863257064819336
+        ],
+        "observedGltfTranslationM": [
+          -1.420606689,
+          0.886338043,
+          0.863257065
+        ],
+        "errorMByAxis": [
+          4.5312531504748677e-10,
+          2.128904830200895e-10,
+          1.8066403928429509e-10
+        ],
+        "maxErrorCm": 4.5312531504748677e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MergedMeshes/SM_NATO_Weaponcrate_Stack.SM_NATO_Weaponcrate_Stack",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e419bccf23c26cc62677ffabd227a909e56ae3461619c5c79c71c2c29e9ecb49",
+      "name": "StaticMesh11",
+      "actor": "BP_M-Gator_Transport_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/5d655f61fe85e07482c628c821e60731fb49cbc8e05f5ee84fb71f88c879e726/asset-e5efaccc2777ba3dfa3e4a7f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.018627853,
+        0.886336594,
+        0.885988159,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.0186278533935547,
+          0.8863365936279297,
+          0.8859881591796877
+        ],
+        "observedGltfTranslationM": [
+          -1.018627853,
+          0.886336594,
+          0.885988159
+        ],
+        "errorMByAxis": [
+          3.935547443489895e-10,
+          3.720702634879558e-10,
+          1.7968759813413726e-10
+        ],
+        "maxErrorCm": 3.935547443489895e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MergedMeshes/SM_NATO_Weaponcrate_Stack.SM_NATO_Weaponcrate_Stack",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/caf/caf-luv-a1-transport-tran-bp-m-gator-transport-arid-six-view-qa.json",
+    "sha256": "4900881050dbdc735d1aee69eaad83eab09f20fa3340a0f86a6c3bd49ddb372d",
+    "reviewedAt": "2026-07-21T09:30:33.559109Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

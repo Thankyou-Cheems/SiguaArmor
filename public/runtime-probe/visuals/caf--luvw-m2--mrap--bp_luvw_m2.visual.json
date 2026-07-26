@@ -1,0 +1,446 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--luvw-m2--mrap--bp_luvw_m2.visual.json.recipe.json",
+  "visualRecipeSha256": "517837355df1de2e69fd6d9fc493073de6544b6463832ab3cbf0c4d4f975939e",
+  "cardId": "caf--luvw-m2--mrap",
+  "factionId": "CAF",
+  "targetKey": "caf-luvw-m2-mrap-bp-luvw-m2",
+  "rawName": "BP_LUVW_M2",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/LUVW/BP_LUVW_M2.BP_LUVW_M2_C",
+  "vehicleId": "vehicle-b5d0259d32ff93950adbab5198b5d1060542ce236cd1a0753c62bcc8b6065405",
+  "identitySha256": "b5d0259d32ff93950adbab5198b5d1060542ce236cd1a0753c62bcc8b6065405",
+  "packageSha256": "0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 79526829,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 82,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-8b0755f7c625228f582b2fccea33ba7dc26c0dfe9f200fd9b25ed0d590acf68d",
+      "name": "WeaponMesh3P",
+      "actor": "BP_50Cal_LUVW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75/asset-9636b5227301d52f88687514/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        -1.63e-07,
+        1.0,
+        0.0,
+        -0.27085516,
+        2.641624798,
+        3.54e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.2708551602783203,
+          2.6416247975464042,
+          3.54190950283451e-07
+        ],
+        "observedGltfTranslationM": [
+          -0.27085516,
+          2.641624798,
+          3.54e-07
+        ],
+        "errorMByAxis": [
+          2.7832031124219725e-10,
+          4.535958275653229e-10,
+          1.9095028345095538e-10
+        ],
+        "maxErrorCm": 4.535958275653229e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LUVW/Weapons/m2_LUVW_base.m2_LUVW_base",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "b075debe1790f17b8d4e54343aeaf3c2a853ecedcb33ce63c9fa29b5d9fa5713",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "d6c4efe7e589e6a649eda4f34e7468c818f1419bd35e4b472797f00c26d01a76",
+        "sourceSkinStructureSha256": "ba8c487eea9353a5bd774ca7f81bde655b5aa2fdd345be64af3179ea23f9c6e5",
+        "sourceInverseBindStructureSha256": "e8860eece80048648d2be0bc62fe4247e6da0cf0fa57ab15d6324e9bb60db59f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-d4ffbb2550c7723de770ca0666f19d51a3c295235f919cc059362fe554b0c62c",
+      "name": "Vehicle Mesh",
+      "actor": "BP_LUVW_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75/asset-97482e7af2961fa972817798/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LUVW/Meshes/LUVW_Body_Rack.LUVW_Body_Rack",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "68d1dac6f2f4f1f100910db4426294c1d9a578c3650e7021ac6326a23476173d",
+      "runtimeBonePoseJointCount": 47,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 48,
+        "sourceNodeStructureSha256": "61c4ab1ed2c106e092ddc3bfbcc9b88abb3aaeaf4b39f048320ffa6865c17d60",
+        "sourceSkinStructureSha256": "a37a8db49ddb5175bcaa80bab1ddaed718e5349049d408c1b4d637f3903f9b62",
+        "sourceInverseBindStructureSha256": "163af5b25fab335ecde3ff5a9ca3ca8344e4d76d958509a2a90c812419c7b408"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 47
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a5270c45210592b8785d3a2eb71c5f7e540805bcd00936b0c95f422e9b2f7022",
+      "name": "HullDecoration",
+      "actor": "BP_LUVW_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75/asset-effe2a19bef0bff3da35f77b/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.63e-07,
+        -1.0,
+        0.0,
+        -0.803015671,
+        2.043523006,
+        -0.816770678,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8030156707763672,
+          2.043523005993649,
+          -0.8167706783108425
+        ],
+        "observedGltfTranslationM": [
+          -0.803015671,
+          2.043523006,
+          -0.816770678
+        ],
+        "errorMByAxis": [
+          2.2363288998406006e-10,
+          6.3509197900657455e-12,
+          3.108424628806006e-10
+        ],
+        "maxErrorCm": 3.108424628806006e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LUVW/Meshes/LUVW_Deco_Exterior.LUVW_Deco_Exterior",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-0c6c380754f64ac1113d6680a024277518491c19ab9b8f180042d0a47618b34d",
+      "name": "RazorWire",
+      "actor": "BP_LUVW_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        1.495492019,
+        -0.116205082,
+        0.0,
+        0.0,
+        0.077470055,
+        0.996994679,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.5,
+        0.0,
+        1.503674774,
+        1.236090317,
+        0.016442776,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.503674774169922,
+          1.2360903167724608,
+          0.01644277572631836
+        ],
+        "observedGltfTranslationM": [
+          1.503674774,
+          1.236090317,
+          0.016442776
+        ],
+        "errorMByAxis": [
+          1.6992185436492946e-10,
+          2.275390986739012e-10,
+          2.7368163985075356e-10
+        ],
+        "maxErrorCm": 2.7368163985075356e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f7aab97fe1d5ddac2d585eb6e36e2054d7f5350c705fd7603ed13acb9f0a8ce9",
+      "name": "CanadianFlag",
+      "actor": "BP_LUVW_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75/asset-328fe51e21810c91e306f5e9/source.gltf",
+      "matrix": [
+        1.718e-06,
+        4.2e-08,
+        -0.150000006,
+        0.0,
+        0.994806169,
+        0.10178746,
+        1.1421e-05,
+        0.0,
+        0.01526812,
+        -0.149220931,
+        1.33e-07,
+        0.0,
+        1.751909637,
+        1.288514523,
+        0.676075268,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.7519096374511718,
+          1.2885145230321036,
+          0.6760752680186372
+        ],
+        "observedGltfTranslationM": [
+          1.751909637,
+          1.288514523,
+          0.676075268
+        ],
+        "errorMByAxis": [
+          4.5117176661335634e-10,
+          3.2103653069270877e-11,
+          1.863720289208004e-11
+        ],
+        "maxErrorCm": 4.5117176661335634e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7226a06c4615ab15579a1206969967cee489dde91fb7d974b9e55965f530e9ca",
+      "name": "LUVW_Cup",
+      "actor": "BP_LUVW_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75/asset-d268c5ece03d1108e4835ffc/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.04,
+        0.95,
+        0.03,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.04,
+          0.95,
+          0.03
+        ],
+        "observedGltfTranslationM": [
+          0.04,
+          0.95,
+          0.03
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LUVW/Meshes/LUVW_Cup.LUVW_Cup",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-93bd25389fef00b056ec08eab0e280ac3b09cbeed75dd3ad4d9ea85215feb223",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_LUVW_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0dc8d6f45a74c6cac8ad5f7eb48043897cda61190e6a4373529f2080ca3f6d75/asset-e9fc2907df1b001809b19961/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.62e-07,
+        0.0,
+        0.0,
+        -1.63e-07,
+        1.0,
+        0.0,
+        -0.920000458,
+        2.099904938,
+        4.19e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.9200004577636719,
+          2.0999049377441406,
+          4.1852148569887503e-07
+        ],
+        "observedGltfTranslationM": [
+          -0.920000458,
+          2.099904938,
+          4.19e-07
+        ],
+        "errorMByAxis": [
+          2.363280682260438e-10,
+          2.558593337198545e-10,
+          4.785143011249486e-10
+        ],
+        "maxErrorCm": 4.7851430112494864e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LUVW/Weapons/LUVW_Turret.LUVW_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "da777a961aee9c8c5ddc77422c5ead685cdb97f7599cba2c13d11106dfa5edf9",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "93dec48ab405bf34573cbc2775805f2f4a4feafee140056c7e769d531052da00",
+        "sourceSkinStructureSha256": "e4c10817f2adcc54d77e8eb8b558b757d5114645be65e7fcb3d5ad50572568c6",
+        "sourceInverseBindStructureSha256": "9491738e16849c51cddfd39bf548492f88a0ba3c82dde4ee26228a63a64203d4"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/caf/caf-luvw-m2-mrap-bp-luvw-m2-six-view-qa.json",
+    "sha256": "4f067c5081944cc3bdeb46e97f73f49aa739ac002174f296a72265b12082c9f3",
+    "reviewedAt": "2026-07-21T09:30:36.416011Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

@@ -1,0 +1,650 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--luv-a1-logistics--logi--bp_m-gator_logistics_arid.visual.json.recipe.json",
+  "visualRecipeSha256": "05ef78791010a8750de984171a542d26b5b29c03e7ac19c1f6399bfe394753f2",
+  "cardId": "caf--luv-a1-logistics--logi",
+  "factionId": "CAF",
+  "targetKey": "caf-luv-a1-logistics-logi-bp-m-gator-logistics-arid",
+  "rawName": "BP_M-Gator_Logistics_ARID",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/M-Gator/BP_M-Gator_Logistics_ARID.BP_M-Gator_Logistics_ARID_C",
+  "vehicleId": "vehicle-671d859f2d242004b0417f141053393acb8c68b2f5d73ae70232cc6e265be816",
+  "identitySha256": "671d859f2d242004b0417f141053393acb8c68b2f5d73ae70232cc6e265be816",
+  "packageSha256": "c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526",
+  "requiredOccurrences": 12,
+  "capturedVisibleOccurrences": 12,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 3,
+  "totalBytes": 36080740,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 14,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-0cf195cbde7d851ac32661fe3b8af17c2f8e4b9f4f2bdfd9c936deccbed79cfe",
+      "name": "Vehicle Mesh",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-d6da4e312672c98ca72ed0ec/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M-Gator/Meshes/SK_M-Gator.SK_M-Gator",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "e0792c9e31f5df40cb6bd9ad1fdf1fc446153a823cdeceed23443ce421b21cbb",
+      "runtimeBonePoseJointCount": 14,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 15,
+        "sourceNodeStructureSha256": "3fce6123c0020a36ec12d555c3a484243e0cecb3bd8c173aac2083157fdeeba4",
+        "sourceSkinStructureSha256": "1c84e8902bc61c0689115d66d040e4ed90cf2911db28e3b3f7af6d8ae3f5db0e",
+        "sourceInverseBindStructureSha256": "506a467101e97b708f0ad91af3a9902d2dfa04f0469df832f7734c1cdbe25491"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 14
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-7275799fb64343e8d6156139e6d00608598936fd40057ba84578cf6d26277c65",
+      "name": "USA_SupplyCrate",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        -7.99e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.99e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -0.400084,
+        0.886343231,
+        0.746524277,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.40008399963378904,
+          0.8863432312011718,
+          0.7465242767333983
+        ],
+        "observedGltfTranslationM": [
+          -0.400084,
+          0.886343231,
+          0.746524277
+        ],
+        "errorMByAxis": [
+          3.6621095045319407e-10,
+          2.011717459282636e-10,
+          2.6660174068382503e-10
+        ],
+        "maxErrorCm": 3.662109504531941e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-1a0a56b408d5df28ba4d62e18f5023c78f61653362b2d22c2a04c3da04484f57",
+      "name": "StaticMesh",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-dd2c2b4427c4e183c61d1203/source.gltf",
+      "matrix": [
+        1.2783e-05,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.2783e-05,
+        0.0,
+        -0.946165924,
+        0.886338425,
+        -0.05827652,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.9461659240722656,
+          0.8863384246826174,
+          -0.058276519775390626
+        ],
+        "observedGltfTranslationM": [
+          -0.946165924,
+          0.886338425,
+          -0.05827652
+        ],
+        "errorMByAxis": [
+          7.226563791817853e-11,
+          3.173826756963649e-10,
+          2.246093727675813e-10
+        ],
+        "maxErrorCm": 3.173826756963649e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Medium/AmmoCrateMedium.AmmoCrateMedium",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-fd3186722777862712895d21da61505d10c977474ef55be68c601d6b7c79b4db",
+      "name": "StaticMesh1",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-dd2c2b4427c4e183c61d1203/source.gltf",
+      "matrix": [
+        0.173661815,
+        0.0,
+        -0.984805348,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.984805348,
+        0.0,
+        0.173661816,
+        0.0,
+        -0.946153259,
+        0.886338425,
+        -0.695876923,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.9461532592773436,
+          0.8863384246826171,
+          -0.6958769226074217
+        ],
+        "observedGltfTranslationM": [
+          -0.946153259,
+          0.886338425,
+          -0.695876923
+        ],
+        "errorMByAxis": [
+          2.7734359253628327e-10,
+          3.1738289774096984e-10,
+          3.925783031988317e-10
+        ],
+        "maxErrorCm": 3.925783031988317e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Medium/AmmoCrateMedium.AmmoCrateMedium",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7002a6048cbe9a634f38c21f2cf4f947612d5518b787add7013c012113da78b8",
+      "name": "StaticMesh2",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        -7.99e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.989e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -0.621253395,
+        0.886343231,
+        0.746522522,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.6212533950805664,
+          0.8863432312011718,
+          0.7465225219726562
+        ],
+        "observedGltfTranslationM": [
+          -0.621253395,
+          0.886343231,
+          0.746522522
+        ],
+        "errorMByAxis": [
+          8.056644240639343e-11,
+          2.011717459282636e-10,
+          2.7343793895795443e-11
+        ],
+        "maxErrorCm": 2.011717459282636e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-30e456c798851fb21f61b32b0b567f17d142b520a5fd7036c65e0aa968cd1c6f",
+      "name": "StaticMesh3",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        -7.99e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.99e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -0.844785309,
+        0.886343307,
+        0.746520691,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8447853088378906,
+          0.8863433074951171,
+          0.7465206909179688
+        ],
+        "observedGltfTranslationM": [
+          -0.844785309,
+          0.886343307,
+          0.746520691
+        ],
+        "errorMByAxis": [
+          1.6210943698524716e-10,
+          4.951171694855816e-10,
+          8.20311596427814e-11
+        ],
+        "maxErrorCm": 4.951171694855816e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-a01f7aab67abaf98532023a7f6805e07a94efc93a4f69102309f26881a9dd8e7",
+      "name": "StaticMesh4",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        -7.989e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.99e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -1.069741669,
+        0.886343155,
+        0.746519165,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.0697416687011718,
+          0.8863431549072266,
+          0.7465191650390623
+        ],
+        "observedGltfTranslationM": [
+          -1.069741669,
+          0.886343155,
+          0.746519165
+        ],
+        "errorMByAxis": [
+          2.98828073397317e-10,
+          9.277345558444949e-11,
+          3.906230894301643e-11
+        ],
+        "maxErrorCm": 2.98828073397317e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-16335f770bc46af418129fce0cb3fb5e31e61ed5a76b53185f656d0c9e0524f5",
+      "name": "StaticMesh5",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        -7.99e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.989e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -1.296350555,
+        0.886347961,
+        0.746517792,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.296350555419922,
+          0.8863479614257812,
+          0.7465177917480469
+        ],
+        "observedGltfTranslationM": [
+          -1.296350555,
+          0.886347961,
+          0.746517792
+        ],
+        "errorMByAxis": [
+          4.199218750500222e-10,
+          4.2578118808478393e-10,
+          2.519531250300133e-10
+        ],
+        "maxErrorCm": 4.2578118808478393e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-01514120d3a11543607e0d82857bda11b614ab396a3c5478e986b886abe63009",
+      "name": "StaticMesh6",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        -7.989e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.99e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -1.521796265,
+        0.886347885,
+        0.746516113,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.5217962646484375,
+          0.8863478851318359,
+          0.74651611328125
+        ],
+        "observedGltfTranslationM": [
+          -1.521796265,
+          0.886347885,
+          0.746516113
+        ],
+        "errorMByAxis": [
+          3.515625568439873e-10,
+          1.3183598657207085e-10,
+          2.8125002327072934e-10
+        ],
+        "maxErrorCm": 3.515625568439873e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-30681e96ffe36ecde661988a2957be0e946a6a16cf6dae66322d5dfa19d042ae",
+      "name": "StaticMesh7",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -0.984806227,
+        0.0,
+        -0.173656832,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.173656832,
+        0.0,
+        -0.984806227,
+        0.0,
+        -0.51897644,
+        1.100913086,
+        0.734345703,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.5189764404296875,
+          1.1009130859375003,
+          0.734345703125
+        ],
+        "observedGltfTranslationM": [
+          -0.51897644,
+          1.100913086,
+          0.734345703
+        ],
+        "errorMByAxis": [
+          4.2968750779692755e-10,
+          6.249978312666826e-11,
+          1.2500001034254637e-10
+        ],
+        "maxErrorCm": 4.2968750779692755e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f8c280df12f464cd857447dc61de4394e3352f5d029ae48cc388454addc10ff8",
+      "name": "StaticMesh10",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        -7.989e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.99e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -1.069741669,
+        1.100913162,
+        0.746519699,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.0697416687011718,
+          1.1009131622314454,
+          0.7465196990966796
+        ],
+        "observedGltfTranslationM": [
+          -1.069741669,
+          1.100913162,
+          0.746519699
+        ],
+        "errorMByAxis": [
+          2.98828073397317e-10,
+          2.3144552940834728e-10,
+          9.667955325198818e-11
+        ],
+        "maxErrorCm": 2.98828073397317e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-c875f11e90d037a973c3ff5c1bc8446bc12ac5dd7550975074b1510549e923c8",
+      "name": "StaticMesh11",
+      "actor": "BP_M-Gator_Logistics_ARID_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c6dac33216b2dbd598cbb2343f93a5d199231225e43d7ecbf123449520dd8526/asset-5548d255ad0817d5b8715985/source.gltf",
+      "matrix": [
+        -0.999999999,
+        0.0,
+        -7.99e-06,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        7.99e-06,
+        0.0,
+        -1.0,
+        0.0,
+        -0.817349854,
+        1.100913315,
+        0.58727356,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.817349853515625,
+          1.1009133148193362,
+          0.5872735595703126
+        ],
+        "observedGltfTranslationM": [
+          -0.817349854,
+          1.100913315,
+          0.58727356
+        ],
+        "errorMByAxis": [
+          4.843750955885184e-10,
+          1.806637062173877e-10,
+          4.296873967746251e-10
+        ],
+        "maxErrorCm": 4.8437509558851843e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Small/AmmoCrateSmall.AmmoCrateSmall",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/caf/caf-luv-a1-logistics-logi-bp-m-gator-logistics-arid-six-view-qa.json",
+    "sha256": "83cde3224fc32e7e5e8f229c2030f3d1fafed13753ada3fc8c00b4e6b8de3083",
+    "reviewedAt": "2026-07-21T09:30:32.423914Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

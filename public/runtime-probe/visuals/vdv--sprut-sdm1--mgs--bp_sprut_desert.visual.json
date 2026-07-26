@@ -1,0 +1,386 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/vdv--sprut-sdm1--mgs--bp_sprut_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "d564223f297dd276f560a600ae0e010293d80425879e3d472fc07eba7a785fc4",
+  "cardId": "vdv--sprut-sdm1--mgs",
+  "factionId": "VDV",
+  "targetKey": "vdv-sprut-sdm1-mgs-bp-sprut-desert",
+  "rawName": "BP_Sprut_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/Sprut-SDM1/BP_Sprut_Desert.BP_Sprut_Desert_C",
+  "vehicleId": "vehicle-5a8c5aa7b02fdc53e0bf444183a97c269eb46dff2ed9e7b09d64852511501ca4",
+  "identitySha256": "5a8c5aa7b02fdc53e0bf444183a97c269eb46dff2ed9e7b09d64852511501ca4",
+  "packageSha256": "a3a03470396c9678ace9c557374b9c5ea5ccf60e021f952d705690914a88ea2f",
+  "requiredOccurrences": 5,
+  "capturedVisibleOccurrences": 5,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 5,
+  "totalBytes": 48846669,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 88,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 5,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-361cbcd6f2400bbe78fa14de0ac6415c27a387d1bd5af997f3622d20c97fd8b4",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Sprut_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a3a03470396c9678ace9c557374b9c5ea5ccf60e021f952d705690914a88ea2f/asset-675d6f4971715331534ed8b3/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Sprut-SDM1/mesh/Sprut.Sprut",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "13e2f90066b7e0779a08310c5940569c40f480e5e07a4fd5faf6fda4e54c87d0",
+      "runtimeBonePoseJointCount": 66,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 67,
+        "sourceNodeStructureSha256": "ab47ef0fbf4c83c57c237dbdf08d762deddbbb7ed7b16d4819a55ff0307b8473",
+        "sourceSkinStructureSha256": "8e3066bca5e0a8ba211588c2047b41af1c310a51089670ed727adab8405abce1",
+        "sourceInverseBindStructureSha256": "4f4307fe7eeec63fe26a17aee2a10df1a3fa884adeddf7bef82c9e98ca0fac75"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 66
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-e586b7e6dcde0c7fa282eca10ec8cdc2a27ef014cb46409ddbbee4ad6bf8081b",
+      "name": "SkeletalMesh",
+      "actor": "BP_Sprut_RWS_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a3a03470396c9678ace9c557374b9c5ea5ccf60e021f952d705690914a88ea2f/asset-dc27dda04439922f103319f0/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        -1.38361692,
+        2.566971588,
+        -0.374520232,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.3836169204892734,
+          2.566971588134765,
+          -0.37452023211138086
+        ],
+        "observedGltfTranslationM": [
+          -1.38361692,
+          2.566971588,
+          -0.374520232
+        ],
+        "errorMByAxis": [
+          4.892735105954671e-10,
+          1.347650879779394e-10,
+          1.1138084898831835e-10
+        ],
+        "maxErrorCm": 4.892735105954671e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Sprut-SDM1/mesh/RWS/Sprut_RWS_Turret.Sprut_RWS_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "7c2d0a3549c14af52a7872e0116a500c044ba0dda19bcc3209f5cb2a31450e43",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "ac31cff34aa66078d0033c3f1e0700a8135a7bffccf6430c150fb7071ee00bea",
+        "sourceSkinStructureSha256": "a993bf109e4f707122340cfdc6183779474d396da62dbe5dd0cbcec2469fc166",
+        "sourceInverseBindStructureSha256": "2ff655008aaefd03cba0e66341dbc351898f064aac14f7dc422a6e6fcbcfe16b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-13a35fbd5138c7d793689dbeff308f4f9fcb360dd5c5e85f34c6693771eaa5ad",
+      "name": "Gun",
+      "actor": "BP_Sprut_RWS_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a3a03470396c9678ace9c557374b9c5ea5ccf60e021f952d705690914a88ea2f/asset-987272a155047322f1cf418c/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        -1.486198901,
+        2.964330444,
+        -0.474940857,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.4861989010464023,
+          2.9643304443359373,
+          -0.47494085734461655
+        ],
+        "observedGltfTranslationM": [
+          -1.486198901,
+          2.964330444,
+          -0.474940857
+        ],
+        "errorMByAxis": [
+          4.640221540341827e-11,
+          3.3593750004001777e-10,
+          3.4461655751272247e-10
+        ],
+        "maxErrorCm": 3.4461655751272247e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Sprut-SDM1/mesh/RWS/Sprut_RWS_Gun.Sprut_RWS_Gun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d2cde8d234a16cea49bb0ef0badb240fd0e447990527ef2df259efe02bb2bdc6",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "759509a7baa6bdc2b7eeb16ed8971b8c52cb69cec436b265938deba98b02c40c",
+        "sourceSkinStructureSha256": "e2f7b98081c9e31e6701b3ce93fd83879bfd3748b8aaca730e348aab39696c41",
+        "sourceInverseBindStructureSha256": "c4f294a92f68c4c3f0333c745c02901b5f58eecb15213b8cd3d51178f0856ff8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-da4c05a4040f0ae8b21fbb4e6a04fc04200440f64df0f5ca90c3015d1b8e32fc",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_Sprut_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a3a03470396c9678ace9c557374b9c5ea5ccf60e021f952d705690914a88ea2f/asset-f8b2ef29bd643ab8c52b8bd2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        0.061677208,
+        1.670649567,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.061677207946778154,
+          1.6706495666503907,
+          -1.3132610572467486e-16
+        ],
+        "observedGltfTranslationM": [
+          0.061677208,
+          1.670649567,
+          0.0
+        ],
+        "errorMByAxis": [
+          5.322184359890514e-11,
+          3.496092304544618e-10,
+          1.3132610572467486e-16
+        ],
+        "maxErrorCm": 3.496092304544618e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Sprut-SDM1/mesh/Sprut_Turret.Sprut_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "c7adf387b1edb7de1aaca1a1d156a269ad42d36f570e77acb7876f9dbd604d82",
+      "runtimeBonePoseJointCount": 12,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 13,
+        "sourceNodeStructureSha256": "f504506998bbf67ffddb0dd978a34ee3e60004e36a8451e6a44bde40864fe194",
+        "sourceSkinStructureSha256": "cbf73b607eaeb499a3ccc102ef73007a043d5eaee28be3035af0106f53d1a8d9",
+        "sourceInverseBindStructureSha256": "69aee436b75917a706a7bd57685e0e925a0c86fbb93eb3f5203e9907f097ca83"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 12
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-af17814280f2fca486b985c289cc51bc1eb081f01ef44f4ad353fa3214992bf0",
+      "name": "SkeletalMesh",
+      "actor": "BP_Sprut_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a3a03470396c9678ace9c557374b9c5ea5ccf60e021f952d705690914a88ea2f/asset-d982a93d77646c3aafe5e303/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        1.080931664,
+        2.022408752,
+        -0.001723619,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.080931663794011,
+          2.0224087524414065,
+          -0.0017236193427569118
+        ],
+        "observedGltfTranslationM": [
+          1.080931664,
+          2.022408752,
+          -0.001723619
+        ],
+        "errorMByAxis": [
+          2.0598900363211214e-10,
+          4.414064669333584e-10,
+          3.42756911828751e-10
+        ],
+        "maxErrorCm": 4.414064669333584e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Sprut-SDM1/mesh/Sprut_Gun.Sprut_Gun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "e6d8cb48fe960b9ec8a3c9dc8e55d5783906719e33656bead2600ebca4616048",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "da6a76d92162d1cf5437978080439b1ce4746b8652a9c4b28ef3c4a83322f799",
+        "sourceSkinStructureSha256": "a7448e86a5368be0b3ad4667f25b7a384be5c42b0bb3a06283721af2a6f75e3d",
+        "sourceInverseBindStructureSha256": "88cdba88322b547a4c10cf129ac1885d864101877199f2b26d661815ba74a1c1"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/vdv-sprut-sdm1-mgs-bp-sprut-desert-six-view-qa.json",
+    "sha256": "cd39a5df95960ad550a2cfabc1151700993005e12ab2a2a1c6e26510510b6701",
+    "reviewedAt": "2026-07-21T16:17:04.468343Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

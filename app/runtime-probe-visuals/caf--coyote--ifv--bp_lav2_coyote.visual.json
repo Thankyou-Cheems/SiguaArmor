@@ -1,0 +1,632 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--coyote--ifv--bp_lav2_coyote.visual.json.recipe.json",
+  "visualRecipeSha256": "6af3f8bdaa82e980e554e446a81485077a51a0f683ea6e9bdbfb1ae784785dd1",
+  "cardId": "caf--coyote--ifv",
+  "factionId": "CAF",
+  "targetKey": "caf-coyote-ifv-bp-lav2-coyote",
+  "rawName": "BP_LAV2_Coyote",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/Coyote/BP_LAV2_Coyote.BP_LAV2_Coyote_C",
+  "vehicleId": "vehicle-d1476743fe71b4a6524776d3c5e33c68d9345c89afec5770853b1c7d119dc192",
+  "identitySha256": "d1476743fe71b4a6524776d3c5e33c68d9345c89afec5770853b1c7d119dc192",
+  "packageSha256": "ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6",
+  "requiredOccurrences": 9,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 291901388,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 8,
+  "runtimeBonePoseJointCount": 103,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 1,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-0ec694f3fc0c5ba28610fc5cd624aff1364c93f1024a01f2c0ce31ffeacc4cbb",
+      "name": "WeaponMesh3P",
+      "actor": "BP_C6_Commander_Turret_Weapon_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-8a0542a358df4da0445a01f2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.534190845,
+        2.847258406,
+        0.206914882,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.5341908454895019,
+          2.847258405685425,
+          0.20691488206386566
+        ],
+        "observedGltfTranslationM": [
+          -0.534190845,
+          2.847258406,
+          0.206914882
+        ],
+        "errorMByAxis": [
+          4.895018834716325e-10,
+          3.1457503268939035e-10,
+          6.386566275828898e-11
+        ],
+        "maxErrorCm": 4.895018834716325e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV6/WeaponsNew/C6Commander/LAV6_C6_Weapon.LAV6_C6_Weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "c3a6da8de08e97292e46f83deeb6dbccc79ea72cb7f156888e54508e7bdde86b",
+      "runtimeBonePoseJointCount": 27,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 28,
+        "sourceNodeStructureSha256": "5cfb1a198376188fe01bb9c04851640f98aceb8fdb1966f249d55909ba568aeb",
+        "sourceSkinStructureSha256": "54c1f67dab2fe4ff723f996312b721a29b67ba84660c2dbdeb7d990f1090083e",
+        "sourceInverseBindStructureSha256": "01e40ba800af6b8cd423aabc4fc0cb91c2f12e7ed3c0158434a43ae461d12612"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 27
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-fe9176d0791294f1388a9960b11ed90403081ad1a09fe268b7ff34e8996fceff",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Coyote_762_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-2c91e85a343d42be931316bb/source.gltf",
+      "matrix": [
+        0.999946876,
+        0.010307515,
+        4.28e-06,
+        0.0,
+        -0.010307516,
+        0.999946875,
+        5.2208e-05,
+        0.0,
+        -3.741e-06,
+        -5.2249e-05,
+        0.999999999,
+        0.0,
+        -0.207491194,
+        0.734347693,
+        0.138700721,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.20749119445973085,
+          0.7343476927901151,
+          0.13870072148675283
+        ],
+        "observedGltfTranslationM": [
+          -0.207491194,
+          0.734347693,
+          0.138700721
+        ],
+        "errorMByAxis": [
+          4.597308644882503e-10,
+          2.0988488724782428e-10,
+          4.867528324847825e-10
+        ],
+        "maxErrorCm": 4.867528324847825e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "633f7ce9dc3f42b62c79e1118571d85276e909a7f6147497a3d074bf9bffd1c7",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "3c21ccb4ac0933b7241f39e472254bd8ac3407e68e6087ace5c4102c6da733e8",
+        "sourceSkinStructureSha256": "ec0eb60bc531adfc0ad0bb87d501f682a65ab4bbcc7cdce75b8fb6540c97f1e5",
+        "sourceInverseBindStructureSha256": "ae74a852114686ecd36b0e89098a5de2d769861d3a5016f69464e3276080e307"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-74e4a02535942ca194cf657f04dacaadff4fdedbb5985a4da1597c2e7c9c9a5c",
+      "name": "Vehicle Mesh",
+      "actor": "BP_LAV2_Coyote_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-9d4c1de93e575e94b8c72184/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Coyote/Meshes/Coyote.Coyote",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "8afea6398e85bfcdfd75ce24bfbee9b949cb6685207b6b71368fe9f82d02a5d0",
+      "runtimeBonePoseJointCount": 40,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 41,
+        "sourceNodeStructureSha256": "d5080ed483fef0fc4aee913fc100885b7debbb5ca7e889f6d64bc10276e211a3",
+        "sourceSkinStructureSha256": "4e295c6bf403f6a663010dd750c324eb755aa4b4c9707a16941c1562b10ec5e5",
+        "sourceInverseBindStructureSha256": "c6d8ad54293926214ffb19e4a9398e09c0de896f02d17a3407a164be9217284d"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 40
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-efd73ded49005377b490a7a65dded71b467f82db85fefc833ba258675e508a86",
+      "name": "HullDecoration",
+      "actor": "BP_LAV2_Coyote_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-02960f7c4c40bfa9c4681e6a/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Coyote/Meshes/Coyote_Hull_Deco.Coyote_Hull_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-12153ad5558047e0b16c409776a9a551e1905ab9da628649c3acfcc22308d1ab",
+      "name": "LAV25_turret",
+      "actor": "BP_LAV2_Coyote_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-86bdadc37de7c1d32b88e780/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.867391052,
+        1.802120056,
+        -0.185797043,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8673910522460937,
+          1.8021200561523438,
+          -0.1857970428466797
+        ],
+        "observedGltfTranslationM": [
+          -0.867391052,
+          1.802120056,
+          -0.185797043
+        ],
+        "errorMByAxis": [
+          2.4609370097294914e-10,
+          1.5234391526064428e-10,
+          1.5332030089965087e-10
+        ],
+        "maxErrorCm": 2.4609370097294914e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Coyote/Meshes/Coyote_Turret.Coyote_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "5408e3b9593bcff2286164b1f21b8918b51e423ccc3f4ce3e756936a2366f066",
+      "runtimeBonePoseJointCount": 15,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": true,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 16,
+        "sourceNodeStructureSha256": "8c5e3e61f03cb5cc74b51499651fbcdf9619b026b45fd24d6327c080cd02d660",
+        "sourceSkinStructureSha256": "8e8d77abfd3988d8775a2511fbab4468a654e377af8300acf3b3aee5d1e3a196",
+        "sourceInverseBindStructureSha256": "a704ec2e75f75a0e56c2cae51fd07d3931f9a9d946016ce245f16de5d08e6fa2"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 15
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-224d71cf1450fc6ebf2dad72af511fabfcf156f07daa27ef5b4a7ead1bca0b6e",
+      "name": "SkeletalMesh",
+      "actor": "BP_LAV2_Coyote_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-9b4f8d1099ecac74ab7a65b8/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.677518044,
+        2.510596008,
+        0.035681953,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.6775180435180664,
+          2.5105960083007814,
+          0.03568195343017578
+        ],
+        "observedGltfTranslationM": [
+          -0.677518044,
+          2.510596008,
+          0.035681953
+        ],
+        "errorMByAxis": [
+          4.819336041350653e-10,
+          3.007816218314474e-10,
+          4.301757769442638e-10
+        ],
+        "maxErrorCm": 4.8193360413506525e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/wCMDR_MG/LAV60_mag_turret.LAV60_mag_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ea8fb2db3052f49e510abb9d169ea8b74053d5fecc31969c4ca549c1e83bb97b",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "4ed59c53f33cbf77c40ff2c45e55d583e5cdfe930e71c42528cdef777683f127",
+        "sourceSkinStructureSha256": "06900ea0878b1ff20b5bd9139b9d1c5687c1b0a00423d61ba2617315a47c3d25",
+        "sourceInverseBindStructureSha256": "b9c09618a5d591d694f113968bc551f21ab92a80b7a4e341925cb8df95b11d69"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-f6083affe884b8bbf5e179deae23b2236c24274ca4c5718c2acc1f00dd064aba",
+      "name": "WeaponMesh3P",
+      "actor": "Coyote_M252_AP_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-0d0f2145f7f302ddfb04c7ef/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.351023979,
+        2.22867424,
+        -0.047120056,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.35102397918701167,
+          2.2286742401123045,
+          -0.04712005615234372
+        ],
+        "observedGltfTranslationM": [
+          -0.351023979,
+          2.22867424,
+          -0.047120056
+        ],
+        "errorMByAxis": [
+          1.870116839164382e-10,
+          1.1230438801135278e-10,
+          1.5234372097161497e-10
+        ],
+        "maxErrorCm": 1.870116839164382e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "7ba5a8426d6177b819e35e9f31d8954f196bccf648484be835e5114ade6c93df",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "3c21ccb4ac0933b7241f39e472254bd8ac3407e68e6087ace5c4102c6da733e8",
+        "sourceSkinStructureSha256": "ec0eb60bc531adfc0ad0bb87d501f682a65ab4bbcc7cdce75b8fb6540c97f1e5",
+        "sourceInverseBindStructureSha256": "ae74a852114686ecd36b0e89098a5de2d769861d3a5016f69464e3276080e307"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-2a891b96394fa94d70d3ae957c3a76bd8cab8a01603c0e6d4d1d2ac7ebbbaf88",
+      "name": "WeaponMesh3P",
+      "actor": "Coyote_M252_HE_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-2c91e85a343d42be931316bb/source.gltf",
+      "matrix": [
+        0.999946876,
+        0.010307515,
+        4.28e-06,
+        0.0,
+        -0.010307516,
+        0.999946875,
+        5.2208e-05,
+        0.0,
+        -3.741e-06,
+        -5.2249e-05,
+        0.999999999,
+        0.0,
+        -0.207491194,
+        0.734347693,
+        0.138700721,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.20749119445973085,
+          0.7343476927901151,
+          0.13870072148675283
+        ],
+        "observedGltfTranslationM": [
+          -0.207491194,
+          0.734347693,
+          0.138700721
+        ],
+        "errorMByAxis": [
+          4.597308644882503e-10,
+          2.0988488724782428e-10,
+          4.867528324847825e-10
+        ],
+        "maxErrorCm": 4.867528324847825e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "633f7ce9dc3f42b62c79e1118571d85276e909a7f6147497a3d074bf9bffd1c7",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "3c21ccb4ac0933b7241f39e472254bd8ac3407e68e6087ace5c4102c6da733e8",
+        "sourceSkinStructureSha256": "ec0eb60bc531adfc0ad0bb87d501f682a65ab4bbcc7cdce75b8fb6540c97f1e5",
+        "sourceInverseBindStructureSha256": "ae74a852114686ecd36b0e89098a5de2d769861d3a5016f69464e3276080e307"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-461a7fa4976382ce694b171d7515ac885bce1bab91be2f97af9dbd775019bcea",
+      "name": "WeaponMesh3P",
+      "actor": "Smoke_Launcher_Coyote_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6/asset-2c91e85a343d42be931316bb/source.gltf",
+      "matrix": [
+        0.999946876,
+        0.010307515,
+        4.28e-06,
+        0.0,
+        -0.010307516,
+        0.999946875,
+        5.2208e-05,
+        0.0,
+        -3.741e-06,
+        -5.2249e-05,
+        0.999999999,
+        0.0,
+        -0.207491194,
+        0.734347693,
+        0.138700721,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.20749119445973085,
+          0.7343476927901151,
+          0.13870072148675283
+        ],
+        "observedGltfTranslationM": [
+          -0.207491194,
+          0.734347693,
+          0.138700721
+        ],
+        "errorMByAxis": [
+          4.597308644882503e-10,
+          2.0988488724782428e-10,
+          4.867528324847825e-10
+        ],
+        "maxErrorCm": 4.867528324847825e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "633f7ce9dc3f42b62c79e1118571d85276e909a7f6147497a3d074bf9bffd1c7",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "3c21ccb4ac0933b7241f39e472254bd8ac3407e68e6087ace5c4102c6da733e8",
+        "sourceSkinStructureSha256": "ec0eb60bc531adfc0ad0bb87d501f682a65ab4bbcc7cdce75b8fb6540c97f1e5",
+        "sourceInverseBindStructureSha256": "ae74a852114686ecd36b0e89098a5de2d769861d3a5016f69464e3276080e307"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/caf/caf-coyote-ifv-bp-lav2-coyote-six-view-qa.json",
+    "sha256": "2513076834dd5a4778f6f11e0fea3fdd4bc7ffaa501d425059b316893b05b460",
+    "reviewedAt": "2026-07-21T09:30:27.318715Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

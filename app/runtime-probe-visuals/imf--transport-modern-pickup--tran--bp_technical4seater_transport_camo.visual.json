@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--transport-modern-pickup--tran--bp_technical4seater_transport_camo.visual.json.recipe.json",
+  "visualRecipeSha256": "de1c02b953edf0a714e86f52d348da64a751dd7718a98e1cb69b4647e6669891",
+  "cardId": "imf--transport-modern-pickup--tran",
+  "factionId": "IMF",
+  "targetKey": "imf-transport-modern-pickup-tran-bp-technical4seater-transport-camo",
+  "rawName": "BP_Technical4Seater_Transport_Camo",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/Technical4Seater/BP_Technical4Seater_Transport_Camo.BP_Technical4Seater_Transport_Camo_C",
+  "vehicleId": "vehicle-e9228a9f84e0b2aa19bcdfef10b4ebc107e66a0907b47fbe38b11e3d2f1e3f86",
+  "identitySha256": "e9228a9f84e0b2aa19bcdfef10b4ebc107e66a0907b47fbe38b11e3d2f1e3f86",
+  "packageSha256": "33fdd165b480cea886f8e0dae3ef072c993417bb9b235a12db777693a5fda7c1",
+  "requiredOccurrences": 2,
+  "capturedVisibleOccurrences": 2,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 2,
+  "totalBytes": 15373765,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 33,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-cecfaeddda21e758aa01ae7ca5b3fe2a949ab8325dcfe7de9dab35bdbfae73c2",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Technical4Seater_Transport_Camo_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/33fdd165b480cea886f8e0dae3ef072c993417bb9b235a12db777693a5fda7c1/asset-eb163a15fa110b0b1f10c28d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical4Seater/Meshes/SK_Technical_4Seater.SK_Technical_4Seater",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f6ccea56d9bf0103a79ddb8677f435cef8a2e8510266b0a09db9b449c38ed48a",
+      "runtimeBonePoseJointCount": 33,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 34,
+        "sourceNodeStructureSha256": "39b7e1aaf7157464f9bb0d348d06aa0c3481908ba8b33307d7aaa1cba0e97a2f",
+        "sourceSkinStructureSha256": "edb7cd56b08259c8ed27555908e9f7afe16315bca25b8152482e4c393fc296d4",
+        "sourceInverseBindStructureSha256": "bc400b6f3888773fce72da2f26e2752d14ef6ea6804e1c06d96b31f1121f2fbe"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 33
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-b768ec2c7fed1e0dd49baa9fbf656c250bc8926577715469eaf61ce84c46772e",
+      "name": "InteriorDeco",
+      "actor": "BP_Technical4Seater_Transport_Camo_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/33fdd165b480cea886f8e0dae3ef072c993417bb9b235a12db777693a5fda7c1/asset-82b837d2445debc764af7edb/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.368953552,
+        0.7174189,
+        -0.257723694,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.3689535522460938,
+          0.7174188995361328,
+          -0.25772369384765625
+        ],
+        "observedGltfTranslationM": [
+          -0.368953552,
+          0.7174189,
+          -0.257723694
+        ],
+        "errorMByAxis": [
+          2.4609375648410037e-10,
+          4.63867166899945e-10,
+          1.5234374872719059e-10
+        ],
+        "maxErrorCm": 4.63867166899945e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical4Seater/Meshes/SM_Technical4Seater_Interior_Deco_2.SM_Technical4Seater_Interior_Deco_2",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/imf/imf-transport-modern-pickup-tran-bp-technical4seater-transport-camo-six-view-qa.json",
+    "sha256": "bd9c5e0ca26375a5b4a4bb7b1bb262f9ec8f2d32a102a6079947407d0a06c627",
+    "reviewedAt": "2026-07-21T09:40:26.738408Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

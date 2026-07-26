@@ -1,0 +1,548 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--btr-80--apc--bp_btr80_militia.visual.json.recipe.json",
+  "visualRecipeSha256": "ad711ef66dc5d4c23aa7a1b89eb7241cf8d77b5f92a60bd0158d3a6f24764878",
+  "cardId": "imf--btr-80--apc",
+  "factionId": "IMF",
+  "targetKey": "imf-btr-80-apc-bp-btr80-militia",
+  "rawName": "BP_BTR80_Militia",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/BTR80/BP_BTR80_Militia.BP_BTR80_Militia_C",
+  "vehicleId": "vehicle-8106fe0531226b18fd10e8f7a25a5be9409ab2a9990c53237f208f324702e41a",
+  "identitySha256": "8106fe0531226b18fd10e8f7a25a5be9409ab2a9990c53237f208f324702e41a",
+  "packageSha256": "e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 8,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 44087789,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 6,
+  "runtimeBonePoseJointCount": 58,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 3,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-8a63eb40e34dc4037217ddbc539f5d88e53d08260b684fd4f6568af64c5eea54",
+      "name": "BTR_82A_turret",
+      "actor": "BP_BTR80_MIL_turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-dda0c865a24c9509f686bbe4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.924189911,
+        2.012087097,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.9241899108886718,
+          2.0120870971679685,
+          2.439454888092385e-20
+        ],
+        "observedGltfTranslationM": [
+          0.924189911,
+          2.012087097,
+          0.0
+        ],
+        "errorMByAxis": [
+          1.1132827992810235e-10,
+          1.6796830593079903e-10,
+          2.439454888092385e-20
+        ],
+        "maxErrorCm": 1.6796830593079903e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_turret.BTR80_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "86966618620320171ddf4c91ad9a70513c70e7859a8a32cf5d93ea6cacb099dc",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "480aa690ae65a434613b813ba473a47d89aee11ac00e7d95144996eb87957cb3",
+        "sourceSkinStructureSha256": "68fb9f379ffc3bb13683b40f388593d63f6f79f48b9fdf84a925ea2c25da343d",
+        "sourceInverseBindStructureSha256": "00580590a8d0ae85d43d2042dc674d05b9e500567f491c859547e7bd5a8adfa1"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-17e6cd825de8e132dffb253834db8e5d16e5efd3846fa7b5b98c59caee4eced9",
+      "name": "Vehicle Mesh",
+      "actor": "BP_BTR80_Militia_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-1495c8118a3ec905d3b26709/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/btr80_body.btr80_body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "5eb84e64889f09388bd101298d81c2cc3a1c581ef4219a300f9f5e3913acbe7a",
+      "runtimeBonePoseJointCount": 52,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 53,
+        "sourceNodeStructureSha256": "a607936fc32157e699116992e46d71cbc90f7a3f5f881a43f3df6e63bea730db",
+        "sourceSkinStructureSha256": "db487494aa3d5888e94c1459134f52d7f663bf535e09651747326ef64f5224ce",
+        "sourceInverseBindStructureSha256": "88ec5418aa42248f7914252dee38dbbb835edf1b15d37e254fbf6090471a220a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 52
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-566faa1e248d5942e8370f4ddd7625700fa987d3de4748b8f37f057a9dcd63a3",
+      "name": "HullDecoration",
+      "actor": "BP_BTR80_Militia_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-16a348644370c6c2c545c183/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        3.05e-07,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.5164156181448906e-17,
+          3.0517578123368446e-07,
+          -3.2294154877305723e-20
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          3.05e-07,
+          0.0
+        ],
+        "errorMByAxis": [
+          1.5164156181448906e-17,
+          1.7578123368446623e-10,
+          3.2294154877305723e-20
+        ],
+        "maxErrorCm": 1.7578123368446623e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/SM_btr80_decoration.SM_btr80_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-888eec977c4017c06f1ff802596a31f916b621c4509ea195d89a04602ac04c3e",
+      "name": "RazorWire",
+      "actor": "BP_BTR80_Militia_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        0.088697708,
+        1.5667414,
+        1.8e-08,
+        0.0,
+        -0.696496679,
+        0.039430667,
+        -1.42e-07,
+        0.0,
+        -3.21e-07,
+        0.0,
+        1.569250107,
+        0.0,
+        -3.87151001,
+        1.275562897,
+        0.730784149,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -3.8715100097656254,
+          1.2755628967285157,
+          0.7307841491699217
+        ],
+        "observedGltfTranslationM": [
+          -3.87151001,
+          1.275562897,
+          0.730784149
+        ],
+        "errorMByAxis": [
+          2.343747418365183e-10,
+          2.714841684792191e-10,
+          1.69921743342627e-10
+        ],
+        "maxErrorCm": 2.7148416847921908e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-b71fb9a44ecbe091074da9f24db522641e03f3f039e4e1b3256f2d7060ec01dc",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BTR80_Militia_KPVT_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-fc5ecba6efa0f27360234cc9/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.200463028,
+        2.195459919,
+        0.051988235,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.2004630279541015,
+          2.19545991897583,
+          0.05198823451995851
+        ],
+        "observedGltfTranslationM": [
+          1.200463028,
+          2.195459919,
+          0.051988235
+        ],
+        "errorMByAxis": [
+          4.589839619484337e-11,
+          2.4169999335299508e-11,
+          4.8004149266756e-10
+        ],
+        "maxErrorCm": 4.8004149266756e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "7e0e815317f5f732b9d3687f30871d62716bf9c57ba131c14b66fb6621bdfcdd",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "375137d225ee7df72531b22aa1bdd417986fd78e6dcca2fbc8cf62aa112ea1c1",
+        "sourceInverseBindStructureSha256": "aa36232076d1e98852f929bcc221bb332c778e08f4e6a603eac62372559a0f73"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-903dd86d32b158d63c2fb9f199e53fbe662244b9c2fdfc3d6b3012e8a20a127a",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BTR80_Militia_PKT_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-baf6ea4679b7052f154bf2e6/source.gltf",
+      "matrix": [
+        0.999992346,
+        0.00391225,
+        3.0262e-05,
+        0.0,
+        -0.003912252,
+        0.999992345,
+        6.427e-05,
+        0.0,
+        -3.0011e-05,
+        -6.4389e-05,
+        0.999999997,
+        0.0,
+        -0.44367651,
+        0.488606102,
+        0.052582021,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.4436765104392548,
+          0.4886061017845118,
+          0.052582020763064355
+        ],
+        "observedGltfTranslationM": [
+          -0.44367651,
+          0.488606102,
+          0.052582021
+        ],
+        "errorMByAxis": [
+          4.392547992004836e-10,
+          2.1548818285310745e-10,
+          2.369356447151638e-10
+        ],
+        "maxErrorCm": 4.392547992004836e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "a4d877da04342af03eeace3b7cc5c929d46976b119087157a2d2f674a0364952",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "375137d225ee7df72531b22aa1bdd417986fd78e6dcca2fbc8cf62aa112ea1c1",
+        "sourceInverseBindStructureSha256": "aa36232076d1e98852f929bcc221bb332c778e08f4e6a603eac62372559a0f73"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a0f80dc226c92a547b37910bdfa9253db7c7de0894dc875e974d33ca70474122",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BTR80_Militia_Smoke_Launcher_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-baf6ea4679b7052f154bf2e6/source.gltf",
+      "matrix": [
+        0.999992346,
+        0.00391225,
+        3.0262e-05,
+        0.0,
+        -0.003912252,
+        0.999992345,
+        6.427e-05,
+        0.0,
+        -3.0011e-05,
+        -6.4389e-05,
+        0.999999997,
+        0.0,
+        -0.44367651,
+        0.488606102,
+        0.052582021,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.4436765104392548,
+          0.4886061017845118,
+          0.052582020763064355
+        ],
+        "observedGltfTranslationM": [
+          -0.44367651,
+          0.488606102,
+          0.052582021
+        ],
+        "errorMByAxis": [
+          4.392547992004836e-10,
+          2.1548818285310745e-10,
+          2.369356447151638e-10
+        ],
+        "maxErrorCm": 4.392547992004836e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "a4d877da04342af03eeace3b7cc5c929d46976b119087157a2d2f674a0364952",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "375137d225ee7df72531b22aa1bdd417986fd78e6dcca2fbc8cf62aa112ea1c1",
+        "sourceInverseBindStructureSha256": "aa36232076d1e98852f929bcc221bb332c778e08f4e6a603eac62372559a0f73"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-889d3e9601963e46f33dd2e3fd6121180a794cd81add9e5ff4b912e9e77e230a",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_BTR80_RUS_Periscope_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb/asset-891de57878df791972563299/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        -1.3798e-05,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.3798e-05,
+        0.0,
+        1.0,
+        0.0,
+        2.294660492,
+        2.025223846,
+        0.373187408,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.2946604919433593,
+          2.025223846435547,
+          0.37318740844726556
+        ],
+        "observedGltfTranslationM": [
+          2.294660492,
+          2.025223846,
+          0.373187408
+        ],
+        "errorMByAxis": [
+          5.6640914181116386e-11,
+          4.3554715389859666e-10,
+          4.472655579235152e-10
+        ],
+        "maxErrorCm": 4.472655579235152e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/btr-80_periscope.btr-80_periscope",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "9e16426b07ed8e8c60858f35f1d2629f436613ce4b3e3fcaa008c2161db9aad9",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "7dcfa8fa18c43128e4d8cbc72f904ea87971fed1bdbebcd09f3766ef20f55c38",
+        "sourceInverseBindStructureSha256": "74e697d7503efa9794efbed777589b8356b1d4c16516a6f43dba137907f8eb34"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/imf/imf-btr-80-apc-bp-btr80-militia-six-view-qa.json",
+    "sha256": "b72b1d7f51d2ca76c4130692c417f54e3121084e5633a56be55ef1122a042d2e",
+    "reviewedAt": "2026-07-21T09:40:12.379070Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

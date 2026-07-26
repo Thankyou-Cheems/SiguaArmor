@@ -1,0 +1,302 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--pars-iii-m2-rws--apc--bp_pars3_m2.visual.json.recipe.json",
+  "visualRecipeSha256": "d3400a2c67d153271dabc688763c6cebe2492981e01efa24c39b27c6721e4c1c",
+  "cardId": "tlf--pars-iii-m2-rws--apc",
+  "factionId": "TLF",
+  "targetKey": "tlf-pars-iii-m2-rws-apc-bp-pars3-m2",
+  "rawName": "BP_PARS3_M2",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/PARS_III/BP_PARS3_M2.BP_PARS3_M2_C",
+  "vehicleId": "vehicle-0176be90e786a03c0ec4cdd2a3ca2559bce0948c969a6912add7e1cf3e217658",
+  "identitySha256": "0176be90e786a03c0ec4cdd2a3ca2559bce0948c969a6912add7e1cf3e217658",
+  "packageSha256": "1321faa46cab9c50e5429230dece475e046f974873b02bf0f482cb8146c21bbe",
+  "requiredOccurrences": 4,
+  "capturedVisibleOccurrences": 4,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 4,
+  "totalBytes": 42409958,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 70,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-bcb0cfd6e4a8d1afade9d71e574d0a9d1e27a5db1045d637271ab634013db6b6",
+      "name": "Vehicle Mesh",
+      "actor": "BP_PARS3_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/1321faa46cab9c50e5429230dece475e046f974873b02bf0f482cb8146c21bbe/asset-001242a5c8c8fc29c56e9943/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/PARS_III/Meshes/SK_PARS_III.SK_PARS_III",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "72f9307e44c3fb203ab85ee49437e6a3d326afc9a76026092aecbf2e0043aba6",
+      "runtimeBonePoseJointCount": 54,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 55,
+        "sourceNodeStructureSha256": "0d6e78c482cbc6eae435a376ec0504ee6af46bc02c4a374cef7ee2b01eb1e1de",
+        "sourceSkinStructureSha256": "3e325194f3101b808700b8b4291a53842bcbf9e676ba12300b3246408ea9caf8",
+        "sourceInverseBindStructureSha256": "1f926e43bda61c8b229dd7fbf53211489d17834db4f1da5a3ad7fac8c898d408"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 54
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-61852858b6e546402c53f693f248826f2552156dfcc3a90dab2c4b74fac2d3a4",
+      "name": "RWS_RoofCover",
+      "actor": "BP_PARS3_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/1321faa46cab9c50e5429230dece475e046f974873b02bf0f482cb8146c21bbe/asset-70033f277397b3a7e387eecb/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.502698325,
+        2.082633972,
+        5.5539e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.502698324701073,
+          2.0826339721679688,
+          5.553932216744606e-05
+        ],
+        "observedGltfTranslationM": [
+          -0.502698325,
+          2.082633972,
+          5.5539e-05
+        ],
+        "errorMByAxis": [
+          2.989269942688111e-10,
+          1.6796875002000888e-10,
+          3.2216744606138525e-10
+        ],
+        "maxErrorCm": 3.2216744606138525e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/PARS_III/Sancak_RWS/Meshes/SM_Sancak_RWS_HullPlate.SM_Sancak_RWS_HullPlate",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-542ff876a2309a99754383f742f534ccf80fbf65acf8833dbede4a94114807e7",
+      "name": "WeaponMesh3P",
+      "actor": "BP_SancakRWS_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/1321faa46cab9c50e5429230dece475e046f974873b02bf0f482cb8146c21bbe/asset-689742eed965a10c6ea74a11/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.69e-07,
+        0.0,
+        0.0,
+        -1.68e-07,
+        1.0,
+        0.0,
+        -0.213537865,
+        2.682809691,
+        5.5539e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.2135378646850586,
+          2.682809691429138,
+          5.553941708058119e-05
+        ],
+        "observedGltfTranslationM": [
+          -0.213537865,
+          2.682809691,
+          5.5539e-05
+        ],
+        "errorMByAxis": [
+          3.1494140628751666e-10,
+          4.2913805842204056e-10,
+          4.1708058119265803e-10
+        ],
+        "maxErrorCm": 4.2913805842204056e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/PARS_III/Sancak_RWS/Meshes/SK_SancakRWS_Gun_M2.SK_SancakRWS_Gun_M2",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "4e7c355045f19cdb55795cc1b762ed90ce55040431fcde0719ac45b5ac46b955",
+      "runtimeBonePoseJointCount": 14,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 15,
+        "sourceNodeStructureSha256": "4c1a35d002983848283690fe087ba24ede5cf56332b036e2901aebb9a0ea06a6",
+        "sourceSkinStructureSha256": "69756ca7d2317a7e35dc6320e4341c2fecb7484d9ad7fd32200807a56bb508d7",
+        "sourceInverseBindStructureSha256": "2839310e5feb080b0a0e8b133db01ccba2d19450d839e4c3c0a78a7107872b05"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 14
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-e2ff348b692dac165457c8fa713f87aea5653b776bb231d61fad0c99927f0e33",
+      "name": "TurretMesh",
+      "actor": "BP_SancakRWS_M2_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/1321faa46cab9c50e5429230dece475e046f974873b02bf0f482cb8146c21bbe/asset-a030657f44757bbc041e4d75/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.26269825,
+        2.106906524,
+        5.5539e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.26269824981689455,
+          2.106906523704529,
+          5.553941708058119e-05
+        ],
+        "observedGltfTranslationM": [
+          -0.26269825,
+          2.106906524,
+          5.5539e-05
+        ],
+        "errorMByAxis": [
+          1.8310547522659704e-10,
+          2.954707589708505e-10,
+          4.1708058119265803e-10
+        ],
+        "maxErrorCm": 4.17080581192658e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/PARS_III/Sancak_RWS/Meshes/SK_SancakRWS_Turret.SK_SancakRWS_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "3c99ce375383d0622131850432a7e2928bc44bb48f4fdfe90a1e1a8ef1cb81e1",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "da5d90997e7350f3981e514a303b4aff4360c12e6d431fe21f61885fb43026c9",
+        "sourceSkinStructureSha256": "6b24821dac605768f250febba691a0adb54edd4e5157963de51a90937c4392c9",
+        "sourceInverseBindStructureSha256": "17cf2229f18a4b894b0ef3e507415ed6ece0712c77f78bbe585d32fc7bd6aebf"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/tlf-pars-iii-m2-rws-apc-bp-pars3-m2-six-view-qa.json",
+    "sha256": "afe7bfa7a4d76ddec4a0660f0d7d0a512ae22ab7bdde8921371bfb4b29e60379",
+    "reviewedAt": "2026-07-21T16:15:37.710345Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

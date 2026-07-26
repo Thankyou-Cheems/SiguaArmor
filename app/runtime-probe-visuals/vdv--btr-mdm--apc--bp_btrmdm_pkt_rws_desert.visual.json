@@ -1,0 +1,368 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/vdv--btr-mdm--apc--bp_btrmdm_pkt_rws_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "97f7828f0fbec132785c530260af2821edcc36ad9b7ec534d64f46831725cad1",
+  "cardId": "vdv--btr-mdm--apc",
+  "factionId": "VDV",
+  "targetKey": "vdv-btr-mdm-apc-bp-btrmdm-pkt-rws-desert",
+  "rawName": "BP_BTRMDM_PKT_RWS_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/BTR-MDM/BP_BTRMDM_PKT_RWS_Desert.BP_BTRMDM_PKT_RWS_Desert_C",
+  "vehicleId": "vehicle-54a40ac31341ecf9ffec816f675caa65517c8b7d7052579827b5d61956f38150",
+  "identitySha256": "54a40ac31341ecf9ffec816f675caa65517c8b7d7052579827b5d61956f38150",
+  "packageSha256": "3626d373f939f56ee69b6e777387778194a410fd98a33ed89073b94fe804f468",
+  "requiredOccurrences": 5,
+  "capturedVisibleOccurrences": 5,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 5,
+  "totalBytes": 38089029,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 4,
+  "runtimeBonePoseJointCount": 76,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 4,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-1bb98dba5acbe3aeb332503b5a69270df318620681f50952ff91fffcfbdf18bf",
+      "name": "bmd1m_bowgun_l",
+      "actor": "BP_BTRMDM_Bowgun_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3626d373f939f56ee69b6e777387778194a410fd98a33ed89073b94fe804f468/asset-0e673cdc33b9a4f304b04306/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        2.210798151,
+        2.11803009,
+        1.156561563,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.210798151415977,
+          2.1180300903320317,
+          1.1565615631876942
+        ],
+        "observedGltfTranslationM": [
+          2.210798151,
+          2.11803009,
+          1.156561563
+        ],
+        "errorMByAxis": [
+          4.159770305989241e-10,
+          3.3203173543938647e-10,
+          1.8769430454312896e-10
+        ],
+        "maxErrorCm": 4.159770305989241e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-MDM/mesh/BTRMDM_BowGun.BTRMDM_BowGun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "7167b94d1496101404ef47ab5fbd5ca6e76f60477c411648fbee438cc199a29c",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "759509a7baa6bdc2b7eeb16ed8971b8c52cb69cec436b265938deba98b02c40c",
+        "sourceSkinStructureSha256": "84c958c83fa913df5552dcd45fccfc58064bc3a05a11dd5501e32768748a40e8",
+        "sourceInverseBindStructureSha256": "bb96e0b8f9ee6ca27042478a4e15fc36861f1164f2a4179e8ac32a8a1d57ce79"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-fe558e4cb08b1fc9969e4d2d45529a81ea633ddee6135152b6536db063ef323f",
+      "name": "Vehicle Mesh",
+      "actor": "BP_BTRMDM_PKT_RWS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3626d373f939f56ee69b6e777387778194a410fd98a33ed89073b94fe804f468/asset-12e5f021eb817dbcf208417b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-MDM/mesh/BTRMDM.BTRMDM",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "375b9f2fbda0a24772403261d5d68de64967edb3dab66b6c6b2a49807e9c38e6",
+      "runtimeBonePoseJointCount": 63,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 64,
+        "sourceNodeStructureSha256": "17a872fbac18b1411016c976dbaca534de9eba40e18dbb9df100b6162e3e4ff8",
+        "sourceSkinStructureSha256": "854f618be8b6d0b25fcccbdbdecd7f56df7ed6a31bc62a4a4350b80f49dd2101",
+        "sourceInverseBindStructureSha256": "9b6ac952cbb6f946b4b4123d43efea8b889a992e7e952f5dcd0c658f96793ed2"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 63
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-12be555b02dc336eb076f3871ed1aeaebb957eff8dede49b5300ee5956f8d96b",
+      "name": "Hatch",
+      "actor": "BP_BTRMDM_PKT_RWS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3626d373f939f56ee69b6e777387778194a410fd98a33ed89073b94fe804f468/asset-f5f048c4691e2c8469f976a0/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.62e-07,
+        0.0,
+        1.0,
+        0.0,
+        1.644888143,
+        2.363369446,
+        -0.877652396,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.6448881434760323,
+          2.3633694458007812,
+          -0.8776523961982791
+        ],
+        "observedGltfTranslationM": [
+          1.644888143,
+          2.363369446,
+          -0.877652396
+        ],
+        "errorMByAxis": [
+          4.760323246699727e-10,
+          1.9921886362794794e-10,
+          1.9827905983760274e-10
+        ],
+        "maxErrorCm": 4.760323246699727e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-MDM/mesh/BTRMDM_CupolaCover.BTRMDM_CupolaCover",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e2bea75c814b33f15e2222d5d1e9064150d46d94d9da1601425b8bef4d36a000",
+      "name": "SkeletalMesh",
+      "actor": "BP_PK_Kord_RWS_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3626d373f939f56ee69b6e777387778194a410fd98a33ed89073b94fe804f468/asset-7d4811cb390acab348830061/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.62e-07,
+        0.0,
+        1.0,
+        0.0,
+        1.644888143,
+        2.363369446,
+        -0.877652396,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.6448881434760323,
+          2.3633694458007812,
+          -0.8776523961982791
+        ],
+        "observedGltfTranslationM": [
+          1.644888143,
+          2.363369446,
+          -0.877652396
+        ],
+        "errorMByAxis": [
+          4.760323246699727e-10,
+          1.9921886362794794e-10,
+          1.9827905983760274e-10
+        ],
+        "maxErrorCm": 4.760323246699727e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-MDM/Weapons/PK_Kord_RWSStation/Mesh/Kord_RWS_Base.Kord_RWS_Base",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "0ea88bcec9aa491d9c8ae97f9d94085af2075ef48c39da20a1d97193eb3021c7",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "f0b74676172b074ac3b9e6422b3d39401fb21f04e3613f846d3272bf199d7a2e",
+        "sourceSkinStructureSha256": "164e2219364b29743355e2309d1a56f8a34c676a1ccab66f293f3067e4d4ab4c",
+        "sourceInverseBindStructureSha256": "cd46351ba9f14f34a4d7c8ac75e1df78424ee5743528228cccdd7918095f6998"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-cf305a4654daf3d39f0d09100adfc5e5be312d3b6760ef4ddbdc750680765513",
+      "name": "WeaponMesh3P",
+      "actor": "BP_PK_RWS_Gun_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3626d373f939f56ee69b6e777387778194a410fd98a33ed89073b94fe804f468/asset-962859a8426005020574fe2d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        1.513598568,
+        2.862773132,
+        -1.359706098,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.513598568234474,
+          2.862773132324219,
+          -1.3597060980079947
+        ],
+        "observedGltfTranslationM": [
+          1.513598568,
+          2.862773132,
+          -1.359706098
+        ],
+        "errorMByAxis": [
+          2.344739957749198e-10,
+          3.242188739704943e-10,
+          7.994716000325752e-12
+        ],
+        "maxErrorCm": 3.242188739704943e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR-MDM/Weapons/PK_Kord_RWSStation/Mesh/Kord_RWS_Weapon.Kord_RWS_Weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "fb959bcacc1da7f96ca9fcf134f0fc7ac7a4955da975a0ac05a19c664826691a",
+      "runtimeBonePoseJointCount": 6,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 7,
+        "sourceNodeStructureSha256": "82943ff6bd9a560ef1cd29bfcd384a40541710a98cc4c888ca3db5076a1587bb",
+        "sourceSkinStructureSha256": "687e88b1081068d561448c170ab4c699318f4641db7e72f516816a82f6b4dbc4",
+        "sourceInverseBindStructureSha256": "c4283d9d1db394bebacbe964f103d3f105f70771be00747e65ebf3458356e623"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 6
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/vdv-btr-mdm-apc-bp-btrmdm-pkt-rws-desert-six-view-qa.json",
+    "sha256": "8e4df1129cb1b60859cd935fd667256daca9765a5a38aa1446e2e4b42746d4b5",
+    "reviewedAt": "2026-07-21T16:17:00.188551Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

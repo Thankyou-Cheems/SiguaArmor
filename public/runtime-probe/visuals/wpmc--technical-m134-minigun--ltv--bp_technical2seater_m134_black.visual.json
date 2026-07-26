@@ -1,0 +1,398 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/wpmc--technical-m134-minigun--ltv--bp_technical2seater_m134_black.visual.json.recipe.json",
+  "visualRecipeSha256": "5a889f45299e3e22fbae0a5c241a19e2ea078d7195204277d5ac8ecafcdc62b8",
+  "cardId": "wpmc--technical-m134-minigun--ltv",
+  "factionId": "WPMC",
+  "targetKey": "wpmc-technical-m134-minigun-ltv-bp-technical2seater-m134-black",
+  "rawName": "BP_Technical2Seater_M134_Black",
+  "variant": "Black",
+  "generatedClass": "/Game/Vehicles/Technical2Seater_WPMC/BP_Technical2Seater_M134_Black.BP_Technical2Seater_M134_Black_C",
+  "vehicleId": "vehicle-9bd6be68b1c0d3bd2920f829f5fb742b2d50a9d583b76253c8b4169020add671",
+  "identitySha256": "9bd6be68b1c0d3bd2920f829f5fb742b2d50a9d583b76253c8b4169020add671",
+  "packageSha256": "3360a20fd777c8752cf4417e6ee1d3d3315025f5d21ed9c2727360d3c8048c7b",
+  "requiredOccurrences": 6,
+  "capturedVisibleOccurrences": 6,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 4,
+  "totalBytes": 43059499,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 43,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-91a303aad3674965ccafa3a1372f0efda95089d9a0f2b5f788f1839456102e61",
+      "name": "WeaponMesh3P",
+      "actor": "BP_M134_Weapon_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/3360a20fd777c8752cf4417e6ee1d3d3315025f5d21ed9c2727360d3c8048c7b/asset-354949a693986c2353ecd1fc/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.733265114,
+        2.202882919,
+        0.001548459,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7332651138305664,
+          2.2028829193115236,
+          0.0015484594297538478
+        ],
+        "observedGltfTranslationM": [
+          -1.733265114,
+          2.202882919,
+          0.001548459
+        ],
+        "errorMByAxis": [
+          1.6943357827869931e-10,
+          3.115236957285106e-10,
+          4.2975384774261716e-10
+        ],
+        "maxErrorCm": 4.2975384774261716e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/UH60M/Weapons/M134/M134_ShortMount_Weapon.M134_ShortMount_Weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "4545a154b095a93141c18130528fdbbe0b6b8d509b89268a0ed3d73ac151efc0",
+      "runtimeBonePoseJointCount": 11,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 12,
+        "sourceNodeStructureSha256": "d515c925e3576e3e5dc38a3e0a880d49d20779c194fc0883c4097608d1e03492",
+        "sourceSkinStructureSha256": "b920c96b011a41d128a1dc7689be032b3df83f509dff0c51df5b1bb1fd169949",
+        "sourceInverseBindStructureSha256": "f9f8fd4958ebe0b00b844fd8d447083d295cc5267253069d40c424a3f9c953c2"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 11
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-61e7a4eb1a519c0bad5ca365936c11dc16a5774c79b6ef21fa981dafb909f458",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Technical2Seater_M134_Black_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3360a20fd777c8752cf4417e6ee1d3d3315025f5d21ed9c2727360d3c8048c7b/asset-dab1c0a717882447ab5e00f7/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical2Seater/Meshes/SK_Technical_2Seater.SK_Technical_2Seater",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "54c6dc205917ce96e51623663769f0d3763bfa40448de874af871bc4a4dd785a",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "aa9169ccb9ba4e253eecf4ddd08eca3cbe18f7719e524592a14fd51437da28c3",
+        "sourceSkinStructureSha256": "40b08a84e0dfc96f1d3afda0e4927dcad4c575f788ec43b73e86de5965066c35",
+        "sourceInverseBindStructureSha256": "affd20a810e4f426b908ea15b56b0c08c73a7b9fd081858a013958b204d93271"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-3c03fa60d747ec42284cd7878da3e0853bd0dfcf240c0bed205c5772a1872bec",
+      "name": "Technical_Mount",
+      "actor": "BP_Technical2Seater_M134_Black_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3360a20fd777c8752cf4417e6ee1d3d3315025f5d21ed9c2727360d3c8048c7b/asset-9b870dfd868ced59d31db925/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.899999976,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.811002502,
+        0.957947998,
+        -2.38e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.8110025024414063,
+          0.957947998046875,
+          -2.3794569642632268e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.811002502,
+          0.957947998,
+          -2.38e-07
+        ],
+        "errorMByAxis": [
+          4.4140624488875346e-10,
+          4.687505938960612e-11,
+          5.430357367730554e-11
+        ],
+        "maxErrorCm": 4.4140624488875346e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/technical_mount.technical_mount",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "37cec19cd75f82d1d6b10b3004f40d093f9fe311706f32d4cda65c1cbe257045",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "f842d1278d7cdbe2c4ff25dd290c459e68871d68aa75259ccd907991b80911ee",
+        "sourceSkinStructureSha256": "fa09795d6bdb6437451fde62fd81ed546e14b3b0014ba0e37c4563054798dde9",
+        "sourceInverseBindStructureSha256": "70acb6b4ffb3d34b984af1f0f7d1a5cf85889c96418510214c7fdc353d0de866"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-dffbe501def8b3618bfd1dc85aaceba202df44fe15d788d996d8ad27d3b1df49",
+      "name": "StaticMesh",
+      "actor": "BP_Technical2Seater_M134_Black_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3360a20fd777c8752cf4417e6ee1d3d3315025f5d21ed9c2727360d3c8048c7b/asset-b24c909bb8ba559bbb8862fe/source.gltf",
+      "matrix": [
+        -0.999911112,
+        0.0,
+        0.013332987,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.013332987,
+        0.0,
+        -0.999911112,
+        0.0,
+        -0.810988388,
+        1.017407837,
+        -0.526150284,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8109883880615234,
+          1.0174078369140624,
+          -0.5261502838134766
+        ],
+        "observedGltfTranslationM": [
+          -0.810988388,
+          1.017407837,
+          -0.526150284
+        ],
+        "errorMByAxis": [
+          6.15234529988129e-11,
+          8.593747935492502e-11,
+          1.865233523190568e-10
+        ],
+        "maxErrorCm": 1.865233523190568e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/mortarbox.mortarbox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-804e9c36fac892478e305887ae59c4cbc31a9adc5347bbfa58c03b1dc74eae7b",
+      "name": "StaticMesh1",
+      "actor": "BP_Technical2Seater_M134_Black_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3360a20fd777c8752cf4417e6ee1d3d3315025f5d21ed9c2727360d3c8048c7b/asset-b24c909bb8ba559bbb8862fe/source.gltf",
+      "matrix": [
+        -0.999911112,
+        0.0,
+        0.013332987,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.013332988,
+        0.0,
+        -0.999911112,
+        0.0,
+        -0.810985336,
+        1.209479675,
+        -0.526150284,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.810985336303711,
+          1.2094796752929688,
+          -0.5261502838134766
+        ],
+        "observedGltfTranslationM": [
+          -0.810985336,
+          1.209479675,
+          -0.526150284
+        ],
+        "errorMByAxis": [
+          3.037109452819209e-10,
+          2.9296876036255526e-10,
+          1.865233523190568e-10
+        ],
+        "maxErrorCm": 3.037109452819209e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/mortarbox.mortarbox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-c4c304c71596c41fdd9b1adbbe755b38dba9fdc454d9e7063265dcb0db9266e5",
+      "name": "StaticMesh2",
+      "actor": "BP_Technical2Seater_M134_Black_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3360a20fd777c8752cf4417e6ee1d3d3315025f5d21ed9c2727360d3c8048c7b/asset-b24c909bb8ba559bbb8862fe/source.gltf",
+      "matrix": [
+        0.899985447,
+        0.0,
+        0.00511388,
+        0.0,
+        0.0,
+        0.899999976,
+        0.0,
+        0.0,
+        -0.005113881,
+        0.0,
+        0.899985447,
+        0.0,
+        -0.81597435,
+        1.021672592,
+        0.532692719,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8159743499755859,
+          1.021672592163086,
+          0.5326927185058594
+        ],
+        "observedGltfTranslationM": [
+          -0.81597435,
+          1.021672592,
+          0.532692719
+        ],
+        "errorMByAxis": [
+          2.4414026356112117e-11,
+          1.6308598915770744e-10,
+          4.941406173131213e-10
+        ],
+        "maxErrorCm": 4.941406173131213e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/mortarbox.mortarbox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/wpmc-technical-m134-minigun-ltv-bp-technical2seater-m134-black-six-view-qa.json",
+    "sha256": "929b421560b137c40514e0165603bd14286083b64a20348b432ad5a5547f7fac",
+    "reviewedAt": "2026-07-21T16:17:27.715997Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

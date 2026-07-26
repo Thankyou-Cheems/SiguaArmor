@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--ural-375d-transport--tran--bp_armored_ural_375_mil.visual.json.recipe.json",
+  "visualRecipeSha256": "13b8a8d9799b8382f03c428b51af860555ed62cd0cdc9002ba53e2806e028dda",
+  "cardId": "imf--ural-375d-transport--tran",
+  "factionId": "IMF",
+  "targetKey": "imf-ural-375d-transport-tran-bp-armored-ural-375-mil",
+  "rawName": "BP_Armored_Ural_375_MIL",
+  "variant": "Red",
+  "generatedClass": "/Game/Vehicles/Ural375/BP_Armored_Ural_375_MIL.BP_Armored_Ural_375_MIL_C",
+  "vehicleId": "vehicle-aa98bba4d81d29b9429555e5ee529dd14b9bd158a70c6883e9058a09c0a8bf83",
+  "identitySha256": "aa98bba4d81d29b9429555e5ee529dd14b9bd158a70c6883e9058a09c0a8bf83",
+  "packageSha256": "bbf9f5a3b238ab1b9b41312e05d8038d9388f6e0bb6669d5d85f99c4b33459f0",
+  "requiredOccurrences": 2,
+  "capturedVisibleOccurrences": 2,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 2,
+  "totalBytes": 23052734,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 53,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-b94bdcd7476af4b86b2cb3537220ebf8d70f9f50d5ca88d80a2687dd15e7eb80",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Armored_Ural_375_MIL_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bbf9f5a3b238ab1b9b41312e05d8038d9388f6e0bb6669d5d85f99c4b33459f0/asset-446b1f1c71269a038cc2006f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Ural375/Meshes/SK_Ural375.SK_Ural375",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "fe09a3dd42f7fb5748b021cf352469183f37ab605b0809ba9633d2a95e91981c",
+      "runtimeBonePoseJointCount": 53,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 54,
+        "sourceNodeStructureSha256": "df98a3cdb929a2d16e9a776ecef7dcf752caaa8cf16dc37b9584c39da8578565",
+        "sourceSkinStructureSha256": "e371c59792d2dba399a97cdb0dcc28c9123da9ede80010c78c8fc5cc5fe5ac7a",
+        "sourceInverseBindStructureSha256": "d9fa6e1ee586095c939372f6231effadff3a0e90122f2d9d15871db194ae4b6e"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 53
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-356627163a7f37a7be1d0dab7b1c9b6d5b332070498266b665c6b7fcbdfe9fc1",
+      "name": "SQArmorMesh1",
+      "actor": "BP_Armored_Ural_375_MIL_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bbf9f5a3b238ab1b9b41312e05d8038d9388f6e0bb6669d5d85f99c4b33459f0/asset-54ef13a725a7c7b15389a0ba/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Ural375/Meshes/SM_Ural375_Armour.SM_Ural375_Armour",
+      "componentClassPath": "/Script/Squad.SQArmorMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/imf/imf-ural-375d-transport-tran-bp-armored-ural-375-mil-six-view-qa.json",
+    "sha256": "34e4a69fb410ebd0c35eb29c7a687ebaee84aaa2d3103ac4c979cb71d9d7c2bf",
+    "reviewedAt": "2026-07-21T09:40:29.071690Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

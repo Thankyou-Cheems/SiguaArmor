@@ -1,0 +1,680 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m2a3--ifv--bp_bfv.visual.json.recipe.json",
+  "visualRecipeSha256": "175d4d0003404349ea2c8b5e059c7ed0e3963ed3eba0a4ed6bc9475836ee49a2",
+  "cardId": "usa--m2a3--ifv",
+  "factionId": "USA",
+  "targetKey": "usa-m2a3-ifv-bp-bfv",
+  "rawName": "BP_BFV",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/BFV/BP_BFV.BP_BFV_C",
+  "vehicleId": "vehicle-afa03670212db8e3e281e901208f3392b6ef6836cfbe0d8f9e4af2a78c16fba9",
+  "identitySha256": "afa03670212db8e3e281e901208f3392b6ef6836cfbe0d8f9e4af2a78c16fba9",
+  "packageSha256": "a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa",
+  "requiredOccurrences": 10,
+  "capturedVisibleOccurrences": 10,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 54369365,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 8,
+  "runtimeBonePoseJointCount": 78,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 3,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-7d3e8a8522c7ddffd724a977ca96d67becee51b94ae9627beb3de58769d09ae8",
+      "name": "WeaponMesh3P",
+      "actor": "BFV_M252_AP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-06a775e8697765a1d38c3437/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.19e-07,
+        0.0,
+        0.0,
+        -1.2e-07,
+        1.0,
+        0.0,
+        0.317869949,
+        2.566473885,
+        0.229653502,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.3178699493408203,
+          2.5664738845825195,
+          0.2296535015106201
+        ],
+        "observedGltfTranslationM": [
+          0.317869949,
+          2.566473885,
+          0.229653502
+        ],
+        "errorMByAxis": [
+          3.4082031641347044e-10,
+          4.174807166634764e-10,
+          4.893798977168018e-10
+        ],
+        "maxErrorCm": 4.893798977168018e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d7255d31537dc9c41019deea1a762f3155d471ebdc14edeb7c16652bcc1685f3",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "a2a5f4660d63adf92f6f6bb2c3ca852cafe3a55f00a4f01512969f31c540f44e",
+        "sourceInverseBindStructureSha256": "eae3875c1ffa46135585b8e47cc37e9ad06f601885e79ea6bbeb3648f72c78fb"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-00863f64f9683ec69fa9db9e84d7eb45f5158bd233d7ec6c6c3f2817bc9be49c",
+      "name": "WeaponMesh3P",
+      "actor": "BFV_M252_HE_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-18abfa420c778a129259934b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.19e-07,
+        0.0,
+        0.0,
+        -1.19e-07,
+        1.0,
+        0.0,
+        -0.069808121,
+        0.456243424,
+        0.091863804,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.06980812072753906,
+          0.4562434242894379,
+          0.09186380386352538
+        ],
+        "observedGltfTranslationM": [
+          -0.069808121,
+          0.456243424,
+          0.091863804
+        ],
+        "errorMByAxis": [
+          2.724609426962843e-10,
+          2.8943791807733987e-10,
+          1.3647460939125722e-10
+        ],
+        "maxErrorCm": 2.8943791807733987e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "27ac25f197dcc8d4907f4dbb41f536c783e14d313188bad359e3967932f0a896",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "a2a5f4660d63adf92f6f6bb2c3ca852cafe3a55f00a4f01512969f31c540f44e",
+        "sourceInverseBindStructureSha256": "eae3875c1ffa46135585b8e47cc37e9ad06f601885e79ea6bbeb3648f72c78fb"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-d13dc668aa5a4dbb0c31ab892f89d542705f63fb634cc798acc1939574cb49a8",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BFV_762_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-18abfa420c778a129259934b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.19e-07,
+        0.0,
+        0.0,
+        -1.19e-07,
+        1.0,
+        0.0,
+        -0.069808121,
+        0.456243424,
+        0.091863804,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.06980812072753906,
+          0.4562434242894379,
+          0.09186380386352538
+        ],
+        "observedGltfTranslationM": [
+          -0.069808121,
+          0.456243424,
+          0.091863804
+        ],
+        "errorMByAxis": [
+          2.724609426962843e-10,
+          2.8943791807733987e-10,
+          1.3647460939125722e-10
+        ],
+        "maxErrorCm": 2.8943791807733987e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "27ac25f197dcc8d4907f4dbb41f536c783e14d313188bad359e3967932f0a896",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "a2a5f4660d63adf92f6f6bb2c3ca852cafe3a55f00a4f01512969f31c540f44e",
+        "sourceInverseBindStructureSha256": "eae3875c1ffa46135585b8e47cc37e9ad06f601885e79ea6bbeb3648f72c78fb"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-d58c0b6b1291a3d08c819c90763f6f7b0c9af14dff703ca09161b9f73d25968f",
+      "name": "Vehicle Mesh",
+      "actor": "BP_BFV_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-51a47255c8111a95d1d42d65/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV.BFV",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "c86d69424d165952cbc0262a3ec352753e4a73f9a2a63a5bc22649c9ffccf9ae",
+      "runtimeBonePoseJointCount": 47,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 48,
+        "sourceNodeStructureSha256": "40e27b4cd1f686e751dd5e8dca503233b63026e86a4b7cb4359f6ad9b86b88f3",
+        "sourceSkinStructureSha256": "affd590a44e5ad9f4ac0254a2bbd10d7f6e7ed3d44136c786d4ac1f3b279c84e",
+        "sourceInverseBindStructureSha256": "218f12e151d835c138b403a9da7e57fdf19d9b215b96e40d60ea77ee6fa05102"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 47
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-4c0b18e84b04a65704086500bad81dae20d0a901c0a591a6cec3ef805a2a2f43",
+      "name": "HullDecoration",
+      "actor": "BP_BFV_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-159ceb83f1355e3d418e70f4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/SM_BFV_Decoration_Body.SM_BFV_Decoration_Body",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-81d22b8ea7a03f8f509a866ac0109b75ea3897fe3bb4da759ae94a1f91ad4e9d",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_BFV_CmdrScope_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-c93aa95b0323621d83b3133b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.438825989,
+        3.002593994,
+        1.104642115,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.4388259887695312,
+          3.002593994140625,
+          1.1046421146392822
+        ],
+        "observedGltfTranslationM": [
+          -1.438825989,
+          3.002593994,
+          1.104642115
+        ],
+        "errorMByAxis": [
+          2.3046875519128207e-10,
+          1.4062484510191098e-10,
+          3.607178999942562e-10
+        ],
+        "maxErrorCm": 3.607178999942562e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_CmdrScope.BFV_CmdrScope",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "fc5f5d2171132e91e61999dd9d653848bc86698931a487f6fe3c28296eac2e0f",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "55fe4d2a9355251f66b4f6d43fdca22ddf789a459eae9dcc56eeabbe2e456b2c",
+        "sourceSkinStructureSha256": "d59b48bd4143ddccd23b904cc3b830614267b798382a73c72e56d0faa361048f",
+        "sourceInverseBindStructureSha256": "8eabcf5697814ae4fa71fbdf2b2d3beab6f323dd0357fbd63ecdcad89692f6f9"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-79ce9cd4b5e1d3714ae600bb2856bf5aa57fd40f71550ebb08b0a29e6a4d5e98",
+      "name": "BFV_turret",
+      "actor": "BP_BFV_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-f6e77449ba3a8bf1b94072f7/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.33232193,
+        2.123433533,
+        0.137789698,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.3323219299316406,
+          2.1234335327148437,
+          0.13778969764709473
+        ],
+        "observedGltfTranslationM": [
+          -0.33232193,
+          2.123433533,
+          0.137789698
+        ],
+        "errorMByAxis": [
+          6.835937371718614e-11,
+          2.8515634298287296e-10,
+          3.5290526056996896e-10
+        ],
+        "maxErrorCm": 3.5290526056996896e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_turret.BFV_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ad682dbe50a63874827c315e22a6033fe5824536414ed52a38f28b88bb220f51",
+      "runtimeBonePoseJointCount": 19,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 20,
+        "sourceNodeStructureSha256": "959087ffd0b350cf3c71ff585d69a22372cbf5f4916ebf3f0590308d74e23375",
+        "sourceSkinStructureSha256": "b398634cd7962eefd3ea7489edac5e910fc8a7ad0ad0792520f13b2e364a0446",
+        "sourceInverseBindStructureSha256": "ee877e54adc9fa531c188d2f203fd4fcf6e70883370641f5a38fc97f8900b296"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 19
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-423f2574078b277489c1ecbdc28678af66aba83c1e12786eb9b3fd9ee3a37ee7",
+      "name": "Decoration",
+      "actor": "BP_BFV_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-dddd7d1513d148627a7de68f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.346329498,
+        2.123433533,
+        0.088642626,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.3463294982910156,
+          2.1234335327148437,
+          0.08864262580871582
+        ],
+        "observedGltfTranslationM": [
+          -0.346329498,
+          2.123433533,
+          0.088642626
+        ],
+        "errorMByAxis": [
+          2.9101560050648345e-10,
+          2.8515634298287296e-10,
+          1.912841829376788e-10
+        ],
+        "maxErrorCm": 2.9101560050648345e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/SM_BFV_Decoration_Turret.SM_BFV_Decoration_Turret",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-035e53621abc46d45eda2bd59e8d0e37db2942d5cbdec397bba68a2384ae757e",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BFV_vehicleTOW_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-18abfa420c778a129259934b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.19e-07,
+        0.0,
+        0.0,
+        -1.19e-07,
+        1.0,
+        0.0,
+        -0.069808121,
+        0.456243424,
+        0.091863804,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.06980812072753906,
+          0.4562434242894379,
+          0.09186380386352538
+        ],
+        "observedGltfTranslationM": [
+          -0.069808121,
+          0.456243424,
+          0.091863804
+        ],
+        "errorMByAxis": [
+          2.724609426962843e-10,
+          2.8943791807733987e-10,
+          1.3647460939125722e-10
+        ],
+        "maxErrorCm": 2.8943791807733987e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "27ac25f197dcc8d4907f4dbb41f536c783e14d313188bad359e3967932f0a896",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "a2a5f4660d63adf92f6f6bb2c3ca852cafe3a55f00a4f01512969f31c540f44e",
+        "sourceInverseBindStructureSha256": "eae3875c1ffa46135585b8e47cc37e9ad06f601885e79ea6bbeb3648f72c78fb"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8513cab5ddfbcb7039ec92f2ed81fad36ce890fd3e70d430f8e4bd312a417bb4",
+      "name": "WeaponMesh3P",
+      "actor": "Smoke_Launcher_BFV_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa/asset-18abfa420c778a129259934b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.19e-07,
+        0.0,
+        0.0,
+        -1.19e-07,
+        1.0,
+        0.0,
+        -0.069808121,
+        0.456243424,
+        0.091863804,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.06980812072753906,
+          0.4562434242894379,
+          0.09186380386352538
+        ],
+        "observedGltfTranslationM": [
+          -0.069808121,
+          0.456243424,
+          0.091863804
+        ],
+        "errorMByAxis": [
+          2.724609426962843e-10,
+          2.8943791807733987e-10,
+          1.3647460939125722e-10
+        ],
+        "maxErrorCm": 2.8943791807733987e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "27ac25f197dcc8d4907f4dbb41f536c783e14d313188bad359e3967932f0a896",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fbfa4b2e76b4f1ea584bccc049585751b0113051fa9344613697ff4e4a5d54c",
+        "sourceSkinStructureSha256": "a2a5f4660d63adf92f6f6bb2c3ca852cafe3a55f00a4f01512969f31c540f44e",
+        "sourceInverseBindStructureSha256": "eae3875c1ffa46135585b8e47cc37e9ad06f601885e79ea6bbeb3648f72c78fb"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usa-m2a3-ifv-bp-bfv-six-view-qa.json",
+    "sha256": "8cf8a529cbda13fc8bb335c49737607c7c3cf3292a97ae110732244d7242f1e2",
+    "reviewedAt": "2026-07-21T16:16:16.885095Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

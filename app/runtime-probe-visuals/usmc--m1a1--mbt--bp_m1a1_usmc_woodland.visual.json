@@ -1,0 +1,482 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--m1a1--mbt--bp_m1a1_usmc_woodland.visual.json.recipe.json",
+  "visualRecipeSha256": "de22a124e01d0091e33f890ff0455b6e53672413c22cea0ba9865ab317933ad8",
+  "cardId": "usmc--m1a1--mbt",
+  "factionId": "USMC",
+  "targetKey": "usmc-m1a1-mbt-bp-m1a1-usmc-woodland",
+  "rawName": "BP_M1A1_USMC_Woodland",
+  "variant": "Woodland",
+  "generatedClass": "/Game/Vehicles/M1A1_USMC/BP_M1A1_USMC_Woodland.BP_M1A1_USMC_Woodland_C",
+  "vehicleId": "vehicle-54dd493e9c9aadd8c05600112977f88b870d4751b15476c3b0c5c4df93bab9fa",
+  "identitySha256": "54dd493e9c9aadd8c05600112977f88b870d4751b15476c3b0c5c4df93bab9fa",
+  "packageSha256": "13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 69922805,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 100,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 4,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-188f310ba63f1bd0a5e73853407e7a557bc955c594cfe466a358afd953ba5567",
+      "name": "WeaponMesh3P",
+      "actor": "BP_M1A1_USMC_Cmdr_M2_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d/asset-cd39bb4ec6a095f108e1c990/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.084315224,
+        2.983411255,
+        0.656397464,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.08431522369384767,
+          2.9834112548828124,
+          0.6563974642862064
+        ],
+        "observedGltfTranslationM": [
+          0.084315224,
+          2.983411255,
+          0.656397464
+        ],
+        "errorMByAxis": [
+          3.061523257130716e-10,
+          1.1718759296286407e-10,
+          2.8620639191956343e-10
+        ],
+        "maxErrorCm": 3.061523257130716e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A1_USMC/Meshes/Commander_Cupola/M2_M1A1_Cupola.M2_M1A1_Cupola",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "5f3a9a177a3ac2bae941a0cee68c3986be1997e2f95925730cb92665e19ce49d",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "8a1af182a0175c0a8cb99596855caa201e0049f4b32c14ccc13b5359f94e8461",
+        "sourceSkinStructureSha256": "c76ae5a6ab17c5840226bf7f43d9603873dd7fe2725e344e7ccbbcde7178242f",
+        "sourceInverseBindStructureSha256": "7fdb9b6eebbd688f10b85a1a6ea8b8d3c9815db72b4fae837350b33cdcc76f65"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-34dff71b264fbd5bb443e6510c2aee56e7114684f4b3c5b6c328eba85a8d579c",
+      "name": "SkeletalMesh",
+      "actor": "BP_M1A1_USMC_Commander_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d/asset-49c6e9ee1dc19c34b9939b77/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.596111794,
+        2.552290421,
+        0.656397464,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.5961117935180663,
+          2.552290420532226,
+          0.6563974643914458
+        ],
+        "observedGltfTranslationM": [
+          -0.596111794,
+          2.552290421,
+          0.656397464
+        ],
+        "errorMByAxis": [
+          4.819337151573677e-10,
+          4.67773819678996e-10,
+          3.9144576469141157e-10
+        ],
+        "maxErrorCm": 4.819337151573677e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A1_USMC/Meshes/Commander_Cupola/M1A1_Cmdr_Cupola_Closed.M1A1_Cmdr_Cupola_Closed",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "4e06fe223572d36f9c5a69504f5a966f8fed97d84f89feaaf025b6a9bf73415a",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "f842d1278d7cdbe2c4ff25dd290c459e68871d68aa75259ccd907991b80911ee",
+        "sourceSkinStructureSha256": "b7903809efdad1b84fc4f7c535ea094bc6fa4dd2a2c7159f38bf14d0ffe13171",
+        "sourceInverseBindStructureSha256": "e9297bfefdbd90a3f6f13f422588ba8b00352d74e9e7408b9e91f314b5e361db"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-9d82d64cdf65d187a0434c774c69a41c6a6184b7df33a095bc82f59c8448bc07",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_M1A1_USMC_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d/asset-23052537b0c2357321669b15/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.546779175,
+        0.149999988,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          5.703310003088436e-17,
+          1.5467791748046875,
+          0.14999998819515667
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          1.546779175,
+          0.149999988
+        ],
+        "errorMByAxis": [
+          5.703310003088436e-17,
+          1.9531243289350186e-10,
+          1.9515666860314695e-10
+        ],
+        "maxErrorCm": 1.9531243289350186e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A1_USMC/Meshes/M1A1_USMC_Turret.M1A1_USMC_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "478d52c222e0ce839b5b2168904b9ecb45a7153e8080200b3a39e812cc49a811",
+      "runtimeBonePoseJointCount": 12,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 13,
+        "sourceNodeStructureSha256": "efd1a481399eb2f16e34f29b8c269e2e3d99dbcb8228bfed6697b1b293d43987",
+        "sourceSkinStructureSha256": "b2558761d3c7f550a515e4b41a976db30336854157609422e404a787b9897b83",
+        "sourceInverseBindStructureSha256": "0a040ebe42148b5b26800a89335c588e37eaa84f610e777693ef266e83292a7c"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 12
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-d353d735345ea1632c11c83dbe43ebace522c19bf7fb076cb25f87173448271f",
+      "name": "SkeletalMesh",
+      "actor": "BP_M1A1_USMC_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d/asset-32e6ffe0ab2eaa55f9cc3c10/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.6,
+        2.008579865,
+        0.150000008,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.6,
+          2.0085798645019532,
+          0.15000000838110514
+        ],
+        "observedGltfTranslationM": [
+          1.6,
+          2.008579865,
+          0.150000008
+        ],
+        "errorMByAxis": [
+          0.0,
+          4.980469370252649e-10,
+          3.8110514744005286e-10
+        ],
+        "maxErrorCm": 4.980469370252649e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A2/Meshes/M1A1/m1a2_maingun.m1a2_maingun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "43916c6ef36dae538254d76b3084611fbe9ea636c22893472b1470bf28509415",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "d89af1ac7a9280919c56eadfc92bd43c5f26562c4a73bf1914262dbe93c341db",
+        "sourceSkinStructureSha256": "b41c400642e23a3f27251c10f5c200c9d42554eaf5f44652a1b40b7f178ac78c",
+        "sourceInverseBindStructureSha256": "0fcd00c2a912e0628b42101b94f5cee49cbdf0ff6435148c37b9a64e6f689a42"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-dd24049c2e47344c9199fb7bbb5da2d12aece494d2c6777cae16c06da16b322d",
+      "name": "M1A1_Decoration",
+      "actor": "BP_M1A1_USMC_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d/asset-5bde1667eba90124a08a7784/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.546779175,
+        0.149999988,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          5.703310003088436e-17,
+          1.5467791748046875,
+          0.14999998819515667
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          1.546779175,
+          0.149999988
+        ],
+        "errorMByAxis": [
+          5.703310003088436e-17,
+          1.9531243289350186e-10,
+          1.9515666860314695e-10
+        ],
+        "maxErrorCm": 1.9531243289350186e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A1_USMC/Meshes/SM_M1A1_USMC_Decoration.SM_M1A1_USMC_Decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-67c09d4d36961281fe5f702a51fd1e7dd6e5fc3f0c5b4fba8b17bfb43f7a12f3",
+      "name": "Vehicle Mesh",
+      "actor": "BP_M1A1_USMC_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d/asset-3442350d264d03baf1886023/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A2/Meshes/M1A1/M1A2_Body.M1A2_Body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d40de5f9a70fe9261ad9b4998a99a6c5c3984dad63222d986dc377f025f582e3",
+      "runtimeBonePoseJointCount": 53,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 54,
+        "sourceNodeStructureSha256": "e891489b8bf1c3efa192ec1df7b15ec87b4fcfa8369da62be81ee4c3c9481978",
+        "sourceSkinStructureSha256": "18c88508ecbdb0227f319a9b339e1af3d9f10d25c69f7ea0dd52c339e47f677a",
+        "sourceInverseBindStructureSha256": "3354b0354b7f7e52350d2067cd38b65f26609ed949f8b2f99b3f791affa21bee"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 53
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-f4840146b9c815c324d7fcecffa3f08c2fe48cd8e8a24d3c98b19fd76d95614d",
+      "name": "M1A1_Camonetting_MainBody",
+      "actor": "BP_M1A1_USMC_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/13a8ee05fa2281f79188b6713995043f7e2290a32dadf62b0f0b342864500d9d/asset-d34b7b5b24ca451e79132913/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A2/Meshes/M1A1/M1A1_Camonetting_MainBody.M1A1_Camonetting_MainBody",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usmc-m1a1-mbt-bp-m1a1-usmc-woodland-six-view-qa.json",
+    "sha256": "afc7e8ff016c134fd1e3a19245fd5c2b332dc8a9507f80ded51c1c9431a4e2bf",
+    "reviewedAt": "2026-07-21T16:16:37.139614Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

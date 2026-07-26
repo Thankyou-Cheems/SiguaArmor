@@ -1,0 +1,572 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1151-crows-m2--mrap--bp_m1151_crows_woodland.visual.json.recipe.json",
+  "visualRecipeSha256": "16443b44cb947532e15e2f57d5907fa3f749b1062391dc9947c68efe72d902f7",
+  "cardId": "usa--m1151-crows-m2--mrap",
+  "factionId": "USA",
+  "targetKey": "usa-m1151-crows-m2-mrap-bp-m1151-crows-woodland",
+  "rawName": "BP_M1151_CROWS_Woodland",
+  "variant": "Woodland",
+  "generatedClass": "/Game/Vehicles/M1151/BP_M1151_CROWS_Woodland.BP_M1151_CROWS_Woodland_C",
+  "vehicleId": "vehicle-189001a66471e1f0ef667b5da2301daf29ec06d594c122b1626cc89f4a47f1ab",
+  "identitySha256": "189001a66471e1f0ef667b5da2301daf29ec06d594c122b1626cc89f4a47f1ab",
+  "packageSha256": "0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a",
+  "requiredOccurrences": 10,
+  "capturedVisibleOccurrences": 10,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 10,
+  "totalBytes": 121810494,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 2,
+  "runtimeBonePoseJointCount": 68,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-735f7684575b4dfad555fe0ca605661d5358b4956592bc1ce17339e09b04e7e0",
+      "name": "WeaponMesh3P",
+      "actor": "BP_CROWS_M2_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-1f7423a0fe632fbfc4bf5df1/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.674046402,
+        2.455427451,
+        -3.12e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.6740464019775391,
+          2.455427451133728,
+          -3.117796489959307e-07
+        ],
+        "observedGltfTranslationM": [
+          0.674046402,
+          2.455427451,
+          -3.12e-07
+        ],
+        "errorMByAxis": [
+          2.2460922011191542e-11,
+          1.337281396729395e-10,
+          2.2035100406929256e-10
+        ],
+        "maxErrorCm": 2.2035100406929256e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "2012b405b5ecbc090f6244afc24237998f8036e19819abf43507a4a9488b0ea6",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "0b44af30ee313dc8e9932d70b89ef8b5a7a2a047a518fe9c40ac07bf1a300d9d",
+        "sourceSkinStructureSha256": "502b411dfafe07a9cde0ac3cc5f0f3e84d97a1c17c387c1b072cf012c18fdcf5",
+        "sourceInverseBindStructureSha256": "d1416fc0d25103f1d25a025c20b9eb3dde83023c4bf2dc3ba42f2489dbd8359a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-c3a0eb7d84088df5d4b03f220a9b0404693f6c3a78d88b38e0d967112522b3ee",
+      "name": "crows_turret_static_mesh",
+      "actor": "BP_CROWS_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-17399e05f1669d0abfce6b63/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.674046402,
+        1.861656089,
+        -3.12e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.6740464019775391,
+          1.8616560888290403,
+          -3.117796489959115e-07
+        ],
+        "observedGltfTranslationM": [
+          0.674046402,
+          1.861656089,
+          -3.12e-07
+        ],
+        "errorMByAxis": [
+          2.2460922011191542e-11,
+          1.7095969084834906e-10,
+          2.2035100408850962e-10
+        ],
+        "maxErrorCm": 2.2035100408850962e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/crows_turret_static_mesh.crows_turret_static_mesh",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e9b87d84059dafcd796584d4a6366e9d83c7d1ce76d73c9f7a07ad4ab861867f",
+      "name": "Vehicle Mesh",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-38f50ffc8ad2631d19fb6ae5/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SK_M1151.SK_M1151",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "34b0ac6373043b98220c360f2352d7807d03165c34732d13dd488476050fcb48",
+      "runtimeBonePoseJointCount": 63,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 64,
+        "sourceNodeStructureSha256": "b8e611844d021b047df47bf8912e8a7ee60ba52094faf14ad29a936c01382eb6",
+        "sourceSkinStructureSha256": "7d02375cafc7946aba195dbd2791b3c30431bcc8de59f836baef8b18b859832e",
+        "sourceInverseBindStructureSha256": "938948fb7c8cce28176e9529a74b73df787370e95af313cb02f1ea5bd2245004"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 63
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-48814bc60b985213e89ecef0121323512db81b48ffc03f955b77489b319b48b8",
+      "name": "hmmwv_interior_decoration",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-7dac392c9f2b18ff0e9aac61/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.291899414,
+        1.443727264,
+        0.983759918,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.2918994140625,
+          1.4437272644042969,
+          0.9837599182128907
+        ],
+        "observedGltfTranslationM": [
+          -1.291899414,
+          1.443727264,
+          0.983759918
+        ],
+        "errorMByAxis": [
+          6.250000517127319e-11,
+          4.042968182460527e-10,
+          2.1289070506469443e-10
+        ],
+        "maxErrorCm": 4.042968182460527e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SM_M1151_Interior_Deco.SM_M1151_Interior_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-616c0e2c2ae07ecc7c0899f027ad7afdba6d77847f759e47492bc05e7c8beeab",
+      "name": "razorwire",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        1.489968924,
+        -0.173183728,
+        0.0,
+        0.0,
+        0.115455818,
+        0.993312616,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.5,
+        0.0,
+        1.479674683,
+        1.349351654,
+        0.023326206,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.4796746826171876,
+          1.3493516540527344,
+          0.02332620620727539
+        ],
+        "observedGltfTranslationM": [
+          1.479674683,
+          1.349351654,
+          0.023326206
+        ],
+        "errorMByAxis": [
+          3.8281244840732143e-10,
+          5.273448344667031e-11,
+          2.072753912951697e-10
+        ],
+        "maxErrorCm": 3.828124484073214e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-79389762bd4daa1005192c614e9edc776d11806f51ea0d7f4e180cc9e1519f6f",
+      "name": "Camnet",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-8f3cf686d71edb79c8d7f1a4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SM_M1151_Camonet_Deco.SM_M1151_Camonet_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-87aa79aefd9e9d61b8e6960c8fc76f71f408dbcaec12227e13f8b70e62cf0acf",
+      "name": "hmmwv_closed_hatch",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-de151ac950865c6c5e21ccf4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.069285755,
+        1.86504354,
+        7.318e-06,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.06928575515747074,
+          1.8650435400009155,
+          7.3176148822540765e-06
+        ],
+        "observedGltfTranslationM": [
+          -0.069285755,
+          1.86504354,
+          7.318e-06
+        ],
+        "errorMByAxis": [
+          1.5747073089933394e-10,
+          9.15489906105904e-13,
+          3.8511774592361767e-10
+        ],
+        "maxErrorCm": 3.8511774592361767e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Weapons/Crows/hmmwv_closed_hatch.hmmwv_closed_hatch",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-816be7dd6dd30792fd8b16c023c37856f145e88d408b65963f177447b5e72c5f",
+      "name": "crows_joystick",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-e42c9a043aa51e51a388da90/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.445373535,
+        0.832868018,
+        -0.385634505,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.44537353515625,
+          0.8328680181503297,
+          -0.3856345052000591
+        ],
+        "observedGltfTranslationM": [
+          -0.445373535,
+          0.832868018,
+          -0.385634505
+        ],
+        "errorMByAxis": [
+          1.5625001292818297e-10,
+          1.5032974864936932e-10,
+          2.0005908041298426e-10
+        ],
+        "maxErrorCm": 2.0005908041298426e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Weapons/Crows/crows_joystick.crows_joystick",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-dfdde2a7b47bdb1109b8d961e64cd9b9f20db1902ce9291f3d1cc7bcdce2d56f",
+      "name": "Crows_screen",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-53af4a98857eb1154f6d2668/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.137723637,
+        1.342375541,
+        -0.711414267,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.13772363662719728,
+          1.342375540733337,
+          -0.7114142674681255
+        ],
+        "observedGltfTranslationM": [
+          -0.137723637,
+          1.342375541,
+          -0.711414267
+        ],
+        "errorMByAxis": [
+          3.7280273312845225e-10,
+          2.666629139724819e-10,
+          4.681255383331973e-10
+        ],
+        "maxErrorCm": 4.6812553833319726e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Weapons/Crows/Crows_screen.Crows_screen",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-14fc3c36b3b59fd96244b2a06f2e72e9d435da82fd2eba05ef156bd9b07869d1",
+      "name": "crows_base",
+      "actor": "BP_M1151_CROWS_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/0d1392f135c4b31e24fbfff2bdd8a1afc421a9056fdf0fd36557151ac90b684a/asset-28def6205a1a256b2ca1750f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.674046402,
+        1.861656089,
+        -3.12e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.6740464019775391,
+          1.8616560888290403,
+          -3.117796489959115e-07
+        ],
+        "observedGltfTranslationM": [
+          0.674046402,
+          1.861656089,
+          -3.12e-07
+        ],
+        "errorMByAxis": [
+          2.2460922011191542e-11,
+          1.7095969084834906e-10,
+          2.2035100408850962e-10
+        ],
+        "maxErrorCm": 2.2035100408850962e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Weapons/Crows/crows_base.crows_base",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usa-m1151-crows-m2-mrap-bp-m1151-crows-woodland-six-view-qa.json",
+    "sha256": "07727435c129237e5285ff89abc0a1b4637fa16bfbb17809b2b4b35a69d9b3c1",
+    "reviewedAt": "2026-07-21T16:16:09.421898Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

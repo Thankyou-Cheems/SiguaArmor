@@ -1,0 +1,4407 @@
+{
+  "schemaVersion": "runtime-visual-selection-policy/v1",
+  "globalSuppressions": [
+    {
+      "id": "rhib-interior-mask-mesh",
+      "label": "SUPPRESS RHIB INTERIOR MASK MESH",
+      "reason": "runtime-interior-mask-material-is-not-visual-geometry",
+      "componentNames": [
+        "RHIB_BoatInterior_MaskMesh"
+      ],
+      "sourceMeshPaths": [
+        "/Game/Vehicles/RHIB/Meshes/RHIB_BoatInterior_MaskMesh.RHIB_BoatInterior_MaskMesh"
+      ]
+    },
+    {
+      "id": "lav6-inactive-root-crows-armor-proxy",
+      "label": "SUPPRESS INACTIVE LAV6 ROOT CROWS ARMOR PROXY",
+      "reason": "inactive-unmounted-armor-proxy-at-vehicle-root",
+      "componentNames": [
+        "SQArmorMeshCrowsBase"
+      ],
+      "sourceMeshPaths": [
+        "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_base.crows_base"
+      ],
+      "actorIncludes": [
+        "BP_LAV6_Desert_C_0",
+        "BP_LAV6_Woodland_C_0"
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "cardId": "gfi--brdm-2-ub-32--rsv",
+      "rawName": "BP_BRDM-2_GFI",
+      "selectionMode": "exact-active-weapon-occurrence",
+      "label": "RETAIN TURRET-MOUNTED UB-32; SUPPRESS CHASSIS DUPLICATES",
+      "target": {
+        "componentName": "WeaponMesh3P",
+        "actorIncludes": [
+          "BP_BRDM2_GFI_KPVT_C_0"
+        ]
+      },
+      "suppressComponentNames": [
+        "WeaponMesh3P"
+      ]
+    },
+    {
+      "cardId": "plaagf--zbd05--ifv",
+      "rawName": "BP_ZBD05_HJ73C_Woodland",
+      "selectionMode": "turret-skeletal-mesh-only",
+      "label": "TURRET SKELETALMESH",
+      "target": {
+        "componentName": "SkeletalMesh",
+        "actorIncludes": [
+          "BP_ZBD05_Turret_HJ73C"
+        ]
+      },
+      "suppressComponentNames": [
+        "WeaponMesh3P",
+        "SkeletalMesh"
+      ]
+    },
+    {
+      "cardId": "planmc--zbd05--ifv",
+      "rawName": "BP_ZBD05_HJ73C",
+      "selectionMode": "turret-skeletal-mesh-only",
+      "label": "TURRET SKELETALMESH",
+      "target": {
+        "componentName": "SkeletalMesh",
+        "actorIncludes": [
+          "BP_ZBD05_Turret_HJ73C"
+        ]
+      },
+      "suppressComponentNames": [
+        "WeaponMesh3P",
+        "SkeletalMesh"
+      ]
+    },
+    {
+      "cardId": "plaagf--zbl08--ifv",
+      "rawName": "BP_ZBL08_HJ73C",
+      "selectionMode": "turret-skeletal-mesh-only",
+      "label": "TURRET SKELETALMESH + CANNON",
+      "target": {
+        "componentName": "SkeletalMesh",
+        "actorIncludes": [
+          "BP_ZBL08_Turret_HJ73C"
+        ]
+      },
+      "suppressComponentNames": [
+        "WeaponMesh3P",
+        "SkeletalMesh"
+      ]
+    },
+    {
+      "cardId": "imf--technical-spg-9--td",
+      "rawName": "BP_Armored_Technical2Seater_Camo_SPG9",
+      "selectionMode": "exact-actor-component-suppression",
+      "label": "RETAIN ACTIVE SPG9; SUPPRESS FRAG DUPLICATE",
+      "target": {
+        "componentName": "WeaponMesh3P",
+        "actorIncludes": [
+          "BP_SPG9_C_"
+        ]
+      },
+      "suppressActorIncludes": [
+        "BP_SPG9_Frag_C_"
+      ],
+      "suppressComponentNames": [
+        "WeaponMesh3P",
+        "Scope"
+      ]
+    },
+    {
+      "cardId": "imf--technical-spg-9--td",
+      "rawName": "BP_Technical2Seater_Camo_SPG9",
+      "selectionMode": "exact-actor-component-suppression",
+      "label": "RETAIN ACTIVE SPG9; SUPPRESS FRAG DUPLICATE",
+      "target": {
+        "componentName": "WeaponMesh3P",
+        "actorIncludes": [
+          "BP_SPG9_C_"
+        ]
+      },
+      "suppressActorIncludes": [
+        "BP_SPG9_Frag_C_"
+      ],
+      "suppressComponentNames": [
+        "WeaponMesh3P",
+        "Scope"
+      ]
+    },
+    {
+      "cardId": "mei--technical-spg-9--td",
+      "rawName": "BP_Technical_SPG9_INS_Armoured",
+      "selectionMode": "exact-actor-component-suppression",
+      "label": "RETAIN ACTIVE SPG9; SUPPRESS FRAG DUPLICATE",
+      "target": {
+        "componentName": "WeaponMesh3P",
+        "actorIncludes": [
+          "BP_SPG9_C_"
+        ]
+      },
+      "suppressActorIncludes": [
+        "BP_SPG9_Frag_C_"
+      ],
+      "suppressComponentNames": [
+        "WeaponMesh3P",
+        "Scope"
+      ]
+    },
+    {
+      "cardId": "mei--technical-spg-9--td",
+      "rawName": "BP_Technical2Seater_White_SPG9",
+      "selectionMode": "exact-actor-component-suppression",
+      "label": "RETAIN ACTIVE SPG9; SUPPRESS FRAG DUPLICATE",
+      "target": {
+        "componentName": "WeaponMesh3P",
+        "actorIncludes": [
+          "BP_SPG9_C_"
+        ]
+      },
+      "suppressActorIncludes": [
+        "BP_SPG9_Frag_C_"
+      ],
+      "suppressComponentNames": [
+        "WeaponMesh3P",
+        "Scope"
+      ]
+    }
+  ],
+  "synchronizedWeaponPolicy": {
+    "schemaVersion": "runtime-visual-weapon-synchronization/v1",
+    "sourceVisualIndex": "app/runtime-probe-visual-index.json",
+    "sourceVisualDescriptorCount": 604,
+    "comparison": {
+      "grouping": "componentName=WeaponMesh3P + immediate parent actor class + source mesh",
+      "activePredicate": "weapon owner actor world transform equals its immediate parent actor world transform",
+      "translationToleranceCm": 0.05,
+      "rotationToleranceDeg": 0.05,
+      "scaleTolerance": 0.0005,
+      "ambiguousDisposition": "fail-closed"
+    },
+    "counts": {
+      "analyzedSourceVehicleCount": 471,
+      "staleGroupCount": 84,
+      "affectedSourceVehicleCount": 84,
+      "affectedBindingCount": 91,
+      "suppressedOccurrenceCount": 211,
+      "fullySynchronizedMultiOccurrenceGroupCount": 3,
+      "ambiguousGroupCount": 0
+    },
+    "groups": [
+      {
+        "groupId": "weapon-sync-01b0d6086fdac0754dfa4195",
+        "bindings": [
+          {
+            "cardId": "rgf--btr-82a--apc",
+            "rawName": "BP_BTR82A_RUS"
+          }
+        ],
+        "sourceVehicleId": "vehicle-7f2d7cf60e622ce146df7ee159ab191b5b85cc343f28617df7e427bebf970a4f",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--btr-82a--apc--bp_btr82a_rus.visual.json.recipe.json",
+        "visualRecipeSha256": "f210d1fb0fc6ab1568804801d7b7e989ac89b260a675028e3d86f816199701fb",
+        "parentActorClassPath": "/Game/Vehicles/BTR80/82A/BP_BTR82A_turret.BP_BTR82A_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/82A/Meshes/BTR_82A_gun.BTR_82A_gun",
+        "activeActor": "BP_BTR82A_RUS_2A72_AP_C_1",
+        "activeParentActor": "BP_BTR82A_turret_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR82A_PKT_C_1",
+          "BP_BTR82A_RUS_2A72_HE_C_1",
+          "BP_BTR82A_RUS_Smoke_Launcher_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR82A_turret_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR82A_PKT_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_2A72_HE_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_Smoke_Launcher_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-0b624372f1928f5db67551d0",
+        "bindings": [
+          {
+            "cardId": "pla--zbl08--ifv",
+            "rawName": "BP_ZBL08_HJ73C"
+          },
+          {
+            "cardId": "plaagf--zbl08--ifv",
+            "rawName": "BP_ZBL08_HJ73C"
+          }
+        ],
+        "sourceVehicleId": "vehicle-0ae1a4fa360e1b69217db6d85073e7767ef3f0162e8d5646dd8a748e00f43b40",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--zbl08--ifv--bp_zbl08_hj73c.visual.json.recipe.json",
+        "visualRecipeSha256": "0f4a70f7f86db6fb39fd8e7ef032ebf08e916146a5bdb88db9dc6707e1e77600",
+        "parentActorClassPath": "/Game/Vehicles/ZBL08/Turrets/BP_ZBL08_Turret_HJ73C.BP_ZBL08_Turret_HJ73C_C",
+        "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_Gun.ZBL08_Gun",
+        "activeActor": "BP_ZBL08_ZPT-99_APFSDS_C_0",
+        "activeParentActor": "BP_ZBL08_Turret_HJ73C_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZBL08_HJ73C_ATGM_C_0",
+          "BP_ZBL08_QTJ02_C_0",
+          "BP_ZBL08_Smoke_Launcher_C_0",
+          "BP_ZBL08_ZPT-99_HEFrag_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZBL08_Turret_HJ73C_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZBL08_HJ73C_ATGM_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 120.98187633700816,
+            "rotationDeltaDeg": 0.10650236775347473,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBL08_QTJ02_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 120.98187633700816,
+            "rotationDeltaDeg": 0.10650236775347473,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBL08_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 120.98187633700816,
+            "rotationDeltaDeg": 0.10650236775347473,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBL08_ZPT-99_HEFrag_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 120.98187633700816,
+            "rotationDeltaDeg": 0.10650236775347473,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-0b7821ed493a3483c0f67c2c",
+        "bindings": [
+          {
+            "cardId": "caf--coyote--ifv",
+            "rawName": "BP_LAV2_Coyote_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-d1f19beef51c84cef59b7aa425432a02311a58b230abcfb2390606bb5093f3b5",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--coyote--ifv--bp_lav2_coyote_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "d8b6ee4b22ba9b2e77e2bc8e65565c5967e8fd293d508c251848c04a00db7aa8",
+        "parentActorClassPath": "/Game/Vehicles/Coyote/Turrets/BP_LAV2_Coyote_Turret_Woodland.BP_LAV2_Coyote_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+        "activeActor": "Coyote_M252_AP_Woodland_C_0",
+        "activeParentActor": "BP_LAV2_Coyote_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Coyote_762_Woodland_C_0",
+          "Coyote_M252_HE_Woodland_C_0",
+          "Smoke_Launcher_Coyote_Woodland_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_LAV2_Coyote_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Coyote_762_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10570748120995,
+            "rotationDeltaDeg": 0.5904577344176719,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Coyote_M252_HE_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10570748120995,
+            "rotationDeltaDeg": 0.5904577344176719,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_Coyote_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10570748120995,
+            "rotationDeltaDeg": 0.5904577344176719,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-1093f62b53178a0b1bdc7993",
+        "bindings": [
+          {
+            "cardId": "wpmc--m1117--mrap",
+            "rawName": "BP_M1117"
+          }
+        ],
+        "sourceVehicleId": "vehicle-21c53562f4320654a5bbfb69fd06e6e4ddc3c1120ce8ddbe6aed06f09468d793",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/wpmc--m1117--mrap--bp_m1117.visual.json.recipe.json",
+        "visualRecipeSha256": "c8076a09c76614682702b62ffdecf02deb52640dd0119fcfca2d2189286f7da7",
+        "parentActorClassPath": "/Game/Vehicles/M1117/Turrets/BP_M1117_Turret.BP_M1117_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/M1117/Meshes/SK_M1117_Gun.SK_M1117_Gun",
+        "activeActor": "BP_M1117_M2_C_0",
+        "activeParentActor": "BP_M1117_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1117_MK19_C_0",
+          "Smoke_Launcher_M1117_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_M1117_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1117_MK19_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 82.41752035507612,
+            "rotationDeltaDeg": 0.7904765112188582,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_M1117_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 82.41752035507612,
+            "rotationDeltaDeg": 0.7904765112188582,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-17064dd56aef081b4203f0bc",
+        "bindings": [
+          {
+            "cardId": "caf--m113a3-tlav--apc",
+            "rawName": "BP_M113A3_CAF_TLAV"
+          }
+        ],
+        "sourceVehicleId": "vehicle-dd7c2677e0f5875363542aa147debc13c0c11619aef7830485b1c16736f9f665",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--m113a3-tlav--apc--bp_m113a3_caf_tlav.visual.json.recipe.json",
+        "visualRecipeSha256": "2627c35d0e8ec59f7ccaff3d8476a15fd690e39a0b8982080b1e7686ef7bd2ad",
+        "parentActorClassPath": "/Game/Vehicles/TLAV/Turrets/BP_TLAV_Turret.BP_TLAV_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/TLAV/Meshes/TLAV_Gun.TLAV_Gun",
+        "activeActor": "BP_TLAV_M2_C_0",
+        "activeParentActor": "BP_TLAV_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_TLAV_M240_C_0",
+          "Smoke_Launcher_TLAV_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_TLAV_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_TLAV_M240_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 213.20692653012017,
+            "rotationDeltaDeg": 7.5805094004111295e-22,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_TLAV_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 213.20692653012017,
+            "rotationDeltaDeg": 7.5805094004111295e-22,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-17577124f687b9486899db1c",
+        "bindings": [
+          {
+            "cardId": "imf--technical-spg-9--td",
+            "rawName": "BP_Armored_Technical2Seater_Camo_SPG9"
+          }
+        ],
+        "sourceVehicleId": "vehicle-abc04aff60b63c5a7efbe8ff5d69a2790c7c78cb9b102d716750667a2a495489",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--technical-spg-9--td--bp_armored_technical2seater_camo_spg9.visual.json.recipe.json",
+        "visualRecipeSha256": "eefc7e894b4415f0501dc8773f52c7577787955c8ace38b99da647b6245ae4e5",
+        "parentActorClassPath": "/Game/Vehicles/Technical/Turrets/BP_Technical_Turret_SPG9.BP_Technical_Turret_SPG9_C",
+        "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/SPG9/spg9_weapon_technical.spg9_weapon_technical",
+        "activeActor": "BP_SPG9_C_0",
+        "activeParentActor": "BP_Technical_Turret_SPG9_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_SPG9_Frag_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_Turret_SPG9_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_SPG9_Frag_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 109.10025024414062,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-1c27b1705aefe5fb3afbe306",
+        "bindings": [
+          {
+            "cardId": "pla--zsd89ii-ifv--ifv",
+            "rawName": "BP_ZSD89II"
+          },
+          {
+            "cardId": "plaagf--zsd89ii-ifv--ifv",
+            "rawName": "BP_ZSD89II"
+          }
+        ],
+        "sourceVehicleId": "vehicle-5c2eaab61a9a249dfa984ed9c08d0f2a6430ef91a35dc8942571ae539d7c11bd",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--zsd89ii-ifv--ifv--bp_zsd89ii.visual.json.recipe.json",
+        "visualRecipeSha256": "a6545c09571df09758c704c23b170c645662080a210abc75d88299136c229e59",
+        "parentActorClassPath": "/Game/Vehicles/ZSD89/Turrets/ZSL92/BP_ZSL92_turret.BP_ZSL92_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/ZSD89/Turrets/ZSL92/Meshes/SK_ZSL92_Gun.SK_ZSL92_Gun",
+        "activeActor": "BP_ZSL92_ZPT90_AP_C_0",
+        "activeParentActor": "BP_ZSL92_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZSL92_Smoke_Launcher_C_0",
+          "BP_ZSL92_Type86_C_0",
+          "BP_ZSL92_ZPT90_HE_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZSL92_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZSL92_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 87.80497125577116,
+            "rotationDeltaDeg": 0.24227872866124636,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_ZSL92_Type86_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 87.80497125577116,
+            "rotationDeltaDeg": 0.24227872866124636,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_ZSL92_ZPT90_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 87.80497125577116,
+            "rotationDeltaDeg": 0.24227872866124636,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-1fc8df3e5a98f7bf72468624",
+        "bindings": [
+          {
+            "cardId": "usa--m1126-crows-m240--apc",
+            "rawName": "BP_M1126_M240"
+          }
+        ],
+        "sourceVehicleId": "vehicle-9a6fdae191341e7370e3a3dd23b692e8baabe27b6b7a95ad1334dd3369a17b50",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1126-crows-m240--apc--bp_m1126_m240.visual.json.recipe.json",
+        "visualRecipeSha256": "29ce96db834063391219a2002bfb4a9359a9252fb7c84156171a65f06053e50e",
+        "parentActorClassPath": "/Game/Vehicles/M1126/Turrets/BP_M1126_CROWS_M240_Turret.BP_M1126_CROWS_M240_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_m240.crows_m240",
+        "activeActor": "BP_M1126_CROWS_M240_C_0",
+        "activeParentActor": "BP_M1126_CROWS_M240_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1126_M240_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_M1126_CROWS_M240_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1126_M240_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 200.95505525774234,
+            "rotationDeltaDeg": 0.4562308141751146,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-23868ee9da0c13ec0e4cd4c7",
+        "bindings": [
+          {
+            "cardId": "adf--aslav--ifv",
+            "rawName": "BP_ASLAV"
+          }
+        ],
+        "sourceVehicleId": "vehicle-6317e796b36973f1e44223033ba7e23706d07d5d34cd4b5efc08a58f185137d2",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/adf--aslav--ifv--bp_aslav.visual.json.recipe.json",
+        "visualRecipeSha256": "b5bd7bbbb58c34794e82d56cca6a1a7cec6ab760dc03693035715500fa37194b",
+        "parentActorClassPath": "/Game/Vehicles/ASLAV/Turrets/BP_ASLAV_Turret.BP_ASLAV_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/ASLAV/Meshes/aslav_gun_rigged.aslav_gun_rigged",
+        "activeActor": "ASLAV_M252_AP_C_0",
+        "activeParentActor": "BP_ASLAV_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "ASLAV_762_C_0",
+          "ASLAV_M252_HE_C_0",
+          "BP_ASLAV_SmokeLauncher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ASLAV_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "ASLAV_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 158.61234309711136,
+            "rotationDeltaDeg": 1.1363787565977077,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "ASLAV_M252_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 158.61234309711136,
+            "rotationDeltaDeg": 1.1363787565977077,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ASLAV_SmokeLauncher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 158.61234309711136,
+            "rotationDeltaDeg": 1.1363787565977077,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-279120bb0296bd7a700e5a84",
+        "bindings": [
+          {
+            "cardId": "imf--bmp-2--ifv",
+            "rawName": "BP_BMP2_IMF"
+          }
+        ],
+        "sourceVehicleId": "vehicle-2e7187615087eb86aaaa6e19faa9302fbaef4804942bd876ff0f030da3a8c9a4",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--bmp-2--ifv--bp_bmp2_imf.visual.json.recipe.json",
+        "visualRecipeSha256": "ddeac06d56e10d485e508428111af745d3f62d294d9aa2c2636218e83a71cf45",
+        "parentActorClassPath": "/Game/Vehicles/BMP-2/Turrets/BP_BMP2_Turret_IMF.BP_BMP2_Turret_IMF_C",
+        "sourceMeshPath": "/Game/Vehicles/BMP-2/Meshes/BMP2_Gun.BMP2_Gun",
+        "activeActor": "BP_BMP2_2A42_AP_C_0",
+        "activeParentActor": "BP_BMP2_Turret_IMF_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 1.3877787807814457e-17,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BMP2_2A42_HE_C_0",
+          "BP_BMP2_PKT_C_0",
+          "BP_BMP2_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BMP2_Turret_IMF_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BMP2_2A42_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.18770003831858,
+            "rotationDeltaDeg": 0.7509308582400533,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.18770003831858,
+            "rotationDeltaDeg": 0.7509308582400533,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.18770003831858,
+            "rotationDeltaDeg": 0.7509308582400533,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-32aaf3b77441027791219276",
+        "bindings": [
+          {
+            "cardId": "imf--btr-80--apc",
+            "rawName": "BP_BTR80_Militia"
+          }
+        ],
+        "sourceVehicleId": "vehicle-8106fe0531226b18fd10e8f7a25a5be9409ab2a9990c53237f208f324702e41a",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--btr-80--apc--bp_btr80_militia.visual.json.recipe.json",
+        "visualRecipeSha256": "ad711ef66dc5d4c23aa7a1b89eb7241cf8d77b5f92a60bd0158d3a6f24764878",
+        "parentActorClassPath": "/Game/Vehicles/BTR80/Attachments/BP_BTR80_MIL_turret.BP_BTR80_MIL_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+        "activeActor": "BP_BTR80_Militia_KPVT_C_0",
+        "activeParentActor": "BP_BTR80_MIL_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR80_Militia_PKT_C_0",
+          "BP_BTR80_Militia_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR80_MIL_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR80_Militia_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 170.1487337493584,
+            "rotationDeltaDeg": 0.22415609607520542,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR80_Militia_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 170.1487337493584,
+            "rotationDeltaDeg": 0.22415609607520542,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-3323b8b0c87ff3478e022236",
+        "bindings": [
+          {
+            "cardId": "tlf--pars-iii-25mm--ifv",
+            "rawName": "BP_PARS3"
+          }
+        ],
+        "sourceVehicleId": "vehicle-154f153d6f930e2b318b0b8c9ab3d8ac756d07ce1036b6b090d6b7ab86860cb7",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--pars-iii-25mm--ifv--bp_pars3.visual.json.recipe.json",
+        "visualRecipeSha256": "665bee22ee2d3f3e1a659b7b2d86a52d8d3c222408adf965ee97de2819d5605a",
+        "parentActorClassPath": "/Game/Vehicles/PARS_III/IFV25_Turret/BP_IFV25_Turret.BP_IFV25_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/PARS_III/IFV25_Turret/Meshes/SK_IFV25_Gun.SK_IFV25_Gun",
+        "activeActor": "IFV25_M252_AP_C_0",
+        "activeParentActor": "BP_IFV25_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_IFV25_762_C_0",
+          "IFV25_M252_HE_C_0",
+          "Smoke_Launcher_Turret_IFV25_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_IFV25_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_IFV25_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 209.2092386683901,
+            "rotationDeltaDeg": 3.155706218862919e-15,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "IFV25_M252_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 209.2092386683901,
+            "rotationDeltaDeg": 3.155706218862919e-15,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_Turret_IFV25_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 209.2092386683901,
+            "rotationDeltaDeg": 3.155706218862919e-15,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-35d24266947298cfea6cdaea",
+        "bindings": [
+          {
+            "cardId": "rgf--bmp-2m--ifv",
+            "rawName": "BP_BMP2M_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-f5ce106979b3c426533bda049ccc28637ea2330979b193972626a8e6041ff908",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--bmp-2m--ifv--bp_bmp2m_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "916f8f7de9513731ac3af904fd6ca9a3cb81eda778c53dd906de31d3e89db392",
+        "parentActorClassPath": "/Game/Vehicles/BMP-2M/Turrets/BP_BMP2M_Turret_Desert.BP_BMP2M_Turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/BMP-2M/Meshes/SK_BMP2M_Gun.SK_BMP2M_Gun",
+        "activeActor": "BP_BMP2M_2A42_AP_Desert_C_0",
+        "activeParentActor": "BP_BMP2M_Turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 1.3877787807814457e-17,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BMP2M_2A42_HE_Desert_C_0",
+          "BP_BMP2M_AGS30_Desert_C_0",
+          "BP_BMP2M_Kornet_Desert_C_0",
+          "BP_BMP2M_PKT_Desert_C_0",
+          "BP_BMP2M_Smoke_Launcher_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BMP2M_Turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BMP2M_2A42_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.190740169247,
+            "rotationDeltaDeg": 0.7509641075398009,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_AGS30_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.190740169247,
+            "rotationDeltaDeg": 0.7509641075398009,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_Kornet_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.190740169247,
+            "rotationDeltaDeg": 0.7509641075398009,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_PKT_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.190740169247,
+            "rotationDeltaDeg": 0.7509641075398009,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_Smoke_Launcher_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.190740169247,
+            "rotationDeltaDeg": 0.7509641075398009,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-35d55602ba0bc7641066b7cc",
+        "bindings": [
+          {
+            "cardId": "rgf--mt-lbm-6mb--ifv",
+            "rawName": "BP_MTLBM_6MB_RUS_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-dc2d1cab7d8e82451e1c991132cc5f1ecb9296b671a897cb35572ff195566708",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--mt-lbm-6mb--ifv--bp_mtlbm_6mb_rus_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "e9228f9f06ffb561e50306c7899f28072b2f265160cbf1ca5c873e65b18040d7",
+        "parentActorClassPath": "/Game/Vehicles/MTLB/turrets/BP_MTLB_30mm_turret_Desert.BP_MTLB_30mm_turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+        "activeActor": "BP_MTLB_30mm_AP_gun_Desert_C_0",
+        "activeParentActor": "BP_MTLB_30mm_turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_MTLB_30mm_HE_gun_Desert_C_0",
+          "BP_MTLB30mm_PKT_desert_C_0",
+          "BP_Smoke_Launcher_MTLB30mm_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_MTLB_30mm_turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_MTLB_30mm_HE_gun_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 199.38601916359434,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_MTLB30mm_PKT_desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 199.38601916359434,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Smoke_Launcher_MTLB30mm_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 199.38601916359434,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-38bfd9374533a982b9782e3d",
+        "bindings": [
+          {
+            "cardId": "rgf--tigr-m-rws-kord--mrap",
+            "rawName": "BP_Tigr_RWS"
+          }
+        ],
+        "sourceVehicleId": "vehicle-3a6d44d1e2a1247e5341ad39a6cb08eb6ecc07caa47a909dba8c06a11ec2a2eb",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--tigr-m-rws-kord--mrap--bp_tigr_rws.visual.json.recipe.json",
+        "visualRecipeSha256": "68b321d581b000ab04312bc3f5652c6146939dbf650be63e738e649bd765b5de",
+        "parentActorClassPath": "/Game/Vehicles/Tigr/Turrets/BP_Arbalet_Turret.BP_Arbalet_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/Tigr/Weapons/Arbalet/Meshes/Arbalet_Kord.Arbalet_Kord",
+        "activeActor": "BP_Arbalet_Kord_C_0",
+        "activeParentActor": "BP_Arbalet_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "Smoke_Launcher_Arbalet_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_Arbalet_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "Smoke_Launcher_Arbalet_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 196.0314900339284,
+            "rotationDeltaDeg": 0.20538431889974607,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-3a80b185e0e0f1741fe945ff",
+        "bindings": [
+          {
+            "cardId": "usa--m1126-crows-m2--apc",
+            "rawName": "BP_M1126"
+          }
+        ],
+        "sourceVehicleId": "vehicle-9704a949d399f2f12d80ddab199b00f7e9b9ceb755087889629a7bb0f6389a98",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1126-crows-m2--apc--bp_m1126.visual.json.recipe.json",
+        "visualRecipeSha256": "7f85269358f74c57b8a5c11038687265851b195acd2097ce37cb351b914cc3af",
+        "parentActorClassPath": "/Game/Vehicles/M1126/Turrets/BP_M1126_CROWS_Turret.BP_M1126_CROWS_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+        "activeActor": "BP_M1126_CROWS_M2_C_0",
+        "activeParentActor": "BP_M1126_CROWS_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1126_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_M1126_CROWS_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1126_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 200.95457733020817,
+            "rotationDeltaDeg": 0.4563905823849269,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-42cd3f1c7ad0f08273491983",
+        "bindings": [
+          {
+            "cardId": "rgf--bmp-1am--ifv",
+            "rawName": "BP_BMP1AM_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-1b95f986c5ebc370a24640e1d4343e2b2e5bbba8775b6cdd06de92981ea50b92",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--bmp-1am--ifv--bp_bmp1am_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "db406bad741580a2e45e48d4cec5bd600b94639df494064a34f12a4f468cf9aa",
+        "parentActorClassPath": "/Game/Vehicles/BTR80/82A/BP_BTR82A_turret_desert.BP_BTR82A_turret_desert_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/82A/Meshes/BTR_82A_gun.BTR_82A_gun",
+        "activeActor": "BP_BTR82A_RUS_2A72_AP_Desert_C_0",
+        "activeParentActor": "BP_BTR82A_turret_desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR82A_PKT_desert_C_0",
+          "BP_BTR82A_RUS_2A72_HE_Desert_C_0",
+          "BP_BTR82A_RUS_Smoke_Launcher_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR82A_turret_desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR82A_PKT_desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 131.29240517059765,
+            "rotationDeltaDeg": 0.7503710398078737,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_2A72_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 131.29240517059765,
+            "rotationDeltaDeg": 0.7503710398078737,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_Smoke_Launcher_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 131.29240517059765,
+            "rotationDeltaDeg": 0.7503710398078737,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-461ac393bec112926f88cf26",
+        "bindings": [
+          {
+            "cardId": "rgf--bmp-2--ifv",
+            "rawName": "BP_BMP2"
+          }
+        ],
+        "sourceVehicleId": "vehicle-78b9de4320f2ec2dacab3caed07d4d6340cf2f018e09a65c9e9bc22c9d429bbb",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--bmp-2--ifv--bp_bmp2.visual.json.recipe.json",
+        "visualRecipeSha256": "be849fb16b2d2ee8190608d60caec6da7ac0b12550b6e47e4f6771d4c53f4559",
+        "parentActorClassPath": "/Game/Vehicles/BMP-2/Turrets/BP_BMP2_Turret.BP_BMP2_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BMP-2/Meshes/BMP2_Gun.BMP2_Gun",
+        "activeActor": "BP_BMP2_2A42_AP_C_0",
+        "activeParentActor": "BP_BMP2_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 1.3877787807814457e-17,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BMP2_2A42_HE_C_0",
+          "BP_BMP2_Konkurs_C_0",
+          "BP_BMP2_PKT_C_0",
+          "BP_BMP2_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BMP2_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BMP2_2A42_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.18959132168536,
+            "rotationDeltaDeg": 0.75081428124372,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_Konkurs_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.18959132168536,
+            "rotationDeltaDeg": 0.75081428124372,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.18959132168536,
+            "rotationDeltaDeg": 0.75081428124372,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.18959132168536,
+            "rotationDeltaDeg": 0.75081428124372,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-487f93993e1ad7b7d74941da",
+        "bindings": [
+          {
+            "cardId": "tlf--acv-15-25mm--ifv",
+            "rawName": "BP_ACV-15"
+          }
+        ],
+        "sourceVehicleId": "vehicle-1650648ee7c3604091c8c8619737e53fd68f98b3e14c5b876887c50c15e65ca8",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--acv-15-25mm--ifv--bp_acv-15.visual.json.recipe.json",
+        "visualRecipeSha256": "ac44fb1539a014388b7f9dd59985d5608b9ebc88dae0d8af79d66eaa778786a6",
+        "parentActorClassPath": "/Game/Vehicles/ACV-15/Turrets/BP_ACV15_Turret.BP_ACV15_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/ACV-15/Meshes/SK_ACV15_Gun.SK_ACV15_Gun",
+        "activeActor": "ACV_M252_AP_C_0",
+        "activeParentActor": "BP_ACV15_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "ACV_M252_HE_C_0",
+          "BP_ACV_762_C_0",
+          "Smoke_Launcher_Turret_ACV_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ACV15_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "ACV_M252_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 155.3421053204515,
+            "rotationDeltaDeg": 0.14512260850818845,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ACV_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 155.3421053204515,
+            "rotationDeltaDeg": 0.14512260850818845,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_Turret_ACV_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 155.3421053204515,
+            "rotationDeltaDeg": 0.14512260850818845,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-4c5b1cba98203f3bbe3743bb",
+        "bindings": [
+          {
+            "cardId": "rgf--mt-lbm-6mb--ifv",
+            "rawName": "BP_MTLBM_6MB_RUS"
+          }
+        ],
+        "sourceVehicleId": "vehicle-51bfb9c16c6a094112f4ef313ac44804b4b75c9d0f849fcf96f8899d12c0e245",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--mt-lbm-6mb--ifv--bp_mtlbm_6mb_rus.visual.json.recipe.json",
+        "visualRecipeSha256": "0c247ed3e21f2bd9749bf19ed129a324bab2df0b0cfb5e58ba2bbb0d2a97be3e",
+        "parentActorClassPath": "/Game/Vehicles/MTLB/turrets/BP_MTLB_30mm_turret_Green.BP_MTLB_30mm_turret_Green_C",
+        "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+        "activeActor": "BP_MTLB_30mm_AP_gun_Green_C_0",
+        "activeParentActor": "BP_MTLB_30mm_turret_Green_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_MTLB_30mm_HE_gun_Green_C_0",
+          "BP_MTLB30mm_PKT_green_C_0",
+          "BP_Smoke_Launcher_MTLB30mm_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_MTLB_30mm_turret_Green_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_MTLB_30mm_HE_gun_Green_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 179.8052767453565,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_MTLB30mm_PKT_green_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 179.8052767453565,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Smoke_Launcher_MTLB30mm_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 179.8052767453565,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-4d96621cfa6401c2a0e52cdf",
+        "bindings": [
+          {
+            "cardId": "rgf--btr-80--apc",
+            "rawName": "BP_BTR80_RUS_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-78ffd008de3a05259ad8c0eab31640536c24effe04da04d761970587a6d0af20",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--btr-80--apc--bp_btr80_rus_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "bae0381a3135d864838d79f1a1ced8c50f0cf547899eddfd00f7c0f05448d6b3",
+        "parentActorClassPath": "/Game/Vehicles/BTR80/Attachments/BP_BTR80_RUS_turret_Desert.BP_BTR80_RUS_turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+        "activeActor": "BP_BTR80_RUS_KPVT_Desert_C_0",
+        "activeParentActor": "BP_BTR80_RUS_turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR80_RUS_PKT_Desert_C_0",
+          "BP_BTR80_RUS_Smoke_Launcher_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR80_RUS_turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR80_RUS_PKT_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 170.1487337493584,
+            "rotationDeltaDeg": 0.22415609607520542,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR80_RUS_Smoke_Launcher_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 170.1487337493584,
+            "rotationDeltaDeg": 0.22415609607520542,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-4eff1e06c281433aa9a6d79a",
+        "bindings": [
+          {
+            "cardId": "usa--m2a3--ifv",
+            "rawName": "BP_BFV_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-5b11244ecb06f844ebbef15bea75d1e8e4c82aaacae67478290fa066305d2b05",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m2a3--ifv--bp_bfv_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "1a6e88080dcb01da088013ac0d4a3b2c220b38fb1e3d6d46af2ba7da0cb68e43",
+        "parentActorClassPath": "/Game/Vehicles/BFV/Turrets/BP_BFV_Turret_Woodland.BP_BFV_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+        "activeActor": "BFV_M252_AP_Woodland_C_0",
+        "activeParentActor": "BP_BFV_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BFV_M252_HE_Woodland_C_0",
+          "BP_BFV_762_Woodland_C_0",
+          "BP_BFV_vehicleTOW_Woodland_C_0",
+          "Smoke_Launcher_BFV_Woodland_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BFV_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BFV_M252_HE_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BFV_762_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BFV_vehicleTOW_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_BFV_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-5075ec9863848623fd7ab9ed",
+        "bindings": [
+          {
+            "cardId": "plaagf--zbd05--ifv",
+            "rawName": "BP_ZBD05_HJ73C_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-11b274b4f36c66c656746a849a917171ad90f69ca8f7086c68c38867a21f9a7d",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--zbd05--ifv--bp_zbd05_hj73c_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "1a83bfc77db1aaa71bb58d0e7440703813acda9ad501f875a0b865754e45acf2",
+        "parentActorClassPath": "/Game/Vehicles/ZBD05/Turrets/BP_ZBD05_Turret_HJ73C_Woodland.BP_ZBD05_Turret_HJ73C_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/ZBD05/Mesh/ZBD2000_Gun.ZBD2000_Gun",
+        "activeActor": "BP_ZBD05_ZPT-99_APFSDS_C_0",
+        "activeParentActor": "BP_ZBD05_Turret_HJ73C_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 2.7755575615628914e-17,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZBD05_HJ73C_ATGM_C_0",
+          "BP_ZBD05_QTJ02_C_0",
+          "BP_ZBD05_Smoke_Launcher_C_0",
+          "BP_ZBD05_ZPT-99_HE_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZBD05_Turret_HJ73C_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZBD05_HJ73C_ATGM_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 122.95696054918301,
+            "rotationDeltaDeg": 0.12412117063044396,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBD05_QTJ02_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 122.95696054918301,
+            "rotationDeltaDeg": 0.12412117063044396,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBD05_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 122.95696054918301,
+            "rotationDeltaDeg": 0.12412117063044396,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBD05_ZPT-99_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 122.95696054918301,
+            "rotationDeltaDeg": 0.12412117063044396,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-53e92583c4428ad734ee32dc",
+        "bindings": [
+          {
+            "cardId": "imf--brdm-2--ltv",
+            "rawName": "BP_BRDM-2_MIL"
+          }
+        ],
+        "sourceVehicleId": "vehicle-0e394847017c21f6810d1f6003d2f8461f76630c361f4a0303bfa732d2e7d016",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--brdm-2--ltv--bp_brdm-2_mil.visual.json.recipe.json",
+        "visualRecipeSha256": "bdc1d1a92cb9869fb02c5c9ec52193a0574c6f7e1c97cde53356598f72e28ad1",
+        "parentActorClassPath": "/Game/Vehicles/BRDM-2/Attachments/BP_BRDM2_MIL_turret.BP_BRDM2_MIL_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+        "activeActor": "BP_BRDM2_MIL_KPVT_C_0",
+        "activeParentActor": "BP_BRDM2_MIL_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BRDM2_MIL_PKT_C_0",
+          "BP_BRDM2_MIL_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BRDM2_MIL_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BRDM2_MIL_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.55220280664855,
+            "rotationDeltaDeg": 0.19416444242119082,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_BRDM2_MIL_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.55220280664855,
+            "rotationDeltaDeg": 0.19416444242119082,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-54d2c6e9a6d4aa97b3d07591",
+        "bindings": [
+          {
+            "cardId": "usmc--aavp-7a1--apc",
+            "rawName": "BP_AAVP7A1"
+          }
+        ],
+        "sourceVehicleId": "vehicle-f1463c6958c06eeb1d43c1e54aa90cf549cae34467cd9c1c5d4285615bd2f4a8",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--aavp-7a1--apc--bp_aavp7a1.visual.json.recipe.json",
+        "visualRecipeSha256": "0074ad6b632a309bee76be9523f387fe6ff9d16c5e8da87eb70f39b29111200f",
+        "parentActorClassPath": "/Game/Vehicles/AAVP7A1/Turrets/BP_AAVP7A1_Turret.BP_AAVP7A1_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/AAVP7A1/Meshes/AAVP7A1_Gun.AAVP7A1_Gun",
+        "activeActor": "BP_AAVP7A1_M2_C_0",
+        "activeParentActor": "BP_AAVP7A1_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_AAVP7A1_MK19_C_0",
+          "Smoke_Launcher_AAVP7A1_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_AAVP7A1_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_AAVP7A1_MK19_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 229.54389811986633,
+            "rotationDeltaDeg": 1.4222043741310133,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_AAVP7A1_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 229.54389811986633,
+            "rotationDeltaDeg": 1.4222043741310133,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-55de850af174ba15c961cffb",
+        "bindings": [
+          {
+            "cardId": "planmc--zbd05--ifv",
+            "rawName": "BP_ZBD05_HJ73C"
+          }
+        ],
+        "sourceVehicleId": "vehicle-a1652cbeeb884c75f38251b0afd5b80e15c6d0f3ba23b3ec07ab12c6f2b4df1a",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/planmc--zbd05--ifv--bp_zbd05_hj73c.visual.json.recipe.json",
+        "visualRecipeSha256": "fdcda1805f571cc92d915d06d3b79409bda9b76ba469061ef6c9aa576f378814",
+        "parentActorClassPath": "/Game/Vehicles/ZBD05/Turrets/BP_ZBD05_Turret_HJ73C.BP_ZBD05_Turret_HJ73C_C",
+        "sourceMeshPath": "/Game/Vehicles/ZBD05/Mesh/ZBD2000_Gun.ZBD2000_Gun",
+        "activeActor": "BP_ZBD05_ZPT-99_APFSDS_C_0",
+        "activeParentActor": "BP_ZBD05_Turret_HJ73C_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 1.6981208106336965e-14,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZBD05_HJ73C_ATGM_C_0",
+          "BP_ZBD05_QTJ02_C_0",
+          "BP_ZBD05_Smoke_Launcher_C_0",
+          "BP_ZBD05_ZPT-99_HE_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZBD05_Turret_HJ73C_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZBD05_HJ73C_ATGM_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 175.55883329707748,
+            "rotationDeltaDeg": 0.5574614439477158,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBD05_QTJ02_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 175.55883329707748,
+            "rotationDeltaDeg": 0.5574614439477158,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBD05_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 175.55883329707748,
+            "rotationDeltaDeg": 0.5574614439477158,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBD05_ZPT-99_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 175.55883329707748,
+            "rotationDeltaDeg": 0.5574614439477158,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-57b600197c1ed7fbaa962042",
+        "bindings": [
+          {
+            "cardId": "usa--m7a3--ifv",
+            "rawName": "BP_M7A3_IFV"
+          }
+        ],
+        "sourceVehicleId": "vehicle-37b779df778c607cdb99999727ad668e593a770c8705ae043a107c99c2a60cc4",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m7a3--ifv--bp_m7a3_ifv.visual.json.recipe.json",
+        "visualRecipeSha256": "fc0e887d425c13649ef22cdc553d3262692a95673267746849e143e18de2588c",
+        "parentActorClassPath": "/Game/Vehicles/BFV/BP_M7A3_Turret.BP_M7A3_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+        "activeActor": "BFV_M252_AP_C_1",
+        "activeParentActor": "BP_M7A3_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BFV_M252_HE_C_1",
+          "BP_BFV_762_C_1",
+          "Smoke_Launcher_BFV_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_M7A3_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BFV_M252_HE_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BFV_762_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_BFV_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-5e72e1a36a1ec201958b3048",
+        "bindings": [
+          {
+            "cardId": "tlf--m113a2t-m121--spa",
+            "rawName": "BP_M1064_M121_TLF_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-01a0559fa5cb741648391e8e6783c526157d903ffa88e756322a9c7dcd072e94",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--m113a2t-m121--spa--bp_m1064_m121_tlf_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "b4ca7ca9787bfe685b87b3c3ac5d95b25e62d4388b731ec8016c1b27080fefc3",
+        "parentActorClassPath": "/Game/Vehicles/M1064A3/Turrets/BP_M1064A3_MortarTurret.BP_M1064A3_MortarTurret_C",
+        "sourceMeshPath": "/Game/Vehicles/Emplaced_M120_M121_Mortar/Meshes/SK_M121_Mortar_Tube.SK_M121_Mortar_Tube",
+        "activeActor": "BP_M1064A3_M121mortar_C_1",
+        "activeParentActor": "BP_M1064A3_MortarTurret_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1064A3_M121mortar_Airburst_C_1",
+          "BP_M1064A3_M121mortar_Smoke_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_M1064A3_MortarTurret_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1064A3_M121mortar_Airburst_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 24.184599512230022,
+            "rotationDeltaDeg": 179.9997263278296,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_M1064A3_M121mortar_Smoke_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 24.184599512230022,
+            "rotationDeltaDeg": 179.9997263278296,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-6169a1cbdfebee100c99db6d",
+        "bindings": [
+          {
+            "cardId": "usa--m2a3--ifv",
+            "rawName": "BP_BFV"
+          }
+        ],
+        "sourceVehicleId": "vehicle-afa03670212db8e3e281e901208f3392b6ef6836cfbe0d8f9e4af2a78c16fba9",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m2a3--ifv--bp_bfv.visual.json.recipe.json",
+        "visualRecipeSha256": "175d4d0003404349ea2c8b5e059c7ed0e3963ed3eba0a4ed6bc9475836ee49a2",
+        "parentActorClassPath": "/Game/Vehicles/BFV/Turrets/BP_BFV_Turret.BP_BFV_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+        "activeActor": "BFV_M252_AP_C_0",
+        "activeParentActor": "BP_BFV_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BFV_M252_HE_C_0",
+          "BP_BFV_762_C_0",
+          "BP_BFV_vehicleTOW_C_0",
+          "Smoke_Launcher_BFV_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BFV_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BFV_M252_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 211.02304602930818,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BFV_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 211.02304602930818,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BFV_vehicleTOW_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 211.02304602930818,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_BFV_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 211.02304602930818,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-631a095d741b2bbe6c8c3ed1",
+        "bindings": [
+          {
+            "cardId": "caf--coyote--ifv",
+            "rawName": "BP_LAV2_Coyote"
+          }
+        ],
+        "sourceVehicleId": "vehicle-d1476743fe71b4a6524776d3c5e33c68d9345c89afec5770853b1c7d119dc192",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--coyote--ifv--bp_lav2_coyote.visual.json.recipe.json",
+        "visualRecipeSha256": "6af3f8bdaa82e980e554e446a81485077a51a0f683ea6e9bdbfb1ae784785dd1",
+        "parentActorClassPath": "/Game/Vehicles/Coyote/Turrets/BP_LAV2_Coyote_Turret.BP_LAV2_Coyote_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+        "activeActor": "Coyote_M252_AP_Desert_C_0",
+        "activeParentActor": "BP_LAV2_Coyote_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Coyote_762_Desert_C_0",
+          "Coyote_M252_HE_Desert_C_0",
+          "Smoke_Launcher_Coyote_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_LAV2_Coyote_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Coyote_762_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10548082937572,
+            "rotationDeltaDeg": 0.5905875672801844,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Coyote_M252_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10548082937572,
+            "rotationDeltaDeg": 0.5905875672801844,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_Coyote_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10548082937572,
+            "rotationDeltaDeg": 0.5905875672801844,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-64232891eabc32af43189c3e",
+        "bindings": [
+          {
+            "cardId": "baf--fv510--ifv",
+            "rawName": "BP_FV510_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-29293f6769455feb977b8f38f14d0d4fe3a9b8ddb915984414bca8db230312b7",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv510--ifv--bp_fv510_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "e6e5e0dd9be7a1f17be74d67b463c44154863ac7aaa66a5b1ab7fa7945aec526",
+        "parentActorClassPath": "/Game/Vehicles/FV510/Turrets/BP_FV510_Turret_Woodland.BP_FV510_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+        "activeActor": "BP_Warrior_Rarden_AP_C_0",
+        "activeParentActor": "BP_FV510_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Warrior_762_C_0",
+          "BP_Warrior_Rarden_HE_C_0",
+          "BP_Warrior_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_FV510_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Warrior_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20749356947368,
+            "rotationDeltaDeg": 0.30745751415821587,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Rarden_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20749356947368,
+            "rotationDeltaDeg": 0.30745751415821587,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20749356947368,
+            "rotationDeltaDeg": 0.30745751415821587,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-65d871ee5828f650f967e8bb",
+        "bindings": [
+          {
+            "cardId": "rgf--brdm-2--ltv",
+            "rawName": "BP_BRDM-2_RUS"
+          },
+          {
+            "cardId": "vdv--brdm-2--ltv",
+            "rawName": "BP_BRDM-2_RUS"
+          }
+        ],
+        "sourceVehicleId": "vehicle-9e3b568f4eb65199d0a6f7f661477584bdb2559da1b9d8cd8f1e4ae2066c92de",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--brdm-2--ltv--bp_brdm-2_rus.visual.json.recipe.json",
+        "visualRecipeSha256": "ce0ee23ec402e5c39a7fb52fe2c63b517369a5148bd8565753deae26675a4344",
+        "parentActorClassPath": "/Game/Vehicles/BRDM-2/Attachments/BP_BRDM2_RUS_turret.BP_BRDM2_RUS_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+        "activeActor": "BP_BRDM2_RUS_KPVT_C_0",
+        "activeParentActor": "BP_BRDM2_RUS_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BRDM2_RUS_PKT_C_0",
+          "BP_BRDM2_RUS_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BRDM2_RUS_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BRDM2_RUS_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.55277860028576,
+            "rotationDeltaDeg": 0.19416767144389968,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_BRDM2_RUS_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.55277860028576,
+            "rotationDeltaDeg": 0.19416767144389968,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-72a7bf6eb15e6d20e77c0b95",
+        "bindings": [
+          {
+            "cardId": "crf--coyote--ifv",
+            "rawName": "BP_LAV2_Coyote_CRF"
+          }
+        ],
+        "sourceVehicleId": "vehicle-65110342d6b3545d34209b7dd7d9676450305ad4c17e0482349c018694fe086c",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/crf--coyote--ifv--bp_lav2_coyote_crf.visual.json.recipe.json",
+        "visualRecipeSha256": "334be0d01d5fe1c94228027ff9fc2285ccccb4f73f3fd9c25877f09cfa669185",
+        "parentActorClassPath": "/Game/Vehicles/Coyote/Turrets/BP_LAV2_Coyote_Turret_Woodland_CRF.BP_LAV2_Coyote_Turret_Woodland_CRF_C",
+        "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+        "activeActor": "Coyote_M252_AP_Woodland_C_0",
+        "activeParentActor": "BP_LAV2_Coyote_Turret_Woodland_CRF_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Coyote_762_Woodland_C_0",
+          "Coyote_M252_HE_Woodland_C_0",
+          "Smoke_Launcher_Coyote_Woodland_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_LAV2_Coyote_Turret_Woodland_CRF_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Coyote_762_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10588175028803,
+            "rotationDeltaDeg": 0.5904885793400495,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Coyote_M252_HE_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10588175028803,
+            "rotationDeltaDeg": 0.5904885793400495,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_Coyote_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 150.10588175028803,
+            "rotationDeltaDeg": 0.5904885793400495,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-735fa1489edabe76c02d8f50",
+        "bindings": [
+          {
+            "cardId": "mei--brdm-2--ltv",
+            "rawName": "BP_BRDM-2_Insurgents"
+          }
+        ],
+        "sourceVehicleId": "vehicle-2ae593c65fb2476014dd4ae50fda7fc93b6deb79c4f18bc384ff0194e7575589",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/mei--brdm-2--ltv--bp_brdm-2_insurgents.visual.json.recipe.json",
+        "visualRecipeSha256": "21a66be4679d1b5300851f6547714bcc0e6bcee4dd42c5208687ad360031d173",
+        "parentActorClassPath": "/Game/Vehicles/BRDM-2/Attachments/BP_BRDM2_INS_turret.BP_BRDM2_INS_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+        "activeActor": "BP_BRDM2_INS_KPVT_C_0",
+        "activeParentActor": "BP_BRDM2_INS_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BRDM2_INS_PKT_C_0",
+          "BP_BRDM2_INS_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BRDM2_INS_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BRDM2_INS_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.5521839939807,
+            "rotationDeltaDeg": 0.1941413119146323,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_BRDM2_INS_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.5521839939807,
+            "rotationDeltaDeg": 0.1941413119146323,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-75c87d3270de2d75830ddb0c",
+        "bindings": [
+          {
+            "cardId": "caf--lav-iii-m2-rws--apc",
+            "rawName": "BP_LAV_RWS_M2"
+          }
+        ],
+        "sourceVehicleId": "vehicle-feabf1417d2c02e24c7bdeb88f07d813d457602f231895a9edf654085fa2c2b7",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--lav-iii-m2-rws--apc--bp_lav_rws_m2.visual.json.recipe.json",
+        "visualRecipeSha256": "5703785a91af000bf721de20ce46371f12f1080f94eeda07ac267f2543bbdf30",
+        "parentActorClassPath": "/Game/Vehicles/LAV_RWS/Weapons/BP_CROWS_Nanuk.BP_CROWS_Nanuk_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+        "activeActor": "BP_CROWS_M2_Nanuk_C_0",
+        "activeParentActor": "BP_CROWS_Nanuk_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "Smoke_Launcher_Nanuk_M2_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_CROWS_Nanuk_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "Smoke_Launcher_Nanuk_M2_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 202.3287004815917,
+            "rotationDeltaDeg": 0.38284816243316294,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-75fc50c72253f00949d72494",
+        "bindings": [
+          {
+            "cardId": "tlf--acv-15-25mm--ifv",
+            "rawName": "BP_ACV-15_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-be2aba48baaaa96b2d19b21e36c96e28c0593a0211f1cee372ae546e4ea19b00",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--acv-15-25mm--ifv--bp_acv-15_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "c2a5db299ccf7325a0489b931e4d908b5503438abd9d9f2e0f3ac6e2ff22f456",
+        "parentActorClassPath": "/Game/Vehicles/ACV-15/Turrets/BP_ACV15_Turret_Desert.BP_ACV15_Turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/ACV-15/Meshes/SK_ACV15_Gun.SK_ACV15_Gun",
+        "activeActor": "ACV_M252_AP_Desert_C_0",
+        "activeParentActor": "BP_ACV15_Turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "ACV_M252_HE_Desert_C_0",
+          "BP_ACV_762_Desert_C_0",
+          "Smoke_Launcher_Turret_ACV_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ACV15_Turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "ACV_M252_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 155.3450508574904,
+            "rotationDeltaDeg": 0.1432500684510955,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ACV_762_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 155.3450508574904,
+            "rotationDeltaDeg": 0.1432500684510955,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_Turret_ACV_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 155.3450508574904,
+            "rotationDeltaDeg": 0.1432500684510955,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-764c151ddaa0acd886c33520",
+        "bindings": [
+          {
+            "cardId": "baf--fv520-ctas40--ifv",
+            "rawName": "BP_FV510UA_CTAS40_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-53eccbaf91872e0dafab817adf809af1377d1cc7fc7bd5ee4d49e04590093fd3",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv520-ctas40--ifv--bp_fv510ua_ctas40_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "15320627c74a9659a440821ee8ea6a43b923a3486856e98e4d9b04b99c33f1fd",
+        "parentActorClassPath": "/Game/Vehicles/FV510_40mm/Turrets/BP_FV510_CTAS40_Turret_Woodland.BP_FV510_CTAS40_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/FV510_40mm/Meshes/FV510_gun_ctas.FV510_gun_ctas",
+        "activeActor": "BP_Warrior_CTAS_AP_Woodland_C_0",
+        "activeParentActor": "BP_FV510_CTAS40_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Warrior_CTAS_762_Woodland_C_0",
+          "BP_Warrior_CTAS_HE_Woodland_C_0",
+          "BP_Warrior_CTAS_Smoke_Launcher_Woodland_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_FV510_CTAS40_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Warrior_CTAS_762_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20590314791536,
+            "rotationDeltaDeg": 0.30852814092168046,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_CTAS_HE_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20590314791536,
+            "rotationDeltaDeg": 0.30852814092168046,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_CTAS_Smoke_Launcher_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20590314791536,
+            "rotationDeltaDeg": 0.30852814092168046,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-789b55471c42d9bd589ba9cc",
+        "bindings": [
+          {
+            "cardId": "mei--technical-spg-9--td",
+            "rawName": "BP_Technical_SPG9_INS_Armoured"
+          }
+        ],
+        "sourceVehicleId": "vehicle-f40f55d71670b607ccc2a86d8c309ebb8a7aae2612b4d9f45f0efe1a5316006c",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/mei--technical-spg-9--td--bp_technical_spg9_ins_armoured.visual.json.recipe.json",
+        "visualRecipeSha256": "95acb84e62fe36bb9d39be8d1ea99f891245cca09d6d14a0b98258dca612fa92",
+        "parentActorClassPath": "/Game/Vehicles/Technical/Turrets/BP_Technical_Turret_SPG9.BP_Technical_Turret_SPG9_C",
+        "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/SPG9/spg9_weapon_technical.spg9_weapon_technical",
+        "activeActor": "BP_SPG9_C_1",
+        "activeParentActor": "BP_Technical_Turret_SPG9_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_SPG9_Frag_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_Turret_SPG9_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_SPG9_Frag_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 102.70020531275493,
+            "rotationDeltaDeg": 0.3257412271883593,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-7a6e043830c701060e20df19",
+        "bindings": [
+          {
+            "cardId": "caf--tapv--mrap",
+            "rawName": "BP_TAPV_C16_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-eb12f8cecc023c77e3e1bca0979a88e8a37bea32f00bb8aa0042ba6f25c23667",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--tapv--mrap--bp_tapv_c16_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "90338f79418d695c923b918ef85162afe8b642f02abb9062d61b1b9c4a40d4c8",
+        "parentActorClassPath": "/Game/Vehicles/TAPV/Protector_C16/BP_C16_Turret_Desert.BP_C16_Turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/TAPV/Protector_C16/Meshes/SK_C16_Weapon.SK_C16_Weapon",
+        "activeActor": "BP_C16_C6_Desert_C_0",
+        "activeParentActor": "BP_C16_Turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_C16_MK19_Desert_C_0",
+          "BP_C16_Smoke_Launcher_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_C16_Turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_C16_MK19_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 213.70012436298617,
+            "rotationDeltaDeg": 0.16455603288774226,
+            "scaleDelta": 4.440892098500626e-16
+          },
+          {
+            "actor": "BP_C16_Smoke_Launcher_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 213.70012436298617,
+            "rotationDeltaDeg": 0.16455603288774226,
+            "scaleDelta": 4.440892098500626e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-7e14e734aa1dba78e9017e37",
+        "bindings": [
+          {
+            "cardId": "pla--zsl92-ifv--ifv",
+            "rawName": "BP_WZ551A"
+          },
+          {
+            "cardId": "plaagf--zsl92-ifv--ifv",
+            "rawName": "BP_WZ551A"
+          }
+        ],
+        "sourceVehicleId": "vehicle-df7058a9c0cf03891b247db5cdef7f4356d2a4211e8f11c4ec401a9033c5425d",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--zsl92-ifv--ifv--bp_wz551a.visual.json.recipe.json",
+        "visualRecipeSha256": "96a8a461f74083c9a5ba196f2c88d981c5e065c92adca1d47589c012d7ee09c0",
+        "parentActorClassPath": "/Game/Vehicles/WZ551/Turrets/ZSL92/BP_ZSL92_turret_Interior.BP_ZSL92_turret_Interior_C",
+        "sourceMeshPath": "/Game/Vehicles/ZSD89/Turrets/ZSL92/Meshes/SK_ZSL92_Gun.SK_ZSL92_Gun",
+        "activeActor": "BP_ZSL92_ZPT90_AP_C_0",
+        "activeParentActor": "BP_ZSL92_turret_Interior_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZSL92_Smoke_Launcher_C_0",
+          "BP_ZSL92_Type86_C_0",
+          "BP_ZSL92_ZPT90_HE_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZSL92_turret_Interior_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZSL92_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 138.91848632448125,
+            "rotationDeltaDeg": 3.2489780557042365,
+            "scaleDelta": 4.440892098500626e-16
+          },
+          {
+            "actor": "BP_ZSL92_Type86_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 138.91848632448125,
+            "rotationDeltaDeg": 3.2489780557042365,
+            "scaleDelta": 4.440892098500626e-16
+          },
+          {
+            "actor": "BP_ZSL92_ZPT90_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 138.91848632448125,
+            "rotationDeltaDeg": 3.2489780557042365,
+            "scaleDelta": 4.440892098500626e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-7eabad0a9f32b5b5384447fa",
+        "bindings": [
+          {
+            "cardId": "rgf--brdm-2--ltv",
+            "rawName": "BP_BRDM-2_RUS_Desert"
+          },
+          {
+            "cardId": "vdv--brdm-2--ltv",
+            "rawName": "BP_BRDM-2_RUS_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-f937e7b86940188fe6da2e1c6062a9cae354dd7ecd5f3e5082efbfab74383450",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--brdm-2--ltv--bp_brdm-2_rus_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "57024f9531962f68064d4f93c6f4a1fe7aeb0cbf3168abf74041e2d83d16aacf",
+        "parentActorClassPath": "/Game/Vehicles/BRDM-2/Attachments/BP_BRDM2_RUS_Desert_turret.BP_BRDM2_RUS_Desert_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+        "activeActor": "BP_BRDM2_RUS_Desert_KPVT_C_0",
+        "activeParentActor": "BP_BRDM2_RUS_Desert_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BRDM2_RUS_Desert_PKT_C_0",
+          "BP_BRDM2_RUS_Desert_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BRDM2_RUS_Desert_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BRDM2_RUS_Desert_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.5527575473449,
+            "rotationDeltaDeg": 0.1941658033559172,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_BRDM2_RUS_Desert_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.5527575473449,
+            "rotationDeltaDeg": 0.1941658033559172,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-8de41a03157fe8ca87c0534a",
+        "bindings": [
+          {
+            "cardId": "caf--lav-iii-c6-rws--apc",
+            "rawName": "BP_LAV_RWS_C6_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-9f70a47803d1ef4d956a94bedd3ddd0a3c14d9976e0e30455b3c529575c37673",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--lav-iii-c6-rws--apc--bp_lav_rws_c6_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "0b303a8fd7ce7372ee0ab2518d44c414bd6c64520fd34aff2d47a81edc4d045f",
+        "parentActorClassPath": "/Game/Vehicles/LAV_RWS/Weapons/BP_CROWS_LAV_C6_Desert.BP_CROWS_LAV_C6_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_m240.crows_m240",
+        "activeActor": "BP_CROWS_C6_LAV_Desert_C_0",
+        "activeParentActor": "BP_CROWS_LAV_C6_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "Smoke_Launcher_Nanuk_C6_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_CROWS_LAV_C6_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "Smoke_Launcher_Nanuk_C6_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 202.32761486357418,
+            "rotationDeltaDeg": 0.3832907471845032,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-8e7fb26fb3eeefdeb629e0a8",
+        "bindings": [
+          {
+            "cardId": "baf--fv520-ctas40--ifv",
+            "rawName": "BP_FV510UA_CTAS40"
+          }
+        ],
+        "sourceVehicleId": "vehicle-64d1424dddc075ba851b531578306ca34a24a1484d61db2d6a8debd363691a36",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv520-ctas40--ifv--bp_fv510ua_ctas40.visual.json.recipe.json",
+        "visualRecipeSha256": "f6d8e9c71b2e2c69609428c565e1c22b0d008ba10e084020ab6005a3300847b6",
+        "parentActorClassPath": "/Game/Vehicles/FV510_40mm/Turrets/BP_FV510_CTAS40_Turret.BP_FV510_CTAS40_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/FV510_40mm/Meshes/FV510_gun_ctas.FV510_gun_ctas",
+        "activeActor": "BP_Warrior_CTAS_AP_C_0",
+        "activeParentActor": "BP_FV510_CTAS40_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Warrior_CTAS_762_C_0",
+          "BP_Warrior_CTAS_HE_C_0",
+          "BP_Warrior_CTAS_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_FV510_CTAS40_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Warrior_CTAS_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20558018577586,
+            "rotationDeltaDeg": 0.3086397042532097,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_CTAS_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20558018577586,
+            "rotationDeltaDeg": 0.3086397042532097,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_CTAS_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.20558018577586,
+            "rotationDeltaDeg": 0.3086397042532097,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-8f632da18f55ddff2ab3d41e",
+        "bindings": [
+          {
+            "cardId": "usmc--aavp-7a1--apc",
+            "rawName": "BP_AAVP7A1_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-aca3df7460bd020020e7d1b20d83851ed805ef160c965fb1cfde87a561c7bbdf",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--aavp-7a1--apc--bp_aavp7a1_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "0af9fd94686792f6c38abc843f067bc304ed1309fdcdf567d03c978e0f320210",
+        "parentActorClassPath": "/Game/Vehicles/AAVP7A1/Turrets/BP_AAVP7A1_Turret_Woodland.BP_AAVP7A1_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/AAVP7A1/Meshes/AAVP7A1_Gun.AAVP7A1_Gun",
+        "activeActor": "BP_AAVP7A1_M2_Woodland_C_0",
+        "activeParentActor": "BP_AAVP7A1_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_AAVP7A1_MK19_Woodland_C_0",
+          "Smoke_Launcher_AAVP7A1_Woodland_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_AAVP7A1_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_AAVP7A1_MK19_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 229.55797210114508,
+            "rotationDeltaDeg": 1.4209364206517985,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_AAVP7A1_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 229.55797210114508,
+            "rotationDeltaDeg": 1.4209364206517985,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-93725e071e63ee3139efac67",
+        "bindings": [
+          {
+            "cardId": "usa--m7a3--ifv",
+            "rawName": "BP_M7A3_IFV_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-02bdbfb4b4d454f2ea66af76437dcc530e81d4c0dffcd6ba36fc49698282e8b9",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m7a3--ifv--bp_m7a3_ifv_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "20b9993965ec50e8c84ab22d56f02886a0c97061c0bea257b86dd724f0ff7482",
+        "parentActorClassPath": "/Game/Vehicles/BFV/Turrets/BP_M7A3_Turret_Woodland.BP_M7A3_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/BFV/Meshes/BFV_gun.BFV_gun",
+        "activeActor": "BFV_M252_AP_Woodland_C_1",
+        "activeParentActor": "BP_M7A3_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BFV_M252_HE_Woodland_C_1",
+          "BP_BFV_762_Woodland_C_1",
+          "Smoke_Launcher_BFV_Woodland_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_M7A3_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BFV_M252_HE_Woodland_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BFV_762_Woodland_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_BFV_Woodland_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 216.46193947405416,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-94a63fcef83c7d8cecf4e4c5",
+        "bindings": [
+          {
+            "cardId": "rgf--bmp-2m--ifv",
+            "rawName": "BP_BMP2M"
+          }
+        ],
+        "sourceVehicleId": "vehicle-bf48eb25a3ef2f2e71cbc12dcf70a31940b5da6a00feeb048140afb545a6a605",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--bmp-2m--ifv--bp_bmp2m.visual.json.recipe.json",
+        "visualRecipeSha256": "ec1573003d372e9711185744f56c6928c8b4095fd2f8d2dd4f01600610fef2d5",
+        "parentActorClassPath": "/Game/Vehicles/BMP-2M/Turrets/BP_BMP2M_Turret.BP_BMP2M_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BMP-2M/Meshes/SK_BMP2M_Gun.SK_BMP2M_Gun",
+        "activeActor": "BP_BMP2M_2A42_AP_C_0",
+        "activeParentActor": "BP_BMP2M_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 6.938893903907228e-18,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BMP2M_2A42_HE_C_0",
+          "BP_BMP2M_AGS30_C_0",
+          "BP_BMP2M_Kornet_C_0",
+          "BP_BMP2M_PKT_C_0",
+          "BP_BMP2M_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BMP2M_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BMP2M_2A42_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19114022769256,
+            "rotationDeltaDeg": 0.7496468195207627,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_AGS30_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19114022769256,
+            "rotationDeltaDeg": 0.7496468195207627,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_Kornet_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19114022769256,
+            "rotationDeltaDeg": 0.7496468195207627,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19114022769256,
+            "rotationDeltaDeg": 0.7496468195207627,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2M_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19114022769256,
+            "rotationDeltaDeg": 0.7496468195207627,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-9665c7e59c058616eea7b62c",
+        "bindings": [
+          {
+            "cardId": "tlf--pars-iii-25mm--ifv",
+            "rawName": "BP_PARS3_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-1230608ab4b92614731adb929c0ad94c89b00cc7ab6eb3fa83606365d770a1be",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--pars-iii-25mm--ifv--bp_pars3_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "ca708aacbc85ce7f94c3be7ebee87cd8d48f719cd54c62e353d71d62949f2d8e",
+        "parentActorClassPath": "/Game/Vehicles/PARS_III/IFV25_Turret/BP_IFV25_Turret_Desert.BP_IFV25_Turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/PARS_III/IFV25_Turret/Meshes/SK_IFV25_Gun.SK_IFV25_Gun",
+        "activeActor": "IFV25_M252_AP_Desert_C_0",
+        "activeParentActor": "BP_IFV25_Turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_IFV25_762_Desert_C_0",
+          "IFV25_M252_HE_Desert_C_0",
+          "Smoke_Launcher_Turret_IFV25_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_IFV25_Turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_IFV25_762_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 216.82550280617247,
+            "rotationDeltaDeg": 3.155706218862919e-15,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "IFV25_M252_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 216.82550280617247,
+            "rotationDeltaDeg": 3.155706218862919e-15,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_Turret_IFV25_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 216.82550280617247,
+            "rotationDeltaDeg": 3.155706218862919e-15,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-981afa3736b2593a7bfb40c5",
+        "bindings": [
+          {
+            "cardId": "wpmc--technical-mortar--spa",
+            "rawName": "BP_Technical2Seater_Mortar_Black"
+          }
+        ],
+        "sourceVehicleId": "vehicle-bcfd5aaa1f2ec4d2cb28123306a6292d46ca0f44f68063009dc109a5c2121657",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/wpmc--technical-mortar--spa--bp_technical2seater_mortar_black.visual.json.recipe.json",
+        "visualRecipeSha256": "40cd95827a23497809915e8125d843fc869bc6eb7c37aa3326883808a5678765",
+        "parentActorClassPath": "/Game/Vehicles/Technical2Seater_WPMC/Turrets/BP_Technical_MortarTurret_M252.BP_Technical_MortarTurret_M252_C",
+        "sourceMeshPath": "/Game/Vehicles/Emplaced_M252mortar/M252mortar/m252mortar_tube.m252mortar_tube",
+        "activeActor": "BP_Technical_M252mortar_C_0",
+        "activeParentActor": "BP_Technical_MortarTurret_M252_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Technical_M252mortar_Smoke_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_MortarTurret_M252_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Technical_M252mortar_Smoke_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 173.5584881418817,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-998dee3f2e22d299694dfda8",
+        "bindings": [
+          {
+            "cardId": "caf--lav-6--ifv",
+            "rawName": "BP_LAV6_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-1fea5d4248754b32c34bcf4a5a6cac55c2f9cc76d9c0892d549752bdf70c5c3f",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--lav-6--ifv--bp_lav6_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "c96d2457a73fcbc5c4894819acb344fb939a748347f411772b889e00e195f99d",
+        "parentActorClassPath": "/Game/Vehicles/LAV6/Turrets/BP_LAV6_Turret_Desert.BP_LAV6_Turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+        "activeActor": "LAV_M252_AP_Desert_C_0",
+        "activeParentActor": "BP_LAV6_Turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 9.570469416964045e-15,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_LAV_762_Desert_C_0",
+          "LAV_M252_HE_Desert_C_0",
+          "Smoke_Launcher_LAV_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_LAV6_Turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_LAV_762_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.53977934302463,
+            "rotationDeltaDeg": 0.4192479542701334,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "LAV_M252_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.53977934302463,
+            "rotationDeltaDeg": 0.4192479542701334,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_LAV_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.53977934302463,
+            "rotationDeltaDeg": 0.4192479542701334,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-9c85af45107b42f5a18743bf",
+        "bindings": [
+          {
+            "cardId": "caf--m113a3-tlav--apc",
+            "rawName": "BP_M113A3_CAF_TLAV_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-fe8224bd38d5a3f3e97805a94bd6ca39f1b36a4a0d4c346ccdff30746e784608",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--m113a3-tlav--apc--bp_m113a3_caf_tlav_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "e4e5c5a72f93161a595e5847ca3a3709dad95a8f732c998fc19a8ad352ab92ee",
+        "parentActorClassPath": "/Game/Vehicles/TLAV/Turrets/BP_TLAV_Turret_Desert.BP_TLAV_Turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/TLAV/Meshes/TLAV_Gun.TLAV_Gun",
+        "activeActor": "BP_TLAV_M2_Desert_C_0",
+        "activeParentActor": "BP_TLAV_Turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_TLAV_M240_Desert_C_0",
+          "Smoke_Launcher_TLAV_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_TLAV_Turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_TLAV_M240_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 213.20692653012017,
+            "rotationDeltaDeg": 7.5805094004111295e-22,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_TLAV_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 213.20692653012017,
+            "rotationDeltaDeg": 7.5805094004111295e-22,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-9c8b98031ee1aff37d2b703e",
+        "bindings": [
+          {
+            "cardId": "usa--m1126-crows-m240--apc",
+            "rawName": "BP_M1126_M240_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-75d742bdbc77f4816300ee675d9516740a5a5af460110adc552f0d8dc7f1a0fb",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1126-crows-m240--apc--bp_m1126_m240_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "ea8357bd248c9bce791aa33ed4493194012d1e82e792e2db069be6a7cdc21465",
+        "parentActorClassPath": "/Game/Vehicles/M1126/Turrets/BP_M1126_CROWS_M240_Turret.BP_M1126_CROWS_M240_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_m240.crows_m240",
+        "activeActor": "BP_M1126_CROWS_M240_C_1",
+        "activeParentActor": "BP_M1126_CROWS_M240_Turret_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1126_M240_Smoke_Launcher_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_M1126_CROWS_M240_Turret_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1126_M240_Smoke_Launcher_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 200.95377652797413,
+            "rotationDeltaDeg": 0.4564439715653635,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-9d9361f79380da8e84a0ee6b",
+        "bindings": [
+          {
+            "cardId": "rgf--bmp-2--ifv",
+            "rawName": "BP_BMP2_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-a32d456e5b5c1b7e89ae3f3d59492fe624876e7d8af280bc30d23aeec8529937",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--bmp-2--ifv--bp_bmp2_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "31321dec9eb8487ad3334e6f61ebeaab87569c727e604f29006a96a6816cca26",
+        "parentActorClassPath": "/Game/Vehicles/BMP-2/Turrets/BP_BMP2_Turret_Desert.BP_BMP2_Turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/BMP-2/Meshes/BMP2_Gun.BMP2_Gun",
+        "activeActor": "BP_BMP2_2A42_AP_Desert_C_0",
+        "activeParentActor": "BP_BMP2_Turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 2.0816681711721685e-17,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BMP2_2A42_HE_Desert_C_0",
+          "BP_BMP2_Konkurs_Desert_C_0",
+          "BP_BMP2_PKT_Desert_C_0",
+          "BP_BMP2_Smoke_Launcher_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BMP2_Turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BMP2_2A42_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19541681977918,
+            "rotationDeltaDeg": 0.7501327014446133,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_Konkurs_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19541681977918,
+            "rotationDeltaDeg": 0.7501327014446133,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_PKT_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19541681977918,
+            "rotationDeltaDeg": 0.7501327014446133,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_Smoke_Launcher_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.19541681977918,
+            "rotationDeltaDeg": 0.7501327014446133,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-9e45315270668eb9efbea23e",
+        "bindings": [
+          {
+            "cardId": "rgf--btr-80--apc",
+            "rawName": "BP_BTR80_RUS"
+          }
+        ],
+        "sourceVehicleId": "vehicle-e1e53f2bbc5b65acaa5fc3ea014a9ff34d2b2242b99950242afcab3ff103d373",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--btr-80--apc--bp_btr80_rus.visual.json.recipe.json",
+        "visualRecipeSha256": "d834d460fceebe7e14fcd9adaeaa1ed85bea2b7d6b9cff976ed48a530e4b0155",
+        "parentActorClassPath": "/Game/Vehicles/BTR80/Attachments/BP_BTR80_RUS_turret.BP_BTR80_RUS_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+        "activeActor": "BP_BTR80_RUS_KPVT_C_0",
+        "activeParentActor": "BP_BTR80_RUS_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR80_RUS_PKT_C_0",
+          "BP_BTR80_RUS_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR80_RUS_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR80_RUS_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR80_RUS_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-a0a61e7b42c728048ddefe0f",
+        "bindings": [
+          {
+            "cardId": "gfi--bmp-2--ifv",
+            "rawName": "BP_BMP2_GFI"
+          }
+        ],
+        "sourceVehicleId": "vehicle-7ddf92c88bacf9eb25276981cc602c2911da88d396f7fdeb3ebff4989dbe5d88",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/gfi--bmp-2--ifv--bp_bmp2_gfi.visual.json.recipe.json",
+        "visualRecipeSha256": "da2e5593c88acb190b501f4a9a32a6a780e6d0f2b70f51025824a4aaa1e3dbaf",
+        "parentActorClassPath": "/Game/Vehicles/BMP-2/Turrets/BP_BMP2_GFI_Turret.BP_BMP2_GFI_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BMP-2/Meshes/BMP2_Gun.BMP2_Gun",
+        "activeActor": "BP_BMP2_GFI_2A42_AP_C_0",
+        "activeParentActor": "BP_BMP2_GFI_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 3.469446951953614e-17,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BMP2_GFI_2A42_HE_C_0",
+          "BP_BMP2_GFI_Konkurs_C_0",
+          "BP_BMP2_GFI_PKT_C_0",
+          "BP_BMP2_GFI_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BMP2_GFI_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BMP2_GFI_2A42_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.1938804428842,
+            "rotationDeltaDeg": 0.7514888371274537,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_GFI_Konkurs_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.1938804428842,
+            "rotationDeltaDeg": 0.7514888371274537,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_GFI_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.1938804428842,
+            "rotationDeltaDeg": 0.7514888371274537,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BMP2_GFI_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 134.1938804428842,
+            "rotationDeltaDeg": 0.7514888371274537,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-a3e80b2c2e6f3e91d8048cf4",
+        "bindings": [
+          {
+            "cardId": "planmc--zbl08--ifv",
+            "rawName": "BP_ZBL08_HJ73C_Naval"
+          }
+        ],
+        "sourceVehicleId": "vehicle-bfb5e3f7673e21f8feb8cfb853147c4ca38cd04622e0acac05c492bdde77a171",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/planmc--zbl08--ifv--bp_zbl08_hj73c_naval.visual.json.recipe.json",
+        "visualRecipeSha256": "955236eaeea13bec0be66c5b45591e56987024a167857874ff87e022b447bfa5",
+        "parentActorClassPath": "/Game/Vehicles/ZBL08/Turrets/BP_ZBL08_Turret_HJ73C_Naval.BP_ZBL08_Turret_HJ73C_Naval_C",
+        "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_Gun.ZBL08_Gun",
+        "activeActor": "BP_ZBL08_ZPT-99_APFSDS_C_0",
+        "activeParentActor": "BP_ZBL08_Turret_HJ73C_Naval_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 5.551115123125783e-17,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZBL08_HJ73C_ATGM_C_0",
+          "BP_ZBL08_QTJ02_C_0",
+          "BP_ZBL08_Smoke_Launcher_C_0",
+          "BP_ZBL08_ZPT-99_HEFrag_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZBL08_Turret_HJ73C_Naval_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZBL08_HJ73C_ATGM_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.72336279411957,
+            "rotationDeltaDeg": 0.1323385017717453,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBL08_QTJ02_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.72336279411957,
+            "rotationDeltaDeg": 0.1323385017717453,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBL08_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.72336279411957,
+            "rotationDeltaDeg": 0.1323385017717453,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_ZBL08_ZPT-99_HEFrag_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.72336279411957,
+            "rotationDeltaDeg": 0.1323385017717453,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-a544675c5c37ff50d34aa256",
+        "bindings": [
+          {
+            "cardId": "baf--fv107--apc",
+            "rawName": "BP_FV107_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-fcad1af90f1785c074cdff77e10bbd6af6c702484f1f63592d5377d649e89c30",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv107--apc--bp_fv107_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "8a0b7211343ebb3be3d578f493ebc827d7a88531f357f75fd4745266a52b8ff7",
+        "parentActorClassPath": "/Game/Vehicles/FV107/Turrets/BP_FV107_Turret_Woodland.BP_FV107_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/FV107/Meshes/FV107_gun.FV107_gun",
+        "activeActor": "BP_Scimitar_Rarden_AP_Woodland_C_0",
+        "activeParentActor": "BP_FV107_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Scimitar_762_Woodland_C_0",
+          "BP_Scimitar_Rarden_HE_Woodland_C_0",
+          "BP_Scimitar_Smoke_Launcher_Woodland_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_FV107_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Scimitar_762_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 146.7570574456453,
+            "rotationDeltaDeg": 0.04206875375490425,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Scimitar_Rarden_HE_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 146.7570574456453,
+            "rotationDeltaDeg": 0.04206875375490425,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Scimitar_Smoke_Launcher_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 146.7570574456453,
+            "rotationDeltaDeg": 0.04206875375490425,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-a55e3fb596a741fa9b4e26c7",
+        "bindings": [
+          {
+            "cardId": "baf--fv510-ua--ifv",
+            "rawName": "BP_FV510UA"
+          }
+        ],
+        "sourceVehicleId": "vehicle-57242f551a21499149e02003ed9e24a05625657be7b87a23cbadc5ff60cd1289",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv510-ua--ifv--bp_fv510ua.visual.json.recipe.json",
+        "visualRecipeSha256": "40d2505e9a2d3959f1e2c14f367451712ca51a17b8c05047eeec53bfee129079",
+        "parentActorClassPath": "/Game/Vehicles/FV510/Turrets/BP_FV510_Turret.BP_FV510_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+        "activeActor": "BP_Warrior_Rarden_AP_Tan_C_1",
+        "activeParentActor": "BP_FV510_Turret_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Warrior_762_Tan_C_1",
+          "BP_Warrior_Rarden_HE_Tan_C_1",
+          "BP_Warrior_Smoke_Launcher_Tan_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_FV510_Turret_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Warrior_762_Tan_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 137.21169173297176,
+            "rotationDeltaDeg": 0.3073507939689647,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Rarden_HE_Tan_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 137.21169173297176,
+            "rotationDeltaDeg": 0.3073507939689647,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Smoke_Launcher_Tan_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 137.21169173297176,
+            "rotationDeltaDeg": 0.3073507939689647,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-a80a93ea3630cb6648e59ec6",
+        "bindings": [
+          {
+            "cardId": "usa--m1064a3-m121--spa",
+            "rawName": "BP_M1064A3_M121"
+          }
+        ],
+        "sourceVehicleId": "vehicle-19930c46ce317cc6f3da6dc5643cb61e21e4c5136707a433611659c666367257",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1064a3-m121--spa--bp_m1064a3_m121.visual.json.recipe.json",
+        "visualRecipeSha256": "1158190836ad8c5035c8e2ad4e410b124f75ec829368586e43c8b7fffd0e3929",
+        "parentActorClassPath": "/Game/Vehicles/M1064A3/Turrets/BP_M1064A3_MortarTurret.BP_M1064A3_MortarTurret_C",
+        "sourceMeshPath": "/Game/Vehicles/Emplaced_M120_M121_Mortar/Meshes/SK_M121_Mortar_Tube.SK_M121_Mortar_Tube",
+        "activeActor": "BP_M1064A3_M121mortar_C_0",
+        "activeParentActor": "BP_M1064A3_MortarTurret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1064A3_M121mortar_Airburst_C_0",
+          "BP_M1064A3_M121mortar_Smoke_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_M1064A3_MortarTurret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1064A3_M121mortar_Airburst_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 24.183636862422418,
+            "rotationDeltaDeg": 179.99972262621193,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_M1064A3_M121mortar_Smoke_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 24.183636862422418,
+            "rotationDeltaDeg": 179.99972262621193,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-a8654510f3f37f27897a3e04",
+        "bindings": [
+          {
+            "cardId": "pla--zsd89ii-ifv--ifv",
+            "rawName": "BP_ZSD89II_Desert"
+          },
+          {
+            "cardId": "plaagf--zsd89ii-ifv--ifv",
+            "rawName": "BP_ZSD89II_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-b6f452f2f0393fcdc198c068e38dc055d052f65218c619dba55f7a310782254a",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--zsd89ii-ifv--ifv--bp_zsd89ii_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "729caba0bcf587f62bf6301a52b97818ac18ca426856a9645d38ef65c63a207e",
+        "parentActorClassPath": "/Game/Vehicles/ZSD89/Turrets/ZSL92/BP_ZSL92_turret_Desert.BP_ZSL92_turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/ZSD89/Turrets/ZSL92/Meshes/SK_ZSL92_Gun.SK_ZSL92_Gun",
+        "activeActor": "BP_ZSL92_ZPT90_AP_Desert_C_0",
+        "activeParentActor": "BP_ZSL92_turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZSL92_Smoke_Launcher_Desert_C_0",
+          "BP_ZSL92_Type86_Desert_C_0",
+          "BP_ZSL92_ZPT90_HE_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZSL92_turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZSL92_Smoke_Launcher_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 87.79882600327541,
+            "rotationDeltaDeg": 0.037172548628651186,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_ZSL92_Type86_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 87.79882600327541,
+            "rotationDeltaDeg": 0.037172548628651186,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_ZSL92_ZPT90_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 87.79882600327541,
+            "rotationDeltaDeg": 0.037172548628651186,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-a9de51217a16108423baca5b",
+        "bindings": [
+          {
+            "cardId": "imf--technical-spg-9--td",
+            "rawName": "BP_Technical2Seater_Camo_SPG9"
+          }
+        ],
+        "sourceVehicleId": "vehicle-83d8e50865ac45c162c451a6f250bd4adddb8fc4b63fab3818564082c58395c3",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--technical-spg-9--td--bp_technical2seater_camo_spg9.visual.json.recipe.json",
+        "visualRecipeSha256": "d848f37df0409a2da7c3caaa31a84ec28ef1e4aaf177ea18b47060b30464f6f1",
+        "parentActorClassPath": "/Game/Vehicles/Technical/Turrets/BP_Technical_Turret_SPG9.BP_Technical_Turret_SPG9_C",
+        "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/SPG9/spg9_weapon_technical.spg9_weapon_technical",
+        "activeActor": "BP_SPG9_C_1",
+        "activeParentActor": "BP_Technical_Turret_SPG9_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_SPG9_Frag_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_Turret_SPG9_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_SPG9_Frag_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 109.10025024414062,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-b360b20249f87b4cd64c54a7",
+        "bindings": [
+          {
+            "cardId": "wpmc--technical-mortar--spa",
+            "rawName": "BP_Technical2Seater_Mortar_Tan"
+          }
+        ],
+        "sourceVehicleId": "vehicle-199769f0ce953a7829945bdb86de225398897f554553f7380aeabe063ddff65b",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/wpmc--technical-mortar--spa--bp_technical2seater_mortar_tan.visual.json.recipe.json",
+        "visualRecipeSha256": "3146ce45714ce45536abd524c59fcfb25c185dda18f4e7bdfaf95a39a5f2e835",
+        "parentActorClassPath": "/Game/Vehicles/Technical2Seater_WPMC/Turrets/BP_Technical_MortarTurret_M252.BP_Technical_MortarTurret_M252_C",
+        "sourceMeshPath": "/Game/Vehicles/Emplaced_M252mortar/M252mortar/m252mortar_tube.m252mortar_tube",
+        "activeActor": "BP_Technical_M252mortar_C_2",
+        "activeParentActor": "BP_Technical_MortarTurret_M252_C_2",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Technical_M252mortar_Smoke_C_2"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_MortarTurret_M252_C_2"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Technical_M252mortar_Smoke_C_2",
+            "synchronized": false,
+            "translationDeltaCm": 173.5584881418817,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-b36f1a52108a4e83d45f9b2f",
+        "bindings": [
+          {
+            "cardId": "rgf--btr-82a--apc",
+            "rawName": "BP_BTR82A_RUS_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-b6fff942a45c28e1562e8035a32453222e9fd32b3f0edec0e9846220fc5dae97",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--btr-82a--apc--bp_btr82a_rus_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "7e627cfb598ca38866728168b43bc1ffdcffa09543558e31294090d26b9ab639",
+        "parentActorClassPath": "/Game/Vehicles/BTR80/82A/BP_BTR82A_turret_desert.BP_BTR82A_turret_desert_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/82A/Meshes/BTR_82A_gun.BTR_82A_gun",
+        "activeActor": "BP_BTR82A_RUS_2A72_AP_Desert_C_1",
+        "activeParentActor": "BP_BTR82A_turret_desert_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR82A_PKT_desert_C_1",
+          "BP_BTR82A_RUS_2A72_HE_Desert_C_1",
+          "BP_BTR82A_RUS_Smoke_Launcher_Desert_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR82A_turret_desert_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR82A_PKT_desert_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_2A72_HE_Desert_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_Smoke_Launcher_Desert_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 170.14686576303495,
+            "rotationDeltaDeg": 0.22566894351962208,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-b37afd7eb5870d5d3b8ebe34",
+        "bindings": [
+          {
+            "cardId": "pla--zsl92-ifv--ifv",
+            "rawName": "BP_WZ551A_Desert"
+          },
+          {
+            "cardId": "plaagf--zsl92-ifv--ifv",
+            "rawName": "BP_WZ551A_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-eac0a3275f457d339c832ef76e5294f4dab6b675f4e474a7dad1d4220be40323",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--zsl92-ifv--ifv--bp_wz551a_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "14ea5b7044a760d5c4ff6c1bcabcee69510a9a15b8572b42bc61d2ec039fe085",
+        "parentActorClassPath": "/Game/Vehicles/WZ551/Turrets/ZSL92/BP_ZSL92_turret_Interior_Desert.BP_ZSL92_turret_Interior_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/ZSD89/Turrets/ZSL92/Meshes/SK_ZSL92_Gun.SK_ZSL92_Gun",
+        "activeActor": "BP_ZSL92_ZPT90_AP_Desert_C_0",
+        "activeParentActor": "BP_ZSL92_turret_Interior_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_ZSL92_Smoke_Launcher_Desert_C_0",
+          "BP_ZSL92_Type86_Desert_C_0",
+          "BP_ZSL92_ZPT90_HE_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_ZSL92_turret_Interior_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_ZSL92_Smoke_Launcher_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 139.3279007536807,
+            "rotationDeltaDeg": 1.425508292678174,
+            "scaleDelta": 4.440892098500626e-16
+          },
+          {
+            "actor": "BP_ZSL92_Type86_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 139.3279007536807,
+            "rotationDeltaDeg": 1.425508292678174,
+            "scaleDelta": 4.440892098500626e-16
+          },
+          {
+            "actor": "BP_ZSL92_ZPT90_HE_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 139.3279007536807,
+            "rotationDeltaDeg": 1.425508292678174,
+            "scaleDelta": 4.440892098500626e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-b692b400c0cdf2aa113c2188",
+        "bindings": [
+          {
+            "cardId": "caf--lav-6--ifv",
+            "rawName": "BP_LAV6_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-533a9dcf290b6c5acb8df6b2171f428ceab1e6df533fc93c5e0ee08ddce19a70",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--lav-6--ifv--bp_lav6_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "8721b2a7ed1088609ed53d429fd9a3ace5e326bd867207237b2b965e05bc69f8",
+        "parentActorClassPath": "/Game/Vehicles/LAV6/Turrets/BP_LAV6_Turret_Woodland.BP_LAV6_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/LAV6/Meshes/LAV60_gun.LAV60_gun",
+        "activeActor": "LAV_M252_AP_C_0",
+        "activeParentActor": "BP_LAV6_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 9.572637821309016e-15,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_LAV_762_C_0",
+          "LAV_M252_HE_C_0",
+          "Smoke_Launcher_LAV_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_LAV6_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_LAV_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.53915266216669,
+            "rotationDeltaDeg": 0.4169439444048634,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "LAV_M252_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.53915266216669,
+            "rotationDeltaDeg": 0.4169439444048634,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_LAV_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 176.53915266216669,
+            "rotationDeltaDeg": 0.4169439444048634,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-ba388b87c24545ba4ef5e6dc",
+        "bindings": [
+          {
+            "cardId": "gfi--brdm-2-ub-32--rsv",
+            "rawName": "BP_BRDM-2_GFI"
+          }
+        ],
+        "sourceVehicleId": "vehicle-3404e5f863d0ea3bc2c841b302950ce4d6ef99cef0c50ba6e528f6f11eaf7554",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/gfi--brdm-2-ub-32--rsv--bp_brdm-2_gfi.visual.json.recipe.json",
+        "visualRecipeSha256": "15982508b4176e8e6ef372612efd8460e900c958d922560e1c8f8f1453dc6295",
+        "parentActorClassPath": "/Game/Vehicles/BRDM-2/Attachments/BP_BRDM2_GFI_turret.BP_BRDM2_GFI_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/UB32/SK_BRDM2_Gun_UB32.SK_BRDM2_Gun_UB32",
+        "activeActor": "BP_BRDM2_GFI_KPVT_C_0",
+        "activeParentActor": "BP_BRDM2_GFI_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BRDM2_GFI_PKT_C_0",
+          "BP_BRDM2_GFI_Smoke_Launcher_C_0",
+          "BP_BRDM2_GFI_UB32_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BRDM2_GFI_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BRDM2_GFI_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.55216667056385,
+            "rotationDeltaDeg": 0.1941402309122796,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_BRDM2_GFI_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.55216667056385,
+            "rotationDeltaDeg": 0.1941402309122796,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_BRDM2_GFI_UB32_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.55216667056385,
+            "rotationDeltaDeg": 0.1941402309122796,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-c06dbabf3bde9c563564ca0b",
+        "bindings": [
+          {
+            "cardId": "caf--lav-iii-m2-rws--apc",
+            "rawName": "BP_LAV_RWS_M2_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-9b3ba159461df29e43ae088df1694be805bec6e20d7b22ac12a503c792d3dbe4",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--lav-iii-m2-rws--apc--bp_lav_rws_m2_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "da26df328082eb4f9f960ec51c9c082ea27dc9c3a3ab30008375bc131d16f800",
+        "parentActorClassPath": "/Game/Vehicles/LAV_RWS/Weapons/BP_CROWS_Nanuk_Desert.BP_CROWS_Nanuk_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+        "activeActor": "BP_CROWS_M2_Nanuk_Desert_C_0",
+        "activeParentActor": "BP_CROWS_Nanuk_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "Smoke_Launcher_Nanuk_M2_Desert_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_CROWS_Nanuk_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "Smoke_Launcher_Nanuk_M2_Desert_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 202.3287004815917,
+            "rotationDeltaDeg": 0.38284816243316294,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-c0b729c38445ffbf5b1c2ed3",
+        "bindings": [
+          {
+            "cardId": "afu--brdm-2l1--ltv",
+            "rawName": "BP_BRDM-2L1_AFU"
+          }
+        ],
+        "sourceVehicleId": "vehicle-0a3139a5a8291437fe5403075aae5be4907b34a193eac9ac2ecf9f9b0688e750",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/afu--brdm-2l1--ltv--bp_brdm-2l1_afu.visual.json.recipe.json",
+        "visualRecipeSha256": "2930d9c82842b5fd07b7d654ef0865beebee6a4c8e1ba531435b5f2c90b9697d",
+        "parentActorClassPath": "/Game/Vehicles/BRDM2-L1_AFU/Attachments/BP_BRDM2_AFU_turret.BP_BRDM2_AFU_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+        "activeActor": "BP_BRDM2_AFU_KPVT_C_0",
+        "activeParentActor": "BP_BRDM2_AFU_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BRDM2_AFU_PKT_C_0",
+          "BP_BRDM2_AFU_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BRDM2_AFU_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BRDM2_AFU_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.5526744650624,
+            "rotationDeltaDeg": 0.19387078144431732,
+            "scaleDelta": 3.3306690738754696e-16
+          },
+          {
+            "actor": "BP_BRDM2_AFU_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 159.5526744650624,
+            "rotationDeltaDeg": 0.19387078144431732,
+            "scaleDelta": 3.3306690738754696e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-c3052cacfe87fe3cde995021",
+        "bindings": [
+          {
+            "cardId": "wpmc--technical-mortar--spa",
+            "rawName": "BP_Technical2Seater_Mortar_Grey"
+          }
+        ],
+        "sourceVehicleId": "vehicle-d3103b1eb773f094f0c679fc49d88d366148285ee21c96e8758a487eb4403a6f",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/wpmc--technical-mortar--spa--bp_technical2seater_mortar_grey.visual.json.recipe.json",
+        "visualRecipeSha256": "0b981834ac7470f58e7fb7b7d0dce75ef59514a61f83ed35e95de315a092fbdf",
+        "parentActorClassPath": "/Game/Vehicles/Technical2Seater_WPMC/Turrets/BP_Technical_MortarTurret_M252.BP_Technical_MortarTurret_M252_C",
+        "sourceMeshPath": "/Game/Vehicles/Emplaced_M252mortar/M252mortar/m252mortar_tube.m252mortar_tube",
+        "activeActor": "BP_Technical_M252mortar_C_1",
+        "activeParentActor": "BP_Technical_MortarTurret_M252_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Technical_M252mortar_Smoke_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_MortarTurret_M252_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Technical_M252mortar_Smoke_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 173.5584881418817,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-c3821610dd716a320cbb2b70",
+        "bindings": [
+          {
+            "cardId": "gfi--mtlb-6ma-ub-32--apc",
+            "rawName": "BP_MTLBM_6MA_GFI"
+          }
+        ],
+        "sourceVehicleId": "vehicle-3c10f04922f2de9af382f89185341986b8b4a83e0605994ebc029be79e95eb75",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/gfi--mtlb-6ma-ub-32--apc--bp_mtlbm_6ma_gfi.visual.json.recipe.json",
+        "visualRecipeSha256": "722c612d4ea7b167359d9e08dc4d4686cf448e3b8dd9ac00b0e6338a5bff9542",
+        "parentActorClassPath": "/Game/Vehicles/BRDM-2/Attachments/Legacy/BP_BTR80_UB32_GFI_turret.BP_BTR80_UB32_GFI_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BRDM-2/Weapons/KPVT_UB32/KPVT_UB32.KPVT_UB32",
+        "activeActor": "BP_BTR80_GFI_KPVT_C_0",
+        "activeParentActor": "BP_BTR80_UB32_GFI_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR80_GFI_PKT_C_0",
+          "BP_BTR80_GFI_Smoke_Launcher_C_0",
+          "BP_KPVT_UB32_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR80_UB32_GFI_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR80_GFI_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 140.037195234607,
+            "rotationDeltaDeg": 0.3109781067423682,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR80_GFI_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 140.037195234607,
+            "rotationDeltaDeg": 0.3109781067423682,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_KPVT_UB32_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 140.037195234607,
+            "rotationDeltaDeg": 0.3109781067423682,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-ca8736bf403fd0a23e14d0fd",
+        "bindings": [
+          {
+            "cardId": "baf--fv107--apc",
+            "rawName": "BP_FV107"
+          }
+        ],
+        "sourceVehicleId": "vehicle-b7aff861b8fc73b09d2f736d660240242b9a48c720ca8ec8999b134e1a620533",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv107--apc--bp_fv107.visual.json.recipe.json",
+        "visualRecipeSha256": "016756d6b0f87181d270e66cdae7805a2a3cb13342fe2b6090f2c24eb9d45626",
+        "parentActorClassPath": "/Game/Vehicles/FV107/Turrets/BP_FV107_Turret.BP_FV107_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/FV107/Meshes/FV107_gun.FV107_gun",
+        "activeActor": "BP_Scimitar_Rarden_AP_C_0",
+        "activeParentActor": "BP_FV107_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Scimitar_762_C_0",
+          "BP_Scimitar_Rarden_HE_C_0",
+          "BP_Scimitar_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_FV107_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Scimitar_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 146.75702869996456,
+            "rotationDeltaDeg": 0.04206924063390714,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Scimitar_Rarden_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 146.75702869996456,
+            "rotationDeltaDeg": 0.04206924063390714,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Scimitar_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 146.75702869996456,
+            "rotationDeltaDeg": 0.04206924063390714,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-cd00bade3545d22ed907d57c",
+        "bindings": [
+          {
+            "cardId": "usmc--lav-25--apc",
+            "rawName": "BP_LAV25_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-f220faed043361a603f0268adf15ddf9b09bd0d8d6899481d1a5a536d648b429",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--lav-25--apc--bp_lav25_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "e2996b30db1a7fc8f82a400b0c501b16841db47c6c09156b372b23150f284167",
+        "parentActorClassPath": "/Game/Vehicles/LAV25/Turrets/BP_LAV25_Turret_Woodland.BP_LAV25_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Gun.LAV25_Gun",
+        "activeActor": "LAV25_M252_AP_Woodland_C_0",
+        "activeParentActor": "BP_LAV25_Turret_Woodland_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "LAV25_762_Woodland_C_0",
+          "LAV25_M252_HE_Woodland_C_0",
+          "Smoke_Launcher_LAV25_Woodland_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_LAV25_Turret_Woodland_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "LAV25_762_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 144.2572306236747,
+            "rotationDeltaDeg": 0.5575897020179547,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "LAV25_M252_HE_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 144.2572306236747,
+            "rotationDeltaDeg": 0.5575897020179547,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_LAV25_Woodland_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 144.2572306236747,
+            "rotationDeltaDeg": 0.5575897020179547,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-d206cc395e4e12439ff55905",
+        "bindings": [
+          {
+            "cardId": "rgf--mt-lbm-6ma--apc",
+            "rawName": "BP_MTLBM_6MA_RUS_Desert"
+          }
+        ],
+        "sourceVehicleId": "vehicle-43f2a9deebba9412a404086925b7e84267da4d3eb2918950743b1dccc4d7af4a",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--mt-lbm-6ma--apc--bp_mtlbm_6ma_rus_desert.visual.json.recipe.json",
+        "visualRecipeSha256": "a3e5f8dd6291bc0292fdec38a3d64b00a6fc47c5c41a55000bd49173f065dac8",
+        "parentActorClassPath": "/Game/Vehicles/MTLB/turrets/MTLB_6MA_turret_Desert.MTLB_6MA_turret_Desert_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+        "activeActor": "BP_BTR80_RUS_KPVT_Desert_C_1",
+        "activeParentActor": "MTLB_6MA_turret_Desert_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR80_RUS_PKT_Desert_C_1",
+          "BP_BTR80_RUS_Smoke_Launcher_Desert_C_1"
+        ],
+        "suppressedParentActors": [
+          "MTLB_6MA_turret_Desert_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR80_RUS_PKT_Desert_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 191.76975502581197,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR80_RUS_Smoke_Launcher_Desert_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 191.76975502581197,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-d7369afac21eb50aa2c8651d",
+        "bindings": [
+          {
+            "cardId": "baf--fv510-ua--ifv",
+            "rawName": "BP_FV510UA_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-7541ab2e3417f27567c0f647fe51c35c4a66c824809d16aa7cbe71d2b725aee1",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv510-ua--ifv--bp_fv510ua_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "b5eff31ab030381daaa14f3a9bbe6eb4dde47dde85cfcafae7b6ce615ff960fc",
+        "parentActorClassPath": "/Game/Vehicles/FV510/Turrets/BP_FV510_Turret_Woodland.BP_FV510_Turret_Woodland_C",
+        "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+        "activeActor": "BP_Warrior_Rarden_AP_C_1",
+        "activeParentActor": "BP_FV510_Turret_Woodland_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Warrior_762_C_1",
+          "BP_Warrior_Rarden_HE_C_1",
+          "BP_Warrior_Smoke_Launcher_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_FV510_Turret_Woodland_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Warrior_762_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 137.2054877141536,
+            "rotationDeltaDeg": 0.3073341758931746,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Rarden_HE_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 137.2054877141536,
+            "rotationDeltaDeg": 0.3073341758931746,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Smoke_Launcher_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 137.2054877141536,
+            "rotationDeltaDeg": 0.3073341758931746,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-dacfe4d0a728d61bca6a664b",
+        "bindings": [
+          {
+            "cardId": "rgf--bmp-1am--ifv",
+            "rawName": "BP_BMP1AM"
+          }
+        ],
+        "sourceVehicleId": "vehicle-cfaafa29d443009c3c5a345ac58bfbc3cd04b8b7ed0e0d1c25ae6a9142d15182",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--bmp-1am--ifv--bp_bmp1am.visual.json.recipe.json",
+        "visualRecipeSha256": "c753cefef5e78d731207e9a9b929ba621e10d3d61811dd7cbc518e6b3db8c468",
+        "parentActorClassPath": "/Game/Vehicles/BTR80/82A/BP_BTR82A_turret.BP_BTR82A_turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/82A/Meshes/BTR_82A_gun.BTR_82A_gun",
+        "activeActor": "BP_BTR82A_RUS_2A72_AP_C_0",
+        "activeParentActor": "BP_BTR82A_turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR82A_PKT_C_0",
+          "BP_BTR82A_RUS_2A72_HE_C_0",
+          "BP_BTR82A_RUS_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_BTR82A_turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR82A_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 131.29285691006962,
+            "rotationDeltaDeg": 0.7500425969946601,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_2A72_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 131.29285691006962,
+            "rotationDeltaDeg": 0.7500425969946601,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR82A_RUS_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 131.29285691006962,
+            "rotationDeltaDeg": 0.7500425969946601,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-e445b5dacc1cb1072c0ac746",
+        "bindings": [
+          {
+            "cardId": "rgf--mt-lbm-6ma--apc",
+            "rawName": "BP_MTLBM_6MA_RUS"
+          }
+        ],
+        "sourceVehicleId": "vehicle-d90516f55317dd66033dac2af7619e08bdbd929187aa28c3e30b76807b5ef228",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--mt-lbm-6ma--apc--bp_mtlbm_6ma_rus.visual.json.recipe.json",
+        "visualRecipeSha256": "ef8dea44cc678a32b3dfb2a6f92fe4bb36f71a88ec82f657338987bf4d548482",
+        "parentActorClassPath": "/Game/Vehicles/MTLB/turrets/BP_MTLB_6MA_Turret.BP_MTLB_6MA_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+        "activeActor": "BP_BTR80_RUS_KPVT_C_1",
+        "activeParentActor": "BP_MTLB_6MA_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_BTR80_RUS_PKT_C_1",
+          "BP_BTR80_RUS_Smoke_Launcher_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_MTLB_6MA_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_BTR80_RUS_PKT_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 196.12159506200263,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_BTR80_RUS_Smoke_Launcher_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 196.12159506200263,
+            "rotationDeltaDeg": 0,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-e8a0ae132a602a7c7856438e",
+        "bindings": [
+          {
+            "cardId": "caf--tapv--mrap",
+            "rawName": "BP_TAPV_C16"
+          }
+        ],
+        "sourceVehicleId": "vehicle-adcc312637a07ae1ce6c7ee35d20c1a0b4778004bba3e2a3692b34709354c984",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--tapv--mrap--bp_tapv_c16.visual.json.recipe.json",
+        "visualRecipeSha256": "82e57470592981bc958ca3bb210b5aef72f7dff35727ef028f4634b52506010d",
+        "parentActorClassPath": "/Game/Vehicles/TAPV/Protector_C16/BP_C16_Turret.BP_C16_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/TAPV/Protector_C16/Meshes/SK_C16_Weapon.SK_C16_Weapon",
+        "activeActor": "BP_C16_C6_C_0",
+        "activeParentActor": "BP_C16_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_C16_MK19_C_0",
+          "BP_C16_Smoke_Launcher_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_C16_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_C16_MK19_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 232.5513704953565,
+            "rotationDeltaDeg": 0.00000933466733727817,
+            "scaleDelta": 4.440892098500626e-16
+          },
+          {
+            "actor": "BP_C16_Smoke_Launcher_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 232.5513704953565,
+            "rotationDeltaDeg": 0.00000933466733727817,
+            "scaleDelta": 4.440892098500626e-16
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-ea10f64fdbcc591301db0deb",
+        "bindings": [
+          {
+            "cardId": "usa--m1126-crows-m2--apc",
+            "rawName": "BP_M1126_Woodland"
+          }
+        ],
+        "sourceVehicleId": "vehicle-50484d8f5cb3f4e598757e4aeae359d62481c361b666b3fab792fe784acb7e62",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1126-crows-m2--apc--bp_m1126_woodland.visual.json.recipe.json",
+        "visualRecipeSha256": "71e506ad64846067e82101db2a711e299549dd43e03e238c9f9e6f9eb8e0f175",
+        "parentActorClassPath": "/Game/Vehicles/M1126/Turrets/BP_M1126_CROWS_Turret.BP_M1126_CROWS_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_M2.crows_M2",
+        "activeActor": "BP_M1126_CROWS_M2_C_1",
+        "activeParentActor": "BP_M1126_CROWS_Turret_C_1",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1126_Smoke_Launcher_C_1"
+        ],
+        "suppressedParentActors": [
+          "BP_M1126_CROWS_Turret_C_1"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1126_Smoke_Launcher_C_1",
+            "synchronized": false,
+            "translationDeltaCm": 200.95457733020817,
+            "rotationDeltaDeg": 0.4563905823849269,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-f11392e9367b1cb5b4291d58",
+        "bindings": [
+          {
+            "cardId": "usmc--lav-25--apc",
+            "rawName": "BP_LAV25"
+          }
+        ],
+        "sourceVehicleId": "vehicle-dc20486895248185a9f7bc30a3bfbb081257223ca1b0cbce47913a80b8f9c456",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--lav-25--apc--bp_lav25.visual.json.recipe.json",
+        "visualRecipeSha256": "651055ac01a9daa2ab2494532b9256b918d046103a8171192785806d1c419de7",
+        "parentActorClassPath": "/Game/Vehicles/LAV25/Turrets/BP_LAV25_Turret.BP_LAV25_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/LAV25/Meshes/LAV25_Gun.LAV25_Gun",
+        "activeActor": "LAV25_M252_AP_C_0",
+        "activeParentActor": "BP_LAV25_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "LAV25_762_C_0",
+          "LAV25_M252_HE_C_0",
+          "Smoke_Launcher_LAV25_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_LAV25_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "LAV25_762_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 144.25707291042912,
+            "rotationDeltaDeg": 0.5574104897081607,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "LAV25_M252_HE_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 144.25707291042912,
+            "rotationDeltaDeg": 0.5574104897081607,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "Smoke_Launcher_LAV25_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 144.25707291042912,
+            "rotationDeltaDeg": 0.5574104897081607,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-f2dabe461630591ec22d0819",
+        "bindings": [
+          {
+            "cardId": "mei--technical-mortar--spa",
+            "rawName": "BP_Technical2Seater_White_Mortar"
+          }
+        ],
+        "sourceVehicleId": "vehicle-798448948842fbe585d568bc068eea3a6c7bdbed6d6e9dd6e3d5599be1f6a0c8",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/mei--technical-mortar--spa--bp_technical2seater_white_mortar.visual.json.recipe.json",
+        "visualRecipeSha256": "0a8195030a98f9f8fd377d6554e8a8d2424672646de70a95c6477f96ecb2e05d",
+        "parentActorClassPath": "/Game/Vehicles/Technical2Seater/Turrets/BP_Technical_MortarTurret.BP_Technical_MortarTurret_C",
+        "sourceMeshPath": "/Game/Vehicles/Emplaced_M1937mortar/M1937mortar/m1937mortar_tube2.m1937mortar_tube2",
+        "activeActor": "BP_Technical_M1937mortar_C_0",
+        "activeParentActor": "BP_Technical_MortarTurret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Technical_M1937mortar_Smoke_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_MortarTurret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Technical_M1937mortar_Smoke_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 173.4051378353758,
+            "rotationDeltaDeg": 0.1896384028932516,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-f50ff3d3f96420cb7dc8d25c",
+        "bindings": [
+          {
+            "cardId": "mei--technical-spg-9--td",
+            "rawName": "BP_Technical2Seater_White_SPG9"
+          }
+        ],
+        "sourceVehicleId": "vehicle-188b09522fffe20e71e3081fc25f46b684c01b525ce38d4393cf9d91f91b7203",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/mei--technical-spg-9--td--bp_technical2seater_white_spg9.visual.json.recipe.json",
+        "visualRecipeSha256": "308f3a929a7c17c30376d3f2a4da67d1e1dd06e9baf36e779f94228ea25fb8c7",
+        "parentActorClassPath": "/Game/Vehicles/Technical/Turrets/BP_Technical_Turret_SPG9.BP_Technical_Turret_SPG9_C",
+        "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/SPG9/spg9_weapon_technical.spg9_weapon_technical",
+        "activeActor": "BP_SPG9_C_0",
+        "activeParentActor": "BP_Technical_Turret_SPG9_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_SPG9_Frag_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_Technical_Turret_SPG9_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_SPG9_Frag_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 109.04445244452451,
+            "rotationDeltaDeg": 0.18966244419465278,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-f520f07caba142e3e6b8c2e4",
+        "bindings": [
+          {
+            "cardId": "tlf--m113a2t-m121--spa",
+            "rawName": "BP_M1064_M121_TLF"
+          }
+        ],
+        "sourceVehicleId": "vehicle-3f720ca2e6c44e11af196f28281265669c4ed6a9b5dfdbbe1ff8456f21b8ff0b",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--m113a2t-m121--spa--bp_m1064_m121_tlf.visual.json.recipe.json",
+        "visualRecipeSha256": "bad56fe0d2e32e399eaac3692072a44b0486886396b0e361806652b43bbfc678",
+        "parentActorClassPath": "/Game/Vehicles/M1064A3/Turrets/BP_M1064A3_MortarTurret.BP_M1064A3_MortarTurret_C",
+        "sourceMeshPath": "/Game/Vehicles/Emplaced_M120_M121_Mortar/Meshes/SK_M121_Mortar_Tube.SK_M121_Mortar_Tube",
+        "activeActor": "BP_M1064A3_M121mortar_C_0",
+        "activeParentActor": "BP_M1064A3_MortarTurret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_M1064A3_M121mortar_Airburst_C_0",
+          "BP_M1064A3_M121mortar_Smoke_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_M1064A3_MortarTurret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_M1064A3_M121mortar_Airburst_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 24.184469418899397,
+            "rotationDeltaDeg": 179.99972271191174,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_M1064A3_M121mortar_Smoke_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 24.184469418899397,
+            "rotationDeltaDeg": 179.99972271191174,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-f55e7abee75c97dc0757723a",
+        "bindings": [
+          {
+            "cardId": "caf--lav-iii-c6-rws--apc",
+            "rawName": "BP_LAV_RWS_C6"
+          }
+        ],
+        "sourceVehicleId": "vehicle-4f98b6fc40599a9951fb7bcacd27181b4b8fcb860e92120657a412aadbb9480d",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/caf--lav-iii-c6-rws--apc--bp_lav_rws_c6.visual.json.recipe.json",
+        "visualRecipeSha256": "3fc9df1cf4ec9a8480b0884c85d832f6ad7400efc5a9ed89b708e6e5fab05e81",
+        "parentActorClassPath": "/Game/Vehicles/LAV_RWS/Weapons/BP_CROWS_LAV_C6.BP_CROWS_LAV_C6_C",
+        "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/Crows/crows_m240.crows_m240",
+        "activeActor": "BP_CROWS_C6_LAV_C_0",
+        "activeParentActor": "BP_CROWS_LAV_C6_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "Smoke_Launcher_Nanuk_C6_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_CROWS_LAV_C6_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "Smoke_Launcher_Nanuk_C6_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 202.32776848890597,
+            "rotationDeltaDeg": 0.382547895707546,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-f5938213b0f7cd87d693f726",
+        "bindings": [
+          {
+            "cardId": "imf--mt-lbm-6mb--ifv",
+            "rawName": "BP_MTLBM_6MB_MIL"
+          }
+        ],
+        "sourceVehicleId": "vehicle-a89b5059b51f620f679b8ba9bfcdd14f3e7fa529e7058527ba713bda03d15f10",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--mt-lbm-6mb--ifv--bp_mtlbm_6mb_mil.visual.json.recipe.json",
+        "visualRecipeSha256": "26a8eb931dc6d72d599668d2a4e7be05ef33bba8fb866055c6208c1ab9e0799c",
+        "parentActorClassPath": "/Game/Vehicles/MTLB/turrets/BP_MTLB_30mm_turret_MIL.BP_MTLB_30mm_turret_MIL_C",
+        "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+        "activeActor": "BP_MTLB_30mm_AP_gun_C_0",
+        "activeParentActor": "BP_MTLB_30mm_turret_MIL_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_MTLB_30mm_HE_gun_C_0",
+          "BP_MTLB30mm_PKT_C_0",
+          "BP_Smoke_Launcher_MTLB30mm_Militia_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_MTLB_30mm_turret_MIL_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_MTLB_30mm_HE_gun_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 140.03695124661766,
+            "rotationDeltaDeg": 0.31050043885278455,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_MTLB30mm_PKT_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 140.03695124661766,
+            "rotationDeltaDeg": 0.31050043885278455,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Smoke_Launcher_MTLB30mm_Militia_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 140.03695124661766,
+            "rotationDeltaDeg": 0.31050043885278455,
+            "scaleDelta": 0
+          }
+        ]
+      },
+      {
+        "groupId": "weapon-sync-fdcd7c993a7d190aea08340c",
+        "bindings": [
+          {
+            "cardId": "baf--fv510--ifv",
+            "rawName": "BP_FV510"
+          }
+        ],
+        "sourceVehicleId": "vehicle-93a77d35b5ccb1ae5be3fe2be84797f6b2259f1343954043cdb3f214378a5d3d",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/baf--fv510--ifv--bp_fv510.visual.json.recipe.json",
+        "visualRecipeSha256": "60dd41ea264229a727ca69706ad173640f73b5e5984c3f0868cbc97e5c5bcf5c",
+        "parentActorClassPath": "/Game/Vehicles/FV510/Turrets/BP_FV510_Turret.BP_FV510_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/FV510/meshes/FV510_gun.FV510_gun",
+        "activeActor": "BP_Warrior_Rarden_AP_Tan_C_0",
+        "activeParentActor": "BP_FV510_Turret_C_0",
+        "activeSynchronization": {
+          "synchronized": true,
+          "translationDeltaCm": 0,
+          "rotationDeltaDeg": 0,
+          "scaleDelta": 0
+        },
+        "suppressedActors": [
+          "BP_Warrior_762_Tan_C_0",
+          "BP_Warrior_Rarden_HE_Tan_C_0",
+          "BP_Warrior_Smoke_Launcher_Tan_C_0"
+        ],
+        "suppressedParentActors": [
+          "BP_FV510_Turret_C_0"
+        ],
+        "suppressedSynchronization": [
+          {
+            "actor": "BP_Warrior_762_Tan_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.2056723578884,
+            "rotationDeltaDeg": 0.3086052937701424,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Rarden_HE_Tan_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.2056723578884,
+            "rotationDeltaDeg": 0.3086052937701424,
+            "scaleDelta": 0
+          },
+          {
+            "actor": "BP_Warrior_Smoke_Launcher_Tan_C_0",
+            "synchronized": false,
+            "translationDeltaCm": 137.2056723578884,
+            "rotationDeltaDeg": 0.3086052937701424,
+            "scaleDelta": 0
+          }
+        ]
+      }
+    ],
+    "retainedMultiOccurrenceGroups": [
+      {
+        "bindings": [
+          {
+            "cardId": "tlf--uh60-pkm--uh",
+            "rawName": "BP_UH60_TLF_PKM"
+          }
+        ],
+        "sourceVehicleId": "vehicle-1dcf81e2ba3cbbcdde2f07551f50c9a777a30288a21685f219133511684fd30c",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--uh60-pkm--uh--bp_uh60_tlf_pkm.visual.json.recipe.json",
+        "visualRecipeSha256": "030b515142f0914390b312b10802863ff80823ba195b885fdd62e377a1713352",
+        "parentActorClassPath": "/Game/Vehicles/UH60M/Weapons/BP_PKM_Doorgun_Turret_TLF.BP_PKM_Doorgun_Turret_TLF_C",
+        "sourceMeshPath": "/Game/Vehicles/UH60M/Weapons/PKM_Doorgun/PKM_DoorGun_TLF.PKM_DoorGun_TLF",
+        "actors": [
+          "BP_PKM_DoorGun_C_0",
+          "BP_PKM_DoorGun_C_1"
+        ],
+        "synchronizedActorCount": 2,
+        "occurrenceCount": 2
+      },
+      {
+        "bindings": [
+          {
+            "cardId": "usa--uh-60m--uh",
+            "rawName": "BP_UH60"
+          }
+        ],
+        "sourceVehicleId": "vehicle-67dc2bee269148c126b46f67866814790e6250d40b6222e6ac7c54fbc026ec7b",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--uh-60m--uh--bp_uh60.visual.json.recipe.json",
+        "visualRecipeSha256": "702a48162b5b0abb8925f409539a7c200a9468ab6ec52cbbc238f62e2b1142ea",
+        "parentActorClassPath": "/Game/Vehicles/UH60M/Weapons/BP_M240H_Doorgun_Turret.BP_M240H_Doorgun_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/UH60M/Weapons/M240H_Doorgun/M240H_Doorgun.M240H_Doorgun",
+        "actors": [
+          "BP_M240H_DoorGun_C_0",
+          "BP_M240H_DoorGun_C_1"
+        ],
+        "synchronizedActorCount": 2,
+        "occurrenceCount": 2
+      },
+      {
+        "bindings": [
+          {
+            "cardId": "usmc--uh-1y--uh",
+            "rawName": "BP_UH1Y"
+          }
+        ],
+        "sourceVehicleId": "vehicle-95d50535cb4501dec9f6fb307f507d1247c392eab5d002721fdd108e60e8b4b4",
+        "visualRecipePath": "generated/runtime-probe/visual-recipe/usmc--uh-1y--uh--bp_uh1y.visual.json.recipe.json",
+        "visualRecipeSha256": "c0c3e802a19b774c6751b4ec89292550f13aada65e98288686fc2036ec1f13fb",
+        "parentActorClassPath": "/Game/Vehicles/UH1Y/Weapons/BP_M240H_UH1Y_Doorgun_Turret.BP_M240H_UH1Y_Doorgun_Turret_C",
+        "sourceMeshPath": "/Game/Vehicles/UH60M/Weapons/M240H_Doorgun/M240H_Doorgun.M240H_Doorgun",
+        "actors": [
+          "BP_M240H_UH1Y_DoorGun_C_0",
+          "BP_M240H_UH1Y_DoorGun_C_1"
+        ],
+        "synchronizedActorCount": 2,
+        "occurrenceCount": 2
+      }
+    ]
+  }
+}

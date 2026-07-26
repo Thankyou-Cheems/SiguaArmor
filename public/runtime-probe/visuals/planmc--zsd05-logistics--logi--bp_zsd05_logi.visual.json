@@ -1,0 +1,350 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/planmc--zsd05-logistics--logi--bp_zsd05_logi.visual.json.recipe.json",
+  "visualRecipeSha256": "c59d0e2026b701facf77ca2104a320be39db2c42e2d834320da62c0e5a73a408",
+  "cardId": "planmc--zsd05-logistics--logi",
+  "factionId": "PLANMC",
+  "targetKey": "planmc-zsd05-logistics-logi-bp-zsd05-logi",
+  "rawName": "BP_ZSD05_Logi",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/ZBD05/BP_ZSD05_Logi.BP_ZSD05_Logi_C",
+  "vehicleId": "vehicle-504dc4b7f67780b0e749f6f75b59dad4bd8ef8dbefb5c56dfefb42cc55ab9277",
+  "identitySha256": "504dc4b7f67780b0e749f6f75b59dad4bd8ef8dbefb5c56dfefb42cc55ab9277",
+  "packageSha256": "faf97035483a336b37bf32a2e50efe827ce51534b75098f190c04d181e1d7a07",
+  "requiredOccurrences": 5,
+  "capturedVisibleOccurrences": 5,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 5,
+  "totalBytes": 49388401,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 99,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-7e73a5fb07cc2892c6f2ce263b78187120015ccad2722e98142c55f40ef1dbc7",
+      "name": "WeaponMesh3P",
+      "actor": "BP_QJY88_CSK131_Weapon_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/faf97035483a336b37bf32a2e50efe827ce51534b75098f190c04d181e1d7a07/asset-96a10ec160fa0a895304b3e1/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        6e-08,
+        0.0,
+        0.0,
+        -6e-08,
+        1.0,
+        0.0,
+        -1.223786545,
+        2.583871078,
+        0.007697898,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.2237865447998046,
+          2.5838710780323857,
+          0.007697898494052101
+        ],
+        "observedGltfTranslationM": [
+          -1.223786545,
+          2.583871078,
+          0.007697898
+        ],
+        "errorMByAxis": [
+          2.0019541580040823e-10,
+          3.2385649717525666e-11,
+          4.940521013130361e-10
+        ],
+        "maxErrorCm": 4.940521013130361e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/QJY-88/QJY-88_Mounted.QJY-88_Mounted",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "691dbb45f000909dd84647d0c7b1686325baa1757bd75326aa6c4650e8aa4030",
+      "runtimeBonePoseJointCount": 24,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 25,
+        "sourceNodeStructureSha256": "a6b3e27ae033188846c6bb27202481e75bdb6a7b492fc9b373630655d5be1236",
+        "sourceSkinStructureSha256": "05253f3d60ebe7e1d76a0ad64c1c1d36983586defaa076b99fec268e6898ed58",
+        "sourceInverseBindStructureSha256": "64571a1b4ab52674d5cc596a58beea208b5d3e9234795ff40c1d9bcc7a9344fd"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 24
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-0e31f4863ef5dbbc8e03dbd1344c9dc446541bf6496a9ba3a40870221849c60b",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_QJY88_OpenTop_Turret_Naval_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/faf97035483a336b37bf32a2e50efe827ce51534b75098f190c04d181e1d7a07/asset-0bae29644395927ff73318c0/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        5.9e-08,
+        0.0,
+        0.0,
+        -6e-08,
+        1.0,
+        0.0,
+        -1.87853241,
+        2.13486145,
+        0.007697872,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.8785324096679688,
+          2.134861449736488,
+          0.007697871617165206
+        ],
+        "observedGltfTranslationM": [
+          -1.87853241,
+          2.13486145,
+          0.007697872
+        ],
+        "errorMByAxis": [
+          3.320312913501766e-10,
+          2.6351187898399075e-10,
+          3.828347933804155e-10
+        ],
+        "maxErrorCm": 3.828347933804155e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/CSK131/Weapons/Qjz89_OpenTop/Mesh/CSK_OpenedHatch.CSK_OpenedHatch",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "369a75053a56b25f008674af95f5907ff4350414475654654e9f70c90db852dc",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "3a83df73b164ac477f7ddff13cda219225bbc757dd74405f05a834be9260527a",
+        "sourceSkinStructureSha256": "bb776a0920b342bf4428fe884b11b35e41b6ab0e1f31f9a6d2cf8b3da1131110",
+        "sourceInverseBindStructureSha256": "f36e3148804147cc4f12e9233ca93a83e42f49e35a1c0fcf842b5cc980c503d3"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-3e18577cc2210dad17e28282dfcd67d410016bbfa5d6f32c3af977cda3d3b164",
+      "name": "Turret_Mount",
+      "actor": "BP_QJY88_OpenTop_Turret_Naval_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/faf97035483a336b37bf32a2e50efe827ce51534b75098f190c04d181e1d7a07/asset-5faf18e1f2c22355bdbbdb15/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        6e-08,
+        0.0,
+        0.0,
+        -6e-08,
+        1.0,
+        0.0,
+        -1.177033005,
+        2.442817688,
+        0.00769789,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.177033004760742,
+          2.442817687529456,
+          0.007697890086614907
+        ],
+        "observedGltfTranslationM": [
+          -1.177033005,
+          2.442817688,
+          0.00769789
+        ],
+        "errorMByAxis": [
+          2.392579467880296e-10,
+          4.705440481700407e-10,
+          8.661490708689046e-11
+        ],
+        "maxErrorCm": 4.705440481700407e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/CSK131/Weapons/Qjz89_OpenTop/Mesh/QJY-88_Mount.QJY-88_Mount",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-2608d5a0bd79600b65444b247c55512f74e0f9a7e5b2be0596417403ee4f86b3",
+      "name": "Vehicle Mesh",
+      "actor": "BP_ZSD05_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/faf97035483a336b37bf32a2e50efe827ce51534b75098f190c04d181e1d7a07/asset-b6e3a380184fce2b93da7096/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBD05/Mesh/ZBD2000_Chassis.ZBD2000_Chassis",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f664b404297bfd4d78e43e63c10093452304802ab8c2c9f0a24f5f6b5842f121",
+      "runtimeBonePoseJointCount": 70,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 71,
+        "sourceNodeStructureSha256": "cbf626eed165b5dbafff478fcef485efd8f377631347589aa57e7bece691d034",
+        "sourceSkinStructureSha256": "d498c5f846ea338ab0621bf422d9c5f78ed1ad10f5b975e328daf5527a271868",
+        "sourceInverseBindStructureSha256": "8ae37cc91045de832b4244252286cf6c87c4e8d97c714d52f5102cf032baa6f6"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 70
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-4f58acb9fc335a35df329c748d3b2f265cebe83092cde6277f193a3261153329",
+      "name": "SM_ZBL08_OpenTurret_Baseplate",
+      "actor": "BP_ZSD05_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/faf97035483a336b37bf32a2e50efe827ce51534b75098f190c04d181e1d7a07/asset-a5165c9eb8f886970f3f677a/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        5.9e-08,
+        0.0,
+        0.0,
+        -6e-08,
+        1.0,
+        0.0,
+        -1.87853241,
+        2.202587738,
+        0.007697876,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.8785324096679685,
+          2.2025877375782845,
+          0.007697875653966536
+        ],
+        "observedGltfTranslationM": [
+          -1.87853241,
+          2.202587738,
+          0.007697876
+        ],
+        "errorMByAxis": [
+          3.3203151339478154e-10,
+          4.217155513686066e-10,
+          3.4603346403538904e-10
+        ],
+        "maxErrorCm": 4.217155513686066e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Cupola/SM_ZBL08_OpenTurret_Baseplate.SM_ZBL08_OpenTurret_Baseplate",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/planmc/planmc-zsd05-logistics-logi-bp-zsd05-logi-six-view-qa.json",
+    "sha256": "2f19c0fff94268eb49c040e884de7aa8f3f561438cb4e3a58a40d0d9905d054b",
+    "reviewedAt": "2026-07-21T09:23:03.692437Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

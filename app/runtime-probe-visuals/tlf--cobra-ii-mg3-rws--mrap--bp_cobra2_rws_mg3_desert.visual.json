@@ -1,0 +1,494 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--cobra-ii-mg3-rws--mrap--bp_cobra2_rws_mg3_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "15462881010922d4dd063cca8e14fbc2c5ce2e508e82618a839f7e3b6587bd86",
+  "cardId": "tlf--cobra-ii-mg3-rws--mrap",
+  "factionId": "TLF",
+  "targetKey": "tlf-cobra-ii-mg3-rws-mrap-bp-cobra2-rws-mg3-desert",
+  "rawName": "BP_Cobra2_RWS_MG3_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/Cobra_II/BP_Cobra2_RWS_MG3_Desert.BP_Cobra2_RWS_MG3_Desert_C",
+  "vehicleId": "vehicle-d46049ab5583ac4fdcfea12a354aa1a191ffe178022e27de6f2abbebd73ba716",
+  "identitySha256": "d46049ab5583ac4fdcfea12a354aa1a191ffe178022e27de6f2abbebd73ba716",
+  "packageSha256": "4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 8,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 8,
+  "totalBytes": 104273524,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 59,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-67c8b38ba7a398be5e976d5fa4694f8db1e527ebdeebb761db88e0bc8a939d1a",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Cobra2_RWS_MG3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-6023fbbd5a8f752f96baabb8/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Cobra_II/Meshes/SK_Cobra_II.SK_Cobra_II",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "5ca8dcd46d253683b3866296dcdff519f6f6862106fa35af99f65b30b6579cbc",
+      "runtimeBonePoseJointCount": 52,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 53,
+        "sourceNodeStructureSha256": "f79005690a7f1dbd15cd7a6e63d22ab8a2a5deb5e052f624b1ec572152bf0ac6",
+        "sourceSkinStructureSha256": "e6f60713d3d1f8e374dd87ac3142440b0b11eed2bb9b90601280d3f858583a1e",
+        "sourceInverseBindStructureSha256": "2f6eafa6fa4cdc01649337cf3386a82ed4860dfab2d2eeb3ae92e6b3e6cc8795"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 52
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-3969d72b3f66d3b3bf4d9b7c10140403a87ed90d5a02c993ba362f974674d52f",
+      "name": "HullDecoration",
+      "actor": "BP_Cobra2_RWS_MG3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-96b66323e90af81bbaf4aaaa/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -2.119875946,
+        1.266399231,
+        -1.076023026,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -2.1198759460449224,
+          1.266399230957031,
+          -1.0760230255126952
+        ],
+        "observedGltfTranslationM": [
+          -2.119875946,
+          1.266399231,
+          -1.076023026
+        ],
+        "errorMByAxis": [
+          4.4922288111592934e-11,
+          4.2968961722067434e-11,
+          4.873048631282018e-10
+        ],
+        "maxErrorCm": 4.8730486312820176e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Cobra_II/Meshes/SM_Cobra_II_Deco.SM_Cobra_II_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-af139900d994316b0a4ef706eb616569dc88fa1986b5cdf054c8cbb32211c183",
+      "name": "Main Plane",
+      "actor": "BP_Cobra2_RWS_MG3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-2811b7772f4277131e9b208f/source.gltf",
+      "matrix": [
+        2.168e-06,
+        1.521e-06,
+        0.219999999,
+        0.0,
+        -0.151932355,
+        0.088840076,
+        8.83e-07,
+        0.0,
+        -0.063197602,
+        -0.108079156,
+        1.37e-06,
+        0.0,
+        0.679627075,
+        1.553596649,
+        -0.473335114,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.6796270751953125,
+          1.5535966491699218,
+          -0.47333511352539065
+        ],
+        "observedGltfTranslationM": [
+          0.679627075,
+          1.553596649,
+          -0.473335114
+        ],
+        "errorMByAxis": [
+          1.9531254391580433e-10,
+          1.6992185436492946e-10,
+          4.746093518193106e-10
+        ],
+        "maxErrorCm": 4.746093518193106e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Engine/BasicShapes/Plane.Plane",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6d12883a54b4228bc13f2a3540cda5315ab6e7df275152a6c467f82d50870fdd",
+      "name": "HatchCover",
+      "actor": "BP_Cobra2_RWS_MG3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-50f1ed94eab2cabe76b74cc6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        -0.401662064,
+        2.044731128,
+        0.000422839,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.4016620636675274,
+          2.0447311279177667,
+          0.00042283905236616375
+        ],
+        "observedGltfTranslationM": [
+          -0.401662064,
+          2.044731128,
+          0.000422839
+        ],
+        "errorMByAxis": [
+          3.324726050024651e-10,
+          8.223333125556564e-11,
+          5.2366163759854506e-11
+        ],
+        "maxErrorCm": 3.324726050024651e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Cobra_II/Meshes/SM_Cobra_II_TurretCover.SM_Cobra_II_TurretCover",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7a74996870db836ff82d0fa70a4a8083bd9c39c1cca7b050e2c21b5f867b13a4",
+      "name": "RWSMount",
+      "actor": "BP_Cobra2_RWS_MG3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-b00b575542eb940ea272c664/source.gltf",
+      "matrix": [
+        1.0,
+        -1.19e-07,
+        4.4e-08,
+        0.0,
+        1.19e-07,
+        1.0,
+        4.478e-06,
+        0.0,
+        -4.4e-08,
+        -4.478e-06,
+        0.999999941,
+        0.0,
+        0.335736047,
+        2.044640198,
+        -0.005156694,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.3357360466775388,
+          2.044640197753906,
+          -0.005156693596483579
+        ],
+        "observedGltfTranslationM": [
+          0.335736047,
+          2.044640198,
+          -0.005156694
+        ],
+        "errorMByAxis": [
+          3.2246116887790777e-10,
+          2.4609425608446145e-10,
+          4.035164207980002e-10
+        ],
+        "maxErrorCm": 4.035164207980002e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Cobra_II/Weapons/Cobra_II_RWS/Meshes/SM_Cobra_II_RWS_MG3_Mount.SM_Cobra_II_RWS_MG3_Mount",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f0f9cfac5a7eea52cf7e73e1849ab6d2e651c69b41cb23b4918049cefbaa85ca",
+      "name": "RWSScreen",
+      "actor": "BP_Cobra2_RWS_MG3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-dd13dc6483c4edaa8d925948/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        -0.401662065,
+        2.042531128,
+        0.006672839,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.40166206468578175,
+          2.0425311279296876,
+          0.00667283905236608
+        ],
+        "observedGltfTranslationM": [
+          -0.401662065,
+          2.042531128,
+          0.006672839
+        ],
+        "errorMByAxis": [
+          3.1421826252042706e-10,
+          7.031220050635056e-11,
+          5.2366080222077116e-11
+        ],
+        "maxErrorCm": 3.1421826252042706e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Cobra_II/Meshes/SM_Cobra_II_RWSControls.SM_Cobra_II_RWSControls",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-272a833bf4a531b5f4320446e427123c58e501f91a999cacd36d6a01e2583139",
+      "name": "WeaponMesh3P",
+      "actor": "BP_CobraRWS_MG3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-ea6a08552cc1107b89998ea2/source.gltf",
+      "matrix": [
+        1.0,
+        -2.7e-07,
+        1.95e-07,
+        0.0,
+        2.7e-07,
+        1.0,
+        4.377e-06,
+        0.0,
+        -1.95e-07,
+        -4.376e-06,
+        0.999999941,
+        0.0,
+        0.282915468,
+        2.405675138,
+        -0.005160461,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.28291546814817775,
+          2.4056751383005173,
+          -0.0051604605627404475
+        ],
+        "observedGltfTranslationM": [
+          0.282915468,
+          2.405675138,
+          -0.005160461
+        ],
+        "errorMByAxis": [
+          1.4817774784958715e-10,
+          3.005173887515866e-10,
+          4.372595523507994e-10
+        ],
+        "maxErrorCm": 4.372595523507994e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Cobra_II/Weapons/Cobra_II_RWS/Meshes/SK_Cobra_II_RWS_MG3_Gun.SK_Cobra_II_RWS_MG3_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "b8a9839da4cf60ab69281ee5617b8b0289a9a7fac6f8b0828f5c2e57d9d1c9fe",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "1dc3b91d6e3908e6f321f57b41f831bffd643f91842beac4643d9cde68ef64ba",
+        "sourceSkinStructureSha256": "8028c3c927554e360b1c6f1cf34d23604481550012d9f52f2c4cbedf75af925d",
+        "sourceInverseBindStructureSha256": "5e041963d664cea32837131910e2b129153c8148844520e05adc0a25c2e30ce6"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-e3010b828d7450a24d88b6b1acfc0859b36eac06479b610072f4afb72c76fbaa",
+      "name": "TurretMesh",
+      "actor": "BP_CobraRWS_MG3_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb35b5f9df7cde7a81bb21f8f3627cf2823af81586ecf8056fd573954d00331/asset-680d91ecd314b39474d016d4/source.gltf",
+      "matrix": [
+        1.0,
+        -1.19e-07,
+        4.4e-08,
+        0.0,
+        1.19e-07,
+        1.0,
+        4.528e-06,
+        0.0,
+        -4.4e-08,
+        -4.528e-06,
+        0.999999941,
+        0.0,
+        0.33573607,
+        2.049122436,
+        -0.005162073,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.33573607002251654,
+          2.0491224357794353,
+          -0.005162072501234959
+        ],
+        "observedGltfTranslationM": [
+          0.33573607,
+          2.049122436,
+          -0.005162073
+        ],
+        "errorMByAxis": [
+          2.2516544184725262e-11,
+          2.205648996778109e-10,
+          4.987650405532951e-10
+        ],
+        "maxErrorCm": 4.987650405532951e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Cobra_II/Weapons/Cobra_II_RWS/Meshes/SK_Cobra_II_RWS_MG3_Turret.SK_Cobra_II_RWS_MG3_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1d453c6fb0aa8534e42fa4780bf3614679e0d51eada8a002d9c85c7f5b5c84c8",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "7fc4c0afce026d7bc51f35d42cabe98a96a9ff51ae25e14473a5a98352f25cd6",
+        "sourceSkinStructureSha256": "85ed177a29a88c82945e9c2a26f4b94151f532a01dc202e15857354260fb981d",
+        "sourceInverseBindStructureSha256": "919e388180fa1b0b25bcdea01dc191e15b252cefdea427ef4002de9a74a2d3e8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/tlf-cobra-ii-mg3-rws-mrap-bp-cobra2-rws-mg3-desert-six-view-qa.json",
+    "sha256": "4a4c4e23428c6964b1b6deeb0f4feb7ce97662e8bfc91faa87bcda7fc9851338",
+    "reviewedAt": "2026-07-21T16:15:26.783911Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

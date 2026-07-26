@@ -1,0 +1,770 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--brdm-2--ltv--bp_brdm-2_rus.visual.json.recipe.json",
+  "visualRecipeSha256": "ce0ee23ec402e5c39a7fb52fe2c63b517369a5148bd8565753deae26675a4344",
+  "cardId": "rgf--brdm-2--ltv",
+  "factionId": "RGF",
+  "targetKey": "rgf-brdm-2-ltv-bp-brdm-2-rus",
+  "rawName": "BP_BRDM-2_RUS",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/BRDM-2/BP_BRDM-2_RUS.BP_BRDM-2_RUS_C",
+  "vehicleId": "vehicle-9e3b568f4eb65199d0a6f7f661477584bdb2559da1b9d8cd8f1e4ae2066c92de",
+  "identitySha256": "9e3b568f4eb65199d0a6f7f661477584bdb2559da1b9d8cd8f1e4ae2066c92de",
+  "packageSha256": "4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e",
+  "requiredOccurrences": 13,
+  "capturedVisibleOccurrences": 13,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 12,
+  "totalBytes": 114363095,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 89,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-551079b5442fa8b8c2cee962427de860846c8db277eef0f8270f3e13a10060f3",
+      "name": "Vehicle Mesh",
+      "actor": "BP_BRDM-2_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-562d4d01ed9852f78633e398/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Body.SK_BRDM2_Body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "77067a0573d50d898c93fce4bcaf84eb391043b785355a2d43eda2cca8ef0150",
+      "runtimeBonePoseJointCount": 51,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 52,
+        "sourceNodeStructureSha256": "c513e072f60dc1e3034ff500fe93302a1b67fc7c0ba196b3acdf9ea4769d9de7",
+        "sourceSkinStructureSha256": "614804cb25cbfb20b2e724fa7fec327693b11be85bff3c16f132dc3f382d521c",
+        "sourceInverseBindStructureSha256": "0287d50cb6c798df140f5f6dae7104f6d9bc4f3d25b84c04f4cfa8e655934cb8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 51
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-6d11bfa592e65f7e6c862884a343e1becd18678436b59ec1770de07bc854f0e9",
+      "name": "HullDecoration",
+      "actor": "BP_BRDM-2_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-3d428f9e9e0f766c9a5fadaf/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.53e-07,
+        3.05e-07,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.5258789062892243e-07,
+          3.051757812279875e-07,
+          5.478820909949138e-20
+        ],
+        "observedGltfTranslationM": [
+          1.53e-07,
+          3.05e-07,
+          0.0
+        ],
+        "errorMByAxis": [
+          4.1210937107757937e-10,
+          1.7578122798753439e-10,
+          5.478820909949138e-20
+        ],
+        "maxErrorCm": 4.121093710775794e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SM_brdm-2_rus_decoration.SM_brdm-2_rus_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-bd2e959f3e2d418c55e8a6175ec75cac52a1dae75e5c3a6833b8a75dd9c6781d",
+      "name": "Hull",
+      "actor": "BP_BRDM-2_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-a617087c2e43c80adbb88258/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/Separated/SM_BRDM2_Hull.SM_BRDM2_Hull",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-07ccf678fa5c859aea04f07745e49e743b73c4318c8a1155f60f75a80ef87bcf",
+      "name": "Glass",
+      "actor": "BP_BRDM-2_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-3d3eb3968e0b7ea4cc65b7b9/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SM_BRDM2_Body_Glass.SM_BRDM2_Body_Glass",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-3d90e38464ceebf926ea6faf76861c2482ec39358c924d20b81da7aa7c40ce73",
+      "name": "Interior",
+      "actor": "BP_BRDM-2_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-94d30d786162f5b0c249c8ed/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/Separated/SM_BRDM2_Interior.SM_BRDM2_Interior",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-b94deffef71fc3ae2f8725204c13b94531decc8cd0b17eb77d272aa409b4ddd7",
+      "name": "Interior - No Shadow",
+      "actor": "BP_BRDM-2_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-67f6b25aa9c3f38283b33208/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/Separated/SM_BRDM2_Interior_Small.SM_BRDM2_Interior_Small",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-db1f64a9e8d25813230c5c946f60520969fe2ff80f4f4f2ac2de25c4abbe9adc",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_BRDM-2_periscope_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-f5cce87b10b165c8f482666d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        1.757695665,
+        1.965659943,
+        0.289791946,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.7576956648889048,
+          1.9656599426269532,
+          0.2897919461484592
+        ],
+        "observedGltfTranslationM": [
+          1.757695665,
+          1.965659943,
+          0.289791946
+        ],
+        "errorMByAxis": [
+          1.1109513309293106e-10,
+          3.730467046381136e-10,
+          1.4845918938632963e-10
+        ],
+        "maxErrorCm": 3.730467046381136e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Periscope.SK_BRDM2_Periscope",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f5dd92d86a63483293084a3b5114e87ed9ca150acb27033d5db48d5f015503f9",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "406c1e1cf1c42f1e3cdb0255373aae5038ae86b8b0667eb71106c669ad3f14a1",
+        "sourceSkinStructureSha256": "e85df5fdf521b2f4284e769f7a296ccd3b37d9cdf8164644116c0e69490c164a",
+        "sourceInverseBindStructureSha256": "a622f85a39ddd54f1e334caf3e816f3c657681c74d58c9d2bd4b8b1dbd61f31f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-9f90a86cfebba1f373e95e186ed8c9617fa2621c09a5fbb7c39f2292f60aaa04",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BRDM2_RUS_KPVT_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-81eca0239da96f46f07279d0/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.63e-07,
+        0.0,
+        1.0,
+        0.0,
+        0.537078389,
+        2.149032764,
+        0.051988147,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.537078389054668,
+          2.149032764434814,
+          0.05198814701878301
+        ],
+        "observedGltfTranslationM": [
+          0.537078389,
+          2.149032764,
+          0.051988147
+        ],
+        "errorMByAxis": [
+          5.466793684405502e-11,
+          4.348139626131342e-10,
+          1.8783009869682843e-11
+        ],
+        "maxErrorCm": 4.348139626131342e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f7766308c82bad22848309c3b7ff66df51be300423f2595891639cb63a9ec4b2",
+      "runtimeBonePoseJointCount": 11,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 12,
+        "sourceNodeStructureSha256": "08f370d4e1290aa579189e95187fec0f68ca9d36f8862f6ec9c0b561a3c68bb8",
+        "sourceSkinStructureSha256": "4ed7bb85f6fcd0694734999a514eaf45efd4c4aa27ca3661c325e359b43c317f",
+        "sourceInverseBindStructureSha256": "da697a1619b64a6a7f003b696fcc2772e5dc0ee6509e7fa54db208df71d3ab6f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 11
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-41b4f8d0edd5a005968ba405eb528cadb9d87c6ed31ffc043b671c044bfbefa1",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BRDM2_RUS_PKT_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-9361bf9239dccbd369be85e2/source.gltf",
+      "matrix": [
+        0.999994257,
+        0.003388859,
+        -3.68e-06,
+        0.0,
+        -0.003388859,
+        0.99999425,
+        0.000126893,
+        0.0,
+        4.11e-06,
+        -0.00012688,
+        0.999999992,
+        0.0,
+        -0.443286186,
+        0.551104079,
+        0.052793479,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.44328618638739775,
+          0.551104078836238,
+          0.05279347926468599
+        ],
+        "observedGltfTranslationM": [
+          -0.443286186,
+          0.551104079,
+          0.052793479
+        ],
+        "errorMByAxis": [
+          3.8739772501017455e-10,
+          1.637620039574017e-10,
+          2.646859953436831e-10
+        ],
+        "maxErrorCm": 3.8739772501017455e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1b645f9b1f5e62675f9d84aa4d54ec19d3f3cb572bff3159cce763886e0c442e",
+      "runtimeBonePoseJointCount": 11,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 12,
+        "sourceNodeStructureSha256": "08f370d4e1290aa579189e95187fec0f68ca9d36f8862f6ec9c0b561a3c68bb8",
+        "sourceSkinStructureSha256": "4ed7bb85f6fcd0694734999a514eaf45efd4c4aa27ca3661c325e359b43c317f",
+        "sourceInverseBindStructureSha256": "da697a1619b64a6a7f003b696fcc2772e5dc0ee6509e7fa54db208df71d3ab6f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 11
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-e4b90ebb5ab7a3cefa91fdfcad2b839d9c658eff30e9ca23260c5d4827ca3b8b",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BRDM2_RUS_Smoke_Launcher_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-9361bf9239dccbd369be85e2/source.gltf",
+      "matrix": [
+        0.999994257,
+        0.003388859,
+        -3.68e-06,
+        0.0,
+        -0.003388859,
+        0.99999425,
+        0.000126893,
+        0.0,
+        4.11e-06,
+        -0.00012688,
+        0.999999992,
+        0.0,
+        -0.443286186,
+        0.551104079,
+        0.052793479,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.44328618638739775,
+          0.551104078836238,
+          0.05279347926468599
+        ],
+        "observedGltfTranslationM": [
+          -0.443286186,
+          0.551104079,
+          0.052793479
+        ],
+        "errorMByAxis": [
+          3.8739772501017455e-10,
+          1.637620039574017e-10,
+          2.646859953436831e-10
+        ],
+        "maxErrorCm": 3.8739772501017455e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SK_BRDM2_Gun.SK_BRDM2_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "1b645f9b1f5e62675f9d84aa4d54ec19d3f3cb572bff3159cce763886e0c442e",
+      "runtimeBonePoseJointCount": 11,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 12,
+        "sourceNodeStructureSha256": "08f370d4e1290aa579189e95187fec0f68ca9d36f8862f6ec9c0b561a3c68bb8",
+        "sourceSkinStructureSha256": "4ed7bb85f6fcd0694734999a514eaf45efd4c4aa27ca3661c325e359b43c317f",
+        "sourceInverseBindStructureSha256": "da697a1619b64a6a7f003b696fcc2772e5dc0ee6509e7fa54db208df71d3ab6f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 11
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-6c639e4c883b08b4ee5f1f3001592be8ae3099a0f76e46c88a0685e00bdab3d8",
+      "name": "Static",
+      "actor": "BP_BRDM2_RUS_turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-52b97a65594a6a132f8db609/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.62e-07,
+        0.0,
+        1.0,
+        0.0,
+        0.260805264,
+        1.965659943,
+        -4.2e-08,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.2608052635192836,
+          1.9656599426269528,
+          -4.249057077939409e-08
+        ],
+        "observedGltfTranslationM": [
+          0.260805264,
+          1.965659943,
+          -4.2e-08
+        ],
+        "errorMByAxis": [
+          4.807163556108662e-10,
+          3.730471487273235e-10,
+          4.905707793940936e-10
+        ],
+        "maxErrorCm": 4.9057077939409356e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SM_BRDM2_Turret.SM_BRDM2_Turret",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-c1bacd5f09f6a13a72470968b303e8dded5c513eed9e5d86628d9f04cd00638a",
+      "name": "Static_Interior",
+      "actor": "BP_BRDM2_RUS_turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-7dd1ea8dbc0ca5eb856caaee/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.62e-07,
+        0.0,
+        1.0,
+        0.0,
+        0.260805264,
+        1.965659943,
+        -4.2e-08,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.2608052635192836,
+          1.9656599426269528,
+          -4.249057077939409e-08
+        ],
+        "observedGltfTranslationM": [
+          0.260805264,
+          1.965659943,
+          -4.2e-08
+        ],
+        "errorMByAxis": [
+          4.807163556108662e-10,
+          3.730471487273235e-10,
+          4.905707793940936e-10
+        ],
+        "maxErrorCm": 4.9057077939409356e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SM_BRDM2_Turret_Interior.SM_BRDM2_Turret_Interior",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-a5da80507064a192b6864374a4e046fc3b7cc2326d70df5147ff5b397e0e5abf",
+      "name": "Static_Seat",
+      "actor": "BP_BRDM2_RUS_turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e/asset-02b86ed0f5509869006742be/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        -1.63e-07,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.62e-07,
+        0.0,
+        1.0,
+        0.0,
+        0.260805264,
+        1.965659943,
+        -4.2e-08,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.2608052635192836,
+          1.9656599426269528,
+          -4.249057077939409e-08
+        ],
+        "observedGltfTranslationM": [
+          0.260805264,
+          1.965659943,
+          -4.2e-08
+        ],
+        "errorMByAxis": [
+          4.807163556108662e-10,
+          3.730471487273235e-10,
+          4.905707793940936e-10
+        ],
+        "maxErrorCm": 4.9057077939409356e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BRDM-2/Meshes/SM_BRDM2_Turret_Seat.SM_BRDM2_Turret_Seat",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/rgf-brdm-2-ltv-bp-brdm-2-rus-six-view-qa.json",
+    "sha256": "0d72d1c61303b515ca2acdb76668f6e040696a57060df276f5c79600a16f9095",
+    "reviewedAt": "2026-07-21T16:14:44.136640Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

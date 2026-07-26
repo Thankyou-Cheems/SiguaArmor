@@ -1,0 +1,332 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--mt-lb-logistics--logi--bp_mtlb_logi_rus.visual.json.recipe.json",
+  "visualRecipeSha256": "e9d368ea88fd2a881650e3a19f00f2e630b24cdfca6c1ffdb4361cd4e89f19ea",
+  "cardId": "rgf--mt-lb-logistics--logi",
+  "factionId": "RGF",
+  "targetKey": "rgf-mt-lb-logistics-logi-bp-mtlb-logi-rus",
+  "rawName": "BP_MTLB_LOGI_RUS",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/MTLB/BP_MTLB_LOGI_RUS.BP_MTLB_LOGI_RUS_C",
+  "vehicleId": "vehicle-4d539a90c7cd86ebd93a294643b5135ace10905d6372d4330c9f4e832011fd05",
+  "identitySha256": "4d539a90c7cd86ebd93a294643b5135ace10905d6372d4330c9f4e832011fd05",
+  "packageSha256": "f8c879f1f7cb095a65ed8aa3c26713cfc3fb0559261227d6e09c479f00da4fed",
+  "requiredOccurrences": 5,
+  "capturedVisibleOccurrences": 5,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 5,
+  "totalBytes": 37901706,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 2,
+  "runtimeBonePoseJointCount": 49,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-d58dca75023735f6e03da03fb416123cf7f5f97d89d99cee2064450a42d618fb",
+      "name": "Vehicle Mesh",
+      "actor": "BP_MTLB_LOGI_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f8c879f1f7cb095a65ed8aa3c26713cfc3fb0559261227d6e09c479f00da4fed/asset-14918c7411187774cdaeb208/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SK_MTLB_body.SK_MTLB_body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "429a3e4679a16ae581e70e929fed25de512c6644c48bf91443bfb70a86343dbb",
+      "runtimeBonePoseJointCount": 48,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 49,
+        "sourceNodeStructureSha256": "24168f798b631eceaedfbaf21d80db1fd43ef39e7559de7a1ba9c84e04deb0bb",
+        "sourceSkinStructureSha256": "7ceb752731dd9aaa61e48aa57458d9be7e99f39c3a30e242fa440b9be6ca2b19",
+        "sourceInverseBindStructureSha256": "20e3681239f8fff609bfb98866c871c2718e9009b9a819a3690c06d7db7798e5"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 48
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-2150b310326f89ec996a26f68e6410a9de77101aa328630f6b44e3a3d1cb3f6d",
+      "name": "HullDecoration",
+      "actor": "BP_MTLB_LOGI_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f8c879f1f7cb095a65ed8aa3c26713cfc3fb0559261227d6e09c479f00da4fed/asset-2fbf4ab2800c933fd4e5fea2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SM_mtlb_rus_decoration.SM_mtlb_rus_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-047be1c448c3df3261727b5feea14596781defcf6f15b9074a111f2231674f84",
+      "name": "Razorwire",
+      "actor": "BP_MTLB_LOGI_RUS_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f8c879f1f7cb095a65ed8aa3c26713cfc3fb0559261227d6e09c479f00da4fed/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        1.5297817,
+        -0.349586293,
+        -0.010143723,
+        0.0,
+        0.154651353,
+        0.678260737,
+        -0.052036684,
+        0.0,
+        0.035938889,
+        0.111861648,
+        1.564845325,
+        0.0,
+        3.224506226,
+        1.411398773,
+        0.135794535,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          3.2245062255859374,
+          1.4113987731933593,
+          0.13579453468322755
+        ],
+        "observedGltfTranslationM": [
+          3.224506226,
+          1.411398773,
+          0.135794535
+        ],
+        "errorMByAxis": [
+          4.140625620152605e-10,
+          1.933593285485813e-10,
+          3.167724416108797e-10
+        ],
+        "maxErrorCm": 4.140625620152605e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-ae790ab14953ecc3d57880c594667242b6b4898ffeeefd6897c58678a80ae190",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MTLB_PKT_RUS_Woodland_LowAmmo_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f8c879f1f7cb095a65ed8aa3c26713cfc3fb0559261227d6e09c479f00da4fed/asset-c7851e11f00e184e4c0467ae/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.849347916,
+        1.999038734,
+        0.702467194,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.8493479156494137,
+          1.999038734436035,
+          0.7024671936035157
+        ],
+        "observedGltfTranslationM": [
+          1.849347916,
+          1.999038734,
+          0.702467194
+        ],
+        "errorMByAxis": [
+          3.5058622671613193e-10,
+          4.3603498589561696e-10,
+          3.964842898440679e-10
+        ],
+        "maxErrorCm": 4.3603498589561696e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/PKT_turret_gun.PKT_turret_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "614aa30213caeda0521b373cc1d942958d2f76146bdd17862c3f83dde0518d09",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "27dae0ad3c34c9c6a292e9258933d2984782bc4ef04f129c19acfda5af095084",
+        "sourceInverseBindStructureSha256": "bd581de4c1698631e7cd95e1d44a05444652b829a879c53a307dbfac169c0619"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-f3d9a0e8c3ca070b4f9caddcff60f89a23c4c56ecc687db0fb7a67c9f03002bf",
+      "name": "MTLB_PKT_turret_static_mesh",
+      "actor": "BP_MTLB_turret_PKT_RUS_Woodland_LowAmmo_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/f8c879f1f7cb095a65ed8aa3c26713cfc3fb0559261227d6e09c479f00da4fed/asset-2c276c27e98064dd0123bff5/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.761759338,
+        1.796194763,
+        0.702467194,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.7617593383789063,
+          1.7961947631835935,
+          0.7024671936035156
+        ],
+        "observedGltfTranslationM": [
+          1.761759338,
+          1.796194763,
+          0.702467194
+        ],
+        "errorMByAxis": [
+          3.789062397174803e-10,
+          1.8359358477937349e-10,
+          3.964844008663704e-10
+        ],
+        "maxErrorCm": 3.964844008663704e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_PKT_turret_static_mesh.MTLB_PKT_turret_static_mesh",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/rgf-mt-lb-logistics-logi-bp-mtlb-logi-rus-six-view-qa.json",
+    "sha256": "54069234f20422ace385e04760cfaac3d09454042167a09ca7666b170e26dfa7",
+    "reviewedAt": "2026-07-21T16:14:54.597681Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

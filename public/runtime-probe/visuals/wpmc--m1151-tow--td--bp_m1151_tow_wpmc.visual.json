@@ -1,0 +1,350 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/wpmc--m1151-tow--td--bp_m1151_tow_wpmc.visual.json.recipe.json",
+  "visualRecipeSha256": "304757851a1c383b658b00e64907b01b6924e8b878b97e0038f37ad989d4eae5",
+  "cardId": "wpmc--m1151-tow--td",
+  "factionId": "WPMC",
+  "targetKey": "wpmc-m1151-tow-td-v0-84f18d61ab",
+  "rawName": "BP_M1151_TOW_WPMC",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/M1151_WPMC/BP_M1151_TOW_WPMC.BP_M1151_TOW_WPMC_C",
+  "vehicleId": "vehicle-ae9b47c73ae4f9d454d3d6bc41055935cff7abeaf5d53def200bbe7f8f32bed2",
+  "identitySha256": "ae9b47c73ae4f9d454d3d6bc41055935cff7abeaf5d53def200bbe7f8f32bed2",
+  "packageSha256": "c69caeb0b15687024ad67b1da3b2545f3263352de546af0177e78c0934c40429",
+  "requiredOccurrences": 5,
+  "capturedVisibleOccurrences": 5,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 5,
+  "totalBytes": 86417307,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 77,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-2c3704deae7f721ed3c93c9988d9b8a1f0786fe429a93854e9757d359bae9f37",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BGM71TOW_MATV_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c69caeb0b15687024ad67b1da3b2545f3263352de546af0177e78c0934c40429/asset-f1805be61dbbc13eed54ff38/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.168883429,
+        2.024644618,
+        0.230032199,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.16888342857357902,
+          2.0246446180343627,
+          0.23003219898911673
+        ],
+        "observedGltfTranslationM": [
+          0.168883429,
+          2.024644618,
+          0.230032199
+        ],
+        "errorMByAxis": [
+          4.264209818582998e-10,
+          3.4362734879778145e-11,
+          1.0883266510219869e-11
+        ],
+        "maxErrorCm": 4.264209818582998e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_BGM71TOW/BGM71TOW/Bgm71Tow_Launcher.Bgm71Tow_Launcher",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "bd54840ee2ec7b57017b031ece6b06fb71b2d1120301a9f29456fe311201ae54",
+      "runtimeBonePoseJointCount": 11,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 12,
+        "sourceNodeStructureSha256": "8e56d735311899bb25ad2e3f74c8662e58d50c58dc6c56f591fbec972e60d076",
+        "sourceSkinStructureSha256": "d73ff81d4225d909713e45297c7bc0878ebaab95ae30880f6d389eb855be1672",
+        "sourceInverseBindStructureSha256": "0a9003eab5bb468d3bb6470e71e630b9aba7dfed5026a5ff210dc5fd3256bf86"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 11
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a47cf0646427d21a95a8a098cd898070a0282b2974d3392f102e673e62b94607",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_M1151_TOW_Turret_Black1_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c69caeb0b15687024ad67b1da3b2545f3263352de546af0177e78c0934c40429/asset-0b9e953d9c8c60281fbc11b2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.0721,
+        1.862187552,
+        -7e-09,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.07210000038148069,
+          1.8621875524520872,
+          -6.5925485515094804e-09
+        ],
+        "observedGltfTranslationM": [
+          -0.0721,
+          1.862187552,
+          -7e-09
+        ],
+        "errorMByAxis": [
+          3.8148069425592013e-10,
+          4.5208725651946224e-10,
+          4.074514484905194e-10
+        ],
+        "maxErrorCm": 4.5208725651946224e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/M1151_Bgm71Tow_Turret.M1151_Bgm71Tow_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "aa963dd4dc2e2455a183593e17361c193cbc57b5a0af90217ad797f58ea58183",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "7c9181501164fda02eda6c645e5020149460524dc4afb023c00547ed5774fe69",
+        "sourceSkinStructureSha256": "feda8254d34b74a6be6e214c448fd2091b412c5556e51dd8ed997788a662dc2e",
+        "sourceInverseBindStructureSha256": "480da7c80594cfb09fcfceeb5bec5b6ec90a0f64ada03a08baa41375bc89195f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-ec4c495606b4f104bdf8ce816b001a5958ee32dd19220601843fb44694c95a9f",
+      "name": "Vehicle Mesh",
+      "actor": "BP_M1151_TOW_WPMC_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c69caeb0b15687024ad67b1da3b2545f3263352de546af0177e78c0934c40429/asset-e74b3a7928e3253113f5bf9b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SK_M1151.SK_M1151",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d31f760d876bd67cfee1b37f07dba5ad7381e5cac29865c9ee3025dc068ddc2b",
+      "runtimeBonePoseJointCount": 63,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 64,
+        "sourceNodeStructureSha256": "b8e611844d021b047df47bf8912e8a7ee60ba52094faf14ad29a936c01382eb6",
+        "sourceSkinStructureSha256": "7d02375cafc7946aba195dbd2791b3c30431bcc8de59f836baef8b18b859832e",
+        "sourceInverseBindStructureSha256": "938948fb7c8cce28176e9529a74b73df787370e95af313cb02f1ea5bd2245004"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 63
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a2b327315f89e965304dc343b58850ced0c25e35ce678e849ad0aba3ecc7d52f",
+      "name": "hmmwv_interior_decoration",
+      "actor": "BP_M1151_TOW_WPMC_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c69caeb0b15687024ad67b1da3b2545f3263352de546af0177e78c0934c40429/asset-e6278d28c82d27e274c0df8a/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.291899414,
+        1.443727264,
+        0.983759918,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.2918994140625104,
+          1.4437272644042969,
+          0.9837599182128901
+        ],
+        "observedGltfTranslationM": [
+          -1.291899414,
+          1.443727264,
+          0.983759918
+        ],
+        "errorMByAxis": [
+          6.251044126770466e-11,
+          4.042968182460527e-10,
+          2.1289014995318212e-10
+        ],
+        "maxErrorCm": 4.042968182460527e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SM_M1151_Interior_TOW_Deco.SM_M1151_Interior_TOW_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-c78628b4d344cd06a2b26d6b9315fca4d9d81035799c4d38141f867838e5266c",
+      "name": "Camnet",
+      "actor": "BP_M1151_TOW_WPMC_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/c69caeb0b15687024ad67b1da3b2545f3263352de546af0177e78c0934c40429/asset-132086f9de044925ba5e1ef3/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SM_M1151_Camonet_Deco.SM_M1151_Camonet_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/wpmc-m1151-tow-td-v0-84f18d61ab-six-view-qa.json",
+    "sha256": "736e698e93aab50b3774fb8892be3773823ea139bf3486cc335b3743836fafa2",
+    "reviewedAt": "2026-07-21T16:17:16.497546Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

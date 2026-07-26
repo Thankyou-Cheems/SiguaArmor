@@ -1,0 +1,324 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--tigr-m-ags-17--mrap--bp_tigr_ags17.visual.json.recipe.json",
+  "visualRecipeSha256": "a35bce8f4adcd0e99399ff123191d5343090f3960f1dc6b17378ecd3f8cc88fa",
+  "cardId": "vdv--tigr-m-ags-17--mrap",
+  "factionId": "VDV",
+  "targetKey": "vdv-tigr-m-ags-17-mrap--bp-tigr-ags17",
+  "rawName": "BP_Tigr_AGS17",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/Tigr/BP_Tigr_AGS17.BP_Tigr_AGS17_C",
+  "vehicleId": "vehicle-fdfc3e315b4b2b80b11b65ad03317b6a5758b509033a29dbb3fdad424f7afbb2",
+  "identitySha256": "fdfc3e315b4b2b80b11b65ad03317b6a5758b509033a29dbb3fdad424f7afbb2",
+  "packageSha256": "e7faef2d355b6c9e17ddd94b8f89bf38e402f858a29df4e1cac016892a5f5c71",
+  "requiredOccurrences": 4,
+  "capturedVisibleOccurrences": 4,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 4,
+  "totalBytes": 75267348,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 61,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-2d11e3b73aec9da5c61f910de103695c0b4a39432281116301206a4c052a9549",
+      "name": "WeaponMesh3P",
+      "actor": "BP_AGS-17_OpenTurret_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e7faef2d355b6c9e17ddd94b8f89bf38e402f858a29df4e1cac016892a5f5c71/asset-c35c7aaea642e149bcc2e318/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.518006896,
+        2.583135336,
+        0.000279022,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.5180068959406744,
+          2.5831353362434983,
+          0.0002790221571922304
+        ],
+        "observedGltfTranslationM": [
+          -0.518006896,
+          2.583135336,
+          0.000279022
+        ],
+        "errorMByAxis": [
+          5.932565549926494e-11,
+          2.4349855465288783e-10,
+          1.5719223036940455e-10
+        ],
+        "maxErrorCm": 2.4349855465288783e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_AGS-17/Meshes/SK_AGS-17.SK_AGS-17",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "143b9fa206b1b0954ce015021721bd9117807e7448568690ba9c5e72251f3227",
+      "runtimeBonePoseJointCount": 32,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 33,
+        "sourceNodeStructureSha256": "1676ced9922260c3455700ec5e6ac2bbf2cb717d5e54a86ae8a4ce74fe785655",
+        "sourceSkinStructureSha256": "c27772b975421cec8bc183a27803b597e9955fdce60c2731f52e683f9f3aa2a7",
+        "sourceInverseBindStructureSha256": "772993afb566bd49bbd0c3a52bb6405f62aeb01b2a4ee6aede464aeb8d903456"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 32
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-71776818ee814dab529d8d936778e3aac8b91902039fef25a3c3d849422d39bd",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Tigr_AGS17_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e7faef2d355b6c9e17ddd94b8f89bf38e402f858a29df4e1cac016892a5f5c71/asset-66f2090c743b0e2198a8aac0/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Tigr/Meshes/Tigr.Tigr",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f0987e4ecb1e370c61458e26bf5e82275b37a0d8b2ea0c57ef2b502ba87285a4",
+      "runtimeBonePoseJointCount": 23,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 24,
+        "sourceNodeStructureSha256": "7f4470ad02f22ce6fb0ae0fd0dcb68de7db9de1371e466aa65df85c8b2f4e228",
+        "sourceSkinStructureSha256": "6ee64a16982f3f0b9add10a819e8d185b4b12237b14c50838e67704f195e89cf",
+        "sourceInverseBindStructureSha256": "afb56ff8697b3f980f00fd6ccb467d3bbe7ccfd0cd162dfca5fd4739f7e38f60"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 23
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-e3b0e8a8d527b22132d4012bb2c9578b2f450129b7a2632e83d78ae4239f7010",
+      "name": "HullDecoration",
+      "actor": "BP_Tigr_AGS17_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e7faef2d355b6c9e17ddd94b8f89bf38e402f858a29df4e1cac016892a5f5c71/asset-6bc93ed40913ecff55f10296/source.gltf",
+      "matrix": [
+        1.0,
+        2.38e-07,
+        0.0,
+        0.0,
+        -2.38e-07,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Tigr/Meshes/Tigr_Deco.Tigr_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-9c4a9bcd781a3dfc79409035e3d53506c91f46e793472b1a79dc37d92cdcf5bf",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_Tigr_AGS17_Turret_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e7faef2d355b6c9e17ddd94b8f89bf38e402f858a29df4e1cac016892a5f5c71/asset-ab1992be21613c1900759ac4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.849930115,
+        2.181030273,
+        0.000279022,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8499301147460937,
+          2.1810302734374996,
+          0.0002790221571922304
+        ],
+        "observedGltfTranslationM": [
+          -0.849930115,
+          2.181030273,
+          0.000279022
+        ],
+        "errorMByAxis": [
+          2.5390634039723636e-10,
+          4.3749937006509754e-10,
+          1.5719223036940455e-10
+        ],
+        "maxErrorCm": 4.3749937006509754e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Tigr/Meshes/SK_Tigr_Turret_AGS17.SK_Tigr_Turret_AGS17",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "087dde3cacba05405aa4d0104f1d4fab59b313d81c00094bc5c2f3e655b89af3",
+      "runtimeBonePoseJointCount": 6,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 7,
+        "sourceNodeStructureSha256": "761d66135daab74d3bf45ce8855e1720ea30b39dc36d5547c6737e0d0be02139",
+        "sourceSkinStructureSha256": "3a1fdcc74d4778d2c7ce3146888896c3b4fa2191eacd02d86acaf44d11d95618",
+        "sourceInverseBindStructureSha256": "35039a5d9cf53a21b881943a413a78b7c9b72f42d03a02dbf7d9c468339c224b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 6
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/rgf-tigr-m-ags-17-mrap-bp-tigr-ags17-six-view-qa.json",
+    "sha256": "3820fbd0f55211fa206888c7cb725b8b4b3196a9d1b7b42958cbddffed6775e6",
+    "reviewedAt": "2026-07-21T16:15:07.723896Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ],
+    "reviewMode": "inherited-exact-package-reuse",
+    "inheritedFrom": "app/runtime-probe-visuals/rgf--tigr-m-ags-17--mrap--bp_tigr_ags17.visual.json"
+  },
+  "visualReuse": {
+    "mode": "exact-blueprint-variant-reuse",
+    "reason": "same Blueprint rawName and catalog variant label",
+    "canonical": {
+      "factionId": "RGF",
+      "cardId": "rgf--tigr-m-ags-17--mrap",
+      "variantRawName": "BP_Tigr_AGS17",
+      "variantLabel": "Variant 2",
+      "packageSha256": "e7faef2d355b6c9e17ddd94b8f89bf38e402f858a29df4e1cac016892a5f5c71",
+      "descriptorPath": "app/runtime-probe-visuals/rgf--tigr-m-ags-17--mrap--bp_tigr_ags17.visual.json"
+    },
+    "consumer": {
+      "factionId": "VDV",
+      "cardId": "vdv--tigr-m-ags-17--mrap",
+      "variantRawName": "BP_Tigr_AGS17",
+      "variantLabel": "Variant 2"
+    },
+    "runtimeCaptureRequired": false,
+    "casPackageDuplicated": false
+  }
+}

@@ -1,0 +1,456 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--t-72b3--mbt--bp_t72b3_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "0afe883a4184c91706a83aef81cc62bb1514dea3a7417a2924f1f3c97df79220",
+  "cardId": "vdv--t-72b3--mbt",
+  "factionId": "VDV",
+  "targetKey": "vdv-t-72b3-mbt--bp-t72b3-desert",
+  "rawName": "BP_T72B3_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/T72B3/BP_T72B3_Desert.BP_T72B3_Desert_C",
+  "vehicleId": "vehicle-97bb30d9d56fc102388c3a3f6683b28cce62bba46f6e2308637a7bee81eadf60",
+  "identitySha256": "97bb30d9d56fc102388c3a3f6683b28cce62bba46f6e2308637a7bee81eadf60",
+  "packageSha256": "7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581",
+  "requiredOccurrences": 6,
+  "capturedVisibleOccurrences": 6,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 64653507,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 83,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 4,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-ea892d1d86517214b12ebc1d1887fa53b0caab076066671bb0b62c1280c4ba48",
+      "name": "NSV_Turret",
+      "actor": "BP_Kord_Cupola_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581/asset-84bc8f203fae0954079a6f84/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.32470192,
+        2.144861832,
+        0.575979958,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.3247019195556641,
+          2.144861831665039,
+          0.5759799575805664
+        ],
+        "observedGltfTranslationM": [
+          -0.32470192,
+          2.144861832,
+          0.575979958
+        ],
+        "errorMByAxis": [
+          4.4433590140613433e-10,
+          3.349609478675575e-10,
+          4.1943359896379206e-10
+        ],
+        "maxErrorCm": 4.443359014061343e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T72B3/Weapons/NSV_Cupola/Meshes/NSVCupola_Mount.NSVCupola_Mount",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "cc67872de02eca9b736c1d767128a0436546a4a284ea227ad9afba127ed26374",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "2a3c35af915987e67133e42d65665bfa33263c7efb5af176ef65a29039e54b17",
+        "sourceSkinStructureSha256": "652228ef2e46d55d7c0e5877e1b6a113bdda5ddd0e463d4f8ff37803ee218b73",
+        "sourceInverseBindStructureSha256": "edfaadd647ee1438866ac75e5eca9234948a8db729eab7517a3bb36381b8bf63"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-eb2a81caa7bf05ac6fd25ece13b949bfa54afdf23509ddb48b3371ead0c59405",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Kord_Cupola_Weapon_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581/asset-eb7e7d9477abf3972818db38/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.162023087,
+        2.431777573,
+        0.560711472,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.16202308654785155,
+          2.431777572631836,
+          0.5607114720344544
+        ],
+        "observedGltfTranslationM": [
+          0.162023087,
+          2.431777573,
+          0.560711472
+        ],
+        "errorMByAxis": [
+          4.521484575636947e-10,
+          3.681641658204171e-10,
+          3.445432827930972e-11
+        ],
+        "maxErrorCm": 4.521484575636947e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T72B3/Weapons/NSV_Cupola/Meshes/NSVCupola_Gun.NSVCupola_Gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "a1fe52476243a95388368cf8fad3d7df04c9381f0fcab58a6dd1eebd57bc0444",
+      "runtimeBonePoseJointCount": 19,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 20,
+        "sourceNodeStructureSha256": "4d7fff465afc792ad49c7e8dbd7d5077c7b8565fb619929ea6852745fbeea7fd",
+        "sourceSkinStructureSha256": "28b47e44660a652ccbf0e87c92740b507b5b955e581be5883894bc0ddd3f9112",
+        "sourceInverseBindStructureSha256": "d16d8a00ed082b15def49e56af19bada0f9159cd1b4594417b09e524636022e1"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 19
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-498d356853d95b96d26b3d032972957129d7424d1d1c0f4cb10fcd147fedef37",
+      "name": "Vehicle Mesh",
+      "actor": "BP_T72B3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581/asset-fd9f501e784bc95e9d436f66/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T72B3/Meshes/T72B3.T72B3",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "bece08ac8987cc1006744257d3a8f90b180bf06aff54f9910a69a4c32531f85b",
+      "runtimeBonePoseJointCount": 47,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 48,
+        "sourceNodeStructureSha256": "01eb072f2d3e226a3400bce90043e88dfa778e945a58116c11ee0c09ab1fda33",
+        "sourceSkinStructureSha256": "88c1d3997d83d833e73aa2acb5ade0bdb7cbf3f2a49dcab584a25668b8b0b7d9",
+        "sourceInverseBindStructureSha256": "5f257a4a7e27c9c8adbbfef63a94be5ab980cb9529fcbc468abc175d401d4b0a"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 47
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-35a14c152931c982c5dc2657edf6ee17a226bf400d92559c9cb8f9fab7deb480",
+      "name": "AmmoRackComponent",
+      "actor": "BP_T72B3_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581/asset-40f825ae09a7f9847e359a86/source.gltf",
+      "matrix": [
+        0.659271002,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.579999983,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.659271002,
+        0.0,
+        -0.125494461,
+        1.091163254,
+        -0.027494278,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.12549446105957032,
+          1.0911632537841798,
+          -0.027494277954101563
+        ],
+        "observedGltfTranslationM": [
+          -0.125494461,
+          1.091163254,
+          -0.027494278
+        ],
+        "errorMByAxis": [
+          5.957032089831671e-11,
+          2.1582025055977283e-10,
+          4.5898437828206795e-11
+        ],
+        "maxErrorCm": 2.1582025055977283e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T72B3/Meshes/T72B3_AmmoStorage.T72B3_AmmoStorage",
+      "componentClassPath": "/Script/Squad.SQVehicleAmmoBox",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f6eb7c050f891ac3945c7d135f1ef6ff8fa29f20b56a1320f7005429a5891ce1",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_T72B3_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581/asset-e1c66b8bf75ee05fd654609e/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.480879974,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          1.4808799743652343,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          1.480879974,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          3.652342872584313e-10,
+          0.0
+        ],
+        "maxErrorCm": 3.652342872584313e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T72B3/Meshes/T72B3_turret.T72B3_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d6d36edc3a03219665459193815419a8320be93e76b2405909d4c63f3cd626c6",
+      "runtimeBonePoseJointCount": 9,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 10,
+        "sourceNodeStructureSha256": "c91a7b08eb7ae572140353a30aa72e7c5408cca46834554aa59df0e5c3b0bd58",
+        "sourceSkinStructureSha256": "b59f42210002184de5db96bb6b3eb667f55202c676e8f667fd3ed3407493b742",
+        "sourceInverseBindStructureSha256": "72bf002d91e1638591706d33ac602b35155b5f3fdc967c68c6bf3aab9ae1011f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 9
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-249508738962f871d2ed80dba5e1e4bc71b0c173db354b7a36b319f817291c10",
+      "name": "SkeletalMesh",
+      "actor": "BP_T72B3_Turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581/asset-6636862f4c63ec5049c531ce/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.03520752,
+        1.474207611,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.03520751953125,
+          1.4742076110839843,
+          4.5585229657819055e-15
+        ],
+        "observedGltfTranslationM": [
+          1.03520752,
+          1.474207611,
+          0.0
+        ],
+        "errorMByAxis": [
+          4.687499277622464e-10,
+          8.398437501000444e-11,
+          4.5585229657819055e-15
+        ],
+        "maxErrorCm": 4.6874992776224644e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/T72B3/Meshes/T72B3_gun.T72B3_gun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6b8aa73a8cd1bfc89bc735b03ea2be65b8b6e83eaac3f367a1600a8a06809e47",
+      "runtimeBonePoseJointCount": 3,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 4,
+        "sourceNodeStructureSha256": "b180828e44f3b82e16347b103ad9896d967ab1f4b48bf740c3bc9b217df54fd0",
+        "sourceSkinStructureSha256": "cb8e9275ed1d856e3cfabbf388cc4c817822848293a40048831ece1135e24de1",
+        "sourceInverseBindStructureSha256": "71a62061a900ee9ae74283c94c27e52bbf3792d95acde908b852ce0ad35f2c03"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 3
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/rgf-t-72b3-mbt-bp-t72b3-desert-six-view-qa.json",
+    "sha256": "5b61c0fcd03ca2803c5bab85dc31e75b289db1853ba6796bff71bc015467cf14",
+    "reviewedAt": "2026-07-21T16:15:05.259073Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ],
+    "reviewMode": "inherited-exact-package-reuse",
+    "inheritedFrom": "app/runtime-probe-visuals/rgf--t-72b3--mbt--bp_t72b3_desert.visual.json"
+  },
+  "visualReuse": {
+    "mode": "exact-blueprint-variant-reuse",
+    "reason": "same Blueprint rawName and catalog variant label",
+    "canonical": {
+      "factionId": "RGF",
+      "cardId": "rgf--t-72b3--mbt",
+      "variantRawName": "BP_T72B3_Desert",
+      "variantLabel": "Desert",
+      "packageSha256": "7a2f7ce27e0ea25ea145a3fcdfc1fd53e6a1b6ac9effef60eb270509102a9581",
+      "descriptorPath": "app/runtime-probe-visuals/rgf--t-72b3--mbt--bp_t72b3_desert.visual.json"
+    },
+    "consumer": {
+      "factionId": "VDV",
+      "cardId": "vdv--t-72b3--mbt",
+      "variantRawName": "BP_T72B3_Desert",
+      "variantLabel": "Desert"
+    },
+    "runtimeCaptureRequired": false,
+    "casPackageDuplicated": false
+  }
+}

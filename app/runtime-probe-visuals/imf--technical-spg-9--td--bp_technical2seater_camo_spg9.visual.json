@@ -1,0 +1,481 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--technical-spg-9--td--bp_technical2seater_camo_spg9.visual.json.recipe.json",
+  "visualRecipeSha256": "d848f37df0409a2da7c3caaa31a84ec28ef1e4aaf177ea18b47060b30464f6f1",
+  "cardId": "imf--technical-spg-9--td",
+  "factionId": "IMF",
+  "targetKey": "imf-technical-spg-9-td-bp-technical2seater-camo-spg9",
+  "rawName": "BP_Technical2Seater_Camo_SPG9",
+  "variant": "Variant 2",
+  "generatedClass": "/Game/Vehicles/Technical2Seater/BP_Technical2Seater_Camo_SPG9.BP_Technical2Seater_Camo_SPG9_C",
+  "vehicleId": "vehicle-83d8e50865ac45c162c451a6f250bd4adddb8fc4b63fab3818564082c58395c3",
+  "identitySha256": "83d8e50865ac45c162c451a6f250bd4adddb8fc4b63fab3818564082c58395c3",
+  "packageSha256": "bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 2,
+  "selectionSuppressedOccurrences": [
+    {
+      "componentPath": "/Game/Maps/Jensens_Range/Gameplay_Layers/UEDPIE_0_Jensens_Range_ADF-PLAAGF.Jensens_Range_ADF-PLAAGF:PersistentLevel.BP_SPG9_Frag_C_1.WeaponMesh3P",
+      "retainedComponentPath": "/Game/Maps/Jensens_Range/Gameplay_Layers/UEDPIE_0_Jensens_Range_ADF-PLAAGF.Jensens_Range_ADF-PLAAGF:PersistentLevel.BP_SPG9_C_1.WeaponMesh3P",
+      "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/SPG9/spg9_weapon_technical.spg9_weapon_technical",
+      "reason": "non-selected-turret-visual-component"
+    },
+    {
+      "componentPath": "/Game/Maps/Jensens_Range/Gameplay_Layers/UEDPIE_0_Jensens_Range_ADF-PLAAGF.Jensens_Range_ADF-PLAAGF:PersistentLevel.BP_SPG9_Frag_C_1.Scope",
+      "retainedComponentPath": "/Game/Maps/Jensens_Range/Gameplay_Layers/UEDPIE_0_Jensens_Range_ADF-PLAAGF.Jensens_Range_ADF-PLAAGF:PersistentLevel.BP_SPG9_C_1.WeaponMesh3P",
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_SPG9/Spg9_Scope.Spg9_Scope",
+      "reason": "non-selected-turret-visual-component"
+    }
+  ],
+  "visualSelectionPolicy": {
+    "schemaVersion": "runtime-visual-selection-policy/v1",
+    "selectionMode": "exact-actor-component-suppression",
+    "componentName": "WeaponMesh3P",
+    "selectedComponentName": "WeaponMesh3P",
+    "label": "RETAIN ACTIVE SPG9; SUPPRESS FRAG DUPLICATE",
+    "targetActorIncludes": [
+      "BP_SPG9_C_"
+    ],
+    "suppressActorIncludes": [
+      "BP_SPG9_Frag_C_"
+    ],
+    "selectedComponentPaths": [
+      "/Game/Maps/Jensens_Range/Gameplay_Layers/UEDPIE_0_Jensens_Range_ADF-PLAAGF.Jensens_Range_ADF-PLAAGF:PersistentLevel.BP_SPG9_C_1.WeaponMesh3P"
+    ],
+    "selectedRepresentation": "turret-component",
+    "targetCandidateCount": 1,
+    "suppressComponentNames": [
+      "Scope",
+      "WeaponMesh3P"
+    ],
+    "filteredOccurrenceCount": 2
+  },
+  "sourceAssets": 7,
+  "totalBytes": 43319971,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 41,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-c169ff3479b838665b1dc73a1e823ff7f21c5a770eb516273a4c7caacbd84fbd",
+      "name": "WeaponMesh3P",
+      "actor": "BP_SPG9_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf/asset-d70836421977a8072b7e695b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.829612502,
+        2.166004677,
+        -2.4e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.829612501859665,
+          2.1660046768188477,
+          -2.402296559012029e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.829612502,
+          2.166004677,
+          -2.4e-07
+        ],
+        "errorMByAxis": [
+          1.403350768924838e-10,
+          1.811524263928277e-10,
+          2.2965590120294286e-10
+        ],
+        "maxErrorCm": 2.2965590120294286e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/SPG9/spg9_weapon_technical.spg9_weapon_technical",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "33e04748f4d86bc3916af2c20bb4cab471c008c97f00a8d8413c88018d731f36",
+      "runtimeBonePoseJointCount": 9,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 10,
+        "sourceNodeStructureSha256": "b727c2c27f975600fc3bcd6b884d6446b18547ca8030d266cc4d946922faf021",
+        "sourceSkinStructureSha256": "9e9507c641deaf99dfd1160bb4e0d35b60d68f8421c653ae1c1ddce6f9ae53fe",
+        "sourceInverseBindStructureSha256": "1467593093827694f83b267ca131f0fee23d151f269281da0a092457419d42da"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 9
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-0ad9191bd08f51a67e3ccfe4ca85a45c86494fa241dd15af2d5dcc0bdfa2828a",
+      "name": "Scope",
+      "actor": "BP_SPG9_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf/asset-03ad2361a58368652199225a/source.gltf",
+      "matrix": [
+        2.75e-07,
+        -1.438e-06,
+        -1.000000119,
+        0.0,
+        1.5e-08,
+        0.999999463,
+        -1.438e-06,
+        0.0,
+        0.999999642,
+        -1.5e-08,
+        2.75e-07,
+        0.0,
+        -1.465552855,
+        2.292227659,
+        -0.096970611,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.465552854911275,
+          2.2922276586445807,
+          -0.09697061124712862
+        ],
+        "observedGltfTranslationM": [
+          -1.465552855,
+          2.292227659,
+          -0.096970611
+        ],
+        "errorMByAxis": [
+          8.872502732515386e-11,
+          3.5541924958693016e-10,
+          2.471286231209291e-10
+        ],
+        "maxErrorCm": 3.5541924958693016e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_SPG9/Spg9_Scope.Spg9_Scope",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-54a375165195f350f17e52b9ba11012f655d2af98339d1bd1c20faaeab63b97a",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Technical2Seater_Camo_SPG9_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf/asset-3d35b045072dfa129b69bafc/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical2Seater/Meshes/SK_Technical_2Seater.SK_Technical_2Seater",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "54c6dc205917ce96e51623663769f0d3763bfa40448de874af871bc4a4dd785a",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "aa9169ccb9ba4e253eecf4ddd08eca3cbe18f7719e524592a14fd51437da28c3",
+        "sourceSkinStructureSha256": "40b08a84e0dfc96f1d3afda0e4927dcad4c575f788ec43b73e86de5965066c35",
+        "sourceInverseBindStructureSha256": "affd20a810e4f426b908ea15b56b0c08c73a7b9fd081858a013958b204d93271"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8c0577c00705b59ec12f00681099694e607e0dc91376930e93e0205ba742ef97",
+      "name": "Technical_Mount",
+      "actor": "BP_Technical2Seater_Camo_SPG9_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf/asset-145cc197c645972d829559b1/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.811002502,
+        0.790847473,
+        -2.38e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.8110025024414063,
+          0.7908474731445313,
+          -2.3794569642632268e-07
+        ],
+        "observedGltfTranslationM": [
+          -1.811002502,
+          0.790847473,
+          -2.38e-07
+        ],
+        "errorMByAxis": [
+          4.4140624488875346e-10,
+          1.4453127583635705e-10,
+          5.430357367730554e-11
+        ],
+        "maxErrorCm": 4.4140624488875346e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/technical_mount.technical_mount",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ab545c6173d9fc0a4bb71a30f4698e26afe87ce6270697449a614302d7e5c205",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "f842d1278d7cdbe2c4ff25dd290c459e68871d68aa75259ccd907991b80911ee",
+        "sourceSkinStructureSha256": "fa09795d6bdb6437451fde62fd81ed546e14b3b0014ba0e37c4563054798dde9",
+        "sourceInverseBindStructureSha256": "70acb6b4ffb3d34b984af1f0f7d1a5cf85889c96418510214c7fdc353d0de866"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-fb3a116120e6bc581b263ae69ad263f5c6be62e7dc405b1aab4c90cf25fedeb3",
+      "name": "StaticMesh",
+      "actor": "BP_Technical2Seater_Camo_SPG9_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf/asset-f52b6214a46a757cd554f3c8/source.gltf",
+      "matrix": [
+        0.095388585,
+        0.412293331,
+        0.906043722,
+        0.0,
+        0.019719297,
+        0.909232854,
+        -0.415820594,
+        0.0,
+        -0.995244777,
+        0.057531083,
+        0.078600301,
+        0.0,
+        -0.749156876,
+        1.284034119,
+        -0.286892395,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.7491568756103516,
+          1.2840341186523438,
+          -0.28689239501953123
+        ],
+        "observedGltfTranslationM": [
+          -0.749156876,
+          1.284034119,
+          -0.286892395
+        ],
+        "errorMByAxis": [
+          3.896484246368459e-10,
+          3.476561261095412e-10,
+          1.9531209982659448e-11
+        ],
+        "maxErrorCm": 3.896484246368459e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/Common/Ammunition/SPG9Rockets/spg9_pg9v_rocket_static.spg9_pg9v_rocket_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e3814ae5e70f1d5cf425c2e9faf4dcf3fd5db38d403c0d4df6fe84f482af4e03",
+      "name": "StaticMesh1",
+      "actor": "BP_Technical2Seater_Camo_SPG9_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf/asset-f52b6214a46a757cd554f3c8/source.gltf",
+      "matrix": [
+        0.072811595,
+        0.413490918,
+        0.907592272,
+        0.0,
+        0.019718808,
+        0.909232976,
+        -0.41582035,
+        0.0,
+        -0.997150761,
+        0.048173182,
+        0.058049155,
+        0.0,
+        -0.844602203,
+        1.289552002,
+        -0.27935276,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8446022033691406,
+          1.289552001953125,
+          -0.2793527603149414
+        ],
+        "observedGltfTranslationM": [
+          -0.844602203,
+          1.289552002,
+          -0.27935276
+        ],
+        "errorMByAxis": [
+          3.6914060697057494e-10,
+          4.687494836730366e-11,
+          3.1494140628751666e-10
+        ],
+        "maxErrorCm": 3.6914060697057494e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/Common/Ammunition/SPG9Rockets/spg9_pg9v_rocket_static.spg9_pg9v_rocket_static",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-aea713cc8f7841bd1d2b55a5651f13d4ec7f1f3841f6727c500e8874fb942f28",
+      "name": "StaticMesh2",
+      "actor": "BP_Technical2Seater_Camo_SPG9_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bdc893f67d8f13ff037d2d5304d9176b884b201b9c2c2678f6f89e19076580bf/asset-eaf7b7b61dc835fd3d4e09f3/source.gltf",
+      "matrix": [
+        0.899985448,
+        0.0,
+        0.005113881,
+        0.0,
+        0.0,
+        0.899999976,
+        0.0,
+        0.0,
+        -0.005113881,
+        0.0,
+        0.899985447,
+        0.0,
+        -0.814078522,
+        1.270439758,
+        0.198804817,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.8140785217285156,
+          1.2704397583007812,
+          0.19880481719970702
+        ],
+        "observedGltfTranslationM": [
+          -0.814078522,
+          1.270439758,
+          0.198804817
+        ],
+        "errorMByAxis": [
+          2.71484390523824e-10,
+          3.0078117774223756e-10,
+          1.9970702869187562e-10
+        ],
+        "maxErrorCm": 3.0078117774223756e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Gameplay/Deployables/merged/INS_Ammocrate_Mid_v2.INS_Ammocrate_Mid_v2",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/imf-technical-spg-9-td-bp-technical2seater-camo-spg9-six-view-qa.json",
+    "sha256": "a9f63ee786c5a785c35cb0b294347eba4d8c918b12fb82f3d4c74ba20b97a0e0",
+    "reviewedAt": "2026-07-21T22:28:36.719535Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

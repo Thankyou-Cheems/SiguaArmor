@@ -1,0 +1,464 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/afu--bmp-1--ifv--bp_bmp1_afu.visual.json.recipe.json",
+  "visualRecipeSha256": "c68f4b56c416fbbace0e9c31791b3ab6dee8331aa6518c0e0deefff9befa9ba2",
+  "cardId": "afu--bmp-1--ifv",
+  "factionId": "AFU",
+  "targetKey": "afu-bmp-1-ifv-bp-bmp1-afu",
+  "rawName": "BP_BMP1_AFU",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/BMP1_AFU/BP_BMP1_AFU.BP_BMP1_AFU_C",
+  "vehicleId": "vehicle-718e6e0fd0f1fef75084ba316f0f7439382434077350d302bb63a3ac6913b30f",
+  "identitySha256": "718e6e0fd0f1fef75084ba316f0f7439382434077350d302bb63a3ac6913b30f",
+  "packageSha256": "cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 52586379,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 4,
+  "runtimeBonePoseJointCount": 57,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 4,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-7fa9155ff4735231185d174905255a6889820fbebab51a16315eb4150e46142e",
+      "name": "Vehicle Mesh",
+      "actor": "BP_BMP1_AFU_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77/asset-6c37bc1a71f9457fff532064/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMP-1/Meshes/bmp1_hull.bmp1_hull",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f61240db1dac6a391098f93612eb06a0d69b478a1c71d67a8d2ee9b95e837edf",
+      "runtimeBonePoseJointCount": 47,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 48,
+        "sourceNodeStructureSha256": "2ae72b5ac63c0b839ea2d2502eec38fe3e7201cbb31874c94e29bce932cb1c67",
+        "sourceSkinStructureSha256": "e38fe75a195c64f90dfe44f024e7d31f47246c2e8c5d8ec2c2cdd3209f0e34b7",
+        "sourceInverseBindStructureSha256": "b2ac81c4d6ab1d8257d485276a33bb0951b00629137804b9b250061163925eb6"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 47
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-1d6df823a683a0e1a08b4fcfa80947159f9f72396b9e5cdde4058721d7944e92",
+      "name": "Decoration",
+      "actor": "BP_BMP1_AFU_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77/asset-ad0a8dfa79d166e56cec40d6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.339454651,
+        1.468000031,
+        1.472831573,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.3394546508789062,
+          1.4680000305175784,
+          1.4728315734863278
+        ],
+        "observedGltfTranslationM": [
+          1.339454651,
+          1.468000031,
+          1.472831573
+        ],
+        "errorMByAxis": [
+          1.2109380165270522e-10,
+          4.824216581766905e-10,
+          4.863278668665316e-10
+        ],
+        "maxErrorCm": 4.863278668665316e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMP-1/Meshes/bmp1_hull_decoration.bmp1_hull_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-f054386d5911fdc020997f9cc0d6ed6559a1bc820b56f80d32a24d0938f6807a",
+      "name": "Decoration_2",
+      "actor": "BP_BMP1_AFU_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77/asset-d154fce00e5d2846b1ead130/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMP1TS_AFU/Meshes/SM_BMP1_AFU_Hull_Deco.SM_BMP1_AFU_Hull_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-8d8f0b78d186ee72c2d61613b97ea96640e2e33baf5d453a8854bb5804f5f856",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_BMP1_Periscope_AFU_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77/asset-f0a43d1d5d6e925e0286b441/source.gltf",
+      "matrix": [
+        1.0,
+        1.2e-07,
+        0.0,
+        0.0,
+        -1.2e-07,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.347660065,
+        1.67001358,
+        -0.774229965,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.3476600646972656,
+          1.6700135803222653,
+          -0.7742299652099608
+        ],
+        "observedGltfTranslationM": [
+          0.347660065,
+          1.67001358,
+          -0.774229965
+        ],
+        "errorMByAxis": [
+          3.027343931094606e-10,
+          3.222653255363639e-10,
+          2.0996082650270864e-10
+        ],
+        "maxErrorCm": 3.222653255363639e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMP-1/Meshes/bmp1_commander_hatch.bmp1_commander_hatch",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "ae2a8e17016f14041d0bd3876d3ff53960e78c4b2eb2dac0996ba29a556860d1",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "ee45d93bf3d6397f8ec6257ce28b8814ea4782f345cbe1dc7c38b33ddb90fce4",
+        "sourceSkinStructureSha256": "6f31f98ca9f5876617cd01e0fa55f969cf8497327e9e63c9526e05a1ae6854ff",
+        "sourceInverseBindStructureSha256": "642f82d5133c879e2a3dbc80f5590fb345a0bd3938e2b8f07b1e42109b9c5fef"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-f8d3ade23f1db6c9e9628544ae22c05c7bbf3893c5df48dd34c770f2a7024aa1",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_BMP1_Turret_AFU_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77/asset-a59ee993c3579d0f2a8403a2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.799259949,
+        1.659099731,
+        -6e-09,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.7992599487304688,
+          1.6590997314453124,
+          -5.992613978254217e-09
+        ],
+        "observedGltfTranslationM": [
+          -0.799259949,
+          1.659099731,
+          -6e-09
+        ],
+        "errorMByAxis": [
+          2.6953117515660097e-10,
+          4.453124535785946e-10,
+          7.386021745782845e-12
+        ],
+        "maxErrorCm": 4.453124535785946e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMP-1/Meshes/bmp1_turret.bmp1_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "565a901f25b971827168281c0bf361073198c49c4e918040a95906bb7d7f71f5",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "e99405d3c1a7ebc3ed75f0a9453a1a4755daa2db559153a324834f1ec49b487e",
+        "sourceSkinStructureSha256": "3244a8fe500724a1fbed0a1ad20bc98100b5f848ef0c02ef02d7e211427a33c1",
+        "sourceInverseBindStructureSha256": "29fce348e68ef961caa94d2d19f86855ccd8d5ad53cb5b943bcd2bd7a331a401"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-9f39acdb4a4dce28efeab066f782b744cd66819f1c27383e8b08784a71a4ba3b",
+      "name": "SkeletalMesh",
+      "actor": "BP_BMP1_Turret_AFU_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77/asset-7af98a293f2fc396ac8e3e1a/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.084543457,
+        1.826113281,
+        -1.126e-06,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.0845434570312501,
+          1.82611328125,
+          -1.1262966916095741e-06
+        ],
+        "observedGltfTranslationM": [
+          -0.084543457,
+          1.826113281,
+          -1.126e-06
+        ],
+        "errorMByAxis": [
+          3.125009973015125e-11,
+          2.5000002068509275e-10,
+          2.9669160957402026e-10
+        ],
+        "maxErrorCm": 2.9669160957402026e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMP-1/Meshes/bmp1_gun.bmp1_gun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6ef6a289b2ec6979366b8d17d22e16492861da7372d55ec29bc20ccfcaad4ec4",
+      "runtimeBonePoseJointCount": 4,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 5,
+        "sourceNodeStructureSha256": "87f13d73680a394fa1e4b68608193cb370912e168d1a56ad85366daf2408b59a",
+        "sourceSkinStructureSha256": "df3abd07db97ea1463564c5c1a5bab2f76a947bb2d95d0961e50b0ded054cf9b",
+        "sourceInverseBindStructureSha256": "4ac3156f1992009da97d2c9b4cc8b1686a16b916ee9e89b1ada0d58dceb0c371"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 4
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-85203a24dda08a9acca81bd361f1e3f74bcae643a43f36cd3e2e115b15d4fd18",
+      "name": "AT3",
+      "actor": "BP_BMP1_Turret_AFU_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/cb0fb5787ded49e033790c072dc480217e1de0ee9b6973afa92ca50cdedc6a77/asset-45b63abcdc551ec65f22936e/source.gltf",
+      "matrix": [
+        0.994521896,
+        0.104528457,
+        0.0,
+        0.0,
+        -0.104528456,
+        0.994521896,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.215456543,
+        2.076113281,
+        -7.7e-08,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.21545654296874986,
+          2.0761132812500005,
+          -7.734451060078954e-08
+        ],
+        "observedGltfTranslationM": [
+          0.215456543,
+          2.076113281,
+          -7.7e-08
+        ],
+        "errorMByAxis": [
+          3.125014136351467e-11,
+          2.500004647743026e-10,
+          3.4451060078954086e-10
+        ],
+        "maxErrorCm": 3.4451060078954086e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BMP-1/Meshes/AT3_Rocket.AT3_Rocket",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/afu/afu-bmp-1-ifv-bp-bmp1-afu-six-view-qa.json",
+    "sha256": "c6cb31290491739087bd90adb67cfa344f75e37d0bf4b06edf5a4e0be6285f83",
+    "reviewedAt": "2026-07-21T09:24:44.060201Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

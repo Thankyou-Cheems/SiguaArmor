@@ -1,0 +1,458 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/afu--kraz-6322-logistics--logi--bp_kraz_6322_logi.visual.json.recipe.json",
+  "visualRecipeSha256": "5adc41fa4401764c16262ee7c1d4af1c02b477f5eec430a03be48402a6600fdd",
+  "cardId": "afu--kraz-6322-logistics--logi",
+  "factionId": "AFU",
+  "targetKey": "afu-kraz-6322-logistics-logi-v0-96d040d4c1",
+  "rawName": "BP_Kraz_6322_Logi",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/Kraz-6322/BP_Kraz_6322_Logi.BP_Kraz_6322_Logi_C",
+  "vehicleId": "vehicle-76c62ada5c746f7cb1a6f565edd10a24fd097afa95cc61d04a33d9d27ab0d362",
+  "identitySha256": "76c62ada5c746f7cb1a6f565edd10a24fd097afa95cc61d04a33d9d27ab0d362",
+  "packageSha256": "aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 8,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 8,
+  "totalBytes": 61590118,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 56,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-d9a3a6d985336dc79f94dd0324328ad04b34525b70c9ebb3cf643d63ef6d9f18",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-ad76f7347897666ac3382a00/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kraz-6322/Meshes/SK_Kraz_Rigged.SK_Kraz_Rigged",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "c2c455a0bb66ab32e075a80018b72edf322e45f087b296a8ce7df5665436efc5",
+      "runtimeBonePoseJointCount": 56,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 57,
+        "sourceNodeStructureSha256": "18fe6b91bb2da6de7785bfec0aff4160c8bd317d92c9d3c959000f8dbb71d9fb",
+        "sourceSkinStructureSha256": "02d9d9dd2d960c14d9e187b7d78dd5f2415ba38ca486ac299589bac67dd94715",
+        "sourceInverseBindStructureSha256": "10522692dba5f5865fb37f599eabd08fb4b4114efb05215fc19d4dc612dfd477"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 56
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-75fe8c9306cef4a2c16e633fda63a2e6edbe0c00371e211a87a8c606885822f9",
+      "name": "Body",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-fd59866647cf78a8a2c1d427/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kraz-6322/Meshes/Separated/SM_Kraz_Hull_Ext.SM_Kraz_Hull_Ext",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6904bc9335d81777ce1575909db0cf8c6fce79b7349efab5b72966bb054bdf68",
+      "name": "Glass",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-cd10390d21072247ae87a698/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kraz-6322/Meshes/SM_Kraz_Glass.SM_Kraz_Glass",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-8af8c19beda0f057fb3d88a0dc07b3f115701c76df12d5510d1de3dc6f379878",
+      "name": "Addon",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-d502e74240e3be8d7195c256/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kraz-6322/Meshes/SM_Kraz_Flatbed.SM_Kraz_Flatbed",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-082964d22aa6078c3c2f86e96e097cff4b7585c3971565771572193501873348",
+      "name": "Interior",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-3278c79c72a77f9c26c1098b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kraz-6322/Meshes/Separated/SM_Kraz_Interior.SM_Kraz_Interior",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7bf35d90035bf94eb9e0fb9e94089d1c94310ad36d127d41014812741cb5a3ca",
+      "name": "Interior Parts",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-f77324a544cabb872e14c0cf/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kraz-6322/Meshes/Separated/SM_Kraz_Interior_Parts.SM_Kraz_Interior_Parts",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-84eb7e487c5f06c711ba7bb2e3396417237c7a4ab961243bc3e98c8fcba75648",
+      "name": "Interior Parts - NoShadow",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-9853257019599afbe8e47cce/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Kraz-6322/Meshes/Separated/SM_Kraz_Interior_Parts_Small.SM_Kraz_Interior_Parts_Small",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-6b79c39e2ce7433a96bc7eab265e92f010d0489ffeab8ef0a5f0c09d3d696398",
+      "name": "SupplyDecoration",
+      "actor": "BP_Kraz_6322_Logi_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/aa48beb6d175e9e15f2688a06110a50cbb2e9ca5967541a7af6563b2cb2a1dd5/asset-088f432983de7d3656f0a924/source.gltf",
+      "matrix": [
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        -0.42126849,
+        1.721443724,
+        1.5689e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.4212684895435778,
+          1.7214437240876632,
+          1.5688644566651534e-05
+        ],
+        "observedGltfTranslationM": [
+          -0.42126849,
+          1.721443724,
+          1.5689e-05
+        ],
+        "errorMByAxis": [
+          4.564221778302624e-10,
+          8.766321002440236e-11,
+          3.5543334846388974e-10
+        ],
+        "maxErrorCm": 4.564221778302624e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/Russian/RU_SupplyCrate.RU_SupplyCrate",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/afu/afu-kraz-6322-logistics-logi-v0-96d040d4c1-six-view-qa.json",
+    "sha256": "169f4de90fa7cb4b0af956d156b6d37e0906ec8806736b96a32a2014e0f93e05",
+    "reviewedAt": "2026-07-21T09:24:48.485063Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

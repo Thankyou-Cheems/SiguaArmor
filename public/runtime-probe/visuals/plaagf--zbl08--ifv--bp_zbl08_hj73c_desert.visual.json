@@ -1,0 +1,450 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--zbl08--ifv--bp_zbl08_hj73c_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "162a40d88c1d43f55b9b8be73a18ce7dc39e139a57e88b521557a4bc4f1d102a",
+  "cardId": "plaagf--zbl08--ifv",
+  "factionId": "PLAAGF",
+  "targetKey": "plaagf-zbl08-ifv-v0-3adcea9fed",
+  "rawName": "BP_ZBL08_HJ73C_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/ZBL08/BP_ZBL08_HJ73C_Desert.BP_ZBL08_HJ73C_Desert_C",
+  "vehicleId": "vehicle-137839c24392594b33fba111a808022c0060278f83fc98f3c8c8504cb177c689",
+  "identitySha256": "137839c24392594b33fba111a808022c0060278f83fc98f3c8c8504cb177c689",
+  "packageSha256": "a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 8,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 1,
+  "suppressedOccurrences": [
+    {
+      "componentPath": "/Game/Maps/Jensens_Range/Gameplay_Layers/UEDPIE_0_Jensens_Range_ADF-PLAAGF.Jensens_Range_ADF-PLAAGF:PersistentLevel.BP_ZBL08_ZPT-99_APFSDS_Desert_C_0.WeaponMesh3P",
+      "retainedComponentPath": "/Game/Maps/Jensens_Range/Gameplay_Layers/UEDPIE_0_Jensens_Range_ADF-PLAAGF.Jensens_Range_ADF-PLAAGF:PersistentLevel.BP_ZBL08_Turret_HJ73C_Desert_C_0.SkeletalMesh",
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_Gun.ZBL08_Gun",
+      "reason": "unattached-template-duplicate-of-official-active-occurrence"
+    }
+  ],
+  "sourceAssets": 7,
+  "totalBytes": 44599393,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 98,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 1,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-f7d2775a63171d99e41c7baa6c803281c3516fa96d1e9d22157d01f2d3e80002",
+      "name": "ZBL08_CommanderPeriscope",
+      "actor": "BP_ZBL08_Commander_Periscope_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-fb7825af1afacf7daf0b39df/source.gltf",
+      "matrix": [
+        0.999998902,
+        0.001475161,
+        0.000147001,
+        0.0,
+        -0.001475918,
+        0.999984899,
+        0.005293799,
+        0.0,
+        -0.000139189,
+        -0.00529401,
+        0.999985977,
+        0.0,
+        -1.044263956,
+        3.299373447,
+        0.377911183,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.044263955576787,
+          3.299373447257299,
+          0.3779111831755324
+        ],
+        "observedGltfTranslationM": [
+          -1.044263956,
+          3.299373447,
+          0.377911183
+        ],
+        "errorMByAxis": [
+          4.23213020184221e-10,
+          2.572990709381884e-10,
+          1.7553242193102392e-10
+        ],
+        "maxErrorCm": 4.23213020184221e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_CommanderPeriscope.ZBL08_CommanderPeriscope",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-a812bc17ade558aa88e832808b0949f523bc21da770b95158ecd67e630860217",
+      "name": "Vehicle Mesh",
+      "actor": "BP_ZBL08_HJ73C_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-5a98c5aae7aa398135dbc2fe/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_Body.ZBL08_Body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "3768ea57d6c8fbef5aa57bab93402195e71be22f5528085b1df6abfc1f594cdc",
+      "runtimeBonePoseJointCount": 71,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 72,
+        "sourceNodeStructureSha256": "a7a118c9610f68338684f17dd802be151a663e17539dbccfc5134614a3cdfec3",
+        "sourceSkinStructureSha256": "483f1f76a3891296e1dad5e95f0838c01795236a5de507163a5a4bc8b55c2762",
+        "sourceInverseBindStructureSha256": "04a5f7ee30fd068743870313c06b2a3b7fe7f1ac1e8dc08ab43188e0dd00db74"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 71
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-51c4c6cebfe0857443b4c5dafcbd9724276679ab14c970bd68939796334f9db1",
+      "name": "ZBL08_DriverPeriscope",
+      "actor": "BP_ZBL08_HJ73C_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-c8dcbd6f4337c90436b93b1f/source.gltf",
+      "matrix": [
+        1.0,
+        -1.99e-07,
+        2.64e-07,
+        0.0,
+        1.99e-07,
+        1.0,
+        -7.74e-07,
+        0.0,
+        -2.64e-07,
+        7.74e-07,
+        1.0,
+        0.0,
+        2.894979485,
+        2.019142146,
+        -0.530297645,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.8949794848277635,
+          2.0191421456536314,
+          -0.5302976446055061
+        ],
+        "observedGltfTranslationM": [
+          2.894979485,
+          2.019142146,
+          -0.530297645
+        ],
+        "errorMByAxis": [
+          1.7223644732666799e-10,
+          3.463687114901859e-10,
+          3.9449388200551994e-10
+        ],
+        "maxErrorCm": 3.9449388200551994e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_DriverPeriscope.ZBL08_DriverPeriscope",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-81c92cf1346ef6949fb9ba7eb61b1bbcdc214f05de78e8af6af1d3568de5bf25",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_ZBL08_Turret_HJ73C_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-968d15a40351324b0fbbc361/source.gltf",
+      "matrix": [
+        1.0,
+        -1.99e-07,
+        2.64e-07,
+        0.0,
+        2e-07,
+        1.0,
+        -7.75e-07,
+        0.0,
+        -2.64e-07,
+        7.74e-07,
+        1.0,
+        0.0,
+        -1.065633476,
+        2.111845502,
+        -0.115345259,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.0656334755438193,
+          2.111845501965232,
+          -0.11534525932925974
+        ],
+        "observedGltfTranslationM": [
+          -1.065633476,
+          2.111845502,
+          -0.115345259
+        ],
+        "errorMByAxis": [
+          4.561806488112552e-10,
+          3.476818832837125e-11,
+          3.292597305915024e-10
+        ],
+        "maxErrorCm": 4.561806488112552e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_Turret_HJ73C.ZBL08_Turret_HJ73C",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "82a4a52dda63057f41a666e5e6f2c3875112827d848247ed4d8c009f625a4958",
+      "runtimeBonePoseJointCount": 19,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": true,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 20,
+        "sourceNodeStructureSha256": "9f5348b39f07f3a40fe3c15b00accbd4e5a7e9037bf70ca99caaee6382c30270",
+        "sourceSkinStructureSha256": "c39328de0398953ae4f097898428b2bce4e340e35f4aa89c1e4442fbf9bfb29a",
+        "sourceInverseBindStructureSha256": "7cbfd6953f1318d737cf76138769135e83772733210881c315eaac6ac0673578"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 19
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-374fb2ca3533ba4cd810c96945c9b2dbc4b4791cbdbcc2edcf57dafe35f3fa0d",
+      "name": "SkeletalMesh",
+      "actor": "BP_ZBL08_Turret_HJ73C_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-775a41bc92a1d396525aec08/source.gltf",
+      "matrix": [
+        1.0,
+        -1.99e-07,
+        2.64e-07,
+        0.0,
+        2e-07,
+        1.0,
+        -7.75e-07,
+        0.0,
+        -2.64e-07,
+        7.74e-07,
+        1.0,
+        0.0,
+        -0.465633393,
+        2.528709091,
+        -0.11548445,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.46563339252447816,
+          2.528709090915113,
+          -0.11548445036489036
+        ],
+        "observedGltfTranslationM": [
+          -0.465633393,
+          2.528709091,
+          -0.11548445
+        ],
+        "errorMByAxis": [
+          4.7552184412325e-10,
+          8.488720837362962e-11,
+          3.6489035404319026e-10
+        ],
+        "maxErrorCm": 4.7552184412325005e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/ZBL08_Gun.ZBL08_Gun",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "add0df38877bedcd6d1e5a3e82a6b62442070387a64b7dfc9f924a258d3c14c0",
+      "runtimeBonePoseJointCount": 8,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 9,
+        "sourceNodeStructureSha256": "02da8b4328499f0a9d3d48dc8c9388c9934a7ef94748a0a6ca781a5f4f1f854f",
+        "sourceSkinStructureSha256": "e77780f284772119e5e2ed2ebe07ffaa72767fbb8c44453b2f21aaf0ba063fdb",
+        "sourceInverseBindStructureSha256": "722472200872a207a9737d8fa62918a748bc9828051acbb5d2b777e345adcdab"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 8
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-dbcf1155ad1b10931d9d469088dbbb8b36a2de87df3d0a61b181902471f35e0f",
+      "name": "HJ73_Rocket_L",
+      "actor": "BP_ZBL08_Turret_HJ73C_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-af1603751f4f86bc4e74b2c3/source.gltf",
+      "matrix": [
+        0.997564083,
+        0.069755998,
+        2.1e-07,
+        0.0,
+        -0.069755997,
+        0.997564084,
+        -7.91e-07,
+        0.0,
+        -2.64e-07,
+        7.75e-07,
+        1.0,
+        0.0,
+        -1.748482199,
+        2.598196608,
+        -1.2541059,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7484821991481612,
+          2.5981966084665986,
+          -1.2541058997567474
+        ],
+        "observedGltfTranslationM": [
+          -1.748482199,
+          2.598196608,
+          -1.2541059
+        ],
+        "errorMByAxis": [
+          1.4816126103767147e-10,
+          4.665987596297327e-10,
+          2.432527512752358e-10
+        ],
+        "maxErrorCm": 4.6659875962973274e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/SM_HJ73_Rocket.SM_HJ73_Rocket",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-8663d63a0bad2c8a9b7262b1ff4b7ed775886a37a0e8cda9de328767958ebaa1",
+      "name": "HJ73_Rocket_R",
+      "actor": "BP_ZBL08_Turret_HJ73C_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-af1603751f4f86bc4e74b2c3/source.gltf",
+      "matrix": [
+        0.997564084,
+        0.069755997,
+        2.09e-07,
+        0.0,
+        -0.069755997,
+        0.997564084,
+        -7.91e-07,
+        0.0,
+        -2.64e-07,
+        7.74e-07,
+        1.0,
+        0.0,
+        -1.748482648,
+        2.598198066,
+        1.022203152,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7484826475887376,
+          2.5981980660452466,
+          1.022203151756443
+        ],
+        "observedGltfTranslationM": [
+          -1.748482648,
+          2.598198066,
+          1.022203152
+        ],
+        "errorMByAxis": [
+          4.112623575025509e-10,
+          4.524647323478348e-11,
+          2.435569523839831e-10
+        ],
+        "maxErrorCm": 4.112623575025509e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/ZBL08/Meshes/SM_HJ73_Rocket.SM_HJ73_Rocket",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/20260720-zbl08-canonical-gun-r2/plaagf-zbl08-hj73c-desert-canonical-gun-r2-six-view-qa.json",
+    "sha256": "da14ee1b99a8363296b29d5e02c31fe0bb44056adc9dad3226cc28145a77ee12",
+    "reviewedAt": "2026-07-20T12:27:51.923167Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

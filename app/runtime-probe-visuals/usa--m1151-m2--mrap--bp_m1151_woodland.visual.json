@@ -1,0 +1,398 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/usa--m1151-m2--mrap--bp_m1151_woodland.visual.json.recipe.json",
+  "visualRecipeSha256": "15cbdce88ee3f07d585c35245a8d3a9ba6a7a1806cbe4257270a5ec5aae16f53",
+  "cardId": "usa--m1151-m2--mrap",
+  "factionId": "USA",
+  "targetKey": "usa-m1151-m2-mrap-bp-m1151-woodland",
+  "rawName": "BP_M1151_Woodland",
+  "variant": "Woodland",
+  "generatedClass": "/Game/Vehicles/M1151/BP_M1151_Woodland.BP_M1151_Woodland_C",
+  "vehicleId": "vehicle-c8c66d4491778514fdd1fe2d4af1a142e949ba0eb6e538ecee11477f0ae9a9e0",
+  "identitySha256": "c8c66d4491778514fdd1fe2d4af1a142e949ba0eb6e538ecee11477f0ae9a9e0",
+  "packageSha256": "43f65ba50161864a0248476884d538c7f1c541034869a737db65bdcebb6421f8",
+  "requiredOccurrences": 6,
+  "capturedVisibleOccurrences": 6,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 120748685,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 95,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-52a411404d0c80516da436bb6bed87a656ce989d1b9ee2860d91f08ce21fe0f0",
+      "name": "WeaponMesh3P",
+      "actor": "BP_50Cal_M1151_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/43f65ba50161864a0248476884d538c7f1c541034869a737db65bdcebb6421f8/asset-6843cf9a3485b9e598f23845/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.547185602,
+        2.3010194,
+        -0.026847531,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.5471856016693114,
+          2.3010194003219606,
+          -0.02684753123549101
+        ],
+        "observedGltfTranslationM": [
+          0.547185602,
+          2.3010194,
+          -0.026847531
+        ],
+        "errorMByAxis": [
+          3.3068858762419495e-10,
+          3.2196068033840675e-10,
+          2.3549100863773376e-10
+        ],
+        "maxErrorCm": 3.3068858762419495e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/Weapons/M2A1_Browning/m2_vehicle_base.m2_vehicle_base",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d884977210d7a17010a1e5169234eb0312bb31b18fd789e15d2aa01e1abce9fb",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "d6c4efe7e589e6a649eda4f34e7468c818f1419bd35e4b472797f00c26d01a76",
+        "sourceSkinStructureSha256": "d3d7cbd3377b6999441863b722568a679e0cf224a55ecb9149d44d05ac20415a",
+        "sourceInverseBindStructureSha256": "dbd59eb1f219974d725fd0dd52036193dec6402da87d01df4581c1f2bf664f37"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-ca4b567a718b7f78c18269c3c34b2775e42187c32bc97db62e32b575a5697427",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_M1151_Turret_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/43f65ba50161864a0248476884d538c7f1c541034869a737db65bdcebb6421f8/asset-195415393ff45f2fdd240d67/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.0721,
+        1.862187552,
+        -7e-09,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.07210000038146966,
+          1.8621875524520874,
+          -6.5925466928665666e-09
+        ],
+        "observedGltfTranslationM": [
+          -0.0721,
+          1.862187552,
+          -7e-09
+        ],
+        "errorMByAxis": [
+          3.814696614146129e-10,
+          4.5208747856406717e-10,
+          4.0745330713343323e-10
+        ],
+        "maxErrorCm": 4.520874785640672e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MATV/Turrets/M1151_turret.M1151_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "d11751bb3e3347fa03c558ed5229efd94a59f427c89d8d63db2688c3112a2a0e",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "f842d1278d7cdbe2c4ff25dd290c459e68871d68aa75259ccd907991b80911ee",
+        "sourceSkinStructureSha256": "a07e1ff425d0113f4a185021b0228478c6c1e71176bb319d202d67d95c5d2a4d",
+        "sourceInverseBindStructureSha256": "71ee7b867c80a4515e40fe263d1546871ded594062c0b5bb22b5df42bc044032"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-46a414206ba941bfed2743a7fc397b4894ef299c88bb6c0b35684d5d7c8ccc08",
+      "name": "Vehicle Mesh",
+      "actor": "BP_M1151_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/43f65ba50161864a0248476884d538c7f1c541034869a737db65bdcebb6421f8/asset-ba9f6ccef45062d18f386c5c/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SK_M1151.SK_M1151",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "c638c95c7a1641bd946e815649425e469676435fe8d47077827094730ced97cc",
+      "runtimeBonePoseJointCount": 63,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 64,
+        "sourceNodeStructureSha256": "b8e611844d021b047df47bf8912e8a7ee60ba52094faf14ad29a936c01382eb6",
+        "sourceSkinStructureSha256": "7d02375cafc7946aba195dbd2791b3c30431bcc8de59f836baef8b18b859832e",
+        "sourceInverseBindStructureSha256": "938948fb7c8cce28176e9529a74b73df787370e95af313cb02f1ea5bd2245004"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 63
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-804150b4ad474b821e8ad6d74855e55e4c00b677e57d6ceb73dc849093666e90",
+      "name": "hmmwv_interior_decoration",
+      "actor": "BP_M1151_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/43f65ba50161864a0248476884d538c7f1c541034869a737db65bdcebb6421f8/asset-7dac392c9f2b18ff0e9aac61/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.291899414,
+        1.443727264,
+        0.983759918,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.2918994140625002,
+          1.4437272644042969,
+          0.9837599182128907
+        ],
+        "observedGltfTranslationM": [
+          -1.291899414,
+          1.443727264,
+          0.983759918
+        ],
+        "errorMByAxis": [
+          6.250022721587811e-11,
+          4.042968182460527e-10,
+          2.1289070506469443e-10
+        ],
+        "maxErrorCm": 4.042968182460527e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SM_M1151_Interior_Deco.SM_M1151_Interior_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-a1a0845ae6905d31082f6128724416997d010c182af4f331411aa1968e24f588",
+      "name": "razorwire",
+      "actor": "BP_M1151_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/43f65ba50161864a0248476884d538c7f1c541034869a737db65bdcebb6421f8/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        1.489968924,
+        -0.173183728,
+        0.0,
+        0.0,
+        0.115455818,
+        0.993312616,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.5,
+        0.0,
+        1.479674683,
+        1.349351654,
+        0.023326206,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          1.4796746826171872,
+          1.3493516540527346,
+          0.02332620620727539
+        ],
+        "observedGltfTranslationM": [
+          1.479674683,
+          1.349351654,
+          0.023326206
+        ],
+        "errorMByAxis": [
+          3.828128924965313e-10,
+          5.2734705491275236e-11,
+          2.072753912951697e-10
+        ],
+        "maxErrorCm": 3.828128924965313e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-461142d94fc3fe4ead9e02cf7dc575c6212d1c1187b2dc759f26d5520aeb4282",
+      "name": "Camnet",
+      "actor": "BP_M1151_Woodland_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/43f65ba50161864a0248476884d538c7f1c541034869a737db65bdcebb6421f8/asset-8f3cf686d71edb79c8d7f1a4/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1151/Meshes/SM_M1151_Camonet_Deco.SM_M1151_Camonet_Deco",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/usa-m1151-m2-mrap-bp-m1151-woodland-six-view-qa.json",
+    "sha256": "7ffb29c9a27636a97d1af6e35cf7158a806019a332755068abdda085b947623f",
+    "reviewedAt": "2026-07-21T16:16:11.128879Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

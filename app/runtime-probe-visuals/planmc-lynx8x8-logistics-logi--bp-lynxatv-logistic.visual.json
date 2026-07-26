@@ -1,0 +1,381 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/plaagf--lynx8x8-logistics--logi--bp_lynxatv_logistic.visual.json.recipe.json",
+  "visualRecipeSha256": "bd1ad2d6d5b613c64ebcb74539a671b10bb872d8f5b52bed93c73fef0f44f89e",
+  "cardId": "planmc--lynx8x8-logistics--logi",
+  "factionId": "PLANMC",
+  "targetKey": "planmc-lynx8x8-logistics-logi--bp-lynxatv-logistic",
+  "rawName": "BP_LynxATV_Logistic",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/Lynx_8x8/BP_LynxATV_Logistic.BP_LynxATV_Logistic_C",
+  "vehicleId": "vehicle-98804700c1fe4f8538ef308c220dcc7dba94273ec2396729be84181659b50223",
+  "identitySha256": "98804700c1fe4f8538ef308c220dcc7dba94273ec2396729be84181659b50223",
+  "packageSha256": "ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2",
+  "requiredOccurrences": 6,
+  "capturedVisibleOccurrences": 6,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "sourceAssets": 6,
+  "totalBytes": 44406462,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 30,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 1,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-a9b36e86cbe144185557d446f4386185c98989888fb02af6498fde289a0cf1e1",
+      "name": "Vehicle Mesh",
+      "actor": "BP_LynxATV_Logistic_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2/asset-073785501df534fc486087b3/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Lynx_8x8/Meshes/SK_LynxATV.SK_LynxATV",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "7cbc12c1c0f0844cee1e69be1676ea9db5d2b62dd497173cc8af2d99f44d82f1",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": true,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "e7f2df5195187cfdfeb9c40b6c4a264e6f751a6ffc49afd8df3aaa8a8b700da5",
+        "sourceSkinStructureSha256": "623ea8de04fe8f0fe93467e72f7f545829f1d80a1fef52f965860bc014b1883a",
+        "sourceInverseBindStructureSha256": "755a48dea3d123906f1833c40aaf4c0ad17050c98a19a836c331d651a7267422"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-82af3c35fc4da4d9ec4e75b61bee8e301d5dc613a4a3da6698407bc4f9a5f8dc",
+      "name": "HullDecoration",
+      "actor": "BP_LynxATV_Logistic_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2/asset-c50f5d68ed968c78031373a5/source.gltf",
+      "matrix": [
+        -3.6e-08,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        1e-09,
+        0.0,
+        -1.0,
+        1e-09,
+        -3.6e-08,
+        0.0,
+        -0.173957501,
+        0.625428891,
+        -1e-08,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.1739575014109253,
+          0.6254288913484096,
+          -9.946008141525909e-09
+        ],
+        "observedGltfTranslationM": [
+          -0.173957501,
+          0.625428891,
+          -1e-08
+        ],
+        "errorMByAxis": [
+          4.1092532154785033e-10,
+          3.484096344763543e-10,
+          5.3991858474091394e-11
+        ],
+        "maxErrorCm": 4.109253215478503e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Crates/PLA/PLA_SupplyCrate_Small.PLA_SupplyCrate_Small",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-811290b51974c36f31fa21f63c02f302e60d91beebc1800a77f76aab9e3b7183",
+      "name": "SM_LynxATV_Body",
+      "actor": "BP_LynxATV_Logistic_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2/asset-4755f2b8e6b9a6f1d7d751e2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Lynx_8x8/Meshes/SM_LynxATV_NoSeats_Body.SM_LynxATV_NoSeats_Body",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-127137ddede6bc5ace243548fb1bb11e28329b06347b057040cfb360caf856ff",
+      "name": "SM_LynxATV_Glass",
+      "actor": "BP_LynxATV_Logistic_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2/asset-b81788f0bd05b995e686ed0b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Lynx_8x8/Meshes/SM_LynxATV_Glass.SM_LynxATV_Glass",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-b34b99577780845c69ec04857584223a1e03410fa577ca84380ee12a0e6e2570",
+      "name": "SM_LynxATV_Weld",
+      "actor": "BP_LynxATV_Logistic_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2/asset-956337cd0128020058b8ac58/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Lynx_8x8/Meshes/SM_LynxATV_Weld.SM_LynxATV_Weld",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-63ad437da6894020beeb217eaecb9feb96f56e05e59a9dfea2dc00f4e743d865",
+      "name": "HullDecoration1",
+      "actor": "BP_LynxATV_Logistic_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2/asset-c933a26f18a8c60cea1101fb/source.gltf",
+      "matrix": [
+        0.337813015,
+        -0.941213241,
+        0.0,
+        0.0,
+        0.941213242,
+        0.337813016,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.916250907,
+        0.990331702,
+        -1.2e-08,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.916250907390502,
+          0.9903317024646785,
+          -1.173177281543758e-08
+        ],
+        "observedGltfTranslationM": [
+          -0.916250907,
+          0.990331702,
+          -1.2e-08
+        ],
+        "errorMByAxis": [
+          3.905019640981777e-10,
+          4.6467851788634107e-10,
+          2.6822718456242e-10
+        ],
+        "maxErrorCm": 4.646785178863411e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/mortarbox_bigger.mortarbox_bigger",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/20260720-lynx-logistics-r1/plaagf-lynx-logistics-r1-six-view-qa.json",
+    "sha256": "28b7b66bbda2d3b8878b0ff1e78acfc4a7244885e8f8130dd7225a0dc1a5063f",
+    "reviewedAt": "2026-07-20T14:43:42.406186Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ],
+    "reviewMode": "inherited-exact-package-reuse",
+    "inheritedFrom": "app/runtime-probe-visuals/plaagf--lynx8x8-logistics--logi--bp_lynxatv_logistic.visual.json"
+  },
+  "visualReuse": {
+    "mode": "exact-blueprint-variant-reuse",
+    "reason": "same Blueprint rawName and catalog variant label",
+    "canonical": {
+      "factionId": "PLAAGF",
+      "cardId": "plaagf--lynx8x8-logistics--logi",
+      "variantRawName": "BP_LynxATV_Logistic",
+      "variantLabel": "Standard",
+      "packageSha256": "ab8e5efee8cdd5a163755fdb832018c22287b3b73a0ba64fbf4cf09f34c952f2",
+      "descriptorPath": "app/runtime-probe-visuals/plaagf--lynx8x8-logistics--logi--bp_lynxatv_logistic.visual.json"
+    },
+    "consumer": {
+      "factionId": "PLANMC",
+      "cardId": "planmc--lynx8x8-logistics--logi",
+      "variantRawName": "BP_LynxATV_Logistic",
+      "variantLabel": "Standard"
+    },
+    "runtimeCaptureRequired": false,
+    "casPackageDuplicated": false
+  }
+}

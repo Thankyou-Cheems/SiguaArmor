@@ -1,0 +1,513 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/tlf--rhib-mg3--ultv--bp_rhib_gfi_mg3.visual.json.recipe.json",
+  "visualRecipeSha256": "a2380e415d1dd4e7286550c1b9d1562843ab062ef4b113d5ae00d8fa688f8947",
+  "cardId": "tlf--rhib-mg3--ultv",
+  "factionId": "TLF",
+  "targetKey": "tlf-rhib-mg3-ultv-bp-rhib-gfi-mg3",
+  "rawName": "BP_RHIB_GFI_MG3",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/RHIB/BP_RHIB_GFI_MG3.BP_RHIB_GFI_MG3_C",
+  "vehicleId": "vehicle-02fe1f29dd72de3a2dd3634f7a1ffa59585eedbb2311c46c53bd813ae7367252",
+  "identitySha256": "02fe1f29dd72de3a2dd3634f7a1ffa59585eedbb2311c46c53bd813ae7367252",
+  "packageSha256": "059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 22004705,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 30,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-3e13ad5c6ac5aa849dc0386d4f7c1ede84c8224f4882b589f95aeda0a1ef9400",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MG3_RHIB_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-195ecb5f2e237c6f74828943/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.65836699,
+        1.154665755,
+        4.7153e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.6583669900894167,
+          1.154665755033493,
+          4.715345334268475e-05
+        ],
+        "observedGltfTranslationM": [
+          2.65836699,
+          1.154665755,
+          4.7153e-05
+        ],
+        "errorMByAxis": [
+          8.941647422489041e-11,
+          3.34929861622868e-11,
+          4.533426847488269e-10
+        ],
+        "maxErrorCm": 4.533426847488269e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MI17/Weapons/MG3_DoorGun/MG3_DoorGun.MG3_DoorGun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "311413f9e7967462814781f11f635f97dc020042715aa9ceb63f1b271caa7093",
+      "runtimeBonePoseJointCount": 24,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 25,
+        "sourceNodeStructureSha256": "b10f23d778ccd607dbae7c3028103dbf53637959bd8321b0bcf0384becfe3db3",
+        "sourceSkinStructureSha256": "4b8c8b01dd5aec96d7f53ae57020f9fd2117a14ddbc2b496ed8588907f42fe67",
+        "sourceInverseBindStructureSha256": "140739c2f7b59408dc6a12ae22cd4c394a79bae052dab1855db9b2a33bf16a51"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 24
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-9f3d0b842e84214da7f40564170dc77fa5004efe7491334dcce3d35d14543cf6",
+      "name": "Vehicle Mesh",
+      "actor": "BP_RHIB_GFI_MG3_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-cac6e1cccdd1b9f4dd2b8626/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB.RHIB",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "83c8fa0d15dcbe8f778f0bc564a56341059d8f583ebd70bf6862a1c9fd51edd8",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "c66bb5b392054840bc1bb2a047ed592b823e2e81f18ffd7a73e25b3a4f957e7c",
+        "sourceSkinStructureSha256": "2d175034e9927a9465de500a4b90bcb6a13ac81d15af3d8b42674a636fdf5080",
+        "sourceInverseBindStructureSha256": "fb21912d6eb8c0ac6e7a6a0dc647462f427cb91182fc257b38f22daaad3e9b5f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-35f0a6951830eb3956043816e375f93e8164b69ddd206364ec95ed7853401bf1",
+      "name": "Turret",
+      "actor": "BP_RHIB_GFI_MG3_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-1243bbb392889cea159b951d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.648626099,
+        0.638844833,
+        -6.1e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.648626098632812,
+          0.6388448333740234,
+          -6.099999882280808e-07
+        ],
+        "observedGltfTranslationM": [
+          2.648626099,
+          0.638844833,
+          -6.1e-07
+        ],
+        "errorMByAxis": [
+          3.6718805773716667e-10,
+          3.7402347885517884e-10,
+          1.1771919164185404e-14
+        ],
+        "maxErrorCm": 3.7402347885517884e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB_Turret.RHIB_Turret",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-efe13ac9a44b691049b751f699880c33180ce45d528c311f016a0710226b3227",
+      "name": "Box",
+      "actor": "BP_RHIB_GFI_MG3_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-e5cff2c7a41226c37a1bf533/source.gltf",
+      "matrix": [
+        0.424164791,
+        0.0,
+        -0.905585021,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.905585021,
+        0.0,
+        0.424164791,
+        0.0,
+        2.863762512,
+        0.277004108,
+        -0.359138985,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.8637625122070314,
+          0.2770041084289551,
+          -0.35913898468017585
+        ],
+        "observedGltfTranslationM": [
+          2.863762512,
+          0.277004108,
+          -0.359138985
+        ],
+        "errorMByAxis": [
+          2.0703128100763024e-10,
+          4.2895509366758233e-10,
+          3.198241671498181e-10
+        ],
+        "maxErrorCm": 4.289550936675823e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/MG3/MG3_Box.MG3_Box",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7dfdf98086489725e08975e0cac3a7888c5247f726c800e9203be6b16c05f153",
+      "name": "Box1",
+      "actor": "BP_RHIB_GFI_MG3_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-e5cff2c7a41226c37a1bf533/source.gltf",
+      "matrix": [
+        0.225696245,
+        0.0,
+        0.974197724,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.974197723,
+        0.0,
+        0.225696245,
+        0.0,
+        2.855349426,
+        0.275436516,
+        -0.043629332,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.8553494262695307,
+          0.27543651580810546,
+          -0.043629331588745116
+        ],
+        "observedGltfTranslationM": [
+          2.855349426,
+          0.275436516,
+          -0.043629332
+        ],
+        "errorMByAxis": [
+          2.6953062004508865e-10,
+          1.918945558010421e-10,
+          4.112548843138164e-10
+        ],
+        "maxErrorCm": 4.112548843138164e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/MG3/MG3_Box.MG3_Box",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-621d2e67999b60d3ceb078fed5844d4bd16805855a4cfccf04e5d760ab681765",
+      "name": "Box2",
+      "actor": "BP_RHIB_GFI_MG3_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-e5cff2c7a41226c37a1bf533/source.gltf",
+      "matrix": [
+        -0.879915498,
+        0.0,
+        0.475130211,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.475130211,
+        0.0,
+        -0.879915497,
+        0.0,
+        2.852676392,
+        0.277412128,
+        -0.199168091,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.8526763916015625,
+          0.27741212844848634,
+          -0.19916809082031248
+        ],
+        "observedGltfTranslationM": [
+          2.852676392,
+          0.277412128,
+          -0.199168091
+        ],
+        "errorMByAxis": [
+          3.9843728316668603e-10,
+          4.48486359161393e-10,
+          1.7968751486741041e-10
+        ],
+        "maxErrorCm": 4.48486359161393e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/MG3/MG3_Box.MG3_Box",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-59d304d1815a990cb85b4804475f9bafd5f2ba2e7187b166a8f0be1e2fbe0151",
+      "name": "Box3",
+      "actor": "BP_RHIB_GFI_MG3_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-e5cff2c7a41226c37a1bf533/source.gltf",
+      "matrix": [
+        -0.999452064,
+        0.0,
+        0.033099442,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.033099443,
+        0.0,
+        -0.999452063,
+        0.0,
+        2.992303467,
+        0.277412357,
+        -0.199503517,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.992303466796875,
+          0.27741235733032227,
+          -0.19950351715087888
+        ],
+        "observedGltfTranslationM": [
+          2.992303467,
+          0.277412357,
+          -0.199503517
+        ],
+        "errorMByAxis": [
+          2.031250723177891e-10,
+          3.303222695372199e-10,
+          1.5087889271292454e-10
+        ],
+        "maxErrorCm": 3.303222695372199e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/MG3/MG3_Box.MG3_Box",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-b63faa503ff65369e8d806a1393f88f9f02da193a15fcde6e634cc07e0d9dc17",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_RHIB_Turret_MG3_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/059f4da649348d9f37b353b1e5962454b684f2cb9f720370c92a1a5016772bbc/asset-183da2b68baa26c2a5d79c70/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.652671204,
+        0.038398895,
+        1.869e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.6526712036132807,
+          0.03839889526367188,
+          1.8690000288188455e-05
+        ],
+        "observedGltfTranslationM": [
+          2.652671204,
+          0.038398895,
+          1.869e-05
+        ],
+        "errorMByAxis": [
+          3.8671910118637243e-10,
+          2.6367187599962705e-10,
+          2.881884557110869e-13
+        ],
+        "maxErrorCm": 3.867191011863724e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Emplaced_Dshk/Dshk/dshk_tripod_swivel.dshk_tripod_swivel",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "0e4e3c1e8c2f6a609f70204baa77fd33528dbbd5648b885ecfea8cb129b7d45e",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "e9a59dbfbb6fbd586e0078c0d473229938cc3d945606f835dc70a5835ca0da50",
+        "sourceSkinStructureSha256": "c075dfd02fb68e6197cf44ed196d0f84bb6815da7e3d6cc80ad2b0e08da2eb8c",
+        "sourceInverseBindStructureSha256": "752ef9ab0eb8edc1ad477007b583b953cdaa392b84102d89e2bd5e96e1da879b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "componentSuppressedOccurrences": [
+    {
+      "stableOccurrenceId": "occurrence-04c46db3ed17cabe567cfea393e06b06aba13c22d947931989abeb716e949d8b",
+      "componentName": "RHIB_BoatInterior_MaskMesh",
+      "actor": "BP_RHIB_GFI_MG3_C_0",
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB_BoatInterior_MaskMesh.RHIB_BoatInterior_MaskMesh",
+      "reason": "runtime-interior-mask-material-is-not-visual-geometry",
+      "policyId": "rhib-interior-mask-mesh"
+    }
+  ],
+  "componentSuppressedOccurrenceCount": 1,
+  "visualComponentSuppressionPolicy": [
+    {
+      "id": "rhib-interior-mask-mesh",
+      "label": "SUPPRESS RHIB INTERIOR MASK MESH",
+      "reason": "runtime-interior-mask-material-is-not-visual-geometry",
+      "filteredOccurrenceCount": 1
+    }
+  ],
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/tlf-rhib-mg3-ultv-bp-rhib-gfi-mg3-six-view-qa.json",
+    "sha256": "9a59aa3aee5e2a8f8b94d994ad175dd5bd912b3c80e7cfd31246fcd1a3b8da34",
+    "reviewedAt": "2026-07-21T22:46:52.845001Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

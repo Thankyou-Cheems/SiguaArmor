@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/gfi--ural-4320-transport--tran--bp_ural_4320_gfi.visual.json.recipe.json",
+  "visualRecipeSha256": "3e1e4730029a801eb1d9e9e1cec1b68a7e8e5ed4ec78aa3d144131828eb618e2",
+  "cardId": "gfi--ural-4320-transport--tran",
+  "factionId": "GFI",
+  "targetKey": "gfi-ural-4320-transport-tran-bp-ural-4320-gfi",
+  "rawName": "BP_Ural_4320_GFI",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/Ural4320/BP_Ural_4320_GFI.BP_Ural_4320_GFI_C",
+  "vehicleId": "vehicle-c27b853d245ea12cfbd227959d77ddc1e1e19fa8f340d43ed43e1a6e8e0ad988",
+  "identitySha256": "c27b853d245ea12cfbd227959d77ddc1e1e19fa8f340d43ed43e1a6e8e0ad988",
+  "packageSha256": "784327311086e6037c1674c09d7096badf119bf363a1e004d178503ebb54c1d4",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 1,
+  "totalBytes": 19673701,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 1,
+  "runtimeBonePoseJointCount": 53,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-d519230777a9efce2432d06fb23e79b4aec7a5a69b598f47b690a7cd9b11c576",
+      "name": "Vehicle Mesh",
+      "actor": "BP_Ural_4320_GFI_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/784327311086e6037c1674c09d7096badf119bf363a1e004d178503ebb54c1d4/asset-03a1a717cbf4ad9cdd41cabe/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Ural4320/Meshes/Ural_4320.Ural_4320",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "9f0cf74f773304c1ed56b599ac010e8e672fcdb81a613bfb79d18fb3a5c04fa9",
+      "runtimeBonePoseJointCount": 53,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 54,
+        "sourceNodeStructureSha256": "df98a3cdb929a2d16e9a776ecef7dcf752caaa8cf16dc37b9584c39da8578565",
+        "sourceSkinStructureSha256": "f5fb0407c8e29d9e383581cd873458e1bff10b44b8dfaaa6338617bc5c630c77",
+        "sourceInverseBindStructureSha256": "a363f0d1e5dd918bb717d2bf5008f5103683babdd96ce7eaf60cb773e5f55414"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 53
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/gfi/gfi-ural-4320-transport-tran-bp-ural-4320-gfi-six-view-qa.json",
+    "sha256": "e08ff039519c9a054916692a750ecb5799ba22a64a6d0b5064c7c2b944721456",
+    "reviewedAt": "2026-07-21T09:27:18.418793Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

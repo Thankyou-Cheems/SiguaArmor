@@ -1,0 +1,4960 @@
+{
+  "schemaVersion": "1.0.0",
+  "catalogId": "sigua-armor-international-reference-2026-07-16",
+  "dataRevision": "encyclopedia-v3-43c43063bc260fba",
+  "group": {
+    "id": "crf",
+    "name": "Canadian Resistance Forces",
+    "order": 4,
+    "recordCount": 11
+  },
+  "records": [
+    {
+      "promoEntryId": "crf--m1151-tow--td",
+      "promotionOrder": 77,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "M1151 TOW",
+        "typeZh": "TD",
+        "presentation": {
+          "vehicleNameZh": "M1151 TOW",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_M1151_Light_TOW_Woodland_CRF"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_M1151_Light_TOW_Woodland_CRF",
+          "alias": "",
+          "searchTerms": [
+            "林地"
+          ],
+          "searchAliases": [
+            "lindi",
+            "ld"
+          ],
+          "presentation": {
+            "liveryZh": "林地",
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_M1151_Light_TOW_Woodland_CRF",
+              "displayName": "M1151 TOW",
+              "details": null,
+              "type": "TD",
+              "vehicleHealth": 650,
+              "repairToolLimit": 0.25,
+              "respawnTime": 10,
+              "ticketValue": 5,
+              "killerPointReward": 50,
+              "crewSeatCount": 2,
+              "totalSeatCount": 7,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [
+              {
+                "gunName": "BP_BGM71TOW_MATV",
+                "displayName": "BGM-71 TOW High Explosive Anti-Tank",
+                "turretName": "BP_M1151_TOW_Turret_Woodland_C",
+                "numberOfMags": 6,
+                "magSize": 1,
+                "muzzleVelocityMps": 0.01,
+                "tacticalReloadDurationSeconds": 12.5,
+                "dryReloadDurationSeconds": 12.5,
+                "roundsPerMinute": 4.8,
+                "projectileName": "BP_TOW_Proj_C",
+                "maxDamageToApply": 1800,
+                "minDamageToApply": 1800,
+                "armorPenetrationMm": 900,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 1.5,
+                "projectile": {
+                  "impactDamage": 1800,
+                  "damageType": "BP_HAT_DamageType_C",
+                  "explosiveBaseDamage": 153
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 2.1670000553131104,
+                  "timeBetweenShotsSeconds": 0.08500000089406967,
+                  "damageFalloffCurve": null,
+                  "minimumRearmSeconds": 5,
+                  "rearmOneMagazineAtATime": false,
+                  "rearmByRounds": true,
+                  "roundsPerRearm": 1
+                }
+              }
+            ],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "missile-operator",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_M1151_TOW_Turret_Woodland_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1
+                ],
+                "turret": {
+                  "maxYawSpeed": 50,
+                  "maxPitchSpeed": 60,
+                  "minPitchDegrees": -20,
+                  "maxPitchDegrees": 20
+                }
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.36000001430511475
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 0.800000011920929
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.5
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_M1151_Engine_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 0.800000011920929,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--coyote--ifv",
+      "promotionOrder": 78,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "Coyote",
+        "typeZh": "IFV",
+        "presentation": {
+          "vehicleNameZh": "Coyote",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_LAV2_Coyote_CRF"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_LAV2_Coyote_CRF",
+          "alias": "",
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_LAV2_Coyote_CRF",
+              "displayName": "Coyote",
+              "details": null,
+              "type": "IFV",
+              "vehicleHealth": 1250,
+              "repairToolLimit": 0.25,
+              "respawnTime": 10,
+              "ticketValue": 10,
+              "killerPointReward": 110,
+              "crewSeatCount": 4,
+              "totalSeatCount": 4,
+              "amphibious": true,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [
+              {
+                "gunName": "SmokeGenerator_Wheeled",
+                "displayName": "Smoke Generator",
+                "turretName": null,
+                "numberOfMags": 1,
+                "magSize": 30,
+                "muzzleVelocityMps": 0.01,
+                "tacticalReloadDurationSeconds": 1,
+                "dryReloadDurationSeconds": 1,
+                "roundsPerMinute": 60,
+                "projectileName": "BP_ProjectileBlank_C",
+                "maxDamageToApply": 1,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 0,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 10,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": null,
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1,
+                  "timeBetweenShotsSeconds": 1,
+                  "damageFalloffCurve": null,
+                  "minimumRearmSeconds": 5,
+                  "rearmOneMagazineAtATime": false,
+                  "rearmByRounds": true,
+                  "roundsPerRearm": 20
+                }
+              },
+              {
+                "gunName": "Smoke_Launcher_Coyote_Woodland",
+                "displayName": "40mm Smoke Launchers",
+                "turretName": "BP_LAV2_Coyote_Turret_Woodland_CRF_C",
+                "numberOfMags": 1,
+                "magSize": 2,
+                "muzzleVelocityMps": 50,
+                "tacticalReloadDurationSeconds": 1,
+                "dryReloadDurationSeconds": 1,
+                "roundsPerMinute": 60,
+                "projectileName": "BP_VehicleSmoke_Proj_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 0,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 10,
+                "projectile": {
+                  "impactDamage": 60,
+                  "damageType": "SQDamageType_Explosive",
+                  "explosiveBaseDamage": 0
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1,
+                  "timeBetweenShotsSeconds": 1,
+                  "damageFalloffCurve": null,
+                  "minimumRearmSeconds": 30,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              },
+              {
+                "gunName": "BP_Coyote_762_Woodland",
+                "displayName": "C6 Coaxial Machine Gun",
+                "turretName": "BP_LAV2_Coyote_Turret_Woodland_CRF_C",
+                "numberOfMags": 2,
+                "magSize": 440,
+                "muzzleVelocityMps": 853,
+                "tacticalReloadDurationSeconds": 10.5,
+                "dryReloadDurationSeconds": 11.279999732971191,
+                "roundsPerMinute": 857.1428534935932,
+                "projectileName": "BP_Projectile_7_62mm_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 7,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 10,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_SmallArms_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1,
+                  "timeBetweenShotsSeconds": 0.07000000029802322,
+                  "damageFalloffCurve": "M240_DamageCurve",
+                  "minimumRearmSeconds": 10,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              },
+              {
+                "gunName": "Coyote_M252_HE_Woodland",
+                "displayName": "MK210 25mm High Explosive Incendiary",
+                "turretName": "BP_LAV2_Coyote_Turret_Woodland_CRF_C",
+                "numberOfMags": 1,
+                "magSize": 135,
+                "muzzleVelocityMps": 1000,
+                "tacticalReloadDurationSeconds": 12.5,
+                "dryReloadDurationSeconds": 12.5,
+                "roundsPerMinute": 199.99999205271433,
+                "projectileName": "BP_Projectile_30mm_HE_C",
+                "maxDamageToApply": 120,
+                "minDamageToApply": 100,
+                "armorPenetrationMm": 8,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 1,
+                "projectile": {
+                  "impactDamage": 100,
+                  "damageType": "BP_Fragmentation_DamageType_C",
+                  "explosiveBaseDamage": 125
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1,
+                  "timeBetweenShotsSeconds": 0.30000001192092896,
+                  "damageFalloffCurve": null,
+                  "minimumRearmSeconds": 3,
+                  "rearmOneMagazineAtATime": false,
+                  "rearmByRounds": true,
+                  "roundsPerRearm": 6
+                }
+              },
+              {
+                "gunName": "Coyote_M252_AP_Woodland",
+                "displayName": "M919 25mm Armor-Piercing Sabot",
+                "turretName": "BP_LAV2_Coyote_Turret_Woodland_CRF_C",
+                "numberOfMags": 1,
+                "magSize": 75,
+                "muzzleVelocityMps": 1450,
+                "tacticalReloadDurationSeconds": 12.5,
+                "dryReloadDurationSeconds": 12.5,
+                "roundsPerMinute": 199.99999205271433,
+                "projectileName": "BP_Projectile_30mm_AP_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 100,
+                "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
+                "traceDistanceAfterPenM": 30,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_Kinetic_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1,
+                  "timeBetweenShotsSeconds": 0.30000001192092896,
+                  "damageFalloffCurve": "M252_DamageCurve",
+                  "minimumRearmSeconds": 3,
+                  "rearmOneMagazineAtATime": false,
+                  "rearmByRounds": true,
+                  "roundsPerRearm": 5
+                }
+              },
+              {
+                "gunName": "BP_C6_Commander_Turret_Weapon",
+                "displayName": "C6A1 FLEX",
+                "turretName": "BP_LAV6_Commander_Turret_C",
+                "numberOfMags": 10,
+                "magSize": 220,
+                "muzzleVelocityMps": 853,
+                "tacticalReloadDurationSeconds": 10,
+                "dryReloadDurationSeconds": 10.760000228881836,
+                "roundsPerMinute": 705.8823455163765,
+                "projectileName": "BP_Projectile_7_62mm_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 35,
+                "armorPenetrationMm": 7,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 20,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_SmallArms_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1.4299999475479126,
+                  "timeBetweenShotsSeconds": 0.08500000089406967,
+                  "damageFalloffCurve": "M240_DamageCurve",
+                  "minimumRearmSeconds": 8,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              }
+            ],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Heavy Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "gunner",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Heavy Vehicle",
+                "seatHealth": 300,
+                "repairToolLimit": 0.25,
+                "turretName": "BP_LAV2_Coyote_Turret_Woodland_CRF_C",
+                "stabilized": true,
+                "zoomLevels": [
+                  1.5,
+                  12
+                ],
+                "turret": {
+                  "maxYawSpeed": 50,
+                  "maxPitchSpeed": 60,
+                  "minPitchDegrees": -8,
+                  "maxPitchDegrees": 60
+                }
+              },
+              {
+                "index": 3,
+                "role": "commander",
+                "stationKind": "observation-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_Coyote_Commander_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1,
+                  10
+                ],
+                "turret": {
+                  "maxYawSpeed": 500,
+                  "maxPitchSpeed": 500,
+                  "minPitchDegrees": -20,
+                  "maxPitchDegrees": 20
+                }
+              },
+              {
+                "index": 4,
+                "role": "machine-gunner",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_LAV6_Commander_Turret_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1
+                ],
+                "turret": {
+                  "maxYawSpeed": 330,
+                  "maxPitchSpeed": 180,
+                  "minPitchDegrees": -20,
+                  "maxPitchDegrees": 40
+                }
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.30000001192092896
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.625
+              }
+            ],
+            "components": [
+              {
+                "displayName": "BTR80_engine",
+                "componentHealth": 600,
+                "repairToolLimit": 0.800000011920929,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_LAV25_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.07500000298023224
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--m113a3--apc",
+      "promotionOrder": 79,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "M113A3",
+        "typeZh": "APC",
+        "presentation": {
+          "vehicleNameZh": "M113A3",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_M113A3_M2_CRF"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_M113A3_M2_CRF",
+          "alias": "",
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_M113A3_M2_CRF",
+              "displayName": "M113A3",
+              "details": null,
+              "type": "APC",
+              "vehicleHealth": 1000,
+              "repairToolLimit": 0.25,
+              "respawnTime": 6,
+              "ticketValue": 5,
+              "killerPointReward": 50,
+              "crewSeatCount": 2,
+              "totalSeatCount": 13,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 600,
+              "constructionResources": 0,
+              "ammoResources": 600,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [
+              {
+                "gunName": "SmokeGenerator_Tracked",
+                "displayName": "Smoke Generator",
+                "turretName": null,
+                "numberOfMags": 1,
+                "magSize": 30,
+                "muzzleVelocityMps": 0.01,
+                "tacticalReloadDurationSeconds": 1,
+                "dryReloadDurationSeconds": 1,
+                "roundsPerMinute": 60,
+                "projectileName": "BP_ProjectileBlank_C",
+                "maxDamageToApply": 1,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 0,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 10,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": null,
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1,
+                  "timeBetweenShotsSeconds": 1,
+                  "damageFalloffCurve": null,
+                  "minimumRearmSeconds": 5,
+                  "rearmOneMagazineAtATime": false,
+                  "rearmByRounds": true,
+                  "roundsPerRearm": 20
+                }
+              },
+              {
+                "gunName": "BP_Smoke_Launcher_Tigr_Driver",
+                "displayName": "40mm Smoke Launchers",
+                "turretName": null,
+                "numberOfMags": 1,
+                "magSize": 2,
+                "muzzleVelocityMps": 50,
+                "tacticalReloadDurationSeconds": 1,
+                "dryReloadDurationSeconds": 1,
+                "roundsPerMinute": 60,
+                "projectileName": "BP_VehicleSmoke_Proj_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 0,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 10,
+                "projectile": {
+                  "impactDamage": 60,
+                  "damageType": "SQDamageType_Explosive",
+                  "explosiveBaseDamage": 0
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1,
+                  "timeBetweenShotsSeconds": 1,
+                  "damageFalloffCurve": null,
+                  "minimumRearmSeconds": 30,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              },
+              {
+                "gunName": "BP_ACV15_OpenTurret_M2_Weapon",
+                "displayName": "M2A1 Browning",
+                "turretName": "BP_M113A3_OpenTurret_M2_Turret_C",
+                "numberOfMags": 10,
+                "magSize": 100,
+                "muzzleVelocityMps": 890,
+                "tacticalReloadDurationSeconds": 10.5,
+                "dryReloadDurationSeconds": 11,
+                "roundsPerMinute": 500.0000111758711,
+                "projectileName": "BP_Projectile_50cal_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 28,
+                "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
+                "traceDistanceAfterPenM": 20,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_Kinetic_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1.6670000553131104,
+                  "timeBetweenShotsSeconds": 0.11999999731779099,
+                  "damageFalloffCurve": "M2_DamageCurve",
+                  "minimumRearmSeconds": 8,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              }
+            ],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "machine-gunner",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_M113A3_OpenTurret_M2_Turret_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1
+                ],
+                "turret": {
+                  "maxYawSpeed": 330,
+                  "maxPitchSpeed": 180,
+                  "minPitchDegrees": -15,
+                  "maxPitchDegrees": 40
+                }
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 8,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 9,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 10,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 11,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 12,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 13,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.5
+              }
+            ],
+            "components": [
+              {
+                "displayName": "BTR80_engine",
+                "componentHealth": 600,
+                "repairToolLimit": 0.800000011920929,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_M113A3_TrackL_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.10000000149011612
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1.25
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M113A3_TrackR_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.10000000149011612
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1.25
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--light-transport--mrap",
+      "promotionOrder": 80,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "Light Transport",
+        "typeZh": "MRAP",
+        "presentation": {
+          "vehicleNameZh": "Light Transport",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_Technical4Seater_Transport_CRF"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_Technical4Seater_Transport_CRF",
+          "alias": "Transport",
+          "presentation": {
+            "vehicleNameZh": "Technical",
+            "liveryZh": null,
+            "configurationZh": "Transport"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_Technical4Seater_Transport_CRF",
+              "displayName": "Light Transport",
+              "details": null,
+              "type": "MRAP",
+              "vehicleHealth": 500,
+              "repairToolLimit": 0.3499999940395355,
+              "respawnTime": 3,
+              "ticketValue": 5,
+              "killerPointReward": 30,
+              "crewSeatCount": 1,
+              "totalSeatCount": 9,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": true,
+              "commandZoneRadius": 500
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 8,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 9,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.5
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.05000000074505806
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "SQDamageType_Thermite",
+                "modifier": 10
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_Ural375_Engine",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "sourceRawName": "BP_LUVW_CRF",
+          "alias": "Transport",
+          "presentation": {
+            "vehicleNameZh": "LUVW",
+            "liveryZh": null,
+            "configurationZh": "Transport"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_LUVW_CRF",
+              "displayName": "Light Transport",
+              "details": null,
+              "type": "MRAP",
+              "vehicleHealth": 500,
+              "repairToolLimit": 0.25,
+              "respawnTime": 3,
+              "ticketValue": 5,
+              "killerPointReward": 30,
+              "crewSeatCount": 1,
+              "totalSeatCount": 4,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.5
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.05000000074505806
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "SQDamageType_Thermite",
+                "modifier": 10
+              }
+            ],
+            "components": [
+              {
+                "displayName": "LUVW_Engine_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "LUVW_Wheel_Col",
+                "componentHealth": 500,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "LUVW_Wheel_Col",
+                "componentHealth": 500,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "LUVW_Wheel_Col",
+                "componentHealth": 500,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "LUVW_Wheel_Col",
+                "componentHealth": 500,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "sourceRawName": "BP_CPV_Transport_CRF",
+          "alias": "Transport",
+          "presentation": {
+            "vehicleNameZh": "CPV",
+            "liveryZh": null,
+            "configurationZh": "Transport"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CPV_Transport_CRF",
+              "displayName": "Light Transport",
+              "details": null,
+              "type": "MRAP",
+              "vehicleHealth": 500,
+              "repairToolLimit": 0.3499999940395355,
+              "respawnTime": 3,
+              "ticketValue": 5,
+              "killerPointReward": 30,
+              "crewSeatCount": 1,
+              "totalSeatCount": 12,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": true,
+              "commandZoneRadius": 500
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 8,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 9,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 10,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 11,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 12,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.5
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.05000000074505806
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "SQDamageType_Thermite",
+                "modifier": 10
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_Ural375_Engine",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_CPV_Tire_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_CPV_Tire_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_CPV_Tire_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_CPV_Tire_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--light-fsv--ltv",
+      "promotionOrder": 81,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "Light FSV",
+        "typeZh": "LTV",
+        "presentation": {
+          "vehicleNameZh": "Light FSV",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_Technical2Seater_Camo_M2_CRF"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_Technical2Seater_Camo_M2_CRF",
+          "alias": "M2",
+          "searchTerms": [
+            "沙漠"
+          ],
+          "searchAliases": [
+            "shamo",
+            "sm"
+          ],
+          "presentation": {
+            "vehicleNameZh": "Technical",
+            "liveryZh": "沙漠",
+            "configurationZh": "M2"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_Technical2Seater_Camo_M2_CRF",
+              "displayName": "Light FSV",
+              "details": null,
+              "type": "LTV",
+              "vehicleHealth": 500,
+              "repairToolLimit": 0.3499999940395355,
+              "respawnTime": 5,
+              "ticketValue": 5,
+              "killerPointReward": 25,
+              "crewSeatCount": 2,
+              "totalSeatCount": 5,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": true,
+              "commandZoneRadius": 500
+            },
+            "weapons": [
+              {
+                "gunName": "BP_M2_Technical",
+                "displayName": "M2A1 Browning",
+                "turretName": "BP_Technical_Turret_M2_C",
+                "numberOfMags": 10,
+                "magSize": 100,
+                "muzzleVelocityMps": 890,
+                "tacticalReloadDurationSeconds": 10.5,
+                "dryReloadDurationSeconds": 11,
+                "roundsPerMinute": 500.0000111758711,
+                "projectileName": "BP_Projectile_50cal_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 28,
+                "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
+                "traceDistanceAfterPenM": 20,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_Kinetic_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1.6670000553131104,
+                  "timeBetweenShotsSeconds": 0.11999999731779099,
+                  "damageFalloffCurve": "M2_DamageCurve",
+                  "minimumRearmSeconds": 8,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              }
+            ],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "machine-gunner",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_Technical_Turret_M2_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1
+                ],
+                "turret": {
+                  "maxYawSpeed": 330,
+                  "maxPitchSpeed": 180,
+                  "minPitchDegrees": -20,
+                  "maxPitchDegrees": 40
+                }
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.5
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.05000000074505806
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "SQDamageType_Thermite",
+                "modifier": 10
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_Ural375_Engine",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "sourceRawName": "BP_M1151_Light_Woodland_CRF",
+          "alias": "轻型",
+          "searchTerms": [
+            "林地",
+            "轻型"
+          ],
+          "searchAliases": [
+            "lindi",
+            "ld",
+            "qingxing",
+            "qx"
+          ],
+          "presentation": {
+            "vehicleNameZh": "M1151",
+            "liveryZh": "林地",
+            "configurationZh": "轻型"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_M1151_Light_Woodland_CRF",
+              "displayName": "Light FSV",
+              "details": null,
+              "type": "LTV",
+              "vehicleHealth": 650,
+              "repairToolLimit": 0.25,
+              "respawnTime": 5,
+              "ticketValue": 5,
+              "killerPointReward": 25,
+              "crewSeatCount": 2,
+              "totalSeatCount": 7,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [
+              {
+                "gunName": "BP_50Cal_M1151_Woodland",
+                "displayName": "M2A1 Browning",
+                "turretName": "BP_M1151_Turret_Woodland_C",
+                "numberOfMags": 10,
+                "magSize": 100,
+                "muzzleVelocityMps": 890,
+                "tacticalReloadDurationSeconds": 10.5,
+                "dryReloadDurationSeconds": 11,
+                "roundsPerMinute": 500.0000111758711,
+                "projectileName": "BP_Projectile_50cal_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 28,
+                "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
+                "traceDistanceAfterPenM": 20,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_Kinetic_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1.6670000553131104,
+                  "timeBetweenShotsSeconds": 0.11999999731779099,
+                  "damageFalloffCurve": "M2_DamageCurve",
+                  "minimumRearmSeconds": 8,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              }
+            ],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "machine-gunner",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_M1151_Turret_Woodland_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1
+                ],
+                "turret": {
+                  "maxYawSpeed": 330,
+                  "maxPitchSpeed": 180,
+                  "minPitchDegrees": -20,
+                  "maxPitchDegrees": 35
+                }
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.36000001430511475
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 0.800000011920929
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.5
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_M1151_Engine_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 0.800000011920929,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M1151_Wheel_Collision_2",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.4000000059604645
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--quad-bike--ultv",
+      "promotionOrder": 82,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "Quad Bike",
+        "typeZh": "ULTV",
+        "presentation": {
+          "vehicleNameZh": "Quad Bike",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_Quadbike_Desert"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_Quadbike_Desert",
+          "alias": "",
+          "searchTerms": [
+            "沙漠"
+          ],
+          "searchAliases": [
+            "shamo",
+            "sm"
+          ],
+          "presentation": {
+            "liveryZh": "沙漠",
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_Quadbike_Desert",
+              "displayName": "Quad Bike",
+              "details": null,
+              "type": "ULTV",
+              "vehicleHealth": 450,
+              "repairToolLimit": 0.25,
+              "respawnTime": 1,
+              "ticketValue": 1,
+              "killerPointReward": 5,
+              "crewSeatCount": 1,
+              "totalSeatCount": 2,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 150,
+              "constructionResources": 0,
+              "ammoResources": 150,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.10999999940395355
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 1
+              }
+            ],
+            "components": [
+              {
+                "displayName": "Quadbike_Engine_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "sourceRawName": "BP_Quadbike_Woodland",
+          "alias": "",
+          "searchTerms": [
+            "林地"
+          ],
+          "searchAliases": [
+            "lindi",
+            "ld"
+          ],
+          "presentation": {
+            "liveryZh": "林地",
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_Quadbike_Woodland",
+              "displayName": "Quad Bike",
+              "details": null,
+              "type": "ULTV",
+              "vehicleHealth": 450,
+              "repairToolLimit": 0.25,
+              "respawnTime": 1,
+              "ticketValue": 1,
+              "killerPointReward": 5,
+              "crewSeatCount": 1,
+              "totalSeatCount": 2,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 150,
+              "constructionResources": 0,
+              "ammoResources": 150,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.10999999940395355
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 1
+              }
+            ],
+            "components": [
+              {
+                "displayName": "Quadbike_Engine_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "Quadbike_wheel_col",
+                "componentHealth": 200,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.5
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--rhib-m2--ultv",
+      "promotionOrder": 83,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "RHIB M2",
+        "typeZh": "ULTV",
+        "presentation": {
+          "vehicleNameZh": "RHIB",
+          "configurationZh": "M2"
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_RHIB_US_M2"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_RHIB_US_M2",
+          "alias": "",
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_RHIB_US_M2",
+              "displayName": "RHIB M2",
+              "details": null,
+              "type": "ULTV",
+              "vehicleHealth": 250,
+              "repairToolLimit": 1,
+              "respawnTime": 1,
+              "ticketValue": 1,
+              "killerPointReward": 5,
+              "crewSeatCount": 2,
+              "totalSeatCount": 10,
+              "amphibious": true,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [
+              {
+                "gunName": "BP_M2_RHIB_Weapon",
+                "displayName": "M2A1 Browning",
+                "turretName": "BP_RHIB_Turret_M2_C",
+                "numberOfMags": 10,
+                "magSize": 100,
+                "muzzleVelocityMps": 890,
+                "tacticalReloadDurationSeconds": 10.5,
+                "dryReloadDurationSeconds": 11,
+                "roundsPerMinute": 500.0000111758711,
+                "projectileName": "BP_Projectile_50cal_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 10,
+                "armorPenetrationMm": 28,
+                "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
+                "traceDistanceAfterPenM": 20,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_Kinetic_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1.6670000553131104,
+                  "timeBetweenShotsSeconds": 0.11999999731779099,
+                  "damageFalloffCurve": "M2_DamageCurve",
+                  "minimumRearmSeconds": 8,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              }
+            ],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "machine-gunner",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_RHIB_Turret_M2_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1
+                ],
+                "turret": {
+                  "maxYawSpeed": 330,
+                  "maxPitchSpeed": 180,
+                  "minPitchDegrees": -15,
+                  "maxPitchDegrees": 40
+                }
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 8,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 9,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 10,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.36000001430511475
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 0.800000011920929
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.5
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_M1151_Engine_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--rhib-m240--ultv",
+      "promotionOrder": 84,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "RHIB M240",
+        "typeZh": "ULTV",
+        "presentation": {
+          "vehicleNameZh": "RHIB",
+          "configurationZh": "M240"
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_RHIB_US_M240"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_RHIB_US_M240",
+          "alias": "",
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_RHIB_US_M240",
+              "displayName": "RHIB M240",
+              "details": null,
+              "type": "ULTV",
+              "vehicleHealth": 250,
+              "repairToolLimit": 1,
+              "respawnTime": 1,
+              "ticketValue": 1,
+              "killerPointReward": 5,
+              "crewSeatCount": 2,
+              "totalSeatCount": 10,
+              "amphibious": true,
+              "isDamagedByRadial": true,
+              "hasConstruction": false,
+              "totalResources": 300,
+              "constructionResources": 0,
+              "ammoResources": 300,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [
+              {
+                "gunName": "BP_M240_RHIB_Weapon",
+                "displayName": "M240B",
+                "turretName": "BP_RHIB_Turret_M240_C",
+                "numberOfMags": 10,
+                "magSize": 250,
+                "muzzleVelocityMps": 853,
+                "tacticalReloadDurationSeconds": 10,
+                "dryReloadDurationSeconds": 10.760000228881836,
+                "roundsPerMinute": 705.8823455163765,
+                "projectileName": "BP_Projectile_7_62mm_C",
+                "maxDamageToApply": 60,
+                "minDamageToApply": 35,
+                "armorPenetrationMm": 7,
+                "armorPenetrationCurve": null,
+                "traceDistanceAfterPenM": 20,
+                "projectile": {
+                  "impactDamage": -1,
+                  "damageType": "BP_SmallArms_DamageType_C",
+                  "explosiveBaseDamage": 115
+                },
+                "mechanics": {
+                  "equipDurationSeconds": 1.4299999475479126,
+                  "timeBetweenShotsSeconds": 0.08500000089406967,
+                  "damageFalloffCurve": "M240_DamageCurve",
+                  "minimumRearmSeconds": 8,
+                  "rearmOneMagazineAtATime": true,
+                  "rearmByRounds": false,
+                  "roundsPerRearm": 1
+                }
+              }
+            ],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "machine-gunner",
+                "stationKind": "weapon-station",
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": "BP_RHIB_Turret_M240_C",
+                "stabilized": false,
+                "zoomLevels": [
+                  1
+                ],
+                "turret": {
+                  "maxYawSpeed": 330,
+                  "maxPitchSpeed": 180,
+                  "minPitchDegrees": -20,
+                  "maxPitchDegrees": 40
+                }
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 8,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 9,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 10,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.36000001430511475
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 0.800000011920929
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.5
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_M1151_Engine_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--m939-logistics--logi",
+      "promotionOrder": 85,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "M939 Logistics",
+        "typeZh": "LOGI",
+        "presentation": {
+          "vehicleNameZh": "M939",
+          "configurationZh": "Logistics"
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_US_Util_Woodland_Logi_CRF"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_US_Util_Woodland_Logi_CRF",
+          "alias": "",
+          "searchTerms": [
+            "林地"
+          ],
+          "searchAliases": [
+            "lindi",
+            "ld"
+          ],
+          "presentation": {
+            "liveryZh": "林地",
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_US_Util_Woodland_Logi_CRF",
+              "displayName": "M939 Logistics",
+              "details": null,
+              "type": "LOGI",
+              "vehicleHealth": 750,
+              "repairToolLimit": 0.25,
+              "respawnTime": 3,
+              "ticketValue": 5,
+              "killerPointReward": 15,
+              "crewSeatCount": 1,
+              "totalSeatCount": 10,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": true,
+              "totalResources": 3000,
+              "constructionResources": 1500,
+              "ammoResources": 1500,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 8,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 9,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 10,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.3700000047683716
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.05000000074505806
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.5
+              },
+              {
+                "damageClass": "SQDamageType_Thermite",
+                "modifier": 10
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_Ural375_Engine",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_M939Truck_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.20000000298023224
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M939Truck_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.20000000298023224
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M939Truck_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.20000000298023224
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M939Truck_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.20000000298023224
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M939Truck_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.20000000298023224
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_M939Truck_Wheel_Col",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.20000000298023224
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.6000000238418579
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--rhib-logistics--logi",
+      "promotionOrder": 86,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "RHIB Logistics",
+        "typeZh": "LOGI",
+        "presentation": {
+          "vehicleNameZh": "RHIB",
+          "configurationZh": "Logistics"
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_RHIB_Logistics"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_RHIB_Logistics",
+          "alias": "",
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_RHIB_Logistics",
+              "displayName": "RHIB Logistics",
+              "details": null,
+              "type": "LOGI",
+              "vehicleHealth": 250,
+              "repairToolLimit": 1,
+              "respawnTime": 1,
+              "ticketValue": 1,
+              "killerPointReward": 15,
+              "crewSeatCount": 1,
+              "totalSeatCount": 8,
+              "amphibious": true,
+              "isDamagedByRadial": true,
+              "hasConstruction": true,
+              "totalResources": 1400,
+              "constructionResources": 700,
+              "ammoResources": 700,
+              "hasCommandZone": false,
+              "commandZoneRadius": 0
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 6,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 7,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 8,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.36000001430511475
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 0.800000011920929
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 0.5
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_M1151_Engine_Col",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--technical-logistics--logi",
+      "promotionOrder": 87,
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "Technical Logistics",
+        "typeZh": "LOGI",
+        "presentation": {
+          "vehicleNameZh": "Technical",
+          "configurationZh": "Logistics"
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_Technical4Seater_Logi_Camo_CRF"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_Technical4Seater_Logi_Camo_CRF",
+          "alias": "",
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_Technical4Seater_Logi_Camo_CRF",
+              "displayName": "Technical Logistics",
+              "details": null,
+              "type": "LOGI",
+              "vehicleHealth": 500,
+              "repairToolLimit": 0.3499999940395355,
+              "respawnTime": 3,
+              "ticketValue": 1,
+              "killerPointReward": 15,
+              "crewSeatCount": 1,
+              "totalSeatCount": 5,
+              "amphibious": false,
+              "isDamagedByRadial": true,
+              "hasConstruction": true,
+              "totalResources": 1400,
+              "constructionResources": 700,
+              "ammoResources": 700,
+              "hasCommandZone": true,
+              "commandZoneRadius": 500
+            },
+            "weapons": [],
+            "seats": [
+              {
+                "index": 1,
+                "role": "driver",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": null,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 2,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 3,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 4,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              },
+              {
+                "index": 5,
+                "role": "passenger",
+                "stationKind": null,
+                "kitRequirement": "Light Vehicle",
+                "seatHealth": 0,
+                "repairToolLimit": 0,
+                "turretName": null,
+                "stabilized": null,
+                "zoomLevels": [],
+                "turret": null
+              }
+            ],
+            "damageResistances": [
+              {
+                "damageClass": "BP_BasicHeatDamageType_C",
+                "modifier": 0.5
+              },
+              {
+                "damageClass": "BP_Explosives_Damagetype_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_Fragmentation_DamageType_C",
+                "modifier": 0.25
+              },
+              {
+                "damageClass": "BP_Kinetic_DamageType_C",
+                "modifier": 0.10000000149011612
+              },
+              {
+                "damageClass": "SQBurningDamage",
+                "modifier": 1
+              },
+              {
+                "damageClass": "BP_SmallArms_DamageType_C",
+                "modifier": 0.05000000074505806
+              },
+              {
+                "damageClass": "BP_HAT_DamageType_C",
+                "modifier": 1
+              },
+              {
+                "damageClass": "SQDamageType_Thermite",
+                "modifier": 10
+              }
+            ],
+            "components": [
+              {
+                "displayName": "SM_Ural375_Engine",
+                "componentHealth": 600,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": []
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              },
+              {
+                "displayName": "SM_Technical_2Seater_wheel_collision",
+                "componentHealth": 300,
+                "repairToolLimit": 1,
+                "canBeRepairedAfterDestroy": true,
+                "damageResistances": [
+                  {
+                    "damageClass": "BP_Melee_C",
+                    "modifier": 0.3499999940395355
+                  },
+                  {
+                    "damageClass": "BP_SmallArms_DamageType_C",
+                    "modifier": 0.75
+                  },
+                  {
+                    "damageClass": "BP_Kinetic_DamageType_C",
+                    "modifier": 0.800000011920929
+                  },
+                  {
+                    "damageClass": "BP_Fragmentation_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_BasicHeatDamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_HAT_DamageType_C",
+                    "modifier": 2.5
+                  },
+                  {
+                    "damageClass": "BP_Explosives_Damagetype_C",
+                    "modifier": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

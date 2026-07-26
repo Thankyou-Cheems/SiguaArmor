@@ -1,0 +1,482 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/imf--mt-lbm-6mb--ifv--bp_mtlbm_6mb_mil.visual.json.recipe.json",
+  "visualRecipeSha256": "26a8eb931dc6d72d599668d2a4e7be05ef33bba8fb866055c6208c1ab9e0799c",
+  "cardId": "imf--mt-lbm-6mb--ifv",
+  "factionId": "IMF",
+  "targetKey": "imf-mt-lbm-6mb-ifv-bp-mtlbm-6mb-mil",
+  "rawName": "BP_MTLBM_6MB_MIL",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/MTLB/BP_MTLBM_6MB_MIL.BP_MTLBM_6MB_MIL_C",
+  "vehicleId": "vehicle-a89b5059b51f620f679b8ba9bfcdd14f3e7fa529e7058527ba713bda03d15f10",
+  "identitySha256": "a89b5059b51f620f679b8ba9bfcdd14f3e7fa529e7058527ba713bda03d15f10",
+  "packageSha256": "3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 5,
+  "totalBytes": 31061370,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 56,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 1,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-356a91e105506a835e390143ae65de505eaf63a7ddaf1c40fd073d55d43e86a0",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MTLB30mm_PKT_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3/asset-1c1d1da03dc600ecc394649a/source.gltf",
+      "matrix": [
+        0.999985316,
+        0.005419237,
+        6.105e-06,
+        0.0,
+        -0.005419228,
+        0.999984869,
+        -0.000945092,
+        0.0,
+        -1.1227e-05,
+        0.000945045,
+        0.999999553,
+        0.0,
+        -1.242188818,
+        1.061454802,
+        -0.001057538,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.242188817749692,
+          1.0614548021568246,
+          -0.0010575384503217035
+        ],
+        "observedGltfTranslationM": [
+          -1.242188818,
+          1.061454802,
+          -0.001057538
+        ],
+        "errorMByAxis": [
+          2.5030799655212377e-10,
+          1.568245533434265e-10,
+          4.503217035378704e-10
+        ],
+        "maxErrorCm": 4.503217035378704e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "60b1f0bc775abe577a72a0e423712d6925cbe8e1579138d217176ef3bd40aa26",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-bbb1870e694c7c191528717f1ebfb3447e2b4742b1903ac7c388b8349f54f9e5",
+      "name": "Vehicle Mesh",
+      "actor": "BP_MTLBM_6MB_MIL_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3/asset-acfa5b25967c3f2e0d6ff26f/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SK_MTLB_30mm_body.SK_MTLB_30mm_body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6316ad2d080eb6d1f46218a06f3669b83d1111dcddeb034640ea8ccf04e03dee",
+      "runtimeBonePoseJointCount": 48,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 49,
+        "sourceNodeStructureSha256": "24168f798b631eceaedfbaf21d80db1fd43ef39e7559de7a1ba9c84e04deb0bb",
+        "sourceSkinStructureSha256": "5d217fef6e8ad4b185e6dcaa1ff30b67c7293006cdda60e88d61da8ab10547e9",
+        "sourceInverseBindStructureSha256": "2667f0f1c23cacb115548cedc2823125eda7318a669c483bbe9f0a9e73e72a72"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 48
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-21b632d17668a2196ac074b93bc0b73745b49d81dbc6091db51a7c0c29c80aff",
+      "name": "HullDecoration",
+      "actor": "BP_MTLBM_6MB_MIL_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3/asset-9e9d17df404da853a56f0c4d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SM_MTLB_decoration.SM_MTLB_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-36bf4d59fdd0c25a4adf1a35da98d5eec08ce2de8a7aa9673a77a1f13597a7af",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MTLB_30mm_AP_gun_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3/asset-641adbd567ec86bdf2c0f59b/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.771739807,
+        2.461764679,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.7717398071289063,
+          2.461764678955078,
+          -4.2500725161431773e-19
+        ],
+        "observedGltfTranslationM": [
+          -1.771739807,
+          2.461764679,
+          0.0
+        ],
+        "errorMByAxis": [
+          1.2890621903238753e-10,
+          4.4921844022383084e-11,
+          4.2500725161431773e-19
+        ],
+        "maxErrorCm": 1.2890621903238753e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "f0a5bc3ba60be55c73ff2c371d7382720e0deb1a2c2f9f5ba0e5f052dac251ee",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8b879ac7084d128a3d456362d3d24e481ae2fd50a27fcbd1d5fecba44dc960f3",
+      "name": "WeaponMesh3P",
+      "actor": "BP_MTLB_30mm_HE_gun_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3/asset-1c1d1da03dc600ecc394649a/source.gltf",
+      "matrix": [
+        0.999985316,
+        0.005419237,
+        6.105e-06,
+        0.0,
+        -0.005419228,
+        0.999984869,
+        -0.000945092,
+        0.0,
+        -1.1227e-05,
+        0.000945045,
+        0.999999553,
+        0.0,
+        -1.242188818,
+        1.061454802,
+        -0.001057538,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.242188817749692,
+          1.0614548021568246,
+          -0.0010575384503217035
+        ],
+        "observedGltfTranslationM": [
+          -1.242188818,
+          1.061454802,
+          -0.001057538
+        ],
+        "errorMByAxis": [
+          2.5030799655212377e-10,
+          1.568245533434265e-10,
+          4.503217035378704e-10
+        ],
+        "maxErrorCm": 4.503217035378704e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "60b1f0bc775abe577a72a0e423712d6925cbe8e1579138d217176ef3bd40aa26",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a65efe99f5139712d7839744f8bd7d0651db0fd51025306910b268083b5c8fc0",
+      "name": "MTLB_30mm_turret_static_mesh",
+      "actor": "BP_MTLB_30mm_turret_MIL_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3/asset-a88d6b87975ee9a93594ee1c/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.255653381,
+        1.876511688,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.2556533813476562,
+          1.8765116882324222,
+          4.336808689942018e-20
+        ],
+        "observedGltfTranslationM": [
+          -1.255653381,
+          1.876511688,
+          0.0
+        ],
+        "errorMByAxis": [
+          3.4765634815414614e-10,
+          2.324223036254125e-10,
+          4.336808689942018e-20
+        ],
+        "maxErrorCm": 3.4765634815414614e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_turret_static_mesh.MTLB_30mm_turret_static_mesh",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-4bf54d2052f476a508e418bfe75c406b4ddef519399c89fa2358b2a8ad962036",
+      "name": "WeaponMesh3P",
+      "actor": "BP_Smoke_Launcher_MTLB30mm_Militia_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3/asset-1c1d1da03dc600ecc394649a/source.gltf",
+      "matrix": [
+        0.999985316,
+        0.005419237,
+        6.105e-06,
+        0.0,
+        -0.005419228,
+        0.999984869,
+        -0.000945092,
+        0.0,
+        -1.1227e-05,
+        0.000945045,
+        0.999999553,
+        0.0,
+        -1.242188818,
+        1.061454802,
+        -0.001057538,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.242188817749692,
+          1.0614548021568246,
+          -0.0010575384503217035
+        ],
+        "observedGltfTranslationM": [
+          -1.242188818,
+          1.061454802,
+          -0.001057538
+        ],
+        "errorMByAxis": [
+          2.5030799655212377e-10,
+          1.568245533434265e-10,
+          4.503217035378704e-10
+        ],
+        "maxErrorCm": 4.503217035378704e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/turrets/MTLB_30mm_gun.MTLB_30mm_gun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "60b1f0bc775abe577a72a0e423712d6925cbe8e1579138d217176ef3bd40aa26",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "145fe8944e1bee539d3e9be1ade827a5c9d2dc675984e6ea9667faeefba07004",
+        "sourceSkinStructureSha256": "00e3e3c7366ecc1a153ce62cfeb565319d7c9d2aad0052b00b79a981db5574b8",
+        "sourceInverseBindStructureSha256": "71ee9d9ba8b5b26dbfe0591241e063c7b649ee3f84a69f6c43725c2d6ce941c8"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/imf/imf-mt-lbm-6mb-ifv-bp-mtlbm-6mb-mil-six-view-qa.json",
+    "sha256": "e5f3f252f12be718270e333329d6b40e03cba07d6566ab7c316b2199203685a9",
+    "reviewedAt": "2026-07-21T09:40:18.699598Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

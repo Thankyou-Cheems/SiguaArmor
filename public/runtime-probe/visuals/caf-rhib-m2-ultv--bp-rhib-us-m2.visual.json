@@ -1,0 +1,533 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/adf--rhib-m2--ultv--bp_rhib_us_m2.visual.json.recipe.json",
+  "visualRecipeSha256": "b27d62020e8fd8b22f96f3fbbae5e3f756f6d6460574eb83964682cfbe70aa7e",
+  "cardId": "caf--rhib-m2--ultv",
+  "factionId": "CAF",
+  "targetKey": "caf-rhib-m2-ultv--bp-rhib-us-m2",
+  "rawName": "BP_RHIB_US_M2",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/RHIB/BP_RHIB_US_M2.BP_RHIB_US_M2_C",
+  "vehicleId": "vehicle-cd93a7c325bda01f1a0b3e602a7f88d0dc83d3768eda7429e38f96481efcefd8",
+  "identitySha256": "cd93a7c325bda01f1a0b3e602a7f88d0dc83d3768eda7429e38f96481efcefd8",
+  "packageSha256": "e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c",
+  "requiredOccurrences": 8,
+  "capturedVisibleOccurrences": 9,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 39883062,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 37,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-002d0dbac35e39acf42a79a934e073b852fc1056451bf4bcdea89011dfccc878",
+      "name": "WeaponMesh3P",
+      "actor": "BP_M2_RHIB_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-45e4e986ad28a815644c898e/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.543266911,
+        1.398362182,
+        4.067e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.5432669109878536,
+          1.3983621821688843,
+          4.067048430450804e-05
+        ],
+        "observedGltfTranslationM": [
+          2.543266911,
+          1.398362182,
+          4.067e-05
+        ],
+        "errorMByAxis": [
+          1.2146283978609063e-11,
+          1.688842399261148e-10,
+          4.843045080368726e-10
+        ],
+        "maxErrorCm": 4.843045080368726e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/Weapons/M2Browning/m2a1_technical_base.m2a1_technical_base",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "28bdd8c26e116c6d38e438e7f101766b6de25f0b99d9d2b4bfd8386d028399ee",
+      "runtimeBonePoseJointCount": 30,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 31,
+        "sourceNodeStructureSha256": "d6c4efe7e589e6a649eda4f34e7468c818f1419bd35e4b472797f00c26d01a76",
+        "sourceSkinStructureSha256": "7942a02d6e7b2cde858f1bdc7787f27410f2eb888c71e4228b459024402764ca",
+        "sourceInverseBindStructureSha256": "65149af74b8378593788203689bb30d8b3b839dd3c88c0a3b40da27207cf91d9"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 30
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-ba5b1de9e9148e453705c09e1139acbc9f76e6421638181bd185a2f1ea741163",
+      "name": "Shield",
+      "actor": "BP_M2_RHIB_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-8563ef4ebfe2048cd5cd48b4/source.gltf",
+      "matrix": [
+        1.0,
+        -1.918e-06,
+        5.5e-08,
+        0.0,
+        1.918e-06,
+        1.0,
+        -5.21e-07,
+        0.0,
+        -5.6e-08,
+        5.2e-07,
+        1.0,
+        0.0,
+        2.262268082,
+        1.204697569,
+        4.0667e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.262268081562781,
+          1.2046975685683494,
+          4.066679985320398e-05
+        ],
+        "observedGltfTranslationM": [
+          2.262268082,
+          1.204697569,
+          4.0667e-05
+        ],
+        "errorMByAxis": [
+          4.372187056844723e-10,
+          4.316504931267673e-10,
+          2.001467960211444e-10
+        ],
+        "maxErrorCm": 4.372187056844723e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/M1A2/Meshes/M240_Loaders_Turret/M240_Loaders_Turret.M240_Loaders_Turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "6f473c233de3d2a0f43c153c2c0d98386842c5a90d01dab1c1d174da931f92f2",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "d0a6ff38267238aa9081096a126c7b353faf2a0f3903dd42b256beb29dedfe97",
+        "sourceSkinStructureSha256": "15737f09ef76cd9eec2c685bd7008846b865fbee7349144d22c3af301e9c97f8",
+        "sourceInverseBindStructureSha256": "ffa7856850a3cbd09a326b07529a6c00c8068c2f40f13e0153435cccb08bee8d"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a883063b71dc0e2820bad4e4f47b77400b7e2500c50c84852a3a402aebb3b3b4",
+      "name": "Vehicle Mesh",
+      "actor": "BP_RHIB_US_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-824c34b4d30e93baf2c91716/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB.RHIB",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "aa28eb612087bf9cd6e41f98aae638eafa3f266aad4c3fbd1c36e50ce4e70022",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "c66bb5b392054840bc1bb2a047ed592b823e2e81f18ffd7a73e25b3a4f957e7c",
+        "sourceSkinStructureSha256": "2d175034e9927a9465de500a4b90bcb6a13ac81d15af3d8b42674a636fdf5080",
+        "sourceInverseBindStructureSha256": "fb21912d6eb8c0ac6e7a6a0dc647462f427cb91182fc257b38f22daaad3e9b5f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a1db612857c403193f515de08fdf8a31c63561512f7723121288298769c59489",
+      "name": "Turret",
+      "actor": "BP_RHIB_US_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-1243bbb392889cea159b951d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.648626099,
+        0.718518448,
+        -6.1e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.648626098632813,
+          0.7185184478759765,
+          -6.099999882192008e-07
+        ],
+        "observedGltfTranslationM": [
+          2.648626099,
+          0.718518448,
+          -6.1e-07
+        ],
+        "errorMByAxis": [
+          3.671867254695371e-10,
+          1.240234581700861e-10,
+          1.1780799139967063e-14
+        ],
+        "maxErrorCm": 3.671867254695371e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB_Turret.RHIB_Turret",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-a86dd1979d900d8a061636d2d8fca9af602979141a5187a53ad8b062fd265759",
+      "name": "Box",
+      "actor": "BP_RHIB_US_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-8da5ca17e0d846c497b124ca/source.gltf",
+      "matrix": [
+        0.42416479,
+        0.0,
+        -0.905585021,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.905585021,
+        0.0,
+        0.424164791,
+        0.0,
+        2.935851746,
+        0.187618065,
+        -0.287440205,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.935851745605469,
+          0.18761806488037108,
+          -0.28744020462036135
+        ],
+        "observedGltfTranslationM": [
+          2.935851746,
+          0.187618065,
+          -0.287440205
+        ],
+        "errorMByAxis": [
+          3.945310744768449e-10,
+          1.1962891788286356e-10,
+          3.796386538468255e-10
+        ],
+        "maxErrorCm": 3.945310744768449e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/ammobox.ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-075ef4ae88bb65ae5eb700410ac69d3f75d50ceda36dce20927d5367284567f0",
+      "name": "Box1",
+      "actor": "BP_RHIB_US_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-8da5ca17e0d846c497b124ca/source.gltf",
+      "matrix": [
+        0.225696245,
+        0.0,
+        0.974197724,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.974197723,
+        0.0,
+        0.225696245,
+        0.0,
+        2.94994873,
+        0.186050472,
+        0.261330509,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.9499487304687504,
+          0.18605047225952143,
+          0.26133050918579104
+        ],
+        "observedGltfTranslationM": [
+          2.94994873,
+          0.186050472,
+          0.261330509
+        ],
+        "errorMByAxis": [
+          4.687503718514563e-10,
+          2.5952143212215617e-10,
+          1.8579104921201406e-10
+        ],
+        "maxErrorCm": 4.687503718514563e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/ammobox.ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-c70a32ebef816a507cb2a38bcab87f47fb38e899ce7ddae9262b6700483481ee",
+      "name": "Box2",
+      "actor": "BP_RHIB_US_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-8da5ca17e0d846c497b124ca/source.gltf",
+      "matrix": [
+        -0.999860907,
+        0.0,
+        -0.016678338,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.016678338,
+        0.0,
+        -0.999860907,
+        0.0,
+        2.784427185,
+        0.188026085,
+        -0.003354648,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.7844271850585933,
+          0.18802608489990236,
+          -0.0033546477556228656
+        ],
+        "observedGltfTranslationM": [
+          2.784427185,
+          0.188026085,
+          -0.003354648
+        ],
+        "errorMByAxis": [
+          5.859313034761726e-11,
+          1.0009765238905288e-10,
+          2.443771344139145e-10
+        ],
+        "maxErrorCm": 2.443771344139145e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/ammobox.ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-84a23740305b14e9ed57ae04388710271b78e60b9d29f5dfa8ed1dfdc799d862",
+      "name": "Box3",
+      "actor": "BP_RHIB_US_M2_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c/asset-8da5ca17e0d846c497b124ca/source.gltf",
+      "matrix": [
+        -0.999452063,
+        0.0,
+        0.033099443,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.033099442,
+        0.0,
+        -0.999452063,
+        0.0,
+        2.94176239,
+        0.188026314,
+        0.01690811,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.9417623901367187,
+          0.18802631378173829,
+          0.01690811038017273
+        ],
+        "observedGltfTranslationM": [
+          2.94176239,
+          0.188026314,
+          0.01690811
+        ],
+        "errorMByAxis": [
+          1.3671863641206983e-10,
+          2.182617142576504e-10,
+          3.801727301022684e-10
+        ],
+        "maxErrorCm": 3.801727301022684e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/ammobox.ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "visualReuse": {
+    "mode": "exact-blueprint-variant-reuse",
+    "reason": "same Blueprint rawName and catalog variant label",
+    "canonical": {
+      "factionId": "ADF",
+      "cardId": "adf--rhib-m2--ultv",
+      "variantRawName": "BP_RHIB_US_M2",
+      "variantLabel": "Standard",
+      "packageSha256": "e81bb2c0c8b561b8c5e6f72a975e721dcb1bade027b544d1baf43618dc5ae80c",
+      "descriptorPath": "app/runtime-probe-visuals/adf--rhib-m2--ultv--bp_rhib_us_m2.visual.json"
+    },
+    "consumer": {
+      "factionId": "CAF",
+      "cardId": "caf--rhib-m2--ultv",
+      "variantRawName": "BP_RHIB_US_M2",
+      "variantLabel": "Standard"
+    },
+    "runtimeCaptureRequired": false,
+    "casPackageDuplicated": false
+  },
+  "componentSuppressedOccurrences": [
+    {
+      "stableOccurrenceId": "occurrence-8130e5d93e769c6553f9ba20fd06f75a81e2290648e271023032fa1b0bd47a30",
+      "componentName": "RHIB_BoatInterior_MaskMesh",
+      "actor": "BP_RHIB_US_M2_C_0",
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB_BoatInterior_MaskMesh.RHIB_BoatInterior_MaskMesh",
+      "reason": "runtime-interior-mask-material-is-not-visual-geometry",
+      "policyId": "rhib-interior-mask-mesh"
+    }
+  ],
+  "componentSuppressedOccurrenceCount": 1,
+  "visualComponentSuppressionPolicy": [
+    {
+      "id": "rhib-interior-mask-mesh",
+      "label": "SUPPRESS RHIB INTERIOR MASK MESH",
+      "reason": "runtime-interior-mask-material-is-not-visual-geometry",
+      "filteredOccurrenceCount": 1
+    }
+  ],
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/caf-rhib-m2-ultv--bp-rhib-us-m2-six-view-qa.json",
+    "sha256": "d6fe4ca6594008c7f51adf63c2eafe332ac24e30cdc45ffa85856b0507b9cce1",
+    "reviewedAt": "2026-07-21T22:46:28.959543Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

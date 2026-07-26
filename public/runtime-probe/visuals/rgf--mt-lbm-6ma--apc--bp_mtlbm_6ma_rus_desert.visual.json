@@ -1,0 +1,482 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--mt-lbm-6ma--apc--bp_mtlbm_6ma_rus_desert.visual.json.recipe.json",
+  "visualRecipeSha256": "a3e5f8dd6291bc0292fdec38a3d64b00a6fc47c5c41a55000bd49173f065dac8",
+  "cardId": "rgf--mt-lbm-6ma--apc",
+  "factionId": "RGF",
+  "targetKey": "rgf-mt-lbm-6ma-apc-bp-mtlbm-6ma-rus-desert",
+  "rawName": "BP_MTLBM_6MA_RUS_Desert",
+  "variant": "Desert",
+  "generatedClass": "/Game/Vehicles/MTLB/BP_MTLBM_6MA_RUS_Desert.BP_MTLBM_6MA_RUS_Desert_C",
+  "vehicleId": "vehicle-43f2a9deebba9412a404086925b7e84267da4d3eb2918950743b1dccc4d7af4a",
+  "identitySha256": "43f2a9deebba9412a404086925b7e84267da4d3eb2918950743b1dccc4d7af4a",
+  "packageSha256": "bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b",
+  "requiredOccurrences": 7,
+  "capturedVisibleOccurrences": 7,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 6,
+  "totalBytes": 41287049,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 5,
+  "runtimeBonePoseJointCount": 53,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-3a1003ceed850de88289b303d47e8763d022fb1fd25aa1466c90ab6f4cf2e863",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BTR80_RUS_KPVT_Desert_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b/asset-31d057e64483f350db7fbb25/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.979380264,
+        2.05988451,
+        0.051988235,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.9793802642822266,
+          2.059884510040283,
+          0.051988234519958494
+        ],
+        "observedGltfTranslationM": [
+          -0.979380264,
+          2.05988451,
+          0.051988235
+        ],
+        "errorMByAxis": [
+          2.8222657544318963e-10,
+          4.028333222549918e-11,
+          4.800415065453478e-10
+        ],
+        "maxErrorCm": 4.800415065453478e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "041b09433436155c11131287ec42137d3054d6f4fadf72007c8188c1cb98d5e4",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "375137d225ee7df72531b22aa1bdd417986fd78e6dcca2fbc8cf62aa112ea1c1",
+        "sourceInverseBindStructureSha256": "aa36232076d1e98852f929bcc221bb332c778e08f4e6a603eac62372559a0f73"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-8feebbdbaeebdea935ccc561de45b70fbbadf3bceff05d740bbd7d50a0eddf70",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BTR80_RUS_PKT_Desert_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b/asset-baf6ea4679b7052f154bf2e6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.443726883,
+        0.14218696,
+        0.051988235,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.4437268829345703,
+          0.1421869597821634,
+          0.051988234519958494
+        ],
+        "observedGltfTranslationM": [
+          -0.443726883,
+          0.14218696,
+          0.051988235
+        ],
+        "errorMByAxis": [
+          6.542971719980528e-11,
+          2.1783660986152142e-10,
+          4.800415065453478e-10
+        ],
+        "maxErrorCm": 4.800415065453478e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "a4d877da04342af03eeace3b7cc5c929d46976b119087157a2d2f674a0364952",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "375137d225ee7df72531b22aa1bdd417986fd78e6dcca2fbc8cf62aa112ea1c1",
+        "sourceInverseBindStructureSha256": "aa36232076d1e98852f929bcc221bb332c778e08f4e6a603eac62372559a0f73"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-c84705e91252447617d6a064bbc71f35634d96a317068b5dfc7275b70b19ffae",
+      "name": "WeaponMesh3P",
+      "actor": "BP_BTR80_RUS_Smoke_Launcher_Desert_C_1",
+      "assetUrl": "/assets/runtime-probe/visuals/bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b/asset-baf6ea4679b7052f154bf2e6/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -0.443726883,
+        0.14218696,
+        0.051988235,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -0.4437268829345703,
+          0.1421869597821634,
+          0.051988234519958494
+        ],
+        "observedGltfTranslationM": [
+          -0.443726883,
+          0.14218696,
+          0.051988235
+        ],
+        "errorMByAxis": [
+          6.542971719980528e-11,
+          2.1783660986152142e-10,
+          4.800415065453478e-10
+        ],
+        "maxErrorCm": 4.800415065453478e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_weapon.BTR80_weapon",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "a4d877da04342af03eeace3b7cc5c929d46976b119087157a2d2f674a0364952",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "6b97170ccd3ba6b5f44c345263572b1df7d6cfbe39b289eee7f945c26387b53a",
+        "sourceSkinStructureSha256": "375137d225ee7df72531b22aa1bdd417986fd78e6dcca2fbc8cf62aa112ea1c1",
+        "sourceInverseBindStructureSha256": "aa36232076d1e98852f929bcc221bb332c778e08f4e6a603eac62372559a0f73"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-76f3e4ee8bad0164aa638a4caee38acbd9a7f690c6d9396362d087a170454f61",
+      "name": "Vehicle Mesh",
+      "actor": "BP_MTLBM_6MA_RUS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b/asset-f0bb9e646a1cbe64680d3893/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SK_MTLB_30mm_body.SK_MTLB_30mm_body",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "0bcbb4d8e4f18a256b2694aebcf938715d41f8ae5e5a862e88bf2e9190925a71",
+      "runtimeBonePoseJointCount": 48,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 49,
+        "sourceNodeStructureSha256": "24168f798b631eceaedfbaf21d80db1fd43ef39e7559de7a1ba9c84e04deb0bb",
+        "sourceSkinStructureSha256": "5d217fef6e8ad4b185e6dcaa1ff30b67c7293006cdda60e88d61da8ab10547e9",
+        "sourceInverseBindStructureSha256": "2667f0f1c23cacb115548cedc2823125eda7318a669c483bbe9f0a9e73e72a72"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 48
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-a7da0356355a34b634eb97b059a65adb823b912c1e2e27c3fc0a507f1ccdc239",
+      "name": "HullDecoration",
+      "actor": "BP_MTLBM_6MA_RUS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b/asset-2fbf4ab2800c933fd4e5fea2/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MTLB/Meshes/SM_mtlb_rus_decoration.SM_mtlb_rus_decoration",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-04ae448221cb70241650c2511484f627c0960283e1d41bca17a934756a188131",
+      "name": "Razorwire",
+      "actor": "BP_MTLBM_6MA_RUS_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b/asset-cb9404b996ea025d705254d1/source.gltf",
+      "matrix": [
+        1.5297817,
+        -0.349586293,
+        -0.010143723,
+        0.0,
+        0.154651353,
+        0.678260737,
+        -0.052036684,
+        0.0,
+        0.035938889,
+        0.111861648,
+        1.564845325,
+        0.0,
+        3.224506226,
+        1.411398773,
+        0.135794535,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          3.2245062255859374,
+          1.4113987731933593,
+          0.13579453468322755
+        ],
+        "observedGltfTranslationM": [
+          3.224506226,
+          1.411398773,
+          0.135794535
+        ],
+        "errorMByAxis": [
+          4.140625620152605e-10,
+          1.933593285485813e-10,
+          3.167724416108797e-10
+        ],
+        "maxErrorCm": 4.140625620152605e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Environments/Military/Supplies/Razorwire_Bundle.Razorwire_Bundle",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-fa56a12c5016308804e86f9eddb8be20f71ffeac22ad90c59302491c14cd1d9c",
+      "name": "BTR_82A_turret",
+      "actor": "MTLB_6MA_turret_Desert_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b/asset-d4e14ea2d22049b65dd6ff18/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.255653381,
+        1.876511688,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          -1.2556533813476562,
+          1.876511688232422,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          -1.255653381,
+          1.876511688,
+          0.0
+        ],
+        "errorMByAxis": [
+          3.4765634815414614e-10,
+          2.3242208158080757e-10,
+          0.0
+        ],
+        "maxErrorCm": 3.4765634815414614e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/BTR80/Meshes/BTR80_turret.BTR80_turret",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "9dede2234d9b4d9f6cc3b7828a522cc7cc36eff32a65194755a445f0b25ccf86",
+      "runtimeBonePoseJointCount": 2,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 3,
+        "sourceNodeStructureSha256": "480aa690ae65a434613b813ba473a47d89aee11ac00e7d95144996eb87957cb3",
+        "sourceSkinStructureSha256": "68fb9f379ffc3bb13683b40f388593d63f6f79f48b9fdf84a925ea2c25da343d",
+        "sourceInverseBindStructureSha256": "00580590a8d0ae85d43d2042dc674d05b9e500567f491c859547e7bd5a8adfa1"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 2
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/pending-r2/rgf-mt-lbm-6ma-apc-bp-mtlbm-6ma-rus-desert-six-view-qa.json",
+    "sha256": "9442566b0488cf52b5d9c457859eb5d40a8b85c55ddb6af94d484fc99caa9ca2",
+    "reviewedAt": "2026-07-21T16:15:00.374769Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

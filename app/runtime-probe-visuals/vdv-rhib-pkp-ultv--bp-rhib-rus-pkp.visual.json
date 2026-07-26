@@ -1,0 +1,581 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/rgf--rhib-pkp--ultv--bp_rhib_rus_pkp.visual.json.recipe.json",
+  "visualRecipeSha256": "717d29b387cf8563fa0c054fe32842bb238d2383c7ab92cf030dd068e2ae5ea8",
+  "cardId": "vdv--rhib-pkp--ultv",
+  "factionId": "VDV",
+  "targetKey": "vdv-rhib-pkp-ultv--bp-rhib-rus-pkp",
+  "rawName": "BP_RHIB_RUS_PKP",
+  "variant": "Standard",
+  "generatedClass": "/Game/Vehicles/RHIB/BP_RHIB_RUS_PKP.BP_RHIB_RUS_PKP_C",
+  "vehicleId": "vehicle-287dddbc23d225fa8633fc948e9af66464990a21a4a5903760feda03990b7726",
+  "identitySha256": "287dddbc23d225fa8633fc948e9af66464990a21a4a5903760feda03990b7726",
+  "packageSha256": "d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06",
+  "requiredOccurrences": 9,
+  "capturedVisibleOccurrences": 10,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "sourceAssets": 7,
+  "totalBytes": 33625244,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 3,
+  "runtimeBonePoseJointCount": 46,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 2,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-fa4b820706b931ddeda9da2fdd65587289ac12a00c74e6bdfb3a99af4aa2cad2",
+      "name": "WeaponMesh3P",
+      "actor": "BP_PKP_RHIB_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-7bc955d6e83beb8dec0c87ed/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.653796272,
+        1.157633438,
+        0.001716696,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.653796272277832,
+          1.1576334381103515,
+          0.0017166956467553974
+        ],
+        "observedGltfTranslationM": [
+          2.653796272,
+          1.157633438,
+          0.001716696
+        ],
+        "errorMByAxis": [
+          2.7783197964481587e-10,
+          1.1035150571103713e-10,
+          3.532446026226904e-10
+        ],
+        "maxErrorCm": 3.532446026226904e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MI8/Weapons/PKP_DoorGun/PKP_DoorGun.PKP_DoorGun",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "9b538ccbf2611a0c834d1c222b6b48487a4b73dabe09702396189e41fb66988c",
+      "runtimeBonePoseJointCount": 40,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": false,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 41,
+        "sourceNodeStructureSha256": "e1cefce8436a77ae3f81d42b857a70bc2eae207541dab2ee95d33b0e6348fe92",
+        "sourceSkinStructureSha256": "b1d6505e631615becfbff73b8e0ee9cb62cc077edd6bbde336b92b42e9b8161e",
+        "sourceInverseBindStructureSha256": "0f085120668fdcf3cd07b7ca6ba9da27e1fd7a097b4ae9eae71ebf0b4660bef1"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 40
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-2580ce8d7d406f88a1f5eb29cbf975b7945c9cba6636329f1fab6b407b06023a",
+      "name": "Shield",
+      "actor": "BP_PKP_RHIB_Weapon_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-e867cf9cda1bb896741b8e32/source.gltf",
+      "matrix": [
+        1.000020027,
+        -1.1e-08,
+        -1.3e-08,
+        0.0,
+        1.1e-08,
+        1.000019788,
+        1.43e-07,
+        0.0,
+        1.3e-08,
+        -1.42e-07,
+        1.000019789,
+        0.0,
+        2.543727278,
+        1.004827314,
+        0.001717088,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.5437272780355875,
+          1.0048273137478623,
+          0.0017170884700017076
+        ],
+        "observedGltfTranslationM": [
+          2.543727278,
+          1.004827314,
+          0.001717088
+        ],
+        "errorMByAxis": [
+          3.558753292054462e-11,
+          2.5213764409670603e-10,
+          4.700017074751178e-10
+        ],
+        "maxErrorCm": 4.700017074751178e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/Technical/TechnicalMount/dshk_turret_shield.dshk_turret_shield",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-be19ffb1d1d30411582fde022da12f29505ac85b76ed9e6e61c65a0ca2962970",
+      "name": "Vehicle Mesh",
+      "actor": "BP_RHIB_RUS_PKP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-80c353f53e556b6936730e08/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB.RHIB",
+      "componentClassPath": "/Script/AnimationBudgetAllocator.SkeletalMeshComponentBudgeted",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "412da1004f51d2475f5637d883b6553c7774be71d5508c864759db2ee383dbed",
+      "runtimeBonePoseJointCount": 5,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 6,
+        "sourceNodeStructureSha256": "c66bb5b392054840bc1bb2a047ed592b823e2e81f18ffd7a73e25b3a4f957e7c",
+        "sourceSkinStructureSha256": "2d175034e9927a9465de500a4b90bcb6a13ac81d15af3d8b42674a636fdf5080",
+        "sourceInverseBindStructureSha256": "fb21912d6eb8c0ac6e7a6a0dc647462f427cb91182fc257b38f22daaad3e9b5f"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 5
+      }
+    },
+    {
+      "stableOccurrenceId": "occurrence-fe6f93aa9314a54eec69d63032943a78f329f39d34d43f0d11749bd6c58b5b46",
+      "name": "Turret",
+      "actor": "BP_RHIB_RUS_PKP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-1243bbb392889cea159b951d/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.648626099,
+        0.640483322,
+        -6.86e-07,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.6486260986328123,
+          0.6404833221435546,
+          -6.862939335405827e-07
+        ],
+        "observedGltfTranslationM": [
+          2.648626099,
+          0.640483322,
+          -6.86e-07
+        ],
+        "errorMByAxis": [
+          3.671876136479568e-10,
+          1.435546126415943e-10,
+          2.939335405827112e-10
+        ],
+        "maxErrorCm": 3.671876136479568e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB_Turret.RHIB_Turret",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-a13db9572810937ce5b339167a313542776cf691c4b6a20358d42e08837ab0bf",
+      "name": "Box",
+      "actor": "BP_RHIB_RUS_PKP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-4e5308dd58205dd0dbecfbf2/source.gltf",
+      "matrix": [
+        0.424164791,
+        0.0,
+        -0.905585021,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.905585021,
+        0.0,
+        0.424164791,
+        0.0,
+        2.789689026,
+        0.275073185,
+        -0.3559021,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.789689025878906,
+          0.27507318496704103,
+          -0.355902099609375
+        ],
+        "observedGltfTranslationM": [
+          2.789689026,
+          0.275073185,
+          -0.3559021
+        ],
+        "errorMByAxis": [
+          1.2109380165270522e-10,
+          3.29589688874421e-11,
+          3.906249768093062e-10
+        ],
+        "maxErrorCm": 3.906249768093062e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/Common/Ammunition/Magazines/Pkm_Ammobox.Pkm_Ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-473666da6e82fe9922092d41fbb81eaf20abb725814b51565c4789ab71fddb85",
+      "name": "Box1",
+      "actor": "BP_RHIB_RUS_PKP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-4e5308dd58205dd0dbecfbf2/source.gltf",
+      "matrix": [
+        0.225696245,
+        0.0,
+        0.974197724,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.974197724,
+        0.0,
+        0.225696245,
+        0.0,
+        2.743230896,
+        0.257710381,
+        0.22734478,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.743230895996094,
+          0.2577103805541992,
+          0.22734477996826172
+        ],
+        "observedGltfTranslationM": [
+          2.743230896,
+          0.257710381,
+          0.22734478
+        ],
+        "errorMByAxis": [
+          3.906208689841151e-12,
+          4.45800785175976e-10,
+          3.173827867186674e-11
+        ],
+        "maxErrorCm": 4.45800785175976e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/Common/Ammunition/Magazines/Pkm_Ammobox.Pkm_Ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-7dcab5527329eb883c98410e9e96004b49cec6fce45a1981d944e5dc1a120262",
+      "name": "Box2",
+      "actor": "BP_RHIB_RUS_PKP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-4e5308dd58205dd0dbecfbf2/source.gltf",
+      "matrix": [
+        -0.999860907,
+        0.0,
+        -0.016678338,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.016678338,
+        0.0,
+        -0.999860907,
+        0.0,
+        2.78442688,
+        0.267424126,
+        -0.00335461,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.7844268798828127,
+          0.26742412567138674,
+          -0.003354610204696655
+        ],
+        "observedGltfTranslationM": [
+          2.78442688,
+          0.267424126,
+          -0.00335461
+        ],
+        "errorMByAxis": [
+          1.1718714887365422e-10,
+          3.2861324772426315e-10,
+          2.0469665502551027e-10
+        ],
+        "maxErrorCm": 3.2861324772426315e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/Common/Ammunition/Magazines/Pkm_Ammobox.Pkm_Ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-5eadd89c798075bd774a59e941ecb7dde6b01c46566bcda9fac5acc30982b4cd",
+      "name": "Box3",
+      "actor": "BP_RHIB_RUS_PKP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-4e5308dd58205dd0dbecfbf2/source.gltf",
+      "matrix": [
+        -0.999452063,
+        0.0,
+        0.033099442,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -0.033099442,
+        0.0,
+        -0.999452064,
+        0.0,
+        2.941764221,
+        0.259686222,
+        0.016908168,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.941764221191406,
+          0.259686222076416,
+          0.016908167600631713
+        ],
+        "observedGltfTranslationM": [
+          2.941764221,
+          0.259686222,
+          0.016908168
+        ],
+        "errorMByAxis": [
+          1.914060021590558e-10,
+          7.641598465113475e-11,
+          3.9936828843956107e-10
+        ],
+        "maxErrorCm": 3.993682884395611e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Art/Items/Common/Ammunition/Magazines/Pkm_Ammobox.Pkm_Ammobox",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    },
+    {
+      "stableOccurrenceId": "occurrence-e13e5acaf0cd6b4f150362a8a07823567778c8e69f635418940d158c8ab47b79",
+      "name": "Turret_SkeletalMesh",
+      "actor": "BP_RHIB_Turret_PKP_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06/asset-0fadedb244f01441c07e3b41/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.652671204,
+        1.158281708,
+        1.869e-05,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          2.652671203613281,
+          1.1582817077636718,
+          1.8690000288188458e-05
+        ],
+        "observedGltfTranslationM": [
+          2.652671204,
+          1.158281708,
+          1.869e-05
+        ],
+        "errorMByAxis": [
+          3.867186570971626e-10,
+          2.363282902706487e-10,
+          2.881884590992187e-13
+        ],
+        "maxErrorCm": 3.867186570971626e-08,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/MI8/Weapons/PKP_DoorGun/PKP_DoorGun_Swivel.PKP_DoorGun_Swivel",
+      "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "observed",
+      "runtimeBonePoseSha256": "349660692e338e8a095d45ea25382c8e542692b9faf4b6cfa17708eb7e76b6f1",
+      "runtimeBonePoseJointCount": 1,
+      "runtimeBonePoseNormalTimeSampleCount": 3,
+      "runtimeBonePoseReferenceEquivalent": true,
+      "runtimeBonePoseDynamicAcrossNormalTimeSamples": false,
+      "runtimeBonePoseStructure": {
+        "sourceNodeCount": 2,
+        "sourceNodeStructureSha256": "e9a59dbfbb6fbd586e0078c0d473229938cc3d945606f835dc70a5835ca0da50",
+        "sourceSkinStructureSha256": "55a41bfedd718f48199c685593008360dbd583a8689c648bf4662d1ac6b58a17",
+        "sourceInverseBindStructureSha256": "752ef9ab0eb8edc1ad477007b583b953cdaa392b84102d89e2bd5e96e1da879b"
+      },
+      "runtimeCpuSkinWheelAssembly": {
+        "schemaVersion": "runtime-cpu-skin-wheel-assembly/v1",
+        "status": "not-applicable",
+        "reason": "exact-aslav-body-skeleton-inventory-absent",
+        "observedSkinCount": 1,
+        "observedJointCount": 1
+      }
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing bone dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "visualReuse": {
+    "mode": "exact-blueprint-variant-reuse",
+    "reason": "same Blueprint rawName and catalog variant label",
+    "canonical": {
+      "factionId": "RGF",
+      "cardId": "rgf--rhib-pkp--ultv",
+      "variantRawName": "BP_RHIB_RUS_PKP",
+      "variantLabel": "Standard",
+      "packageSha256": "d6253612123edff7cabfda4f8d1d181b49c6e9eccb21b3e818b71321f3d9db06",
+      "descriptorPath": "app/runtime-probe-visuals/rgf--rhib-pkp--ultv--bp_rhib_rus_pkp.visual.json"
+    },
+    "consumer": {
+      "factionId": "VDV",
+      "cardId": "vdv--rhib-pkp--ultv",
+      "variantRawName": "BP_RHIB_RUS_PKP",
+      "variantLabel": "Standard"
+    },
+    "runtimeCaptureRequired": false,
+    "casPackageDuplicated": false
+  },
+  "componentSuppressedOccurrences": [
+    {
+      "stableOccurrenceId": "occurrence-bd8be981fd7ff0e173b8a289aa314817a1ad5ac6718f0e9f23807a2e7a33df9e",
+      "componentName": "RHIB_BoatInterior_MaskMesh",
+      "actor": "BP_RHIB_RUS_PKP_C_0",
+      "sourceMeshPath": "/Game/Vehicles/RHIB/Meshes/RHIB_BoatInterior_MaskMesh.RHIB_BoatInterior_MaskMesh",
+      "reason": "runtime-interior-mask-material-is-not-visual-geometry",
+      "policyId": "rhib-interior-mask-mesh"
+    }
+  ],
+  "componentSuppressedOccurrenceCount": 1,
+  "visualComponentSuppressionPolicy": [
+    {
+      "id": "rhib-interior-mask-mesh",
+      "label": "SUPPRESS RHIB INTERIOR MASK MESH",
+      "reason": "runtime-interior-mask-material-is-not-visual-geometry",
+      "filteredOccurrenceCount": 1
+    }
+  ],
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/vdv-rhib-pkp-ultv--bp-rhib-rus-pkp-six-view-qa.json",
+    "sha256": "d9dc16ed774e8506b2155d92ebc22863501305c7aa2bfae7f03477350aebd8b2",
+    "reviewedAt": "2026-07-21T22:47:04.657545Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}
