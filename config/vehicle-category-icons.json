@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "variantIconsByCardId": {
+    "agesi-m-atv--matv-crows": "jeep_turret",
+    "agesi-m-atv--matv-crows-m240": "jeep_turret",
+    "agesi-m-atv--matv-tow": "jeep_antitank",
+    "arctic-tigr-m--tigr-rws": "jeep_turret",
+    "ekeqie-cobra-ii--cobra2-rws-m2": "jeep_turret",
+    "ekeqie-cobra-ii--cobra2-rws-mg3": "jeep_turret",
+    "kaweier-simir--safir": "jeep_logistics",
+    "kaweier-simir--safir-kornet": "jeep_antitank",
+    "shenzhou-cks-02--csk131-hj-8atgm": "jeep_antitank",
+    "shenzhou-cks-02--csk131-rws": "jeep_turret"
+  },
+  "promoEntryIcons": {
+    "shenzhou-zvt-9a": "tank",
+    "shenzhou-zlb-08": "ifv",
+    "shenzhou-zvb-4a": "trackedifv",
+    "shenzhou-cks-02": "jeep",
+    "shenzhou-sd-8h": "transporthelo",
+    "arctic-t-72b3": "tank",
+    "arctic-btr-82a": "ifv",
+    "arctic-bmp-2": "trackedifv",
+    "arctic-tigr-m": "jeep",
+    "arctic-mi-8": "transporthelo",
+    "agesi-m1a2": "tank",
+    "agesi-m2a3": "trackedifv",
+    "agesi-m1126": "apc",
+    "agesi-m-atv": "jeep",
+    "agesi-uh-60": "transporthelo",
+    "ekeqie-m60t": "tank",
+    "ekeqie-acv-15": "trackedifv",
+    "ekeqie-pars-iii": "apc",
+    "ekeqie-cobra-ii": "jeep",
+    "ekeqie-uh-1h": "transporthelo",
+    "kaweier-t-72s": "tank",
+    "kaweier-bmp-2": "trackedifv",
+    "kaweier-mt-lb": "trackedapc",
+    "kaweier-simir": "jeep",
+    "kaweier-mi-17": "transporthelo"
+  }
+}

@@ -1,0 +1,25 @@
+node_modules/
+.next/
+out/
+dist/
+outputs/
+.release/
+*.tsbuildinfo
+.env*
+
+# Local caches
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+
+# Generated and locally materialized files
+generated/runtime-probe/
+generated/*.log
+public/assets/
+public/images/
+public/local-preview/*
+!public/local-preview/official/
+!public/local-preview/official/**
+/adf-original-blue.png
+/planmc-original-blue.png
