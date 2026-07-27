@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -71,10 +72,11 @@ interface TurretPreviewControlsProps {
 }
 
 const COMPASS_SAMPLE_STEP = 5;
-const COMPASS_SAMPLE_ANGLES = Array.from(
-  { length: 360 / COMPASS_SAMPLE_STEP },
-  (_, index) => -180 + index * COMPASS_SAMPLE_STEP,
-);
+const COMPASS_MIN_DEGREES = -180;
+const COMPASS_MAX_DEGREES = 180;
+const COMPASS_INNER_RADIUS = 34;
+const COMPASS_OUTER_RADIUS = 43;
+const PITCH_LEVEL_COLOR = "hsl(44 72% 58%)";
 
 function rounded(value: number, maximumFractionDigits = 1) {
   return new Intl.NumberFormat("zh-CN", { maximumFractionDigits }).format(value);
@@ -100,15 +102,20 @@ function annularSectorPath(
   innerRadius: number,
   outerRadius: number,
 ) {
+  const spanDegrees = Math.min(
+    360,
+    Math.max(0, endDegrees - startDegrees),
+  );
+  const largeArc = spanDegrees > 180 ? 1 : 0;
   const outerStart = polarPoint(startDegrees, outerRadius);
   const outerEnd = polarPoint(endDegrees, outerRadius);
   const innerEnd = polarPoint(endDegrees, innerRadius);
   const innerStart = polarPoint(startDegrees, innerRadius);
   return [
     `M ${outerStart.x.toFixed(3)} ${outerStart.y.toFixed(3)}`,
-    `A ${outerRadius} ${outerRadius} 0 0 1 ${outerEnd.x.toFixed(3)} ${outerEnd.y.toFixed(3)}`,
+    `A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outerEnd.x.toFixed(3)} ${outerEnd.y.toFixed(3)}`,
     `L ${innerEnd.x.toFixed(3)} ${innerEnd.y.toFixed(3)}`,
-    `A ${innerRadius} ${innerRadius} 0 0 0 ${innerStart.x.toFixed(3)} ${innerStart.y.toFixed(3)}`,
+    `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${innerStart.x.toFixed(3)} ${innerStart.y.toFixed(3)}`,
     "Z",
   ].join(" ");
 }
@@ -127,11 +134,42 @@ function elevationColor(maxPitchDegrees: number) {
   return `hsl(${hue.toFixed(0)} 70% ${lightness.toFixed(0)}%)`;
 }
 
+function pitchColor(pitchDegrees: number) {
+  if (Math.abs(pitchDegrees) < 0.05) return PITCH_LEVEL_COLOR;
+  return pitchDegrees < 0
+    ? depressionColor(pitchDegrees)
+    : elevationColor(pitchDegrees);
+}
+
 function turretProfileSamples(turret: ReferenceTurret) {
-  return COMPASS_SAMPLE_ANGLES.flatMap((yawDegrees) => {
+  const bounds = turretYawBounds(turret);
+  const startDegrees = bounds.continuous
+    ? COMPASS_MIN_DEGREES
+    : Math.max(COMPASS_MIN_DEGREES, bounds.minDegrees);
+  const endDegrees = bounds.continuous
+    ? COMPASS_MAX_DEGREES
+    : Math.min(COMPASS_MAX_DEGREES, bounds.maxDegrees);
+  const sampleCount = Math.ceil(
+    Math.max(0, endDegrees - startDegrees) / COMPASS_SAMPLE_STEP,
+  );
+  return Array.from({ length: sampleCount }, (_, index) => {
+    const segmentStartDegrees = startDegrees + index * COMPASS_SAMPLE_STEP;
+    const segmentEndDegrees = Math.min(
+      endDegrees,
+      segmentStartDegrees + COMPASS_SAMPLE_STEP,
+    );
+    const yawDegrees =
+      segmentStartDegrees + (segmentEndDegrees - segmentStartDegrees) / 2;
     const window = turretPitchWindowAtYaw(turret, yawDegrees);
-    return window ? [{ yawDegrees, ...window }] : [];
-  });
+    return window
+      ? {
+          startDegrees: segmentStartDegrees,
+          endDegrees: segmentEndDegrees,
+          yawDegrees,
+          ...window,
+        }
+      : null;
+  }).filter((sample): sample is NonNullable<typeof sample> => sample !== null);
 }
 
 function profileSummary(turret: ReferenceTurret) {
@@ -174,6 +212,7 @@ export function TurretLimitCompass({
   onYawChange,
   onInteractionEnd,
 }: TurretLimitCompassProps) {
+  const gradientIdPrefix = useId().replaceAll(":", "");
   const compassRef = useRef<SVGSVGElement>(null);
   const activePointerIdRef = useRef<number | null>(null);
   const activeDetentRef = useRef<number | null>(null);
@@ -184,6 +223,18 @@ export function TurretLimitCompass({
   const interactive = typeof onYawChange === "function";
   const enabled = interactive && !disabled;
   const bounds = turretYawBounds(turret);
+  const yawSpanDegrees = Math.min(
+    360,
+    Math.max(0, bounds.maxDegrees - bounds.minDegrees),
+  );
+  const yawLimited = !bounds.continuous;
+  const hasLockedArc = yawLimited && yawSpanDegrees < 359.95;
+  const minimumYawInner = polarPoint(bounds.minDegrees, 23);
+  const minimumYawOuter = polarPoint(bounds.minDegrees, 45);
+  const minimumYawLabel = polarPoint(bounds.minDegrees, 47.5);
+  const maximumYawInner = polarPoint(bounds.maxDegrees, 23);
+  const maximumYawOuter = polarPoint(bounds.maxDegrees, 45);
+  const maximumYawLabel = polarPoint(bounds.maxDegrees, 47.5);
   const availableDetents = useMemo(
     () => TURRET_YAW_DETENTS.filter((detent) => (
       Math.abs(
@@ -193,7 +244,11 @@ export function TurretLimitCompass({
     [turret],
   );
   const accessibleLabel = current
-    ? `炮塔当前朝向 ${angleLabel(yawDegrees)}，可俯至 ${angleLabel(current.minPitchDegrees)}，可仰至 ${angleLabel(current.maxPitchDegrees)}`
+    ? `炮塔当前朝向 ${angleLabel(yawDegrees)}，可俯至 ${angleLabel(current.minPitchDegrees)}，可仰至 ${angleLabel(current.maxPitchDegrees)}${
+        yawLimited
+          ? `，水平可转 ${angleLabel(bounds.minDegrees)} 至 ${angleLabel(bounds.maxDegrees)}`
+          : ""
+      }`
     : "炮塔俯仰限界未知";
   const activeCardinal = [
     { label: "后", degrees: -180 },
@@ -277,6 +332,7 @@ export function TurretLimitCompass({
       data-compact={compact}
       data-interactive={interactive || undefined}
       data-dragging={dragging || undefined}
+      data-yaw-limited={yawLimited || undefined}
       width={size}
       height={size}
       viewBox="0 0 100 100"
@@ -310,53 +366,168 @@ export function TurretLimitCompass({
       }}
       onPointerCancel={finishPointerInteraction}
     >
+      <defs>
+        <pattern
+          id={`${gradientIdPrefix}-yaw-locked`}
+          width="4"
+          height="4"
+          patternUnits="userSpaceOnUse"
+        >
+          <rect
+            className="turret-limit-compass__locked-fill"
+            width="4"
+            height="4"
+          />
+          <path
+            className="turret-limit-compass__locked-stripe"
+            d="M-1 1 1-1M0 4 4 0M3 5 5 3"
+          />
+        </pattern>
+        {samples.map((sample, index) => {
+          const outer = polarPoint(
+            sample.yawDegrees,
+            COMPASS_OUTER_RADIUS,
+          );
+          const inner = polarPoint(
+            sample.yawDegrees,
+            COMPASS_INNER_RADIUS,
+          );
+          const zeroOffset =
+            sample.minPitchDegrees < 0 && sample.maxPitchDegrees > 0
+              ? -sample.minPitchDegrees /
+                (sample.maxPitchDegrees - sample.minPitchDegrees)
+              : null;
+          return (
+            <linearGradient
+              id={`${gradientIdPrefix}-pitch-${index}`}
+              key={`${sample.startDegrees}:gradient`}
+              gradientUnits="userSpaceOnUse"
+              x1={outer.x}
+              y1={outer.y}
+              x2={inner.x}
+              y2={inner.y}
+            >
+              <stop
+                offset="0%"
+                stopColor={pitchColor(sample.minPitchDegrees)}
+              />
+              {zeroOffset !== null ? (
+                <stop
+                  offset={`${(zeroOffset * 100).toFixed(2)}%`}
+                  stopColor={PITCH_LEVEL_COLOR}
+                />
+              ) : null}
+              <stop
+                offset="100%"
+                stopColor={pitchColor(sample.maxPitchDegrees)}
+              />
+            </linearGradient>
+          );
+        })}
+      </defs>
       <circle className="turret-limit-compass__backdrop" cx="50" cy="50" r="46" />
+      <circle
+        className="turret-limit-compass__range-track"
+        cx="50"
+        cy="50"
+        r="38.5"
+      />
+      {hasLockedArc ? (
+        <path
+          className="turret-limit-compass__yaw-unavailable"
+          d={annularSectorPath(
+            bounds.maxDegrees,
+            bounds.minDegrees + 360,
+            33,
+            44,
+          )}
+          fill={`url(#${gradientIdPrefix}-yaw-locked)`}
+          aria-hidden="true"
+        />
+      ) : null}
+      {samples.map((sample, index) => (
+        <path
+          className="turret-limit-compass__pitch-sector"
+          key={sample.startDegrees}
+          d={annularSectorPath(
+            sample.startDegrees,
+            sample.endDegrees,
+            COMPASS_INNER_RADIUS,
+            COMPASS_OUTER_RADIUS,
+          )}
+          fill={`url(#${gradientIdPrefix}-pitch-${index})`}
+          stroke={`url(#${gradientIdPrefix}-pitch-${index})`}
+          aria-hidden="true"
+        >
+          <title>
+            {`${angleLabel(sample.yawDegrees)}：${angleLabel(sample.minPitchDegrees)} 至 ${angleLabel(sample.maxPitchDegrees)}`}
+          </title>
+        </path>
+      ))}
+      {yawLimited ? (
+        <path
+          className="turret-limit-compass__yaw-outline"
+          d={annularSectorPath(
+            bounds.minDegrees,
+            bounds.maxDegrees,
+            33,
+            44,
+          )}
+          aria-hidden="true"
+        />
+      ) : null}
       <circle className="turret-limit-compass__guide" cx="50" cy="50" r="40" />
       <circle className="turret-limit-compass__guide" cx="50" cy="50" r="29" />
-      {interactive
-        ? samples.map((sample) => (
-            <path
-              className="turret-limit-compass__yaw-sector"
-              key={sample.yawDegrees}
-              d={annularSectorPath(
-                sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
-                sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
-                34,
-                43,
-              )}
-              aria-hidden="true"
-            />
-          ))
-        : samples.map((sample) => (
-            <g key={sample.yawDegrees} aria-hidden="true">
-              <path
-                d={annularSectorPath(
-                  sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
-                  sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
-                  34,
-                  43,
-                )}
-                fill={depressionColor(sample.minPitchDegrees)}
-              >
-                <title>
-                  {`${angleLabel(sample.yawDegrees)}：俯角 ${angleLabel(sample.minPitchDegrees)}`}
-                </title>
-              </path>
-              <path
-                d={annularSectorPath(
-                  sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
-                  sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
-                  25,
-                  32,
-                )}
-                fill={elevationColor(sample.maxPitchDegrees)}
-              >
-                <title>
-                  {`${angleLabel(sample.yawDegrees)}：仰角 ${angleLabel(sample.maxPitchDegrees)}`}
-                </title>
-              </path>
-            </g>
-          ))}
+      {yawLimited ? (
+        <g className="turret-limit-compass__yaw-limits" aria-hidden="true">
+          <line
+            x1={minimumYawInner.x}
+            y1={minimumYawInner.y}
+            x2={minimumYawOuter.x}
+            y2={minimumYawOuter.y}
+          />
+          <line
+            x1={maximumYawInner.x}
+            y1={maximumYawInner.y}
+            x2={maximumYawOuter.x}
+            y2={maximumYawOuter.y}
+          />
+          <text
+            x={minimumYawLabel.x}
+            y={minimumYawLabel.y}
+            textAnchor={
+              minimumYawLabel.x < 48
+                ? "end"
+                : minimumYawLabel.x > 52
+                  ? "start"
+                  : "middle"
+            }
+          >
+            {angleLabel(bounds.minDegrees)}
+          </text>
+          <text
+            x={maximumYawLabel.x}
+            y={maximumYawLabel.y}
+            textAnchor={
+              maximumYawLabel.x < 48
+                ? "end"
+                : maximumYawLabel.x > 52
+                  ? "start"
+                  : "middle"
+            }
+          >
+            {angleLabel(bounds.maxDegrees)}
+          </text>
+          <text
+            className="turret-limit-compass__yaw-span"
+            x="50"
+            y="79"
+            textAnchor="middle"
+          >
+            可转 {rounded(yawSpanDegrees, 0)}°
+          </text>
+        </g>
+      ) : null}
       <g className="turret-limit-compass__detents" aria-hidden="true">
         {availableDetents.map((detent) => {
           const inner = polarPoint(detent, 43);
@@ -472,11 +643,11 @@ export function TurretEnvelopeCard({
       className="turret-envelope-card"
       data-authority={turret.limits?.authority ?? "reference"}
       data-directional={summary.directional}
-      aria-label={`${stationLabel}全向炮塔限界`}
+      aria-label={`${stationLabel}${bounds.continuous ? "全向" : "受限"}炮塔限界`}
     >
       <header className="turret-envelope-card__heading">
         <span>
-          <strong>全向射界</strong>
+          <strong>{bounds.continuous ? "全向射界" : "受限射界"}</strong>
           <small>{stationLabel}</small>
         </span>
         <em>{authorityLabel(turret)}</em>
@@ -529,8 +700,10 @@ export function TurretEnvelopeCard({
         </div>
       </div>
       <div className="turret-envelope-card__legend" aria-label="射界图图例">
-        <span><i data-kind="depression" />外环 · 俯角（越绿越深）</span>
-        <span><i data-kind="elevation" />内环 · 仰角（越亮越高）</span>
+        <span><i data-kind="pitch-range" />环带 · 俯角至仰角渐变</span>
+        {!bounds.continuous ? (
+          <span><i data-kind="yaw-range" />亮区 · 可旋转范围</span>
+        ) : null}
       </div>
       <p className="turret-envelope-card__source" role="note">
         {authorityNote(turret)}
@@ -557,6 +730,17 @@ export function TurretPreviewControls({
   const { turret } = activeStation;
   const pitchWindow = turretPitchWindowAtYaw(turret, yawDegrees);
   if (!pitchWindow) return null;
+  const pitchSpan =
+    pitchWindow.maxPitchDegrees - pitchWindow.minPitchDegrees;
+  const pitchProgress = pitchSpan > 0
+    ? Math.min(
+        100,
+        Math.max(
+          0,
+          ((pitchDegrees - pitchWindow.minPitchDegrees) / pitchSpan) * 100,
+        ),
+      )
+    : 0;
 
   const updatePitchFromPointer = (
     event: ReactPointerEvent<HTMLInputElement>,
@@ -701,6 +885,9 @@ export function TurretPreviewControls({
                   disabled={!activeStation.pitchAvailable}
                   aria-label="炮塔俯仰"
                   aria-orientation="vertical"
+                  style={{
+                    "--pitch-progress": `${pitchProgress}%`,
+                  } as CSSProperties}
                   onPointerDown={(event) => {
                     if (!activeStation.pitchAvailable) return;
                     event.preventDefault();

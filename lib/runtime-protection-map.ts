@@ -3,7 +3,11 @@ import {
   type EditorNativeShotResult,
 } from "./editor-native-hit-model.ts";
 
-export const RUNTIME_PROTECTION_MAP_BATCH_RAYS = 128;
+export const RUNTIME_PROTECTION_MAP_MIN_BATCH_RAYS = 24;
+export const RUNTIME_PROTECTION_MAP_MAX_BATCH_RAYS = 512;
+export const RUNTIME_PROTECTION_MAP_MAX_BATCH_VISITS = 2048;
+export const RUNTIME_PROTECTION_MAP_FRAME_BUDGET_MS = 6;
+export const RUNTIME_PROTECTION_MAP_UI_UPDATE_INTERVAL_MS = 80;
 export const RUNTIME_PROTECTION_MAP_BLOCK_SIZE = 8 as const;
 export const RUNTIME_PROTECTION_MAP_MIN_PRECISION = 1 as const;
 export const RUNTIME_PROTECTION_MAP_STANDARD_MAX_PRECISION = 5 as const;
@@ -25,6 +29,23 @@ export const RUNTIME_PROTECTION_MAP_CELL = {
   ammo: 3,
   engineAndAmmo: 4,
 } as const satisfies Record<string, RuntimeProtectionMapCell>;
+
+export function runtimeProtectionMapFrameHasBudget({
+  sampledRays,
+  visitedCells,
+  elapsedMs,
+}: {
+  sampledRays: number;
+  visitedCells: number;
+  elapsedMs: number;
+}) {
+  if (visitedCells >= RUNTIME_PROTECTION_MAP_MAX_BATCH_VISITS) return false;
+  if (sampledRays < RUNTIME_PROTECTION_MAP_MIN_BATCH_RAYS) return true;
+  return (
+    sampledRays < RUNTIME_PROTECTION_MAP_MAX_BATCH_RAYS &&
+    elapsedMs < RUNTIME_PROTECTION_MAP_FRAME_BUDGET_MS
+  );
+}
 
 type SampleOffset = readonly [number, number];
 

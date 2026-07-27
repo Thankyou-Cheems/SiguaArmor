@@ -61,7 +61,6 @@ import {
   setHitSceneThreeModelComponentPoses,
   setHitSceneThreeModelHoveredProfile,
   setHitSceneThreeModelMode,
-  setHitSceneThreeModelSpacedArmorAnimationTime,
   setHitSceneThreeModelSpecialArmorVisible,
   type HitSceneArmorThicknessRange,
   type HitSceneThreeModel,
@@ -92,16 +91,17 @@ import {
   type RuntimeAttackSource,
 } from "./runtime-probe-weapon-labels";
 import {
-  RUNTIME_PROTECTION_MAP_BATCH_RAYS,
   RUNTIME_PROTECTION_MAP_BLOCK_SIZE,
   RUNTIME_PROTECTION_MAP_MAX_PRECISION,
   RUNTIME_PROTECTION_MAP_MIN_PRECISION,
   RUNTIME_PROTECTION_MAP_STANDARD_MAX_PRECISION,
   RUNTIME_PROTECTION_MAP_SUPER_PRECISION,
+  RUNTIME_PROTECTION_MAP_UI_UPDATE_INTERVAL_MS,
   clampRuntimeProtectionMapPrecision,
   classifyRuntimeProtectionShot,
   reconstructRuntimeProtectionMapBlock,
   runtimeProtectionMapCumulativeSampleCount,
+  runtimeProtectionMapFrameHasBudget,
   runtimeProtectionMapGridSize,
   runtimeProtectionMapLevelOffsets,
   runtimeProtectionMapSuperGridSize,
@@ -2834,9 +2834,6 @@ export function RuntimeVehicleViewer({
     let hoverFrame = 0;
     let pendingHover: { clientX: number; clientY: number } | null = null;
     let protectionFrame = 0;
-    let spacedArmorAnimationFrame = 0;
-    let spacedArmorAnimationStartedAt: number | null = null;
-    let lastSpacedArmorRenderAt = 0;
     let protectionTimer = 0;
     let protectionToken = 0;
     let protectionCache: ProtectionMapComputationCache | null = null;
@@ -3095,31 +3092,7 @@ export function RuntimeVehicleViewer({
       render();
     };
     applyTurretPoseRef.current = applyTurretPose;
-    const animateSpacedArmor = (timestamp: number) => {
-      if (cancelled) return;
-      spacedArmorAnimationStartedAt ??= timestamp;
-      const hitModel = hitModelRef.current;
-      const shouldAnimate =
-        hitModel !== null &&
-        (
-          (modeRef.current === "armor" && specialArmorVisibleRef.current) ||
-          (
-            modeRef.current === "exterior" &&
-            exteriorSpacedArmorHighlightRef.current
-          )
-        ) &&
-        document.visibilityState === "visible";
-      if (shouldAnimate && timestamp - lastSpacedArmorRenderAt >= 1000 / 30) {
-        setHitSceneThreeModelSpacedArmorAnimationTime(
-          hitModel,
-          (timestamp - spacedArmorAnimationStartedAt) / 1000,
-        );
-        render();
-        lastSpacedArmorRenderAt = timestamp;
-      }
-      spacedArmorAnimationFrame = requestAnimationFrame(animateSpacedArmor);
-    };
-    spacedArmorAnimationFrame = requestAnimationFrame(animateSpacedArmor);
+    host.dataset.spacedArmorAnimation = "disabled";
     const raycaster = new THREE.Raycaster();
     raycaster.firstHitOnly = false;
     const pointer = new THREE.Vector2();
@@ -3198,6 +3171,7 @@ export function RuntimeVehicleViewer({
         cancelProtectionMap(true);
         return;
       }
+      host.dataset.protectionMapCompute = "client-frame-budget";
 
       const token = ++protectionToken;
       const viewportWidth = Math.max(renderer.domElement.clientWidth, 1);
@@ -3251,6 +3225,7 @@ export function RuntimeVehicleViewer({
       let completedSamples =
         protectionMapSampleCount(standardGrid.sampledMask) +
         (cache.superGrid ? protectionMapSampleCount(cache.superGrid.sampledMask) : 0);
+      let lastProtectionUiUpdateAt = 0;
 
       const buildLevelSamples = (level: RuntimeProtectionMapStandardPrecision) => {
         const samples: Array<[number, number]> = [];
@@ -3320,6 +3295,7 @@ export function RuntimeVehicleViewer({
           cache.superGrid.width,
           cache.superGrid.height,
         );
+        lastProtectionUiUpdateAt = performance.now();
       };
 
       if (phase === "standard") {
@@ -3366,14 +3342,23 @@ export function RuntimeVehicleViewer({
 
       const processBatch = () => {
         if (cancelled || token !== protectionToken || !protectionEnabledRef.current) return;
+        const batchStartedAt = performance.now();
         let batchCount = 0;
+        let visitedCount = 0;
+        let precisionAdvanced = false;
+        const frameHasBudget = () => runtimeProtectionMapFrameHasBudget({
+          sampledRays: batchCount,
+          visitedCells: visitedCount,
+          elapsedMs: performance.now() - batchStartedAt,
+        });
         if (phase === "standard") {
           const dirtyBlocks = new Set<number>();
           while (
             levelSampleIndex < levelSamples.length &&
-            batchCount < RUNTIME_PROTECTION_MAP_BATCH_RAYS
+            frameHasBudget()
           ) {
             const [column, row] = levelSamples[levelSampleIndex];
+            visitedCount += 1;
             const cell = sampleCell(standardGrid, column, row);
             const cellIndex = row * standardGrid.width + column;
             standardGrid.sampleValues[cellIndex] = cell;
@@ -3399,16 +3384,11 @@ export function RuntimeVehicleViewer({
               standardGrid.reconstructed,
             );
           });
-          paintProtectionMap(
-            canvas,
-            standardGrid.reconstructed,
-            standardGrid.width,
-            standardGrid.height,
-          );
 
           if (levelSampleIndex >= levelSamples.length) {
             cache.completedStandardPrecision = workingPrecision;
             setProtectionRenderedPrecision(workingPrecision);
+            precisionAdvanced = true;
             if (workingPrecision < standardTarget) {
               workingPrecision = (
                 workingPrecision + 1
@@ -3425,10 +3405,11 @@ export function RuntimeVehicleViewer({
           const superGrid = cache.superGrid;
           while (
             superGrid.nextProgressiveIndex < superSampleOrder.length &&
-            batchCount < RUNTIME_PROTECTION_MAP_BATCH_RAYS
+            frameHasBudget()
           ) {
             const cellIndex = superSampleOrder[superGrid.nextProgressiveIndex];
             superGrid.nextProgressiveIndex += 1;
+            visitedCount += 1;
             if (superGrid.sampledMask[cellIndex] !== 0) continue;
             const column = cellIndex % superGrid.width;
             const row = Math.floor(cellIndex / superGrid.width);
@@ -3439,19 +3420,37 @@ export function RuntimeVehicleViewer({
             completedSamples += 1;
             batchCount += 1;
           }
-          paintProtectionMap(
-            canvas,
-            superGrid.reconstructed,
-            superGrid.width,
-            superGrid.height,
-          );
           if (superGrid.nextProgressiveIndex >= superSampleOrder.length) {
             phase = "done";
             setProtectionRenderedPrecision(RUNTIME_PROTECTION_MAP_SUPER_PRECISION);
+            precisionAdvanced = true;
           }
         }
 
-        setProtectionSampleProgress({ completed: completedSamples, total: totalSamples });
+        const uiUpdateAt = performance.now();
+        if (
+          phase === "done" ||
+          precisionAdvanced ||
+          uiUpdateAt - lastProtectionUiUpdateAt >=
+            RUNTIME_PROTECTION_MAP_UI_UPDATE_INTERVAL_MS
+        ) {
+          const displayGrid =
+            targetPrecision === RUNTIME_PROTECTION_MAP_SUPER_PRECISION &&
+            cache.superGrid
+              ? cache.superGrid
+              : standardGrid;
+          paintProtectionMap(
+            canvas,
+            displayGrid.reconstructed,
+            displayGrid.width,
+            displayGrid.height,
+          );
+          setProtectionSampleProgress({
+            completed: completedSamples,
+            total: totalSamples,
+          });
+          lastProtectionUiUpdateAt = uiUpdateAt;
+        }
         if (phase === "done") {
           host.dataset.protectionMapState = "ready";
           protectionFrame = 0;
@@ -4319,7 +4318,6 @@ export function RuntimeVehicleViewer({
       cancelled = true;
       cancelProtectionMap(true);
       cancelAnimationFrame(hoverFrame);
-      cancelAnimationFrame(spacedArmorAnimationFrame);
       resetViewRef.current = null;
       activateAssetModeRef.current = null;
       visualGroupRef.current = null;
@@ -4378,12 +4376,12 @@ export function RuntimeVehicleViewer({
   const protectionStatus = !protectionMapAvailable
     ? "当前模式不可用"
     : !protectionActive
-      ? "防护图已关闭"
+      ? "本机防护图已关闭"
       : protectionSampleProgress.total <= 0
-        ? "防护图等待计算"
+        ? "本机防护图等待计算"
         : protectionSampleProgress.completed >= protectionSampleProgress.total
-          ? `防护图 ${protectionRenderedPrecision} 档完成`
-          : `防护图计算中 ${protectionSampleProgress.completed}/${protectionSampleProgress.total}`;
+          ? `本机防护图 ${protectionRenderedPrecision} 档完成`
+          : `本机防护图计算中 ${protectionSampleProgress.completed}/${protectionSampleProgress.total}`;
 
   return (
     <div
@@ -4757,9 +4755,11 @@ export function RuntimeVehicleViewer({
                 className="viewer-protection-switch"
                 type="button"
                 role="switch"
+                aria-label="防护图，仅在当前浏览器本机计算"
                 aria-checked={protectionActive}
                 data-active={protectionActive}
                 disabled={!protectionMapAvailable}
+                title="射线与伤害求解仅在当前浏览器分帧执行，不占用服务器算力"
                 onClick={() => {
                   const nextEnabled = !protectionEnabled;
                   setProtectionEnabled(nextEnabled);
