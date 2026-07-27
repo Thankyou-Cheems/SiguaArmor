@@ -1936,7 +1936,7 @@ function SiteFooterCopy({
             <h3>字体</h3>
             <p>
               中文界面使用 标小智无界黑 / LogoSC Unbounded Sans
-              的本地化 WOFF2 子集，遵循 SIL Open Font License 1.1；<a href="/fonts/LogoSCUnboundedSans-OFL.txt" target="_blank" rel="noreferrer">查看许可全文</a>。
+              的完整本地 WOFF2 字库，遵循 SIL Open Font License 1.1；<a href="/fonts/LogoSCUnboundedSans-OFL.txt" target="_blank" rel="noreferrer">查看许可全文</a>。
             </p>
             <p className="site-footer__system-font-note">
               微软雅黑、Noto Sans SC、Cascadia Mono 等由设备提供。
