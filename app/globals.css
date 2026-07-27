@@ -3880,6 +3880,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   padding: 9px;
 }
 
+.seat-detail-grid__turret-indicator-status {
+  display: grid;
+  min-height: 34px;
+  place-items: center;
+  margin: 0 9px 9px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 8px;
+}
+
 .turret-damage-profile {
   display: grid;
   gap: 5px;
@@ -13179,7 +13189,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .turret-limit-compass__range-track {
   fill: none;
   stroke: rgba(6, 9, 7, 0.94);
+}
+
+.turret-limit-compass__range-track[data-kind="depression"] {
   stroke-width: 11;
+}
+
+.turret-limit-compass__range-track[data-kind="elevation"] {
+  stroke-width: 9;
 }
 
 .turret-limit-compass__locked-fill {
@@ -13197,7 +13214,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .turret-limit-compass__pitch-sector {
-  stroke-width: 0.32;
+  stroke: rgba(7, 10, 8, 0.74);
+  stroke-width: 0.38;
+}
+
+.turret-limit-compass__pitch-sector[data-kind="depression"] {
+  filter: saturate(0.96);
+}
+
+.turret-limit-compass__pitch-sector[data-kind="elevation"] {
+  filter: saturate(0.92);
 }
 
 .turret-limit-compass__yaw-outline {
@@ -13525,13 +13551,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   height: 4px;
 }
 
-.turret-envelope-card__legend i[data-kind="pitch-range"] {
-  background: linear-gradient(
-    90deg,
-    hsl(108 68% 48%),
-    hsl(44 72% 58%),
-    hsl(207 70% 52%)
-  );
+.turret-envelope-card__legend i[data-kind="depression"],
+.turret-station-indicator__legend i[data-kind="depression"] {
+  background: hsl(108 68% 48%);
+}
+
+.turret-envelope-card__legend i[data-kind="elevation"],
+.turret-station-indicator__legend i[data-kind="elevation"] {
+  background: hsl(207 70% 52%);
 }
 
 .turret-envelope-card__legend i[data-kind="yaw-range"] {
@@ -13544,6 +13571,88 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: var(--text-muted);
   font-size: 7px;
   line-height: 1.5;
+}
+
+.turret-station-indicator {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+  margin: 0 9px 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.turret-station-indicator > .turret-limit-compass {
+  width: 108px;
+  height: 108px;
+}
+
+.turret-station-indicator figcaption {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.turret-station-indicator__heading {
+  display: grid;
+  gap: 2px;
+}
+
+.turret-station-indicator__heading strong {
+  color: var(--text);
+  font-size: 9px;
+}
+
+.turret-station-indicator__heading em {
+  color: var(--brand);
+  font-size: 7px;
+  font-style: normal;
+}
+
+.turret-station-indicator dl {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+}
+
+.turret-station-indicator dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.turret-station-indicator dt,
+.turret-station-indicator dd {
+  margin: 0;
+  font-size: 7px;
+}
+
+.turret-station-indicator dt {
+  color: var(--text-muted);
+}
+
+.turret-station-indicator dd {
+  color: var(--text);
+  font-family: var(--font-mono-ui);
+  text-align: right;
+}
+
+.turret-station-indicator__legend {
+  display: grid;
+  grid-template-columns: 6px minmax(0, 1fr);
+  gap: 2px 4px;
+  align-items: center;
+  color: var(--text-dim);
+  font-size: 6px;
+  line-height: 1.25;
+}
+
+.turret-station-indicator__legend i {
+  width: 6px;
+  height: 4px;
 }
 
 .turret-preview-controls {
