@@ -50,6 +50,7 @@ export interface NoPenetrationSurfaceInfo {
 }
 
 const SPACED_ARMOR_MATERIAL_IDENTITY = /(?:add.?on|no.?pass|sideskirt|spaced|hatch)/iu;
+const SPACED_ARMOR_PATTERN_CODE = 3 as const;
 
 const INTERIOR_STYLES: Readonly<Record<"engine" | "ammo-rack" | "other", ArmorSurfaceVisualStyle>> = {
   engine: {
@@ -268,7 +269,9 @@ function patternCode(
   component: HitSceneComponent,
   profile: HitSceneSurfaceProfile,
 ): number {
-  if (spacedArmorSurfaceInfo(component, profile).isSpacedArmor) return 3;
+  if (spacedArmorSurfaceInfo(component, profile).isSpacedArmor) {
+    return SPACED_ARMOR_PATTERN_CODE;
+  }
   if (
     component.semanticKind === "gun-collision" &&
     !noPenetrationSurfaceInfo(component, profile).isNoPenetration
