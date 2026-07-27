@@ -3,7 +3,7 @@
   "complete": true,
   "source": {
     "catalogId": "sigua-armor-china-reference-2026-07-24",
-    "catalogSha256": "fb69ce177bf847b7bc370f400bb80af817bb24a68488a55215dd3228704d81ca",
+    "catalogSha256": "2cfebd43a843328b76c194661167b6cfca146b8d5c9509237969a7b5e8c293fd",
     "visualIndexSha256": "932fe2516b16952702ab2abad4f2b0628381b4275ef65f154f0df64fdc872304",
     "selectionPolicySha256": "c903135c87be2b05c6ab928512c50a80acac3a968952795992a62c50f93d5d80"
   },
@@ -74,8 +74,8 @@
       "type": "MBT",
       "factionId": "shenzhou",
       "defaultVariantRawName": "BP_ZTZ99_wCage",
-      "impressionPath": "/images/china-vehicle-impressions/f330338c4c915038c3f3bebb0b1fd5a1723ef8a8dc909ffbed91ec35a3e55d1a.webp",
-      "impressionSha256": "f330338c4c915038c3f3bebb0b1fd5a1723ef8a8dc909ffbed91ec35a3e55d1a"
+      "impressionPath": "/images/china-vehicle-impressions/2bc2bd2e10b7747b9b45a63dd6b19eb59ae45da48c7c728cc99ec254e1f935ce.webp",
+      "impressionSha256": "2bc2bd2e10b7747b9b45a63dd6b19eb59ae45da48c7c728cc99ec254e1f935ce"
     },
     {
       "cardId": "pla--ztd05--mgs",
@@ -2734,9 +2734,9 @@
       "displayName": "ZVT-9A",
       "type": "MBT",
       "factionId": "shenzhou",
-      "path": "/images/china-vehicle-impressions/f330338c4c915038c3f3bebb0b1fd5a1723ef8a8dc909ffbed91ec35a3e55d1a.webp",
-      "sha256": "f330338c4c915038c3f3bebb0b1fd5a1723ef8a8dc909ffbed91ec35a3e55d1a",
-      "bytes": 12202,
+      "path": "/images/china-vehicle-impressions/2bc2bd2e10b7747b9b45a63dd6b19eb59ae45da48c7c728cc99ec254e1f935ce.webp",
+      "sha256": "2bc2bd2e10b7747b9b45a63dd6b19eb59ae45da48c7c728cc99ec254e1f935ce",
+      "bytes": 12196,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.157522,
@@ -5921,7 +5921,7 @@
   "summary": {
     "cards": 129,
     "variants": 213,
-    "bytes": 2462616,
+    "bytes": 2462610,
     "maxBytes": 22462
   }
 }

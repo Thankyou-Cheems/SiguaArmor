@@ -92,8 +92,8 @@
       "type": "IFV",
       "factionId": "ADF",
       "defaultVariantRawName": "BP_ASLAV",
-      "impressionPath": "/images/vehicle-impressions/f6af8268812b32f4f554ab896291881cc721450b010ffc025b46c7831ffc3d79.webp",
-      "impressionSha256": "f6af8268812b32f4f554ab896291881cc721450b010ffc025b46c7831ffc3d79"
+      "impressionPath": "/images/vehicle-impressions/2c7241b5a2564c87cd2329bed3736c7f9b8b4fb5cca20a07dca2303c752f6a8c.webp",
+      "impressionSha256": "2c7241b5a2564c87cd2329bed3736c7f9b8b4fb5cca20a07dca2303c752f6a8c"
     },
     {
       "cardId": "adf--pmv-mag58--mrap",
@@ -263,8 +263,8 @@
       "type": "LTV",
       "factionId": "AFU",
       "defaultVariantRawName": "BP_BRDM-2L1_AFU",
-      "impressionPath": "/images/vehicle-impressions/b461514ed20b3c0e9eef624f26c321faa1516185f9a3a0d19bd7de0da8fa1018.webp",
-      "impressionSha256": "b461514ed20b3c0e9eef624f26c321faa1516185f9a3a0d19bd7de0da8fa1018"
+      "impressionPath": "/images/vehicle-impressions/573b01c77aa840256477231b61a706c2d7b0d93b495ed11faa765af79f1bb2b0.webp",
+      "impressionSha256": "573b01c77aa840256477231b61a706c2d7b0d93b495ed11faa765af79f1bb2b0"
     },
     {
       "cardId": "afu--kozak-2m1-nsv--ltv",
@@ -551,8 +551,8 @@
       "type": "IFV",
       "factionId": "CAF",
       "defaultVariantRawName": "BP_LAV2_Coyote",
-      "impressionPath": "/images/vehicle-impressions/f7d4c4f8fc6af2a6c25a7fe54adeebff63c774c5c19f7a381a36266d3786cb6a.webp",
-      "impressionSha256": "f7d4c4f8fc6af2a6c25a7fe54adeebff63c774c5c19f7a381a36266d3786cb6a"
+      "impressionPath": "/images/vehicle-impressions/3d1128dfe1c5eca64077e97606098adb5a351380b26be09c249e92e4af7dbac8.webp",
+      "impressionSha256": "3d1128dfe1c5eca64077e97606098adb5a351380b26be09c249e92e4af7dbac8"
     },
     {
       "cardId": "caf--lav-6--ifv",
@@ -560,8 +560,8 @@
       "type": "IFV",
       "factionId": "CAF",
       "defaultVariantRawName": "BP_LAV6_Desert",
-      "impressionPath": "/images/vehicle-impressions/cb1466fb977c978e60bc93cbf6368c627cb3c5ffb1b7b1c086779653c814aab5.webp",
-      "impressionSha256": "cb1466fb977c978e60bc93cbf6368c627cb3c5ffb1b7b1c086779653c814aab5"
+      "impressionPath": "/images/vehicle-impressions/ce8420d0c85191eac7155aa9e2a2bc70803b0811d13ed57a21be4e760846b270.webp",
+      "impressionSha256": "ce8420d0c85191eac7155aa9e2a2bc70803b0811d13ed57a21be4e760846b270"
     },
     {
       "cardId": "caf--lav-iii-c6-rws--apc",
@@ -569,8 +569,8 @@
       "type": "APC",
       "factionId": "CAF",
       "defaultVariantRawName": "BP_LAV_RWS_C6_Desert",
-      "impressionPath": "/images/vehicle-impressions/9602ca4bf6d53ba87f59a45475da13080e0f2ed62d586fcd79e16b7a6b3a9af3.webp",
-      "impressionSha256": "9602ca4bf6d53ba87f59a45475da13080e0f2ed62d586fcd79e16b7a6b3a9af3"
+      "impressionPath": "/images/vehicle-impressions/e614a3f859338d6b5638597d41df12a0715d2ad86c1fc6aa8b8cf7cc9c56a052.webp",
+      "impressionSha256": "e614a3f859338d6b5638597d41df12a0715d2ad86c1fc6aa8b8cf7cc9c56a052"
     },
     {
       "cardId": "caf--lav-iii-m2-rws--apc",
@@ -578,8 +578,8 @@
       "type": "APC",
       "factionId": "CAF",
       "defaultVariantRawName": "BP_LAV_RWS_M2_Desert",
-      "impressionPath": "/images/vehicle-impressions/9f4cd66a51ce2f699594a0dfd28b386be4046ef8f89cc71bf92cf136e6a79c70.webp",
-      "impressionSha256": "9f4cd66a51ce2f699594a0dfd28b386be4046ef8f89cc71bf92cf136e6a79c70"
+      "impressionPath": "/images/vehicle-impressions/3f0163c66c1db2e200d674651c6661dbcaeeec50dfb361c3083944f5b669cf6f.webp",
+      "impressionSha256": "3f0163c66c1db2e200d674651c6661dbcaeeec50dfb361c3083944f5b669cf6f"
     },
     {
       "cardId": "caf--m113a3-c6--apc",
@@ -605,8 +605,8 @@
       "type": "APC",
       "factionId": "CAF",
       "defaultVariantRawName": "BP_M113A3_CAF_TLAV_Desert",
-      "impressionPath": "/images/vehicle-impressions/a41fa1893b74b7e62e65c33ae546503a6d8a4a9930bc44f78760afd8ee56730e.webp",
-      "impressionSha256": "a41fa1893b74b7e62e65c33ae546503a6d8a4a9930bc44f78760afd8ee56730e"
+      "impressionPath": "/images/vehicle-impressions/287ab85769aafd2374d5dee60baa3371e25e8b436491eb2f0c3d73e249995a5e.webp",
+      "impressionSha256": "287ab85769aafd2374d5dee60baa3371e25e8b436491eb2f0c3d73e249995a5e"
     },
     {
       "cardId": "caf--luvw-c6--mrap",
@@ -632,8 +632,8 @@
       "type": "MRAP",
       "factionId": "CAF",
       "defaultVariantRawName": "BP_TAPV_C16_Desert",
-      "impressionPath": "/images/vehicle-impressions/0ce6bbbde101b1a028d4db3ec1800d6b1abc68905b002e99db2d19854f5cbfff.webp",
-      "impressionSha256": "0ce6bbbde101b1a028d4db3ec1800d6b1abc68905b002e99db2d19854f5cbfff"
+      "impressionPath": "/images/vehicle-impressions/38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657.webp",
+      "impressionSha256": "38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657"
     },
     {
       "cardId": "caf--rhib-m2--ultv",
@@ -767,8 +767,8 @@
       "type": "IFV",
       "factionId": "CRF",
       "defaultVariantRawName": "BP_LAV2_Coyote_CRF",
-      "impressionPath": "/images/vehicle-impressions/896e20229317fb5bf57e7222b621124a45fc2a64bb18ae6590be04faa48cc071.webp",
-      "impressionSha256": "896e20229317fb5bf57e7222b621124a45fc2a64bb18ae6590be04faa48cc071"
+      "impressionPath": "/images/vehicle-impressions/eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef.webp",
+      "impressionSha256": "eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef"
     },
     {
       "cardId": "crf--m113a3--apc",
@@ -1037,8 +1037,8 @@
       "type": "UH",
       "factionId": "GFI",
       "defaultVariantRawName": "BP_UH1H_GFI",
-      "impressionPath": "/images/vehicle-impressions/4e5f2742ea025b6c4e4fa4b0139e0586114a828a988614349a26e4bcd2357f3c.webp",
-      "impressionSha256": "4e5f2742ea025b6c4e4fa4b0139e0586114a828a988614349a26e4bcd2357f3c"
+      "impressionPath": "/images/vehicle-impressions/97e743dec4e646f44e197da3917de8a4ff38bb6367ebd8465fff50a6142cd58a.webp",
+      "impressionSha256": "97e743dec4e646f44e197da3917de8a4ff38bb6367ebd8465fff50a6142cd58a"
     },
     {
       "cardId": "gfi--brdm-2-ub-32--rsv",
@@ -1055,8 +1055,8 @@
       "type": "MBT",
       "factionId": "IMF",
       "defaultVariantRawName": "BP_T62_MIL",
-      "impressionPath": "/images/vehicle-impressions/dc8255852ccf78ef48e8c223efa048fcda11bfced72303ed1d2ce02f9fb638d7.webp",
-      "impressionSha256": "dc8255852ccf78ef48e8c223efa048fcda11bfced72303ed1d2ce02f9fb638d7"
+      "impressionPath": "/images/vehicle-impressions/f1c3772e7ace2c5382e2f837a33067e4e9aa667a511f5d662f1e05df4cc27478.webp",
+      "impressionSha256": "f1c3772e7ace2c5382e2f837a33067e4e9aa667a511f5d662f1e05df4cc27478"
     },
     {
       "cardId": "imf--t-72a--mbt",
@@ -1118,8 +1118,8 @@
       "type": "APC",
       "factionId": "IMF",
       "defaultVariantRawName": "BP_BTR80_Militia",
-      "impressionPath": "/images/vehicle-impressions/d5a291dc9f0fe9a73906df468608395d41f43fa384261064d717919c6701d32e.webp",
-      "impressionSha256": "d5a291dc9f0fe9a73906df468608395d41f43fa384261064d717919c6701d32e"
+      "impressionPath": "/images/vehicle-impressions/04bdd2856620466a27b7b0f42513cbbad6a77d74ea4a5875915128747954b516.webp",
+      "impressionSha256": "04bdd2856620466a27b7b0f42513cbbad6a77d74ea4a5875915128747954b516"
     },
     {
       "cardId": "imf--mt-lb-vmk--apc",
@@ -1145,8 +1145,8 @@
       "type": "LTV",
       "factionId": "IMF",
       "defaultVariantRawName": "BP_BRDM-2_MIL",
-      "impressionPath": "/images/vehicle-impressions/038fc836fb2c2a54784ca8cde4bf818b677d9536d03f3ef6533ac76444302460.webp",
-      "impressionSha256": "038fc836fb2c2a54784ca8cde4bf818b677d9536d03f3ef6533ac76444302460"
+      "impressionPath": "/images/vehicle-impressions/7528e06de1c26a3019f3641896026675437c5a08e8a4d804a464e3906b959101.webp",
+      "impressionSha256": "7528e06de1c26a3019f3641896026675437c5a08e8a4d804a464e3906b959101"
     },
     {
       "cardId": "imf--technical-ags-17--ltv",
@@ -1235,8 +1235,8 @@
       "type": "TRAN",
       "factionId": "IMF",
       "defaultVariantRawName": "BP_Technical4Seater_Transport_Camo",
-      "impressionPath": "/images/vehicle-impressions/e729d9636a8bd0d9e6964a0d941a53ad95fea18bae3b05167f5b5c0df719d4e0.webp",
-      "impressionSha256": "e729d9636a8bd0d9e6964a0d941a53ad95fea18bae3b05167f5b5c0df719d4e0"
+      "impressionPath": "/images/vehicle-impressions/b18371c0dc7800d3a73ffa00f05db3f30a3572a85104b6a7fa962efe2af2ac42.webp",
+      "impressionSha256": "b18371c0dc7800d3a73ffa00f05db3f30a3572a85104b6a7fa962efe2af2ac42"
     },
     {
       "cardId": "imf--ural-375d-transport--tran",
@@ -1361,8 +1361,8 @@
       "type": "LTV",
       "factionId": "MEI",
       "defaultVariantRawName": "BP_BRDM-2_Insurgents",
-      "impressionPath": "/images/vehicle-impressions/8e0bb9465806e3e6e859f7bc59a65bb04ac7c9750293af0511a34d45ea783f16.webp",
-      "impressionSha256": "8e0bb9465806e3e6e859f7bc59a65bb04ac7c9750293af0511a34d45ea783f16"
+      "impressionPath": "/images/vehicle-impressions/f3df809c2e892f5afe94ecb27fd90e9b4fe6b2f84b82c7fdde115f2c5b6ed121.webp",
+      "impressionSha256": "f3df809c2e892f5afe94ecb27fd90e9b4fe6b2f84b82c7fdde115f2c5b6ed121"
     },
     {
       "cardId": "mei--m1151-technical-dshk--ltv",
@@ -1505,8 +1505,8 @@
       "type": "SPA",
       "factionId": "MEI",
       "defaultVariantRawName": "BP_Technical2Seater_White_Mortar",
-      "impressionPath": "/images/vehicle-impressions/ebfb1e7f7bb466d7a199ee89fee50067fea08481c40de54fd25d82fbabadc0be.webp",
-      "impressionSha256": "ebfb1e7f7bb466d7a199ee89fee50067fea08481c40de54fd25d82fbabadc0be"
+      "impressionPath": "/images/vehicle-impressions/af617a347ceb08f18cbd31e839d43271f76d123744c32bb75b5c6a30b9982257.webp",
+      "impressionSha256": "af617a347ceb08f18cbd31e839d43271f76d123744c32bb75b5c6a30b9982257"
     },
     {
       "cardId": "mei--technical-ub-32--spa",
@@ -2036,8 +2036,8 @@
       "type": "UH",
       "factionId": "PLAAGF",
       "defaultVariantRawName": "BP_Z8G",
-      "impressionPath": "/images/vehicle-impressions/92f6abd416b08b542912b53358a579e00e0acbef3647d5fdca6ad9881ffc6797.webp",
-      "impressionSha256": "92f6abd416b08b542912b53358a579e00e0acbef3647d5fdca6ad9881ffc6797"
+      "impressionPath": "/images/vehicle-impressions/325a8cb9ec98d78257a15253896a41576e68d44fc5b7ba1ee77c663f20cf1373.webp",
+      "impressionSha256": "325a8cb9ec98d78257a15253896a41576e68d44fc5b7ba1ee77c663f20cf1373"
     },
     {
       "cardId": "plaagf--z-9a--uh",
@@ -2279,8 +2279,8 @@
       "type": "IFV",
       "factionId": "RGF",
       "defaultVariantRawName": "BP_BMP2M_Desert",
-      "impressionPath": "/images/vehicle-impressions/78d32e24df58c056abf9d154fd6827b0f8b8ed4c399386245f4021dfaab3f0ff.webp",
-      "impressionSha256": "78d32e24df58c056abf9d154fd6827b0f8b8ed4c399386245f4021dfaab3f0ff"
+      "impressionPath": "/images/vehicle-impressions/bcf3cd6d018341f64b32d59dbf55a0b1d439c586a80eed27734931147dbe8730.webp",
+      "impressionSha256": "bcf3cd6d018341f64b32d59dbf55a0b1d439c586a80eed27734931147dbe8730"
     },
     {
       "cardId": "rgf--bmp-3m--ifv",
@@ -2297,8 +2297,8 @@
       "type": "IFV",
       "factionId": "RGF",
       "defaultVariantRawName": "BP_MTLBM_6MB_RUS_Desert",
-      "impressionPath": "/images/vehicle-impressions/a4349944dee957fc6f8f4a544fcd7cd88ee077bfa328c5abaad8ee956c2a1b84.webp",
-      "impressionSha256": "a4349944dee957fc6f8f4a544fcd7cd88ee077bfa328c5abaad8ee956c2a1b84"
+      "impressionPath": "/images/vehicle-impressions/3b7b191331eacf896c60e3dd6731a8c61513bf1bb78020d797fbcd72e18fcf36.webp",
+      "impressionSha256": "3b7b191331eacf896c60e3dd6731a8c61513bf1bb78020d797fbcd72e18fcf36"
     },
     {
       "cardId": "rgf--btr-80--apc",
@@ -2306,8 +2306,8 @@
       "type": "APC",
       "factionId": "RGF",
       "defaultVariantRawName": "BP_BTR80_RUS_Desert",
-      "impressionPath": "/images/vehicle-impressions/c3faf5da9e5eaacfd85d6f11c27fd5b61916b9aeadb816211194c9fafb0b2e0f.webp",
-      "impressionSha256": "c3faf5da9e5eaacfd85d6f11c27fd5b61916b9aeadb816211194c9fafb0b2e0f"
+      "impressionPath": "/images/vehicle-impressions/58c4f99eff6c9e1cdee0fdb16c99be79878ff3b6ac6623fe5c5acf96e6cbb173.webp",
+      "impressionSha256": "58c4f99eff6c9e1cdee0fdb16c99be79878ff3b6ac6623fe5c5acf96e6cbb173"
     },
     {
       "cardId": "rgf--btr-82a--apc",
@@ -2315,8 +2315,8 @@
       "type": "APC",
       "factionId": "RGF",
       "defaultVariantRawName": "BP_BTR82A_RUS_Desert",
-      "impressionPath": "/images/vehicle-impressions/0f1e85bd9e0731960117170857e1cd56ebf73b59f0a1b481eb9acc016879b5e6.webp",
-      "impressionSha256": "0f1e85bd9e0731960117170857e1cd56ebf73b59f0a1b481eb9acc016879b5e6"
+      "impressionPath": "/images/vehicle-impressions/bb114768269363f386938820ad271d4ae999c6c2e3a5690fdb291901c7362397.webp",
+      "impressionSha256": "bb114768269363f386938820ad271d4ae999c6c2e3a5690fdb291901c7362397"
     },
     {
       "cardId": "rgf--mt-lb-pkt--apc",
@@ -2342,8 +2342,8 @@
       "type": "APC",
       "factionId": "RGF",
       "defaultVariantRawName": "BP_MTLBM_6MA_RUS_Desert",
-      "impressionPath": "/images/vehicle-impressions/197d0838179a64fd3fe2b369290a1a9e989945d2defc74a97ea095ae72e29031.webp",
-      "impressionSha256": "197d0838179a64fd3fe2b369290a1a9e989945d2defc74a97ea095ae72e29031"
+      "impressionPath": "/images/vehicle-impressions/69f4c8433765f4f230276b3b14eda5308c0837eed1333b31c49e3ca861f5f76d.webp",
+      "impressionSha256": "69f4c8433765f4f230276b3b14eda5308c0837eed1333b31c49e3ca861f5f76d"
     },
     {
       "cardId": "rgf--tigr-m-ags-17--mrap",
@@ -2378,8 +2378,8 @@
       "type": "LTV",
       "factionId": "RGF",
       "defaultVariantRawName": "BP_BRDM-2_RUS_Desert",
-      "impressionPath": "/images/vehicle-impressions/e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f.webp",
-      "impressionSha256": "e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f"
+      "impressionPath": "/images/vehicle-impressions/b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a.webp",
+      "impressionSha256": "b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a"
     },
     {
       "cardId": "rgf--rhib-ags-17--ultv",
@@ -2477,8 +2477,8 @@
       "type": "IFV",
       "factionId": "TLF",
       "defaultVariantRawName": "BP_PARS3",
-      "impressionPath": "/images/vehicle-impressions/52c998595c4b4358c2d179195e63b6056f695eeb36ed7ae2cab03850b7f5d18b.webp",
-      "impressionSha256": "52c998595c4b4358c2d179195e63b6056f695eeb36ed7ae2cab03850b7f5d18b"
+      "impressionPath": "/images/vehicle-impressions/ea64788bf22d59da78c741dc032f60127becdee288683e7ddd04f30edb96381b.webp",
+      "impressionSha256": "ea64788bf22d59da78c741dc032f60127becdee288683e7ddd04f30edb96381b"
     },
     {
       "cardId": "tlf--acv-15-m2--apc",
@@ -2702,8 +2702,8 @@
       "type": "IFV",
       "factionId": "USA",
       "defaultVariantRawName": "BP_BFV",
-      "impressionPath": "/images/vehicle-impressions/85aa51960f98c4fc6f45de72339102a9b1648a146bf913d1192a2ff6c86e34c7.webp",
-      "impressionSha256": "85aa51960f98c4fc6f45de72339102a9b1648a146bf913d1192a2ff6c86e34c7"
+      "impressionPath": "/images/vehicle-impressions/fde48cee8c99087a3133967daf4815e6e8873d83ba94b8f7663ed1f07f357957.webp",
+      "impressionSha256": "fde48cee8c99087a3133967daf4815e6e8873d83ba94b8f7663ed1f07f357957"
     },
     {
       "cardId": "usa--m7a3--ifv",
@@ -2711,8 +2711,8 @@
       "type": "IFV",
       "factionId": "USA",
       "defaultVariantRawName": "BP_M7A3_IFV",
-      "impressionPath": "/images/vehicle-impressions/1c56570e1ec40e90f4b5c34a2583599108b1033e34751e00d12283ccdca7135b.webp",
-      "impressionSha256": "1c56570e1ec40e90f4b5c34a2583599108b1033e34751e00d12283ccdca7135b"
+      "impressionPath": "/images/vehicle-impressions/21d950fe16f36301ed73dc6ee1bcf2bfe85a6a5df831faf8bb05ae437abf2cac.webp",
+      "impressionSha256": "21d950fe16f36301ed73dc6ee1bcf2bfe85a6a5df831faf8bb05ae437abf2cac"
     },
     {
       "cardId": "usa--m1126-crows-m2--apc",
@@ -2720,8 +2720,8 @@
       "type": "APC",
       "factionId": "USA",
       "defaultVariantRawName": "BP_M1126",
-      "impressionPath": "/images/vehicle-impressions/130d3eecf32c09a8c1c24531bb04056f086308f8be023063135bab5df260beb2.webp",
-      "impressionSha256": "130d3eecf32c09a8c1c24531bb04056f086308f8be023063135bab5df260beb2"
+      "impressionPath": "/images/vehicle-impressions/0193ca6ba553450c5854f69eac2b3e4f9eb137c9de238db1dc23f5658dc68907.webp",
+      "impressionSha256": "0193ca6ba553450c5854f69eac2b3e4f9eb137c9de238db1dc23f5658dc68907"
     },
     {
       "cardId": "usa--m1126-crows-m240--apc",
@@ -2729,8 +2729,8 @@
       "type": "APC",
       "factionId": "USA",
       "defaultVariantRawName": "BP_M1126_M240",
-      "impressionPath": "/images/vehicle-impressions/bfc7e622264a3c7a5b41e76b9f063d78931321b64057d26f86028827ec987573.webp",
-      "impressionSha256": "bfc7e622264a3c7a5b41e76b9f063d78931321b64057d26f86028827ec987573"
+      "impressionPath": "/images/vehicle-impressions/50df61f1f9fbbab5483cee3ce4d41b35cde2bbf5bffcb4b4be104b9f0786f7e2.webp",
+      "impressionSha256": "50df61f1f9fbbab5483cee3ce4d41b35cde2bbf5bffcb4b4be104b9f0786f7e2"
     },
     {
       "cardId": "usa--m113a3-m2--apc",
@@ -2972,8 +2972,8 @@
       "type": "APC",
       "factionId": "USMC",
       "defaultVariantRawName": "BP_LAV25",
-      "impressionPath": "/images/vehicle-impressions/2d01a12f1ad70a2f24fca615f537e0318f7c7af5b3087454b876735584ead820.webp",
-      "impressionSha256": "2d01a12f1ad70a2f24fca615f537e0318f7c7af5b3087454b876735584ead820"
+      "impressionPath": "/images/vehicle-impressions/0afc4f0a4080ac679ac74bd780065e45cd4d9b3d8dff8fe05791e5448348a130.webp",
+      "impressionSha256": "0afc4f0a4080ac679ac74bd780065e45cd4d9b3d8dff8fe05791e5448348a130"
     },
     {
       "cardId": "usmc--m1151-crows-m2--mrap",
@@ -3224,8 +3224,8 @@
       "type": "LTV",
       "factionId": "VDV",
       "defaultVariantRawName": "BP_BRDM-2_RUS_Desert",
-      "impressionPath": "/images/vehicle-impressions/e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f.webp",
-      "impressionSha256": "e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f"
+      "impressionPath": "/images/vehicle-impressions/b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a.webp",
+      "impressionSha256": "b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a"
     },
     {
       "cardId": "vdv--rhib-ags-17--ultv",
@@ -3359,8 +3359,8 @@
       "type": "MRAP",
       "factionId": "WPMC",
       "defaultVariantRawName": "BP_M1117",
-      "impressionPath": "/images/vehicle-impressions/f4616a45f4f606f308a79ae244aba4385710c8f12275ea2a17b6290488a23fb6.webp",
-      "impressionSha256": "f4616a45f4f606f308a79ae244aba4385710c8f12275ea2a17b6290488a23fb6"
+      "impressionPath": "/images/vehicle-impressions/8416bed77d67d6eaffb54fe6ccbbafcbc85ad689bc12248d3d1ca333e44546d1.webp",
+      "impressionSha256": "8416bed77d67d6eaffb54fe6ccbbafcbc85ad689bc12248d3d1ca333e44546d1"
     },
     {
       "cardId": "wpmc--m1151-m2--ltv",
@@ -3485,8 +3485,8 @@
       "type": "SPA",
       "factionId": "WPMC",
       "defaultVariantRawName": "BP_Technical2Seater_Mortar_Black",
-      "impressionPath": "/images/vehicle-impressions/cabef6790b442e7998a5d1592fd53cc45646200a5e4388a0bca593335f62d6de.webp",
-      "impressionSha256": "cabef6790b442e7998a5d1592fd53cc45646200a5e4388a0bca593335f62d6de"
+      "impressionPath": "/images/vehicle-impressions/f1340e62d5cbc8dcb714645efbf0b3ddb6e376846350e694e2b166ebfeec704f.webp",
+      "impressionSha256": "f1340e62d5cbc8dcb714645efbf0b3ddb6e376846350e694e2b166ebfeec704f"
     },
     {
       "cardId": "wpmc--raven-transport--uh",
@@ -3533,24 +3533,19 @@
       "displayName": "ASLAV",
       "type": "IFV",
       "factionId": "ADF",
-      "path": "/images/vehicle-impressions/f6af8268812b32f4f554ab896291881cc721450b010ffc025b46c7831ffc3d79.webp",
-      "sha256": "f6af8268812b32f4f554ab896291881cc721450b010ffc025b46c7831ffc3d79",
-      "bytes": 9824,
+      "path": "/images/vehicle-impressions/2c7241b5a2564c87cd2329bed3736c7f9b8b4fb5cca20a07dca2303c752f6a8c.webp",
+      "sha256": "2c7241b5a2564c87cd2329bed3736c7f9b8b4fb5cca20a07dca2303c752f6a8c",
+      "bytes": 9826,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.162539,
+      "alphaCoverage": 0.162552,
       "sourcePackageSha256": "f11aaf04aa388eba7ca7ae66041d7fdf418fdaacaf631cf36ee55853f47dfbb9",
       "sourceIdentitySha256": "6317e796b36973f1e44223033ba7e23706d07d5d34cd4b5efc08a58f185137d2",
       "sourceDescriptorSha256": "4d006db6fd9d8723b27ea4f91df7316c138be0a09a52f4574d21dd9cb635d7ef",
-      "sourceAssetCount": 3,
-      "sourceOccurrenceCount": 3,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "4d82ea8e6d8511981f6d4c47e762620c03c9e005723e148acf1619d35c19fcc6",
+      "sourceAssetCount": 4,
+      "sourceOccurrenceCount": 6,
+      "selection": null,
+      "renderSourceSha256": "bafbcb85ad2ccf1289c6490df231d7b2857e3c013a9eaa6f2aa29aacfd77e8a5",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -3912,24 +3907,19 @@
       "displayName": "BRDM-2L1",
       "type": "LTV",
       "factionId": "AFU",
-      "path": "/images/vehicle-impressions/b461514ed20b3c0e9eef624f26c321faa1516185f9a3a0d19bd7de0da8fa1018.webp",
-      "sha256": "b461514ed20b3c0e9eef624f26c321faa1516185f9a3a0d19bd7de0da8fa1018",
-      "bytes": 9080,
+      "path": "/images/vehicle-impressions/573b01c77aa840256477231b61a706c2d7b0d93b495ed11faa765af79f1bb2b0.webp",
+      "sha256": "573b01c77aa840256477231b61a706c2d7b0d93b495ed11faa765af79f1bb2b0",
+      "bytes": 8716,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.186506,
+      "alphaCoverage": 0.185486,
       "sourcePackageSha256": "e4b6771aa8fd9fb1763ddfe1651192ab10c83568afd897f409c288ac1e4f9dee",
       "sourceIdentitySha256": "0a3139a5a8291437fe5403075aae5be4907b34a193eac9ac2ecf9f9b0688e750",
       "sourceDescriptorSha256": "be5c7aa1eb420d1afa66482d63938e1207a96fa7383a902636308a863dc5005c",
-      "sourceAssetCount": 12,
-      "sourceOccurrenceCount": 12,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "3c929257d60288bb717601a411c12817ffd75ee089b5a8b6db0d5912de59ffa3",
+      "sourceAssetCount": 13,
+      "sourceOccurrenceCount": 14,
+      "selection": null,
+      "renderSourceSha256": "a2e8f4e0c35bae0f3c99733901e3b9ada35be0824cf8e96d79554ef5bca99d88",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -4366,15 +4356,10 @@
       "sourcePackageSha256": "af25a9ad1769e00cbbd6cf14a3ba3b23cd27065e8b156da6f0ab65ae6a578604",
       "sourceIdentitySha256": "b7aff861b8fc73b09d2f736d660240242b9a48c720ca8ec8999b134e1a620533",
       "sourceDescriptorSha256": "db5e2f0fc6f6c268762bdffb59d5491a703d3d8fa225b75fe9cf353060471e8e",
-      "sourceAssetCount": 4,
-      "sourceOccurrenceCount": 4,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "55245f3e6442604b4a8d064954987f3cc255ca9edf29677ba14a3f56321b24e2",
+      "sourceAssetCount": 5,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "5aded3a8c35dc0647b57df5cf628104e8270ad408284145a7ea5788f98c1929c",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -4393,15 +4378,10 @@
       "sourcePackageSha256": "3d0c25a3e1a4bb8c59d775fa24d9bd24c0dfc92daaf95262541acb681b9eee25",
       "sourceIdentitySha256": "fcad1af90f1785c074cdff77e10bbd6af6c702484f1f63592d5377d649e89c30",
       "sourceDescriptorSha256": "0abd52dc0da7003b08538bf04f5ef0537c6423081500af19a62f5ea7cae4312b",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "04fdabd9233c62ce8e42cb978f303c74b8757a69aa7fb263d0555cb9538f1bb5",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "9ccb190dbf4aaa96307174c8135dc956f874dcf681821b6372037420b03b57a1",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -4596,15 +4576,10 @@
       "sourcePackageSha256": "3b24c3367464d0a8824e32f3430025b7c54e166196bdcc1fa94995780e60ea34",
       "sourceIdentitySha256": "93a77d35b5ccb1ae5be3fe2be84797f6b2259f1343954043cdb3f214378a5d3d",
       "sourceDescriptorSha256": "47dc64fca84b0b3641efce29ff82dea4ccfe5b03e19dbc7c1ba4e33a0f09ad5b",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "4c6ff3b59944493e72b3d7e2a0ba9fb5bc77d56059dd6c83da6d12c9a63bc56d",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "b12f385735e3053056c16586a2cb7efcdfc0b29b7d4a1c361222910820aca8c4",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -4623,15 +4598,10 @@
       "sourcePackageSha256": "c090995c2299f795ac73efe05da0f89fe961bb29df54e0b0284d7f8e26253b24",
       "sourceIdentitySha256": "29293f6769455feb977b8f38f14d0d4fe3a9b8ddb915984414bca8db230312b7",
       "sourceDescriptorSha256": "2c35abd84c912728f2c0211c0f93138ed90fb95414439cb6e4c6e9e9416a1a90",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "bf4b19a319da89d048b160b3e65b71b6dce97c3c46cea34046c2abee836353e0",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "c083cc12619f9f057609380f55daa71a04f2c7adf3de06af1f9bf56c028a20a4",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -4650,15 +4620,10 @@
       "sourcePackageSha256": "1fc0ce314a96817481265b70b5c65eba7c4a0bc6a2ce6020d2eaf8df1c614f8f",
       "sourceIdentitySha256": "57242f551a21499149e02003ed9e24a05625657be7b87a23cbadc5ff60cd1289",
       "sourceDescriptorSha256": "db27e43bacb4ed8fcf3b718b29a86bd50f36df587194b7755ad60905bb73bf26",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "3da4ee370b59586c52b16c9a4e17caec8df8316593bf0ba04521063b62a08cbc",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "47fc572c7fad07c2d09d48e81249efb7eb56ad1f4c199c06d909c9f9999b8ac0",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -4677,15 +4642,10 @@
       "sourcePackageSha256": "5db0cd1ccf058adb69032d62e64f776e608c292d02732916ec0b6397609c467d",
       "sourceIdentitySha256": "7541ab2e3417f27567c0f647fe51c35c4a66c824809d16aa7cbe71d2b725aee1",
       "sourceDescriptorSha256": "7c0ffce0229f59f1abac2f549507f88860ed3c6f5c64c8b251bd6dca86ec6476",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "eb7b52da4fb1def841ae1058d9ce4283e91cdfef825aa94686fe71cd9a7e7faf",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "2a437168f8450b67c80d004302f5f4fc4b792cdbb4b60da0a1b64f0b8d205176",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -4704,15 +4664,10 @@
       "sourcePackageSha256": "0b3156e1d21fa4bbfc413af4fcae099a3d5c41f8d1c24d0bac55396d782157ea",
       "sourceIdentitySha256": "64d1424dddc075ba851b531578306ca34a24a1484d61db2d6a8debd363691a36",
       "sourceDescriptorSha256": "c146361d73285c7cd91f4a95be598e176463814dacb70d0067d5e14613cea6ed",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "71a837d9d5d4e89e7a051ad2cc1dc9a782f70029c4093a2b36466be5e86e84b6",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "dafa08df0c823544e3041a5d4a51d07408d8542663ac754671c7233cbb9baeb7",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -4731,15 +4686,10 @@
       "sourcePackageSha256": "69db96572dfe9b9b45806958cf602f1fc0120dc1238ab9c32abae7bd49f5c128",
       "sourceIdentitySha256": "53eccbaf91872e0dafab817adf809af1377d1cc7fc7bd5ee4d49e04590093fd3",
       "sourceDescriptorSha256": "728890b05713afcc74dc5ade4c41c4456453a8d9af59f70f8f5c3eec5cff066d",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "ff6ffa43f2b588b366ce41d4ae547cba325e98c7fd78811425bee9dd9b2bf22a",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "b758e5f4bb1cb28e8e9111ba0b837c42708d24dc19f4796288de3f3a6d114b8f",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -5167,24 +5117,19 @@
       "displayName": "Coyote",
       "type": "IFV",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/f7d4c4f8fc6af2a6c25a7fe54adeebff63c774c5c19f7a381a36266d3786cb6a.webp",
-      "sha256": "f7d4c4f8fc6af2a6c25a7fe54adeebff63c774c5c19f7a381a36266d3786cb6a",
-      "bytes": 10332,
+      "path": "/images/vehicle-impressions/3d1128dfe1c5eca64077e97606098adb5a351380b26be09c249e92e4af7dbac8.webp",
+      "sha256": "3d1128dfe1c5eca64077e97606098adb5a351380b26be09c249e92e4af7dbac8",
+      "bytes": 10320,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.135152,
+      "alphaCoverage": 0.135156,
       "sourcePackageSha256": "ea724cc58f6472d08c6fffb2a4a697170e19971e00caa4dff9595985bf1c33a6",
       "sourceIdentitySha256": "d1476743fe71b4a6524776d3c5e33c68d9345c89afec5770853b1c7d119dc192",
       "sourceDescriptorSha256": "efe4a86b3b1e0971316d669cada0757ad276d44cfd0d203a04ba8b4cffc0ccfb",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "003d0c04a26d0748ed8a66fd2ce46015eb34c012e7d8cd1b273fc0518aeaf349",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "214098dcf680c427490a707de2726a90702d5fcf0f85c14d4bd0f7fb5ae94fcc",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -5194,24 +5139,19 @@
       "displayName": "Coyote",
       "type": "IFV",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/619165ead809c1e6067625a60eee02c98436c6da659872ad6c2ad017b48c40fc.webp",
-      "sha256": "619165ead809c1e6067625a60eee02c98436c6da659872ad6c2ad017b48c40fc",
-      "bytes": 8172,
+      "path": "/images/vehicle-impressions/e39c33323ea637890f2d6f0b34e4a69917e301c91c6391af1f30443f24a0ef33.webp",
+      "sha256": "e39c33323ea637890f2d6f0b34e4a69917e301c91c6391af1f30443f24a0ef33",
+      "bytes": 8192,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.1351,
+      "alphaCoverage": 0.135104,
       "sourcePackageSha256": "12be0eeced47ca59d4706daad8a82bb8668d4532cea04f973cf64c83cfc260a4",
       "sourceIdentitySha256": "d1f19beef51c84cef59b7aa425432a02311a58b230abcfb2390606bb5093f3b5",
       "sourceDescriptorSha256": "be708f15e796ea0a1dceccb59f1592065e263fb02bf00ff41ef0505534afe794",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "1df07eb33a50e3151b74f5ab0f67bc8c57943f7931d5c7fb6b31a5ac69c1cabd",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "59706e69db7ac94f45333efac6caf937ea8ee66d26b09b8353bc9eeed5815191",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -5221,24 +5161,19 @@
       "displayName": "LAV 6",
       "type": "IFV",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/cb1466fb977c978e60bc93cbf6368c627cb3c5ffb1b7b1c086779653c814aab5.webp",
-      "sha256": "cb1466fb977c978e60bc93cbf6368c627cb3c5ffb1b7b1c086779653c814aab5",
-      "bytes": 12130,
+      "path": "/images/vehicle-impressions/ce8420d0c85191eac7155aa9e2a2bc70803b0811d13ed57a21be4e760846b270.webp",
+      "sha256": "ce8420d0c85191eac7155aa9e2a2bc70803b0811d13ed57a21be4e760846b270",
+      "bytes": 12122,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.149913,
+      "alphaCoverage": 0.149931,
       "sourcePackageSha256": "84a277fa3a3542cef26e24c2e075821c4430fc392ade1d0e309b133ad50a3298",
       "sourceIdentitySha256": "1fea5d4248754b32c34bcf4a5a6cac55c2f9cc76d9c0892d549752bdf70c5c3f",
       "sourceDescriptorSha256": "8f6b5087c0f6b0b37e2ba9ce41f51e6b4d245c0cbeca3765b2c899ca8403f74c",
-      "sourceAssetCount": 8,
-      "sourceOccurrenceCount": 8,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "8bb1268eda6253c2f69c714c0c67332f57f9d781920672eab2254b637f20d4a0",
+      "sourceAssetCount": 9,
+      "sourceOccurrenceCount": 11,
+      "selection": null,
+      "renderSourceSha256": "55081a8a8c34d66e0c8c331fac3058e7a54c1db7819a1726cdf6093b9600b66a",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -5257,15 +5192,10 @@
       "sourcePackageSha256": "540648444165f81bccad19c6d3d1e357a936944fb0ded1730bfa6a42a096fb66",
       "sourceIdentitySha256": "533a9dcf290b6c5acb8df6b2171f428ceab1e6df533fc93c5e0ee08ddce19a70",
       "sourceDescriptorSha256": "cf49e2d16dd6c9c2efcf8c5a927db6acf1bf63e075ebd3d08fd147da9ffaf7ae",
-      "sourceAssetCount": 9,
-      "sourceOccurrenceCount": 9,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "66e8c75d6e2b748d884ac3b6dea1da6d1868c9bd621e984c1c0e4a5466cdce7c",
+      "sourceAssetCount": 10,
+      "sourceOccurrenceCount": 12,
+      "selection": null,
+      "renderSourceSha256": "e3ca2837ea512ce42bb1d2173233ed3d51cddd5a93f4b82df45bd519b9ceeb1d",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -5275,24 +5205,19 @@
       "displayName": "LAV III C6 RWS",
       "type": "APC",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/01452557be8261c6ffa70a148a6bee2ea79e583d4fd50a0072df24bce3a2d089.webp",
-      "sha256": "01452557be8261c6ffa70a148a6bee2ea79e583d4fd50a0072df24bce3a2d089",
-      "bytes": 11452,
+      "path": "/images/vehicle-impressions/b414e7542fe67221d3cdb7109936af59a20b19821817b4c4d5bc5ccd047ae258.webp",
+      "sha256": "b414e7542fe67221d3cdb7109936af59a20b19821817b4c4d5bc5ccd047ae258",
+      "bytes": 11436,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.149271,
+      "alphaCoverage": 0.149327,
       "sourcePackageSha256": "7d630015248c4ddfcb9e13a8fbd840216977fa385f6633aabbccf7d6094ab612",
       "sourceIdentitySha256": "4f98b6fc40599a9951fb7bcacd27181b4b8fcb860e92120657a412aadbb9480d",
       "sourceDescriptorSha256": "481b0e55058b95eb5080c851f8d29b5fedba05f6af272e5ddd50b796777af93e",
-      "sourceAssetCount": 8,
-      "sourceOccurrenceCount": 8,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "c995870ce8f73d6914596c0c19860013b3092a23e4b1b9e8b82551c804c6ab1c",
+      "sourceAssetCount": 9,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "3d10a26b69dba05ca342708b2c85836116d26c7e007e861bb7227f67a41fa958",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -5302,24 +5227,19 @@
       "displayName": "LAV III C6 RWS",
       "type": "APC",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/9602ca4bf6d53ba87f59a45475da13080e0f2ed62d586fcd79e16b7a6b3a9af3.webp",
-      "sha256": "9602ca4bf6d53ba87f59a45475da13080e0f2ed62d586fcd79e16b7a6b3a9af3",
-      "bytes": 11640,
+      "path": "/images/vehicle-impressions/e614a3f859338d6b5638597d41df12a0715d2ad86c1fc6aa8b8cf7cc9c56a052.webp",
+      "sha256": "e614a3f859338d6b5638597d41df12a0715d2ad86c1fc6aa8b8cf7cc9c56a052",
+      "bytes": 11642,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.151736,
+      "alphaCoverage": 0.151793,
       "sourcePackageSha256": "c9789b75c78ea18bae1a08f897554ffdde3f9fe52ad41623a09cd388e8dba8b9",
       "sourceIdentitySha256": "9f70a47803d1ef4d956a94bedd3ddd0a3c14d9976e0e30455b3c529575c37673",
       "sourceDescriptorSha256": "7ec6155565d7a8c1b3cb994e80157c0725136162b840676788bbe45410d2a3a2",
-      "sourceAssetCount": 8,
-      "sourceOccurrenceCount": 8,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "b0f559808351e194f174bb9c7d25f8c4cd97c81c74c2f9f73b7cc8a5876f4617",
+      "sourceAssetCount": 9,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "91daa1f8fa64b1e75f8c17f6bf0fed9e35173bcb73b0b12181a2c75b8113f3df",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -5329,24 +5249,19 @@
       "displayName": "LAV III M2 RWS",
       "type": "APC",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/5de8573f20a6e266d932c7c6917985d87c9fef2b10f293a38c009c2386f6ef77.webp",
-      "sha256": "5de8573f20a6e266d932c7c6917985d87c9fef2b10f293a38c009c2386f6ef77",
-      "bytes": 11618,
+      "path": "/images/vehicle-impressions/cd48bf97fd9d26077b6a6866089bd1f43881d12de892fee2d6e1fc28bec46c01.webp",
+      "sha256": "cd48bf97fd9d26077b6a6866089bd1f43881d12de892fee2d6e1fc28bec46c01",
+      "bytes": 11596,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.149761,
+      "alphaCoverage": 0.149818,
       "sourcePackageSha256": "f153f19eae802e10a79c9c104a1c682c596350242cb86a48c4e5c25729628835",
       "sourceIdentitySha256": "feabf1417d2c02e24c7bdeb88f07d813d457602f231895a9edf654085fa2c2b7",
       "sourceDescriptorSha256": "2337600acfd5cc4a25a6cef9f77c450e5985162479c04f8ea91a122165659e5a",
-      "sourceAssetCount": 8,
-      "sourceOccurrenceCount": 8,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "481f33cb1825215a95eff18fd9651cf8246552eee9190709143a7318a684024f",
+      "sourceAssetCount": 9,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "50fb25811be06118c3c80c3b3e2dfafafc5529dd7db7ef4992cfe421de09c3c5",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -5356,24 +5271,19 @@
       "displayName": "LAV III M2 RWS",
       "type": "APC",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/9f4cd66a51ce2f699594a0dfd28b386be4046ef8f89cc71bf92cf136e6a79c70.webp",
-      "sha256": "9f4cd66a51ce2f699594a0dfd28b386be4046ef8f89cc71bf92cf136e6a79c70",
-      "bytes": 11686,
+      "path": "/images/vehicle-impressions/3f0163c66c1db2e200d674651c6661dbcaeeec50dfb361c3083944f5b669cf6f.webp",
+      "sha256": "3f0163c66c1db2e200d674651c6661dbcaeeec50dfb361c3083944f5b669cf6f",
+      "bytes": 11774,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.152235,
+      "alphaCoverage": 0.152292,
       "sourcePackageSha256": "d275f8c01fd5a2b9f41f2893aed64816b3f9fec354d4db6cb296e2e2dd54c535",
       "sourceIdentitySha256": "9b3ba159461df29e43ae088df1694be805bec6e20d7b22ac12a503c792d3dbe4",
       "sourceDescriptorSha256": "e520b1cd01c50ddc9d904eab8fa418059aadebb545e6fed9efacbd12a60e84a8",
-      "sourceAssetCount": 8,
-      "sourceOccurrenceCount": 8,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "5ee03b96c3d924bbcd09240941e196dd5fee661139a3e8e4db8d1f3bcbee60df",
+      "sourceAssetCount": 9,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "a67c1e46d3290d1a8a5e6a3d16a20c1e56d0461f0e4e79762d136daa21dbbc73",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -5867,24 +5777,19 @@
       "displayName": "M113A3 TLAV",
       "type": "APC",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/9e46e6966ada7ee667dc097142e34bd7029fc21f77482b77e7e970beaaa3263f.webp",
-      "sha256": "9e46e6966ada7ee667dc097142e34bd7029fc21f77482b77e7e970beaaa3263f",
-      "bytes": 8506,
+      "path": "/images/vehicle-impressions/1213a58a2ba91aa1ed021b73dfd54145c5fc27eaf1c23417cefc483caf15dfad.webp",
+      "sha256": "1213a58a2ba91aa1ed021b73dfd54145c5fc27eaf1c23417cefc483caf15dfad",
+      "bytes": 8326,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.133694,
+      "alphaCoverage": 0.128828,
       "sourcePackageSha256": "38bb1f5e011b35964676561e9653a665ec3c8f96bb9457c1bbf1ca5e628bc3c5",
       "sourceIdentitySha256": "dd7c2677e0f5875363542aa147debc13c0c11619aef7830485b1c16736f9f665",
       "sourceDescriptorSha256": "31d6adaf70e6b0f15283008f142d7b47d58b0a0cc6bf386c6037f8d14a2a0221",
-      "sourceAssetCount": 3,
-      "sourceOccurrenceCount": 3,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "73991c004f6b6ebfbdd3feca05b7602c014e5f4a51b705a1a4ee102123810979",
+      "sourceAssetCount": 4,
+      "sourceOccurrenceCount": 5,
+      "selection": null,
+      "renderSourceSha256": "37a6cc73ab5e2c26aea206b17e52d99d4a7d78fd1f3bcad563b8c62d0b1eb474",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -5894,24 +5799,19 @@
       "displayName": "M113A3 TLAV",
       "type": "APC",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/a41fa1893b74b7e62e65c33ae546503a6d8a4a9930bc44f78760afd8ee56730e.webp",
-      "sha256": "a41fa1893b74b7e62e65c33ae546503a6d8a4a9930bc44f78760afd8ee56730e",
-      "bytes": 10586,
+      "path": "/images/vehicle-impressions/287ab85769aafd2374d5dee60baa3371e25e8b436491eb2f0c3d73e249995a5e.webp",
+      "sha256": "287ab85769aafd2374d5dee60baa3371e25e8b436491eb2f0c3d73e249995a5e",
+      "bytes": 10354,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.133694,
+      "alphaCoverage": 0.128828,
       "sourcePackageSha256": "45cd6f093b28f2bbec1a81537e7817cb5087ed0b937060fd69ff1b43abd8cf63",
       "sourceIdentitySha256": "fe8224bd38d5a3f3e97805a94bd6ca39f1b36a4a0d4c346ccdff30746e784608",
       "sourceDescriptorSha256": "72fd674c674a2bf6ee49f5719ec3b0b87ac9bf2fa21ca99c4ce15ebf4ea8bb16",
-      "sourceAssetCount": 3,
-      "sourceOccurrenceCount": 3,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "3acff606375b5563c14d3171ecddac923decd406fc6036454e6c38abb3e63206",
+      "sourceAssetCount": 4,
+      "sourceOccurrenceCount": 5,
+      "selection": null,
+      "renderSourceSha256": "42886b527b1f81c06e1c290c9bf880bf663b8cb7e6983ab091185f1e9c9142ba",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -6119,24 +6019,19 @@
       "displayName": "TAPV",
       "type": "MRAP",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/53371d469bfec6ad1c72d3311a6d3a39ca3436154f6a6b4f927b55bcfbe6679b.webp",
-      "sha256": "53371d469bfec6ad1c72d3311a6d3a39ca3436154f6a6b4f927b55bcfbe6679b",
-      "bytes": 10834,
+      "path": "/images/vehicle-impressions/8f53dbe578a3286d8a8356f4630302c8d2c93bd10f6e5d85e82e670650a137f7.webp",
+      "sha256": "8f53dbe578a3286d8a8356f4630302c8d2c93bd10f6e5d85e82e670650a137f7",
+      "bytes": 10452,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.135356,
+      "alphaCoverage": 0.128069,
       "sourcePackageSha256": "74367fd9659f11a1fece69c5770e6aa27528fb2de7b9b2ef3f2a99ab32c54bd2",
       "sourceIdentitySha256": "adcc312637a07ae1ce6c7ee35d20c1a0b4778004bba3e2a3692b34709354c984",
       "sourceDescriptorSha256": "2e5b267637059564a75cdd97825b0f3db931dc18ccef7a3ac540068a99d7c18b",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "360dc7717866ee76077abcc379fd52e0bc4a0b1325bcf6957f33ef811f1b9a7d",
+      "sourceAssetCount": 9,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "be4f437765889d3b481221b707c13eeb8ea293625bee060a48210099fc1dc6e5",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -6146,24 +6041,19 @@
       "displayName": "TAPV",
       "type": "MRAP",
       "factionId": "CAF",
-      "path": "/images/vehicle-impressions/0ce6bbbde101b1a028d4db3ec1800d6b1abc68905b002e99db2d19854f5cbfff.webp",
-      "sha256": "0ce6bbbde101b1a028d4db3ec1800d6b1abc68905b002e99db2d19854f5cbfff",
-      "bytes": 12234,
+      "path": "/images/vehicle-impressions/38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657.webp",
+      "sha256": "38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657",
+      "bytes": 11798,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.135356,
+      "alphaCoverage": 0.132027,
       "sourcePackageSha256": "26c1770514674ded16cea05d145c90f96c20f0496bdcbc9ccf36c8cb2f9dd448",
       "sourceIdentitySha256": "eb12f8cecc023c77e3e1bca0979a88e8a37bea32f00bb8aa0042ba6f25c23667",
       "sourceDescriptorSha256": "385717a5c6c8eb990f2db28e82476981ef7407fe72d54dd044612427af0c03cc",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "85c7f65c3aac9cdcce4716c33616a67d7d48587f03be40c3e48304e091cbab67",
+      "sourceAssetCount": 8,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "2c708364d18ad04d8a7cd2bf2622a6befad73047e81baffa45b3fa878fa61291",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -6173,24 +6063,19 @@
       "displayName": "Coyote",
       "type": "IFV",
       "factionId": "CRF",
-      "path": "/images/vehicle-impressions/896e20229317fb5bf57e7222b621124a45fc2a64bb18ae6590be04faa48cc071.webp",
-      "sha256": "896e20229317fb5bf57e7222b621124a45fc2a64bb18ae6590be04faa48cc071",
-      "bytes": 8468,
+      "path": "/images/vehicle-impressions/eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef.webp",
+      "sha256": "eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef",
+      "bytes": 8460,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.135152,
+      "alphaCoverage": 0.135156,
       "sourcePackageSha256": "f8dfe0f40e2f1ef3217f02500717e43a259ad827e805ac54e366b63c2cce09fd",
       "sourceIdentitySha256": "65110342d6b3545d34209b7dd7d9676450305ad4c17e0482349c018694fe086c",
       "sourceDescriptorSha256": "1c15903e5a24e9fa5cfdad8847b4602c531d8749d066b6987bdc64fa3b9f5fcd",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "23c4494e777c5925b1c591f640610b497a153949ef74708852d0c31a05bead48",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "70c352146ce403102111e74e1d3c0de7540da91a0cc4d6dc0c560bc272505d9e",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -6539,15 +6424,10 @@
       "sourcePackageSha256": "420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2",
       "sourceIdentitySha256": "7ddf92c88bacf9eb25276981cc602c2911da88d396f7fdeb3ebff4989dbe5d88",
       "sourceDescriptorSha256": "e6205c8b37934c4f6672db88074d1eee3e36300f246f00f6e8183bd371f28448",
-      "sourceAssetCount": 4,
-      "sourceOccurrenceCount": 4,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 4
-      },
-      "renderSourceSha256": "f427b5c134e4183e1ebee33cbe45ce4b06694843620b5b1d23f79879ebe72948",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "181b4d342530bc6a7bc65fae9ea5aff81cd49f874018a53504a9e7a896a1c137",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -6681,15 +6561,10 @@
       "sourcePackageSha256": "2d9ed7f4ef1f2b0c44c229ec5549138fb8ae073f04abe5631690cfd38cc0911d",
       "sourceIdentitySha256": "3c10f04922f2de9af382f89185341986b8b4a83e0605994ebc029be79e95eb75",
       "sourceDescriptorSha256": "775f0e7281b708312dc3426b0cd3134e2351b870781b45754feb6093de13a7bb",
-      "sourceAssetCount": 3,
-      "sourceOccurrenceCount": 3,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "9e62549c4064332eb6d19de91755b8b576cdfd40fb1f7a348e460a4909074488",
+      "sourceAssetCount": 4,
+      "sourceOccurrenceCount": 6,
+      "selection": null,
+      "renderSourceSha256": "627fdaac88b34260a3db6717a2a9cf48bb08dca131b2ab566ae60933d509edc4",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -6941,8 +6816,8 @@
       "displayName": "UH-1H MG3",
       "type": "UH",
       "factionId": "GFI",
-      "path": "/images/vehicle-impressions/4e5f2742ea025b6c4e4fa4b0139e0586114a828a988614349a26e4bcd2357f3c.webp",
-      "sha256": "4e5f2742ea025b6c4e4fa4b0139e0586114a828a988614349a26e4bcd2357f3c",
+      "path": "/images/vehicle-impressions/97e743dec4e646f44e197da3917de8a4ff38bb6367ebd8465fff50a6142cd58a.webp",
+      "sha256": "97e743dec4e646f44e197da3917de8a4ff38bb6367ebd8465fff50a6142cd58a",
       "bytes": 21998,
       "width": 640,
       "height": 360,
@@ -7060,15 +6935,10 @@
       "sourcePackageSha256": "31255ce01c341a5bcbe65c9448a69ba10f6438f4b38faf5deaa3c454afedd330",
       "sourceIdentitySha256": "2e7187615087eb86aaaa6e19faa9302fbaef4804942bd876ff0f030da3a8c9a4",
       "sourceDescriptorSha256": "0c68cd83e787cfa61493b9a39a9539d3801c2df7c3f9535b1ef68b65ab6c8030",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "9df4a0fa9aa3585f4e985492293f5212124bc24990ca3ed8838293bbd39ca026",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "80838b61778bdef70626aefbdeb7af27b7d2312982b7450cffd97e46721dd4c0",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -7078,24 +6948,19 @@
       "displayName": "BRDM-2",
       "type": "LTV",
       "factionId": "IMF",
-      "path": "/images/vehicle-impressions/038fc836fb2c2a54784ca8cde4bf818b677d9536d03f3ef6533ac76444302460.webp",
-      "sha256": "038fc836fb2c2a54784ca8cde4bf818b677d9536d03f3ef6533ac76444302460",
-      "bytes": 10622,
+      "path": "/images/vehicle-impressions/7528e06de1c26a3019f3641896026675437c5a08e8a4d804a464e3906b959101.webp",
+      "sha256": "7528e06de1c26a3019f3641896026675437c5a08e8a4d804a464e3906b959101",
+      "bytes": 10752,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.191975,
+      "alphaCoverage": 0.190942,
       "sourcePackageSha256": "ad6ef988c13376f3a6c2d1afcb45b4eec9b729e8c71aafc1e1eb204a94add2a6",
       "sourceIdentitySha256": "0e394847017c21f6810d1f6003d2f8461f76630c361f4a0303bfa732d2e7d016",
       "sourceDescriptorSha256": "47fd1d43588cbe776c0b79ab3fb2c024e041f347eae0c2faf0dd333c7e1a9cab",
-      "sourceAssetCount": 11,
-      "sourceOccurrenceCount": 11,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "af701771dbd94795e53fb8fd9b89533980943f66781ca08a690509b91e909ba7",
+      "sourceAssetCount": 12,
+      "sourceOccurrenceCount": 13,
+      "selection": null,
+      "renderSourceSha256": "688a10414fa4f2cb8e87f94aafc1741dcd407ec6130730634609f84197ae79ab",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -7105,24 +6970,19 @@
       "displayName": "BTR-80",
       "type": "APC",
       "factionId": "IMF",
-      "path": "/images/vehicle-impressions/d5a291dc9f0fe9a73906df468608395d41f43fa384261064d717919c6701d32e.webp",
-      "sha256": "d5a291dc9f0fe9a73906df468608395d41f43fa384261064d717919c6701d32e",
-      "bytes": 10442,
+      "path": "/images/vehicle-impressions/04bdd2856620466a27b7b0f42513cbbad6a77d74ea4a5875915128747954b516.webp",
+      "sha256": "04bdd2856620466a27b7b0f42513cbbad6a77d74ea4a5875915128747954b516",
+      "bytes": 10444,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.149518,
+      "alphaCoverage": 0.14954,
       "sourcePackageSha256": "e0366135c1d030c8371273487daa781aa8772ee6ae3bb1ff1f1a6fd8002e7ebb",
       "sourceIdentitySha256": "8106fe0531226b18fd10e8f7a25a5be9409ab2a9990c53237f208f324702e41a",
       "sourceDescriptorSha256": "71040e73e0c4fbddd87b3174656dd4d80cda7d98a00af95bd7b1d21e322fc25e",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "d9aa57fcbcb38a3c1d5bbcb573958613dc5d3702dc614b7f257d06472e287d57",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "28fed3d2ee64028818d5746a800fe631cf24a07b18b69b5273c36813ba73c3c9",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -7361,15 +7221,10 @@
       "sourcePackageSha256": "3c76b2f10528f20d1f5f910203d872757e1ad2d76409350f49fb9b5488e33ef3",
       "sourceIdentitySha256": "a89b5059b51f620f679b8ba9bfcdd14f3e7fa529e7058527ba713bda03d15f10",
       "sourceDescriptorSha256": "843ecd9f338f60a8e97e347e31f7b353a4a786a4a3b11383ec844cb0b4a465f4",
-      "sourceAssetCount": 4,
-      "sourceOccurrenceCount": 4,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "ff2933b385ec20a9bc9e61f991f5365000e11c5d5464d7509b0dddecbef5a504",
+      "sourceAssetCount": 5,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "889db3c9a7c3cfee6a821316f53e9b9030ebf5af5c9c10164e9d7f9c542e3edc",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -7445,9 +7300,9 @@
       "displayName": "T-62",
       "type": "MBT",
       "factionId": "IMF",
-      "path": "/images/vehicle-impressions/dc8255852ccf78ef48e8c223efa048fcda11bfced72303ed1d2ce02f9fb638d7.webp",
-      "sha256": "dc8255852ccf78ef48e8c223efa048fcda11bfced72303ed1d2ce02f9fb638d7",
-      "bytes": 10516,
+      "path": "/images/vehicle-impressions/f1c3772e7ace2c5382e2f837a33067e4e9aa667a511f5d662f1e05df4cc27478.webp",
+      "sha256": "f1c3772e7ace2c5382e2f837a33067e4e9aa667a511f5d662f1e05df4cc27478",
+      "bytes": 10536,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.136688,
@@ -7741,9 +7596,9 @@
       "displayName": "Transport Modern Pickup",
       "type": "TRAN",
       "factionId": "IMF",
-      "path": "/images/vehicle-impressions/e729d9636a8bd0d9e6964a0d941a53ad95fea18bae3b05167f5b5c0df719d4e0.webp",
-      "sha256": "e729d9636a8bd0d9e6964a0d941a53ad95fea18bae3b05167f5b5c0df719d4e0",
-      "bytes": 12910,
+      "path": "/images/vehicle-impressions/b18371c0dc7800d3a73ffa00f05db3f30a3572a85104b6a7fa962efe2af2ac42.webp",
+      "sha256": "b18371c0dc7800d3a73ffa00f05db3f30a3572a85104b6a7fa962efe2af2ac42",
+      "bytes": 12912,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.213954,
@@ -7939,24 +7794,19 @@
       "displayName": "BRDM-2",
       "type": "LTV",
       "factionId": "MEI",
-      "path": "/images/vehicle-impressions/8e0bb9465806e3e6e859f7bc59a65bb04ac7c9750293af0511a34d45ea783f16.webp",
-      "sha256": "8e0bb9465806e3e6e859f7bc59a65bb04ac7c9750293af0511a34d45ea783f16",
+      "path": "/images/vehicle-impressions/f3df809c2e892f5afe94ecb27fd90e9b4fe6b2f84b82c7fdde115f2c5b6ed121.webp",
+      "sha256": "f3df809c2e892f5afe94ecb27fd90e9b4fe6b2f84b82c7fdde115f2c5b6ed121",
       "bytes": 11094,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.191975,
+      "alphaCoverage": 0.190942,
       "sourcePackageSha256": "76f242dd9e36f5d5f9fedf768a3d7386607042ec921359020cb72fb98821907b",
       "sourceIdentitySha256": "2ae593c65fb2476014dd4ae50fda7fc93b6deb79c4f18bc384ff0194e7575589",
       "sourceDescriptorSha256": "22c45bd2a258ce5d8747cb960713a4dee084059c6411a5cfbf11295df4391ca6",
-      "sourceAssetCount": 11,
-      "sourceOccurrenceCount": 11,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "6ad09748b2b98c1df85fb735c249174e7dced3fb690e0889923660a9c3313bc4",
+      "sourceAssetCount": 12,
+      "sourceOccurrenceCount": 13,
+      "selection": null,
+      "renderSourceSha256": "d14656d3dcf0438f0efe035978e6562e8c4f19dd464b2a0295babee9b0881434",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -8428,24 +8278,19 @@
       "displayName": "Technical Mortar",
       "type": "SPA",
       "factionId": "MEI",
-      "path": "/images/vehicle-impressions/ebfb1e7f7bb466d7a199ee89fee50067fea08481c40de54fd25d82fbabadc0be.webp",
-      "sha256": "ebfb1e7f7bb466d7a199ee89fee50067fea08481c40de54fd25d82fbabadc0be",
-      "bytes": 11834,
+      "path": "/images/vehicle-impressions/af617a347ceb08f18cbd31e839d43271f76d123744c32bb75b5c6a30b9982257.webp",
+      "sha256": "af617a347ceb08f18cbd31e839d43271f76d123744c32bb75b5c6a30b9982257",
+      "bytes": 11726,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.210204,
+      "alphaCoverage": 0.205694,
       "sourcePackageSha256": "772c2316ff63bb22ed5783c09519bfa9243c80792049fee81e3d0185d8c028e4",
       "sourceIdentitySha256": "798448948842fbe585d568bc068eea3a6c7bdbed6d6e9dd6e3d5599be1f6a0c8",
       "sourceDescriptorSha256": "c7552ff27457e4c92124dd99b601fff75d2464a8a6df1fd0ce1f3f8e4db4d68c",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "c02d14668d12c7670bcc8297e78f820cae8f50c33276a9764798e246625ea7cd",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "e588f93e2691916fdab9975eb17cfb69d9c44c340acaa191f91fb2d8ccecec82",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -9376,15 +9221,10 @@
       "sourcePackageSha256": "c09f2ff80c6d58eacde0c708d249e0a4e555f56f415a1eed2fedf0660a9d12da",
       "sourceIdentitySha256": "5c2eaab61a9a249dfa984ed9c08d0f2a6430ef91a35dc8942571ae539d7c11bd",
       "sourceDescriptorSha256": "a4e5a52e13a5bec36f2e041e53149b3a8ed0785ffbf11e67fc76d2592069014d",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "06f04e2b67b8ea126fe179af4bd8510690f8c2e221893ae92d1ca4445eee053c",
+      "sourceAssetCount": 8,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "af032760741cf79729981ade899759cd106133b470eeaf6f8768fa174883ee9f",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -9403,15 +9243,10 @@
       "sourcePackageSha256": "9ccfe796eed7b19df2034b643f1b079717193c9c739ec5c64253516aded119ec",
       "sourceIdentitySha256": "b6f452f2f0393fcdc198c068e38dc055d052f65218c619dba55f7a310782254a",
       "sourceDescriptorSha256": "802bed8237b606a689697b8742076f902e34f2eb062f9851610d93b3a49f13c8",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "d4417cbcf02a4215f0f79d950658e89b6d6a6c7dfa51053cf6cb331484c4ce30",
+      "sourceAssetCount": 8,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "dd220746764bfb6caa7ed65138802c7f43a91415fb6659e9b72f379ab1d4810f",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -9496,15 +9331,10 @@
       "sourcePackageSha256": "2ebf1daa6a13dd4fab26473fc1b3f7709d5fd4dd30b9df36f96f739ea3dc0969",
       "sourceIdentitySha256": "df7058a9c0cf03891b247db5cdef7f4356d2a4211e8f11c4ec401a9033c5425d",
       "sourceDescriptorSha256": "ef0dec638e0a07f561b4de37638739c96d1f12ef8ea2545b249492893a8ed3dd",
-      "sourceAssetCount": 13,
-      "sourceOccurrenceCount": 13,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "9064b74a1368e78f5e8b61322d8883a3749351031975ac9163a48263aa9a4aa9",
+      "sourceAssetCount": 14,
+      "sourceOccurrenceCount": 16,
+      "selection": null,
+      "renderSourceSha256": "89f41476f35f116a4dc2b387d14131d41262bb8c342488aff6cd7aad88d48db1",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -9523,15 +9353,10 @@
       "sourcePackageSha256": "def6dade2f1c2fc36b7d30d8061230cc8766754f6d11559e076ee329746fde23",
       "sourceIdentitySha256": "eac0a3275f457d339c832ef76e5294f4dab6b675f4e474a7dad1d4220be40323",
       "sourceDescriptorSha256": "c879b1990c1f107851b34c36fc21e9f90932e7f3ca707687e29166f0456cc592",
-      "sourceAssetCount": 13,
-      "sourceOccurrenceCount": 13,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "3d8ba2fff55eb92ea4c82222eb0971555ddb881d19e4329b356ae0ad453151be",
+      "sourceAssetCount": 14,
+      "sourceOccurrenceCount": 16,
+      "selection": null,
+      "renderSourceSha256": "d6dc7972bfd24fe1eee5fa0631857bba3c18766659ca45e0e812a7fc9b66f347",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -10135,9 +9960,9 @@
       "displayName": "Z-8G",
       "type": "UH",
       "factionId": "PLAAGF",
-      "path": "/images/vehicle-impressions/92f6abd416b08b542912b53358a579e00e0acbef3647d5fdca6ad9881ffc6797.webp",
-      "sha256": "92f6abd416b08b542912b53358a579e00e0acbef3647d5fdca6ad9881ffc6797",
-      "bytes": 20348,
+      "path": "/images/vehicle-impressions/325a8cb9ec98d78257a15253896a41576e68d44fc5b7ba1ee77c663f20cf1373.webp",
+      "sha256": "325a8cb9ec98d78257a15253896a41576e68d44fc5b7ba1ee77c663f20cf1373",
+      "bytes": 20354,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.188607,
@@ -10440,15 +10265,10 @@
       "sourcePackageSha256": "c09f2ff80c6d58eacde0c708d249e0a4e555f56f415a1eed2fedf0660a9d12da",
       "sourceIdentitySha256": "5c2eaab61a9a249dfa984ed9c08d0f2a6430ef91a35dc8942571ae539d7c11bd",
       "sourceDescriptorSha256": "60da00f19736061881a71839b2ea95f9bb58bfd16b19e1c40b43b133f70adbec",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "05dff608dcd8d1dacfd2fce55cf39b414efff113e6874db6cd2357ecb31feda4",
+      "sourceAssetCount": 8,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "aeaa2c26fa631133870f96759e1b0c36ab89679b7b41d5c2756edb67fd0bfd28",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -10467,15 +10287,10 @@
       "sourcePackageSha256": "9ccfe796eed7b19df2034b643f1b079717193c9c739ec5c64253516aded119ec",
       "sourceIdentitySha256": "b6f452f2f0393fcdc198c068e38dc055d052f65218c619dba55f7a310782254a",
       "sourceDescriptorSha256": "794a934ebc23270923044705ab6a706ad5738427a58159d9d12daad714b2ffe0",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "fe912aff5a28a460e95e9f4254bd8ccdfc10f4330c316c9462936bed0d3d6069",
+      "sourceAssetCount": 8,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "1944b4c4e2f03d049d53a9bda8b94cee059a64895debd85b297488d8eaf46542",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -10560,15 +10375,10 @@
       "sourcePackageSha256": "2ebf1daa6a13dd4fab26473fc1b3f7709d5fd4dd30b9df36f96f739ea3dc0969",
       "sourceIdentitySha256": "df7058a9c0cf03891b247db5cdef7f4356d2a4211e8f11c4ec401a9033c5425d",
       "sourceDescriptorSha256": "bd438515e5a34122cb510f10baafa96c74657267ca2e420eb2d8149c6536e829",
-      "sourceAssetCount": 13,
-      "sourceOccurrenceCount": 13,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "7b2d78b5de71a0d27ab03ee46e39e8b69f431d33f0c29291547779f2c155700f",
+      "sourceAssetCount": 14,
+      "sourceOccurrenceCount": 16,
+      "selection": null,
+      "renderSourceSha256": "b532f8f47fdf1eb158106744abe86e0c96ab6e455da216eb11bb38e9474a5131",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -10587,15 +10397,10 @@
       "sourcePackageSha256": "def6dade2f1c2fc36b7d30d8061230cc8766754f6d11559e076ee329746fde23",
       "sourceIdentitySha256": "eac0a3275f457d339c832ef76e5294f4dab6b675f4e474a7dad1d4220be40323",
       "sourceDescriptorSha256": "06d9076526c4b750d5126248d6a3961f02c8520a106ce6eb5ebd012bb826ed7c",
-      "sourceAssetCount": 13,
-      "sourceOccurrenceCount": 13,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "d820e504c0f3605caa589f24174e2dab2040c848eb62faa814ccc94f98a7a397",
+      "sourceAssetCount": 14,
+      "sourceOccurrenceCount": 16,
+      "selection": null,
+      "renderSourceSha256": "49fe7372766aa07db507874fd6fccb2a7cb22f599b0da6fe4ad595ab31ddc634",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11103,15 +10908,10 @@
       "sourcePackageSha256": "50d9d4fe4f8b4df0accdb043227586f4932ec731c99df3dafe623e5f52aa6833",
       "sourceIdentitySha256": "bfb5e3f7673e21f8feb8cfb853147c4ca38cd04622e0acac05c492bdde77a171",
       "sourceDescriptorSha256": "7f1aade51c15df2f6bf2e0da19fa606e801a004860586fd9e1e07fecd64095f7",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 8,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 4
-      },
-      "renderSourceSha256": "1ba694ae2827a42527473a567854d82299b50e4a285f2300a655ef8af805bf7f",
+      "sourceAssetCount": 8,
+      "sourceOccurrenceCount": 12,
+      "selection": null,
+      "renderSourceSha256": "8c8ba2fd28fa9ed36377817939ff48df8371a621a0aa4fd6767210ed18883991",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -11218,15 +11018,10 @@
       "sourcePackageSha256": "dfd6fd546d70007c531dafdf355a402f1c34b98621e35710c7cae254d3774bf2",
       "sourceIdentitySha256": "cfaafa29d443009c3c5a345ac58bfbc3cd04b8b7ed0e0d1c25ae6a9142d15182",
       "sourceDescriptorSha256": "ebe81d39697b977b74f7283185f5517ac27c4e4e2ec60c0b9fdbbb74e2a7f666",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "8a4eec35930846945e324c64b84d4b258421f450fca6d1e6ef5cb3dbc1683815",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "82e19edf2ed365b0f06865f417f23f98de33cb57a708904802ec43c091ef0f81",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11245,15 +11040,10 @@
       "sourcePackageSha256": "5f50bafb0b10a7a4a2aa0dbae0bc8846182917a16d5e41fb55f2fb91656951e3",
       "sourceIdentitySha256": "1b95f986c5ebc370a24640e1d4343e2b2e5bbba8775b6cdd06de92981ea50b92",
       "sourceDescriptorSha256": "919d1214c7b35ea91844ec9180cb44c110718c241f8127bdb3fd550bffd26610",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "2699e908144727003652b268b67b6dfb7f5fdf34493f66183de7f4d7e960fbb5",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "c6432ba11d41b4f87ec9370c23863d985048e89490bebcd3f4cf493a68810fae",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11272,15 +11062,10 @@
       "sourcePackageSha256": "f0afcf540eee3999d4611fdfa95b37510ca377a97b3f6af33ee3e171d6fe0794",
       "sourceIdentitySha256": "78b9de4320f2ec2dacab3caed07d4d6340cf2f018e09a65c9e9bc22c9d429bbb",
       "sourceDescriptorSha256": "1276e137a8f9479cd5b8e3c70550b61f3d0cb3d5c13f07cd77c581968e4e3f99",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 4
-      },
-      "renderSourceSha256": "716457d4e3f45e34c05b1df34772464e23f689f1de101013ffc83ed3672ba917",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "454da866e266b90a63f3f61d5e9342fa27429a9f7ad41785242a824ce24dacd0",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11299,15 +11084,10 @@
       "sourcePackageSha256": "a6144defe78c969329326a5bf2b905164dd86a69d0d62c9a95d806022cf3ccaf",
       "sourceIdentitySha256": "a32d456e5b5c1b7e89ae3f3d59492fe624876e7d8af280bc30d23aeec8529937",
       "sourceDescriptorSha256": "93e751f11d4f42e5dd05bfcdfbd7568f4f212053a4d1e87b5bbd044c3860973d",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 4
-      },
-      "renderSourceSha256": "b43fd56483e76d3ae9e0ce89284267474aa535c450518e04a0e10a8e4c6cde4e",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "0dd3e536b90351a252b6f4dbfafad9ae3109da855af3f3d53a4d64817868f2b1",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11317,24 +11097,19 @@
       "displayName": "BMP-2M",
       "type": "IFV",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/fc3aac59b443328551d49bbeb4947591aa6da30ce01d3c4470f8122994e3ee87.webp",
-      "sha256": "fc3aac59b443328551d49bbeb4947591aa6da30ce01d3c4470f8122994e3ee87",
-      "bytes": 10804,
+      "path": "/images/vehicle-impressions/709f37f2505be63aa92f2a25ed55d81c7d670835c3733c94132149f7ef5e1409.webp",
+      "sha256": "709f37f2505be63aa92f2a25ed55d81c7d670835c3733c94132149f7ef5e1409",
+      "bytes": 10798,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.16076,
       "sourcePackageSha256": "259ecb847ebfdeaa7569b7ffef2231df6749af96bd97fb6850daae87b2656c2d",
       "sourceIdentitySha256": "bf48eb25a3ef2f2e71cbc12dcf70a31940b5da6a00feeb048140afb545a6a605",
       "sourceDescriptorSha256": "8005dd5a44ee5a0b4525d99273a399c37d14f47763accb2ad841f7f5465d460a",
-      "sourceAssetCount": 4,
-      "sourceOccurrenceCount": 4,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 5
-      },
-      "renderSourceSha256": "7520828983ae4c23566e2b8560ff329eaf7a54b3348dd9f7420ab1fac40492b1",
+      "sourceAssetCount": 5,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "ddc1c5a860d54790585f9a9c287fd965bb6850ba8fe04eaa474dcf0498b99de2",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11344,24 +11119,19 @@
       "displayName": "BMP-2M",
       "type": "IFV",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/78d32e24df58c056abf9d154fd6827b0f8b8ed4c399386245f4021dfaab3f0ff.webp",
-      "sha256": "78d32e24df58c056abf9d154fd6827b0f8b8ed4c399386245f4021dfaab3f0ff",
-      "bytes": 14934,
+      "path": "/images/vehicle-impressions/bcf3cd6d018341f64b32d59dbf55a0b1d439c586a80eed27734931147dbe8730.webp",
+      "sha256": "bcf3cd6d018341f64b32d59dbf55a0b1d439c586a80eed27734931147dbe8730",
+      "bytes": 14936,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.16076,
       "sourcePackageSha256": "1b28b5b9f2fea25aee7dee66ccb44094eb8657389732aeda72232174a9c241b9",
       "sourceIdentitySha256": "f5ce106979b3c426533bda049ccc28637ea2330979b193972626a8e6041ff908",
       "sourceDescriptorSha256": "a3de0401041ddb4cb4678989c3db715a5b6f42ff36bc16b36f72c0d9a9bdf80d",
-      "sourceAssetCount": 4,
-      "sourceOccurrenceCount": 4,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 5
-      },
-      "renderSourceSha256": "59a9ffeda5fa5bd4dfe1eccaa88c5490cf1482278855c545802415aa2a5d57e1",
+      "sourceAssetCount": 5,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "d82c0154a8aa128cd46c1b8ec2e6b700b00cc2be83bc60b47df1093ac6e8daa0",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11415,24 +11185,19 @@
       "displayName": "BRDM-2",
       "type": "LTV",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/536e5385b6eabfd81ad3a7e019a949dc2a520f93249ee8d59e0bfa93c5d8d783.webp",
-      "sha256": "536e5385b6eabfd81ad3a7e019a949dc2a520f93249ee8d59e0bfa93c5d8d783",
-      "bytes": 9350,
+      "path": "/images/vehicle-impressions/88beff19f9d793f504a16abe77d820b8d26f720612bac3a6a5d4d99d9468ab84.webp",
+      "sha256": "88beff19f9d793f504a16abe77d820b8d26f720612bac3a6a5d4d99d9468ab84",
+      "bytes": 9618,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.191007,
+      "alphaCoverage": 0.189952,
       "sourcePackageSha256": "4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e",
       "sourceIdentitySha256": "9e3b568f4eb65199d0a6f7f661477584bdb2559da1b9d8cd8f1e4ae2066c92de",
       "sourceDescriptorSha256": "7478cf39d5653b82c1b913c367db938c06d22d99275c2338f55741286db54369",
-      "sourceAssetCount": 11,
-      "sourceOccurrenceCount": 11,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "13f050f17016687911453e681f3eb34c4875aaa8b93439eb92bcdf346be7b427",
+      "sourceAssetCount": 12,
+      "sourceOccurrenceCount": 13,
+      "selection": null,
+      "renderSourceSha256": "5d76aaa839e8eecdc6ca2525ece4b0748946e841c5ba29dd35454eb0c805786e",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11442,24 +11207,19 @@
       "displayName": "BRDM-2",
       "type": "LTV",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f.webp",
-      "sha256": "e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f",
-      "bytes": 11568,
+      "path": "/images/vehicle-impressions/b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a.webp",
+      "sha256": "b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a",
+      "bytes": 11592,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.191007,
+      "alphaCoverage": 0.189952,
       "sourcePackageSha256": "65f1c3521871d948a3fe32205b8b6e9cb0066b843efc864ef69839f19559a84c",
       "sourceIdentitySha256": "f937e7b86940188fe6da2e1c6062a9cae354dd7ecd5f3e5082efbfab74383450",
       "sourceDescriptorSha256": "ed778ed108160bbf1c895d0f63bf09059ebbaf54adaf709e10d89530a8695c1b",
-      "sourceAssetCount": 11,
-      "sourceOccurrenceCount": 11,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "3f85a6535afdb1f928777f3f815be9257af6e589f327893f6aa47a472c516431",
+      "sourceAssetCount": 12,
+      "sourceOccurrenceCount": 13,
+      "selection": null,
+      "renderSourceSha256": "106c216ebdf1e26d0e5c4cabc9ed21a0318a28c16cefe46348aebe88810e66f7",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11513,24 +11273,19 @@
       "displayName": "BTR-80",
       "type": "APC",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/4dd7ba26fb243cc8f675feb59b6f7afa8f65c1f42b412b5469d6468b537d95af.webp",
-      "sha256": "4dd7ba26fb243cc8f675feb59b6f7afa8f65c1f42b412b5469d6468b537d95af",
-      "bytes": 9926,
+      "path": "/images/vehicle-impressions/b417efed5c1f0c05f20b037cf4e3ea2c8bdb768ecb577922423b6c828b92d85b.webp",
+      "sha256": "b417efed5c1f0c05f20b037cf4e3ea2c8bdb768ecb577922423b6c828b92d85b",
+      "bytes": 9934,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.149518,
+      "alphaCoverage": 0.14954,
       "sourcePackageSha256": "4620e698ac89467b7ced9c973344d16635fef5cd56c30d3ba187a7eecf4ae4e1",
       "sourceIdentitySha256": "e1e53f2bbc5b65acaa5fc3ea014a9ff34d2b2242b99950242afcab3ff103d373",
       "sourceDescriptorSha256": "f55b29f9f24e37016f23021c0cddfd70635b6441c1311d3c93426dcf86d29e3e",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "33b8947075252f16ac1fa5f35b7e310aa11060b4b5980267f30a710c952989f7",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "36c2805f6a68ac66c1d1738b1c0067f4de0ff429eb4bd5311db621be0ebf9cac",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11540,24 +11295,19 @@
       "displayName": "BTR-80",
       "type": "APC",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/c3faf5da9e5eaacfd85d6f11c27fd5b61916b9aeadb816211194c9fafb0b2e0f.webp",
-      "sha256": "c3faf5da9e5eaacfd85d6f11c27fd5b61916b9aeadb816211194c9fafb0b2e0f",
-      "bytes": 11966,
+      "path": "/images/vehicle-impressions/58c4f99eff6c9e1cdee0fdb16c99be79878ff3b6ac6623fe5c5acf96e6cbb173.webp",
+      "sha256": "58c4f99eff6c9e1cdee0fdb16c99be79878ff3b6ac6623fe5c5acf96e6cbb173",
+      "bytes": 11976,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.149518,
+      "alphaCoverage": 0.14954,
       "sourcePackageSha256": "f746fd29ab479ae87da8510442bea522c58152467f24a973b427e97d1b4a4508",
       "sourceIdentitySha256": "78ffd008de3a05259ad8c0eab31640536c24effe04da04d761970587a6d0af20",
       "sourceDescriptorSha256": "8a3edd163c600672626e01df75f0add483efd8e3c0c4137197709f47582755fb",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "067fe41cab7a120ba5b4d5bc1bfe8a159284d0fd9da47efe21d3dd436798a6a3",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "c19dfc50fe067e823542303f9a467bab0be1dac1841239412001d35318b40aa4",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11567,24 +11317,19 @@
       "displayName": "BTR-82A",
       "type": "APC",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/40a967de9e5fd2fbc9ecdf231fb7f14bc074ff7ba583109d41c745e720b677f9.webp",
-      "sha256": "40a967de9e5fd2fbc9ecdf231fb7f14bc074ff7ba583109d41c745e720b677f9",
-      "bytes": 10030,
+      "path": "/images/vehicle-impressions/c29700e61f5e68ac4974e12a1b1cf9a26fdc57326e6edb03188bd6b8dc812e80.webp",
+      "sha256": "c29700e61f5e68ac4974e12a1b1cf9a26fdc57326e6edb03188bd6b8dc812e80",
+      "bytes": 10040,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.151385,
+      "alphaCoverage": 0.151923,
       "sourcePackageSha256": "fa6479ea91f7dafacb141298f7b97e0f718b3909327d83a308a4fb67d8e19e89",
       "sourceIdentitySha256": "7f2d7cf60e622ce146df7ee159ab191b5b85cc343f28617df7e427bebf970a4f",
       "sourceDescriptorSha256": "ffc6fabf50327af7bd890aa79199ddf31c06246969f09370027f42c0f1d12a25",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "57c532fb8a70f2e1e82f1fef884e60717fedcf0cbf81abbafc1d846a3fa1f15a",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "c3b287bfbc0684f91f57a07fa037ab80c6ad2b6ec5b7e0aac0cb335e9829cecc",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11594,24 +11339,19 @@
       "displayName": "BTR-82A",
       "type": "APC",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/0f1e85bd9e0731960117170857e1cd56ebf73b59f0a1b481eb9acc016879b5e6.webp",
-      "sha256": "0f1e85bd9e0731960117170857e1cd56ebf73b59f0a1b481eb9acc016879b5e6",
-      "bytes": 12230,
+      "path": "/images/vehicle-impressions/bb114768269363f386938820ad271d4ae999c6c2e3a5690fdb291901c7362397.webp",
+      "sha256": "bb114768269363f386938820ad271d4ae999c6c2e3a5690fdb291901c7362397",
+      "bytes": 12252,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.151385,
+      "alphaCoverage": 0.151923,
       "sourcePackageSha256": "9f54958d609f40f4e1dfd961ffc6f9694d6f05b77740646e8f036fd06aab4330",
       "sourceIdentitySha256": "b6fff942a45c28e1562e8035a32453222e9fd32b3f0edec0e9846220fc5dae97",
       "sourceDescriptorSha256": "43584c96f8ba41143dffa32dd36694ac1cc26f95d0bdd29c946b78858af8bc2a",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "41c7e417ab8b6bcff7a9ae4757070b93e9624e6209f2b05341d0cb7ee6604402",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "ce871fb9921fae5277c70e24e675f1ff25c2c5da9f6822f478a2e62c7e3605ef",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11863,24 +11603,19 @@
       "displayName": "MT-LBM 6MA",
       "type": "APC",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/c0066aeaeff99e1996857bc6d239119cd13fed450928d575b196013cac12f8c4.webp",
-      "sha256": "c0066aeaeff99e1996857bc6d239119cd13fed450928d575b196013cac12f8c4",
-      "bytes": 9706,
+      "path": "/images/vehicle-impressions/02c38ee10ab6b463fee9296c60c100d41505b52bc298114397afec2fc6678770.webp",
+      "sha256": "02c38ee10ab6b463fee9296c60c100d41505b52bc298114397afec2fc6678770",
+      "bytes": 8998,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.184106,
+      "alphaCoverage": 0.173763,
       "sourcePackageSha256": "4a474d986acd9023d370a691c4fd79d190e011259e619b9a80945cd2564a2c6f",
       "sourceIdentitySha256": "d90516f55317dd66033dac2af7619e08bdbd929187aa28c3e30b76807b5ef228",
       "sourceDescriptorSha256": "2754dd4c95aa661daffeb6b6a7be01e25c79e7194abdf5cdf9ff54183d926f76",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "7c840dcdd8b95af1a0664f060084abe9b3a188c93f9634bc62c3955bf3dfbc0a",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "fa705b2fec2b25920de9d4f00e0ebebfa8182408855855953672019b02e465b1",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11890,24 +11625,19 @@
       "displayName": "MT-LBM 6MA",
       "type": "APC",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/197d0838179a64fd3fe2b369290a1a9e989945d2defc74a97ea095ae72e29031.webp",
-      "sha256": "197d0838179a64fd3fe2b369290a1a9e989945d2defc74a97ea095ae72e29031",
-      "bytes": 13676,
+      "path": "/images/vehicle-impressions/69f4c8433765f4f230276b3b14eda5308c0837eed1333b31c49e3ca861f5f76d.webp",
+      "sha256": "69f4c8433765f4f230276b3b14eda5308c0837eed1333b31c49e3ca861f5f76d",
+      "bytes": 13020,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.184106,
+      "alphaCoverage": 0.175603,
       "sourcePackageSha256": "bcbe975f86f577d39e50470f854e9418648006084a2c5ec0d2e99ff023beae7b",
       "sourceIdentitySha256": "43f2a9deebba9412a404086925b7e84267da4d3eb2918950743b1dccc4d7af4a",
       "sourceDescriptorSha256": "a2998a9fdd54003efda0debc8008125ac3f8ea2325c2cb6a0b8d3bfeac212f50",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "5c87a03903be51b15d63ef36e72649bd0b7816dce8ac988c357262a306a42df4",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "6bcf600d3263e13534341e1322829e73a9c58e519412c8b38ce59e897c49d4d4",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -11917,24 +11647,19 @@
       "displayName": "MT-LBM 6MB",
       "type": "IFV",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/cb3f2dcb7e69ae9f8381cc8342410ad84d3082b8a73863cf53e93c9dd8222d6e.webp",
-      "sha256": "cb3f2dcb7e69ae9f8381cc8342410ad84d3082b8a73863cf53e93c9dd8222d6e",
-      "bytes": 10108,
+      "path": "/images/vehicle-impressions/a2422262d069455306c273e61c45e6ea605bc789c89c800b21347f4fcfca59e8.webp",
+      "sha256": "a2422262d069455306c273e61c45e6ea605bc789c89c800b21347f4fcfca59e8",
+      "bytes": 9784,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.19036,
+      "alphaCoverage": 0.186623,
       "sourcePackageSha256": "62420cff0ff305c8042c1bb4f77a0885590ac9a2df89557303582d9829fd089e",
       "sourceIdentitySha256": "51bfb9c16c6a094112f4ef313ac44804b4b75c9d0f849fcf96f8899d12c0e245",
       "sourceDescriptorSha256": "888248214923073f7f465cdc96c71cb3089daa3176973b2f4ead497277c1920a",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "80d04883ded949b865d3482d883ee5c4ad01ff74851edbfb1ef7d955d8262b24",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "14b5e56b8fbc33f9fa134117a54b7a401e95284c447f9b5bfef60f85c9136fa9",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -11944,24 +11669,19 @@
       "displayName": "MT-LBM 6MB",
       "type": "IFV",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/a4349944dee957fc6f8f4a544fcd7cd88ee077bfa328c5abaad8ee956c2a1b84.webp",
-      "sha256": "a4349944dee957fc6f8f4a544fcd7cd88ee077bfa328c5abaad8ee956c2a1b84",
-      "bytes": 14166,
+      "path": "/images/vehicle-impressions/3b7b191331eacf896c60e3dd6731a8c61513bf1bb78020d797fbcd72e18fcf36.webp",
+      "sha256": "3b7b191331eacf896c60e3dd6731a8c61513bf1bb78020d797fbcd72e18fcf36",
+      "bytes": 13420,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.19036,
+      "alphaCoverage": 0.177782,
       "sourcePackageSha256": "036b04c90284a806dd1a204b7440f86cc3431bf9c581d6f620335d716a4c1612",
       "sourceIdentitySha256": "dc2d1cab7d8e82451e1c991132cc5f1ecb9296b671a897cb35572ff195566708",
       "sourceDescriptorSha256": "93e57ebc803f278e2bb5ecbdc7224d0afa4319aa377133395b79504fb5d5a231",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "8ab35071982a551c9c8acd671e73f74f2c2d50a359e2ac540d4b6f62ba4f0689",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "e5073f7b03aa2415d866efe2b82e56474d01f337ab4b98f5e6713289d51ff0de",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -12235,24 +11955,19 @@
       "displayName": "Tigr-M RWS Kord",
       "type": "MRAP",
       "factionId": "RGF",
-      "path": "/images/vehicle-impressions/1955d5097d373d3f1c4b63d1f2e44b7690210d0931e5e2e21b25721463545012.webp",
-      "sha256": "1955d5097d373d3f1c4b63d1f2e44b7690210d0931e5e2e21b25721463545012",
-      "bytes": 9488,
+      "path": "/images/vehicle-impressions/b6a1a3c015727af19ea0602681bc0cf7e87a23d98c969d96e2de1d2932ff5b6e.webp",
+      "sha256": "b6a1a3c015727af19ea0602681bc0cf7e87a23d98c969d96e2de1d2932ff5b6e",
+      "bytes": 9404,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.182005,
+      "alphaCoverage": 0.180048,
       "sourcePackageSha256": "d16e3246b9b223fad95858ebc589f0ed0e9093ef1a8a63a2586f5a65e2f5ce3f",
       "sourceIdentitySha256": "3a6d44d1e2a1247e5341ad39a6cb08eb6ecc07caa47a909dba8c06a11ec2a2eb",
       "sourceDescriptorSha256": "e088feda99a5df049006b1651e9252dd4576e035f6f27c64238ee3413e1d217b",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "f305ba99d0fa7937501a596de1e84a0f1824b8424d7fdab39d88bbbfc6e884d8",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 6,
+      "selection": null,
+      "renderSourceSha256": "1f75e5db79c9a8539b5f5beb2e19e323f5a80ca3e7a9588a633dcc12d5f7c4c8",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -12293,15 +12008,10 @@
       "sourcePackageSha256": "925b587755609795054f0d9fa7ad25750e8c6dbcf766845b9c627b7ebe309ee0",
       "sourceIdentitySha256": "1650648ee7c3604091c8c8619737e53fd68f98b3e14c5b876887c50c15e65ca8",
       "sourceDescriptorSha256": "76e63df0c32e921387ccc2973a3382b05d1777c8718f8a114039b50d3346cc49",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "f10b7cfcfd8ab4ab5a5151b07d162e44dc1ce5e613fc0626af52dc5bc02b3d91",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "f30ad856fbca0e2358ba7e050e88f55be1a2c33b3f9ee0ec5d75a73c21579d9b",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -12320,15 +12030,10 @@
       "sourcePackageSha256": "674363be858d25393c0a6f16185d0018d998ff4562c4f5c24aa04f09388e63c9",
       "sourceIdentitySha256": "be2aba48baaaa96b2d19b21e36c96e28c0593a0211f1cee372ae546e4ea19b00",
       "sourceDescriptorSha256": "65cf461ea9457b4e62abb37cb3796b5fc416c880b95e79c8c5b5fce93fa23565",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "7f5a3c096c006342550211a51243e49d58a8d73425a93a9206d437a91d485114",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "45943e79b8c128d1b39f46bc45486c847b48414b81fe1d658d3d146ca57dd1c4",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -12743,15 +12448,10 @@
       "sourcePackageSha256": "02e01adc6e3b2871779b47b26732f906af53d56b1bfe3af3231e5a96f6804db5",
       "sourceIdentitySha256": "3f720ca2e6c44e11af196f28281265669c4ed6a9b5dfdbbe1ff8456f21b8ff0b",
       "sourceDescriptorSha256": "c310cf28ba0abdbb4649d9608706f28687f87590e57615bba5f276e2f404484d",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "9d46562f7ecd3542c6fdb88eb8eeb0e290d9d944b585edc2a5a30b4894ddebd1",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "629b0e4428808fdb9d349f1ffb65ae193d1368d9592afeb91c26a6b746d8dc72",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -12770,15 +12470,10 @@
       "sourcePackageSha256": "4ddca5b6af3b0cd5da071a83d0aa052e8b004fb1d7940b4e80aa9ca7a7f0f466",
       "sourceIdentitySha256": "01a0559fa5cb741648391e8e6783c526157d903ffa88e756322a9c7dcd072e94",
       "sourceDescriptorSha256": "26d4971588ebac67a2bb6b5c223456ca02f3f152af9d75ec3c66a4322e57fccd",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "90bfb84b2f79f311d2e51f21173efe255c0a4463b7c8790c6aa388c3638b59a7",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "13f45724326c6afef148dd283e99084f7dc4800820dd52c38a1d1094690ff03b",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -12964,24 +12659,19 @@
       "displayName": "PARS III 25mm",
       "type": "IFV",
       "factionId": "TLF",
-      "path": "/images/vehicle-impressions/52c998595c4b4358c2d179195e63b6056f695eeb36ed7ae2cab03850b7f5d18b.webp",
-      "sha256": "52c998595c4b4358c2d179195e63b6056f695eeb36ed7ae2cab03850b7f5d18b",
-      "bytes": 8378,
+      "path": "/images/vehicle-impressions/ea64788bf22d59da78c741dc032f60127becdee288683e7ddd04f30edb96381b.webp",
+      "sha256": "ea64788bf22d59da78c741dc032f60127becdee288683e7ddd04f30edb96381b",
+      "bytes": 8122,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.142452,
+      "alphaCoverage": 0.137565,
       "sourcePackageSha256": "c1c996de3c93246ba996b9c91d92d8ab7825f5d4936e4f8e687ffc910273447d",
       "sourceIdentitySha256": "154f153d6f930e2b318b0b8c9ab3d8ac756d07ce1036b6b090d6b7ab86860cb7",
       "sourceDescriptorSha256": "96d47c106068a4c6780d431f56ef53ba9cecfc65cb84fd8e04b77080721d712b",
-      "sourceAssetCount": 3,
-      "sourceOccurrenceCount": 3,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "7d3b186afa56fa29f884e45cc453df603c56d4c7677b3090cf90e6f104d12cf2",
+      "sourceAssetCount": 4,
+      "sourceOccurrenceCount": 6,
+      "selection": null,
+      "renderSourceSha256": "867b17d5e905513fd11f558fc501a39e6e8d344b32bd4a82c3af717f62c5a565",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -12991,24 +12681,19 @@
       "displayName": "PARS III 25mm",
       "type": "IFV",
       "factionId": "TLF",
-      "path": "/images/vehicle-impressions/f2288bfd3193c0aef1af6eba3ee44be99602e2d29c07462acfaf0e7af66578dd.webp",
-      "sha256": "f2288bfd3193c0aef1af6eba3ee44be99602e2d29c07462acfaf0e7af66578dd",
-      "bytes": 10918,
+      "path": "/images/vehicle-impressions/a1734e0f105d10d6d23efa6cd31ba748a3f40f09e31e43eb80c3757e57f5b94d.webp",
+      "sha256": "a1734e0f105d10d6d23efa6cd31ba748a3f40f09e31e43eb80c3757e57f5b94d",
+      "bytes": 10650,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.142452,
+      "alphaCoverage": 0.135339,
       "sourcePackageSha256": "ca9e900b10c50f4e7029501ccaeb5f609b873499da07c9388a5d8d52de0aa943",
       "sourceIdentitySha256": "1230608ab4b92614731adb929c0ad94c89b00cc7ab6eb3fa83606365d770a1be",
       "sourceDescriptorSha256": "843f40f61b14766c92bb01e9f3fced084e95b2a78082f30e0f88cdc5129ce602",
-      "sourceAssetCount": 3,
-      "sourceOccurrenceCount": 3,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "e9dc7c970d027b8bbd1448be63e2b40d6978f1ad7e86797183d3a6673a9ebb27",
+      "sourceAssetCount": 4,
+      "sourceOccurrenceCount": 6,
+      "selection": null,
+      "renderSourceSha256": "0424f0adf0759e116bd483f350792a90d4c3d92dc68018fd197b8ec33f50b618",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -13511,15 +13196,10 @@
       "sourcePackageSha256": "2bfed807fb5f5becb93ce37085a5a64485c67a4a2adfc44956f1699a42707fd2",
       "sourceIdentitySha256": "19930c46ce317cc6f3da6dc5643cb61e21e4c5136707a433611659c666367257",
       "sourceDescriptorSha256": "0751b5ce436598715c7af8037de7d272a04b4611727f025cb2570f764c29e0e3",
-      "sourceAssetCount": 7,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "83cae093a07d232278027a9f3c85da32a85a4fced595276c29d5db6f45fc21d5",
+      "sourceAssetCount": 8,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "625643ce657a56cd1d1a50905f576f46b115936977ecd8bd713c48b4d63a5b84",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -13551,24 +13231,19 @@
       "displayName": "M1126 CROWS M2",
       "type": "APC",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/130d3eecf32c09a8c1c24531bb04056f086308f8be023063135bab5df260beb2.webp",
-      "sha256": "130d3eecf32c09a8c1c24531bb04056f086308f8be023063135bab5df260beb2",
+      "path": "/images/vehicle-impressions/0193ca6ba553450c5854f69eac2b3e4f9eb137c9de238db1dc23f5658dc68907.webp",
+      "sha256": "0193ca6ba553450c5854f69eac2b3e4f9eb137c9de238db1dc23f5658dc68907",
       "bytes": 10970,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.174232,
+      "alphaCoverage": 0.174301,
       "sourcePackageSha256": "a0c89ef111539120b1dc3a67d5258c0ece761821a9a93d79f67f29eb261dc5d6",
       "sourceIdentitySha256": "9704a949d399f2f12d80ddab199b00f7e9b9ceb755087889629a7bb0f6389a98",
       "sourceDescriptorSha256": "7631a019f541940aa679a448f2de4951ac6f04881c3dded4988f596220975dfe",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "e37148c0212061bd9a83223fd047bee9c8de9331b6ac0774c895a0f358842278",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "22c6833f7ddf67284bdb583fd23b4db9e59b4aa677e1ab302385dbed87da930a",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -13578,24 +13253,19 @@
       "displayName": "M1126 CROWS M2",
       "type": "APC",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/8bba5ecf8eed41129d453bec3c7ce69d2edde8566b730afa2988b2810e8d56cb.webp",
-      "sha256": "8bba5ecf8eed41129d453bec3c7ce69d2edde8566b730afa2988b2810e8d56cb",
-      "bytes": 12724,
+      "path": "/images/vehicle-impressions/496b270ee332db41addbba1654d5eb9a5f40a740dbd510f35340615765e5f5b8.webp",
+      "sha256": "496b270ee332db41addbba1654d5eb9a5f40a740dbd510f35340615765e5f5b8",
+      "bytes": 12718,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.170951,
+      "alphaCoverage": 0.17102,
       "sourcePackageSha256": "2ee9622d9b02a2c503f4fbb08b248d4d17c4ca787e6133ce49e0af680d80ac88",
       "sourceIdentitySha256": "50484d8f5cb3f4e598757e4aeae359d62481c361b666b3fab792fe784acb7e62",
       "sourceDescriptorSha256": "90f9ba673be9b871a4aec789f2bc3bc8629ba8d639124f53ab88b0d4fc9e87f0",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "b9443ad3ac9392131c777a8524bf7d1104ce2b2bd0f8f0a945b1b88ca47b9fec",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "42cf2ac10de6d71da3d5a2d99949f8e839b174a5805e62f0913b74a02f06e0a6",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -13605,24 +13275,19 @@
       "displayName": "M1126 CROWS M240",
       "type": "APC",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/bfc7e622264a3c7a5b41e76b9f063d78931321b64057d26f86028827ec987573.webp",
-      "sha256": "bfc7e622264a3c7a5b41e76b9f063d78931321b64057d26f86028827ec987573",
-      "bytes": 10906,
+      "path": "/images/vehicle-impressions/50df61f1f9fbbab5483cee3ce4d41b35cde2bbf5bffcb4b4be104b9f0786f7e2.webp",
+      "sha256": "50df61f1f9fbbab5483cee3ce4d41b35cde2bbf5bffcb4b4be104b9f0786f7e2",
+      "bytes": 10732,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.173594,
+      "alphaCoverage": 0.173663,
       "sourcePackageSha256": "e31ae712585dce9fd78346b3b0bb05185e163804170678ddb8abcbe8350c6a8d",
       "sourceIdentitySha256": "9a6fdae191341e7370e3a3dd23b692e8baabe27b6b7a95ad1334dd3369a17b50",
       "sourceDescriptorSha256": "d8255c88460655b6533138e82f0cbcaa2db47ddd7a15b171fd9c4e80009f57ca",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "d0bdd5d25dd612c45adff643256052ccf9a99af4635364f1f485fe1f261c1e73",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "c8e42501a0fc1625581d719e7db958bedd1b916f25b06839ce991572b49a4d54",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -13632,24 +13297,19 @@
       "displayName": "M1126 CROWS M240",
       "type": "APC",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/c8705106728dc467127e900f834d548fa7cbf19c19a91aa028c9a5007e94e6ec.webp",
-      "sha256": "c8705106728dc467127e900f834d548fa7cbf19c19a91aa028c9a5007e94e6ec",
-      "bytes": 12632,
+      "path": "/images/vehicle-impressions/48fbaf24285f9c0ed815c6f81797b2131fbf8b7f852c1c84cfa5b278999cefde.webp",
+      "sha256": "48fbaf24285f9c0ed815c6f81797b2131fbf8b7f852c1c84cfa5b278999cefde",
+      "bytes": 12640,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.170347,
+      "alphaCoverage": 0.170417,
       "sourcePackageSha256": "9b944096c94ded82189a1d2b050479f69db01ec3b8c9b3525739b5095fc431b9",
       "sourceIdentitySha256": "75d742bdbc77f4816300ee675d9516740a5a5af460110adc552f0d8dc7f1a0fb",
       "sourceDescriptorSha256": "5b93ecf89761e23b0f166c86678480e80d1e7849bbe2eead72250b3c1203eb9e",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "bb50a830c3602c35ce0a12211e67a308b9ca8d1b320dd9e18e97c0501f91b491",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "bb2a5ffe3143db5ee98741d94dd65b52f40a20ea0f533ac8fd7a5c82f06ad94c",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -14143,24 +13803,19 @@
       "displayName": "M2A3",
       "type": "IFV",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/85aa51960f98c4fc6f45de72339102a9b1648a146bf913d1192a2ff6c86e34c7.webp",
-      "sha256": "85aa51960f98c4fc6f45de72339102a9b1648a146bf913d1192a2ff6c86e34c7",
-      "bytes": 13172,
+      "path": "/images/vehicle-impressions/fde48cee8c99087a3133967daf4815e6e8873d83ba94b8f7663ed1f07f357957.webp",
+      "sha256": "fde48cee8c99087a3133967daf4815e6e8873d83ba94b8f7663ed1f07f357957",
+      "bytes": 12806,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.166832,
+      "alphaCoverage": 0.160052,
       "sourcePackageSha256": "a4da0185490a9999e737aa7ec76afb5a94af9444ea3ad1f6566409bde68c1aaa",
       "sourceIdentitySha256": "afa03670212db8e3e281e901208f3392b6ef6836cfbe0d8f9e4af2a78c16fba9",
       "sourceDescriptorSha256": "5ca7b630ca96edf0c725c1e7ea4f6f83f3f0fe68c821ea0bff6bb5b543ad5218",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 4
-      },
-      "renderSourceSha256": "82cef1279dca8f565a1247cf206826f5d62223f5c14e3104fe91cac417c573f6",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "8725a9050495bcd98aa7357c2757c74bd2ed91889bcdc0250a108f996042c167",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -14170,24 +13825,19 @@
       "displayName": "M2A3",
       "type": "IFV",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/a599b24489f69e47b66d60eda205ea0bc413461852e7dac977d3fbba55e0ec3c.webp",
-      "sha256": "a599b24489f69e47b66d60eda205ea0bc413461852e7dac977d3fbba55e0ec3c",
-      "bytes": 12334,
+      "path": "/images/vehicle-impressions/24fa4e6032101140c166bad1497aac3cddaeee3f7f968ea87ed6b2c0a3862248.webp",
+      "sha256": "24fa4e6032101140c166bad1497aac3cddaeee3f7f968ea87ed6b2c0a3862248",
+      "bytes": 11822,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.167174,
+      "alphaCoverage": 0.158737,
       "sourcePackageSha256": "68f92faef590e7670e2cf68fe65477670113831edf42757b2487dcc22158895b",
       "sourceIdentitySha256": "5b11244ecb06f844ebbef15bea75d1e8e4c82aaacae67478290fa066305d2b05",
       "sourceDescriptorSha256": "9a11a7bebbee081ad5727fdd8c64a85ac27d480fd2cf10dd863cc05a76c8b4a3",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 4
-      },
-      "renderSourceSha256": "3b5c551611b9ef43ac6e7cfd47d71fed0c94b3c2591a671c7276732d163c579b",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 10,
+      "selection": null,
+      "renderSourceSha256": "19ebeb3ca35868c0b2c7e496ed60db4aeee9354cda99198552a28f9b10501d41",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -14197,24 +13847,19 @@
       "displayName": "M7A3",
       "type": "IFV",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/1c56570e1ec40e90f4b5c34a2583599108b1033e34751e00d12283ccdca7135b.webp",
-      "sha256": "1c56570e1ec40e90f4b5c34a2583599108b1033e34751e00d12283ccdca7135b",
-      "bytes": 13500,
+      "path": "/images/vehicle-impressions/21d950fe16f36301ed73dc6ee1bcf2bfe85a6a5df831faf8bb05ae437abf2cac.webp",
+      "sha256": "21d950fe16f36301ed73dc6ee1bcf2bfe85a6a5df831faf8bb05ae437abf2cac",
+      "bytes": 13162,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.171094,
+      "alphaCoverage": 0.162461,
       "sourcePackageSha256": "99d1c22a5fd975c53ac75459ffb9ff845606a029aaf7f40d7b960ceb7e1ea2d7",
       "sourceIdentitySha256": "37b779df778c607cdb99999727ad668e593a770c8705ae043a107c99c2a60cc4",
       "sourceDescriptorSha256": "0bfc4f586d34acecd996a32b251011a57c9e9ba2c48bd6aa5afea5aaa57a6890",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "6c303edc4e70d7564c22fcd5f2da673171ebd3358b16c9c9858870c60367ed99",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "c5886c550764b15a555493f60db8cf7c5039531a0bed661742e8bc94a1306ef3",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -14224,24 +13869,19 @@
       "displayName": "M7A3",
       "type": "IFV",
       "factionId": "USA",
-      "path": "/images/vehicle-impressions/0b15c0c8a1d4e337a85929ee7859b89628ab68097df1252b456fffa1b5c5e623.webp",
-      "sha256": "0b15c0c8a1d4e337a85929ee7859b89628ab68097df1252b456fffa1b5c5e623",
-      "bytes": 12622,
+      "path": "/images/vehicle-impressions/4f8b9a77c304456594cdb49da4f998500b757830035e7643410c88540b7ad59b.webp",
+      "sha256": "4f8b9a77c304456594cdb49da4f998500b757830035e7643410c88540b7ad59b",
+      "bytes": 12116,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.171437,
+      "alphaCoverage": 0.162791,
       "sourcePackageSha256": "08b9c642aa92be6b01f0e540539c638e31be976d8955a88827aa35f49d54921b",
       "sourceIdentitySha256": "02bdbfb4b4d454f2ea66af76437dcc530e81d4c0dffcd6ba36fc49698282e8b9",
       "sourceDescriptorSha256": "b4c622df8316a5f597b750800db2e74fa148dc6bff0838f92bb0b0d2db2656bd",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 6,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "905f4f489fa5371e34a9903570099810ab4c572248820fbf3c33160c1be70d7f",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 9,
+      "selection": null,
+      "renderSourceSha256": "d99a72ce0e4b1cffb3e5e3b114dd475d9e82f44579386a7dffbc484d66449f16",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -14590,15 +14230,10 @@
       "sourcePackageSha256": "01d8cc3b59c392c5a6bb259a4cf8fda6dd42edd41fe5b2bf82cebd14599643ef",
       "sourceIdentitySha256": "f1463c6958c06eeb1d43c1e54aa90cf549cae34467cd9c1c5d4285615bd2f4a8",
       "sourceDescriptorSha256": "cd9be0d1add6d1f83ac96f6fbc0e348ce807a1774aee5b99ee870522e20b9b7d",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "b054c5e71eb097998617fc6d1e8ab836da477c8da29bff1e32da2d6c9a8da81b",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "bfa2b5a776b837be2f2c8e42a1020b0645be2fdcb524c69abb537f6d4a777526",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -14617,15 +14252,10 @@
       "sourcePackageSha256": "00b23de07bd9e9ddf8438ef91315f5d3f650e98803fca32442ecd0f1da1c695e",
       "sourceIdentitySha256": "aca3df7460bd020020e7d1b20d83851ed805ef160c965fb1cfde87a561c7bbdf",
       "sourceDescriptorSha256": "a583bc16d9c1534412313e2351f36cceff6b2c45bfd633c2b356a0283176b9e9",
-      "sourceAssetCount": 5,
-      "sourceOccurrenceCount": 5,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "7cecbcdb32d40a2b926867a8cfc24f0620a3bb3c824156f9b8d545101262c2a5",
+      "sourceAssetCount": 6,
+      "sourceOccurrenceCount": 7,
+      "selection": null,
+      "renderSourceSha256": "c2640de2885a0fd21dddf94de070163a05b76bb80e8f4cee1ea0e3a05fe693c1",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -14635,24 +14265,19 @@
       "displayName": "LAV-25",
       "type": "APC",
       "factionId": "USMC",
-      "path": "/images/vehicle-impressions/2d01a12f1ad70a2f24fca615f537e0318f7c7af5b3087454b876735584ead820.webp",
-      "sha256": "2d01a12f1ad70a2f24fca615f537e0318f7c7af5b3087454b876735584ead820",
-      "bytes": 11796,
+      "path": "/images/vehicle-impressions/0afc4f0a4080ac679ac74bd780065e45cd4d9b3d8dff8fe05791e5448348a130.webp",
+      "sha256": "0afc4f0a4080ac679ac74bd780065e45cd4d9b3d8dff8fe05791e5448348a130",
+      "bytes": 11818,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.152044,
+      "alphaCoverage": 0.152096,
       "sourcePackageSha256": "a5184f5830a56fd93b075d35869e1a0e9ae8a117138000e75f1611610d631d99",
       "sourceIdentitySha256": "dc20486895248185a9f7bc30a3bfbb081257223ca1b0cbce47913a80b8f9c456",
       "sourceDescriptorSha256": "5a9f10f97230dbc9ad746c9aed5e398dfb43017b11f5624fa489d2db92a02d54",
-      "sourceAssetCount": 8,
-      "sourceOccurrenceCount": 8,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "6a97cad1b8c62a6ea73a2a4e63c4fccc1332a5f63dce83948431d6224ec9c79b",
+      "sourceAssetCount": 9,
+      "sourceOccurrenceCount": 11,
+      "selection": null,
+      "renderSourceSha256": "6ecfa41a2bbaa45569f16c7aacc3d2ab3dbcf29a532f0feab00feec093b79922",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -14662,24 +14287,19 @@
       "displayName": "LAV-25",
       "type": "APC",
       "factionId": "USMC",
-      "path": "/images/vehicle-impressions/0da68ae61bfc3d6c51d17874dfda0ed53668e69a3016bed071e289106ed4d772.webp",
-      "sha256": "0da68ae61bfc3d6c51d17874dfda0ed53668e69a3016bed071e289106ed4d772",
-      "bytes": 10802,
+      "path": "/images/vehicle-impressions/489c675f89ef18ff205b737a8b21820e715297b96ce7e433b6d19b0859ae980f.webp",
+      "sha256": "489c675f89ef18ff205b737a8b21820e715297b96ce7e433b6d19b0859ae980f",
+      "bytes": 10788,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.153238,
+      "alphaCoverage": 0.15329,
       "sourcePackageSha256": "f3bcd2db12050ac3ef66ce7685e04e152f758564f2ec9daa03d04f77ce403e3d",
       "sourceIdentitySha256": "f220faed043361a603f0268adf15ddf9b09bd0d8d6899481d1a5a536d648b429",
       "sourceDescriptorSha256": "5b463e91d7835932e7e83a47b0a6e8fead9f371e07e2026649caf5ef20dc71ef",
-      "sourceAssetCount": 10,
-      "sourceOccurrenceCount": 10,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 3
-      },
-      "renderSourceSha256": "841dd8329a2159c6e6b205837e237afd5991cbc9c01affb40d661c5be2795e8b",
+      "sourceAssetCount": 11,
+      "sourceOccurrenceCount": 13,
+      "selection": null,
+      "renderSourceSha256": "76edf1ef14e4de15567a1071aeef7e344ba2842a2c3155c3092425004ba722f3",
       "sourceCatalogVariant": "Woodland"
     },
     {
@@ -15591,24 +15211,19 @@
       "displayName": "BRDM-2",
       "type": "LTV",
       "factionId": "VDV",
-      "path": "/images/vehicle-impressions/536e5385b6eabfd81ad3a7e019a949dc2a520f93249ee8d59e0bfa93c5d8d783.webp",
-      "sha256": "536e5385b6eabfd81ad3a7e019a949dc2a520f93249ee8d59e0bfa93c5d8d783",
-      "bytes": 9350,
+      "path": "/images/vehicle-impressions/88beff19f9d793f504a16abe77d820b8d26f720612bac3a6a5d4d99d9468ab84.webp",
+      "sha256": "88beff19f9d793f504a16abe77d820b8d26f720612bac3a6a5d4d99d9468ab84",
+      "bytes": 9618,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.191007,
+      "alphaCoverage": 0.189952,
       "sourcePackageSha256": "4cb5649394d9449c4248a521da749809b7feca3e31e7944bcf02b30e7a3c593e",
       "sourceIdentitySha256": "9e3b568f4eb65199d0a6f7f661477584bdb2559da1b9d8cd8f1e4ae2066c92de",
       "sourceDescriptorSha256": "627d67c5657a1ea40f2282882e5d3e448198573bc86252f83298128ec8a58860",
-      "sourceAssetCount": 11,
-      "sourceOccurrenceCount": 11,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "39da9bf7753e10da5a5d0f05b0c38c8a42402bf1eedfbcaaef055a0f70d67038",
+      "sourceAssetCount": 12,
+      "sourceOccurrenceCount": 13,
+      "selection": null,
+      "renderSourceSha256": "c67c60fc75206d02ab6531f963154170454bde7763e7c43bc5c7ea5e4d05ec9f",
       "sourceCatalogVariant": "Variant 2"
     },
     {
@@ -15618,24 +15233,19 @@
       "displayName": "BRDM-2",
       "type": "LTV",
       "factionId": "VDV",
-      "path": "/images/vehicle-impressions/e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f.webp",
-      "sha256": "e971ce845156b9166cb7e78335d78bc8374eab1010989a66ae515b4640cf5c3f",
-      "bytes": 11568,
+      "path": "/images/vehicle-impressions/b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a.webp",
+      "sha256": "b0de9c7f84e0ab9738020dba8db5a3d59b8de62374576e47dc1171f352e51b7a",
+      "bytes": 11592,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.191007,
+      "alphaCoverage": 0.189952,
       "sourcePackageSha256": "65f1c3521871d948a3fe32205b8b6e9cb0066b843efc864ef69839f19559a84c",
       "sourceIdentitySha256": "f937e7b86940188fe6da2e1c6062a9cae354dd7ecd5f3e5082efbfab74383450",
       "sourceDescriptorSha256": "64fdb1b7519e69796b6f31bef590a2b2c47b87516480337af5740d77241c9f3d",
-      "sourceAssetCount": 11,
-      "sourceOccurrenceCount": 11,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "84a60aaf676f598d4a8987d658b0ee64924b6bdfee06a92ff7f57ab09bda176e",
+      "sourceAssetCount": 12,
+      "sourceOccurrenceCount": 13,
+      "selection": null,
+      "renderSourceSha256": "992e3daf1433b15661b2850e9d35993a01bc0ecea93bbbc2e64b6d0c32178044",
       "sourceCatalogVariant": "Desert"
     },
     {
@@ -16503,24 +16113,19 @@
       "displayName": "M1117",
       "type": "MRAP",
       "factionId": "WPMC",
-      "path": "/images/vehicle-impressions/f4616a45f4f606f308a79ae244aba4385710c8f12275ea2a17b6290488a23fb6.webp",
-      "sha256": "f4616a45f4f606f308a79ae244aba4385710c8f12275ea2a17b6290488a23fb6",
-      "bytes": 8366,
+      "path": "/images/vehicle-impressions/8416bed77d67d6eaffb54fe6ccbbafcbc85ad689bc12248d3d1ca333e44546d1.webp",
+      "sha256": "8416bed77d67d6eaffb54fe6ccbbafcbc85ad689bc12248d3d1ca333e44546d1",
+      "bytes": 8458,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.133064,
+      "alphaCoverage": 0.134041,
       "sourcePackageSha256": "bf1f623b0a82da122a2f8bd27da25f0c7fc11d42bda07dde0acf570e394be312",
       "sourceIdentitySha256": "21c53562f4320654a5bbfb69fd06e6e4ddc3c1120ce8ddbe6aed06f09468d793",
       "sourceDescriptorSha256": "225d8ecf5fadcf53a95e0313f5283a91ff2dedec5d037cd6cb061529335bb934",
-      "sourceAssetCount": 4,
-      "sourceOccurrenceCount": 4,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 2
-      },
-      "renderSourceSha256": "b1aa602307f4be55b07a397e21f2e3d4c4e176f1c627392ee814706c4488e04a",
+      "sourceAssetCount": 5,
+      "sourceOccurrenceCount": 6,
+      "selection": null,
+      "renderSourceSha256": "c6c07851efaf785e8286acf7111856a24dd46d6db5079a24045c8e6bc4583377",
       "sourceCatalogVariant": "Standard"
     },
     {
@@ -17190,24 +16795,19 @@
       "displayName": "Technical Mortar",
       "type": "SPA",
       "factionId": "WPMC",
-      "path": "/images/vehicle-impressions/cabef6790b442e7998a5d1592fd53cc45646200a5e4388a0bca593335f62d6de.webp",
-      "sha256": "cabef6790b442e7998a5d1592fd53cc45646200a5e4388a0bca593335f62d6de",
-      "bytes": 12080,
+      "path": "/images/vehicle-impressions/f1340e62d5cbc8dcb714645efbf0b3ddb6e376846350e694e2b166ebfeec704f.webp",
+      "sha256": "f1340e62d5cbc8dcb714645efbf0b3ddb6e376846350e694e2b166ebfeec704f",
+      "bytes": 11130,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.206393,
+      "alphaCoverage": 0.174766,
       "sourcePackageSha256": "fa3ca4b12a6410b19e7fc61b50e43a4f6926f1e386557b150bc1fe26f4f28b89",
       "sourceIdentitySha256": "bcfd5aaa1f2ec4d2cb28123306a6292d46ca0f44f68063009dc109a5c2121657",
       "sourceDescriptorSha256": "90ff03c9f4400667ab9ef318eb18450c74cb8e407d62ce1d72c97f026e4db4c1",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "a7a5eea23a9af12fffcae607f89f9830511eb1f64e64029010a564a5acc82250",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "95e3e9178649a7203cc73534c906b52207c7cc7029f176ced0ad3af02c35abf4",
       "sourceCatalogVariant": "Black"
     },
     {
@@ -17217,24 +16817,19 @@
       "displayName": "Technical Mortar",
       "type": "SPA",
       "factionId": "WPMC",
-      "path": "/images/vehicle-impressions/1015d821b626d2f8656c1d6b7faa9fe52193559fb6d03bab6aa755c7bf1f8fea.webp",
-      "sha256": "1015d821b626d2f8656c1d6b7faa9fe52193559fb6d03bab6aa755c7bf1f8fea",
-      "bytes": 12004,
+      "path": "/images/vehicle-impressions/809014c7c99b9d10c09c0796c8fb68f9d06da64b83a42e0e2e2a7484a4ca194c.webp",
+      "sha256": "809014c7c99b9d10c09c0796c8fb68f9d06da64b83a42e0e2e2a7484a4ca194c",
+      "bytes": 11028,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.206393,
+      "alphaCoverage": 0.17651,
       "sourcePackageSha256": "97ea79996f768c06d180ba37e3b1c4f5708ecfd7512de4b7df4478e14312e138",
       "sourceIdentitySha256": "d3103b1eb773f094f0c679fc49d88d366148285ee21c96e8758a487eb4403a6f",
       "sourceDescriptorSha256": "37c3a84679c67f23e4c19f698b725c4ae68e85fc0653c25736a88d33b10db433",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "005f6a8bab57efc6fd49af195ef45b9e279c3f74645256d4544e28d65c723317",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "98e82fc8d35ddd352c1a7a29d33315d006404a21904088d314f00bfaeb78855a",
       "sourceCatalogVariant": "Grey"
     },
     {
@@ -17244,31 +16839,26 @@
       "displayName": "Technical Mortar",
       "type": "SPA",
       "factionId": "WPMC",
-      "path": "/images/vehicle-impressions/782f9e2bf27428132b28ffb5aff3fc653ca130e7b0d0a54d3139b02ad99a26ed.webp",
-      "sha256": "782f9e2bf27428132b28ffb5aff3fc653ca130e7b0d0a54d3139b02ad99a26ed",
-      "bytes": 12602,
+      "path": "/images/vehicle-impressions/089a7883097dd5cf368dc585c717c05a66d01543c6a0b15e7f6be5f44c8c5c35.webp",
+      "sha256": "089a7883097dd5cf368dc585c717c05a66d01543c6a0b15e7f6be5f44c8c5c35",
+      "bytes": 11580,
       "width": 640,
       "height": 360,
-      "alphaCoverage": 0.206393,
+      "alphaCoverage": 0.174766,
       "sourcePackageSha256": "8697439ed7e6be3fed28abc60665d87fef5b4e6fe5b6b9827277213d70cd64ec",
       "sourceIdentitySha256": "199769f0ce953a7829945bdb86de225398897f554553f7380aeabe063ddff65b",
       "sourceDescriptorSha256": "30bce09a27dbda4d286c7df77e29838277d721411b0996062bb5b8ab0e3f6d8e",
-      "sourceAssetCount": 6,
-      "sourceOccurrenceCount": 7,
-      "selection": {
-        "mode": "actor-parent-transform-synchronization",
-        "label": "保留与挂载父级同步的武器组件",
-        "selectedOccurrences": 1,
-        "filteredOccurrences": 1
-      },
-      "renderSourceSha256": "32093f4aecca70da6c41a828e13393236f9f7260b9c201417d1912193423530e",
+      "sourceAssetCount": 7,
+      "sourceOccurrenceCount": 8,
+      "selection": null,
+      "renderSourceSha256": "b4515db4d4240b46b60fd3211713f5d093378d6af8dbcd153abad90f1a063b29",
       "sourceCatalogVariant": "Tan"
     }
   ],
   "summary": {
     "cards": 384,
     "variants": 604,
-    "bytes": 7053818,
+    "bytes": 7045168,
     "maxBytes": 22744
   }
 }
