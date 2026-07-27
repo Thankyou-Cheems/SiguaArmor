@@ -74,9 +74,10 @@ interface TurretPreviewControlsProps {
 const COMPASS_SAMPLE_STEP = 5;
 const COMPASS_MIN_DEGREES = -180;
 const COMPASS_MAX_DEGREES = 180;
-const COMPASS_INNER_RADIUS = 34;
-const COMPASS_OUTER_RADIUS = 43;
-const PITCH_LEVEL_COLOR = "hsl(44 72% 58%)";
+const DEPRESSION_INNER_RADIUS = 34;
+const DEPRESSION_OUTER_RADIUS = 43;
+const ELEVATION_INNER_RADIUS = 25;
+const ELEVATION_OUTER_RADIUS = 32;
 
 function rounded(value: number, maximumFractionDigits = 1) {
   return new Intl.NumberFormat("zh-CN", { maximumFractionDigits }).format(value);
@@ -132,13 +133,6 @@ function elevationColor(maxPitchDegrees: number) {
   const hue = 194 + height * 18;
   const lightness = 42 + height * 13;
   return `hsl(${hue.toFixed(0)} 70% ${lightness.toFixed(0)}%)`;
-}
-
-function pitchColor(pitchDegrees: number) {
-  if (Math.abs(pitchDegrees) < 0.05) return PITCH_LEVEL_COLOR;
-  return pitchDegrees < 0
-    ? depressionColor(pitchDegrees)
-    : elevationColor(pitchDegrees);
 }
 
 function turretProfileSamples(turret: ReferenceTurret) {
@@ -212,7 +206,7 @@ export function TurretLimitCompass({
   onYawChange,
   onInteractionEnd,
 }: TurretLimitCompassProps) {
-  const gradientIdPrefix = useId().replaceAll(":", "");
+  const patternIdPrefix = useId().replaceAll(":", "");
   const compassRef = useRef<SVGSVGElement>(null);
   const activePointerIdRef = useRef<number | null>(null);
   const activeDetentRef = useRef<number | null>(null);
@@ -368,7 +362,7 @@ export function TurretLimitCompass({
     >
       <defs>
         <pattern
-          id={`${gradientIdPrefix}-yaw-locked`}
+          id={`${patternIdPrefix}-yaw-locked`}
           width="4"
           height="4"
           patternUnits="userSpaceOnUse"
@@ -383,54 +377,21 @@ export function TurretLimitCompass({
             d="M-1 1 1-1M0 4 4 0M3 5 5 3"
           />
         </pattern>
-        {samples.map((sample, index) => {
-          const outer = polarPoint(
-            sample.yawDegrees,
-            COMPASS_OUTER_RADIUS,
-          );
-          const inner = polarPoint(
-            sample.yawDegrees,
-            COMPASS_INNER_RADIUS,
-          );
-          const zeroOffset =
-            sample.minPitchDegrees < 0 && sample.maxPitchDegrees > 0
-              ? -sample.minPitchDegrees /
-                (sample.maxPitchDegrees - sample.minPitchDegrees)
-              : null;
-          return (
-            <linearGradient
-              id={`${gradientIdPrefix}-pitch-${index}`}
-              key={`${sample.startDegrees}:gradient`}
-              gradientUnits="userSpaceOnUse"
-              x1={outer.x}
-              y1={outer.y}
-              x2={inner.x}
-              y2={inner.y}
-            >
-              <stop
-                offset="0%"
-                stopColor={pitchColor(sample.minPitchDegrees)}
-              />
-              {zeroOffset !== null ? (
-                <stop
-                  offset={`${(zeroOffset * 100).toFixed(2)}%`}
-                  stopColor={PITCH_LEVEL_COLOR}
-                />
-              ) : null}
-              <stop
-                offset="100%"
-                stopColor={pitchColor(sample.maxPitchDegrees)}
-              />
-            </linearGradient>
-          );
-        })}
       </defs>
       <circle className="turret-limit-compass__backdrop" cx="50" cy="50" r="46" />
       <circle
         className="turret-limit-compass__range-track"
+        data-kind="depression"
         cx="50"
         cy="50"
         r="38.5"
+      />
+      <circle
+        className="turret-limit-compass__range-track"
+        data-kind="elevation"
+        cx="50"
+        cy="50"
+        r="28.5"
       />
       {hasLockedArc ? (
         <path
@@ -438,31 +399,50 @@ export function TurretLimitCompass({
           d={annularSectorPath(
             bounds.maxDegrees,
             bounds.minDegrees + 360,
-            33,
+            24,
             44,
           )}
-          fill={`url(#${gradientIdPrefix}-yaw-locked)`}
+          fill={`url(#${patternIdPrefix}-yaw-locked)`}
           aria-hidden="true"
         />
       ) : null}
-      {samples.map((sample, index) => (
-        <path
-          className="turret-limit-compass__pitch-sector"
+      {samples.map((sample) => (
+        <g
+          className="turret-limit-compass__pitch-zones"
           key={sample.startDegrees}
-          d={annularSectorPath(
-            sample.startDegrees,
-            sample.endDegrees,
-            COMPASS_INNER_RADIUS,
-            COMPASS_OUTER_RADIUS,
-          )}
-          fill={`url(#${gradientIdPrefix}-pitch-${index})`}
-          stroke={`url(#${gradientIdPrefix}-pitch-${index})`}
           aria-hidden="true"
         >
-          <title>
-            {`${angleLabel(sample.yawDegrees)}：${angleLabel(sample.minPitchDegrees)} 至 ${angleLabel(sample.maxPitchDegrees)}`}
-          </title>
-        </path>
+          <path
+            className="turret-limit-compass__pitch-sector"
+            data-kind="depression"
+            d={annularSectorPath(
+              sample.startDegrees,
+              sample.endDegrees,
+              DEPRESSION_INNER_RADIUS,
+              DEPRESSION_OUTER_RADIUS,
+            )}
+            fill={depressionColor(sample.minPitchDegrees)}
+          >
+            <title>
+              {`${angleLabel(sample.yawDegrees)}：俯角下限 ${angleLabel(sample.minPitchDegrees)}`}
+            </title>
+          </path>
+          <path
+            className="turret-limit-compass__pitch-sector"
+            data-kind="elevation"
+            d={annularSectorPath(
+              sample.startDegrees,
+              sample.endDegrees,
+              ELEVATION_INNER_RADIUS,
+              ELEVATION_OUTER_RADIUS,
+            )}
+            fill={elevationColor(sample.maxPitchDegrees)}
+          >
+            <title>
+              {`${angleLabel(sample.yawDegrees)}：仰角上限 ${angleLabel(sample.maxPitchDegrees)}`}
+            </title>
+          </path>
+        </g>
       ))}
       {yawLimited ? (
         <path
@@ -470,7 +450,7 @@ export function TurretLimitCompass({
           d={annularSectorPath(
             bounds.minDegrees,
             bounds.maxDegrees,
-            33,
+            24,
             44,
           )}
           aria-hidden="true"
@@ -620,6 +600,80 @@ export function TurretLimitCompass({
   );
 }
 
+function pitchRangeLabel(minimum: number, maximum: number) {
+  return Math.abs(maximum - minimum) < 0.05
+    ? angleLabel(minimum)
+    : `${angleLabel(minimum)}～${angleLabel(maximum)}`;
+}
+
+export function TurretStationIndicator({
+  turret,
+  stationLabel,
+}: {
+  turret: ReferenceTurret;
+  stationLabel: string;
+}) {
+  const bounds = turretYawBounds(turret);
+  const yawDegrees = clampTurretYaw(turret, 0);
+  const current = turretPitchWindowAtYaw(turret, yawDegrees);
+  const summary = profileSummary(turret);
+  if (!current || !summary) return null;
+
+  return (
+    <figure
+      className="turret-station-indicator"
+      data-authority={turret.limits?.authority ?? "reference"}
+      data-yaw-limited={!bounds.continuous || undefined}
+      aria-label={`${stationLabel}武器站射界指示器`}
+    >
+      <TurretLimitCompass
+        turret={turret}
+        yawDegrees={yawDegrees}
+        size={108}
+        compact
+      />
+      <figcaption>
+        <span className="turret-station-indicator__heading">
+          <strong>{bounds.continuous ? "360° 全向" : "受限射界"}</strong>
+          <em>{authorityLabel(turret)}</em>
+        </span>
+        <dl>
+          <div>
+            <dt>水平</dt>
+            <dd>
+              {bounds.continuous
+                ? "全向"
+                : `${angleLabel(bounds.minDegrees)}～${angleLabel(bounds.maxDegrees)}`}
+            </dd>
+          </div>
+          <div>
+            <dt>俯角</dt>
+            <dd>
+              {pitchRangeLabel(
+                summary.deepestDepression,
+                summary.shallowestDepression,
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>仰角</dt>
+            <dd>
+              {pitchRangeLabel(
+                summary.lowestElevation,
+                summary.highestElevation,
+              )}
+            </dd>
+          </div>
+        </dl>
+        <span className="turret-station-indicator__legend" aria-label="射界色块说明">
+          <i data-kind="depression" />外圈俯角
+          <i data-kind="elevation" />内圈仰角
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
+
 export function TurretEnvelopeCard({
   turret,
   stationLabel,
@@ -700,7 +754,8 @@ export function TurretEnvelopeCard({
         </div>
       </div>
       <div className="turret-envelope-card__legend" aria-label="射界图图例">
-        <span><i data-kind="pitch-range" />环带 · 俯角至仰角渐变</span>
+        <span><i data-kind="depression" />外圈色块 · 俯角下限</span>
+        <span><i data-kind="elevation" />内圈色块 · 仰角上限</span>
         {!bounds.continuous ? (
           <span><i data-kind="yaw-range" />亮区 · 可旋转范围</span>
         ) : null}

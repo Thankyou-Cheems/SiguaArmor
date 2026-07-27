@@ -95,6 +95,12 @@ import {
   type SiteEdition,
 } from "./site-edition";
 
+const WikiTurretStationIndicator = lazy(() =>
+  import("./TurretLimitsDisplay").then(({ TurretStationIndicator }) => ({
+    default: TurretStationIndicator,
+  })),
+);
+
 const ALL_GROUPS = ALL_CATALOG_GROUPS;
 const CATEGORY_ICON_BY_PROMO_ENTRY = categoryIconConfig.promoEntryIcons as Record<string, string>;
 const CATEGORY_ICON_BY_CARD_ID =
@@ -1720,6 +1726,30 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
                   </>
                 ) : null}
               </dl>
+              {seat.turret ? (
+                <Suspense
+                  fallback={(
+                    <div
+                      className="seat-detail-grid__turret-indicator-status"
+                      role="status"
+                    >
+                      正在载入射界指示器…
+                    </div>
+                  )}
+                >
+                  <WikiTurretStationIndicator
+                    turret={seat.turret}
+                    stationLabel={`${seatRoleLabel(seat.role)} F${seat.index}`}
+                  />
+                </Suspense>
+              ) : (
+                <p
+                  className="seat-detail-grid__turret-indicator-status"
+                  role="note"
+                >
+                  暂无可验证的武器站射界
+                </p>
+              )}
               </article>
             );
           })}
