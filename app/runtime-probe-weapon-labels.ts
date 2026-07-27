@@ -15,6 +15,10 @@ import {
   distinctInfantryHitAnalysisWeaponGroups,
 } from "../lib/infantry-hit-analysis-weapons.ts";
 import { runtimeHitRecordReferenceForVariant } from "./runtime-probe-preview-data";
+import {
+  buildRuntimeAttackSourceShareSlug,
+  normalizeRuntimeAttackSourceShareSlug,
+} from "../lib/runtime-attack-source-share.mjs";
 import wikiInfantryWeaponIndexJson from "./wiki-infantry-weapon-ballistics-index.json";
 import weaponLabelIndexJson from "./runtime-probe-weapon-label-index.json";
 
@@ -149,6 +153,7 @@ export interface RuntimeAttackSourceWeapon extends RuntimeAttackSourceWeaponReco
 }
 
 export interface RuntimeAttackSource extends Omit<RuntimeAttackSourceRecord, "weapons"> {
+  shareSlug: string;
   sourceKind: "vehicle" | "wiki-infantry";
   weapons: RuntimeAttackSourceWeapon[];
 }
@@ -324,16 +329,19 @@ for (const binding of weaponLabelIndex.bindings) {
   bindingByIdentity.set(identity, binding);
 }
 
-const attackSourceByCardId = new Map<string, RuntimeAttackSource>();
+const attackSourceById = new Map<string, RuntimeAttackSource>();
 const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
   weaponLabelIndex.attackSources.map((source) => {
-    const duplicateCardId = source.cardIds.some((cardId) => attackSourceByCardId.has(cardId));
+    const duplicateCardId = source.cardIds.some((cardId) => attackSourceById.has(cardId));
+    const shareSlug = buildRuntimeAttackSourceShareSlug(source);
     const canonicalReleaseRecord = runtimeHitRecordReferenceForVariant(
       source.cardId,
       source.canonicalRawName,
     );
     if (
       duplicateCardId ||
+      normalizeRuntimeAttackSourceShareSlug(shareSlug) !== shareSlug ||
+      attackSourceById.has(shareSlug) ||
       !canonicalReleaseRecord ||
       canonicalReleaseRecord.vehicleId !== source.vehicleId ||
       source.cardIds.length === 0 ||
@@ -357,6 +365,7 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
     const ballisticsIds = new Set<string>();
     const normalized: RuntimeAttackSource = {
       ...source,
+      shareSlug,
       sourceKind: "vehicle",
       vehicleId: canonicalReleaseRecord.vehicleId,
       recordUrl: canonicalReleaseRecord.recordUrl,
@@ -417,7 +426,8 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
         };
       }),
     };
-    for (const cardId of source.cardIds) attackSourceByCardId.set(cardId, normalized);
+    for (const cardId of source.cardIds) attackSourceById.set(cardId, normalized);
+    attackSourceById.set(shareSlug, normalized);
     return normalized;
   });
 
@@ -471,6 +481,7 @@ const wikiInfantryAttackSource: RuntimeAttackSource = {
   sourceKind: "wiki-infantry",
   cardId: WIKI_INFANTRY_ATTACK_SOURCE_CARD_ID,
   cardIds: [WIKI_INFANTRY_ATTACK_SOURCE_CARD_ID],
+  shareSlug: "inf-weapons",
   displayName: "步兵武器",
   groupId: "infantry-weapons",
   groupName: "步兵",
@@ -493,7 +504,15 @@ const wikiInfantryAttackSource: RuntimeAttackSource = {
   baseCurveFallbackWeaponCount: 0,
   weapons: wikiInfantryAttackSourceWeapons,
 };
-attackSourceByCardId.set(WIKI_INFANTRY_ATTACK_SOURCE_CARD_ID, wikiInfantryAttackSource);
+if (
+  normalizeRuntimeAttackSourceShareSlug(wikiInfantryAttackSource.shareSlug) !==
+    wikiInfantryAttackSource.shareSlug ||
+  attackSourceById.has(wikiInfantryAttackSource.shareSlug)
+) {
+  throw new Error("Invalid Wiki infantry attack source share slug");
+}
+attackSourceById.set(WIKI_INFANTRY_ATTACK_SOURCE_CARD_ID, wikiInfantryAttackSource);
+attackSourceById.set(wikiInfantryAttackSource.shareSlug, wikiInfantryAttackSource);
 
 export const runtimeAttackSources: readonly RuntimeAttackSource[] = [
   ...runtimeVehicleAttackSources,
@@ -521,8 +540,8 @@ export function runtimeAttackWeaponSupportsHitAnalysis(
     ballistics.damageTypePath !== null;
 }
 
-export function runtimeAttackSourceForCardId(cardId: string) {
-  return attackSourceByCardId.get(cardId) ?? null;
+export function runtimeAttackSourceForId(id: string) {
+  return attackSourceById.get(id) ?? null;
 }
 
 export function runtimeWeaponLabelFor({

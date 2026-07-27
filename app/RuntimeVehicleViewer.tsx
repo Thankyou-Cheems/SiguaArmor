@@ -23,6 +23,15 @@ import {
 } from "../lib/analysis-visual-surface-policy";
 import { dedupeIdenticalVisualPlacements } from "../lib/runtime-visual-occurrence-dedupe";
 import {
+  clampTurretPitch,
+  clampTurretYaw,
+  resolveRuntimeTurretAssembly,
+  resolveRuntimeTurretHitComponentAssembly,
+  runtimeTurretFallbackSpec,
+  turretArticulationMatrices,
+  type RuntimeTurretAssembly,
+} from "../lib/turret-articulation";
+import {
   editorNativeEffectiveDamageAmount,
   isEditorNativeComponentOnlyDamageEvent,
   isEditorNativeVehicleDamageEvent,
@@ -47,6 +56,7 @@ import {
 import {
   createHitSceneThreeModel,
   setHitSceneThreeModelArmorThicknessScale,
+  setHitSceneThreeModelComponentPoses,
   setHitSceneThreeModelHoveredProfile,
   setHitSceneThreeModelMode,
   setHitSceneThreeModelSpacedArmorAnimationTime,
@@ -61,10 +71,19 @@ import {
 } from "../lib/runtime-hit-scene";
 import { runtimeAnalysisVisualUrl } from "../lib/runtime-visual-lazy-load";
 import type { RuntimeVehiclePreview } from "./runtime-probe-preview-data";
+import type {
+  ReferenceData,
+  ReferenceSeat,
+  ReferenceTurretArticulation,
+} from "./catalog-types";
+import {
+  TurretPreviewControls,
+  type TurretPreviewStation,
+} from "./TurretLimitsDisplay";
 import {
   INFANTRY_WEAPON_CATEGORIES,
   runtimeAttackWeaponSupportsHitAnalysis,
-  runtimeAttackSourceForCardId,
+  runtimeAttackSourceForId,
   runtimeAttackSources,
   type RuntimeAttackSource,
 } from "./runtime-probe-weapon-labels";
@@ -94,6 +113,10 @@ import {
   decodeViewerCameraState,
   encodeViewerCameraState,
 } from "../lib/viewer-camera-share.mjs";
+import {
+  decodeViewerTurretState,
+  encodeViewerTurretState,
+} from "../lib/viewer-turret-share.mjs";
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
@@ -169,6 +192,64 @@ interface SearchableSelectMetric {
   penetrationMm: number | null;
   penetrationKind: WeaponPenetrationKind;
   damage: number | null;
+}
+
+interface RuntimeTurretPreviewStation extends TurretPreviewStation {
+  assembly: RuntimeTurretAssembly | null;
+  seat: ReferenceSeat;
+}
+
+interface RuntimeExteriorOccurrence {
+  object: THREE.Group;
+  baseMatrix: THREE.Matrix4;
+}
+
+interface RuntimeTurretPose {
+  stationId: string;
+  assembly: RuntimeTurretAssembly | null;
+  articulation?: ReferenceTurretArticulation;
+  yawDegrees: number;
+  pitchDegrees: number;
+}
+
+interface RuntimeTurretPoseState {
+  yawDegrees: number;
+  pitchDegrees: number;
+}
+
+function runtimeTurretStationDepth(
+  station: RuntimeTurretPreviewStation,
+  stations: RuntimeTurretPreviewStation[],
+  visiting = new Set<string>(),
+): number {
+  const componentId = station.assembly?.yawComponentPlacementId;
+  if (!componentId || visiting.has(station.id)) return 0;
+  const nextVisiting = new Set(visiting).add(station.id);
+  const parent = stations
+    .filter(
+      (candidate) =>
+        candidate.id !== station.id &&
+        candidate.assembly?.yawPlacementIds.includes(componentId),
+    )
+    .sort(
+      (left, right) =>
+        (left.assembly?.yawPlacementIds.length ?? Number.MAX_SAFE_INTEGER) -
+        (right.assembly?.yawPlacementIds.length ?? Number.MAX_SAFE_INTEGER),
+    )[0];
+  return parent
+    ? 1 + runtimeTurretStationDepth(parent, stations, nextVisiting)
+    : 0;
+}
+
+function orderedRuntimeTurretStations(
+  stations: RuntimeTurretPreviewStation[],
+) {
+  return [...stations].sort(
+    (left, right) =>
+      runtimeTurretStationDepth(left, stations) -
+        runtimeTurretStationDepth(right, stations) ||
+      left.seat.index - right.seat.index,
+  );
 }
 
 interface SearchableSelectOption {
@@ -1137,6 +1218,13 @@ function defaultAttackWeaponOptionIndex(source: RuntimeAttackSource) {
   return armorPiercing >= 0 ? armorPiercing : 0;
 }
 
+function runtimeAttackSourceMatchesId(
+  source: RuntimeAttackSource,
+  id: string,
+) {
+  return source.shareSlug === id || source.cardIds.includes(id);
+}
+
 const WEAPON_SELECTION_SEPARATOR = "::weapon::";
 
 function weaponSelectionValue(sourceCardId: string, optionIndex: number) {
@@ -1401,11 +1489,40 @@ function createShotVisual(traceIndex: number): ShotVisualRuntime {
   };
 }
 
+function turretStationRoleLabel(role: ReferenceSeat["role"]) {
+  return ({
+    driver: "驾驶员",
+    gunner: "炮手",
+    "machine-gunner": "机枪手",
+    grenadier: "榴弹手",
+    "missile-operator": "导弹操作员",
+    "rocket-operator": "火箭操作员",
+    commander: "车长",
+    passenger: "乘员",
+  } satisfies Record<ReferenceSeat["role"], string>)[role];
+}
+
+function turretStationEquipmentLabel(
+  referenceData: ReferenceData,
+  seat: ReferenceSeat,
+) {
+  const labels = [...new Set(
+    referenceData.weapons
+      .filter((weapon) => weapon.turretName === seat.turretName)
+      .map((weapon) => weapon.displayName)
+      .filter(Boolean),
+  )];
+  if (labels.length === 0) return seat.turretName ?? "炮塔";
+  if (labels.length === 1) return labels[0];
+  return `${labels[0]} 等 ${labels.length} 项`;
+}
+
 export function RuntimeVehicleViewer({
   preview,
   showChrome = true,
   mode: requestedMode = "exterior",
   displayName = preview.variantRawName,
+  referenceData,
   onModeChange,
   onClose,
   navigationState,
@@ -1415,6 +1532,7 @@ export function RuntimeVehicleViewer({
   showChrome?: boolean;
   mode?: ViewerAssetMode;
   displayName?: string;
+  referenceData?: ReferenceData | null;
   onModeChange?: (mode: ViewerAssetMode) => void;
   onClose?: () => void;
   navigationState?: ViewerNavigationState;
@@ -1449,6 +1567,13 @@ export function RuntimeVehicleViewer({
     decodeSharedShotPaths(navigationState?.shots ?? ""),
   );
   const renderRef = useRef<(() => void) | null>(null);
+  const exteriorOccurrencesRef = useRef<Map<string, RuntimeExteriorOccurrence>>(
+    new Map(),
+  );
+  const applyTurretPoseRef = useRef<(() => void) | null>(null);
+  const turretPosesRef = useRef<RuntimeTurretPose[]>([]);
+  const turretPoseStatesRef = useRef<Record<string, RuntimeTurretPoseState>>({});
+  const appliedTurretNavigationKeyRef = useRef("");
   const modeRef = useRef(mode);
   const weaponIndexRef = useRef(-1);
   const weaponOptionIndexRef = useRef(-1);
@@ -1472,7 +1597,157 @@ export function RuntimeVehicleViewer({
   const visual = preview.visual;
   const hit = preview.hit;
   const uniqueAssetCount = visual ? new Set(visual.placements.map(({ assetUrl }) => assetUrl)).size : 0;
-
+  const runtimeTurretStations = useMemo<RuntimeTurretPreviewStation[]>(() => {
+    if (!referenceData || !visual) return [];
+    const seats = referenceData.seats.filter(
+      (seat) => Boolean(seat.turret && seat.turretName),
+    );
+    const primarySeat = seats.find(
+      (seat) => seat.role === "gunner" && seat.stationKind === "weapon-station",
+    ) ?? seats.find((seat) => seat.role === "gunner") ?? seats[0];
+    const dedupedPlacements = dedupeIdenticalVisualPlacements(
+      visual.placements,
+    ).placements;
+    const allTurretNames = [
+      ...new Set(seats.map((seat) => seat.turretName!)),
+    ];
+    const fallbackSpecs = new Map(
+      allTurretNames.map((turretName) => [
+        turretName,
+        runtimeTurretFallbackSpec(preview.generatedClass, turretName),
+      ]),
+    );
+    return seats.map((seat) => {
+      const stationWeaponNames = referenceData.weapons
+        .filter((weapon) => weapon.turretName === seat.turretName)
+        .map((weapon) => weapon.gunName);
+      const assembly = resolveRuntimeTurretAssembly({
+        placements: dedupedPlacements,
+        vehicleGeneratedClass: preview.generatedClass,
+        turretName: seat.turretName!,
+        stationWeaponNames,
+        articulation: seat.turret!.articulation,
+        primary: seat === primarySeat,
+        siblingTurretNames: allTurretNames,
+        absorbsSiblingStations: seat === primarySeat && seat.role === "gunner",
+        fallbackYawAnchorComponentName:
+          fallbackSpecs.get(seat.turretName!)?.yawAnchorComponentName,
+        fallbackYawAnchorActorName:
+          fallbackSpecs.get(seat.turretName!)?.yawAnchorActorName,
+        fallbackPitchUsesYawAnchor:
+          fallbackSpecs.get(seat.turretName!)?.pitchUsesYawAnchor,
+        fallbackHitActorClassNames:
+          fallbackSpecs.get(seat.turretName!)?.hitActorClassNames,
+        carriedHitActorClassNames: seat === primarySeat && seat.role === "gunner"
+          ? allTurretNames.flatMap((turretName) =>
+              fallbackSpecs.get(turretName)?.hitActorClassNames ?? []
+            )
+          : [],
+        siblingFallbackYawAnchorComponentNames: allTurretNames
+          .filter((turretName) => turretName !== seat.turretName)
+          .map((turretName) =>
+            fallbackSpecs.get(turretName)?.yawAnchorComponentName
+          )
+          .filter((name): name is string => Boolean(name)),
+      });
+      return {
+        id: `${seat.index}:${seat.turretName}`,
+        label: `${turretStationRoleLabel(seat.role)} · F${seat.index}`,
+        equipmentLabel: turretStationEquipmentLabel(referenceData, seat),
+        turret: seat.turret!,
+        yawAvailable: Boolean(assembly?.yawPlacementIds.length),
+        pitchAvailable: Boolean(assembly?.pitchPlacementIds.length),
+        assembly,
+        seat,
+      };
+    });
+  }, [preview.generatedClass, referenceData, visual]);
+  const defaultTurretStation = runtimeTurretStations.find(
+    (station) =>
+      station.seat.role === "gunner" &&
+      station.seat.stationKind === "weapon-station",
+  ) ?? runtimeTurretStations.find(
+    (station) => station.seat.role === "gunner",
+  ) ?? runtimeTurretStations[0] ?? null;
+  const [activeTurretStationId, setActiveTurretStationId] = useState("");
+  const [turretPoseStates, setTurretPoseStates] = useState<
+    Record<string, RuntimeTurretPoseState>
+  >({});
+  const activeTurretStation = runtimeTurretStations.find(
+    (station) => station.id === activeTurretStationId,
+  ) ?? defaultTurretStation;
+  const activeTurretPose = activeTurretStation
+    ? turretPoseStates[activeTurretStation.id] ?? {
+        yawDegrees: 0,
+        pitchDegrees: 0,
+      }
+    : { yawDegrees: 0, pitchDegrees: 0 };
+  const clampedTurretYaw = activeTurretStation
+    ? clampTurretYaw(
+        activeTurretStation.turret,
+        activeTurretPose.yawDegrees,
+      )
+    : 0;
+  const clampedTurretPitch = activeTurretStation
+    ? clampTurretPitch(
+        activeTurretStation.turret,
+        clampedTurretYaw,
+        activeTurretPose.pitchDegrees,
+      )
+    : 0;
+  const updateTurretStationPose = (
+    station: RuntimeTurretPreviewStation,
+    yawDegrees: number,
+    pitchDegrees: number,
+  ) => {
+    const clampedYaw = clampTurretYaw(station.turret, yawDegrees);
+    const nextPoseStates = {
+      ...turretPoseStatesRef.current,
+      [station.id]: {
+        yawDegrees: clampedYaw,
+        pitchDegrees: clampTurretPitch(
+          station.turret,
+          clampedYaw,
+          pitchDegrees,
+        ),
+      },
+    };
+    turretPoseStatesRef.current = nextPoseStates;
+    setTurretPoseStates(nextPoseStates);
+    return nextPoseStates;
+  };
+  const commitTurretNavigation = (
+    stationId: string,
+    poseStates = turretPoseStatesRef.current,
+  ) => {
+    const current = navigationStateRef.current;
+    if (!current || !onNavigationStateChangeRef.current) return;
+    const activeStationIndex = Math.max(
+      0,
+      runtimeTurretStations.findIndex((station) => station.id === stationId),
+    );
+    const token = encodeViewerTurretState({
+      activeStationIndex,
+      poses: runtimeTurretStations.map((station, stationIndex) => {
+        const state = poseStates[station.id] ?? {
+          yawDegrees: 0,
+          pitchDegrees: 0,
+        };
+        return {
+          stationIndex,
+          yawDegrees: state.yawDegrees,
+          pitchDegrees: state.pitchDegrees,
+        };
+      }),
+    });
+    if (current.turrets === token) return;
+    const next = { ...current, turrets: token };
+    navigationStateRef.current = next;
+    appliedTurretNavigationKeyRef.current = `${runtimeTurretStations
+      .map((station) => station.id)
+      .join("|")}:${token}`;
+    onNavigationStateChangeRef.current(next);
+  };
   const [viewerState, setViewerState] = useState<ViewerState>({
     kind: "loading",
     loaded: 0,
@@ -1481,8 +1756,8 @@ export function RuntimeVehicleViewer({
   const [hitState, setHitState] = useState<HitState>(hit ? { kind: "loading" } : { kind: "absent" });
   const [hitHeader, setHitHeader] = useState<ParsedRuntimeHitScene["header"] | null>(null);
   const [attackSourceCardId, setAttackSourceCardId] = useState(() =>
-    runtimeAttackSourceForCardId(navigationState?.attacker ?? "")?.cardId ??
-    runtimeAttackSourceForCardId(preview.cardId)?.cardId ??
+    runtimeAttackSourceForId(navigationState?.attacker ?? "")?.cardId ??
+    runtimeAttackSourceForId(preview.cardId)?.cardId ??
     runtimeAttackSources[0]?.cardId ??
     ""
   );
@@ -1498,6 +1773,9 @@ export function RuntimeVehicleViewer({
   const [targetDistanceM, setTargetDistanceM] = useState(
     navigationState?.distance ?? DEFAULT_TARGET_DISTANCE_M,
   );
+  // The parent navigation update rerenders the full catalog tree. Keep it out
+  // of continuous range input and publish the final distance on interaction end.
+  const [distanceInteractionActive, setDistanceInteractionActive] = useState(false);
   const [specialArmorVisible, setSpecialArmorVisible] = useState(true);
   const [exteriorSpacedArmorHighlight, setExteriorSpacedArmorHighlight] =
     useState(false);
@@ -1520,7 +1798,7 @@ export function RuntimeVehicleViewer({
     completed: 0,
     total: 0,
   });
-  const attackSource = runtimeAttackSourceForCardId(attackSourceCardId) ?? null;
+  const attackSource = runtimeAttackSourceForId(attackSourceCardId) ?? null;
   const weaponOptions = useMemo(
     () => attackSource?.weapons.map((_, optionIndex) => optionIndex) ?? [],
     [attackSource],
@@ -1879,13 +2157,13 @@ export function RuntimeVehicleViewer({
   }, [updateHostShotState]);
 
   useEffect(() => {
-    const requested = runtimeAttackSourceForCardId(navigationState?.attacker ?? "");
+    const requested = runtimeAttackSourceForId(navigationState?.attacker ?? "");
     if (requested) setAttackSourceCardId(requested.cardId);
   }, [navigationState?.attacker]);
 
   useEffect(() => {
     if (navigationState?.attacker) return;
-    const preferred = runtimeAttackSourceForCardId(preview.cardId) ?? runtimeAttackSources[0];
+    const preferred = runtimeAttackSourceForId(preview.cardId) ?? runtimeAttackSources[0];
     if (preferred) setAttackSourceCardId(preferred.cardId);
   }, [navigationState?.attacker, preview.cardId]);
 
@@ -1926,7 +2204,8 @@ export function RuntimeVehicleViewer({
       }
       const requestedNavigation = navigationStateRef.current;
       const navigationApplies =
-        !requestedNavigation?.attacker || source.cardIds.includes(requestedNavigation.attacker);
+        !requestedNavigation?.attacker ||
+        runtimeAttackSourceMatchesId(source, requestedNavigation.attacker);
       const pendingSelection = pendingAttackWeaponSelectionRef.current;
       const pendingByIndex =
         pendingSelection?.sourceCardId === source.cardId &&
@@ -2111,7 +2390,10 @@ export function RuntimeVehicleViewer({
       !attackHeader ||
       !attackSource ||
       weaponOptions.length === 0 ||
-      (requestedNavigation.attacker && !attackSource.cardIds.includes(requestedNavigation.attacker))
+      (
+        requestedNavigation.attacker &&
+        !runtimeAttackSourceMatchesId(attackSource, requestedNavigation.attacker)
+      )
     ) return;
     let requestedOptionIndex = defaultAttackWeaponOptionIndex(attackSource);
     if (
@@ -2167,6 +2449,7 @@ export function RuntimeVehicleViewer({
 
   useEffect(() => {
     if (
+      distanceInteractionActive ||
       !attackReady ||
       !attackHeader ||
       !attackSource ||
@@ -2185,11 +2468,12 @@ export function RuntimeVehicleViewer({
       pitch: null,
       camera: "",
       shots: "",
+      turrets: "",
     };
     const next: ViewerNavigationState = {
       view: mode,
       protection: protectionActive,
-      attacker: attackSource.cardId,
+      attacker: attackSource.shareSlug,
       weapon: "",
       weaponIndex: weaponOptionIndex === defaultAttackWeaponOptionIndex(attackSource)
         ? null
@@ -2199,6 +2483,7 @@ export function RuntimeVehicleViewer({
       pitch: current.pitch,
       camera: current.camera,
       shots: sharedShotToken,
+      turrets: current.turrets,
     };
     const unchanged =
       current.view === next.view &&
@@ -2209,7 +2494,8 @@ export function RuntimeVehicleViewer({
       current.yaw === next.yaw &&
       current.pitch === next.pitch &&
       current.camera === next.camera &&
-      current.shots === next.shots;
+      current.shots === next.shots &&
+      current.turrets === next.turrets;
     if (unchanged) return;
     navigationStateRef.current = next;
     onNavigationStateChangeRef.current(next);
@@ -2217,6 +2503,7 @@ export function RuntimeVehicleViewer({
     attackHeader,
     attackSource,
     attackReady,
+    distanceInteractionActive,
     mode,
     protectionActive,
     sharedShotToken,
@@ -2346,6 +2633,108 @@ export function RuntimeVehicleViewer({
   }, []);
 
   useEffect(() => {
+    const stationSignature = runtimeTurretStations
+      .map((station) => station.id)
+      .join("|");
+    const token = navigationState?.turrets ?? "";
+    const navigationKey = `${stationSignature}:${token}`;
+    if (appliedTurretNavigationKeyRef.current === navigationKey) return;
+    const decoded = token ? decodeViewerTurretState(token) : null;
+    const defaultStationIndex = defaultTurretStation
+      ? runtimeTurretStations.findIndex(
+          (station) => station.id === defaultTurretStation.id,
+        )
+      : 0;
+    const requestedActiveIndex = decoded?.activeStationIndex ??
+      Math.max(0, defaultStationIndex);
+    const requestedActiveStation =
+      runtimeTurretStations[requestedActiveIndex] ??
+      defaultTurretStation ??
+      runtimeTurretStations[0] ??
+      null;
+    const nextPoseStates: Record<string, RuntimeTurretPoseState> = {};
+    for (const encodedPose of decoded?.poses ?? []) {
+      const station = runtimeTurretStations[encodedPose.stationIndex];
+      if (!station) continue;
+      const yawDegrees = clampTurretYaw(
+        station.turret,
+        encodedPose.yawDegrees,
+      );
+      nextPoseStates[station.id] = {
+        yawDegrees,
+        pitchDegrees: clampTurretPitch(
+          station.turret,
+          yawDegrees,
+          encodedPose.pitchDegrees,
+        ),
+      };
+    }
+    turretPoseStatesRef.current = nextPoseStates;
+    setTurretPoseStates(nextPoseStates);
+    setActiveTurretStationId(requestedActiveStation?.id ?? "");
+    appliedTurretNavigationKeyRef.current = navigationKey;
+  }, [
+    defaultTurretStation,
+    navigationState?.turrets,
+    runtimeTurretStations,
+  ]);
+
+  useEffect(() => {
+    turretPosesRef.current = orderedRuntimeTurretStations(
+      runtimeTurretStations,
+    ).map((station) => {
+      const state = turretPoseStates[station.id] ?? {
+        yawDegrees: 0,
+        pitchDegrees: 0,
+      };
+      const yawDegrees = clampTurretYaw(station.turret, state.yawDegrees);
+      return {
+        stationId: station.id,
+        assembly: station.assembly,
+        articulation: station.turret.articulation,
+        yawDegrees,
+        pitchDegrees: clampTurretPitch(
+          station.turret,
+          yawDegrees,
+          state.pitchDegrees,
+        ),
+      };
+    });
+    const host = hostRef.current;
+    if (host) {
+      if (activeTurretStation) {
+        host.dataset.turretStationId = activeTurretStation.id;
+        host.dataset.turretYawDegrees = String(clampedTurretYaw);
+        host.dataset.turretPitchDegrees = String(clampedTurretPitch);
+        host.dataset.turretDataAuthority =
+          activeTurretStation.turret.limits?.authority ?? "reference";
+        host.dataset.turretYawPlacementCount = String(
+          activeTurretStation.assembly?.yawPlacementIds.length ?? 0,
+        );
+        host.dataset.turretPitchPlacementCount = String(
+          activeTurretStation.assembly?.pitchPlacementIds.length ?? 0,
+        );
+        host.dataset.turretPoseCount = String(turretPosesRef.current.length);
+      } else {
+        delete host.dataset.turretStationId;
+        delete host.dataset.turretYawDegrees;
+        delete host.dataset.turretPitchDegrees;
+        delete host.dataset.turretDataAuthority;
+        delete host.dataset.turretYawPlacementCount;
+        delete host.dataset.turretPitchPlacementCount;
+        delete host.dataset.turretPoseCount;
+      }
+    }
+    applyTurretPoseRef.current?.();
+  }, [
+    activeTurretStation,
+    clampedTurretPitch,
+    clampedTurretYaw,
+    runtimeTurretStations,
+    turretPoseStates,
+  ]);
+
+  useEffect(() => {
     const host = hostRef.current;
     if (!host || !visual) return;
     setArmorThicknessRange(null);
@@ -2382,6 +2771,14 @@ export function RuntimeVehicleViewer({
     let protectionTimer = 0;
     let protectionToken = 0;
     let protectionCache: ProtectionMapComputationCache | null = null;
+    const exteriorOccurrences = new Map<string, RuntimeExteriorOccurrence>();
+    const analysisOccurrences = new Map<
+      string,
+      RuntimeExteriorOccurrence[]
+    >();
+    let lastAppliedHitModel: HitSceneThreeModel | null = null;
+    let lastAppliedHitPoseKey: string | null = null;
+    exteriorOccurrencesRef.current = exteriorOccurrences;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 200);
     const renderer = new THREE.WebGLRenderer({
@@ -2443,6 +2840,192 @@ export function RuntimeVehicleViewer({
 
     const render = () => renderer.render(scene, camera);
     renderRef.current = render;
+    const applyTurretPose = () => {
+      const appliedMatrices: string[] = [];
+      let appliedAnalysisOccurrenceCount = 0;
+      for (const occurrence of exteriorOccurrences.values()) {
+        occurrence.object.matrix.copy(occurrence.baseMatrix);
+        occurrence.object.matrixWorldNeedsUpdate = true;
+      }
+      for (const occurrences of analysisOccurrences.values()) {
+        for (const occurrence of occurrences) {
+          occurrence.object.matrix.copy(occurrence.baseMatrix);
+          occurrence.object.matrixWorldNeedsUpdate = true;
+        }
+      }
+      const poses = turretPosesRef.current.filter(
+        (pose): pose is RuntimeTurretPose & {
+          assembly: RuntimeTurretAssembly;
+        } => Boolean(pose.assembly),
+      );
+      const poseTransforms = poses.map((pose) => {
+        const matrices = turretArticulationMatrices(
+          pose.assembly,
+          pose.yawDegrees,
+          pose.pitchDegrees,
+        );
+        const yawTransform = new THREE.Matrix4().fromArray(matrices.yaw);
+        return {
+          pose,
+          yawTransform,
+          yawPitchTransform: yawTransform
+            .clone()
+            .multiply(new THREE.Matrix4().fromArray(matrices.pitch)),
+          pitchPlacementIds: new Set(pose.assembly.pitchPlacementIds),
+        };
+      });
+      const occurrenceTransforms = new Map<string, THREE.Matrix4>();
+      for (const {
+        pose,
+        yawTransform,
+        yawPitchTransform,
+        pitchPlacementIds,
+      } of poseTransforms) {
+        for (const occurrenceId of pose.assembly.yawPlacementIds) {
+          const combined = occurrenceTransforms.get(occurrenceId) ??
+            new THREE.Matrix4();
+          combined.multiply(
+            pitchPlacementIds.has(occurrenceId)
+              ? yawPitchTransform
+              : yawTransform,
+          );
+          occurrenceTransforms.set(occurrenceId, combined);
+        }
+      }
+      for (const [occurrenceId, articulationTransform] of occurrenceTransforms) {
+        appliedMatrices.push(
+          `${occurrenceId}:${Array.from(
+            articulationTransform.elements,
+            (value) => value.toFixed(5),
+          ).join(",")}`,
+        );
+        const exteriorOccurrence = exteriorOccurrences.get(occurrenceId);
+        if (exteriorOccurrence) {
+          exteriorOccurrence.object.matrix
+            .copy(articulationTransform)
+            .multiply(exteriorOccurrence.baseMatrix);
+          exteriorOccurrence.object.matrixWorldNeedsUpdate = true;
+        }
+        for (const analysisOccurrence of
+          analysisOccurrences.get(occurrenceId) ?? []) {
+          analysisOccurrence.object.matrix
+            .copy(articulationTransform)
+            .multiply(analysisOccurrence.baseMatrix);
+          analysisOccurrence.object.matrixWorldNeedsUpdate = true;
+          appliedAnalysisOccurrenceCount += 1;
+        }
+      }
+      const hitModel = hitModelRef.current;
+      const parsedHit = parsedHitRef.current;
+      const hitPoseKey = poses.length > 0
+        ? poses.map((pose) => [
+            pose.stationId,
+            pose.yawDegrees.toFixed(3),
+            pose.pitchDegrees.toFixed(3),
+          ].join(":")).join(";")
+        : "none";
+      let hitPoseChanged = false;
+      if (
+        hitModel &&
+        parsedHit &&
+        (
+          hitModel !== lastAppliedHitModel ||
+          hitPoseKey !== lastAppliedHitPoseKey
+        )
+      ) {
+        const componentTransforms = new Map<number, THREE.Matrix4>();
+        for (const {
+          pose,
+          yawTransform,
+          yawPitchTransform,
+        } of poseTransforms) {
+          const componentAssembly =
+            resolveRuntimeTurretHitComponentAssembly({
+              placements: renderPlacements,
+              assembly: pose.assembly,
+              articulation: pose.articulation,
+              components: parsedHit.header.components,
+            });
+          const pitchComponents = new Set(
+            componentAssembly.pitchComponentIndices,
+          );
+          for (const componentIndex of componentAssembly.yawComponentIndices) {
+            const combined = componentTransforms.get(componentIndex) ??
+              new THREE.Matrix4();
+            combined.multiply(
+              pitchComponents.has(componentIndex)
+                ? yawPitchTransform
+                : yawTransform,
+            );
+            componentTransforms.set(componentIndex, combined);
+          }
+        }
+        const hitToVisual = new THREE.Matrix4().makeRotationX(-Math.PI / 2);
+        const visualToHit = hitToVisual.clone().invert();
+        const result = setHitSceneThreeModelComponentPoses(
+          hitModel,
+          parsedHit,
+          {
+            componentPoses: [...componentTransforms].map(
+              ([componentIndex, visualMatrix]) => ({
+                componentIndex,
+                matrix: visualToHit
+                  .clone()
+                  .multiply(visualMatrix)
+                  .multiply(hitToVisual)
+                  .elements,
+              }),
+            ),
+          },
+        );
+        host.dataset.turretAppliedHitComponentCount = String(
+          result.appliedComponentCount,
+        );
+        host.dataset.turretHitVertexConflictCount = String(
+          result.conflictedVertexCount,
+        );
+        host.dataset.turretAppliedHitPose = hitPoseKey;
+        lastAppliedHitModel = hitModel;
+        lastAppliedHitPoseKey = hitPoseKey;
+        hitPoseChanged = true;
+      }
+      if (poses.length > 0) {
+        let matrixChecksum = 2166136261;
+        for (const character of appliedMatrices.join("|")) {
+          matrixChecksum ^= character.charCodeAt(0);
+          matrixChecksum = Math.imul(matrixChecksum, 16777619);
+        }
+        host.dataset.turretAppliedOccurrenceCount = String(
+          appliedMatrices.length,
+        );
+        host.dataset.turretAppliedPose = [
+          ...poses.map((pose) => [
+            pose.stationId,
+            pose.yawDegrees.toFixed(3),
+            pose.pitchDegrees.toFixed(3),
+          ].join(":")),
+        ].join(";");
+        host.dataset.turretAppliedMatrixChecksum = (
+          matrixChecksum >>> 0
+        ).toString(16);
+        host.dataset.turretAppliedAnalysisOccurrenceCount = String(
+          appliedAnalysisOccurrenceCount,
+        );
+      } else {
+        delete host.dataset.turretAppliedOccurrenceCount;
+        delete host.dataset.turretAppliedPose;
+        delete host.dataset.turretAppliedMatrixChecksum;
+        delete host.dataset.turretAppliedAnalysisOccurrenceCount;
+      }
+      visualGroup.updateMatrixWorld(true);
+      analysisVisualGroup.updateMatrixWorld(true);
+      hitGroupRef.current?.updateMatrixWorld(true);
+      if (hitPoseChanged && protectionEnabledRef.current) {
+        scheduleProtectionMapRef.current?.({ invalidate: true });
+      }
+      render();
+    };
+    applyTurretPoseRef.current = applyTurretPose;
     const animateSpacedArmor = (timestamp: number) => {
       if (cancelled) return;
       spacedArmorAnimationStartedAt ??= timestamp;
@@ -2896,6 +3479,7 @@ export function RuntimeVehicleViewer({
         pitch: null,
         camera: "",
         shots: "",
+        turrets: "",
       };
       if (
         current.camera === token &&
@@ -3192,7 +3776,8 @@ export function RuntimeVehicleViewer({
         depthOccurrence.userData.stableOccurrenceId = placement.stableOccurrenceId;
         depthOccurrence.userData.analysisVisualDepthOccluder = true;
         depthOccurrence.matrixAutoUpdate = false;
-        depthOccurrence.matrix.fromArray(placement.matrix);
+        const depthBaseMatrix = new THREE.Matrix4().fromArray(placement.matrix);
+        depthOccurrence.matrix.copy(depthBaseMatrix);
         const depthModel = cloneSkeleton(source);
         depthModel.traverse((object) => {
           if (!(object instanceof THREE.Mesh)) return;
@@ -3209,13 +3794,26 @@ export function RuntimeVehicleViewer({
         });
         depthOccurrence.add(depthModel);
         analysisVisualDepthGroup.add(depthOccurrence);
+        const articulatedOccurrences =
+          analysisOccurrences.get(placement.stableOccurrenceId) ?? [];
+        articulatedOccurrences.push({
+          object: depthOccurrence,
+          baseMatrix: depthBaseMatrix,
+        });
+        analysisOccurrences.set(
+          placement.stableOccurrenceId,
+          articulatedOccurrences,
+        );
 
         const analysisOccurrence = new THREE.Group();
         analysisOccurrence.name = `${placement.actor}.${placement.name}:analysis-visual-only`;
         analysisOccurrence.userData.stableOccurrenceId = placement.stableOccurrenceId;
         analysisOccurrence.userData.analysisVisualOnly = true;
         analysisOccurrence.matrixAutoUpdate = false;
-        analysisOccurrence.matrix.fromArray(placement.matrix);
+        const analysisBaseMatrix = new THREE.Matrix4().fromArray(
+          placement.matrix,
+        );
+        analysisOccurrence.matrix.copy(analysisBaseMatrix);
         const stableSurfacePlacement =
           isStableAnalysisVisualSurfacePlacement(placement);
         analysisOccurrence.userData.analysisVisualStableSurfacePlacement =
@@ -3271,13 +3869,17 @@ export function RuntimeVehicleViewer({
         });
         analysisOccurrence.add(analysisModel);
         analysisVisualGroup.add(analysisOccurrence);
+        articulatedOccurrences.push({
+          object: analysisOccurrence,
+          baseMatrix: analysisBaseMatrix,
+        });
       });
       host.dataset.analysisVisualDepthOccluderMeshCount = String(
         analysisVisualDepthOccluderMeshCount,
       );
       analysisVisualReady = true;
       host.dataset.analysisVisualAssetState = "ready";
-      render();
+      applyTurretPose();
     };
 
     const loadExteriorAssets = () => {
@@ -3311,7 +3913,12 @@ export function RuntimeVehicleViewer({
           occurrence.name = `${placement.actor}.${placement.name}`;
           occurrence.userData.stableOccurrenceId = placement.stableOccurrenceId;
           occurrence.matrixAutoUpdate = false;
-          occurrence.matrix.fromArray(placement.matrix);
+          const baseMatrix = new THREE.Matrix4().fromArray(placement.matrix);
+          occurrence.matrix.copy(baseMatrix);
+          exteriorOccurrences.set(placement.stableOccurrenceId, {
+            object: occurrence,
+            baseMatrix,
+          });
           const model = cloneSkeleton(source);
           model.traverse((object) => {
             if (!(object instanceof THREE.Mesh)) return;
@@ -3335,6 +3942,7 @@ export function RuntimeVehicleViewer({
           occurrence.add(model);
           visualGroup.add(occurrence);
         }
+        applyTurretPose();
       };
       exteriorPromise = Promise.all(urls.map(async (url) => {
         const gltf = await exteriorLoader.loadAsync(url);
@@ -3439,6 +4047,9 @@ export function RuntimeVehicleViewer({
               exteriorSpacedArmorHighlightRef.current;
             hitGroupRef.current = hitGroup;
             modelGroup.add(hitGroup);
+            lastAppliedHitModel = null;
+            lastAppliedHitPoseKey = null;
+            applyTurretPose();
             hitLoadSucceeded = true;
             hitSettled = true;
             visualGroup.visible = modeRef.current === "exterior";
@@ -3653,6 +4264,12 @@ export function RuntimeVehicleViewer({
       shotRecordsRef.current = [];
       activeShotIdRef.current = null;
       renderRef.current = null;
+      if (applyTurretPoseRef.current === applyTurretPose) {
+        applyTurretPoseRef.current = null;
+      }
+      if (exteriorOccurrencesRef.current === exteriorOccurrences) {
+        exteriorOccurrencesRef.current = new Map();
+      }
       scheduleProtectionMapRef.current = null;
       cancelProtectionMapRef.current = null;
       resizeObserver.disconnect();
@@ -3719,6 +4336,15 @@ export function RuntimeVehicleViewer({
       data-exterior-unavailable={exteriorUnavailableMessage ? "true" : undefined}
       data-exterior-streaming={exteriorStreaming ? "true" : "false"}
       data-realtime-crosshair={realtimePointer ? "visible" : "hidden"}
+      data-turret-preview={
+        runtimeTurretStations.length > 0 ? "available" : "absent"
+      }
+      data-turret-station-id={activeTurretStation?.id}
+      data-turret-yaw-degrees={activeTurretStation ? clampedTurretYaw : undefined}
+      data-turret-pitch-degrees={activeTurretStation ? clampedTurretPitch : undefined}
+      data-turret-authority={
+        activeTurretStation?.turret.limits?.authority ?? undefined
+      }
     >
       <div className="viewer-canvas" aria-label={`${displayName} 交互式 3D 视图`}>
         <div className="runtime-vehicle-viewer__host" ref={hostRef} />
@@ -3764,6 +4390,46 @@ export function RuntimeVehicleViewer({
           </div>
           <p>{exteriorUnavailableMessage}</p>
         </aside>
+      ) : null}
+
+      {(mode === "exterior" || mode === "armor") && activeTurretStation ? (
+        <TurretPreviewControls
+          stations={runtimeTurretStations}
+          activeStationId={activeTurretStation.id}
+          yawDegrees={clampedTurretYaw}
+          pitchDegrees={clampedTurretPitch}
+          onStationChange={(stationId) => {
+            setActiveTurretStationId(stationId);
+            commitTurretNavigation(stationId);
+          }}
+          onYawChange={(yawDegrees) => {
+            updateTurretStationPose(
+              activeTurretStation,
+              yawDegrees,
+              activeTurretPose.pitchDegrees,
+            );
+          }}
+          onPitchChange={(pitchDegrees) => {
+            updateTurretStationPose(
+              activeTurretStation,
+              activeTurretPose.yawDegrees,
+              pitchDegrees,
+            );
+          }}
+          onReset={() => {
+            const nextPoseStates = updateTurretStationPose(
+              activeTurretStation,
+              0,
+              0,
+            );
+            commitTurretNavigation(
+              activeTurretStation.id,
+              nextPoseStates,
+            );
+          }}
+          onInteractionEnd={() =>
+            commitTurretNavigation(activeTurretStation.id)}
+        />
       ) : null}
 
       {realtimePointer ? (
@@ -3853,13 +4519,15 @@ export function RuntimeVehicleViewer({
             searchPlaceholder="搜索攻击来源"
             onChange={(nextCardId) => {
               if (nextCardId === attackSource?.cardId) return;
+              const nextSource = runtimeAttackSourceForId(nextCardId);
+              if (!nextSource) return;
               pendingAttackWeaponSelectionRef.current = null;
               setPendingAttackWeaponSelection(null);
               const current = navigationStateRef.current;
               if (current) {
                 const next = {
                   ...current,
-                  attacker: nextCardId,
+                  attacker: nextSource.shareSlug,
                   weapon: "",
                   weaponIndex: null,
                   distance: 0,
@@ -3887,7 +4555,7 @@ export function RuntimeVehicleViewer({
             onChange={(nextValue) => {
               const selection = parseWeaponSelectionValue(nextValue);
               if (!selection) return;
-              const nextSource = runtimeAttackSourceForCardId(selection.sourceCardId);
+              const nextSource = runtimeAttackSourceForId(selection.sourceCardId);
               const nextWeapon = nextSource?.weapons[selection.optionIndex];
               if (!nextSource || !nextWeapon) return;
               if (nextSource.cardId !== attackSource?.cardId) {
@@ -3901,7 +4569,7 @@ export function RuntimeVehicleViewer({
                 if (current) {
                   const next = {
                     ...current,
-                    attacker: nextSource.cardId,
+                    attacker: nextSource.shareSlug,
                     weapon: "",
                     weaponIndex:
                       selection.optionIndex === defaultAttackWeaponOptionIndex(nextSource)
@@ -3938,7 +4606,7 @@ export function RuntimeVehicleViewer({
               if (current && attackSource) {
                 const next = {
                   ...current,
-                  attacker: attackSource.cardId,
+                  attacker: attackSource.shareSlug,
                   weapon: "",
                   weaponIndex: nextOptionIndex === defaultAttackWeaponOptionIndex(attackSource)
                     ? null
@@ -3966,6 +4634,12 @@ export function RuntimeVehicleViewer({
               style={{
                 "--range-progress": `${maxDistanceM > 0 ? (targetDistanceM / maxDistanceM) * 100 : 0}%`,
               } as CSSProperties}
+              onPointerDown={() => setDistanceInteractionActive(true)}
+              onPointerUp={() => setDistanceInteractionActive(false)}
+              onPointerCancel={() => setDistanceInteractionActive(false)}
+              onKeyDown={() => setDistanceInteractionActive(true)}
+              onKeyUp={() => setDistanceInteractionActive(false)}
+              onBlur={() => setDistanceInteractionActive(false)}
               onChange={(event) => {
                 const nextDistance = Number(event.currentTarget.value);
                 setTargetDistanceM(nextDistance);

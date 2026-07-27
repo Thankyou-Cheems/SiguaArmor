@@ -35,6 +35,53 @@ export interface ReferenceDamageResistance {
   modifier: number | null;
 }
 
+export interface ReferenceTurretLimitSample {
+  yawDegrees: number;
+  minPitchDegrees: number;
+  maxPitchDegrees: number;
+}
+
+export interface ReferenceTurretLimits {
+  authority: "editor" | "reference";
+  sourceBuildId: string | null;
+  observedAt: string | null;
+  evidenceSha256?: string;
+  yaw: {
+    minDegrees: number;
+    maxDegrees: number;
+    continuous: boolean;
+  } | null;
+  pitchByYaw: ReferenceTurretLimitSample[];
+}
+
+export interface ReferenceTurretArticulation {
+  yawComponentName: string | null;
+  pitchComponentName: string | null;
+  /**
+   * Mesh components driven by the yaw component only, and by the pitch
+   * component as well, as observed in the editor attachment graph. The yaw and
+   * pitch drivers themselves are geometry-free SceneComponents, so these lists
+   * are what the runtime visual placements can actually be matched against.
+   */
+  yawMeshComponentNames?: string[];
+  pitchMeshComponentNames?: string[];
+  /** Mesh components the pivot offsets below are measured from. */
+  yawAnchorMeshComponentName?: string | null;
+  pitchAnchorMeshComponentName?: string | null;
+  /** glTF-space (metres, X forward / Y up / Z right) offsets from anchor mesh origin to axis. */
+  yawPivotOffsetMetres?: [number, number, number] | null;
+  pitchPivotOffsetMetres?: [number, number, number] | null;
+}
+
+export interface ReferenceTurret {
+  maxYawSpeed: number | null;
+  maxPitchSpeed: number | null;
+  minPitchDegrees: number | null;
+  maxPitchDegrees: number | null;
+  limits?: ReferenceTurretLimits;
+  articulation?: ReferenceTurretArticulation;
+}
+
 export interface ReferenceSeat {
   index: number;
   role:
@@ -57,12 +104,7 @@ export interface ReferenceSeat {
   turretName: string | null;
   stabilized: boolean | null;
   zoomLevels: number[];
-  turret: {
-    maxYawSpeed: number | null;
-    maxPitchSpeed: number | null;
-    minPitchDegrees: number | null;
-    maxPitchDegrees: number | null;
-  } | null;
+  turret: ReferenceTurret | null;
 }
 
 export interface ReferenceComponent {

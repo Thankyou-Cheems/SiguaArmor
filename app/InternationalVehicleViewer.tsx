@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { runtimePreviewForVariant } from "./runtime-probe-preview-data";
 import { RuntimeVehicleViewer } from "./RuntimeVehicleViewer";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
+import type { ReferenceData } from "./catalog-types";
 import type { SiteEdition } from "./site-edition";
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
 
@@ -19,6 +20,7 @@ interface InternationalVehicleViewerProps {
   cardId: string;
   rawName: string;
   displayName: string;
+  referenceData: ReferenceData | null;
   textureVariants?: TextureVariantOption[];
   onTextureVariantChange?: (variantId: string) => void;
   onClose?: () => void;
@@ -35,6 +37,7 @@ export default function InternationalVehicleViewer({
   cardId,
   rawName,
   displayName,
+  referenceData,
   textureVariants = [],
   onTextureVariantChange,
   onClose,
@@ -87,6 +90,7 @@ export default function InternationalVehicleViewer({
         showChrome={false}
         mode={mode}
         displayName={displayName}
+        referenceData={referenceData}
         onModeChange={selectMode}
         onClose={onClose}
         navigationState={navigationState}

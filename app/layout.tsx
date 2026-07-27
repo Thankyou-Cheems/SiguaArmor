@@ -25,7 +25,7 @@ export default function RootLayout({
       <head>
         <link
           rel="preload"
-          href="/fonts/sigua-unbounded-site-c713f53e766643c6.woff2"
+          href="/fonts/sigua-unbounded-site-93d6dfdb7fb7ee40.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"

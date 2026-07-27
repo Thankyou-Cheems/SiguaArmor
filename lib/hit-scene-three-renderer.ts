@@ -12,7 +12,10 @@ import {
   type HitSceneRenderLayer,
 } from "./hit-scene-render-batches.ts";
 import { relativeArmorThicknessRgb } from "./armor-thickness-ramp.ts";
-import type { ParsedHitSceneRuntime } from "./runtime-hit-scene";
+import type {
+  ParsedHitSceneRuntime,
+  ParsedRuntimeHitScene,
+} from "./runtime-hit-scene";
 
 const VERTEX_SHADER = `
   attribute vec3 color;
@@ -383,6 +386,35 @@ export interface HitSceneThreeModel {
   dispose(): void;
 }
 
+interface HitSceneMeshPoseBase {
+  positions: Float32Array;
+  normals: Float32Array;
+}
+
+interface RuntimeHitScenePoseBase {
+  positions: Float32Array;
+  faceNormals: Float32Array;
+}
+
+export interface HitSceneTurretPoseResult {
+  appliedComponentCount: number;
+  conflictedVertexCount: number;
+}
+
+export interface HitSceneComponentPose {
+  componentIndex: number;
+  matrix: readonly number[];
+}
+
+const hitSceneMeshPoseBases = new WeakMap<
+  HitSceneRenderMesh,
+  HitSceneMeshPoseBase
+>();
+const runtimeHitScenePoseBases = new WeakMap<
+  ParsedRuntimeHitScene,
+  RuntimeHitScenePoseBase
+>();
+
 function createGeometry(batch: HitSceneRenderBatch) {
   const geometry = new BufferGeometry();
   const { outlineBarycentrics, spacedArmorEdgeMasks } = spacedArmorOutlineAttributes(batch);
@@ -452,6 +484,10 @@ function createMesh(batch: HitSceneRenderBatch): HitSceneRenderMesh {
     nominalThicknessMm: batch.nominalThicknessMm,
     absoluteColors: Float32Array.from(batch.colors),
   };
+  hitSceneMeshPoseBases.set(mesh, {
+    positions: Float32Array.from(batch.positions),
+    normals: Float32Array.from(batch.normals),
+  });
   return mesh;
 }
 
@@ -510,6 +546,241 @@ export function createHitSceneThreeModel(pack: ParsedHitSceneRuntime): HitSceneT
       interior.material.dispose();
     },
   };
+}
+
+function transformPosition(
+  source: Float32Array,
+  sourceOffset: number,
+  target: Float32Array,
+  targetOffset: number,
+  matrix: readonly number[],
+) {
+  const x = source[sourceOffset];
+  const y = source[sourceOffset + 1];
+  const z = source[sourceOffset + 2];
+  target[targetOffset] =
+    matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12];
+  target[targetOffset + 1] =
+    matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13];
+  target[targetOffset + 2] =
+    matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14];
+}
+
+function transformNormal(
+  source: Float32Array,
+  sourceOffset: number,
+  target: Float32Array,
+  targetOffset: number,
+  matrix: readonly number[],
+) {
+  const x = source[sourceOffset];
+  const y = source[sourceOffset + 1];
+  const z = source[sourceOffset + 2];
+  const transformedX = matrix[0] * x + matrix[4] * y + matrix[8] * z;
+  const transformedY = matrix[1] * x + matrix[5] * y + matrix[9] * z;
+  const transformedZ = matrix[2] * x + matrix[6] * y + matrix[10] * z;
+  const length = Math.hypot(transformedX, transformedY, transformedZ) || 1;
+  target[targetOffset] = transformedX / length;
+  target[targetOffset + 1] = transformedY / length;
+  target[targetOffset + 2] = transformedZ / length;
+}
+
+function applyRenderMeshComponentPoses(
+  mesh: HitSceneRenderMesh,
+  componentMatrices: ReadonlyMap<number, readonly number[]>,
+) {
+  const base = hitSceneMeshPoseBases.get(mesh);
+  if (!base) throw new Error(`Missing pose base for ${mesh.name}`);
+  const positionAttribute = mesh.geometry.getAttribute("position");
+  const normalAttribute = mesh.geometry.getAttribute("normal");
+  const positions = positionAttribute.array as Float32Array;
+  const normals = normalAttribute.array as Float32Array;
+  positions.set(base.positions);
+  normals.set(base.normals);
+
+  for (
+    let triangleIndex = 0;
+    triangleIndex < mesh.userData.componentIndices.length;
+    triangleIndex += 1
+  ) {
+    const matrix = componentMatrices.get(
+      mesh.userData.componentIndices[triangleIndex],
+    );
+    if (!matrix) continue;
+    const triangleOffset = triangleIndex * 9;
+    for (let corner = 0; corner < 3; corner += 1) {
+      const vertexOffset = triangleOffset + corner * 3;
+      transformPosition(
+        base.positions,
+        vertexOffset,
+        positions,
+        vertexOffset,
+        matrix,
+      );
+      transformNormal(
+        base.normals,
+        vertexOffset,
+        normals,
+        vertexOffset,
+        matrix,
+      );
+    }
+  }
+
+  positionAttribute.needsUpdate = true;
+  normalAttribute.needsUpdate = true;
+  mesh.geometry.computeBoundingBox();
+  mesh.geometry.computeBoundingSphere();
+}
+
+/**
+ * Apply exact component-bound poses to both the visible hit meshes and the
+ * raycast/BVH geometry. Every update starts from immutable base data, so
+ * parent/child station composition cannot accumulate floating-point drift.
+ */
+export function setHitSceneThreeModelComponentPoses(
+  model: HitSceneThreeModel,
+  pack: ParsedRuntimeHitScene,
+  {
+    componentPoses,
+  }: {
+    componentPoses: readonly HitSceneComponentPose[];
+  },
+): HitSceneTurretPoseResult {
+  const componentMatrices = new Map<number, readonly number[]>();
+  for (const pose of componentPoses) {
+    if (
+      !Number.isInteger(pose.componentIndex) ||
+      pose.componentIndex < 0 ||
+      pose.matrix.length !== 16 ||
+      componentMatrices.has(pose.componentIndex)
+    ) {
+      throw new Error("Component pose entries must be unique and contain 16-value matrices");
+    }
+    componentMatrices.set(pose.componentIndex, pose.matrix);
+  }
+  for (const mesh of modelMeshes(model)) {
+    applyRenderMeshComponentPoses(mesh, componentMatrices);
+  }
+
+  let base = runtimeHitScenePoseBases.get(pack);
+  if (!base) {
+    base = {
+      positions: Float32Array.from(pack.positions),
+      faceNormals: Float32Array.from(pack.faceNormals),
+    };
+    runtimeHitScenePoseBases.set(pack, base);
+  }
+  pack.positions.set(base.positions);
+  pack.faceNormals.set(base.faceNormals);
+
+  const matrixIds = new Map<string, number>();
+  const matricesById: Array<readonly number[] | null> = [null];
+  const componentMatrixIds = new Map<number, number>();
+  for (const [componentIndex, matrix] of componentMatrices) {
+    const identity = matrix.join(",");
+    let matrixId = matrixIds.get(identity);
+    if (matrixId === undefined) {
+      matrixId = matricesById.length;
+      matrixIds.set(identity, matrixId);
+      matricesById.push(matrix);
+    }
+    componentMatrixIds.set(componentIndex, matrixId);
+  }
+  const vertexModes = new Int32Array(pack.header.counts.vertices);
+  vertexModes.fill(-1);
+  const appliedComponents = new Set<number>();
+  for (
+    let triangleIndex = 0;
+    triangleIndex < pack.header.counts.triangles;
+    triangleIndex += 1
+  ) {
+    const componentIndex = pack.triangleComponentIndex[triangleIndex];
+    const mode = componentMatrixIds.get(componentIndex) ?? 0;
+    if (mode > 0) appliedComponents.add(componentIndex);
+    for (let corner = 0; corner < 3; corner += 1) {
+      const vertexIndex = pack.indices[triangleIndex * 3 + corner];
+      const existingMode = vertexModes[vertexIndex];
+      if (existingMode === -1) vertexModes[vertexIndex] = mode;
+      else if (existingMode !== mode) vertexModes[vertexIndex] = -2;
+    }
+    if (mode === 0) continue;
+    const matrix = matricesById[mode];
+    if (!matrix) continue;
+    transformNormal(
+      base.faceNormals,
+      triangleIndex * 3,
+      pack.faceNormals,
+      triangleIndex * 3,
+      matrix,
+    );
+  }
+
+  let conflictedVertexCount = 0;
+  for (let vertexIndex = 0; vertexIndex < vertexModes.length; vertexIndex += 1) {
+    const mode = vertexModes[vertexIndex];
+    if (mode === -2) {
+      conflictedVertexCount += 1;
+      continue;
+    }
+    if (mode <= 0) continue;
+    const matrix = matricesById[mode];
+    if (!matrix) continue;
+    transformPosition(
+      base.positions,
+      vertexIndex * 3,
+      pack.positions,
+      vertexIndex * 3,
+      matrix,
+    );
+  }
+
+  const analysisPositionAttribute = pack.analysisGeometry.getAttribute("position");
+  analysisPositionAttribute.needsUpdate = true;
+  pack.analysisGeometry.computeBoundingBox();
+  pack.analysisGeometry.computeBoundingSphere();
+  pack.boundsTree.refit();
+
+  return {
+    appliedComponentCount: appliedComponents.size,
+    conflictedVertexCount,
+  };
+}
+
+/**
+ * Backward-compatible single-station wrapper used by focused renderer tests.
+ */
+export function setHitSceneThreeModelTurretPose(
+  model: HitSceneThreeModel,
+  pack: ParsedRuntimeHitScene,
+  {
+    yawComponentIndices,
+    pitchComponentIndices,
+    yawMatrix,
+    yawPitchMatrix,
+  }: {
+    yawComponentIndices: readonly number[];
+    pitchComponentIndices: readonly number[];
+    yawMatrix: readonly number[];
+    yawPitchMatrix: readonly number[];
+  },
+): HitSceneTurretPoseResult {
+  if (yawMatrix.length !== 16 || yawPitchMatrix.length !== 16) {
+    throw new Error("Turret pose matrices must contain 16 values");
+  }
+  const pitchComponents = new Set(pitchComponentIndices);
+  const componentMatrices = new Map<number, readonly number[]>();
+  for (const componentIndex of yawComponentIndices) {
+    componentMatrices.set(
+      componentIndex,
+      pitchComponents.has(componentIndex) ? yawPitchMatrix : yawMatrix,
+    );
+  }
+  return setHitSceneThreeModelComponentPoses(model, pack, {
+    componentPoses: [...componentMatrices].map(
+      ([componentIndex, matrix]) => ({ componentIndex, matrix }),
+    ),
+  });
 }
 
 export function setHitSceneThreeModelArmorThicknessScale(
