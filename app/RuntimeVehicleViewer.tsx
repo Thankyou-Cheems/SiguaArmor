@@ -23,8 +23,10 @@ import {
 } from "../lib/analysis-visual-surface-policy";
 import { dedupeIdenticalVisualPlacements } from "../lib/runtime-visual-occurrence-dedupe";
 import {
+  carryNestedRuntimeTurretAssemblies,
   clampTurretPitch,
   clampTurretYaw,
+  normalizeTurretYaw,
   resolveRuntimeTurretAssembly,
   resolveRuntimeTurretHitComponentAssembly,
   runtimeTurretFallbackSpec,
@@ -78,6 +80,8 @@ import type {
 } from "./catalog-types";
 import {
   TurretPreviewControls,
+  type TurretOrientationIndicator,
+  type TurretPreviewIndicatorKind,
   type TurretPreviewStation,
 } from "./TurretLimitsDisplay";
 import {
@@ -217,15 +221,13 @@ interface RuntimeTurretPoseState {
   pitchDegrees: number;
 }
 
-function runtimeTurretStationDepth(
+function runtimeTurretParentStation(
   station: RuntimeTurretPreviewStation,
   stations: RuntimeTurretPreviewStation[],
-  visiting = new Set<string>(),
-): number {
+) {
   const componentId = station.assembly?.yawComponentPlacementId;
-  if (!componentId || visiting.has(station.id)) return 0;
-  const nextVisiting = new Set(visiting).add(station.id);
-  const parent = stations
+  if (!componentId) return null;
+  return stations
     .filter(
       (candidate) =>
         candidate.id !== station.id &&
@@ -235,10 +237,40 @@ function runtimeTurretStationDepth(
       (left, right) =>
         (left.assembly?.yawPlacementIds.length ?? Number.MAX_SAFE_INTEGER) -
         (right.assembly?.yawPlacementIds.length ?? Number.MAX_SAFE_INTEGER),
-    )[0];
+    )[0] ?? null;
+}
+
+function runtimeTurretStationDepth(
+  station: RuntimeTurretPreviewStation,
+  stations: RuntimeTurretPreviewStation[],
+  visiting = new Set<string>(),
+): number {
+  if (visiting.has(station.id)) return 0;
+  const nextVisiting = new Set(visiting).add(station.id);
+  const parent = runtimeTurretParentStation(station, stations);
   return parent
     ? 1 + runtimeTurretStationDepth(parent, stations, nextVisiting)
     : 0;
+}
+
+function runtimeTurretWorldYaw(
+  station: RuntimeTurretPreviewStation,
+  stations: RuntimeTurretPreviewStation[],
+  poseStates: Record<string, RuntimeTurretPoseState>,
+  visiting = new Set<string>(),
+): number {
+  const ownYaw = poseStates[station.id]?.yawDegrees ?? 0;
+  if (visiting.has(station.id)) return normalizeTurretYaw(ownYaw);
+  const parent = runtimeTurretParentStation(station, stations);
+  if (!parent) return normalizeTurretYaw(ownYaw);
+  return normalizeTurretYaw(
+    runtimeTurretWorldYaw(
+      parent,
+      stations,
+      poseStates,
+      new Set(visiting).add(station.id),
+    ) + ownYaw,
+  );
 }
 
 function orderedRuntimeTurretStations(
@@ -1617,7 +1649,16 @@ export function RuntimeVehicleViewer({
         runtimeTurretFallbackSpec(preview.generatedClass, turretName),
       ]),
     );
-    return seats.map((seat) => {
+    const stations = seats.map((seat) => {
+      const indicatorKind: TurretPreviewIndicatorKind =
+        seat === primarySeat
+          ? "main-turret"
+          : seat.stationKind === "remote-weapon-station"
+            ? "weapon-station"
+            : seat.role === "machine-gunner" ||
+                seat.stationKind === "weapon-station"
+              ? "machine-gun"
+              : "weapon-station";
       const stationWeaponNames = referenceData.weapons
         .filter((weapon) => weapon.turretName === seat.turretName)
         .map((weapon) => weapon.gunName);
@@ -1655,10 +1696,23 @@ export function RuntimeVehicleViewer({
         label: `${turretStationRoleLabel(seat.role)} · F${seat.index}`,
         equipmentLabel: turretStationEquipmentLabel(referenceData, seat),
         turret: seat.turret!,
+        indicatorKind,
         yawAvailable: Boolean(assembly?.yawPlacementIds.length),
         pitchAvailable: Boolean(assembly?.pitchPlacementIds.length),
         assembly,
         seat,
+      };
+    });
+    const nestedAssemblies = carryNestedRuntimeTurretAssemblies(
+      stations.map((station) => station.assembly),
+    );
+    return stations.map((station, index) => {
+      const assembly = nestedAssemblies[index];
+      return {
+        ...station,
+        assembly,
+        yawAvailable: Boolean(assembly?.yawPlacementIds.length),
+        pitchAvailable: Boolean(assembly?.pitchPlacementIds.length),
       };
     });
   }, [preview.generatedClass, referenceData, visual]);
@@ -1695,6 +1749,21 @@ export function RuntimeVehicleViewer({
         activeTurretPose.pitchDegrees,
       )
     : 0;
+  const turretOrientationIndicators = useMemo<TurretOrientationIndicator[]>(
+    () =>
+      runtimeTurretStations.map((station) => ({
+        id: station.id,
+        label: station.label,
+        kind: station.indicatorKind,
+        yawDegrees: runtimeTurretWorldYaw(
+          station,
+          runtimeTurretStations,
+          turretPoseStates,
+        ),
+        active: station.id === activeTurretStation?.id,
+      })),
+    [activeTurretStation?.id, runtimeTurretStations, turretPoseStates],
+  );
   const updateTurretStationPose = (
     station: RuntimeTurretPreviewStation,
     yawDegrees: number,
@@ -4284,7 +4353,15 @@ export function RuntimeVehicleViewer({
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [clearShotVisual, hit, preview, saveRayShot, selectSavedShot, visual]);
+  }, [
+    clearShotVisual,
+    hit,
+    preview.variantRawName,
+    preview.visualVehicleId,
+    saveRayShot,
+    selectSavedShot,
+    visual,
+  ]);
 
   if (!visual) return null;
 
@@ -4395,6 +4472,7 @@ export function RuntimeVehicleViewer({
       {(mode === "exterior" || mode === "armor") && activeTurretStation ? (
         <TurretPreviewControls
           stations={runtimeTurretStations}
+          orientationIndicators={turretOrientationIndicators}
           activeStationId={activeTurretStation.id}
           yawDegrees={clampedTurretYaw}
           pitchDegrees={clampedTurretPitch}
