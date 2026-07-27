@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-v3-43c43063bc260fba",
+  "dataRevision": "encyclopedia-v3-43c43063bc260fba-turret-2343956d90d4",
   "group": {
     "id": "planmc",
     "name": "PLA Navy Marine Corps",
@@ -274,7 +274,35 @@
                   "maxYawSpeed": 20,
                   "maxPitchSpeed": 20,
                   "minPitchDegrees": -6,
-                  "maxPitchDegrees": 16
+                  "maxPitchDegrees": 16,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "DefaultSceneRoot",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SkeletalMesh",
+                      "GunCollisionMesh"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SkeletalMesh",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -294,7 +322,32 @@
                   "maxYawSpeed": 90,
                   "maxPitchSpeed": 90,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 45
+                  "maxPitchDegrees": 45,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Scene",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "ZBL08_CommanderPeriscope",
+                      "Col_Mesh"
+                    ],
+                    "pitchMeshComponentNames": [],
+                    "yawAnchorMeshComponentName": "ZBL08_CommanderPeriscope",
+                    "pitchAnchorMeshComponentName": null,
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               }
             ],
@@ -529,7 +582,35 @@
                   "maxYawSpeed": 50,
                   "maxPitchSpeed": 60,
                   "minPitchDegrees": -20,
-                  "maxPitchDegrees": 20
+                  "maxPitchDegrees": 20,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "HJ8Swivel",
+                      "SQArmorMesh_Hatch"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMesh_Weapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMesh_Weapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -1024,8 +1105,98 @@
                 "turret": {
                   "maxYawSpeed": 50,
                   "maxPitchSpeed": 60,
-                  "minPitchDegrees": -3,
-                  "maxPitchDegrees": 44
+                  "minPitchDegrees": -20,
+                  "maxPitchDegrees": 70,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": [
+                      {
+                        "yawDegrees": -180,
+                        "minPitchDegrees": -5,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": -150,
+                        "minPitchDegrees": -5,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": -90,
+                        "minPitchDegrees": -16.25,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": -70,
+                        "minPitchDegrees": -20,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": -20,
+                        "minPitchDegrees": -3,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": 0,
+                        "minPitchDegrees": -3,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": 20,
+                        "minPitchDegrees": -3,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": 70,
+                        "minPitchDegrees": -20,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": 90,
+                        "minPitchDegrees": -16.25,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": 150,
+                        "minPitchDegrees": -5,
+                        "maxPitchDegrees": 70
+                      },
+                      {
+                        "yawDegrees": 180,
+                        "minPitchDegrees": -5,
+                        "maxPitchDegrees": 70
+                      }
+                    ]
+                  },
+                  "articulation": {
+                    "yawComponentName": "DefaultSceneRoot",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "Turret_ArmorMesh",
+                      "HJ73_Rocket_L",
+                      "HJ73_Rocket_R"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SkeletalMesh",
+                      "GunCollisionMesh"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SkeletalMesh",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": [
+                      0.007895736694335938,
+                      0,
+                      0
+                    ]
+                  }
                 }
               },
               {
@@ -1045,7 +1216,32 @@
                   "maxYawSpeed": 90,
                   "maxPitchSpeed": 90,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 45
+                  "maxPitchDegrees": 45,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Scene",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "ZBL08_CommanderPeriscope",
+                      "Col_Mesh"
+                    ],
+                    "pitchMeshComponentNames": [],
+                    "yawAnchorMeshComponentName": "ZBL08_CommanderPeriscope",
+                    "pitchAnchorMeshComponentName": null,
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -1532,7 +1728,37 @@
                   "maxYawSpeed": 50,
                   "maxPitchSpeed": 50,
                   "minPitchDegrees": -8,
-                  "maxPitchDegrees": 44
+                  "maxPitchDegrees": 44,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "DefaultSceneRoot",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "Turret_ArmorMesh",
+                      "HJ73_Rocket_L",
+                      "HJ73_Rocket_R"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SkeletalMesh",
+                      "GunCollisionMesh"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SkeletalMesh",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -1552,7 +1778,32 @@
                   "maxYawSpeed": 90,
                   "maxPitchSpeed": 90,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 45
+                  "maxPitchDegrees": 45,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Scene",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "ZBL08_CommanderPeriscope",
+                      "Col_Mesh"
+                    ],
+                    "pitchMeshComponentNames": [],
+                    "yawAnchorMeshComponentName": "ZBL08_CommanderPeriscope",
+                    "pitchAnchorMeshComponentName": null,
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -2103,7 +2354,38 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -10,
-                  "maxPitchDegrees": 40
+                  "maxPitchDegrees": 40,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMeshWeapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMeshWeapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": [
+                      -0.46204151153564454,
+                      0.18004798889160156,
+                      0.000511002540588379
+                    ]
+                  }
                 }
               },
               {
@@ -2441,7 +2723,38 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -10,
-                  "maxPitchDegrees": 40
+                  "maxPitchDegrees": 40,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMeshWeapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMeshWeapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": [
+                      -0.46204151153564454,
+                      0.18004798889160156,
+                      0.000511002540588379
+                    ]
+                  }
                 }
               },
               {
@@ -2946,7 +3259,34 @@
                   "maxYawSpeed": 90,
                   "maxPitchSpeed": 90,
                   "minPitchDegrees": -9,
-                  "maxPitchDegrees": 62
+                  "maxPitchDegrees": 62,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "DefaultSceneRoot",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "Turret",
+                      "SQArmorMesh"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMeshWeapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret",
+                    "pitchAnchorMeshComponentName": "SQArmorMeshWeapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -3281,7 +3621,35 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 30
+                  "maxPitchDegrees": 30,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh_Hatch",
+                      "Turret_Mount"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMesh_Weapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMesh_Weapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -3628,7 +3996,34 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 30
+                  "maxPitchDegrees": 30,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh_Hatch"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMesh_Weapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMesh_Weapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -3999,7 +4394,29 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 30
+                  "maxPitchDegrees": 30,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -75,
+                      "maxDegrees": 75,
+                      "continuous": false
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": null,
+                    "pitchComponentName": null,
+                    "yawMeshComponentNames": [],
+                    "pitchMeshComponentNames": [],
+                    "yawAnchorMeshComponentName": null,
+                    "pitchAnchorMeshComponentName": null,
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -4294,7 +4711,29 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -14,
-                  "maxPitchDegrees": 55
+                  "maxPitchDegrees": 55,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -90,
+                      "maxDegrees": 90,
+                      "continuous": false
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": null,
+                    "pitchComponentName": null,
+                    "yawMeshComponentNames": [],
+                    "pitchMeshComponentNames": [],
+                    "yawAnchorMeshComponentName": null,
+                    "pitchAnchorMeshComponentName": null,
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -4558,7 +4997,29 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 30
+                  "maxPitchDegrees": 30,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -85,
+                      "maxDegrees": 85,
+                      "continuous": false
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": null,
+                    "pitchComponentName": null,
+                    "yawMeshComponentNames": [],
+                    "pitchMeshComponentNames": [],
+                    "yawAnchorMeshComponentName": null,
+                    "pitchAnchorMeshComponentName": null,
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -4806,7 +5267,29 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -12,
-                  "maxPitchDegrees": 30
+                  "maxPitchDegrees": 30,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -85,
+                      "maxDegrees": 85,
+                      "continuous": false
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": null,
+                    "pitchComponentName": null,
+                    "yawMeshComponentNames": [],
+                    "pitchMeshComponentNames": [],
+                    "yawAnchorMeshComponentName": null,
+                    "pitchAnchorMeshComponentName": null,
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -5931,7 +6414,35 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 30
+                  "maxPitchDegrees": 30,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh_Hatch",
+                      "Turret_Mount"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMesh_Weapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMesh_Weapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -6202,7 +6713,81 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -15,
-                  "maxPitchDegrees": 30
+                  "maxPitchDegrees": 30,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": [
+                      {
+                        "yawDegrees": -180,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": -160,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": -145,
+                        "minPitchDegrees": -15,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": -90,
+                        "minPitchDegrees": -15,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": 0,
+                        "minPitchDegrees": -15,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": 90,
+                        "minPitchDegrees": -15,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": 150,
+                        "minPitchDegrees": -15,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": 160,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 30
+                      },
+                      {
+                        "yawDegrees": 180,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 30
+                      }
+                    ]
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh_Hatch",
+                      "Turret_Mount"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMesh_Weapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMesh_Weapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -6789,7 +7374,80 @@
                   "maxYawSpeed": 330,
                   "maxPitchSpeed": 180,
                   "minPitchDegrees": -20,
-                  "maxPitchDegrees": 40
+                  "maxPitchDegrees": 40,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": [
+                      {
+                        "yawDegrees": -180,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": -160,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": -130,
+                        "minPitchDegrees": -20,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": -90,
+                        "minPitchDegrees": -20,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": 0,
+                        "minPitchDegrees": -20,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": 90,
+                        "minPitchDegrees": -20,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": 140,
+                        "minPitchDegrees": -20,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": 160,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 40
+                      },
+                      {
+                        "yawDegrees": 180,
+                        "minPitchDegrees": -7.5,
+                        "maxPitchDegrees": 40
+                      }
+                    ]
+                  },
+                  "articulation": {
+                    "yawComponentName": "Turret_SkeletalMesh",
+                    "pitchComponentName": "GunMountComponent",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "SQArmorMesh"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "SQArmorMesh_Weapon"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "SQArmorMesh_Weapon",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {
@@ -7339,7 +7997,34 @@
                   "maxYawSpeed": 50,
                   "maxPitchSpeed": 60,
                   "minPitchDegrees": -85,
-                  "maxPitchDegrees": -5
+                  "maxPitchDegrees": -5,
+                  "limits": {
+                    "authority": "editor",
+                    "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+                    "observedAt": "2026-07-26T14:18:16.012531Z",
+                    "evidenceSha256": "2343956d90d4db3a6a2194f663f7e656c0aa76d2fcb22563150ceeb24ee45e25",
+                    "yaw": {
+                      "minDegrees": -180,
+                      "maxDegrees": 180,
+                      "continuous": true
+                    },
+                    "pitchByYaw": []
+                  },
+                  "articulation": {
+                    "yawComponentName": "DefaultSceneRoot",
+                    "pitchComponentName": "GunAttachPoint",
+                    "yawMeshComponentNames": [
+                      "Turret_SkeletalMesh",
+                      "Collision"
+                    ],
+                    "pitchMeshComponentNames": [
+                      "UH1Y_CameraTurret"
+                    ],
+                    "yawAnchorMeshComponentName": "Turret_SkeletalMesh",
+                    "pitchAnchorMeshComponentName": "UH1Y_CameraTurret",
+                    "yawPivotOffsetMetres": null,
+                    "pitchPivotOffsetMetres": null
+                  }
                 }
               },
               {

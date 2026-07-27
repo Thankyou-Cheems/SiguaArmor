@@ -80591,8 +80591,8 @@
   },
   "schemaVersion": "runtime-hit-weapon-label-index/v4",
   "source": {
-    "catalogDataRevision": "encyclopedia-v3-43c43063bc260fba",
-    "catalogDataSha256": "d6ad577a511425ea783fbb49b3ca9519f542f3895cbfd3ac010a4b52c51d0e0b",
-    "runtimeHitIndexSha256": "1f7f9bd7305741d7b9f8ef888438f6c49abe60b6c94233fbba2d5ad2de03e859"
+    "catalogDataRevision": "encyclopedia-local-v1-469e1112a44d7e06-turret-2343956d90d4",
+    "catalogDataSha256": "189ec92e2bddeaf92d0190d6f45fd15a49ec5202ae7ddc26e67da3e6e00ee364",
+    "runtimeHitIndexSha256": "dd77463a38d2fbae7b1ea143a774325cb995beb402298219eab39fcc63d3ec1b"
   }
 }

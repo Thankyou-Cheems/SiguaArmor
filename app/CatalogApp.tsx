@@ -139,7 +139,7 @@ const DONATE_QR_SRC = new URL("../donateQR.jpg", import.meta.url).href;
 const FEEDBACK_EMAIL = "thankucheems@gmail.com";
 const EMPTY_FACTION_FOREGROUND_SRC =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-const FACTION_FOREGROUND_PRELOADS = new Map<string, Promise<void>>();
+const FACTION_IMAGE_PRELOADS = new Map<string, Promise<void>>();
 const FACTION_DOCK_TITLE_LINES: Record<string, readonly string[]> = {
   神州防御共同体: ["神州防御", "共同体"],
   北极国家联合体: ["北极国家", "联合体"],
@@ -147,8 +147,8 @@ const FACTION_DOCK_TITLE_LINES: Record<string, readonly string[]> = {
 };
 const FACTION_DOCK_TITLE_SIZE_PROPERTY = "--faction-dock-title-font-size";
 
-function preloadFactionForeground(src: string) {
-  const cached = FACTION_FOREGROUND_PRELOADS.get(src);
+function preloadFactionImage(src: string) {
+  const cached = FACTION_IMAGE_PRELOADS.get(src);
   if (cached) return cached;
   const image = new Image();
   image.decoding = "async";
@@ -157,11 +157,11 @@ function preloadFactionForeground(src: string) {
   const preload = image.decode().then(
     () => undefined,
     (reason: unknown) => {
-      FACTION_FOREGROUND_PRELOADS.delete(src);
+      FACTION_IMAGE_PRELOADS.delete(src);
       throw reason;
     },
   );
-  FACTION_FOREGROUND_PRELOADS.set(src, preload);
+  FACTION_IMAGE_PRELOADS.set(src, preload);
   return preload;
 }
 
@@ -1717,7 +1717,6 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
                   <>
                     <div><dt>最大水平速度</dt><dd>{formatNumber(seat.turret.maxYawSpeed, "°/s")}</dd></div>
                     <div><dt>最大俯仰速度</dt><dd>{formatNumber(seat.turret.maxPitchSpeed, "°/s")}</dd></div>
-                    <div><dt>俯仰范围</dt><dd>{formatNumber(seat.turret.minPitchDegrees, "°")} – {formatNumber(seat.turret.maxPitchDegrees, "°")}</dd></div>
                   </>
                 ) : null}
               </dl>
@@ -2370,6 +2369,7 @@ function DetailPanel({
               cardId={record.promoEntryId}
               rawName={data?.general.rawName ?? record.mapping.selectedRawName ?? ""}
               displayName={displayName}
+              referenceData={data}
               textureVariants={viewerTextureVariants}
               onTextureVariantChange={(variantId) => {
                 const nextVariant = textureVariants.find((entry) => entry.cardId === variantId);
@@ -2590,6 +2590,108 @@ const CHARACTER_WHEEL_MAX_FLING_VELOCITY = 1.2;
 const CHARACTER_WHEEL_STOP_VELOCITY = 0.03;
 const CHARACTER_WHEEL_FRICTION = 0.925;
 const CHARACTER_WHEEL_CLICK_ANIMATION_MS = 580;
+const FACTION_BACKGROUND_CROSSFADE_MS = 240;
+
+function FactionBackground({ src }: { src: string }) {
+  const currentSrcRef = useRef(src);
+  const requestedSrcRef = useRef(src);
+  const revealFrameRef = useRef<number | null>(null);
+  const settleTimerRef = useRef<number | null>(null);
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const [pendingSrc, setPendingSrc] = useState<string | null>(null);
+  const [pendingVisible, setPendingVisible] = useState(false);
+
+  useEffect(() => {
+    requestedSrcRef.current = src;
+    if (revealFrameRef.current !== null) {
+      window.cancelAnimationFrame(revealFrameRef.current);
+      revealFrameRef.current = null;
+    }
+    if (settleTimerRef.current !== null) {
+      window.clearTimeout(settleTimerRef.current);
+      settleTimerRef.current = null;
+    }
+    setPendingVisible(false);
+
+    if (src === currentSrcRef.current) {
+      setPendingSrc(null);
+      return undefined;
+    }
+
+    let cancelled = false;
+    void preloadFactionImage(src).then(
+      () => {
+        if (!cancelled && requestedSrcRef.current === src) {
+          setPendingSrc(src);
+        }
+      },
+      () => undefined,
+    );
+
+    return () => {
+      cancelled = true;
+      if (revealFrameRef.current !== null) {
+        window.cancelAnimationFrame(revealFrameRef.current);
+        revealFrameRef.current = null;
+      }
+      if (settleTimerRef.current !== null) {
+        window.clearTimeout(settleTimerRef.current);
+        settleTimerRef.current = null;
+      }
+    };
+  }, [src]);
+
+  useEffect(() => {
+    if (!pendingSrc || pendingSrc !== requestedSrcRef.current) return undefined;
+    const nextSrc = pendingSrc;
+
+    revealFrameRef.current = window.requestAnimationFrame(() => {
+      revealFrameRef.current = null;
+      setPendingVisible(true);
+      settleTimerRef.current = window.setTimeout(() => {
+        settleTimerRef.current = null;
+        if (requestedSrcRef.current !== nextSrc) return;
+        currentSrcRef.current = nextSrc;
+        setCurrentSrc(nextSrc);
+        setPendingSrc(null);
+        setPendingVisible(false);
+      }, FACTION_BACKGROUND_CROSSFADE_MS);
+    });
+
+    return () => {
+      if (revealFrameRef.current !== null) {
+        window.cancelAnimationFrame(revealFrameRef.current);
+        revealFrameRef.current = null;
+      }
+      if (settleTimerRef.current !== null) {
+        window.clearTimeout(settleTimerRef.current);
+        settleTimerRef.current = null;
+      }
+    };
+  }, [pendingSrc]);
+
+  return (
+    <div className="faction-selector__visual-frame" aria-hidden="true">
+      {/* eslint-disable-next-line @next/next/no-img-element -- exact untransformed pixels keep the local background aligned */}
+      <img
+        className="faction-selector__base"
+        src={currentSrc}
+        alt=""
+        decoding="async"
+      />
+      {pendingSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element -- a decoded second layer avoids cold full-viewport swaps
+        <img
+          className="faction-selector__base faction-selector__base--incoming"
+          src={pendingSrc}
+          alt=""
+          decoding="async"
+          data-visible={pendingVisible ? "true" : undefined}
+        />
+      ) : null}
+    </div>
+  );
+}
 
 function wrapWheelIndex(index: number, length: number) {
   return ((index % length) + length) % length;
@@ -2609,16 +2711,6 @@ function characterWheelRenderStyle(offset: number, dragOffset: number): CSSPrope
   const slot = offset + dragOffset / CHARACTER_WHEEL_STEP;
   const depth = Math.min(3.5, Math.abs(slot));
   const x = -50 + slot * 40.5;
-  const focus = Math.exp(-depth * 1.55);
-  const selection = Math.max(0, 1 - depth) ** 4;
-  const brightness = 0.31 + focus * 0.77;
-  const saturation = 0.32 + focus * 0.68;
-  const contrast = 1.12 - focus * 0.05;
-  const blur = Math.max(0, (depth - 0.7) * 0.28);
-  const shadowAlpha = 0.66 - focus * 0.18;
-  const neutralRimAlpha = 0.08 + (1 - focus) * 0.1;
-  const glowBlur = 2 + selection * 7;
-  const glowAlpha = selection * 0.78;
   const flagFocus = Math.exp(-depth * 1.85);
   const flagOpacity = 0.08 + flagFocus * 0.64;
   const flagScale = 0.72 + flagFocus * 0.2;
@@ -2627,7 +2719,6 @@ function characterWheelRenderStyle(offset: number, dragOffset: number): CSSPrope
   return {
     zIndex: 70 - Math.round(depth * 12),
     opacity: 1,
-    filter: `brightness(${brightness.toFixed(3)}) contrast(${contrast.toFixed(3)}) saturate(${saturation.toFixed(3)}) blur(${blur.toFixed(2)}px) drop-shadow(0 0 1.5px rgba(166, 177, 169, ${neutralRimAlpha.toFixed(3)})) drop-shadow(0 0 ${glowBlur.toFixed(2)}px rgba(231, 189, 104, ${glowAlpha.toFixed(3)})) drop-shadow(0 18px 26px rgba(0, 0, 0, ${shadowAlpha.toFixed(3)}))`,
     transform: `translate3d(${x.toFixed(3)}%, 0, 0)`,
     "--wheel-flag-opacity": flagOpacity.toFixed(3),
     "--wheel-flag-scale": flagScale.toFixed(3),
@@ -2983,6 +3074,7 @@ function FactionCharacterWheel({
                 onClick={() => handleItemClick(group.id, offset)}
                 onKeyDown={(event) => handleItemKeyDown(event, group.id, offset)}
               >
+                <span className="faction-character-wheel__hit-area" aria-hidden="true" />
                 <span className="faction-character-wheel__image-shell">
                   <span className="faction-character-wheel__flag" aria-hidden="true">
                     {/* eslint-disable-next-line @next/next/no-img-element -- compact local faction flag follows the wheel focus state */}
@@ -3042,6 +3134,7 @@ export function CatalogApp({
   const [preloadedFactionIds, setPreloadedFactionIds] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
+  const [choicePanelActive, setChoicePanelActive] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [dataAccuracyNoticeOpen, setDataAccuracyNoticeOpen] = useState(true);
   const [dataAccuracyNoticeSecondsLeft, setDataAccuracyNoticeSecondsLeft] = useState(10);
@@ -3063,6 +3156,10 @@ export function CatalogApp({
 
   useEffect(() => {
     if (!dataAccuracyNoticeOpen) return undefined;
+    if (!editionProfile.showNoticeCountdown) {
+      const timeout = window.setTimeout(() => setDataAccuracyNoticeOpen(false), 10_000);
+      return () => window.clearTimeout(timeout);
+    }
     const deadline = Date.now() + 10_000;
     const updateCountdown = () => {
       const secondsLeft = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
@@ -3072,7 +3169,7 @@ export function CatalogApp({
     updateCountdown();
     const interval = window.setInterval(updateCountdown, 250);
     return () => window.clearInterval(interval);
-  }, [dataAccuracyNoticeOpen]);
+  }, [dataAccuracyNoticeOpen, editionProfile.showNoticeCountdown]);
 
   const groups = useMemo(
     () => [...catalogIndex.groups].sort((left, right) => left.order - right.order),
@@ -3099,6 +3196,13 @@ export function CatalogApp({
     [groups, siteEdition],
   );
   useEffect(() => {
+    if (siteEdition !== "international") return;
+    for (const group of visualGroups) {
+      const background = factionVisualAsset(group, siteEdition).catalogBackground;
+      void preloadFactionImage(background).catch(() => undefined);
+    }
+  }, [siteEdition, visualGroups]);
+  useEffect(() => {
     if (siteEdition !== "china") return undefined;
     const requestedFactionId = activeFactionDustId ?? morphFactionId;
     if (!requestedFactionId) return undefined;
@@ -3106,7 +3210,7 @@ export function CatalogApp({
     if (!group) return undefined;
     let cancelled = false;
     const asset = factionVisualAsset(group, siteEdition);
-    void preloadFactionForeground(asset.foreground).then(
+    void preloadFactionImage(asset.foreground).then(
       () => {
         if (cancelled) return;
         setPreloadedFactionIds((current) => {
@@ -3571,6 +3675,7 @@ export function CatalogApp({
         data-foregrounds-preloaded={
           siteEdition === "china" ? preloadedFactionIds.size : undefined
         }
+        data-choice-panel-active={choicePanelActive ? "true" : undefined}
         aria-labelledby="faction-selector-title"
         aria-describedby={
           siteEdition === "international" ? "faction-selector-ai-notice" : undefined
@@ -3807,18 +3912,13 @@ export function CatalogApp({
         ) : (
           <>
         <div className="faction-selector__stage">
-          <div className="faction-selector__visual-frame" aria-hidden="true">
-            {/* eslint-disable-next-line @next/next/no-img-element -- exact untransformed pixels keep the alpha overlays registered to the official image */}
-            <img
-              className="faction-selector__base"
-              src={
-                previewFaction
-                  ? factionVisualAsset(previewFaction, siteEdition).catalogBackground
-                  : "/images/site/faction-impression.jpg"
-              }
-              alt=""
-            />
-          </div>
+          <FactionBackground
+            src={
+              previewFaction
+                ? factionVisualAsset(previewFaction, siteEdition).catalogBackground
+                : "/images/site/faction-impression.jpg"
+            }
+          />
           <div className="faction-selector__shade" aria-hidden="true" />
           <FactionCharacterWheel
             groups={visualGroups}
@@ -3908,7 +4008,21 @@ export function CatalogApp({
           />
         </header>
 
-        <div className="faction-selector__choice-panel">
+        <div
+          className="faction-selector__choice-panel"
+          onPointerEnter={() => setChoicePanelActive(true)}
+          onPointerLeave={(event) => {
+            setChoicePanelActive(event.currentTarget.matches(":focus-within"));
+          }}
+          onFocusCapture={() => setChoicePanelActive(true)}
+          onBlurCapture={(event) => {
+            const nextTarget = event.relatedTarget;
+            if (nextTarget instanceof Node && event.currentTarget.contains(nextTarget)) {
+              return;
+            }
+            setChoicePanelActive(event.currentTarget.matches(":hover"));
+          }}
+        >
           <header className="faction-selector__choice-panel-heading">
             <span>
               <small>FACTION INDEX</small>

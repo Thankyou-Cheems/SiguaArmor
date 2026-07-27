@@ -11,6 +11,7 @@ export interface ViewerNavigationState {
   pitch: number | null;
   camera: string;
   shots: string;
+  turrets: string;
 }
 
 export interface DamageTypeModifier {
