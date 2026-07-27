@@ -5106,11 +5106,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .viewer-load-status {
   position: absolute;
   z-index: 6;
-  top: 12px;
+  top: auto;
   right: 12px;
+  bottom: 12px;
   display: flex;
   min-height: 34px;
-  max-width: min(46%, 430px);
+  max-width: min(430px, calc(100% - 540px));
   align-items: center;
   overflow: hidden;
   padding: 0 9px;
@@ -5126,16 +5127,17 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-load-status[data-with-close="true"] {
-  right: 58px;
+  right: 12px;
 }
 
 .viewer-texture-variant-switcher {
   position: absolute;
   z-index: 39;
   top: 12px;
-  right: 58px;
+  right: auto;
+  left: 50%;
   display: flex;
-  max-width: min(560px, calc(100% - 360px));
+  max-width: min(560px, calc(100% - 520px));
   min-height: 34px;
   align-items: center;
   gap: 8px;
@@ -5145,6 +5147,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
   color: var(--text-dim);
   backdrop-filter: blur(10px);
+  transform: translateX(-50%);
 }
 
 .viewer-texture-variant-switcher > span {
@@ -9172,6 +9175,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 @media (max-width: 900px) {
+  .viewer-load-status {
+    right: 12px;
+    bottom: 132px;
+    max-width: min(430px, calc(100% - 24px));
+  }
+
   .viewer-engagement-controls {
     width: min(480px, calc(100% - 24px));
     grid-template-columns: minmax(120px, 0.62fr) minmax(210px, 1.38fr);
@@ -9221,6 +9230,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     right: 8px;
     left: 8px;
     max-width: none;
+    transform: none;
   }
 
   .viewer-resource-warning {
@@ -13169,6 +13179,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   stroke-width: 0.45;
 }
 
+.turret-limit-compass__yaw-sector {
+  fill: rgba(108, 127, 115, 0.24);
+  stroke: rgba(184, 202, 190, 0.12);
+  stroke-width: 0.2;
+}
+
 .turret-limit-compass__vehicle {
   fill: rgba(20, 25, 21, 0.94);
   stroke: rgba(241, 239, 226, 0.72);
@@ -13178,11 +13194,20 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .turret-limit-compass__pointer {
-  fill: var(--brand);
-  stroke: var(--brand);
+  --turret-indicator-tone: var(--brand);
+  fill: var(--turret-indicator-tone);
+  stroke: var(--turret-indicator-tone);
   stroke-linecap: round;
   stroke-width: 1.2;
-  filter: drop-shadow(0 0 2px rgba(231, 189, 104, 0.8));
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--turret-indicator-tone) 78%, transparent));
+}
+
+.turret-limit-compass__pointer[data-kind="weapon-station"] {
+  --turret-indicator-tone: #63d7e9;
+}
+
+.turret-limit-compass__pointer[data-kind="machine-gun"] {
+  --turret-indicator-tone: #79a8ff;
 }
 
 .turret-limit-compass__pointer .turret-limit-compass__handle {
@@ -13201,6 +13226,34 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   stroke: var(--brand);
   stroke-width: 1.8;
   filter: drop-shadow(0 0 2px rgba(231, 189, 104, 0.82));
+}
+
+.turret-limit-compass__orientation {
+  --turret-orientation-tone: var(--brand);
+  fill: none;
+  stroke: var(--turret-orientation-tone);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.85;
+  opacity: 0.76;
+}
+
+.turret-limit-compass__orientation[data-kind="weapon-station"] {
+  --turret-orientation-tone: #63d7e9;
+}
+
+.turret-limit-compass__orientation[data-kind="machine-gun"] {
+  --turret-orientation-tone: #79a8ff;
+}
+
+.turret-limit-compass__orientation circle {
+  fill: var(--turret-orientation-tone);
+}
+
+.turret-limit-compass__orientation[data-active="true"] {
+  stroke-width: 1.25;
+  opacity: 1;
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--turret-orientation-tone) 76%, transparent));
 }
 
 .turret-limit-compass__interaction-surface {
@@ -13431,10 +13484,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .turret-preview-controls {
   position: absolute;
-  z-index: 9;
-  top: 12px;
-  right: 54px;
-  width: min(280px, calc(100% - 270px));
+  z-index: 10;
+  top: 54px;
+  right: 12px;
+  width: min(280px, calc(100% - 24px));
   color: var(--text);
 }
 
@@ -13634,6 +13687,73 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: var(--brand);
 }
 
+.turret-preview-controls__orientation-legend {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.turret-preview-controls__orientation-legend li {
+  --turret-orientation-tone: var(--brand);
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 11px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border: 1px solid rgba(225, 200, 155, 0.1);
+  color: var(--text-dim);
+  font-size: 7px;
+}
+
+.turret-preview-controls__orientation-legend li[data-kind="weapon-station"] {
+  --turret-orientation-tone: #63d7e9;
+}
+
+.turret-preview-controls__orientation-legend li[data-kind="machine-gun"] {
+  --turret-orientation-tone: #79a8ff;
+}
+
+.turret-preview-controls__orientation-legend li[data-active="true"] {
+  border-color: color-mix(in srgb, var(--turret-orientation-tone) 42%, transparent);
+  background: color-mix(in srgb, var(--turret-orientation-tone) 8%, transparent);
+  color: var(--text);
+}
+
+.turret-preview-controls__orientation-legend i {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--turret-orientation-tone);
+  transform: rotate(45deg);
+}
+
+.turret-preview-controls__orientation-legend li[data-kind="main-turret"] i {
+  border: 0;
+  background: var(--turret-orientation-tone);
+  clip-path: polygon(50% 0, 100% 100%, 50% 72%, 0 100%);
+  transform: none;
+}
+
+.turret-preview-controls__orientation-legend li[data-kind="machine-gun"] i {
+  border-radius: 50%;
+  box-shadow: 0 4px 0 -2px var(--turret-orientation-tone);
+  transform: none;
+}
+
+.turret-preview-controls__orientation-legend span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.turret-preview-controls__orientation-legend output {
+  color: var(--turret-orientation-tone);
+  font-family: var(--font-mono-ui);
+  font-size: 7px;
+}
+
 .turret-preview-controls__body > p {
   color: var(--text-muted);
   font-size: 7px;
@@ -13663,9 +13783,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   }
 
   .turret-preview-controls {
-    top: 54px;
-    right: 10px;
-    width: min(280px, calc(100% - 20px));
+    top: 96px;
+    right: 8px;
+    width: min(280px, calc(100% - 16px));
   }
 
   .turret-preview-controls__yaw > .turret-limit-compass {

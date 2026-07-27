@@ -37,6 +37,92 @@ export interface RuntimeTurretAssembly {
   pitchComponentPlacementId: string | null;
 }
 
+/**
+ * Expand exact parent/child turret assemblies without guessing from names.
+ *
+ * `resolveRuntimeTurretAssembly` deliberately starts from a bounded spatial
+ * cluster. That is enough to identify a nested station's yaw anchor, but a
+ * long barrel can extend beyond the parent's carry radius. Once the parent's
+ * yaw assembly already contains the child's exact yaw component occurrence,
+ * the local visual package has established the attachment relationship. The
+ * parent must then carry the child's complete yaw assembly while leaving the
+ * child's pitch transform independent.
+ */
+export function carryNestedRuntimeTurretAssemblies(
+  assemblies: readonly (RuntimeTurretAssembly | null)[],
+) {
+  const expanded = assemblies.map((assembly) =>
+    assembly
+      ? {
+          ...assembly,
+          yawPlacementIds: [...assembly.yawPlacementIds],
+          pitchPlacementIds: [...assembly.pitchPlacementIds],
+          hitYawPlacementIds: assembly.hitYawPlacementIds
+            ? [...assembly.hitYawPlacementIds]
+            : undefined,
+          hitActorClassNames: assembly.hitActorClassNames
+            ? [...assembly.hitActorClassNames]
+            : undefined,
+        }
+      : null
+  );
+  const appendUnique = (target: string[], values: readonly string[]) => {
+    let changed = false;
+    const known = new Set(target);
+    for (const value of values) {
+      if (known.has(value)) continue;
+      known.add(value);
+      target.push(value);
+      changed = true;
+    }
+    return changed;
+  };
+
+  let changed = true;
+  for (
+    let pass = 0;
+    changed && pass < Math.max(1, expanded.length);
+    pass += 1
+  ) {
+    changed = false;
+    for (let parentIndex = 0; parentIndex < expanded.length; parentIndex += 1) {
+      const parent = expanded[parentIndex];
+      if (!parent) continue;
+      for (let childIndex = 0; childIndex < expanded.length; childIndex += 1) {
+        if (parentIndex === childIndex) continue;
+        const child = expanded[childIndex];
+        if (
+          !child ||
+          child.yawComponentPlacementId === parent.yawComponentPlacementId ||
+          !parent.yawPlacementIds.includes(child.yawComponentPlacementId)
+        ) {
+          continue;
+        }
+        changed =
+          appendUnique(parent.yawPlacementIds, child.yawPlacementIds) ||
+          changed;
+        if (child.hitYawPlacementIds) {
+          parent.hitYawPlacementIds ??= [];
+          changed =
+            appendUnique(
+              parent.hitYawPlacementIds,
+              child.hitYawPlacementIds,
+            ) || changed;
+        }
+        if (child.hitActorClassNames) {
+          parent.hitActorClassNames ??= [];
+          changed =
+            appendUnique(
+              parent.hitActorClassNames,
+              child.hitActorClassNames,
+            ) || changed;
+        }
+      }
+    }
+  }
+  return expanded;
+}
+
 export interface RuntimeTurretFallbackSpec {
   yawAnchorComponentName: string;
   yawAnchorActorName?: string;

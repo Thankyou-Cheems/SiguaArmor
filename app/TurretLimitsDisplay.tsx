@@ -28,8 +28,23 @@ interface TurretLimitCompassProps {
   size?: number;
   compact?: boolean;
   disabled?: boolean;
+  activeIndicatorKind?: TurretPreviewIndicatorKind;
+  orientationIndicators?: TurretOrientationIndicator[];
   onYawChange?: (yawDegrees: number) => void;
   onInteractionEnd?: () => void;
+}
+
+export type TurretPreviewIndicatorKind =
+  | "main-turret"
+  | "weapon-station"
+  | "machine-gun";
+
+export interface TurretOrientationIndicator {
+  id: string;
+  label: string;
+  kind: TurretPreviewIndicatorKind;
+  yawDegrees: number;
+  active: boolean;
 }
 
 export interface TurretPreviewStation {
@@ -37,12 +52,14 @@ export interface TurretPreviewStation {
   label: string;
   equipmentLabel: string;
   turret: ReferenceTurret;
+  indicatorKind: TurretPreviewIndicatorKind;
   yawAvailable: boolean;
   pitchAvailable: boolean;
 }
 
 interface TurretPreviewControlsProps {
   stations: TurretPreviewStation[];
+  orientationIndicators: TurretOrientationIndicator[];
   activeStationId: string;
   yawDegrees: number;
   pitchDegrees: number;
@@ -152,6 +169,8 @@ export function TurretLimitCompass({
   size = 176,
   compact = false,
   disabled = false,
+  activeIndicatorKind = "main-turret",
+  orientationIndicators = [],
   onYawChange,
   onInteractionEnd,
 }: TurretLimitCompassProps) {
@@ -294,36 +313,50 @@ export function TurretLimitCompass({
       <circle className="turret-limit-compass__backdrop" cx="50" cy="50" r="46" />
       <circle className="turret-limit-compass__guide" cx="50" cy="50" r="40" />
       <circle className="turret-limit-compass__guide" cx="50" cy="50" r="29" />
-      {samples.map((sample) => (
-        <g key={sample.yawDegrees} aria-hidden="true">
-          <path
-            d={annularSectorPath(
-              sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
-              sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
-              34,
-              43,
-            )}
-            fill={depressionColor(sample.minPitchDegrees)}
-          >
-            <title>
-              {`${angleLabel(sample.yawDegrees)}：俯角 ${angleLabel(sample.minPitchDegrees)}`}
-            </title>
-          </path>
-          <path
-            d={annularSectorPath(
-              sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
-              sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
-              25,
-              32,
-            )}
-            fill={elevationColor(sample.maxPitchDegrees)}
-          >
-            <title>
-              {`${angleLabel(sample.yawDegrees)}：仰角 ${angleLabel(sample.maxPitchDegrees)}`}
-            </title>
-          </path>
-        </g>
-      ))}
+      {interactive
+        ? samples.map((sample) => (
+            <path
+              className="turret-limit-compass__yaw-sector"
+              key={sample.yawDegrees}
+              d={annularSectorPath(
+                sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
+                sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
+                34,
+                43,
+              )}
+              aria-hidden="true"
+            />
+          ))
+        : samples.map((sample) => (
+            <g key={sample.yawDegrees} aria-hidden="true">
+              <path
+                d={annularSectorPath(
+                  sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
+                  sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
+                  34,
+                  43,
+                )}
+                fill={depressionColor(sample.minPitchDegrees)}
+              >
+                <title>
+                  {`${angleLabel(sample.yawDegrees)}：俯角 ${angleLabel(sample.minPitchDegrees)}`}
+                </title>
+              </path>
+              <path
+                d={annularSectorPath(
+                  sample.yawDegrees - COMPASS_SAMPLE_STEP / 2,
+                  sample.yawDegrees + COMPASS_SAMPLE_STEP / 2,
+                  25,
+                  32,
+                )}
+                fill={elevationColor(sample.maxPitchDegrees)}
+              >
+                <title>
+                  {`${angleLabel(sample.yawDegrees)}：仰角 ${angleLabel(sample.maxPitchDegrees)}`}
+                </title>
+              </path>
+            </g>
+          ))}
       <g className="turret-limit-compass__detents" aria-hidden="true">
         {availableDetents.map((detent) => {
           const inner = polarPoint(detent, 43);
@@ -348,7 +381,44 @@ export function TurretLimitCompass({
         <path d="M50 33V22" />
         <path d="m46 27 4-5 4 5" />
       </g>
-      <g className="turret-limit-compass__pointer" aria-hidden="true">
+      {interactive && orientationIndicators.length > 0 ? (
+        <g className="turret-limit-compass__orientations" aria-hidden="true">
+          {orientationIndicators.map((indicator) => {
+            const position = polarPoint(indicator.yawDegrees, 26.5);
+            return (
+              <g
+                key={indicator.id}
+                className="turret-limit-compass__orientation"
+                data-kind={indicator.kind}
+                data-active={indicator.active || undefined}
+                transform={`translate(${position.x.toFixed(3)} ${position.y.toFixed(3)}) rotate(${indicator.yawDegrees.toFixed(3)})`}
+              >
+                {indicator.kind === "main-turret" ? (
+                  <>
+                    <path d="M-3 2 0-4 3 2Z" />
+                    <path d="M0-4V-8" />
+                  </>
+                ) : indicator.kind === "weapon-station" ? (
+                  <>
+                    <path d="M0-4 4 0 0 4-4 0Z" />
+                    <path d="M-2 0H2M0-2V2" />
+                  </>
+                ) : (
+                  <>
+                    <circle cx="0" cy="-1" r="1.1" />
+                    <path d="M-3 2 0-2 3 2M-3 5 0 1 3 5" />
+                  </>
+                )}
+              </g>
+            );
+          })}
+        </g>
+      ) : null}
+      <g
+        className="turret-limit-compass__pointer"
+        data-kind={activeIndicatorKind}
+        aria-hidden="true"
+      >
         <line x1="50" y1="50" x2={pointer.x} y2={pointer.y} />
         <circle cx={pointer.x} cy={pointer.y} r="1.8" />
         {interactive ? (
@@ -471,6 +541,7 @@ export function TurretEnvelopeCard({
 
 export function TurretPreviewControls({
   stations,
+  orientationIndicators,
   activeStationId,
   yawDegrees,
   pitchDegrees,
@@ -603,10 +674,12 @@ export function TurretPreviewControls({
                 size={148}
                 compact
                 disabled={!activeStation.yawAvailable}
+                activeIndicatorKind={activeStation.indicatorKind}
+                orientationIndicators={orientationIndicators}
                 onYawChange={onYawChange}
                 onInteractionEnd={onInteractionEnd}
               />
-              <small>拖动圆盘 · 四向档位轻吸附</small>
+              <small>外圈调相对方位 · 内圈显示世界朝向</small>
             </div>
             <label className="turret-preview-controls__pitch">
               <span className="turret-preview-controls__readout">
@@ -674,6 +747,22 @@ export function TurretPreviewControls({
               回正炮塔
             </button>
           </div>
+          <ul
+            className="turret-preview-controls__orientation-legend"
+            aria-label="炮塔与武器站世界朝向"
+          >
+            {orientationIndicators.map((indicator) => (
+              <li
+                key={indicator.id}
+                data-kind={indicator.kind}
+                data-active={indicator.active || undefined}
+              >
+                <i aria-hidden="true" />
+                <span>{indicator.label}</span>
+                <output>{angleLabel(indicator.yawDegrees)}</output>
+              </li>
+            ))}
+          </ul>
           {!activeStation.yawAvailable ? (
             <p role="note">当前运行时视觉包没有可验证的炮塔 actor，暂不旋转模型。</p>
           ) : !activeStation.pitchAvailable ? (
