@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "group": {
     "id": "mei",
     "name": "Middle Eastern Insurgents",
     "order": 7,
-    "recordCount": 25
+    "recordCount": 26
   },
   "records": [
     {
@@ -12371,6 +12371,84 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "mei--portable-recon-drone--drone",
+      "promotionOrder": 399,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "mei",
+        "groupNameZh": "Middle Eastern Insurgents",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_FlyingDrone"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone",
+          "alias": "",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_FlyingDrone",
+              "displayName": "Portable Recon Drone",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/CommanderActions/MEI/HandledDrone_MEI.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "DRONE",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "portable-standard",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone.BP_FlyingDrone_C",
+            "gameplayAuthorityPath": "Settings/Actions/CommanderActions/MEI/HandledDrone_MEI.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
           }
         }
       ]

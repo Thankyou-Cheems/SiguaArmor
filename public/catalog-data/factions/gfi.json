@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "group": {
     "id": "gfi",
     "name": "Ground Forces of Iran",
     "order": 5,
-    "recordCount": 22
+    "recordCount": 24
   },
   "records": [
     {
@@ -9107,6 +9107,213 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "gfi--pchela--uav",
+      "promotionOrder": 396,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "gfi",
+        "groupNameZh": "Ground Forces of Iran",
+        "nameZh": "Pchela-1T",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Pchela-1T",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_UAV_Pchela"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_Pchela",
+          "alias": "",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_UAV_Pchela",
+              "displayName": "Pchela-1T",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/GFI/UAV_Pchela-1T_GFI.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "UAV",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "pchela",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_Pchela.BP_CommandActor_UAV_Pchela_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/GFI/UAV_Pchela-1T_GFI.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "gfi--su25--cas",
+      "promotionOrder": 397,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "gfi",
+        "groupNameZh": "Ground Forces of Iran",
+        "nameZh": "Su-25",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "Su-25",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_SU25_Bomb_Strafe"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+          "alias": "Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
+              "displayName": "Su-25 Precision Bomb Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/GFI/Su25_PrecisionStrike_500lbBomb_GFI.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "su25-bomb",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Bomb_Strafe.BP_CommandActor_SU25_Bomb_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/GFI/Su25_PrecisionStrike_500lbBomb_GFI.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        },
+        {
+          "sourceRawName": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
+          "alias": "S-8 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "S-8 Rocket Strike"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
+              "displayName": "Su-25 S-8 Rocket Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/GFI/Su25_Strafing_S8_GFI.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "su25-gfi-rockets",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_GFI_Rockets_Strafe.BP_CommandActor_SU25_GFI_Rockets_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/GFI/Su25_Strafing_S8_GFI.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
           }
         }
       ]

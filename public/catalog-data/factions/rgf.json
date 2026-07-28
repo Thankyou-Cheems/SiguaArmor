@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "group": {
     "id": "rgf",
     "name": "Russian Ground Forces",
     "order": 11,
-    "recordCount": 25
+    "recordCount": 28
   },
   "records": [
     {
@@ -22107,6 +22107,291 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "rgf--pchela--uav",
+      "promotionOrder": 407,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "rgf",
+        "groupNameZh": "Russian Ground Forces",
+        "nameZh": "Pchela-1T",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Pchela-1T",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_UAV_Pchela"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_Pchela",
+          "alias": "",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_UAV_Pchela",
+              "displayName": "Pchela-1T",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/RGF/UAV_Pchela-1T_RGF.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "UAV",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "pchela",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_Pchela.BP_CommandActor_UAV_Pchela_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/RGF/UAV_Pchela-1T_RGF.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "rgf--su25--cas",
+      "promotionOrder": 408,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "rgf",
+        "groupNameZh": "Russian Ground Forces",
+        "nameZh": "Su-25",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "Su-25",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_SU25_Bomb_Strafe"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+          "alias": "Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
+              "displayName": "Su-25 Precision Bomb Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/RGF/Su25_PrecisionStrike_500lbBomb_RGF.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "su25-bomb",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Bomb_Strafe.BP_CommandActor_SU25_Bomb_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/RGF/Su25_PrecisionStrike_500lbBomb_RGF.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        },
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
+          "alias": "S-8 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "S-8 Rocket Strike"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_SU25_Rockets_Strafe",
+              "displayName": "Su-25 S-8 Rocket Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/RGF/Su25_Strafing_S8_RGF.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "su25-rockets",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/RGF/Su25_Strafing_S8_RGF.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "rgf--portable-recon-drone--drone",
+      "promotionOrder": 409,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "rgf",
+        "groupNameZh": "Russian Ground Forces",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_FlyingDrone_Recoverable"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_FlyingDrone_Recoverable",
+              "displayName": "Recoverable Scout Drone",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Roles/RGF/RGF_Scout_01.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "DRONE",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "portable-recoverable",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_Recoverable.BP_FlyingDrone_Recoverable_C",
+            "gameplayAuthorityPath": "Settings/Roles/RGF/RGF_Scout_01.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
           }
         }
       ]

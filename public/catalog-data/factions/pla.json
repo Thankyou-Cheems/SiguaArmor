@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "group": {
     "id": "pla",
     "name": "People's Liberation Army",
     "order": 8,
-    "recordCount": 29
+    "recordCount": 32
   },
   "records": [
     {
@@ -21987,6 +21987,240 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "pla--ch4a--uav",
+      "promotionOrder": 400,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "pla",
+        "groupNameZh": "People's Liberation Army",
+        "nameZh": "CH-4A",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "CH-4A",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_UAV_CH4A"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_CH4A",
+          "alias": "",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_UAV_CH4A",
+              "displayName": "CH-4A",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/PLA/UAV_CH4A_PLA.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "UAV",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "ch4a",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_CH4A.BP_CommandActor_UAV_CH4A_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/PLA/UAV_CH4A_PLA.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "pla--jh7a--cas",
+      "promotionOrder": 401,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "pla",
+        "groupNameZh": "People's Liberation Army",
+        "nameZh": "JH-7A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "JH-7A",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_JH7A_Rockets_Strafe"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_JH7A_Rockets_Strafe",
+          "alias": "",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_JH7A_Rockets_Strafe",
+              "displayName": "JH-7A Rocket Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/PLA/JH7A_Strafing_Rockets_PLA.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "jh7a-rockets",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_JH7A_Rockets_Strafe.BP_CommandActor_JH7A_Rockets_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/PLA/JH7A_Strafing_Rockets_PLA.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "pla--portable-recon-drone--drone",
+      "promotionOrder": 402,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "pla",
+        "groupNameZh": "People's Liberation Army",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_FlyingDrone_Recoverable"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_FlyingDrone_Recoverable",
+              "displayName": "Recoverable Scout Drone",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Roles/PLA/PLA_Scout_01.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "DRONE",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "portable-recoverable",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_Recoverable.BP_FlyingDrone_Recoverable_C",
+            "gameplayAuthorityPath": "Settings/Roles/PLA/PLA_Scout_01.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
           }
         }
       ]

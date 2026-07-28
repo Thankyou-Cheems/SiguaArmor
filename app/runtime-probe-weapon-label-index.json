@@ -69535,6 +69535,14 @@
       "weapons": []
     },
     {
+      "bindingKey": "afu--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "afu--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
       "bindingKey": "afu--quad-bike--ultv\u0000BP_Quadbike_Desert",
       "cardId": "afu--quad-bike--ultv",
       "rawName": "BP_Quadbike_Desert",
@@ -71376,6 +71384,22 @@
       "weapons": []
     },
     {
+      "bindingKey": "crf--portable-recon-drone--drone\u0000BP_FlyingDrone",
+      "cardId": "crf--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone",
+      "recordSha256": "42db803c1cf0531112686cd49442d8d00ed6462a11ea3b11fdceb988b0055052",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
+      "bindingKey": "crf--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "crf--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
       "bindingKey": "crf--quad-bike--ultv\u0000BP_Quadbike_Desert",
       "cardId": "crf--quad-bike--ultv",
       "rawName": "BP_Quadbike_Desert",
@@ -72117,6 +72141,22 @@
       "weapons": []
     },
     {
+      "bindingKey": "imf--portable-recon-drone--drone\u0000BP_FlyingDrone",
+      "cardId": "imf--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone",
+      "recordSha256": "42db803c1cf0531112686cd49442d8d00ed6462a11ea3b11fdceb988b0055052",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
+      "bindingKey": "imf--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "imf--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
       "bindingKey": "imf--rhib-dshk--ultv\u0000BP_RHIB_DSHK",
       "cardId": "imf--rhib-dshk--ultv",
       "rawName": "BP_RHIB_DSHK",
@@ -72670,6 +72710,14 @@
       "cardId": "mei--mt-lb-zu-23-2--spaa",
       "rawName": "BP_MTLB_ZU23_INS",
       "recordSha256": "db9050f5a6e32b1fd0d599e774ff0db85ad5dc72de77cd5fc1bd42e0d47884df",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
+      "bindingKey": "mei--portable-recon-drone--drone\u0000BP_FlyingDrone",
+      "cardId": "mei--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone",
+      "recordSha256": "42db803c1cf0531112686cd49442d8d00ed6462a11ea3b11fdceb988b0055052",
       "unmatchedWeaponIndices": [],
       "weapons": []
     },
@@ -73330,6 +73378,14 @@
           "weaponIndex": 0
         }
       ]
+    },
+    {
+      "bindingKey": "pla--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "pla--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
     },
     {
       "bindingKey": "pla--rhib-logistics--logi\u0000BP_RHIB_Logistics",
@@ -74269,6 +74325,14 @@
       ]
     },
     {
+      "bindingKey": "plaagf--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "plaagf--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
       "bindingKey": "plaagf--rhib-logistics--logi\u0000BP_RHIB_Logistics",
       "cardId": "plaagf--rhib-logistics--logi",
       "rawName": "BP_RHIB_Logistics",
@@ -75152,6 +75216,14 @@
           "weaponIndex": 0
         }
       ]
+    },
+    {
+      "bindingKey": "planmc--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "planmc--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
     },
     {
       "bindingKey": "planmc--rhib-logistics--logi\u0000BP_RHIB_Logistics",
@@ -76118,6 +76190,14 @@
       "cardId": "rgf--mt-lbm-6mb--ifv",
       "rawName": "BP_MTLBM_6MB_RUS_Desert",
       "recordSha256": "c2e7792e42e5adb0c312d5817255e3b8ec4e47763aeed0a529d07191e042e038",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
+      "bindingKey": "rgf--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "rgf--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
       "unmatchedWeaponIndices": [],
       "weapons": []
     },
@@ -79585,6 +79665,14 @@
       ]
     },
     {
+      "bindingKey": "vdv--portable-recon-drone--drone\u0000BP_FlyingDrone_Recoverable",
+      "cardId": "vdv--portable-recon-drone--drone",
+      "rawName": "BP_FlyingDrone_Recoverable",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "unmatchedWeaponIndices": [],
+      "weapons": []
+    },
+    {
       "bindingKey": "vdv--rhib-ags-17--ultv\u0000BP_RHIB_AGS17",
       "cardId": "vdv--rhib-ags-17--ultv",
       "rawName": "BP_RHIB_AGS17",
@@ -80574,25 +80662,27 @@
     "attackSources": 174,
     "attackWeapons": 521,
     "baseCurveFallbackAttackWeapons": 9,
-    "bindings": 604,
+    "bindings": 615,
     "catalogCompletedAttackWeapons": 178,
     "collapsedSameNameAttackCards": 121,
     "collapsedVariantBindings": 169,
     "encyclopediaDirectWeapons": 883,
     "exactAssetMatches": 708,
     "exactFingerprintMatches": 9,
-    "excludedNoDirectWeaponCards": 89,
+    "excludedNoDirectWeaponCards": 125,
     "matchedWeapons": 717,
     "multiRecordAttackSources": 70,
     "runtimeBackedAttackWeapons": 343,
     "runtimeWeapons": 729,
     "unmatchedWeapons": 12,
-    "vehicleCards": 384
+    "vehicleCards": 420
   },
   "schemaVersion": "runtime-hit-weapon-label-index/v4",
   "source": {
-    "catalogDataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
-    "catalogDataSha256": "b467226b2c40ae7f5144db3dff2e32b6469c7721ab199f4cd0e25425f823a490",
-    "runtimeHitIndexSha256": "dd77463a38d2fbae7b1ea143a774325cb995beb402298219eab39fcc63d3ec1b"
+    "catalogDataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
+    "catalogDataSha256": "6efafad01af4d94fa07ed708560ff54ef2d0eb99298360b045401fbd987a621b",
+    "runtimeHitIndexSha256": "1f7f9bd7305741d7b9f8ef888438f6c49abe60b6c94233fbba2d5ad2de03e859",
+    "supportHitExtractionSummarySha256": "5974a417e497bda956a3e825edbc19ba6ad13c8d608ba3e2fdc8c90e91c1dff8",
+    "supportRuntimeHitIndexSha256": "b1f78e9bf192c2f77cd55cbc125a8f12eccf9e023748ac3dbb6f177c727128db"
   }
 }

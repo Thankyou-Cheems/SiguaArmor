@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "group": {
     "id": "adf",
     "name": "Australian Defence Force",
     "order": 0,
-    "recordCount": 12
+    "recordCount": 14
   },
   "records": [
     {
@@ -5787,6 +5787,213 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "adf--mq9--uav",
+      "promotionOrder": 385,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "adf",
+        "groupNameZh": "Australian Defence Force",
+        "nameZh": "MQ-9 Reaper",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "MQ-9 Reaper",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_UAV_MQ9"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_MQ9",
+          "alias": "",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_UAV_MQ9",
+              "displayName": "MQ-9 Reaper",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/ADF/UAV_MQ9_ADF.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "UAV",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "mq9",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_MQ9.BP_CommandActor_UAV_MQ9_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/ADF/UAV_MQ9_ADF.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "adf--fa18--cas",
+      "promotionOrder": 386,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "adf",
+        "groupNameZh": "Australian Defence Force",
+        "nameZh": "F/A-18F",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "F/A-18F",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_FA18_Strafe"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_FA18_Strafe",
+          "alias": "30 mm Strafe",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "30 mm Strafe"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_FA18_Strafe",
+              "displayName": "F/A-18F 30 mm Strafe",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/ADF/F18_Strafing_30mm_ADF.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "fa18-strafe",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Strafe.BP_CommandActor_FA18_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/ADF/F18_Strafing_30mm_ADF.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        },
+        {
+          "sourceRawName": "BP_CommandActor_FA18_Rockets_Strafe",
+          "alias": "Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Rocket Strike"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_FA18_Rockets_Strafe",
+              "displayName": "F/A-18F Rocket Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/ADF/F18_RocketStrike_ADF.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "fa18-rockets",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Rockets_Strafe.BP_CommandActor_FA18_Rockets_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/ADF/F18_RocketStrike_ADF.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
           }
         }
       ]

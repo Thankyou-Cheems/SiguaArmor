@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "group": {
     "id": "usa",
     "name": "United States Army",
     "order": 13,
-    "recordCount": 30
+    "recordCount": 32
   },
   "records": [
     {
@@ -23325,6 +23325,162 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "usa--mq9--uav",
+      "promotionOrder": 412,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "usa",
+        "groupNameZh": "United States Army",
+        "nameZh": "MQ-9 Reaper",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "MQ-9 Reaper",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_UAV_MQ9"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_MQ9",
+          "alias": "",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_UAV_MQ9",
+              "displayName": "MQ-9 Reaper",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/USA/UAV_MQ9_USA.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "UAV",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "mq9",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_MQ9.BP_CommandActor_UAV_MQ9_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/USA/UAV_MQ9_USA.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "usa--a10--cas",
+      "promotionOrder": 413,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "usa",
+        "groupNameZh": "United States Army",
+        "nameZh": "A-10A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "A-10A",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_A10_Strafe_2"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_A10_Strafe_2",
+          "alias": "",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_A10_Strafe_2",
+              "displayName": "A-10A 30 mm Strafe",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/USA/A10_Strafing_30mm_USA.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "a10-strafe",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/USA/A10_Strafing_30mm_USA.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
           }
         }
       ]

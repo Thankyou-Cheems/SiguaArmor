@@ -1,0 +1,91 @@
+{
+  "accessPolicy": {
+    "publishStatus": "public"
+  },
+  "formatVersion": "hit-scene-runtime/v1",
+  "records": [
+    {
+      "bindings": [
+        {
+          "cardId": "crf--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone"
+        },
+        {
+          "cardId": "imf--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone"
+        },
+        {
+          "cardId": "mei--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone"
+        }
+      ],
+      "bvhBytes": 13280,
+      "bvhPath": "assets/runtime-probe/hit-runtime/bvh/d91aa52dc719362c45a16b10f8dd22db0a24d138010cb24bf6fbd63afad4cc65.bin",
+      "bvhSha256": "d91aa52dc719362c45a16b10f8dd22db0a24d138010cb24bf6fbd63afad4cc65",
+      "formatVersion": "hit-scene-runtime/v1",
+      "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone.BP_FlyingDrone_C",
+      "geometryBytes": 32664,
+      "geometryPath": "assets/runtime-probe/hit-runtime/geometry/0f4f145d171f654e522d3a0281c8edd0f193edd987c2e0b9881de5953906c23d.bin",
+      "geometrySha256": "0f4f145d171f654e522d3a0281c8edd0f193edd987c2e0b9881de5953906c23d",
+      "promoEntryId": "support-air-source-2c7c90faa71c8a8ebd9c5c85cc53fec2",
+      "recordBytes": 22824,
+      "recordPath": "assets/runtime-probe/hit-runtime/records/42db803c1cf0531112686cd49442d8d00ed6462a11ea3b11fdceb988b0055052.json",
+      "recordSha256": "42db803c1cf0531112686cd49442d8d00ed6462a11ea3b11fdceb988b0055052",
+      "sourceVehicleId": "support-air-source-2c7c90faa71c8a8ebd9c5c85cc53fec2",
+      "targetPackage": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone",
+      "vehicleId": "vehicle-2ce3b2a66f8d62b5bff2b01f02a703a71df35252a5fb641499b1a9050f45778d"
+    },
+    {
+      "bindings": [
+        {
+          "cardId": "afu--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        },
+        {
+          "cardId": "crf--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        },
+        {
+          "cardId": "imf--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        },
+        {
+          "cardId": "pla--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        },
+        {
+          "cardId": "plaagf--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        },
+        {
+          "cardId": "planmc--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        },
+        {
+          "cardId": "rgf--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        },
+        {
+          "cardId": "vdv--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_Recoverable"
+        }
+      ],
+      "bvhBytes": 13280,
+      "bvhPath": "assets/runtime-probe/hit-runtime/bvh/cb80d5c390f6669cca36ec0952a92a2fa0fb37a6dd830ef3dcc3c49651eac832.bin",
+      "bvhSha256": "cb80d5c390f6669cca36ec0952a92a2fa0fb37a6dd830ef3dcc3c49651eac832",
+      "formatVersion": "hit-scene-runtime/v1",
+      "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_Recoverable.BP_FlyingDrone_Recoverable_C",
+      "geometryBytes": 32664,
+      "geometryPath": "assets/runtime-probe/hit-runtime/geometry/89acc00489f59cbf498bed3a7bafb27bad8f7acbb4e95026a0107d11fa81690a.bin",
+      "geometrySha256": "89acc00489f59cbf498bed3a7bafb27bad8f7acbb4e95026a0107d11fa81690a",
+      "promoEntryId": "support-air-source-100ce2d922896b3cef6a234889e10b78",
+      "recordBytes": 22983,
+      "recordPath": "assets/runtime-probe/hit-runtime/records/c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895.json",
+      "recordSha256": "c23cc51f366fc1f09c4256742e0dace738740208b5d9850f6478e62775ebc895",
+      "sourceVehicleId": "support-air-source-100ce2d922896b3cef6a234889e10b78",
+      "targetPackage": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_Recoverable",
+      "vehicleId": "vehicle-66eced3a5918cfdee68d89691f429d10804e7a9d9224b74f2d77ed6a53935fe1"
+    }
+  ],
+  "schemaVersion": "1.0.0"
+}

@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "group": {
     "id": "afu",
     "name": "Armed Forces of Ukraine",
     "order": 1,
-    "recordCount": 22
+    "recordCount": 25
   },
   "records": [
     {
@@ -9916,6 +9916,291 @@
                 ]
               }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "afu--tb2--uav",
+      "promotionOrder": 387,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "afu",
+        "groupNameZh": "Armed Forces of Ukraine",
+        "nameZh": "Bayraktar TB2",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Bayraktar TB2",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_UAV_TB2"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_TB2",
+          "alias": "",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_UAV_TB2",
+              "displayName": "Bayraktar TB2",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/AFU/UAV_TB2_AFU.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "UAV",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "tb2",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_TB2.BP_CommandActor_UAV_TB2_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/AFU/UAV_TB2_AFU.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "afu--su25--cas",
+      "promotionOrder": 388,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "afu",
+        "groupNameZh": "Armed Forces of Ukraine",
+        "nameZh": "Su-25",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "Su-25",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_CommandActor_SU25_Bomb_Strafe"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+          "alias": "Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
+              "displayName": "Su-25 Precision Bomb Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/AFU/Su25_PrecisionStrike_500lbBomb_AFU.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "su25-bomb",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Bomb_Strafe.BP_CommandActor_SU25_Bomb_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/AFU/Su25_PrecisionStrike_500lbBomb_AFU.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        },
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
+          "alias": "S-8 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "S-8 Rocket Strike"
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_CommandActor_SU25_Rockets_Strafe",
+              "displayName": "Su-25 S-8 Rocket Strike",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Actions/MapActions/AFU/Su25_Strafing_S8_AFU.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "CAS",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "su25-rockets",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+            "gameplayAuthorityPath": "Settings/Actions/MapActions/AFU/Su25_Strafing_S8_AFU.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
+          }
+        }
+      ]
+    },
+    {
+      "promoEntryId": "afu--portable-recon-drone--drone",
+      "promotionOrder": 389,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "afu",
+        "groupNameZh": "Armed Forces of Ukraine",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "mapping": {
+        "selectedRawName": "BP_FlyingDrone_Recoverable"
+      },
+      "data": null,
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "data": {
+            "general": {
+              "rawName": "BP_FlyingDrone_Recoverable",
+              "displayName": "Recoverable Scout Drone",
+              "details": "真实 RuntimeProbeMap 视觉；游戏权限 Settings/Roles/AFU/AFU_Scout_01.uasset。该支援资产没有独立 split hit-runtime，命中与伤害状态为 native-unknown。",
+              "type": "DRONE",
+              "vehicleHealth": null,
+              "repairToolLimit": null,
+              "respawnTime": null,
+              "ticketValue": null,
+              "killerPointReward": null,
+              "crewSeatCount": null,
+              "totalSeatCount": null,
+              "amphibious": null,
+              "isDamagedByRadial": null,
+              "hasConstruction": null,
+              "totalResources": null,
+              "constructionResources": null,
+              "ammoResources": null,
+              "hasCommandZone": null,
+              "commandZoneRadius": null
+            },
+            "weapons": [],
+            "seats": [],
+            "damageResistances": [],
+            "components": []
+          },
+          "supportAirEvidence": {
+            "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
+            "sourceMap": "/Game/RuntimeProbe/RuntimeProbeMap",
+            "captureTargetId": "portable-recoverable",
+            "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_Recoverable.BP_FlyingDrone_Recoverable_C",
+            "gameplayAuthorityPath": "Settings/Roles/AFU/AFU_Scout_01.uasset",
+            "visualEvidence": "real-pie-exact-generated-class-or-runtime-referenced-source-mesh",
+            "hitRuntimeStatus": "native-unknown"
           }
         }
       ]

@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/pla--jh7a--cas--bp_commandactor_jh7a_rockets_strafe.visual.json.recipe.json",
+  "visualRecipeSha256": "001809062635a8cc2e5c6a986acc25d912f75d2246f85264c368159de61aa1be",
+  "cardId": "pla--jh7a--cas",
+  "factionId": "PLA",
+  "targetKey": "pla--support-air--jh7a-rockets",
+  "rawName": "BP_CommandActor_JH7A_Rockets_Strafe",
+  "variant": "JH-7A Rocket Strike",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_JH7A_Rockets_Strafe.BP_CommandActor_JH7A_Rockets_Strafe_C",
+  "vehicleId": "vehicle-f05a88c5abbf409b5573af4d28e6e2f62aef4e252ee2218b2a68ec01ae9b05d2",
+  "identitySha256": "f05a88c5abbf409b5573af4d28e6e2f62aef4e252ee2218b2a68ec01ae9b05d2",
+  "packageSha256": "6f9cd0ac8dd03a9d1c36a2d97e19f7cce136a6c21087ab3d0d80df77f3ffc6a3",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "weaponSuppressedOccurrenceCount": 0,
+  "weaponSuppressedOccurrences": [],
+  "weaponSynchronizationPolicy": null,
+  "componentSuppressedOccurrenceCount": 0,
+  "componentSuppressedOccurrences": [],
+  "visualComponentSuppressionPolicy": [],
+  "sourceAssets": 1,
+  "totalBytes": 3111109,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeReferencedSourceMeshOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-466f850f4f57de6cc6f3dd8089990b668748c1a1dc41c54bc4a53af65432e7bb",
+      "name": "Aircraft",
+      "actor": "BP_CommandActor_JH7A_Rockets_Strafe_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/6f9cd0ac8dd03a9d1c36a2d97e19f7cce136a6c21087ab3d0d80df77f3ffc6a3/asset-4bb1628c310ee52003f16424/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/JH7a/Meshes/SM_JH7a.SM_JH7a",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing normal-time visual dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/support-air/pla--support-air--jh7a-rockets-six-view-qa.json",
+    "sha256": "56bb2de443c0dff42d83e3200e7eee298c4096b70f954927509a8c2b21e82566",
+    "reviewedAt": "2026-07-28T05:51:24.968044Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

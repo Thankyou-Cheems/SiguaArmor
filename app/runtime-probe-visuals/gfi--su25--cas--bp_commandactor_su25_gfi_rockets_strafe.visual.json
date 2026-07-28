@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/gfi--su25--cas--bp_commandactor_su25_gfi_rockets_strafe.visual.json.recipe.json",
+  "visualRecipeSha256": "8ce18058ef52267a91733232926e9fa731416a65408b4b2c10ce5b9ec1821979",
+  "cardId": "gfi--su25--cas",
+  "factionId": "GFI",
+  "targetKey": "gfi--support-air--su25-gfi-rockets",
+  "rawName": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
+  "variant": "Su-25 S-8 Rocket Strike",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_GFI_Rockets_Strafe.BP_CommandActor_SU25_GFI_Rockets_Strafe_C",
+  "vehicleId": "vehicle-5557d310c2f04b481727f42e46895818c5e830285f919225d1d8053ce4d2f775",
+  "identitySha256": "5557d310c2f04b481727f42e46895818c5e830285f919225d1d8053ce4d2f775",
+  "packageSha256": "d62069a8a77fca7dac009c34aba3313c6fdb2a5296e438b48afe99f01dd359eb",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "weaponSuppressedOccurrenceCount": 0,
+  "weaponSuppressedOccurrences": [],
+  "weaponSynchronizationPolicy": null,
+  "componentSuppressedOccurrenceCount": 0,
+  "componentSuppressedOccurrences": [],
+  "visualComponentSuppressionPolicy": [],
+  "sourceAssets": 1,
+  "totalBytes": 8243567,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeReferencedSourceMeshOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-d1ba43ccc19c2e2f7fb4d915468ee71a4ec4b071942e108f5a03bb27763fc167",
+      "name": "Aircraft",
+      "actor": "BP_CommandActor_SU25_GFI_Rockets_Strafe_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/d62069a8a77fca7dac009c34aba3313c6fdb2a5296e438b48afe99f01dd359eb/asset-f3489724dfda33bfea877958/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/SU-25/Meshes/SU-25_GFI.SU-25_GFI",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing normal-time visual dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/support-air/gfi--support-air--su25-gfi-rockets-six-view-qa.json",
+    "sha256": "2d0760a49f7d43a98d4e9356f278c26bfb021c1b53e3b17de37d023d4f8bcea1",
+    "reviewedAt": "2026-07-28T05:51:24.293156Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

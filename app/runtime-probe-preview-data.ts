@@ -1,7 +1,10 @@
 import visualDescriptorIndexJson from "./runtime-probe-visual-release-index.json";
+import supportAirVisualDescriptorIndexJson from "./support-air-visual-release-index.json";
+import visualReviewDescriptorIndexJson from "./runtime-probe-visual-review-index.json";
 import chinaVisualDescriptorIndexJson from "./china-runtime-probe-visual-release-index.json";
 import visualSelectionPolicyJson from "./runtime-probe-visual-selection-policy.json";
 import hitDescriptorIndexJson from "./runtime-probe-hit-release-index.json";
+import supportAirHitDescriptorIndexJson from "./support-air-hit-release-index.json";
 import type { SiteEdition } from "./site-edition";
 
 export type RuntimePreviewStatus =
@@ -181,29 +184,69 @@ interface RuntimeHitDescriptor extends RuntimeHitRecordReference {
   bvhNodes: number;
 }
 
-const visualDescriptorIndex = visualDescriptorIndexJson as unknown as {
+type RuntimeVisualDescriptorIndex = {
   schemaVersion: "runtime-visual-descriptor-index/v1";
   descriptorCount: number;
   descriptors: RuntimeVisualDescriptor[];
+};
+const coreVisualDescriptorIndex =
+  visualDescriptorIndexJson as unknown as RuntimeVisualDescriptorIndex;
+const supportAirVisualDescriptorIndex =
+  supportAirVisualDescriptorIndexJson as unknown as RuntimeVisualDescriptorIndex;
+const visualDescriptorIndex: RuntimeVisualDescriptorIndex = {
+  schemaVersion: "runtime-visual-descriptor-index/v1",
+  descriptorCount:
+    coreVisualDescriptorIndex.descriptorCount +
+    supportAirVisualDescriptorIndex.descriptorCount,
+  descriptors: [
+    ...coreVisualDescriptorIndex.descriptors,
+    ...supportAirVisualDescriptorIndex.descriptors,
+  ],
 };
 const chinaVisualDescriptorIndex = chinaVisualDescriptorIndexJson as unknown as {
   schemaVersion: "runtime-visual-descriptor-index/v1";
   descriptorCount: number;
   descriptors: RuntimeVisualDescriptor[];
 };
-const visualReviewDescriptorIndex = visualDescriptorIndex;
+const visualReviewDescriptorIndex =
+  visualReviewDescriptorIndexJson as unknown as RuntimeVisualDescriptorIndex;
 const visualSelectionRules = visualSelectionPolicyJson.rules as RuntimeVisualSelectionRule[];
 const visualComponentSuppressionRules = (visualSelectionPolicyJson.globalSuppressions ?? []) as
   RuntimeVisualComponentSuppressionRule[];
 const synchronizedWeaponPolicy = visualSelectionPolicyJson.synchronizedWeaponPolicy as
   RuntimeVisualSynchronizedWeaponPolicy;
-const hitDescriptorIndex = hitDescriptorIndexJson as unknown as {
+type RuntimeHitDescriptorIndex = {
   schemaVersion: "runtime-hit-preview-index/v1";
   descriptorCount: number;
   descriptors: RuntimeHitDescriptor[];
 };
+const coreHitDescriptorIndex =
+  hitDescriptorIndexJson as unknown as RuntimeHitDescriptorIndex;
+const supportAirHitDescriptorIndex =
+  supportAirHitDescriptorIndexJson as unknown as RuntimeHitDescriptorIndex;
+const hitDescriptorIndex: RuntimeHitDescriptorIndex = {
+  schemaVersion: "runtime-hit-preview-index/v1",
+  descriptorCount:
+    coreHitDescriptorIndex.descriptorCount +
+    supportAirHitDescriptorIndex.descriptorCount,
+  descriptors: [
+    ...coreHitDescriptorIndex.descriptors,
+    ...supportAirHitDescriptorIndex.descriptors,
+  ],
+};
 if (visualDescriptorIndex.schemaVersion !== "runtime-visual-descriptor-index/v1") {
   throw new Error("Unsupported runtime visual descriptor index schema");
+}
+for (const [label, index] of [
+  ["core", coreVisualDescriptorIndex],
+  ["support-air", supportAirVisualDescriptorIndex],
+] as const) {
+  if (
+    index.schemaVersion !== "runtime-visual-descriptor-index/v1" ||
+    index.descriptorCount !== index.descriptors.length
+  ) {
+    throw new Error(`Unsupported ${label} runtime visual descriptor index`);
+  }
 }
 if (visualDescriptorIndex.descriptorCount !== visualDescriptorIndex.descriptors.length) {
   throw new Error("Runtime visual descriptor count does not match the generated index");
@@ -228,8 +271,16 @@ if (
     "Runtime visual review descriptor count does not match the generated index",
   );
 }
-if (hitDescriptorIndex.schemaVersion !== "runtime-hit-preview-index/v1") {
-  throw new Error("Unsupported runtime hit descriptor index schema");
+for (const [label, index] of [
+  ["core", coreHitDescriptorIndex],
+  ["support-air", supportAirHitDescriptorIndex],
+] as const) {
+  if (
+    index.schemaVersion !== "runtime-hit-preview-index/v1" ||
+    index.descriptorCount !== index.descriptors.length
+  ) {
+    throw new Error(`Unsupported ${label} runtime hit descriptor index`);
+  }
 }
 if (hitDescriptorIndex.descriptorCount !== hitDescriptorIndex.descriptors.length) {
   throw new Error("Runtime hit descriptor count does not match the generated index");
@@ -333,6 +384,11 @@ function applyVisualSelection(descriptor: RuntimeVisualDescriptor) {
   const globallyFilteredPlacements = descriptor.placements.filter(
     (placement) => !globallySuppressedPaths.has(placement.stableOccurrenceId),
   );
+  const globallySuppressedSkeletalOccurrenceCount = descriptor.placements.filter(
+    (placement) =>
+      globallySuppressedPaths.has(placement.stableOccurrenceId) &&
+      placement.componentClassPath.includes("SkeletalMeshComponent"),
+  ).length;
   const synchronizedWeaponSelection = applySynchronizedWeaponPolicy(
     descriptor,
     globallyFilteredPlacements,
@@ -357,8 +413,9 @@ function applyVisualSelection(descriptor: RuntimeVisualDescriptor) {
               filteredOccurrences:
                 synchronizedWeaponSelection.filteredOccurrences,
               selectedRepresentation: "turret-component" as const,
-            }
+          }
           : null,
+      globallySuppressedSkeletalOccurrenceCount,
     };
   }
 
@@ -404,6 +461,7 @@ function applyVisualSelection(descriptor: RuntimeVisualDescriptor) {
       ).length + synchronizedWeaponSelection.filteredOccurrences,
       selectedRepresentation: "turret-component" as const,
     },
+    globallySuppressedSkeletalOccurrenceCount,
   };
 }
 
@@ -420,12 +478,18 @@ function toRuntimePreview(
   if (descriptor.runtimeBonePoseStatus !== "observed") {
     throw new Error(`Runtime bone pose is not observed for ${descriptor.cardId} / ${descriptor.rawName}`);
   }
-  const { placements, selection } = applyVisualSelection(descriptor);
+  const {
+    placements,
+    selection,
+    globallySuppressedSkeletalOccurrenceCount,
+  } = applyVisualSelection(descriptor);
   const skeletalPlacements = placements.filter((placement) =>
     placement.componentClassPath.includes("SkeletalMeshComponent"),
   );
+  const expectedRuntimeBonePoseOccurrenceCount =
+    descriptor.runtimeBonePoseOccurrenceCount - globallySuppressedSkeletalOccurrenceCount;
   if (
-    (!selection && descriptor.runtimeBonePoseOccurrenceCount !== skeletalPlacements.length) ||
+    (!selection && expectedRuntimeBonePoseOccurrenceCount !== skeletalPlacements.length) ||
     skeletalPlacements.some(
       (placement) =>
         placement.runtimeBonePoseStatus !== "observed" ||

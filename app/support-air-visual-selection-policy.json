@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "runtime-visual-selection-policy/v1",
+  "globalSuppressions": [],
+  "rules": [],
+  "synchronizedWeaponPolicy": {
+    "schemaVersion": "runtime-visual-weapon-synchronization/v1",
+    "groups": []
+  }
+}

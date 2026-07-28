@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/afu--su25--cas--bp_commandactor_su25_bomb_strafe.visual.json.recipe.json",
+  "visualRecipeSha256": "6e7ab4dbd874ebcae375acbb56f95a1e88da409edc30f8e73be97460da1382d9",
+  "cardId": "afu--su25--cas",
+  "factionId": "AFU",
+  "targetKey": "afu--support-air--su25-bomb",
+  "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
+  "variant": "Su-25 Precision Bomb Strike",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Bomb_Strafe.BP_CommandActor_SU25_Bomb_Strafe_C",
+  "vehicleId": "vehicle-70bca98896751dea1c50e85d580d02cbab030ccb081cb5f6e22a3d3591128ccf",
+  "identitySha256": "70bca98896751dea1c50e85d580d02cbab030ccb081cb5f6e22a3d3591128ccf",
+  "packageSha256": "97662b1d963cae4273944fe6cc37278d6f52235b901c126061dfd9fa7061d2f7",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "weaponSuppressedOccurrenceCount": 0,
+  "weaponSuppressedOccurrences": [],
+  "weaponSynchronizationPolicy": null,
+  "componentSuppressedOccurrenceCount": 0,
+  "componentSuppressedOccurrences": [],
+  "visualComponentSuppressionPolicy": [],
+  "sourceAssets": 1,
+  "totalBytes": 8245791,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeReferencedSourceMeshOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-56ed69767c09aa9e2b6007650dfe906b514d12d71b7493e969d544a8be74be22",
+      "name": "Aircraft",
+      "actor": "BP_CommandActor_SU25_Bomb_Strafe_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/97662b1d963cae4273944fe6cc37278d6f52235b901c126061dfd9fa7061d2f7/asset-12895c9d274ae36d1f1cae56/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/SU-25/Meshes/SM_SU-25_RGF.SM_SU-25_RGF",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing normal-time visual dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/support-air/afu--support-air--su25-bomb-six-view-qa.json",
+    "sha256": "cbcd453496594e1541c03138f5ef8200dbb6282a326d23e93366c2662fdc1631",
+    "reviewedAt": "2026-07-28T05:51:23.149899Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}

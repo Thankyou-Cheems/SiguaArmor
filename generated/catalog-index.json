@@ -1,109 +1,109 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4",
+  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-support-air-ff38618c313b",
   "groups": [
     {
       "id": "adf",
       "name": "Australian Defence Force",
       "order": 0,
-      "recordCount": 12
+      "recordCount": 14
     },
     {
       "id": "afu",
       "name": "Armed Forces of Ukraine",
       "order": 1,
-      "recordCount": 22
+      "recordCount": 25
     },
     {
       "id": "baf",
       "name": "British Armed Forces",
       "order": 2,
-      "recordCount": 17
+      "recordCount": 19
     },
     {
       "id": "caf",
       "name": "Canadian Armed Forces",
       "order": 3,
-      "recordCount": 25
+      "recordCount": 28
     },
     {
       "id": "crf",
       "name": "Canadian Resistance Forces",
       "order": 4,
-      "recordCount": 11
+      "recordCount": 12
     },
     {
       "id": "gfi",
       "name": "Ground Forces of Iran",
       "order": 5,
-      "recordCount": 22
+      "recordCount": 24
     },
     {
       "id": "imf",
       "name": "Irregular Militia Forces",
       "order": 6,
-      "recordCount": 27
+      "recordCount": 28
     },
     {
       "id": "mei",
       "name": "Middle Eastern Insurgents",
       "order": 7,
-      "recordCount": 25
+      "recordCount": 26
     },
     {
       "id": "pla",
       "name": "People's Liberation Army",
       "order": 8,
-      "recordCount": 29
+      "recordCount": 32
     },
     {
       "id": "plaagf",
       "name": "PLA Amphibious Ground Forces",
       "order": 9,
-      "recordCount": 30
+      "recordCount": 31
     },
     {
       "id": "planmc",
       "name": "PLA Navy Marine Corps",
       "order": 10,
-      "recordCount": 20
+      "recordCount": 23
     },
     {
       "id": "rgf",
       "name": "Russian Ground Forces",
       "order": 11,
-      "recordCount": 25
+      "recordCount": 28
     },
     {
       "id": "tlf",
       "name": "Turkish Land Forces",
       "order": 12,
-      "recordCount": 23
+      "recordCount": 25
     },
     {
       "id": "usa",
       "name": "United States Army",
       "order": 13,
-      "recordCount": 30
+      "recordCount": 32
     },
     {
       "id": "usmc",
       "name": "United States Marine Corps",
       "order": 14,
-      "recordCount": 21
+      "recordCount": 23
     },
     {
       "id": "vdv",
       "name": "Russian Airborne Forces",
       "order": 15,
-      "recordCount": 21
+      "recordCount": 24
     },
     {
       "id": "wpmc",
       "name": "Western Private Military Contractors",
       "order": 16,
-      "recordCount": 24
+      "recordCount": 26
     }
   ],
   "records": [
@@ -17440,6 +17440,1770 @@
           },
           "cardId": "wpmc--m113a3-msv--msv--m113a3-msv-wpmc",
           "routeSlug": "wpmc--m113a3-msv--msv--m113a3-msv-wpmc"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "adf--mq9--uav",
+      "promotionOrder": 385,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "adf",
+        "groupNameZh": "Australian Defence Force",
+        "nameZh": "MQ-9 Reaper",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "MQ-9 Reaper",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_MQ9",
+      "selectedDisplayName": "MQ-9 Reaper",
+      "defaultCardId": "adf--mq9--uav--commandactor-uav-mq9",
+      "routeSlug": "adf--mq9--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_MQ9",
+          "alias": "",
+          "displayName": "MQ-9 Reaper",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "adf--mq9--uav--commandactor-uav-mq9",
+          "routeSlug": "adf--mq9--uav--commandactor-uav-mq9"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "adf--fa18--cas",
+      "promotionOrder": 386,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "adf",
+        "groupNameZh": "Australian Defence Force",
+        "nameZh": "F/A-18F",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "F/A-18F",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_FA18_Strafe",
+      "selectedDisplayName": "F/A-18F",
+      "defaultCardId": "adf--fa18--cas--commandactor-fa18-strafe",
+      "routeSlug": "adf--fa18--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_FA18_Strafe",
+          "alias": "30 mm Strafe",
+          "displayName": "F/A-18F 30 mm Strafe",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "30 mm Strafe"
+          },
+          "cardId": "adf--fa18--cas--commandactor-fa18-strafe",
+          "routeSlug": "adf--fa18--cas--commandactor-fa18-strafe"
+        },
+        {
+          "sourceRawName": "BP_CommandActor_FA18_Rockets_Strafe",
+          "alias": "Rocket Strike",
+          "displayName": "F/A-18F Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Rocket Strike"
+          },
+          "cardId": "adf--fa18--cas--commandactor-fa18-rockets-strafe",
+          "routeSlug": "adf--fa18--cas--commandactor-fa18-rockets-strafe"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "afu--tb2--uav",
+      "promotionOrder": 387,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "afu",
+        "groupNameZh": "Armed Forces of Ukraine",
+        "nameZh": "Bayraktar TB2",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Bayraktar TB2",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_TB2",
+      "selectedDisplayName": "Bayraktar TB2",
+      "defaultCardId": "afu--tb2--uav--commandactor-uav-tb2",
+      "routeSlug": "afu--tb2--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_TB2",
+          "alias": "",
+          "displayName": "Bayraktar TB2",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "afu--tb2--uav--commandactor-uav-tb2",
+          "routeSlug": "afu--tb2--uav--commandactor-uav-tb2"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "afu--su25--cas",
+      "promotionOrder": 388,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "afu",
+        "groupNameZh": "Armed Forces of Ukraine",
+        "nameZh": "Su-25",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "Su-25",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+      "selectedDisplayName": "Su-25",
+      "defaultCardId": "afu--su25--cas--commandactor-su25-bomb-strafe",
+      "routeSlug": "afu--su25--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+          "alias": "Precision Bomb Strike",
+          "displayName": "Su-25 Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "cardId": "afu--su25--cas--commandactor-su25-bomb-strafe",
+          "routeSlug": "afu--su25--cas--commandactor-su25-bomb-strafe"
+        },
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
+          "alias": "S-8 Rocket Strike",
+          "displayName": "Su-25 S-8 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "S-8 Rocket Strike"
+          },
+          "cardId": "afu--su25--cas--commandactor-su25-rockets-strafe",
+          "routeSlug": "afu--su25--cas--commandactor-su25-rockets-strafe"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "afu--portable-recon-drone--drone",
+      "promotionOrder": 389,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "afu",
+        "groupNameZh": "Armed Forces of Ukraine",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "afu--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "afu--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "afu--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "afu--portable-recon-drone--drone--flyingdrone-recoverable"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "baf--mq9--uav",
+      "promotionOrder": 390,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "baf",
+        "groupNameZh": "British Armed Forces",
+        "nameZh": "MQ-9 Reaper",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "MQ-9 Reaper",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_MQ9",
+      "selectedDisplayName": "MQ-9 Reaper",
+      "defaultCardId": "baf--mq9--uav--commandactor-uav-mq9",
+      "routeSlug": "baf--mq9--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_MQ9",
+          "alias": "",
+          "displayName": "MQ-9 Reaper",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "baf--mq9--uav--commandactor-uav-mq9",
+          "routeSlug": "baf--mq9--uav--commandactor-uav-mq9"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "baf--a10--cas",
+      "promotionOrder": 391,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "baf",
+        "groupNameZh": "British Armed Forces",
+        "nameZh": "A-10A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "A-10A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_A10_Strafe_2",
+      "selectedDisplayName": "A-10A",
+      "defaultCardId": "baf--a10--cas--commandactor-a10-strafe-2",
+      "routeSlug": "baf--a10--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_A10_Strafe_2",
+          "alias": "",
+          "displayName": "A-10A",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "baf--a10--cas--commandactor-a10-strafe-2",
+          "routeSlug": "baf--a10--cas--commandactor-a10-strafe-2"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "caf--mq9--uav",
+      "promotionOrder": 392,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "caf",
+        "groupNameZh": "Canadian Armed Forces",
+        "nameZh": "MQ-9 Reaper",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "MQ-9 Reaper",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_MQ9",
+      "selectedDisplayName": "MQ-9 Reaper",
+      "defaultCardId": "caf--mq9--uav--commandactor-uav-mq9",
+      "routeSlug": "caf--mq9--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_MQ9",
+          "alias": "",
+          "displayName": "MQ-9 Reaper",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "caf--mq9--uav--commandactor-uav-mq9",
+          "routeSlug": "caf--mq9--uav--commandactor-uav-mq9"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "caf--a10--cas",
+      "promotionOrder": 393,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "caf",
+        "groupNameZh": "Canadian Armed Forces",
+        "nameZh": "A-10A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "A-10A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_A10_Strafe_2",
+      "selectedDisplayName": "A-10A",
+      "defaultCardId": "caf--a10--cas--commandactor-a10-strafe-2",
+      "routeSlug": "caf--a10--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_A10_Strafe_2",
+          "alias": "",
+          "displayName": "A-10A",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "caf--a10--cas--commandactor-a10-strafe-2",
+          "routeSlug": "caf--a10--cas--commandactor-a10-strafe-2"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "caf--cf18--cas",
+      "promotionOrder": 394,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "caf",
+        "groupNameZh": "Canadian Armed Forces",
+        "nameZh": "CF-18",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "CF-18",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_CF18_Bomb_Strafe_NEW",
+      "selectedDisplayName": "CF-18",
+      "defaultCardId": "caf--cf18--cas--commandactor-cf18-bomb-strafe-new",
+      "routeSlug": "caf--cf18--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_CF18_Bomb_Strafe_NEW",
+          "alias": "Precision Bomb Strike",
+          "displayName": "CF-18 Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "cardId": "caf--cf18--cas--commandactor-cf18-bomb-strafe-new",
+          "routeSlug": "caf--cf18--cas--commandactor-cf18-bomb-strafe-new"
+        },
+        {
+          "sourceRawName": "BP_CommandActor_FA18_Rockets_Strafe_CAF",
+          "alias": "Rocket Strike",
+          "displayName": "CF-18 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Rocket Strike"
+          },
+          "cardId": "caf--cf18--cas--commandactor-fa18-rockets-strafe-caf",
+          "routeSlug": "caf--cf18--cas--commandactor-fa18-rockets-strafe-caf"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "crf--portable-recon-drone--drone",
+      "promotionOrder": 395,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "crf",
+        "groupNameZh": "Canadian Resistance Forces",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "crf--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "crf--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "Recoverable Scout Drone",
+          "displayName": "Portable Recon Drone Recoverable Scout Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Recoverable Scout Drone"
+          },
+          "cardId": "crf--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "crf--portable-recon-drone--drone--flyingdrone-recoverable"
+        },
+        {
+          "sourceRawName": "BP_FlyingDrone",
+          "alias": "Portable Recon Drone",
+          "displayName": "Portable Recon Drone Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Portable Recon Drone"
+          },
+          "cardId": "crf--portable-recon-drone--drone--flyingdrone",
+          "routeSlug": "crf--portable-recon-drone--drone--flyingdrone"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "gfi--pchela--uav",
+      "promotionOrder": 396,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "gfi",
+        "groupNameZh": "Ground Forces of Iran",
+        "nameZh": "Pchela-1T",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Pchela-1T",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_Pchela",
+      "selectedDisplayName": "Pchela-1T",
+      "defaultCardId": "gfi--pchela--uav--commandactor-uav-pchela",
+      "routeSlug": "gfi--pchela--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_Pchela",
+          "alias": "",
+          "displayName": "Pchela-1T",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "gfi--pchela--uav--commandactor-uav-pchela",
+          "routeSlug": "gfi--pchela--uav--commandactor-uav-pchela"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "gfi--su25--cas",
+      "promotionOrder": 397,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "gfi",
+        "groupNameZh": "Ground Forces of Iran",
+        "nameZh": "Su-25",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "Su-25",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+      "selectedDisplayName": "Su-25",
+      "defaultCardId": "gfi--su25--cas--commandactor-su25-bomb-strafe",
+      "routeSlug": "gfi--su25--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+          "alias": "Precision Bomb Strike",
+          "displayName": "Su-25 Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "cardId": "gfi--su25--cas--commandactor-su25-bomb-strafe",
+          "routeSlug": "gfi--su25--cas--commandactor-su25-bomb-strafe"
+        },
+        {
+          "sourceRawName": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
+          "alias": "S-8 Rocket Strike",
+          "displayName": "Su-25 S-8 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "S-8 Rocket Strike"
+          },
+          "cardId": "gfi--su25--cas--commandactor-su25-gfi-rockets-strafe",
+          "routeSlug": "gfi--su25--cas--commandactor-su25-gfi-rockets-strafe"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "imf--portable-recon-drone--drone",
+      "promotionOrder": 398,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "imf",
+        "groupNameZh": "Irregular Militia Forces",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "imf--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "imf--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "Recoverable Scout Drone",
+          "displayName": "Portable Recon Drone Recoverable Scout Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Recoverable Scout Drone"
+          },
+          "cardId": "imf--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "imf--portable-recon-drone--drone--flyingdrone-recoverable"
+        },
+        {
+          "sourceRawName": "BP_FlyingDrone",
+          "alias": "Portable Recon Drone",
+          "displayName": "Portable Recon Drone Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Portable Recon Drone"
+          },
+          "cardId": "imf--portable-recon-drone--drone--flyingdrone",
+          "routeSlug": "imf--portable-recon-drone--drone--flyingdrone"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "mei--portable-recon-drone--drone",
+      "promotionOrder": 399,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "mei",
+        "groupNameZh": "Middle Eastern Insurgents",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "mei--portable-recon-drone--drone--flyingdrone",
+      "routeSlug": "mei--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "mei--portable-recon-drone--drone--flyingdrone",
+          "routeSlug": "mei--portable-recon-drone--drone--flyingdrone"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "pla--ch4a--uav",
+      "promotionOrder": 400,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "pla",
+        "groupNameZh": "People's Liberation Army",
+        "nameZh": "CH-4A",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "CH-4A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_CH4A",
+      "selectedDisplayName": "CH-4A",
+      "defaultCardId": "pla--ch4a--uav--commandactor-uav-ch4a",
+      "routeSlug": "pla--ch4a--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_CH4A",
+          "alias": "",
+          "displayName": "CH-4A",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "pla--ch4a--uav--commandactor-uav-ch4a",
+          "routeSlug": "pla--ch4a--uav--commandactor-uav-ch4a"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "pla--jh7a--cas",
+      "promotionOrder": 401,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "pla",
+        "groupNameZh": "People's Liberation Army",
+        "nameZh": "JH-7A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "JH-7A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_JH7A_Rockets_Strafe",
+      "selectedDisplayName": "JH-7A",
+      "defaultCardId": "pla--jh7a--cas--commandactor-jh7a-rockets-strafe",
+      "routeSlug": "pla--jh7a--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_JH7A_Rockets_Strafe",
+          "alias": "",
+          "displayName": "JH-7A",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "pla--jh7a--cas--commandactor-jh7a-rockets-strafe",
+          "routeSlug": "pla--jh7a--cas--commandactor-jh7a-rockets-strafe"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "pla--portable-recon-drone--drone",
+      "promotionOrder": 402,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "pla",
+        "groupNameZh": "People's Liberation Army",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "pla--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "pla--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "pla--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "pla--portable-recon-drone--drone--flyingdrone-recoverable"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "plaagf--portable-recon-drone--drone",
+      "promotionOrder": 403,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "plaagf",
+        "groupNameZh": "PLA Amphibious Ground Forces",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "plaagf--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "plaagf--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "plaagf--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "plaagf--portable-recon-drone--drone--flyingdrone-recoverable"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "planmc--ch4a--uav",
+      "promotionOrder": 404,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "planmc",
+        "groupNameZh": "PLA Navy Marine Corps",
+        "nameZh": "CH-4A",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "CH-4A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_CH4A",
+      "selectedDisplayName": "CH-4A",
+      "defaultCardId": "planmc--ch4a--uav--commandactor-uav-ch4a",
+      "routeSlug": "planmc--ch4a--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_CH4A",
+          "alias": "",
+          "displayName": "CH-4A",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "planmc--ch4a--uav--commandactor-uav-ch4a",
+          "routeSlug": "planmc--ch4a--uav--commandactor-uav-ch4a"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "planmc--jh7a--cas",
+      "promotionOrder": 405,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "planmc",
+        "groupNameZh": "PLA Navy Marine Corps",
+        "nameZh": "JH-7A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "JH-7A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_JH7A_Rockets_Strafe",
+      "selectedDisplayName": "JH-7A",
+      "defaultCardId": "planmc--jh7a--cas--commandactor-jh7a-rockets-strafe",
+      "routeSlug": "planmc--jh7a--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_JH7A_Rockets_Strafe",
+          "alias": "",
+          "displayName": "JH-7A",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "planmc--jh7a--cas--commandactor-jh7a-rockets-strafe",
+          "routeSlug": "planmc--jh7a--cas--commandactor-jh7a-rockets-strafe"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "planmc--portable-recon-drone--drone",
+      "promotionOrder": 406,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "planmc",
+        "groupNameZh": "PLA Navy Marine Corps",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "planmc--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "planmc--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "planmc--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "planmc--portable-recon-drone--drone--flyingdrone-recoverable"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "rgf--pchela--uav",
+      "promotionOrder": 407,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "rgf",
+        "groupNameZh": "Russian Ground Forces",
+        "nameZh": "Pchela-1T",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Pchela-1T",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_Pchela",
+      "selectedDisplayName": "Pchela-1T",
+      "defaultCardId": "rgf--pchela--uav--commandactor-uav-pchela",
+      "routeSlug": "rgf--pchela--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_Pchela",
+          "alias": "",
+          "displayName": "Pchela-1T",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "rgf--pchela--uav--commandactor-uav-pchela",
+          "routeSlug": "rgf--pchela--uav--commandactor-uav-pchela"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "rgf--su25--cas",
+      "promotionOrder": 408,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "rgf",
+        "groupNameZh": "Russian Ground Forces",
+        "nameZh": "Su-25",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "Su-25",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+      "selectedDisplayName": "Su-25",
+      "defaultCardId": "rgf--su25--cas--commandactor-su25-bomb-strafe",
+      "routeSlug": "rgf--su25--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+          "alias": "Precision Bomb Strike",
+          "displayName": "Su-25 Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "cardId": "rgf--su25--cas--commandactor-su25-bomb-strafe",
+          "routeSlug": "rgf--su25--cas--commandactor-su25-bomb-strafe"
+        },
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
+          "alias": "S-8 Rocket Strike",
+          "displayName": "Su-25 S-8 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "S-8 Rocket Strike"
+          },
+          "cardId": "rgf--su25--cas--commandactor-su25-rockets-strafe",
+          "routeSlug": "rgf--su25--cas--commandactor-su25-rockets-strafe"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "rgf--portable-recon-drone--drone",
+      "promotionOrder": 409,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "rgf",
+        "groupNameZh": "Russian Ground Forces",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "rgf--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "rgf--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "rgf--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "rgf--portable-recon-drone--drone--flyingdrone-recoverable"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "tlf--tb2--uav",
+      "promotionOrder": 410,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "tlf",
+        "groupNameZh": "Turkish Land Forces",
+        "nameZh": "Bayraktar TB2",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Bayraktar TB2",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_TB2",
+      "selectedDisplayName": "Bayraktar TB2",
+      "defaultCardId": "tlf--tb2--uav--commandactor-uav-tb2",
+      "routeSlug": "tlf--tb2--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_TB2",
+          "alias": "",
+          "displayName": "Bayraktar TB2",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "tlf--tb2--uav--commandactor-uav-tb2",
+          "routeSlug": "tlf--tb2--uav--commandactor-uav-tb2"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "tlf--f16--cas",
+      "promotionOrder": 411,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "tlf",
+        "groupNameZh": "Turkish Land Forces",
+        "nameZh": "F-16C",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "F-16C",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+      "selectedDisplayName": "F-16C",
+      "defaultCardId": "tlf--f16--cas--commandactor-f16-rockets-strafe-tlf",
+      "routeSlug": "tlf--f16--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+          "alias": "",
+          "displayName": "F-16C",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "tlf--f16--cas--commandactor-f16-rockets-strafe-tlf",
+          "routeSlug": "tlf--f16--cas--commandactor-f16-rockets-strafe-tlf"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "usa--mq9--uav",
+      "promotionOrder": 412,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "usa",
+        "groupNameZh": "United States Army",
+        "nameZh": "MQ-9 Reaper",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "MQ-9 Reaper",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_MQ9",
+      "selectedDisplayName": "MQ-9 Reaper",
+      "defaultCardId": "usa--mq9--uav--commandactor-uav-mq9",
+      "routeSlug": "usa--mq9--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_MQ9",
+          "alias": "",
+          "displayName": "MQ-9 Reaper",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "usa--mq9--uav--commandactor-uav-mq9",
+          "routeSlug": "usa--mq9--uav--commandactor-uav-mq9"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "usa--a10--cas",
+      "promotionOrder": 413,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "usa",
+        "groupNameZh": "United States Army",
+        "nameZh": "A-10A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "A-10A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_A10_Strafe_2",
+      "selectedDisplayName": "A-10A",
+      "defaultCardId": "usa--a10--cas--commandactor-a10-strafe-2",
+      "routeSlug": "usa--a10--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_A10_Strafe_2",
+          "alias": "",
+          "displayName": "A-10A",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "usa--a10--cas--commandactor-a10-strafe-2",
+          "routeSlug": "usa--a10--cas--commandactor-a10-strafe-2"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "usmc--mq9--uav",
+      "promotionOrder": 414,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "usmc",
+        "groupNameZh": "United States Marine Corps",
+        "nameZh": "MQ-9 Reaper",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "MQ-9 Reaper",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_MQ9",
+      "selectedDisplayName": "MQ-9 Reaper",
+      "defaultCardId": "usmc--mq9--uav--commandactor-uav-mq9",
+      "routeSlug": "usmc--mq9--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_MQ9",
+          "alias": "",
+          "displayName": "MQ-9 Reaper",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "usmc--mq9--uav--commandactor-uav-mq9",
+          "routeSlug": "usmc--mq9--uav--commandactor-uav-mq9"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "usmc--a10--cas",
+      "promotionOrder": 415,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "usmc",
+        "groupNameZh": "United States Marine Corps",
+        "nameZh": "A-10A",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "A-10A",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_A10_Strafe_2",
+      "selectedDisplayName": "A-10A",
+      "defaultCardId": "usmc--a10--cas--commandactor-a10-strafe-2",
+      "routeSlug": "usmc--a10--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_A10_Strafe_2",
+          "alias": "",
+          "displayName": "A-10A",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "usmc--a10--cas--commandactor-a10-strafe-2",
+          "routeSlug": "usmc--a10--cas--commandactor-a10-strafe-2"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "vdv--pchela--uav",
+      "promotionOrder": 416,
+      "searchTerms": [
+        "大型侦察无人机"
+      ],
+      "searchAliases": [
+        "daxingzhenchawurenji",
+        "dxzcwrj"
+      ],
+      "official": {
+        "groupId": "vdv",
+        "groupNameZh": "Russian Airborne Forces",
+        "nameZh": "Pchela-1T",
+        "typeZh": "UAV",
+        "presentation": {
+          "vehicleNameZh": "Pchela-1T",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_UAV_Pchela",
+      "selectedDisplayName": "Pchela-1T",
+      "defaultCardId": "vdv--pchela--uav--commandactor-uav-pchela",
+      "routeSlug": "vdv--pchela--uav",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_UAV_Pchela",
+          "alias": "",
+          "displayName": "Pchela-1T",
+          "searchTerms": [
+            "大型侦察无人机"
+          ],
+          "searchAliases": [
+            "daxingzhenchawurenji",
+            "dxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "vdv--pchela--uav--commandactor-uav-pchela",
+          "routeSlug": "vdv--pchela--uav--commandactor-uav-pchela"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "vdv--su25--cas",
+      "promotionOrder": 417,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "vdv",
+        "groupNameZh": "Russian Airborne Forces",
+        "nameZh": "Su-25",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "Su-25",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+      "selectedDisplayName": "Su-25",
+      "defaultCardId": "vdv--su25--cas--commandactor-su25-bomb-strafe",
+      "routeSlug": "vdv--su25--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
+          "alias": "Precision Bomb Strike",
+          "displayName": "Su-25 Precision Bomb Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "Precision Bomb Strike"
+          },
+          "cardId": "vdv--su25--cas--commandactor-su25-bomb-strafe",
+          "routeSlug": "vdv--su25--cas--commandactor-su25-bomb-strafe"
+        },
+        {
+          "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
+          "alias": "S-8 Rocket Strike",
+          "displayName": "Su-25 S-8 Rocket Strike",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": "S-8 Rocket Strike"
+          },
+          "cardId": "vdv--su25--cas--commandactor-su25-rockets-strafe",
+          "routeSlug": "vdv--su25--cas--commandactor-su25-rockets-strafe"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "vdv--portable-recon-drone--drone",
+      "promotionOrder": 418,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "vdv",
+        "groupNameZh": "Russian Airborne Forces",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_Recoverable",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "vdv--portable-recon-drone--drone--flyingdrone-recoverable",
+      "routeSlug": "vdv--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_Recoverable",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "vdv--portable-recon-drone--drone--flyingdrone-recoverable",
+          "routeSlug": "vdv--portable-recon-drone--drone--flyingdrone-recoverable"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "wpmc--f16--cas",
+      "promotionOrder": 419,
+      "searchTerms": [
+        "攻击机"
+      ],
+      "searchAliases": [
+        "gongjiji",
+        "gjj"
+      ],
+      "official": {
+        "groupId": "wpmc",
+        "groupNameZh": "Western Private Military Contractors",
+        "nameZh": "F-16C",
+        "typeZh": "CAS",
+        "presentation": {
+          "vehicleNameZh": "F-16C",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+      "selectedDisplayName": "F-16C",
+      "defaultCardId": "wpmc--f16--cas--commandactor-f16-rockets-strafe-tlf",
+      "routeSlug": "wpmc--f16--cas",
+      "variants": [
+        {
+          "sourceRawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+          "alias": "",
+          "displayName": "F-16C",
+          "searchTerms": [
+            "攻击机"
+          ],
+          "searchAliases": [
+            "gongjiji",
+            "gjj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "wpmc--f16--cas--commandactor-f16-rockets-strafe-tlf",
+          "routeSlug": "wpmc--f16--cas--commandactor-f16-rockets-strafe-tlf"
+        }
+      ]
+    },
+    {
+      "promoEntryId": "wpmc--portable-recon-drone--drone",
+      "promotionOrder": 420,
+      "searchTerms": [
+        "便携侦察无人机"
+      ],
+      "searchAliases": [
+        "bianxiezhenchawurenji",
+        "bxzcwrj"
+      ],
+      "official": {
+        "groupId": "wpmc",
+        "groupNameZh": "Western Private Military Contractors",
+        "nameZh": "Portable Recon Drone",
+        "typeZh": "DRONE",
+        "presentation": {
+          "vehicleNameZh": "Portable Recon Drone",
+          "configurationZh": null
+        }
+      },
+      "selectedRawName": "BP_FlyingDrone_WPMC",
+      "selectedDisplayName": "Portable Recon Drone",
+      "defaultCardId": "wpmc--portable-recon-drone--drone--flyingdrone-wpmc",
+      "routeSlug": "wpmc--portable-recon-drone--drone",
+      "variants": [
+        {
+          "sourceRawName": "BP_FlyingDrone_WPMC",
+          "alias": "",
+          "displayName": "Portable Recon Drone",
+          "searchTerms": [
+            "便携侦察无人机"
+          ],
+          "searchAliases": [
+            "bianxiezhenchawurenji",
+            "bxzcwrj"
+          ],
+          "presentation": {
+            "liveryZh": null,
+            "configurationZh": null
+          },
+          "cardId": "wpmc--portable-recon-drone--drone--flyingdrone-wpmc",
+          "routeSlug": "wpmc--portable-recon-drone--drone--flyingdrone-wpmc"
         }
       ]
     }

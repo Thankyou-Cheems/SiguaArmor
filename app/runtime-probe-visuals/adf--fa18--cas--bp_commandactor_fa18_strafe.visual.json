@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "runtime-visual-preview/v1",
+  "captureContractRevision": "official-runtime-visual-capture/v2",
+  "visualScopePolicy": "third-person-runtime-visible-no-owner-view-or-seat-viewport-helpers/v2",
+  "unrealToGltfBoneCoordinatePolicy": "ue-left-handed-z-up-centimeters-to-gltf-right-handed-y-up-metres/bone-only-four-point-parent-relative/v1",
+  "status": "complete",
+  "visualAcceptanceStatus": "web-usable",
+  "visualAcceptanceScope": "web-visual-only; hit-runtime-out-of-scope",
+  "visualRecipeStatus": "exact-runtime-graph-observed",
+  "visualRecipePath": "generated/runtime-probe/visual-recipe/adf--fa18--cas--bp_commandactor_fa18_strafe.visual.json.recipe.json",
+  "visualRecipeSha256": "a5a417ce393b10b1ea61a4fe52afa09d944f500b03b37b07eb42cad1c7f72bcf",
+  "cardId": "adf--fa18--cas",
+  "factionId": "ADF",
+  "targetKey": "adf--support-air--fa18-strafe",
+  "rawName": "BP_CommandActor_FA18_Strafe",
+  "variant": "F/A-18F 30 mm Strafe",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Strafe.BP_CommandActor_FA18_Strafe_C",
+  "vehicleId": "vehicle-0106401c2b5abc6d7f44815d89e1d94393129e8f03462fe0fe5b384818e9004a",
+  "identitySha256": "0106401c2b5abc6d7f44815d89e1d94393129e8f03462fe0fe5b384818e9004a",
+  "packageSha256": "b46a4789be5f86a78092b7f06c5b56a6df7069cca11b75e31fa5577d10bb7e94",
+  "requiredOccurrences": 1,
+  "capturedVisibleOccurrences": 1,
+  "attachmentClosureStatus": "passed",
+  "suppressedOccurrenceCount": 0,
+  "suppressedOccurrences": [],
+  "selectionSuppressedOccurrenceCount": 0,
+  "selectionSuppressedOccurrences": [],
+  "visualSelectionPolicy": null,
+  "weaponSuppressedOccurrenceCount": 0,
+  "weaponSuppressedOccurrences": [],
+  "weaponSynchronizationPolicy": null,
+  "componentSuppressedOccurrenceCount": 0,
+  "componentSuppressedOccurrences": [],
+  "visualComponentSuppressionPolicy": [],
+  "sourceAssets": 1,
+  "totalBytes": 4264798,
+  "runtimeBonePoseStatus": "observed",
+  "runtimeBonePoseValidationPolicy": "current-four-point-local-reconstruction-contract",
+  "runtimeAnimationBudgetPolicy": "disable-animation-budget-before-pie",
+  "runtimeRenderPoseRefreshPolicy": "always-tick-pose-and-refresh-bones",
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseDynamicOccurrenceCount": 0,
+  "runtimeReferencedSourceMeshOccurrenceCount": 0,
+  "runtimeCpuSkinWheelAssemblyGateCount": 0,
+  "placements": [
+    {
+      "stableOccurrenceId": "occurrence-4e3573ad12096cc48e90bf09a523471c718425316c0292bf8653661ab967e953",
+      "name": "Aircraft",
+      "actor": "BP_CommandActor_FA18_Strafe_C_0",
+      "assetUrl": "/assets/runtime-probe/visuals/b46a4789be5f86a78092b7f06c5b56a6df7069cca11b75e31fa5577d10bb7e94/asset-0ea13cf15046c8e7834ca714/source.gltf",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transformMatrixConsistency": {
+        "method": "ue-centimetres-xyz-to-gltf-metres-xzy",
+        "expectedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "observedGltfTranslationM": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "errorMByAxis": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maxErrorCm": 0.0,
+        "maxAllowedErrorCm": 0.001
+      },
+      "sourceMeshPath": "/Game/Vehicles/FA-18/Meshes/FA18.FA18",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "runtimeBonePoseStatus": "not-applicable"
+    }
+  ],
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing normal-time visual dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "webUsable": true,
+  "viewerSixViewQa": {
+    "status": "passed",
+    "path": "generated/runtime-probe/viewer-qa/support-air/adf--support-air--fa18-strafe-six-view-qa.json",
+    "sha256": "c09b6afcf077146c8d46ad0f7b9efce2422945e01d90daed4ced7a3b5352ddca",
+    "reviewedAt": "2026-07-28T05:51:20.762914Z",
+    "semanticChecks": [
+      "attachment-parent-socket",
+      "complete-vehicle",
+      "duplicate-render-occurrences",
+      "material-and-pose"
+    ]
+  }
+}
