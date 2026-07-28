@@ -5252,14 +5252,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .viewer-texture-streaming {
   position: absolute;
   z-index: 38;
-  top: 54px;
-  right: 12px;
+  top: 12px;
+  right: 54px;
   display: flex;
-  width: min(390px, calc(100% - 24px));
-  max-width: calc(100% - 24px);
+  width: max-content;
+  max-width: min(198px, calc(100% - 66px));
+  min-height: 34px;
+  box-sizing: border-box;
   align-items: center;
   gap: 8px;
-  padding: 7px 9px;
+  padding: 4px 8px;
   border: 1px solid rgba(72, 176, 255, 0.5);
   border-left: 3px solid #48b0ff;
   border-radius: 4px;
@@ -5275,22 +5277,30 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-texture-streaming > span:last-child {
-  display: grid;
-  gap: 2px;
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 6px;
 }
 
 .viewer-texture-streaming strong {
+  min-width: 0;
+  overflow: hidden;
   color: rgba(232, 247, 255, 0.96);
   font-size: 9px;
   font-weight: 650;
   letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .viewer-texture-streaming small {
+  flex: none;
   color: rgba(173, 216, 245, 0.78);
   font-family: var(--font-mono-ui);
   font-size: 7px;
   letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .viewer-texture-streaming__signal {
@@ -9767,15 +9777,11 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   }
 
   .viewer-texture-streaming {
-    top: 52px;
-    right: 8px;
-    width: calc(100% - 16px);
-    max-width: calc(100% - 16px);
-    padding: 6px 8px;
-  }
-
-  .international-vehicle-viewer[data-has-texture-variants="true"] .viewer-texture-streaming {
-    top: 98px;
+    top: 12px;
+    right: 54px;
+    width: max-content;
+    max-width: min(198px, calc(100% - 66px));
+    padding: 4px 8px;
   }
 
   .detail-panel--viewer .viewer-canvas {
