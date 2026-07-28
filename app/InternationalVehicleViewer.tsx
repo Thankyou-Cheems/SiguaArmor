@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { runtimePreviewForVariant } from "./runtime-probe-preview-data";
 import { RuntimeVehicleViewer } from "./RuntimeVehicleViewer";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
@@ -13,6 +13,11 @@ interface TextureVariantOption {
   rawName: string;
   label: string;
   displayName: string;
+}
+
+interface TextureStreamingState {
+  loaded: number;
+  total: number;
 }
 
 interface InternationalVehicleViewerProps {
@@ -48,6 +53,7 @@ export default function InternationalVehicleViewer({
   const requestedMode = initialMode(navigationState);
   const previewIssue = officialVehiclePreviewIssue(rawName);
   const mode = previewIssue && requestedMode === "exterior" ? "armor" : requestedMode;
+  const [textureStreaming, setTextureStreaming] = useState<TextureStreamingState | null>(null);
 
   useEffect(() => {
     if (!previewIssue || requestedMode !== "exterior") return;
@@ -84,43 +90,58 @@ export default function InternationalVehicleViewer({
       data-hit-access={preview.hit?.status ?? "absent"}
       data-official-preview-issue={previewIssue?.code}
       data-has-texture-variants={!previewIssue && textureVariants.length > 1 ? "true" : undefined}
+      data-texture-streaming={textureStreaming ? "true" : "false"}
     >
-      <RuntimeVehicleViewer
-        preview={preview}
-        showChrome={false}
-        mode={mode}
-        displayName={displayName}
-        referenceData={referenceData}
-        onModeChange={selectMode}
-        onClose={onClose}
-        navigationState={navigationState}
-        onNavigationStateChange={onNavigationStateChange}
-      />
-      {!previewIssue && mode === "exterior" && textureVariants.length > 1 && onTextureVariantChange ? (
-        <nav className="viewer-texture-variant-switcher" aria-label="切换外观贴图变体">
-          <span>贴图变体</span>
-          <div role="group" aria-label={`${displayName}贴图变体`}>
-            {textureVariants.map((variant) => {
-              const selected = variant.rawName === rawName;
-              return (
-                <button
-                  key={variant.id}
-                  type="button"
-                  data-active={selected}
-                  aria-pressed={selected}
-                  aria-label={`切换到${variant.displayName}`}
-                  title={variant.displayName}
-                  onClick={() => {
-                    if (!selected) onTextureVariantChange(variant.id);
-                  }}
-                >
-                  {variant.label}
-                </button>
-              );
-            })}
+      <div className="international-vehicle-viewer__stage">
+        {textureStreaming ? (
+          <div className="viewer-texture-streaming" role="status" aria-live="polite">
+            <span className="viewer-texture-streaming__signal" aria-hidden="true"><i /></span>
+            <span>
+              <strong>外观贴图载入中</strong>
+              <small>
+                {textureStreaming.loaded} / {textureStreaming.total} 源资产 · 已完成部分将直接显示
+              </small>
+            </span>
           </div>
-        </nav>
-      ) : null}
+        ) : null}
+        <RuntimeVehicleViewer
+          preview={preview}
+          showChrome={false}
+          mode={mode}
+          displayName={displayName}
+          referenceData={referenceData}
+          onModeChange={selectMode}
+          onClose={onClose}
+          navigationState={navigationState}
+          onNavigationStateChange={onNavigationStateChange}
+          onExteriorStreamingChange={setTextureStreaming}
+        />
+        {!previewIssue && mode === "exterior" && textureVariants.length > 1 && onTextureVariantChange ? (
+          <nav className="viewer-texture-variant-switcher" aria-label="选择外观">
+            <span>选择外观</span>
+            <div role="group" aria-label={`${displayName}外观选择`}>
+              {textureVariants.map((variant) => {
+                const selected = variant.rawName === rawName;
+                return (
+                  <button
+                    key={variant.id}
+                    type="button"
+                    data-active={selected}
+                    aria-pressed={selected}
+                    aria-label={`切换到${variant.displayName}`}
+                    title={variant.displayName}
+                    onClick={() => {
+                      if (!selected) onTextureVariantChange(variant.id);
+                    }}
+                  >
+                    {variant.label}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+        ) : null}
+      </div>
     </div>
   );
 }

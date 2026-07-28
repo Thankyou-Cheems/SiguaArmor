@@ -1559,6 +1559,7 @@ export function RuntimeVehicleViewer({
   onClose,
   navigationState,
   onNavigationStateChange,
+  onExteriorStreamingChange,
 }: {
   preview: RuntimeVehiclePreview;
   showChrome?: boolean;
@@ -1569,6 +1570,7 @@ export function RuntimeVehicleViewer({
   onClose?: () => void;
   navigationState?: ViewerNavigationState;
   onNavigationStateChange?: (state: ViewerNavigationState) => void;
+  onExteriorStreamingChange?: (state: { loaded: number; total: number } | null) => void;
 }) {
   const previewIssue = officialVehiclePreviewIssue(preview.variantRawName);
   const exteriorUnavailableMessage = previewIssue?.message;
@@ -1822,6 +1824,14 @@ export function RuntimeVehicleViewer({
     loaded: 0,
     total: uniqueAssetCount,
   });
+  useEffect(() => {
+    if (!onExteriorStreamingChange) return;
+    onExteriorStreamingChange(
+      mode === "exterior" && viewerState.kind === "loading"
+        ? { loaded: viewerState.loaded, total: viewerState.total }
+        : null,
+    );
+  }, [mode, onExteriorStreamingChange, viewerState]);
   const [hitState, setHitState] = useState<HitState>(hit ? { kind: "loading" } : { kind: "absent" });
   const [hitHeader, setHitHeader] = useState<ParsedRuntimeHitScene["header"] | null>(null);
   const [attackSourceCardId, setAttackSourceCardId] = useState(() =>
@@ -4349,6 +4359,7 @@ export function RuntimeVehicleViewer({
       controls.dispose();
       disposeScene(scene);
       renderer.dispose();
+      renderer.forceContextLoss();
       renderer.domElement.remove();
     };
   }, [
@@ -4437,17 +4448,6 @@ export function RuntimeVehicleViewer({
           onClose={onClose}
           embedded
         />
-      ) : null}
-      {exteriorStreaming ? (
-        <div className="viewer-texture-streaming" role="status" aria-live="polite">
-          <span className="viewer-texture-streaming__signal" aria-hidden="true"><i /></span>
-          <span>
-            <strong>外观贴图载入中</strong>
-            <small>
-              {viewerState.loaded} / {viewerState.total} 源资产 · 已完成部分将直接显示
-            </small>
-          </span>
-        </div>
       ) : null}
       {viewerState.kind === "error" ? (
         <div className="runtime-vehicle-viewer__error" role="alert">
