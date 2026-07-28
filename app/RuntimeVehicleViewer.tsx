@@ -1125,6 +1125,76 @@ function disposeScene(root: THREE.Object3D) {
   geometries.forEach((geometry) => geometry.dispose());
 }
 
+interface RuntimeRendererLease {
+  renderer: THREE.WebGLRenderer;
+  rendererId: number;
+  shared: boolean;
+  release: () => void;
+}
+
+let sharedRuntimeRenderer: THREE.WebGLRenderer | null = null;
+let sharedRuntimeRendererId = 0;
+let sharedRuntimeRendererLeased = false;
+let runtimeRendererSequence = 0;
+
+function createRuntimeRenderer() {
+  return {
+    renderer: new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    }),
+    rendererId: ++runtimeRendererSequence,
+  };
+}
+
+function acquireRuntimeRenderer(): RuntimeRendererLease {
+  let renderer: THREE.WebGLRenderer;
+  let rendererId: number;
+  let shared = false;
+
+  if (!sharedRuntimeRendererLeased) {
+    if (
+      !sharedRuntimeRenderer ||
+      sharedRuntimeRenderer.getContext().isContextLost()
+    ) {
+      sharedRuntimeRenderer?.dispose();
+      sharedRuntimeRenderer?.domElement.remove();
+      const created = createRuntimeRenderer();
+      sharedRuntimeRenderer = created.renderer;
+      sharedRuntimeRendererId = created.rendererId;
+    }
+    renderer = sharedRuntimeRenderer;
+    rendererId = sharedRuntimeRendererId;
+    sharedRuntimeRendererLeased = true;
+    shared = true;
+  } else {
+    const created = createRuntimeRenderer();
+    renderer = created.renderer;
+    rendererId = created.rendererId;
+  }
+
+  let released = false;
+  return {
+    renderer,
+    rendererId,
+    shared,
+    release: () => {
+      if (released) return;
+      released = true;
+      renderer.setAnimationLoop(null);
+      renderer.renderLists.dispose();
+      renderer.domElement.remove();
+      if (shared && sharedRuntimeRenderer === renderer) {
+        sharedRuntimeRendererLeased = false;
+        return;
+      }
+      renderer.dispose();
+      renderer.forceContextLoss();
+    },
+  };
+}
+
 const ANALYSIS_VISUAL_DEPTH_RESET_RENDER_ORDER = 4;
 const ANALYSIS_VISUAL_DEPTH_OCCLUDER_RENDER_ORDER = 5;
 const ANALYSIS_VISUAL_SURFACE_RENDER_ORDER = 6;
@@ -2857,11 +2927,8 @@ export function RuntimeVehicleViewer({
     exteriorOccurrencesRef.current = exteriorOccurrences;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 200);
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance",
-    });
+    const rendererLease = acquireRuntimeRenderer();
+    const renderer = rendererLease.renderer;
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -2870,6 +2937,8 @@ export function RuntimeVehicleViewer({
     renderer.domElement.setAttribute("aria-label", `${preview.variantRawName} runtime asset 3D preview`);
     renderer.domElement.setAttribute("role", "img");
     host.appendChild(renderer.domElement);
+    host.dataset.webglRendererLease = rendererLease.shared ? "shared" : "isolated";
+    host.dataset.webglRendererId = String(rendererLease.rendererId);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = false;
@@ -3481,6 +3550,22 @@ export function RuntimeVehicleViewer({
     scheduleProtectionMapRef.current = scheduleProtectionMap;
     cancelProtectionMapRef.current = () => cancelProtectionMap(true);
 
+    let cameraFitUserLocked = false;
+    let initialFitAspect = camera.aspect;
+    let initialFitStabilizationPending = false;
+    let initialFitStabilizationTimer = 0;
+    const scheduleInitialFitStabilization = () => {
+      window.clearTimeout(initialFitStabilizationTimer);
+      initialFitStabilizationTimer = window.setTimeout(() => {
+        initialFitStabilizationTimer = 0;
+        if (!initialFitStabilizationPending || cameraFitUserLocked) return;
+        initialFitStabilizationPending = false;
+        if (Math.abs(camera.aspect - initialFitAspect) < 0.08) return;
+        host.dataset.viewerFitStabilized = "true";
+        resetViewRef.current?.({ preserveShotVisual: true });
+      }, 120);
+    };
+
     let lastAppliedCameraNavigationKey: string | null = null;
     const cameraNavigationKey = (state: ViewerNavigationState | undefined) => {
       if (state?.camera) return `camera:${state.camera}`;
@@ -3499,6 +3584,12 @@ export function RuntimeVehicleViewer({
       if (fittedSource === null) return;
       const key = cameraNavigationKey(state);
       if (lastAppliedCameraNavigationKey === key) return;
+      if (key !== "default") {
+        cameraFitUserLocked = true;
+        initialFitStabilizationPending = false;
+        window.clearTimeout(initialFitStabilizationTimer);
+        initialFitStabilizationTimer = 0;
+      }
       const sharedCamera = decodeViewerCameraState(state?.camera ?? "");
       if (sharedCamera) {
         controls.target.fromArray(sharedCamera.target);
@@ -3584,7 +3675,14 @@ export function RuntimeVehicleViewer({
       protectionCache = null;
       if (protectionEnabledRef.current) scheduleProtectionMap({ invalidate: true });
     };
+    const onControlsStart = () => {
+      cameraFitUserLocked = true;
+      initialFitStabilizationPending = false;
+      window.clearTimeout(initialFitStabilizationTimer);
+      initialFitStabilizationTimer = 0;
+    };
     const onControlsEnd = () => publishCameraNavigation();
+    controls.addEventListener("start", onControlsStart);
     controls.addEventListener("change", onControlsChange);
     controls.addEventListener("end", onControlsEnd);
     let rendererWidth = 0;
@@ -3600,6 +3698,9 @@ export function RuntimeVehicleViewer({
       camera.updateProjectionMatrix();
       render();
       if (sizeChanged) protectionCache = null;
+      if (sizeChanged && initialFitStabilizationPending) {
+        scheduleInitialFitStabilization();
+      }
       if (protectionEnabledRef.current) {
         scheduleProtectionMap({ invalidate: sizeChanged });
       }
@@ -3668,6 +3769,9 @@ export function RuntimeVehicleViewer({
       resetViewRef.current = resetView;
       fittedSource = source;
       resetView();
+      initialFitAspect = camera.aspect;
+      initialFitStabilizationPending = true;
+      scheduleInitialFitStabilization();
       lastAppliedCameraNavigationKey = null;
       applyCameraNavigation(navigationStateRef.current, false);
     };
@@ -4328,6 +4432,7 @@ export function RuntimeVehicleViewer({
       cancelled = true;
       cancelProtectionMap(true);
       cancelAnimationFrame(hoverFrame);
+      window.clearTimeout(initialFitStabilizationTimer);
       resetViewRef.current = null;
       activateAssetModeRef.current = null;
       visualGroupRef.current = null;
@@ -4354,13 +4459,12 @@ export function RuntimeVehicleViewer({
       renderer.domElement.removeEventListener("pointermove", onPointerMove);
       renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
+      controls.removeEventListener("start", onControlsStart);
       controls.removeEventListener("change", onControlsChange);
       controls.removeEventListener("end", onControlsEnd);
       controls.dispose();
       disposeScene(scene);
-      renderer.dispose();
-      renderer.forceContextLoss();
-      renderer.domElement.remove();
+      rendererLease.release();
     };
   }, [
     clearShotVisual,
