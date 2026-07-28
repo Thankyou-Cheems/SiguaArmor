@@ -94,13 +94,16 @@ export default function InternationalVehicleViewer({
     >
       <div className="international-vehicle-viewer__stage">
         {textureStreaming ? (
-          <div className="viewer-texture-streaming" role="status" aria-live="polite">
+          <div
+            className="viewer-texture-streaming"
+            role="status"
+            aria-live="polite"
+            aria-label={`外观贴图载入中，${textureStreaming.loaded} / ${textureStreaming.total} 源资产，已完成部分将直接显示`}
+          >
             <span className="viewer-texture-streaming__signal" aria-hidden="true"><i /></span>
             <span>
               <strong>外观贴图载入中</strong>
-              <small>
-                {textureStreaming.loaded} / {textureStreaming.total} 源资产 · 已完成部分将直接显示
-              </small>
+              <small>{textureStreaming.loaded} / {textureStreaming.total}</small>
             </span>
           </div>
         ) : null}
