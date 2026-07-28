@@ -2941,9 +2941,11 @@ export function RuntimeVehicleViewer({
     host.dataset.webglRendererId = String(rendererLease.rendererId);
 
     const controls = new OrbitControls(camera, renderer.domElement);
+    const compactPortableDrone =
+      preview.cardId.includes("--portable-recon-drone--");
     controls.enableDamping = false;
     controls.enablePan = true;
-    controls.minDistance = 2;
+    controls.minDistance = compactPortableDrone ? 0.18 : 2;
     controls.maxDistance = 40;
 
     const modelGroup = new THREE.Group();
@@ -3720,7 +3722,10 @@ export function RuntimeVehicleViewer({
       const sphere = bounds.getBoundingSphere(new THREE.Sphere());
       modelGroup.position.sub(center);
       modelGroup.updateMatrixWorld(true);
-      const radius = Math.max(sphere.radius, 2.5);
+      const radius = Math.max(
+        sphere.radius,
+        compactPortableDrone ? 0.3 : 2.5,
+      );
       const groundY = bounds.min.y - center.y - 0.03;
       if (gridHelper) {
         scene.remove(gridHelper);
@@ -4469,6 +4474,7 @@ export function RuntimeVehicleViewer({
   }, [
     clearShotVisual,
     hit,
+    preview.cardId,
     preview.variantRawName,
     preview.visualVehicleId,
     saveRayShot,

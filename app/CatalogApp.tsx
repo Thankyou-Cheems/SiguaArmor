@@ -108,6 +108,8 @@ const CATEGORY_ICON_BY_CARD_ID =
 const CATEGORY_ICON_BY_TYPE: Record<string, string> = {
   AH: "transporthelo",
   APC: "apc",
+  CAS: "map_jet_tornado",
+  DRONE: "map_handhelddrone",
   IFV: "ifv",
   LOGI: "jeep_logistics",
   LTV: "jeep",
@@ -120,12 +122,15 @@ const CATEGORY_ICON_BY_TYPE: Record<string, string> = {
   SPAA: "trackedifv",
   TD: "jeep_antitank",
   TRAN: "jeep_logistics",
+  UAV: "map_uav",
   UH: "transporthelo",
   ULTV: "jeep",
 };
 const VEHICLE_TYPE_NAME_ZH: Record<string, string> = {
   AH: "攻击直升机",
   APC: "装甲输送车",
+  CAS: "攻击机",
+  DRONE: "便携侦察无人机",
   IFV: "步兵战车",
   LOGI: "补给载具",
   LTV: "轻型战术载具",
@@ -138,6 +143,7 @@ const VEHICLE_TYPE_NAME_ZH: Record<string, string> = {
   SPAA: "自行防空炮",
   TD: "坦克歼击车",
   TRAN: "运输载具",
+  UAV: "大型侦察无人机",
   UH: "通用直升机",
   ULTV: "超轻型战术载具",
 };
