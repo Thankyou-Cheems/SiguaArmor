@@ -1,24 +1,32 @@
-import {
-  infantryWeaponDisplayNameZh,
-  weaponDisplayNameZh,
-} from "../lib/weapon-display-name.ts";
+import { weaponDisplayNameZh } from "../lib/weapon-display-name.ts";
 import type {
   RuntimeWeaponLabel,
   RuntimeWeaponLabelMatchBasis,
 } from "../lib/runtime-weapon-label-options.ts";
 import {
-  editorNativeDirectWeaponIndices,
-  resolveEditorNativeBallistics,
+  editorNativeDamageWeaponIndices,
   type EditorNativeModel,
 } from "../lib/editor-native-hit-model.ts";
 import {
   distinctInfantryHitAnalysisWeaponGroups,
+  infantryHitAnalysisWeaponGroupLabels,
 } from "../lib/infantry-hit-analysis-weapons.ts";
+import {
+  RUNTIME_EXPLOSIVE_CATALOG_SHA256,
+  RUNTIME_EXPLOSIVE_CATEGORY_ORDER,
+  runtimeExplosiveCanonicalName,
+  runtimeExplosiveLayerOrderIsClosed,
+  validateRuntimeExplosiveCatalog,
+  type RuntimeExplosiveCategory,
+  type RuntimeExplosiveSource,
+} from "../lib/runtime-explosive-catalog.ts";
 import { runtimeHitRecordReferenceForVariant } from "./runtime-probe-preview-data";
 import {
   buildRuntimeAttackSourceShareSlug,
   normalizeRuntimeAttackSourceShareSlug,
 } from "../lib/runtime-attack-source-share.mjs";
+import explosiveCatalogJson from "./infantry-explosive-catalog.json";
+import productionExplosiveWeaponsJson from "./runtime-production-explosive-weapons.json";
 import wikiInfantryWeaponIndexJson from "./wiki-infantry-weapon-ballistics-index.json";
 import weaponLabelIndexJson from "./runtime-probe-weapon-label-index.json";
 
@@ -59,7 +67,8 @@ interface RuntimeAttackSourceRecord {
   catalogSelectedRawName: string;
   canonicalSelectionBasis:
     | "max-distinct-direct-encyclopedia-weapons-then-card-id-within-faction-display-name"
-    | "wiki-infantry-configuration-order";
+    | "wiki-infantry-configuration-order"
+    | "editor-explosive-catalog-shipping-order";
   variantRawNames: string[];
   vehicleId: string;
   recordUrl: string;
@@ -73,7 +82,11 @@ interface RuntimeAttackSourceRecord {
 }
 
 interface RuntimeAttackBallisticsSource {
-  kind: "exact-runtime-record" | "encyclopedia-weapon-closure";
+  kind:
+    | "exact-runtime-record"
+    | "encyclopedia-weapon-closure"
+    | "editor-explosive-catalog"
+    | "editor-production-explosive";
   catalogFingerprintSha256: string;
   runtimeRecordSha256?: string;
   runtimeWeaponIndex?: number;
@@ -147,14 +160,20 @@ export function infantryWeaponCategoryForPenetration(
 export interface RuntimeAttackSourceWeapon extends RuntimeAttackSourceWeaponRecord {
   displayNameZh: string;
   displayNameEnglish: string;
-  sourceKind: "vehicle" | "wiki-infantry";
+  sourceKind: "vehicle" | "wiki-infantry" | "explosive-catalog";
   infantryCategory?: InfantryWeaponCategoryId;
+  explosiveCategory?: RuntimeExplosiveCategory;
+  explosiveCategoryLabel?: string;
+  explosiveLayerOrderEvidence?: string;
+  explosiveLayerOrderClosed?: boolean;
+  explosiveLayerCount?: number;
+  directFireRoute: boolean;
   searchAliases?: string[];
 }
 
 export interface RuntimeAttackSource extends Omit<RuntimeAttackSourceRecord, "weapons"> {
   shareSlug: string;
-  sourceKind: "vehicle" | "wiki-infantry";
+  sourceKind: "vehicle" | "wiki-infantry" | "explosive-catalog";
   weapons: RuntimeAttackSourceWeapon[];
 }
 
@@ -192,6 +211,80 @@ interface WikiInfantryWeaponBallisticsIndex {
   weapons: WikiInfantryWeaponBallisticsRecord[];
 }
 
+interface RuntimeProductionExplosiveWeaponRecord {
+  id: string;
+  label: string;
+  groupLabel: string;
+  groupLabels: string[];
+  type: string;
+  platformKind: "vehicle" | "emplaced" | "airstrike";
+  penetrationKind: "kinetic" | "shaped-charge";
+  projectileName: string;
+  projectileCanonicalName: string;
+  directImpactDamage: number;
+  penetrationMm: number;
+  traceDistanceAfterPenetrationM: number;
+  maxDistanceM: number;
+  damageType: string;
+  radialExplosiveId: string;
+  impactRadialOrder: string;
+  ballisticsIds: string[];
+  factions: string[];
+  sourceCardIds: string[];
+  sourceLabels: string[];
+  runtimeAssetPaths: string[];
+  configurationCount: number;
+  searchText: string;
+}
+
+interface RuntimeProductionExplosiveDelivery {
+  id: string;
+  kind: "commander-airstrike" | "vehicle-mounted" | "emplaced";
+  factionId: string;
+  cardIds: string[];
+  platformName: string;
+  platformType: string;
+  actorClass: string;
+  actorAssetPath: string;
+  weaponClass: string;
+  weaponAssetPath: string;
+  gameplayAuthorityPath: string;
+}
+
+interface RuntimeProductionExplosiveDeliveryBinding {
+  explosiveId: string;
+  canonicalName: string;
+  projectileClass: string;
+  category: "vehicle-cannon" | "vehicle-rocket" | "guided-missile";
+  deliveryKinds: RuntimeProductionExplosiveDelivery["kind"][];
+  factions: string[];
+  cardIds: string[];
+  deliveries: RuntimeProductionExplosiveDelivery[];
+  searchText: string;
+}
+
+interface RuntimeProductionExplosiveWeaponIndex {
+  schemaVersion: "runtime-production-explosive-weapons/v1";
+  dataRevision: string;
+  source: {
+    productionFilter: string;
+    kineticWeaponsSha256: string;
+    explosiveDeliveryBindingsSha256: string;
+    explosiveCatalogSha256: string;
+    targetRuntimeWeaponLabelIndexSha256: string;
+    targetWikiWeaponBallisticsIndexSha256: string;
+  };
+  counts: {
+    productionExplosiveSources: number;
+    directFireWeapons: number;
+    deliveryBindings: number;
+    deliveries: number;
+  };
+  productionExplosiveIds: string[];
+  directFireWeapons: RuntimeProductionExplosiveWeaponRecord[];
+  deliveryBindings: RuntimeProductionExplosiveDeliveryBinding[];
+}
+
 interface RuntimeWeaponLabelIndex {
   schemaVersion: "runtime-hit-weapon-label-index/v4";
   counts: {
@@ -220,6 +313,142 @@ interface RuntimeWeaponLabelIndex {
 
 const wikiInfantryWeaponIndex =
   wikiInfantryWeaponIndexJson as unknown as WikiInfantryWeaponBallisticsIndex;
+const runtimeExplosiveCatalog = validateRuntimeExplosiveCatalog(
+  explosiveCatalogJson,
+);
+const runtimeProductionExplosiveWeaponIndex =
+  productionExplosiveWeaponsJson as unknown as RuntimeProductionExplosiveWeaponIndex;
+const runtimeExplosiveSourceByProjectileName =
+  new Map<string, RuntimeExplosiveSource>();
+for (const source of runtimeExplosiveCatalog.sources) {
+  for (const candidate of [
+    source.canonicalName,
+    source.assetPath,
+    source.generatedClassPath,
+    ...source.variantAssetPaths,
+  ]) {
+    const canonicalName = runtimeExplosiveCanonicalName(candidate);
+    if (!canonicalName) continue;
+    const existing = runtimeExplosiveSourceByProjectileName.get(canonicalName);
+    if (existing && existing.id !== source.id) {
+      throw new Error(
+        `Explosive projectile ${canonicalName} maps to both ${existing.id} and ${source.id}`,
+      );
+    }
+    runtimeExplosiveSourceByProjectileName.set(canonicalName, source);
+  }
+}
+if (
+  runtimeProductionExplosiveWeaponIndex.schemaVersion !==
+    "runtime-production-explosive-weapons/v1" ||
+  runtimeProductionExplosiveWeaponIndex.source.productionFilter !==
+    "catalogShipping=true; catalogDebug=false; selectorVisibility=shipping; directEvidenceKind=exact-projectile-cdo; deliveryState=bound" ||
+  runtimeProductionExplosiveWeaponIndex.source.explosiveCatalogSha256 !==
+    RUNTIME_EXPLOSIVE_CATALOG_SHA256 ||
+  !/^[0-9a-f]{64}$/u.test(
+    runtimeProductionExplosiveWeaponIndex.dataRevision,
+  ) ||
+  runtimeProductionExplosiveWeaponIndex.counts.directFireWeapons !==
+    runtimeProductionExplosiveWeaponIndex.directFireWeapons.length ||
+  runtimeProductionExplosiveWeaponIndex.counts.productionExplosiveSources !==
+    runtimeProductionExplosiveWeaponIndex.productionExplosiveIds.length ||
+  runtimeProductionExplosiveWeaponIndex.counts.deliveryBindings !==
+    runtimeProductionExplosiveWeaponIndex.deliveryBindings.length ||
+  runtimeProductionExplosiveWeaponIndex.counts.deliveries !==
+    runtimeProductionExplosiveWeaponIndex.deliveryBindings.reduce(
+      (total, binding) => total + binding.deliveries.length,
+      0,
+    ) ||
+  runtimeProductionExplosiveWeaponIndex.counts.directFireWeapons !== 8
+) {
+  throw new Error("Invalid production explosive weapon index");
+}
+const runtimeProductionExplosiveIds = new Set(
+  runtimeProductionExplosiveWeaponIndex.productionExplosiveIds,
+);
+if (
+  runtimeProductionExplosiveIds.size !==
+    runtimeProductionExplosiveWeaponIndex.productionExplosiveIds.length ||
+  runtimeProductionExplosiveWeaponIndex.productionExplosiveIds.some(
+    (id) =>
+      !runtimeExplosiveCatalog.sources.some(
+        (source) => source.id === id && source.shipping,
+      ),
+  )
+) {
+  throw new Error("Invalid production explosive source allowlist");
+}
+const runtimeProductionExplosiveDeliveryByProjectileName =
+  new Map<string, RuntimeProductionExplosiveDeliveryBinding>();
+for (const binding of runtimeProductionExplosiveWeaponIndex.deliveryBindings) {
+  const canonicalName = runtimeExplosiveCanonicalName(binding.canonicalName);
+  if (
+    !canonicalName ||
+    runtimeProductionExplosiveDeliveryByProjectileName.has(canonicalName) ||
+    binding.deliveries.length === 0 ||
+    binding.deliveryKinds.length === 0 ||
+    binding.factions.length === 0 ||
+    "shipping" in binding ||
+    "state" in binding ||
+    /(?:generic|test|original|nosound)/iu.test(binding.canonicalName)
+  ) {
+    throw new Error(
+      `Invalid production explosive delivery: ${binding.canonicalName}`,
+    );
+  }
+  runtimeProductionExplosiveDeliveryByProjectileName.set(
+    canonicalName,
+    binding,
+  );
+}
+const runtimeProductionExplosiveWeaponByProjectileName =
+  new Map<string, RuntimeProductionExplosiveWeaponRecord>();
+for (
+  const record of runtimeProductionExplosiveWeaponIndex.directFireWeapons
+) {
+  const canonicalName = runtimeExplosiveCanonicalName(
+    record.projectileCanonicalName,
+  );
+  const radialSource = runtimeExplosiveCatalog.sources.find(
+    ({ id }) => id === record.radialExplosiveId,
+  );
+  const delivery =
+    runtimeProductionExplosiveDeliveryByProjectileName.get(canonicalName);
+  if (
+    !canonicalName ||
+    runtimeProductionExplosiveWeaponByProjectileName.has(canonicalName) ||
+    !radialSource?.shipping ||
+    !runtimeProductionExplosiveIds.has(record.radialExplosiveId) ||
+    radialSource.id !== delivery?.explosiveId ||
+    !Number.isFinite(record.directImpactDamage) ||
+    record.directImpactDamage < 0 ||
+    !Number.isFinite(record.penetrationMm) ||
+    record.penetrationMm < 0 ||
+    !Number.isFinite(record.traceDistanceAfterPenetrationM) ||
+    record.traceDistanceAfterPenetrationM < 0 ||
+    record.ballisticsIds.length === 0 ||
+    record.factions.length === 0 ||
+    "selectorVisibility" in record ||
+    "directEvidenceKind" in record ||
+    /(?:generic|test|original|nosound)/iu.test(
+      record.projectileCanonicalName,
+    )
+  ) {
+    throw new Error(
+      `Invalid production explosive direct-fire record: ${record.projectileCanonicalName}`,
+    );
+  }
+  runtimeProductionExplosiveWeaponByProjectileName.set(
+    canonicalName,
+    record,
+  );
+}
+if (
+  runtimeProductionExplosiveWeaponByProjectileName.size !==
+    runtimeProductionExplosiveDeliveryByProjectileName.size
+) {
+  throw new Error("Production explosive weapon and delivery sets differ");
+}
 if (
   wikiInfantryWeaponIndex.schemaVersion !== "sigua-infantry-weapon-ballistics/v1" ||
   !/^[0-9a-f]{64}$/u.test(wikiInfantryWeaponIndex.dataRevision) ||
@@ -232,9 +461,18 @@ if (
 ) {
   throw new Error("Invalid Wiki infantry weapon ballistics index");
 }
+if (
+  runtimeExplosiveCatalog.source.wikiDataRevision !==
+    wikiInfantryWeaponIndex.sourceDataRevision
+) {
+  throw new Error(
+    "Explosive catalog and Wiki weapon data revisions do not match",
+  );
+}
 
 function wikiInfantryWeaponBallisticsModel(
   record: WikiInfantryWeaponBallisticsRecord,
+  radialSource: RuntimeExplosiveSource | null,
 ): EditorNativeModel {
   const sourceCurve = record.damageCurveName
     ? wikiInfantryWeaponIndex.damageCurves[record.damageCurveName]
@@ -255,6 +493,34 @@ function wikiInfantryWeaponBallisticsModel(
           { time: record.maxDistanceM * 100, value: record.directImpactDamage },
         ]
       : null;
+  const firstRadialLayer = radialSource?.layers[0] ?? null;
+  const explosiveFields = radialSource && firstRadialLayer
+    ? {
+        explosiveBaseDamage: firstRadialLayer.baseDamage,
+        explosiveMinimumDamage: firstRadialLayer.minimumDamage,
+        explosiveInnerRadiusCm: firstRadialLayer.innerRadiusMeters * 100,
+        explosiveOuterRadiusCm: firstRadialLayer.outerRadiusMeters * 100,
+        explosiveFalloff: firstRadialLayer.falloff,
+        impactNormalOffsetCm:
+          firstRadialLayer.originNormalOffsetMeters * 100,
+        explosiveLayerOrderEvidence: radialSource.layerOrderEvidence,
+        explosiveLayers: radialSource.layers.map((layer) => ({
+          layerId: layer.id,
+          label: layer.label,
+          shortLabel: layer.shortLabel,
+          damageTypePath:
+            layer.damageTypeClassPath ?? layer.damageType,
+          baseDamage: layer.baseDamage,
+          minimumDamage: layer.minimumDamage,
+          innerRadiusCm: layer.innerRadiusMeters * 100,
+          outerRadiusCm: layer.outerRadiusMeters * 100,
+          falloff: layer.falloff,
+          impactNormalOffsetCm: layer.originNormalOffsetMeters * 100,
+          onlyDamageMeshes: layer.onlyDamageMeshes,
+          orderEvidence: radialSource.layerOrderEvidence,
+        })),
+      }
+    : {};
   return {
     healthPools: [],
     components: [],
@@ -280,6 +546,7 @@ function wikiInfantryWeaponBallisticsModel(
       impactDamage: record.directImpactDamage,
       isExplosive: record.isExplosive,
       traceDistanceAfterPenetrationMeters: record.traceDistanceAfterPenetrationM,
+      ...explosiveFields,
     }],
     curves: damageCurveKeys ? [{
       curveId: record.damageCurveName ?? `${record.weaponKey}:constant-damage`,
@@ -287,6 +554,127 @@ function wikiInfantryWeaponBallisticsModel(
       outputUnit: "damage",
       keys: damageCurveKeys,
     }] : [],
+  };
+}
+
+function runtimeExplosiveBallisticsModel(
+  source: RuntimeExplosiveSource,
+): EditorNativeModel {
+  const firstLayer = source.layers[0];
+  if (!firstLayer) {
+    throw new Error(`Explosive catalog source has no layers: ${source.id}`);
+  }
+  const firstDamageTypePath =
+    firstLayer.damageTypeClassPath ?? firstLayer.damageType;
+  return {
+    healthPools: [],
+    components: [],
+    surfaceProfiles: [],
+    weapons: [{
+      weaponId: source.canonicalName,
+      role: "editor-explosive-catalog",
+      projectileIndex: 0,
+      armorPenetrationDepthMm: 0,
+      armorPenetrationCurveIndex: { value: null, state: "absent" },
+      damageFalloffCurveIndex: { value: null, state: "absent" },
+      maxDamage: 0,
+      minDamage: 0,
+      traceDistanceAfterPenetrationMeters: 0,
+    }],
+    projectiles: [{
+      projectileId: source.canonicalName,
+      role: "editor-explosive-catalog",
+      damageTypePath: firstDamageTypePath,
+      armorPenetrationDepthMm: 0,
+      impactDamage: 0,
+      isExplosive: true,
+      traceDistanceAfterPenetrationMeters: 0,
+      explosiveBaseDamage: firstLayer.baseDamage,
+      explosiveMinimumDamage: firstLayer.minimumDamage,
+      explosiveInnerRadiusCm: firstLayer.innerRadiusMeters * 100,
+      explosiveOuterRadiusCm: firstLayer.outerRadiusMeters * 100,
+      explosiveFalloff: firstLayer.falloff,
+      impactNormalOffsetCm: firstLayer.originNormalOffsetMeters * 100,
+      explosiveLayerOrderEvidence: source.layerOrderEvidence,
+      explosiveLayers: source.layers.map((layer) => ({
+        layerId: layer.id,
+        label: layer.label,
+        shortLabel: layer.shortLabel,
+        damageTypePath:
+          layer.damageTypeClassPath ?? layer.damageType,
+        baseDamage: layer.baseDamage,
+        minimumDamage: layer.minimumDamage,
+        innerRadiusCm: layer.innerRadiusMeters * 100,
+        outerRadiusCm: layer.outerRadiusMeters * 100,
+        falloff: layer.falloff,
+        impactNormalOffsetCm: layer.originNormalOffsetMeters * 100,
+        onlyDamageMeshes: layer.onlyDamageMeshes,
+        orderEvidence: source.layerOrderEvidence,
+      })),
+    }],
+    curves: [],
+  };
+}
+
+function runtimeProductionExplosiveBallisticsModel(
+  record: RuntimeProductionExplosiveWeaponRecord,
+  source: RuntimeExplosiveSource,
+): EditorNativeModel {
+  const firstLayer = source.layers[0];
+  if (!firstLayer) {
+    throw new Error(
+      `Production explosive source has no radial layers: ${record.projectileCanonicalName}`,
+    );
+  }
+  return {
+    healthPools: [],
+    components: [],
+    surfaceProfiles: [],
+    weapons: [{
+      weaponId: record.id,
+      role: "production-explosive-direct-hit",
+      projectileIndex: 0,
+      armorPenetrationDepthMm: record.penetrationMm,
+      armorPenetrationCurveIndex: { value: null, state: "absent" },
+      damageFalloffCurveIndex: { value: null, state: "absent" },
+      maxDamage: record.directImpactDamage,
+      minDamage: record.directImpactDamage,
+      traceDistanceAfterPenetrationMeters:
+        record.traceDistanceAfterPenetrationM,
+    }],
+    projectiles: [{
+      projectileId: record.projectileName,
+      role: "production-explosive-projectile",
+      damageTypePath: record.damageType,
+      armorPenetrationDepthMm: record.penetrationMm,
+      impactDamage: record.directImpactDamage,
+      isExplosive: true,
+      traceDistanceAfterPenetrationMeters:
+        record.traceDistanceAfterPenetrationM,
+      explosiveBaseDamage: firstLayer.baseDamage,
+      explosiveMinimumDamage: firstLayer.minimumDamage,
+      explosiveInnerRadiusCm: firstLayer.innerRadiusMeters * 100,
+      explosiveOuterRadiusCm: firstLayer.outerRadiusMeters * 100,
+      explosiveFalloff: firstLayer.falloff,
+      impactNormalOffsetCm: firstLayer.originNormalOffsetMeters * 100,
+      explosiveLayerOrderEvidence: source.layerOrderEvidence,
+      explosiveLayers: source.layers.map((layer) => ({
+        layerId: layer.id,
+        label: layer.label,
+        shortLabel: layer.shortLabel,
+        damageTypePath:
+          layer.damageTypeClassPath ?? layer.damageType,
+        baseDamage: layer.baseDamage,
+        minimumDamage: layer.minimumDamage,
+        innerRadiusCm: layer.innerRadiusMeters * 100,
+        outerRadiusCm: layer.outerRadiusMeters * 100,
+        falloff: layer.falloff,
+        impactNormalOffsetCm: layer.originNormalOffsetMeters * 100,
+        onlyDamageMeshes: layer.onlyDamageMeshes,
+        orderEvidence: source.layerOrderEvidence,
+      })),
+    }],
+    curves: [],
   };
 }
 
@@ -417,6 +805,7 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
         return {
           ...weapon,
           sourceKind: "vehicle",
+          directFireRoute: true,
           sourceVehicleId: releaseRecord.vehicleId,
           sourceRecordUrl: releaseRecord.recordUrl,
           sourceRecordSha256: releaseRecord.recordSha256,
@@ -437,9 +826,16 @@ const wikiInfantryAttackSourceWeaponGroups =
     wikiInfantryWeaponIndex.weapons,
     wikiInfantryWeaponIndex.damageCurves,
   );
+const wikiInfantryAttackSourceWeaponLabels =
+  infantryHitAnalysisWeaponGroupLabels(wikiInfantryAttackSourceWeaponGroups);
 const wikiInfantryAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
-  wikiInfantryAttackSourceWeaponGroups.map((group) => {
+  wikiInfantryAttackSourceWeaponGroups.map((group, groupIndex) => {
     const record = group.canonical;
+    const radialSource = record.projectileName
+      ? runtimeExplosiveSourceByProjectileName.get(
+          runtimeExplosiveCanonicalName(record.projectileName),
+        ) ?? null
+      : null;
     return {
       weaponIndex: -1,
       weaponId: record.weaponKey,
@@ -450,7 +846,7 @@ const wikiInfantryAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
       matchBasis: "exact-encyclopedia-weapon-ballistics",
       ballisticsId: record.ballisticsId,
       ballisticsWeaponIndex: 0,
-      ballisticsModel: wikiInfantryWeaponBallisticsModel(record),
+      ballisticsModel: wikiInfantryWeaponBallisticsModel(record, radialSource),
       ballisticsSource: {
         kind: "encyclopedia-weapon-closure",
         catalogFingerprintSha256: wikiInfantryWeaponIndex.sourceDataRevision,
@@ -464,15 +860,18 @@ const wikiInfantryAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
       sourceRecordUrl: "/data/wiki-weapons.json",
       sourceRecordSha256: wikiInfantryWeaponIndex.sourceDataRevision,
       sourceRecordBytes: 0,
-      displayNameZh: infantryWeaponDisplayNameZh({
-        displayName: record.displayName,
-        gunName: record.groupDisplayName,
-        projectileName: record.projectileName,
-        type: record.type,
-      }),
+      displayNameZh: wikiInfantryAttackSourceWeaponLabels[groupIndex],
       displayNameEnglish: record.displayName,
       sourceKind: "wiki-infantry",
+      directFireRoute: true,
       infantryCategory: infantryWeaponCategoryForPenetration(record.penetrationMm),
+      explosiveCategory: radialSource?.category,
+      explosiveCategoryLabel: radialSource?.categoryLabel,
+      explosiveLayerOrderEvidence: radialSource?.layerOrderEvidence,
+      explosiveLayerOrderClosed: radialSource
+        ? runtimeExplosiveLayerOrderIsClosed(radialSource)
+        : undefined,
+      explosiveLayerCount: radialSource?.layers.length,
       searchAliases: group.searchAliases,
     };
   });
@@ -514,30 +913,226 @@ if (
 attackSourceById.set(WIKI_INFANTRY_ATTACK_SOURCE_CARD_ID, wikiInfantryAttackSource);
 attackSourceById.set(wikiInfantryAttackSource.shareSlug, wikiInfantryAttackSource);
 
+const EXPLOSIVE_CATALOG_ATTACK_SOURCE_CARD_ID = "catalog--explosives";
+const coveredExplosiveCanonicalNames = new Set(
+  [
+    ...runtimeVehicleAttackSources.flatMap(({ weapons }) =>
+      weapons.map(({ projectileName }) => projectileName)
+    ),
+    ...wikiInfantryAttackSourceWeapons.map(
+      ({ projectileName }) => projectileName,
+    ),
+  ].map(runtimeExplosiveCanonicalName).filter(Boolean),
+);
+const missingShippingExplosiveSources = runtimeExplosiveCatalog.sources
+  .filter(
+    (source) =>
+      runtimeProductionExplosiveIds.has(source.id) &&
+      !coveredExplosiveCanonicalNames.has(
+        runtimeExplosiveCanonicalName(source.canonicalName),
+      ),
+  )
+  .sort((left, right) => {
+    const categoryDifference =
+      RUNTIME_EXPLOSIVE_CATEGORY_ORDER.indexOf(left.category) -
+      RUNTIME_EXPLOSIVE_CATEGORY_ORDER.indexOf(right.category);
+    if (categoryDifference !== 0) return categoryDifference;
+    return left.label.localeCompare(right.label, "zh-CN");
+  });
+if (missingShippingExplosiveSources.length !== 45) {
+  throw new Error(
+    `Explosive selector closure drifted: expected 45 missing production sources, got ${missingShippingExplosiveSources.length}`,
+  );
+}
+
+const explosiveCatalogAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
+  missingShippingExplosiveSources.map((source) => {
+    const canonicalName = runtimeExplosiveCanonicalName(source.canonicalName);
+    const productionRecord =
+      runtimeProductionExplosiveWeaponByProjectileName.get(canonicalName) ??
+        null;
+    const deliveryBinding = productionRecord
+      ? runtimeProductionExplosiveDeliveryByProjectileName.get(canonicalName) ??
+        null
+      : null;
+    if (productionRecord && !deliveryBinding) {
+      throw new Error(
+        `Missing production delivery for ${productionRecord.projectileCanonicalName}`,
+      );
+    }
+    const directFireRoute = productionRecord !== null;
+    const sourceRecordSha256 = directFireRoute
+      ? runtimeProductionExplosiveWeaponIndex.dataRevision
+      : RUNTIME_EXPLOSIVE_CATALOG_SHA256;
+    return {
+      weaponIndex: -1,
+      weaponId: productionRecord?.id ?? source.canonicalName,
+      runtimeAssetPath: source.assetPath,
+      gunName: productionRecord?.groupLabel ?? source.label,
+      displayName: productionRecord?.label ?? source.shortLabel,
+      projectileName:
+        productionRecord?.projectileName ?? source.canonicalName,
+      matchBasis: directFireRoute
+        ? "exact-editor-projectile-cdo"
+        : "exact-editor-explosive-catalog",
+      ballisticsId:
+        productionRecord?.ballisticsIds[0] ?? source.id,
+      ballisticsWeaponIndex: 0,
+      ballisticsModel: productionRecord
+        ? runtimeProductionExplosiveBallisticsModel(
+            productionRecord,
+            source,
+          )
+        : runtimeExplosiveBallisticsModel(source),
+      ballisticsSource: {
+        kind: directFireRoute
+          ? "editor-production-explosive"
+          : "editor-explosive-catalog",
+        catalogFingerprintSha256: sourceRecordSha256,
+        projectileEvidence: {
+          recordSha256: sourceRecordSha256,
+          projectileIndex: 0,
+          assetPath: source.assetPath,
+        },
+        curveEvidence: [],
+        baseCurveFallbacks: [],
+      },
+      sourceCardId: EXPLOSIVE_CATALOG_ATTACK_SOURCE_CARD_ID,
+      sourceRawName:
+        productionRecord?.groupLabel ?? source.canonicalName,
+      sourceVehicleId: directFireRoute
+        ? `production-explosive-${runtimeProductionExplosiveWeaponIndex.dataRevision}`
+        : `explosive-catalog-${RUNTIME_EXPLOSIVE_CATALOG_SHA256}`,
+      sourceRecordUrl: directFireRoute
+        ? "embedded:app/runtime-production-explosive-weapons.json"
+        : "embedded:app/infantry-explosive-catalog.json",
+      sourceRecordSha256,
+      sourceRecordBytes: 0,
+      displayNameZh: productionRecord
+        ? `${productionRecord.label} · ${productionRecord.groupLabel}`
+        : source.label,
+      displayNameEnglish: source.shortLabel,
+      sourceKind: "explosive-catalog",
+      directFireRoute,
+      explosiveCategory: source.category,
+      explosiveCategoryLabel: source.categoryLabel,
+      explosiveLayerOrderEvidence: source.layerOrderEvidence,
+      explosiveLayerOrderClosed: runtimeExplosiveLayerOrderIsClosed(source),
+      explosiveLayerCount: source.layers.length,
+      searchAliases: [
+        source.canonicalName,
+        source.nativeClass,
+        source.categoryLabel,
+        source.searchText,
+        ...source.factions,
+        ...(productionRecord
+          ? [
+              productionRecord.projectileCanonicalName,
+              productionRecord.groupLabel,
+              productionRecord.searchText,
+              ...productionRecord.groupLabels,
+              ...productionRecord.factions,
+              ...productionRecord.sourceCardIds,
+              ...productionRecord.sourceLabels,
+              ...productionRecord.runtimeAssetPaths,
+            ]
+          : []),
+        ...(deliveryBinding
+          ? [
+              deliveryBinding.searchText,
+              ...deliveryBinding.factions,
+              ...deliveryBinding.deliveryKinds,
+              ...deliveryBinding.deliveries.flatMap((delivery) => [
+                delivery.factionId,
+                delivery.platformName,
+                delivery.platformType,
+                delivery.actorClass,
+                delivery.weaponClass,
+                delivery.gameplayAuthorityPath,
+              ]),
+            ]
+          : []),
+        ...source.weapons.flatMap((weapon) => [
+          weapon.weaponKey,
+          weapon.displayName,
+          weapon.groupDisplayName ?? "",
+          weapon.type ?? "",
+          ...weapon.factions,
+        ]),
+        ...source.layers.flatMap((layer) => [
+          layer.label,
+          layer.shortLabel,
+          layer.damageType,
+          layer.damageTypeClassPath ?? "",
+        ]),
+      ].filter(Boolean),
+    };
+  });
+
+const explosiveCatalogAttackSource: RuntimeAttackSource = {
+  sourceKind: "explosive-catalog",
+  cardId: EXPLOSIVE_CATALOG_ATTACK_SOURCE_CARD_ID,
+  cardIds: [EXPLOSIVE_CATALOG_ATTACK_SOURCE_CARD_ID],
+  shareSlug: "catalog-explosives",
+  displayName: "爆炸物",
+  groupId: "explosives",
+  groupName: "爆炸物",
+  groupOrder: Number.MAX_SAFE_INTEGER - 1,
+  type: "Explosive",
+  types: [
+    "Explosive",
+    "Explosion",
+    "爆炸物",
+    ...new Set(
+      missingShippingExplosiveSources.map(({ categoryLabel }) => categoryLabel),
+    ),
+  ],
+  canonicalRawName: "Explosive Catalog",
+  catalogSelectedRawName: "Explosive Catalog",
+  canonicalSelectionBasis: "editor-explosive-catalog-shipping-order",
+  variantRawNames: missingShippingExplosiveSources.map(
+    ({ canonicalName }) => canonicalName,
+  ),
+  vehicleId:
+    `explosive-catalog-${RUNTIME_EXPLOSIVE_CATALOG_SHA256}`,
+  recordUrl: "embedded:app/infantry-explosive-catalog.json",
+  recordSha256: RUNTIME_EXPLOSIVE_CATALOG_SHA256,
+  recordBytes: 0,
+  directWeaponCount: explosiveCatalogAttackSourceWeapons.length,
+  runtimeBackedWeaponCount: 0,
+  catalogCompletedWeaponCount: explosiveCatalogAttackSourceWeapons.length,
+  baseCurveFallbackWeaponCount: 0,
+  weapons: explosiveCatalogAttackSourceWeapons,
+};
+if (
+  normalizeRuntimeAttackSourceShareSlug(
+    explosiveCatalogAttackSource.shareSlug,
+  ) !== explosiveCatalogAttackSource.shareSlug ||
+  attackSourceById.has(explosiveCatalogAttackSource.shareSlug)
+) {
+  throw new Error("Invalid explosive catalog attack source share slug");
+}
+attackSourceById.set(
+  EXPLOSIVE_CATALOG_ATTACK_SOURCE_CARD_ID,
+  explosiveCatalogAttackSource,
+);
+attackSourceById.set(
+  explosiveCatalogAttackSource.shareSlug,
+  explosiveCatalogAttackSource,
+);
+
 export const runtimeAttackSources: readonly RuntimeAttackSource[] = [
   ...runtimeVehicleAttackSources,
   wikiInfantryAttackSource,
+  explosiveCatalogAttackSource,
 ];
 
 export function runtimeAttackWeaponSupportsHitAnalysis(
   weapon: RuntimeAttackSourceWeapon,
 ) {
-  if (weapon.sourceKind === "vehicle") {
-    return editorNativeDirectWeaponIndices(weapon.ballisticsModel).includes(
-      weapon.ballisticsWeaponIndex,
-    );
-  }
-  const ballistics = resolveEditorNativeBallistics(
-    weapon.ballisticsModel,
+  return editorNativeDamageWeaponIndices(weapon.ballisticsModel).includes(
     weapon.ballisticsWeaponIndex,
-    0,
   );
-  return ballistics.penetrationAtRangeMm !== null &&
-    ballistics.penetrationAtRangeMm > 0 &&
-    ballistics.impactDamageAtRange !== null &&
-    ballistics.impactDamageAtRange >= 0 &&
-    ballistics.traceDistanceAfterPenetrationM !== null &&
-    ballistics.damageTypePath !== null;
 }
 
 export function runtimeAttackSourceForId(id: string) {

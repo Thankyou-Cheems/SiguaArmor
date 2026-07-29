@@ -6,6 +6,10 @@ import visualSelectionPolicyJson from "./runtime-probe-visual-selection-policy.j
 import hitDescriptorIndexJson from "./runtime-probe-hit-release-index.json";
 import supportAirHitDescriptorIndexJson from "./support-air-hit-release-index.json";
 import type { SiteEdition } from "./site-edition";
+import {
+  runtimeChassisPoseForGeneratedClass,
+  type RuntimeChassisPose,
+} from "./runtime-chassis-pose";
 
 export type RuntimePreviewStatus =
   | "visual-ready"
@@ -93,6 +97,7 @@ export interface RuntimeVehiclePreview {
   visualVehicleId: string | null;
   visualIdentitySha256: string | null;
   note: string;
+  chassisPose: RuntimeChassisPose | null;
   runtime: {
     actors: number | null;
     components: number | null;
@@ -510,6 +515,9 @@ function toRuntimePreview(
   const hitDescriptor = hitDescriptorByIdentity.get(
     descriptorIdentity(descriptor.cardId, descriptor.rawName),
   );
+  const chassisPose = runtimeChassisPoseForGeneratedClass(
+    descriptor.generatedClass,
+  );
   if (
     hitDescriptor &&
     (hitDescriptor.vehicleId !== descriptor.vehicleId ||
@@ -532,6 +540,7 @@ function toRuntimePreview(
     latestRuntimeIdentitySha256: descriptor.identitySha256,
     visualVehicleId: descriptor.vehicleId,
     visualIdentitySha256: descriptor.identitySha256,
+    chassisPose,
     note: `${reviewOnly
       ? "该 exact card / variant 正在本机六视角复核，尚未标记 web-usable。"
       : "该 exact card / variant 已接入官方运行时生成、DX11 稳定后导出的 source-native 视觉包。"}${

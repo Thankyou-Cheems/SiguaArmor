@@ -125,3 +125,29 @@ export function distinctInfantryHitAnalysisWeaponGroups<
   }
   return [...groupsByIdentity.values()];
 }
+
+/**
+ * Different native weapon fields can produce calculator-distinct groups with
+ * the same translated name. Qualify only those collisions with the field that
+ * makes their results differ; all other labels stay unchanged.
+ */
+export function infantryHitAnalysisWeaponGroupLabels<
+  T extends InfantryHitAnalysisWeaponRecord,
+>(
+  groups: readonly InfantryHitAnalysisWeaponGroup<T>[],
+) {
+  const baseLabels = groups.map(({ canonical }) => playerFacingName(canonical));
+  const counts = new Map<string, number>();
+  for (const label of baseLabels) {
+    counts.set(label, (counts.get(label) ?? 0) + 1);
+  }
+  return groups.map((group, index) => {
+    const label = baseLabels[index];
+    if ((counts.get(label) ?? 0) <= 1) return label;
+    const distance = group.canonical.traceDistanceAfterPenetrationM;
+    const formattedDistance = Number.isInteger(distance)
+      ? String(distance)
+      : String(Number(distance.toFixed(3)));
+    return `${label} · 后效 ${formattedDistance} m`;
+  });
+}
