@@ -1,7 +1,9 @@
 export type RuntimeWeaponLabelMatchBasis =
   | "exact-runtime-asset-to-encyclopedia-gun"
   | "exact-editor-ballistic-fingerprint"
-  | "exact-encyclopedia-weapon-ballistics";
+  | "exact-encyclopedia-weapon-ballistics"
+  | "exact-editor-projectile-cdo"
+  | "exact-editor-explosive-catalog";
 
 export interface RuntimeWeaponLabel {
   displayNameZh: string;

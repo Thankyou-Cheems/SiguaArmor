@@ -15,7 +15,7 @@ const DESTROYED_EFFECTS: Readonly<Record<string, EditorDamageCardEffect>> = {
   track: { id: "track-destroyed", label: "断履" },
   wheel: { id: "wheel-destroyed", label: "车轮击毁" },
   engine: { id: "engine-destroyed", label: "发动机摧毁" },
-  "ammo-rack": { id: "ammo-rack-destroyed", label: "弹药架爆炸" },
+  "ammo-rack": { id: "ammo-rack-destroyed", label: "弹药架摧毁" },
 };
 
 const STABILIZATION_LOST_EFFECT: EditorDamageCardEffect = {

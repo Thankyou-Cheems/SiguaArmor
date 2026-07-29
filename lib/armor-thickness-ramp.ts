@@ -29,7 +29,7 @@ export type ArmorSurfaceVisualStyle = {
 };
 
 export const ARMOR_THICKNESS_MIN_MM = 0;
-export const ARMOR_THICKNESS_MAX_MM = 800;
+export const ARMOR_THICKNESS_MAX_MM = 890;
 /** Keep the ramp visually balanced while giving common thin armor blue and green room. */
 
 export const ARMOR_THICKNESS_STOPS: ReadonlyArray<{
@@ -46,7 +46,7 @@ export const ARMOR_THICKNESS_STOPS: ReadonlyArray<{
   { thicknessMm: 400, normalizedPosition: 0.64, rgb: [232 / 255, 91 / 255, 36 / 255] },
   { thicknessMm: 500, normalizedPosition: 0.72, rgb: [220 / 255, 38 / 255, 38 / 255] },
   { thicknessMm: 600, normalizedPosition: 0.8, rgb: [127 / 255, 20 / 255, 20 / 255] },
-  { thicknessMm: 800, normalizedPosition: 1, rgb: [110 / 255, 74 / 255, 46 / 255] },
+  { thicknessMm: 890, normalizedPosition: 1, rgb: [110 / 255, 74 / 255, 46 / 255] },
 ];
 
 const RELATIVE_ARMOR_THICKNESS_RED_END_MM = 600;
@@ -58,7 +58,7 @@ const RELATIVE_ARMOR_THICKNESS_RED_END_POSITION =
 /**
  * Relative mode deliberately stops at the absolute ramp's deep-red node.
  * Rescaling these positions to 0..1 keeps its legend and mesh colors aligned
- * without inheriting the absolute scale's 600–800 mm brown segment.
+ * without inheriting the absolute scale's 600–890 mm brown segment.
  */
 export const RELATIVE_ARMOR_THICKNESS_STOPS = ARMOR_THICKNESS_STOPS
   .filter((stop) => stop.normalizedPosition <= RELATIVE_ARMOR_THICKNESS_RED_END_POSITION)
@@ -68,7 +68,7 @@ export const RELATIVE_ARMOR_THICKNESS_STOPS = ARMOR_THICKNESS_STOPS
       stop.normalizedPosition / RELATIVE_ARMOR_THICKNESS_RED_END_POSITION,
   }));
 
-const LEGEND_TICK_VALUES_MM = [0, 200, 400, 600, 800] as const;
+const LEGEND_TICK_VALUES_MM = [0, 200, 400, 600, 800, 890] as const;
 
 function assertFiniteThickness(thicknessMm: number): void {
   if (!Number.isFinite(thicknessMm)) {
@@ -257,7 +257,7 @@ export function armorSurfaceVisualStyle(
 }
 
 /**
- * Absolute mode uses a linear 0–800 mm presentation axis. Relative mode is
+ * Absolute mode uses a linear 0–890 mm presentation axis. Relative mode is
  * available separately when players need the full color range for one vehicle.
  */
 export const ARMOR_THICKNESS_LEGEND_STOPS = ARMOR_THICKNESS_STOPS.map(

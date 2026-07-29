@@ -1,0 +1,904 @@
+{
+  "schemaVersion": "runtime-production-explosive-weapons/v1",
+  "dataRevision": "36149723741772e02428f29811db5be41763e7456cd8f33bd4fdbab6402a0e09",
+  "source": {
+    "productionFilter": "catalogShipping=true; catalogDebug=false; selectorVisibility=shipping; directEvidenceKind=exact-projectile-cdo; deliveryState=bound",
+    "kineticWeaponsSha256": "c3d3eb35632966f385cf19f1de7bb946469772fdc8864c8de388dc67ef59ef8c",
+    "explosiveDeliveryBindingsSha256": "c612218341e7fcd677cf87f886c04112276377711d3fe4d99ca2a4a4c4c1d24f",
+    "explosiveCatalogSha256": "c32cff37c9fc1b79e8175224dcc6eb97fa2333ebce13b5dfaee7ea9798b6582b",
+    "targetRuntimeWeaponLabelIndexSha256": "ab99fe244cc10f1ffa59e8db86bcdebe82d76265abb97c5c0225af5cf9152af9",
+    "targetWikiWeaponBallisticsIndexSha256": "55711ec3ffc61675222f169b632f214335be560baa233164fab5f494226d6167"
+  },
+  "counts": {
+    "productionExplosiveSources": 95,
+    "directFireWeapons": 8,
+    "deliveryBindings": 8,
+    "deliveries": 20
+  },
+  "productionExplosiveIds": [
+    "explosive-021abc8378ecfbe8",
+    "explosive-02fc1395751df25d",
+    "explosive-03994be9f915a15f",
+    "explosive-077780c74c43a46a",
+    "explosive-07b898a450b01fea",
+    "explosive-07f8b45b5ebf2451",
+    "explosive-1350ba6e80c9377c",
+    "explosive-13540a715477ccce",
+    "explosive-16ce35713c8b11a2",
+    "explosive-19e18ce916a1668f",
+    "explosive-1af097f02131d599",
+    "explosive-1bb981e99481a1c8",
+    "explosive-1c742aa924951363",
+    "explosive-1dcbe1f27484cd50",
+    "explosive-2001ec6f97107ec3",
+    "explosive-2794a113eb6828a3",
+    "explosive-2af9e5b44a8c3138",
+    "explosive-2e8cf6ace64f550a",
+    "explosive-31c830b881f0944f",
+    "explosive-33ae26dd616e8fed",
+    "explosive-33b0a59f715d359c",
+    "explosive-3d725eb6abe5f51c",
+    "explosive-40ac34113a80044c",
+    "explosive-4b3f8c19aca77119",
+    "explosive-4b4d1cb87e233564",
+    "explosive-4be393171f552d7e",
+    "explosive-4bf3b4d055b08c14",
+    "explosive-4ea636c7a0caa2b7",
+    "explosive-4ee98e11d78fccb0",
+    "explosive-5b0e4fd8ceea4702",
+    "explosive-5c66d39ffda9e0d9",
+    "explosive-5dd22fec44844bfb",
+    "explosive-61ae5795592f7d07",
+    "explosive-65e96a03f54e0543",
+    "explosive-670466438a852eca",
+    "explosive-6aa026177c32b405",
+    "explosive-6b12a8800d523e32",
+    "explosive-6cfc71d570c03d10",
+    "explosive-6e219b2f1eac7675",
+    "explosive-6effa461d155a7d6",
+    "explosive-71602398590ace0d",
+    "explosive-76ce97b2e1df6cc6",
+    "explosive-772914c204173c48",
+    "explosive-781c03988f410bfb",
+    "explosive-7acab1addc3c8fea",
+    "explosive-7b7fe73a2e3ff5a9",
+    "explosive-7f64ad01ef8ae5c2",
+    "explosive-82a37546808f4dff",
+    "explosive-85d691c1a603b387",
+    "explosive-888b8c9a262d9d29",
+    "explosive-8c611f8ed42045e1",
+    "explosive-8ce611344c2f8d42",
+    "explosive-8ff3ce96ac71b433",
+    "explosive-92a1bad589f00710",
+    "explosive-930fe11a82270e5b",
+    "explosive-987fa0bf891c6d0c",
+    "explosive-9d8fc09fe23fa0e5",
+    "explosive-9db761f86e0f2553",
+    "explosive-9e36b130bffecf5c",
+    "explosive-a0ec53add76b57fa",
+    "explosive-a3aefa504dedf2d7",
+    "explosive-a6264e69c7be6cad",
+    "explosive-a99358387e3e1dcb",
+    "explosive-a9cf70b928b9af21",
+    "explosive-aa3790889b549f2e",
+    "explosive-af282803f08e9cfc",
+    "explosive-b0034c69fc8a4ed8",
+    "explosive-b4df190abd405cad",
+    "explosive-b565843ded5ce86b",
+    "explosive-ba6561f97e941799",
+    "explosive-bb49511a27e6ae0a",
+    "explosive-bbbb88db8414e67c",
+    "explosive-bc7f964099fdbce1",
+    "explosive-bd6fc0a799bf2cb4",
+    "explosive-be2bdce6f5f029ec",
+    "explosive-c07dde6cd930743c",
+    "explosive-c0d9b38d187d2c50",
+    "explosive-c6180075763a842c",
+    "explosive-c654f03ce6a038d0",
+    "explosive-c689dcdefdd08d33",
+    "explosive-c8bb80a2789ebb02",
+    "explosive-c952365e72a80c9c",
+    "explosive-c9b692b0d53c7811",
+    "explosive-cffb3fac503e3382",
+    "explosive-da41df0e1e7b47ef",
+    "explosive-da77730ebf803145",
+    "explosive-dbae7d066d9a3b2b",
+    "explosive-dbe336e540167005",
+    "explosive-dca3c3680f25b702",
+    "explosive-ea54c1c45b041b35",
+    "explosive-ed3f2b0dfc3b48fa",
+    "explosive-ee386a0865cb5832",
+    "explosive-fec4188cb20242f6",
+    "explosive-ff84a6a851f68803",
+    "explosive-ffe586bdff311433"
+  ],
+  "directFireWeapons": [
+    {
+      "id": "projectile-47ffa7a2cf26d20a",
+      "label": "APKWS 制导火箭弹",
+      "groupLabel": "CF-18",
+      "groupLabels": [
+        "CF-18",
+        "F-16C",
+        "F/A-18F"
+      ],
+      "type": "CAS",
+      "platformKind": "airstrike",
+      "penetrationKind": "shaped-charge",
+      "projectileName": "BP_APKWS_Proj2_C",
+      "projectileCanonicalName": "BP_APKWS_Proj2",
+      "directImpactDamage": 2500,
+      "penetrationMm": 600,
+      "traceDistanceAfterPenetrationM": 10,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_HAT_DamageType.BP_HAT_DamageType_C",
+      "radialExplosiveId": "explosive-1bb981e99481a1c8",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-ec1dea865e3c6b2b9cb676bd9fa51292dcf684400ab92f197da0c934d01a41f3"
+      ],
+      "factions": [
+        "adf",
+        "caf",
+        "tlf",
+        "wpmc"
+      ],
+      "sourceCardIds": [
+        "adf--fa18--cas",
+        "caf--cf18--cas",
+        "tlf--f16--cas",
+        "wpmc--f16--cas"
+      ],
+      "sourceLabels": [
+        "CF-18",
+        "F-16C",
+        "F/A-18F"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_F16_Rockets_Strafe_TLF.BP_CommandActor_F16_Rockets_Strafe_TLF_C",
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Rockets_Strafe.BP_CommandActor_FA18_Rockets_Strafe_C",
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Rockets_Strafe_CAF.BP_CommandActor_FA18_Rockets_Strafe_CAF_C",
+        "/Game/Blueprints/Items/Projectiles/Rockets/BP_APKWS_Proj2"
+      ],
+      "configurationCount": 4,
+      "searchText": "apkws 制导火箭弹 apkws bp_apkws_proj2 车载火箭 apkws 制导火箭弹 apkws bp_apkws_proj2 bp_apkws_proj2_c 车载火箭 adf caf tlf wpmc adf--fa18--cas caf--cf18--cas tlf--f16--cas wpmc--f16--cas f-16c bp_commandactor_f16_rockets_strafe_tlf bp_commandactor_f16_rockets_strafe_tlf settings/actions/mapactions/tlf/f16_strafing_rockets_tlf.uasset f/a-18f bp_commandactor_fa18_rockets_strafe bp_commandactor_fa18_rockets_strafe settings/actions/mapactions/adf/f18_rocketstrike_adf.uasset cf-18 bp_commandactor_fa18_rockets_strafe_caf bp_commandactor_fa18_rockets_strafe_caf settings/actions/mapactions/caf/cf18_rocketstrike_caf.uasset f-16c bp_commandactor_f16_rockets_strafe_tlf bp_commandactor_f16_rockets_strafe_tlf settings/actions/mapactions/wpmc/f16_rocketstrike_wpmc.uasset cf-18 f-16c f/a-18f"
+    },
+    {
+      "id": "projectile-6916bb746ebf57a0",
+      "label": "米兰 反坦克导弹",
+      "groupLabel": "F2 MILAN 架设式反坦克导弹",
+      "groupLabels": [
+        "F2 MILAN 架设式反坦克导弹"
+      ],
+      "type": "ATGM",
+      "platformKind": "emplaced",
+      "penetrationKind": "shaped-charge",
+      "projectileName": "BP_MILAN_Proj_C",
+      "projectileCanonicalName": "BP_MILAN_Proj",
+      "directImpactDamage": 1800,
+      "penetrationMm": 900,
+      "traceDistanceAfterPenetrationM": 10,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_HAT_DamageType.BP_HAT_DamageType_C",
+      "radialExplosiveId": "explosive-2794a113eb6828a3",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-33661814dfbe9b0297be27b14544e028e59c8ab823dcd60bc7726169222a5506"
+      ],
+      "factions": [
+        "tlf"
+      ],
+      "sourceCardIds": [],
+      "sourceLabels": [
+        "F2 MILAN 架设式反坦克导弹"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Blueprints/Items/Projectiles/Rockets/GuidedMissiles/BP_MILAN_Proj",
+        "/Game/Vehicles/Emplaced_F2_MILAN/BP_Emplaced_F2_Milan"
+      ],
+      "configurationCount": 1,
+      "searchText": "米兰 反坦克导弹 milan bp_milan_proj 制导导弹 米兰 反坦克导弹 milan bp_milan_proj bp_milan_proj_c 制导导弹 tlf f2 milan 架设式反坦克导弹 bp_emplaced_f2_milan_tripod bp_emplaced_f2_milan /game/settings/deployables/weapons/milan_tlf f2 milan 架设式反坦克导弹"
+    },
+    {
+      "id": "projectile-78c75f970cc7d4b8",
+      "label": "30 mm 对地攻击弹",
+      "groupLabel": "A-10A",
+      "groupLabels": [
+        "A-10A",
+        "F/A-18F"
+      ],
+      "type": "CAS",
+      "platformKind": "airstrike",
+      "penetrationKind": "shaped-charge",
+      "projectileName": "BP_Projectile_30mm_CAS_C",
+      "projectileCanonicalName": "BP_Projectile_30mm_CAS",
+      "directImpactDamage": 2500,
+      "penetrationMm": 600,
+      "traceDistanceAfterPenetrationM": 10,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_HAT_DamageType.BP_HAT_DamageType_C",
+      "radialExplosiveId": "explosive-6b12a8800d523e32",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-34a67f06b50ccaa464b189e80415dd30c35398952eaca51674b691ec6293b2e7"
+      ],
+      "factions": [
+        "adf",
+        "baf",
+        "caf",
+        "usa",
+        "usmc"
+      ],
+      "sourceCardIds": [
+        "adf--fa18--cas",
+        "baf--a10--cas",
+        "caf--a10--cas",
+        "usa--a10--cas",
+        "usmc--a10--cas"
+      ],
+      "sourceLabels": [
+        "A-10A",
+        "F/A-18F"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Strafe.BP_CommandActor_FA18_Strafe_C",
+        "/Game/Blueprints/Items/Projectiles/BP_Projectile_30mm_CAS"
+      ],
+      "configurationCount": 5,
+      "searchText": "30 mm 对地攻击弹 30 mm cas bp_projectile_30mm_cas 车载炮弹 30 mm 对地攻击弹 30 mm cas bp_projectile_30mm_cas bp_projectile_30mm_cas_c 车载炮弹 adf baf caf usa usmc adf--fa18--cas baf--a10--cas caf--a10--cas usa--a10--cas usmc--a10--cas f/a-18f bp_commandactor_fa18_strafe bp_commandactor_fa18_strafe settings/actions/mapactions/adf/f18_strafing_30mm_adf.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/caf/a10_strafing_30mm_caf.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/usmc/a10_strafing_30mm_usmc.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/baf/a10_strafing_30mm_baf.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/usa/a10_strafing_30mm_usa.uasset a-10a f/a-18f"
+    },
+    {
+      "id": "projectile-6b86716ac3f78b6d",
+      "label": "76 mm 破甲弹",
+      "groupLabel": "ZiS-3 76 mm 野战炮",
+      "groupLabels": [
+        "ZiS-3 76 mm 野战炮"
+      ],
+      "type": "EMPLACED",
+      "platformKind": "emplaced",
+      "penetrationKind": "shaped-charge",
+      "projectileName": "BP_Projectile_76mm_HEAT_C",
+      "projectileCanonicalName": "BP_Projectile_76mm_HEAT",
+      "directImpactDamage": 1900,
+      "penetrationMm": 120,
+      "traceDistanceAfterPenetrationM": 2,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_BasicHeatDamageType.BP_BasicHeatDamageType_C",
+      "radialExplosiveId": "explosive-2af9e5b44a8c3138",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-cf30eb620ced6d868dd0a4dd1500060c9e2b6d3dde5390de9758343effd4951e"
+      ],
+      "factions": [
+        "imf"
+      ],
+      "sourceCardIds": [],
+      "sourceLabels": [
+        "ZiS-3 76 mm 野战炮"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Vehicles/Emplaced_ZiS3_Cannon/Weapons/BP_Projectile_76mm_HEAT",
+        "/Game/Vehicles/Emplaced_ZiS3_Cannon/Weapons/BP_ZiS3_Weapon_HEAT"
+      ],
+      "configurationCount": 1,
+      "searchText": "76 mm 破甲弹 76 mm heat bp_projectile_76mm_heat 车载炮弹 76 mm 破甲弹 76 mm heat bp_projectile_76mm_heat bp_projectile_76mm_heat_c 车载炮弹 imf zis-3 76 mm 野战炮 bp_zis3_base bp_zis3_weapon_heat /game/settings/deployables/weapons/zis3_fieldgun zis-3 76 mm 野战炮"
+    },
+    {
+      "id": "projectile-635c4cb763f3569a",
+      "label": "76 mm 发烟弹",
+      "groupLabel": "ZiS-3 76 mm 野战炮",
+      "groupLabels": [
+        "ZiS-3 76 mm 野战炮"
+      ],
+      "type": "EMPLACED",
+      "platformKind": "emplaced",
+      "penetrationKind": "kinetic",
+      "projectileName": "BP_Projectile_76mm_Smoke_C",
+      "projectileCanonicalName": "BP_Projectile_76mm_Smoke",
+      "directImpactDamage": 100,
+      "penetrationMm": 0,
+      "traceDistanceAfterPenetrationM": 2,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_Kinetic_DamageType.BP_Kinetic_DamageType_C",
+      "radialExplosiveId": "explosive-a3aefa504dedf2d7",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-635c6aa4ce900631556686712c007c885846365b6346ac6880c4612aff27dc92"
+      ],
+      "factions": [
+        "imf"
+      ],
+      "sourceCardIds": [],
+      "sourceLabels": [
+        "ZiS-3 76 mm 野战炮"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Vehicles/Emplaced_ZiS3_Cannon/Weapons/BP_Projectile_76mm_Smoke",
+        "/Game/Vehicles/Emplaced_ZiS3_Cannon/Weapons/BP_ZiS3_Weapon_Smoke"
+      ],
+      "configurationCount": 1,
+      "searchText": "76 mm 发烟弹 76 mm 烟 bp_projectile_76mm_smoke 车载炮弹 76 mm 发烟弹 76 mm 烟 bp_projectile_76mm_smoke bp_projectile_76mm_smoke_c 车载炮弹 imf zis-3 76 mm 野战炮 bp_zis3_base bp_zis3_weapon_smoke /game/settings/deployables/weapons/zis3_fieldgun zis-3 76 mm 野战炮"
+    },
+    {
+      "id": "projectile-a37329d0c7a8f146",
+      "label": "S-8 火箭弹",
+      "groupLabel": "JH-7A",
+      "groupLabels": [
+        "JH-7A",
+        "Su-25"
+      ],
+      "type": "CAS",
+      "platformKind": "airstrike",
+      "penetrationKind": "shaped-charge",
+      "projectileName": "BP_S8_Proj2_C",
+      "projectileCanonicalName": "BP_S8_Proj2",
+      "directImpactDamage": 2500,
+      "penetrationMm": 600,
+      "traceDistanceAfterPenetrationM": 10,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_HAT_DamageType.BP_HAT_DamageType_C",
+      "radialExplosiveId": "explosive-c689dcdefdd08d33",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-c227f9bd1d272163cd496586c14c17d50b67665bd55472078032b500241eeadb"
+      ],
+      "factions": [
+        "afu",
+        "gfi",
+        "pla",
+        "planmc",
+        "rgf",
+        "vdv"
+      ],
+      "sourceCardIds": [
+        "afu--su25--cas",
+        "gfi--su25--cas",
+        "pla--jh7a--cas",
+        "planmc--jh7a--cas",
+        "rgf--su25--cas",
+        "vdv--su25--cas"
+      ],
+      "sourceLabels": [
+        "JH-7A",
+        "Su-25"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_JH7A_Rockets_Strafe.BP_CommandActor_JH7A_Rockets_Strafe_C",
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_GFI_Rockets_Strafe.BP_CommandActor_SU25_GFI_Rockets_Strafe_C",
+        "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+        "/Game/Blueprints/Items/Projectiles/Rockets/BP_S8_Proj2"
+      ],
+      "configurationCount": 6,
+      "searchText": "s-8 火箭弹 s-8 bp_s8_proj2 车载火箭 s-8 火箭弹 s-8 bp_s8_proj2 bp_s8_proj2_c 车载火箭 afu gfi pla planmc rgf vdv afu--su25--cas gfi--su25--cas pla--jh7a--cas planmc--jh7a--cas rgf--su25--cas vdv--su25--cas jh-7a bp_commandactor_jh7a_rockets_strafe bp_commandactor_jh7a_rockets_strafe settings/actions/mapactions/planmc/jh7a_strafing_rockets_planmc.uasset su-25 bp_commandactor_su25_rockets_strafe bp_commandactor_su25_rockets_strafe settings/actions/mapactions/rgf/su25_strafing_s8_rgf.uasset su-25 bp_commandactor_su25_rockets_strafe bp_commandactor_su25_rockets_strafe settings/actions/mapactions/afu/su25_strafing_s8_afu.uasset su-25 bp_commandactor_su25_gfi_rockets_strafe bp_commandactor_su25_gfi_rockets_strafe settings/actions/mapactions/gfi/su25_strafing_s8_gfi.uasset su-25 bp_commandactor_su25_rockets_strafe bp_commandactor_su25_rockets_strafe settings/actions/mapactions/vdv/su25_strafing_s8_vdv.uasset jh-7a bp_commandactor_jh7a_rockets_strafe bp_commandactor_jh7a_rockets_strafe settings/actions/mapactions/pla/jh7a_strafing_rockets_pla.uasset jh-7a su-25"
+    },
+    {
+      "id": "projectile-e8a91b280942c99e",
+      "label": "刺针-P 反坦克导弹",
+      "groupLabel": "Stugna-P 架设式反坦克导弹",
+      "groupLabels": [
+        "Stugna-P 架设式反坦克导弹"
+      ],
+      "type": "ATGM",
+      "platformKind": "emplaced",
+      "penetrationKind": "shaped-charge",
+      "projectileName": "BP_StugnaP_Proj_C",
+      "projectileCanonicalName": "BP_StugnaP_Proj",
+      "directImpactDamage": 1800,
+      "penetrationMm": 1200,
+      "traceDistanceAfterPenetrationM": 1.5,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_HAT_DamageType.BP_HAT_DamageType_C",
+      "radialExplosiveId": "explosive-03994be9f915a15f",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-9741667d42aaa86050a94f6207fa1bdebc7e21af463ac751345f6b3ca3e5cd8e"
+      ],
+      "factions": [
+        "afu"
+      ],
+      "sourceCardIds": [],
+      "sourceLabels": [
+        "Stugna-P 架设式反坦克导弹"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Blueprints/Items/Projectiles/Rockets/GuidedMissiles/BP_StugnaP_Proj",
+        "/Game/Vehicles/Emplaced_Stugna-P/BP_EmplacedStugna"
+      ],
+      "configurationCount": 1,
+      "searchText": "刺针-p 反坦克导弹 stugna-p bp_stugnap_proj 制导导弹 刺针-p 反坦克导弹 stugna-p bp_stugnap_proj bp_stugnap_proj_c 制导导弹 afu stugna-p 架设式反坦克导弹 bp_emplacedstugna_tripod bp_emplacedstugna /game/vehicles/emplaced_stugna-p/stugnap_afu stugna-p 架设式反坦克导弹"
+    },
+    {
+      "id": "projectile-b8308eef50ecdbff",
+      "label": "57 式火箭弹",
+      "groupLabel": "Z-8J CAS",
+      "groupLabels": [
+        "Z-8J CAS"
+      ],
+      "type": "UH",
+      "platformKind": "vehicle",
+      "penetrationKind": "shaped-charge",
+      "projectileName": "BP_Type57_Proj2_C",
+      "projectileCanonicalName": "BP_Type57_Proj2",
+      "directImpactDamage": 250,
+      "penetrationMm": 130,
+      "traceDistanceAfterPenetrationM": 1,
+      "maxDistanceM": 0,
+      "damageType": "/Game/Gameplay/DamageTypes/BP_BasicHeatDamageType.BP_BasicHeatDamageType_C",
+      "radialExplosiveId": "explosive-6effa461d155a7d6",
+      "impactRadialOrder": "radial-before-point",
+      "ballisticsIds": [
+        "projectile-cdo-603d211d8adf1667f62c547f4ba2b7ae1fcfc3dc69dd61f217eb1b5b567f7f21"
+      ],
+      "factions": [
+        "planmc"
+      ],
+      "sourceCardIds": [
+        "planmc--z-8j--uh"
+      ],
+      "sourceLabels": [
+        "Z-8J CAS"
+      ],
+      "runtimeAssetPaths": [
+        "/Game/Vehicles/Z8J/Weapons/BP_Type57_Z8J",
+        "/Game/Vehicles/Z8J/Weapons/Projectiles/BP_Type57_Proj2"
+      ],
+      "configurationCount": 1,
+      "searchText": "57 式火箭弹 type 57 bp_type57_proj2 车载火箭 57 式火箭弹 type 57 bp_type57_proj2 bp_type57_proj2_c 车载火箭 planmc planmc--z-8j--uh z-8j cas bp_z8j_cas bp_type57_z8j z-8j cas"
+    }
+  ],
+  "deliveryBindings": [
+    {
+      "explosiveId": "explosive-1bb981e99481a1c8",
+      "canonicalName": "BP_APKWS_Proj2",
+      "projectileClass": "bp_apkws_proj2",
+      "category": "vehicle-rocket",
+      "deliveryKinds": [
+        "commander-airstrike"
+      ],
+      "factions": [
+        "adf",
+        "caf",
+        "tlf",
+        "wpmc"
+      ],
+      "cardIds": [
+        "adf--fa18--cas",
+        "caf--cf18--cas",
+        "tlf--f16--cas",
+        "wpmc--f16--cas"
+      ],
+      "deliveries": [
+        {
+          "id": "delivery-59fa5ec4f428a219",
+          "kind": "commander-airstrike",
+          "factionId": "tlf",
+          "cardIds": [
+            "tlf--f16--cas"
+          ],
+          "platformName": "F-16C",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_F16_Rockets_Strafe_TLF.BP_CommandActor_F16_Rockets_Strafe_TLF_C",
+          "weaponClass": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_F16_Rockets_Strafe_TLF.BP_CommandActor_F16_Rockets_Strafe_TLF_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/TLF/F16_Strafing_Rockets_TLF.uasset"
+        },
+        {
+          "id": "delivery-7e35c755b7589fa3",
+          "kind": "commander-airstrike",
+          "factionId": "adf",
+          "cardIds": [
+            "adf--fa18--cas"
+          ],
+          "platformName": "F/A-18F",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_FA18_Rockets_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Rockets_Strafe.BP_CommandActor_FA18_Rockets_Strafe_C",
+          "weaponClass": "BP_CommandActor_FA18_Rockets_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Rockets_Strafe.BP_CommandActor_FA18_Rockets_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/ADF/F18_RocketStrike_ADF.uasset"
+        },
+        {
+          "id": "delivery-d248e5796b20ae96",
+          "kind": "commander-airstrike",
+          "factionId": "caf",
+          "cardIds": [
+            "caf--cf18--cas"
+          ],
+          "platformName": "CF-18",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_FA18_Rockets_Strafe_CAF",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Rockets_Strafe_CAF.BP_CommandActor_FA18_Rockets_Strafe_CAF_C",
+          "weaponClass": "BP_CommandActor_FA18_Rockets_Strafe_CAF",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Rockets_Strafe_CAF.BP_CommandActor_FA18_Rockets_Strafe_CAF_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/CAF/CF18_RocketStrike_CAF.uasset"
+        },
+        {
+          "id": "delivery-f90a56f36898726b",
+          "kind": "commander-airstrike",
+          "factionId": "wpmc",
+          "cardIds": [
+            "wpmc--f16--cas"
+          ],
+          "platformName": "F-16C",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_F16_Rockets_Strafe_TLF.BP_CommandActor_F16_Rockets_Strafe_TLF_C",
+          "weaponClass": "BP_CommandActor_F16_Rockets_Strafe_TLF",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_F16_Rockets_Strafe_TLF.BP_CommandActor_F16_Rockets_Strafe_TLF_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/WPMC/F16_RocketStrike_WPMC.uasset"
+        }
+      ],
+      "searchText": "apkws 制导火箭弹 apkws bp_apkws_proj2 bp_apkws_proj2_c 车载火箭 adf caf tlf wpmc adf--fa18--cas caf--cf18--cas tlf--f16--cas wpmc--f16--cas f-16c bp_commandactor_f16_rockets_strafe_tlf bp_commandactor_f16_rockets_strafe_tlf settings/actions/mapactions/tlf/f16_strafing_rockets_tlf.uasset f/a-18f bp_commandactor_fa18_rockets_strafe bp_commandactor_fa18_rockets_strafe settings/actions/mapactions/adf/f18_rocketstrike_adf.uasset cf-18 bp_commandactor_fa18_rockets_strafe_caf bp_commandactor_fa18_rockets_strafe_caf settings/actions/mapactions/caf/cf18_rocketstrike_caf.uasset f-16c bp_commandactor_f16_rockets_strafe_tlf bp_commandactor_f16_rockets_strafe_tlf settings/actions/mapactions/wpmc/f16_rocketstrike_wpmc.uasset"
+    },
+    {
+      "explosiveId": "explosive-2794a113eb6828a3",
+      "canonicalName": "BP_MILAN_Proj",
+      "projectileClass": "bp_milan_proj",
+      "category": "guided-missile",
+      "deliveryKinds": [
+        "emplaced"
+      ],
+      "factions": [
+        "tlf"
+      ],
+      "cardIds": [],
+      "deliveries": [
+        {
+          "id": "delivery-809b232753540bf8",
+          "kind": "emplaced",
+          "factionId": "tlf",
+          "cardIds": [],
+          "platformName": "F2 MILAN 架设式反坦克导弹",
+          "platformType": "ATGM",
+          "actorClass": "BP_Emplaced_F2_Milan_Tripod",
+          "actorAssetPath": "/Game/Vehicles/Emplaced_F2_MILAN/BP_Emplaced_F2_Milan_Tripod",
+          "weaponClass": "BP_Emplaced_F2_Milan",
+          "weaponAssetPath": "/Game/Vehicles/Emplaced_F2_MILAN/BP_Emplaced_F2_Milan",
+          "gameplayAuthorityPath": "/Game/Settings/Deployables/Weapons/Milan_TLF"
+        }
+      ],
+      "searchText": "米兰 反坦克导弹 milan bp_milan_proj bp_milan_proj_c 制导导弹 tlf f2 milan 架设式反坦克导弹 bp_emplaced_f2_milan_tripod bp_emplaced_f2_milan /game/settings/deployables/weapons/milan_tlf"
+    },
+    {
+      "explosiveId": "explosive-6b12a8800d523e32",
+      "canonicalName": "BP_Projectile_30mm_CAS",
+      "projectileClass": "bp_projectile_30mm_cas",
+      "category": "vehicle-cannon",
+      "deliveryKinds": [
+        "commander-airstrike"
+      ],
+      "factions": [
+        "adf",
+        "baf",
+        "caf",
+        "usa",
+        "usmc"
+      ],
+      "cardIds": [
+        "adf--fa18--cas",
+        "baf--a10--cas",
+        "caf--a10--cas",
+        "usa--a10--cas",
+        "usmc--a10--cas"
+      ],
+      "deliveries": [
+        {
+          "id": "delivery-07d88d1f8af8c65e",
+          "kind": "commander-airstrike",
+          "factionId": "adf",
+          "cardIds": [
+            "adf--fa18--cas"
+          ],
+          "platformName": "F/A-18F",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_FA18_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Strafe.BP_CommandActor_FA18_Strafe_C",
+          "weaponClass": "BP_CommandActor_FA18_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Strafe.BP_CommandActor_FA18_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/ADF/F18_Strafing_30mm_ADF.uasset"
+        },
+        {
+          "id": "delivery-091c9ed4d58021c1",
+          "kind": "commander-airstrike",
+          "factionId": "caf",
+          "cardIds": [
+            "caf--a10--cas"
+          ],
+          "platformName": "A-10A",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_A10_Strafe_2",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "weaponClass": "BP_CommandActor_A10_Strafe_2",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/CAF/A10_Strafing_30mm_CAF.uasset"
+        },
+        {
+          "id": "delivery-24e96f997f4c8e78",
+          "kind": "commander-airstrike",
+          "factionId": "usmc",
+          "cardIds": [
+            "usmc--a10--cas"
+          ],
+          "platformName": "A-10A",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_A10_Strafe_2",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "weaponClass": "BP_CommandActor_A10_Strafe_2",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/USMC/A10_Strafing_30mm_USMC.uasset"
+        },
+        {
+          "id": "delivery-9ce9bcfb3baa290c",
+          "kind": "commander-airstrike",
+          "factionId": "baf",
+          "cardIds": [
+            "baf--a10--cas"
+          ],
+          "platformName": "A-10A",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_A10_Strafe_2",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "weaponClass": "BP_CommandActor_A10_Strafe_2",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/BAF/A10_Strafing_30mm_BAF.uasset"
+        },
+        {
+          "id": "delivery-ad342f7c4bd514ce",
+          "kind": "commander-airstrike",
+          "factionId": "usa",
+          "cardIds": [
+            "usa--a10--cas"
+          ],
+          "platformName": "A-10A",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_A10_Strafe_2",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "weaponClass": "BP_CommandActor_A10_Strafe_2",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/USA/A10_Strafing_30mm_USA.uasset"
+        }
+      ],
+      "searchText": "30 mm 对地攻击弹 30 mm cas bp_projectile_30mm_cas bp_projectile_30mm_cas_c 车载炮弹 adf baf caf usa usmc adf--fa18--cas baf--a10--cas caf--a10--cas usa--a10--cas usmc--a10--cas f/a-18f bp_commandactor_fa18_strafe bp_commandactor_fa18_strafe settings/actions/mapactions/adf/f18_strafing_30mm_adf.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/caf/a10_strafing_30mm_caf.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/usmc/a10_strafing_30mm_usmc.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/baf/a10_strafing_30mm_baf.uasset a-10a bp_commandactor_a10_strafe_2 bp_commandactor_a10_strafe_2 settings/actions/mapactions/usa/a10_strafing_30mm_usa.uasset"
+    },
+    {
+      "explosiveId": "explosive-2af9e5b44a8c3138",
+      "canonicalName": "BP_Projectile_76mm_HEAT",
+      "projectileClass": "bp_projectile_76mm_heat",
+      "category": "vehicle-cannon",
+      "deliveryKinds": [
+        "emplaced"
+      ],
+      "factions": [
+        "imf"
+      ],
+      "cardIds": [],
+      "deliveries": [
+        {
+          "id": "delivery-c200732052b066fb",
+          "kind": "emplaced",
+          "factionId": "imf",
+          "cardIds": [],
+          "platformName": "ZiS-3 76 mm 野战炮",
+          "platformType": "EMPLACED",
+          "actorClass": "BP_ZiS3_Base",
+          "actorAssetPath": "/Game/Vehicles/Emplaced_ZiS3_Cannon/BP_ZiS3_Base",
+          "weaponClass": "BP_ZiS3_Weapon_HEAT",
+          "weaponAssetPath": "/Game/Vehicles/Emplaced_ZiS3_Cannon/Weapons/BP_ZiS3_Weapon_HEAT",
+          "gameplayAuthorityPath": "/Game/Settings/Deployables/Weapons/Zis3_FieldGun"
+        }
+      ],
+      "searchText": "76 mm 破甲弹 76 mm heat bp_projectile_76mm_heat bp_projectile_76mm_heat_c 车载炮弹 imf zis-3 76 mm 野战炮 bp_zis3_base bp_zis3_weapon_heat /game/settings/deployables/weapons/zis3_fieldgun"
+    },
+    {
+      "explosiveId": "explosive-a3aefa504dedf2d7",
+      "canonicalName": "BP_Projectile_76mm_Smoke",
+      "projectileClass": "bp_projectile_76mm_smoke",
+      "category": "vehicle-cannon",
+      "deliveryKinds": [
+        "emplaced"
+      ],
+      "factions": [
+        "imf"
+      ],
+      "cardIds": [],
+      "deliveries": [
+        {
+          "id": "delivery-feb24846a54a56a9",
+          "kind": "emplaced",
+          "factionId": "imf",
+          "cardIds": [],
+          "platformName": "ZiS-3 76 mm 野战炮",
+          "platformType": "EMPLACED",
+          "actorClass": "BP_ZiS3_Base",
+          "actorAssetPath": "/Game/Vehicles/Emplaced_ZiS3_Cannon/BP_ZiS3_Base",
+          "weaponClass": "BP_ZiS3_Weapon_Smoke",
+          "weaponAssetPath": "/Game/Vehicles/Emplaced_ZiS3_Cannon/Weapons/BP_ZiS3_Weapon_Smoke",
+          "gameplayAuthorityPath": "/Game/Settings/Deployables/Weapons/Zis3_FieldGun"
+        }
+      ],
+      "searchText": "76 mm 发烟弹 76 mm 烟 bp_projectile_76mm_smoke bp_projectile_76mm_smoke_c 车载炮弹 imf zis-3 76 mm 野战炮 bp_zis3_base bp_zis3_weapon_smoke /game/settings/deployables/weapons/zis3_fieldgun"
+    },
+    {
+      "explosiveId": "explosive-c689dcdefdd08d33",
+      "canonicalName": "BP_S8_Proj2",
+      "projectileClass": "bp_s8_proj2",
+      "category": "vehicle-rocket",
+      "deliveryKinds": [
+        "commander-airstrike"
+      ],
+      "factions": [
+        "afu",
+        "gfi",
+        "pla",
+        "planmc",
+        "rgf",
+        "vdv"
+      ],
+      "cardIds": [
+        "afu--su25--cas",
+        "gfi--su25--cas",
+        "pla--jh7a--cas",
+        "planmc--jh7a--cas",
+        "rgf--su25--cas",
+        "vdv--su25--cas"
+      ],
+      "deliveries": [
+        {
+          "id": "delivery-054a7893ef8065f9",
+          "kind": "commander-airstrike",
+          "factionId": "planmc",
+          "cardIds": [
+            "planmc--jh7a--cas"
+          ],
+          "platformName": "JH-7A",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_JH7A_Rockets_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_JH7A_Rockets_Strafe.BP_CommandActor_JH7A_Rockets_Strafe_C",
+          "weaponClass": "BP_CommandActor_JH7A_Rockets_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_JH7A_Rockets_Strafe.BP_CommandActor_JH7A_Rockets_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/PLANMC/JH7A_Strafing_Rockets_PLANMC.uasset"
+        },
+        {
+          "id": "delivery-1b29a34af33d1d48",
+          "kind": "commander-airstrike",
+          "factionId": "rgf",
+          "cardIds": [
+            "rgf--su25--cas"
+          ],
+          "platformName": "Su-25",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_SU25_Rockets_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+          "weaponClass": "BP_CommandActor_SU25_Rockets_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/RGF/Su25_Strafing_S8_RGF.uasset"
+        },
+        {
+          "id": "delivery-330d06b936bc2799",
+          "kind": "commander-airstrike",
+          "factionId": "afu",
+          "cardIds": [
+            "afu--su25--cas"
+          ],
+          "platformName": "Su-25",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_SU25_Rockets_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+          "weaponClass": "BP_CommandActor_SU25_Rockets_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/AFU/Su25_Strafing_S8_AFU.uasset"
+        },
+        {
+          "id": "delivery-42df2da5d5114d2f",
+          "kind": "commander-airstrike",
+          "factionId": "gfi",
+          "cardIds": [
+            "gfi--su25--cas"
+          ],
+          "platformName": "Su-25",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_GFI_Rockets_Strafe.BP_CommandActor_SU25_GFI_Rockets_Strafe_C",
+          "weaponClass": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_GFI_Rockets_Strafe.BP_CommandActor_SU25_GFI_Rockets_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/GFI/Su25_Strafing_S8_GFI.uasset"
+        },
+        {
+          "id": "delivery-a7c7bd0f989cd250",
+          "kind": "commander-airstrike",
+          "factionId": "vdv",
+          "cardIds": [
+            "vdv--su25--cas"
+          ],
+          "platformName": "Su-25",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_SU25_Rockets_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+          "weaponClass": "BP_CommandActor_SU25_Rockets_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_SU25_Rockets_Strafe.BP_CommandActor_SU25_Rockets_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/VDV/Su25_Strafing_S8_VDV.uasset"
+        },
+        {
+          "id": "delivery-aab052989ef386cb",
+          "kind": "commander-airstrike",
+          "factionId": "pla",
+          "cardIds": [
+            "pla--jh7a--cas"
+          ],
+          "platformName": "JH-7A",
+          "platformType": "CAS",
+          "actorClass": "BP_CommandActor_JH7A_Rockets_Strafe",
+          "actorAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_JH7A_Rockets_Strafe.BP_CommandActor_JH7A_Rockets_Strafe_C",
+          "weaponClass": "BP_CommandActor_JH7A_Rockets_Strafe",
+          "weaponAssetPath": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_JH7A_Rockets_Strafe.BP_CommandActor_JH7A_Rockets_Strafe_C",
+          "gameplayAuthorityPath": "Settings/Actions/MapActions/PLA/JH7A_Strafing_Rockets_PLA.uasset"
+        }
+      ],
+      "searchText": "s-8 火箭弹 s-8 bp_s8_proj2 bp_s8_proj2_c 车载火箭 afu gfi pla planmc rgf vdv afu--su25--cas gfi--su25--cas pla--jh7a--cas planmc--jh7a--cas rgf--su25--cas vdv--su25--cas jh-7a bp_commandactor_jh7a_rockets_strafe bp_commandactor_jh7a_rockets_strafe settings/actions/mapactions/planmc/jh7a_strafing_rockets_planmc.uasset su-25 bp_commandactor_su25_rockets_strafe bp_commandactor_su25_rockets_strafe settings/actions/mapactions/rgf/su25_strafing_s8_rgf.uasset su-25 bp_commandactor_su25_rockets_strafe bp_commandactor_su25_rockets_strafe settings/actions/mapactions/afu/su25_strafing_s8_afu.uasset su-25 bp_commandactor_su25_gfi_rockets_strafe bp_commandactor_su25_gfi_rockets_strafe settings/actions/mapactions/gfi/su25_strafing_s8_gfi.uasset su-25 bp_commandactor_su25_rockets_strafe bp_commandactor_su25_rockets_strafe settings/actions/mapactions/vdv/su25_strafing_s8_vdv.uasset jh-7a bp_commandactor_jh7a_rockets_strafe bp_commandactor_jh7a_rockets_strafe settings/actions/mapactions/pla/jh7a_strafing_rockets_pla.uasset"
+    },
+    {
+      "explosiveId": "explosive-03994be9f915a15f",
+      "canonicalName": "BP_StugnaP_Proj",
+      "projectileClass": "bp_stugnap_proj",
+      "category": "guided-missile",
+      "deliveryKinds": [
+        "emplaced"
+      ],
+      "factions": [
+        "afu"
+      ],
+      "cardIds": [],
+      "deliveries": [
+        {
+          "id": "delivery-3f8fd68aff03fbbc",
+          "kind": "emplaced",
+          "factionId": "afu",
+          "cardIds": [],
+          "platformName": "Stugna-P 架设式反坦克导弹",
+          "platformType": "ATGM",
+          "actorClass": "BP_EmplacedStugna_Tripod",
+          "actorAssetPath": "/Game/Vehicles/Emplaced_Stugna-P/BP_EmplacedStugna_Tripod",
+          "weaponClass": "BP_EmplacedStugna",
+          "weaponAssetPath": "/Game/Vehicles/Emplaced_Stugna-P/BP_EmplacedStugna",
+          "gameplayAuthorityPath": "/Game/Vehicles/Emplaced_Stugna-P/StugnaP_AFU"
+        }
+      ],
+      "searchText": "刺针-p 反坦克导弹 stugna-p bp_stugnap_proj bp_stugnap_proj_c 制导导弹 afu stugna-p 架设式反坦克导弹 bp_emplacedstugna_tripod bp_emplacedstugna /game/vehicles/emplaced_stugna-p/stugnap_afu"
+    },
+    {
+      "explosiveId": "explosive-6effa461d155a7d6",
+      "canonicalName": "BP_Type57_Proj2",
+      "projectileClass": "bp_type57_proj2",
+      "category": "vehicle-rocket",
+      "deliveryKinds": [
+        "vehicle-mounted"
+      ],
+      "factions": [
+        "planmc"
+      ],
+      "cardIds": [
+        "planmc--z-8j--uh"
+      ],
+      "deliveries": [
+        {
+          "id": "delivery-2ff704f9cba2d9a2",
+          "kind": "vehicle-mounted",
+          "factionId": "planmc",
+          "cardIds": [
+            "planmc--z-8j--uh"
+          ],
+          "platformName": "Z-8J CAS",
+          "platformType": "UH",
+          "actorClass": "BP_Z8J_CAS",
+          "actorAssetPath": "/Game/Vehicles/Z8J/BP_Z8J_CAS",
+          "weaponClass": "BP_Type57_Z8J",
+          "weaponAssetPath": "/Game/Vehicles/Z8J/Weapons/BP_Type57_Z8J",
+          "gameplayAuthorityPath": null
+        }
+      ],
+      "searchText": "57 式火箭弹 type 57 bp_type57_proj2 bp_type57_proj2_c 车载火箭 planmc planmc--z-8j--uh z-8j cas bp_z8j_cas bp_type57_z8j"
+    }
+  ]
+}

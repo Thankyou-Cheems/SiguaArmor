@@ -1,6 +1,6 @@
 {
   "schemaVersion": "sigua-infantry-weapon-ballistics/v1",
-  "dataRevision": "3bfcb53c1fd0fe3a7e62ecc25c2a8389d0a5b5c9bef2ae2f72a05569c56397de",
+  "dataRevision": "57003c18df39c55f3c33bcaf0345a8293c70c51a7d5f672ff7a56d93656fd669",
   "sourceDataRevision": "0c62aabdd1714cdb93943154249b81d6290ebbd1bab41e1e0f95af2ef1d65c66",
   "damageCurveSampleIntervalM": 50,
   "damageCurves": {
@@ -1167,7 +1167,7 @@
       "muzzleVelocityMps": 76,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -1181,7 +1181,7 @@
         "USMC",
         "USA"
       ],
-      "ballisticsId": "dd88203f35cebf110546103d63e80a62a703739737d0892deca30cd35a1ee164"
+      "ballisticsId": "79354e5201f9c6af8ce6bc83a83be25c75edba7a37e6cf95777c1b988ed8ae2a"
     },
     {
       "weaponKey": "BP_MP5A3_T800",
@@ -1228,7 +1228,7 @@
       "muzzleVelocityMps": 75,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -1242,7 +1242,7 @@
         "USMC",
         "TLF"
       ],
-      "ballisticsId": "be8e06d4bcbe5bd5e6bcb7a02b462811c83182a40a1b4c960135f22b5d23ba5b"
+      "ballisticsId": "b5659bcd1cff4f6dc38a292a9a8fc0db81441f875f7dc6cfa1239af47e266693"
     },
     {
       "weaponKey": "BP_AK101_PushCO_EXPS",
@@ -1545,7 +1545,7 @@
       "muzzleVelocityMps": 255,
       "maxDistanceM": 0,
       "penetrationMm": 9,
-      "traceDistanceAfterPenetrationM": 1,
+      "traceDistanceAfterPenetrationM": 1.5,
       "directImpactDamage": 960,
       "damageTypePath": "BP_Fragmentation_DamageType_C",
       "isExplosive": true,
@@ -1559,7 +1559,7 @@
         "WPMC_CoOp",
         "WPMC"
       ],
-      "ballisticsId": "81649453c27e122de702885cbb91486dc40af1132b6cafd3b872e7cd14674670"
+      "ballisticsId": "9ba66007a9be85a46c6f800f8e65c87be683ea3a0d111762cd0baf3cef795855"
     },
     {
       "weaponKey": "BP_M4_SimonOffense_T800",
@@ -1836,7 +1836,7 @@
       "muzzleVelocityMps": 76,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -1848,7 +1848,7 @@
         "USMC_Coop",
         "USMC"
       ],
-      "ballisticsId": "3c56d88ba8df2304c2203c48ba8a19028902a5acf0511e9cab1d2f6a5be1f11a"
+      "ballisticsId": "5ca66c5108863b302fe1b359471b3c6e0ba83eb7b15f8a4bc91ed7fdf599d8cb"
     },
     {
       "weaponKey": "BP_M4_M68_Foregrip",
@@ -4772,7 +4772,7 @@
       "muzzleVelocityMps": 70,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -4783,7 +4783,7 @@
         "BP_40MM_Proj2_C",
         "TLF"
       ],
-      "ballisticsId": "e44fc16aad055261f66ccc78ca6d71edda94a9c022ab0e25b4f027b75dd3510e"
+      "ballisticsId": "323d684f7be6b70824e53496079f7de235ca7fdc0c54d3e3ff12f57aafec7f46"
     },
     {
       "weaponKey": "BP_MPT76_AK40GL_A940_Rifle",
@@ -4825,7 +4825,7 @@
       "muzzleVelocityMps": 70,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -4836,7 +4836,7 @@
         "BP_40MM_Proj2_C",
         "TLF"
       ],
-      "ballisticsId": "7be3ff44db532017e035d3846d57d3a6cbd2ce23a684abc958c3de2bc8bc3b40"
+      "ballisticsId": "caf1367b852026bf1f86dc9502eb266607ad4bd982ba821bb11140458d052199"
     },
     {
       "weaponKey": "BP_MPT76_HNA",
@@ -6150,7 +6150,7 @@
       "muzzleVelocityMps": 190,
       "maxDistanceM": 0,
       "penetrationMm": 80,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -6162,7 +6162,7 @@
         "PLANMC",
         "PLA"
       ],
-      "ballisticsId": "a26f15a6d415b372014c6f208fda3e45e3287f1b4fd67e154ef268f02aab2d83"
+      "ballisticsId": "153a5a19f856d02197099748d72468627e1128d5648074b46bde4e56e27be769"
     },
     {
       "weaponKey": "BP_QBZ192_Optic_QMK171A",
@@ -6206,7 +6206,7 @@
       "muzzleVelocityMps": 190,
       "maxDistanceM": 0,
       "penetrationMm": 80,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -6219,7 +6219,7 @@
         "PLANMC",
         "PLA"
       ],
-      "ballisticsId": "c5815b678b175f2bcf58f58f6b3e42b46dc05632fe3123eea376fb0502f75519"
+      "ballisticsId": "449e7561cfffcb4193ee42b6bb43adff577c7f0f9debbd2bce9e07f3d0da2732"
     },
     {
       "weaponKey": "BP_QJY-201_IronSights",
@@ -6325,7 +6325,7 @@
       "muzzleVelocityMps": 220,
       "maxDistanceM": 0,
       "penetrationMm": 400,
-      "traceDistanceAfterPenetrationM": 2,
+      "traceDistanceAfterPenetrationM": 1.5,
       "directImpactDamage": 960,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -6339,7 +6339,7 @@
         "PLAAGF",
         "PLA"
       ],
-      "ballisticsId": "1b00d926d94597438574ef7e697c50cd6a415bc5bfadddea30abdae4650278cd"
+      "ballisticsId": "547a9c4cc9cd0c31d98ec591d30c726578fdec8ee97f3c5773f96a12de51ffa0"
     },
     {
       "weaponKey": "BP_QBZ192_Holo",
@@ -6960,7 +6960,7 @@
       "muzzleVelocityMps": 220,
       "maxDistanceM": 0,
       "penetrationMm": 400,
-      "traceDistanceAfterPenetrationM": 2,
+      "traceDistanceAfterPenetrationM": 1.5,
       "directImpactDamage": 960,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -6974,7 +6974,7 @@
         "PLAAGF",
         "PLA"
       ],
-      "ballisticsId": "133f34e94a44d59c5672c2d273b7fd444dff6d55bb57c0441f4bda6b3694a732"
+      "ballisticsId": "4f75325cb6122ec7a8bf34ecd16ce0a6d9500993624f5e7d043018639912aa01"
     },
     {
       "weaponKey": "BP_QBZ95-1_Holo_4Mags",
@@ -7410,7 +7410,7 @@
       "muzzleVelocityMps": 76,
       "maxDistanceM": 0,
       "penetrationMm": 9,
-      "traceDistanceAfterPenetrationM": 1.5,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 0,
       "damageTypePath": "BP_Fragmentation_DamageType_C",
       "isExplosive": true,
@@ -7423,7 +7423,7 @@
         "MEI",
         "IMF"
       ],
-      "ballisticsId": "de3c3b26192572018f6afd59635818cdd313f86496832220fbc325349e799ea5"
+      "ballisticsId": "00362f1c1d3794c8f676c556f441dfee952119a6ba1492d56f1bd70ddcbc3eb3"
     },
     {
       "weaponKey": "BP_M16A2_Optic",
@@ -7990,7 +7990,7 @@
       "muzzleVelocityMps": 76,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -8001,7 +8001,7 @@
         "BP_40MM_Proj2_C",
         "ADF"
       ],
-      "ballisticsId": "4080c16ff13edde4da5213a89814a6699e1a88234891fe4fa0e0eae271e9e52a"
+      "ballisticsId": "38d94ea219f13aa9f9f2bf399a660f29fb0923f91748e1d8ddf69061f631ead5"
     },
     {
       "weaponKey": "BP_M72A7_SRAAW",
@@ -9306,7 +9306,7 @@
       "muzzleVelocityMps": 40,
       "maxDistanceM": 0,
       "penetrationMm": 900,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1.5,
       "directImpactDamage": 1400,
       "damageTypePath": "BP_HAT_DamageType_C",
       "isExplosive": true,
@@ -9318,7 +9318,7 @@
         "AFU",
         "BAF"
       ],
-      "ballisticsId": "7a9fe4de56e8215f736f9710ab575ff0e25dc3324c302b8e7a2e4a68a93bc6dd"
+      "ballisticsId": "e43b5066230bf9577947123abcc0f5c9d7702c93b6565926a448e04993eed86e"
     },
     {
       "weaponKey": "BP_AK74_OKP7_Pro",
@@ -9904,7 +9904,7 @@
       "muzzleVelocityMps": 76,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -9915,7 +9915,7 @@
         "BP_40MM_Proj2_C",
         "BAF"
       ],
-      "ballisticsId": "b1bcfd341b806e9edf5568fe3ee921e2ea0d61f5f1dd041e05806b52617eddf7"
+      "ballisticsId": "e8871adf9913837b1b69c093965807419c6f99793dfc14ee942845735b0596e7"
     },
     {
       "weaponKey": "BP_ILAWAT4",
@@ -10087,7 +10087,7 @@
       "muzzleVelocityMps": 40,
       "maxDistanceM": 0,
       "penetrationMm": 900,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1.5,
       "directImpactDamage": 1400,
       "damageTypePath": "BP_HAT_DamageType_C",
       "isExplosive": true,
@@ -10098,7 +10098,7 @@
         "BP_NLAW_Proj_C",
         "BAF"
       ],
-      "ballisticsId": "28227a9ebad66bee094131ce7c9492320b2bcac81d54f084f9057acc9f9eb190"
+      "ballisticsId": "5ad9f43fbadbfaf79e70df38ed0fd0dd455c9230e4930b72e3affcf7b162c460"
     },
     {
       "weaponKey": "BP_L22A2_Foregrip",
@@ -11008,7 +11008,7 @@
       "muzzleVelocityMps": 76,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -11020,7 +11020,7 @@
         "CAF",
         "CRF"
       ],
-      "ballisticsId": "a93a51dbae0693907c7094aef0d70dfa0e8d7584d2f6d69a04096ce38723bce2"
+      "ballisticsId": "92e4d067f1014ae8becd22f52838e6114f262c3101d352f7f5cfd1df7ecc3849"
     },
     {
       "weaponKey": "BP_C7A2_C79A2_M203A1",
@@ -11062,7 +11062,7 @@
       "muzzleVelocityMps": 76,
       "maxDistanceM": 0,
       "penetrationMm": 10,
-      "traceDistanceAfterPenetrationM": 10,
+      "traceDistanceAfterPenetrationM": 1,
       "directImpactDamage": 60,
       "damageTypePath": "BP_BasicHeatDamageType_C",
       "isExplosive": true,
@@ -11073,7 +11073,7 @@
         "BP_40MM_Proj2_C",
         "CAF"
       ],
-      "ballisticsId": "498747653b947fa1ef42463c6c3998ef4a751d01aaa2cf41a31a400ae773af87"
+      "ballisticsId": "da29cc0c45447da29c55ef3f368520a00297c829011cf78260e6afa5efc69bdb"
     },
     {
       "weaponKey": "BP_C7A2_Ironsights",
@@ -11245,7 +11245,7 @@
       "muzzleVelocityMps": 255,
       "maxDistanceM": 0,
       "penetrationMm": 9,
-      "traceDistanceAfterPenetrationM": 1,
+      "traceDistanceAfterPenetrationM": 1.5,
       "directImpactDamage": 960,
       "damageTypePath": "BP_Fragmentation_DamageType_C",
       "isExplosive": true,
@@ -11258,7 +11258,7 @@
         "BP_FFV441D_Rocket_Proj_C",
         "CAF"
       ],
-      "ballisticsId": "dc9732343a98d10acb0b12c45d4dd4e2f735336a2aedd8d0d097f1a05fd99514"
+      "ballisticsId": "fa395b2fa6d15334694f1cf8dcc5c8aa4bafa32d3ad3ae742d85996b9f0ded5b"
     },
     {
       "weaponKey": "BP_Mosin_M38Carbine_1Mag",

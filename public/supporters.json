@@ -1,10 +1,11 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-25T23:52:28.456Z",
+  "updatedAt": "2026-07-26T09:57:51.327Z",
   "entries": [
     {
       "id": "feixing-acv",
       "name": "@飞行ACV",
+      "kind": "friend",
       "nameSegments": [
         {
           "text": "@飞行",
@@ -15,23 +16,22 @@
           "color": "#e1c89b"
         }
       ],
-      "kind": "friend",
       "url": "https://space.bilibili.com/11219102"
     },
     {
       "id": "predent-jiazhuang",
-      "name": "Predent假装",
+      "name": "@Predent假装",
+      "kind": "sponsor",
       "nameSegments": [
         {
-          "text": "Predent",
-          "color": "#e1c89b"
+          "text": "@Predent",
+          "color": "#ffffff"
         },
         {
           "text": "假装",
-          "color": "#ffffff"
+          "color": "#e1c89b"
         }
       ],
-      "kind": "sponsor",
       "url": "https://space.bilibili.com/678833642"
     }
   ]

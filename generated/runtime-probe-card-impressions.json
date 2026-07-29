@@ -3,7 +3,7 @@
   "complete": true,
   "source": {
     "catalogId": "sigua-armor-international-reference-2026-07-16",
-    "catalogSha256": "4cc292aed79f6829e942439d2f7661c14b47df0194b514aaa51b092e22fec791",
+    "catalogSha256": "63f0ed9bc0976aeac2d98064e19a95ddccfcc52235e28ac2d66d3a3452002dd7",
     "visualIndexSha256": "a258dd78229c2648a7130dc6b4e1a68e8ae3367a172e4e3d850b371c1b134ec3",
     "selectionPolicySha256": "f35e6c15bf6014821eabc771c960b6d97446f24ae0e23ae34d4a48f92b6c4276"
   },
@@ -218,8 +218,8 @@
       "type": "IFV",
       "factionId": "afu",
       "defaultVariantRawName": "BP_BMP2_AFU",
-      "impressionPath": "/images/vehicle-impressions/14dcbb17496236dadacd54e1812751cceae5cf34b37bb0dfebc68eebfd8819e3.webp",
-      "impressionSha256": "14dcbb17496236dadacd54e1812751cceae5cf34b37bb0dfebc68eebfd8819e3"
+      "impressionPath": "/images/vehicle-impressions/0c61e5ec930c1b328d7901b3d13fede66d2d710512597cd1651ce261f192e6e1.webp",
+      "impressionSha256": "0c61e5ec930c1b328d7901b3d13fede66d2d710512597cd1651ce261f192e6e1"
     },
     {
       "cardId": "afu--btr-4--ifv",
@@ -632,8 +632,8 @@
       "type": "MRAP",
       "factionId": "caf",
       "defaultVariantRawName": "BP_TAPV_C16_Desert",
-      "impressionPath": "/images/vehicle-impressions/38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657.webp",
-      "impressionSha256": "38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657"
+      "impressionPath": "/images/vehicle-impressions/2dfcfd54b35ceb87e06975d2434d2529066ee3c2861c66a5ca1fd69594e99d11.webp",
+      "impressionSha256": "2dfcfd54b35ceb87e06975d2434d2529066ee3c2861c66a5ca1fd69594e99d11"
     },
     {
       "cardId": "caf--rhib-m2--ultv",
@@ -767,8 +767,8 @@
       "type": "IFV",
       "factionId": "crf",
       "defaultVariantRawName": "BP_LAV2_Coyote_CRF",
-      "impressionPath": "/images/vehicle-impressions/eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef.webp",
-      "impressionSha256": "eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef"
+      "impressionPath": "/images/vehicle-impressions/fa6ed067b61144ac51b1bbea54015717e6c1472cbfedc5dd905851d076db901b.webp",
+      "impressionSha256": "fa6ed067b61144ac51b1bbea54015717e6c1472cbfedc5dd905851d076db901b"
     },
     {
       "cardId": "crf--m113a3--apc",
@@ -4275,9 +4275,9 @@
       "displayName": "BMP-2",
       "type": "IFV",
       "factionId": "afu",
-      "path": "/images/vehicle-impressions/14dcbb17496236dadacd54e1812751cceae5cf34b37bb0dfebc68eebfd8819e3.webp",
-      "sha256": "14dcbb17496236dadacd54e1812751cceae5cf34b37bb0dfebc68eebfd8819e3",
-      "bytes": 9702,
+      "path": "/images/vehicle-impressions/0c61e5ec930c1b328d7901b3d13fede66d2d710512597cd1651ce261f192e6e1.webp",
+      "sha256": "0c61e5ec930c1b328d7901b3d13fede66d2d710512597cd1651ce261f192e6e1",
+      "bytes": 9734,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.163615,
@@ -6651,9 +6651,9 @@
       "displayName": "TAPV",
       "type": "MRAP",
       "factionId": "caf",
-      "path": "/images/vehicle-impressions/38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657.webp",
-      "sha256": "38ee6ee1dddf3cfba2cc0276a75d67a73a0b8733706868aaa38fc527c63df657",
-      "bytes": 11798,
+      "path": "/images/vehicle-impressions/2dfcfd54b35ceb87e06975d2434d2529066ee3c2861c66a5ca1fd69594e99d11.webp",
+      "sha256": "2dfcfd54b35ceb87e06975d2434d2529066ee3c2861c66a5ca1fd69594e99d11",
+      "bytes": 11814,
       "width": 640,
       "height": 360,
       "alphaCoverage": 0.132027,
@@ -6673,8 +6673,8 @@
       "displayName": "Coyote",
       "type": "IFV",
       "factionId": "crf",
-      "path": "/images/vehicle-impressions/eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef.webp",
-      "sha256": "eeff13f62bf05aed3b717e20a59af566941342b0ecd25224ef1aadb6ee74e9ef",
+      "path": "/images/vehicle-impressions/fa6ed067b61144ac51b1bbea54015717e6c1472cbfedc5dd905851d076db901b.webp",
+      "sha256": "fa6ed067b61144ac51b1bbea54015717e6c1472cbfedc5dd905851d076db901b",
       "bytes": 8460,
       "width": 640,
       "height": 360,
@@ -18150,7 +18150,7 @@
   "summary": {
     "cards": 420,
     "variants": 648,
-    "bytes": 7283346,
+    "bytes": 7283394,
     "maxBytes": 22744
   }
 }

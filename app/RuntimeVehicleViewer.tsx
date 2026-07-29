@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, HeartPulse, Layers3, Shield, Swords, X } from "lucide-react";
+import { CircleAlert, HeartPulse, Layers3, MoveRight, Shield, Swords, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
@@ -22,6 +22,12 @@ import {
   type AnalysisVisualSurfaceEvidence,
 } from "../lib/analysis-visual-surface-policy";
 import { dedupeIdenticalVisualPlacements } from "../lib/runtime-visual-occurrence-dedupe";
+import { resolveRuntimeRunningGearHitComponentPoses } from "../lib/runtime-running-gear-hit-pose";
+import {
+  createRuntimeSkeletalPoseController,
+  runtimeSkeletalPoseEvidence,
+  type RuntimeSkeletalPoseController,
+} from "../lib/runtime-skeletal-pose";
 import {
   carryNestedRuntimeTurretAssemblies,
   clampTurretPitch,
@@ -40,15 +46,30 @@ import {
   maxEditorNativeWeaponDistanceM,
   resolveEditorNativeBallistics,
   simulateEditorNativeShot,
+  type EditorNativeBallistics,
+  type EditorNativeDamageEvent,
   type EditorNativeIntersection,
   type EditorNativeModel,
   type EditorNativeShotResult,
 } from "../lib/editor-native-hit-model";
+import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
 import { editorDamageCardEffect } from "../lib/editor-damage-card-effects";
+import {
+  RUNTIME_GROUND_SCALE_SEGMENTS,
+  runtimeGroundScaleLengthM,
+} from "../lib/runtime-ground-scale";
 import {
   weaponPenetrationKindForDamageTypePath,
   type WeaponPenetrationKind,
 } from "../lib/weapon-penetration-kind";
+import {
+  VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS,
+  explosiveDamageTypeIconKinds,
+  vehicleDamageTypeIconKindForPath,
+  vehicleDamageTypeIconLabel,
+  vehicleDamageTypeIconShortLabel,
+  type VehicleDamageTypeIconKind,
+} from "../lib/vehicle-damage-type-icons";
 import { playerHitComponentLabel } from "../lib/runtime-component-labels";
 import {
   componentOnlyDamageSurfaceInfo,
@@ -71,7 +92,17 @@ import {
   type ParsedRuntimeHitScene,
 } from "../lib/runtime-hit-scene";
 import { runtimeAnalysisVisualUrl } from "../lib/runtime-visual-lazy-load";
-import type { RuntimeVehiclePreview } from "./runtime-probe-preview-data";
+import infantryPostureRuntime from "./infantry-posture-runtime.json";
+import type {
+  RuntimeVehiclePreview,
+  RuntimeVisualPlacement,
+} from "./runtime-probe-preview-data";
+import {
+  runtimePlanarSuspensionCoverageForGeneratedClass,
+  runtimePlanarSuspensionOffsetsByBoneName,
+  runtimePlanarSuspensionPoseForVisualOccurrence,
+  type RuntimePlanarSuspensionPoseRecord,
+} from "./runtime-planar-suspension-pose";
 import type {
   ReferenceData,
   ReferenceSeat,
@@ -83,6 +114,11 @@ import {
   type TurretPreviewIndicatorKind,
   type TurretPreviewStation,
 } from "./TurretLimitsDisplay";
+import {
+  LAT_ROLE_ICON_FRAME_PATH,
+  LAT_ROLE_ICON_LAUNCHER_PATH,
+  VehicleDamageTypeIcon,
+} from "./VehicleDamageTypeIcon";
 import {
   INFANTRY_WEAPON_CATEGORIES,
   runtimeAttackWeaponSupportsHitAnalysis,
@@ -135,6 +171,25 @@ const STANDARD_SHOT_DAMAGE_MULTIPLIER = 1 as const;
 const MAX_VISIBLE_LAYERS = 8;
 const SHOT_GESTURE_THRESHOLD_PX = 5;
 const DEFAULT_TARGET_DISTANCE_M = 0;
+const REFERENCE_SOLDIER_MODEL_URL =
+  "/infantry-hit-runtime/models/4b6caa60516b49563a968cbcf53875126157d15665cc54b9d8921d832d09ae14.glb";
+const REFERENCE_SOLDIER_SIDE_CLEARANCE_M = 1.6;
+const REFERENCE_SOLDIER_GLASS_MATERIAL_NAME = "MI_USArmyGlass";
+const REFERENCE_SOLDIER_GLASS_HEAD_BONE_NAME = "Bip01_Head";
+type ReferenceSoldierBoneTransform = {
+  translation: [number, number, number];
+  rotation: [number, number, number, number];
+  scale: [number, number, number];
+};
+const REFERENCE_SOLDIER_STANDING_RIFLE_POSE = (
+  infantryPostureRuntime.postures as unknown as Record<
+    string,
+    {
+      boneCount: number;
+      bones: Record<string, ReferenceSoldierBoneTransform>;
+    }
+  >
+)["standing-rifle"];
 const INFANTRY_WEAPON_CATEGORY_BY_ID = new Map(
   INFANTRY_WEAPON_CATEGORIES.map((category, order) => [
     category.id,
@@ -144,6 +199,35 @@ const INFANTRY_WEAPON_CATEGORY_BY_ID = new Map(
 const INFANTRY_WEAPON_CATEGORY_ORDER_BY_LABEL = new Map<string, number>(
   INFANTRY_WEAPON_CATEGORIES.map((category, order) => [category.label, order]),
 );
+
+function selectorDamageMetric(
+  directFireRoute: boolean,
+  ballistics: EditorNativeBallistics,
+) {
+  return directFireRoute
+    ? ballistics.impactDamageAtRange
+    : ballistics.explosiveLayers.reduce(
+      (total, layer) => total + layer.baseDamage,
+      0,
+    );
+}
+
+function selectorDamageTypeIconKinds(
+  ballistics: EditorNativeBallistics,
+): VehicleDamageTypeIconKind[] {
+  const kinds = new Set<VehicleDamageTypeIconKind>();
+  const directDamageKind = vehicleDamageTypeIconKindForPath(
+    ballistics.damageTypePath,
+  );
+  if (directDamageKind) kinds.add(directDamageKind);
+  for (const kind of explosiveDamageTypeIconKinds(
+    ballistics.isExplosive,
+    ballistics.explosiveLayers.map(({ damageTypePath }) => damageTypePath),
+  )) {
+    kinds.add(kind);
+  }
+  return kinds.size > 0 ? [...kinds] : ["generic"];
+}
 
 const ARMOR_THICKNESS_LEGEND_GRADIENT = `linear-gradient(90deg, ${ARMOR_THICKNESS_LEGEND_STOPS.map(
   (stop) => {
@@ -158,6 +242,89 @@ const RELATIVE_ARMOR_THICKNESS_LEGEND_GRADIENT = `linear-gradient(90deg, ${RELAT
     return `rgb(${red}, ${green}, ${blue}) ${stop.normalizedPosition * 100}%`;
   },
 ).join(", ")})`;
+
+function applyReferenceSoldierStandingRiflePose(root: THREE.Object3D) {
+  let appliedBoneCount = 0;
+  for (const [boneName, transform] of Object.entries(
+    REFERENCE_SOLDIER_STANDING_RIFLE_POSE.bones,
+  )) {
+    const bone = root.getObjectByName(boneName);
+    if (!(bone instanceof THREE.Bone)) continue;
+    bone.position.fromArray(transform.translation);
+    bone.quaternion.fromArray(transform.rotation);
+    bone.scale.fromArray(transform.scale);
+    appliedBoneCount += 1;
+  }
+  if (appliedBoneCount !== REFERENCE_SOLDIER_STANDING_RIFLE_POSE.boneCount) {
+    throw new Error(
+      `Reference soldier pose matched ${appliedBoneCount}/${REFERENCE_SOLDIER_STANDING_RIFLE_POSE.boneCount} bones`,
+    );
+  }
+  root.updateMatrixWorld(true);
+  root.traverse((object) => {
+    if (!(object instanceof THREE.SkinnedMesh)) return;
+    object.frustumCulled = false;
+    object.skeleton.update();
+  });
+}
+
+function rebindReferenceSoldierGlassToHead(root: THREE.Object3D) {
+  let reboundMeshCount = 0;
+  let reboundVertexCount = 0;
+  root.traverse((object) => {
+    if (!(object instanceof THREE.SkinnedMesh)) return;
+    const materials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+    if (
+      !materials.some(
+        ({ name }) => name === REFERENCE_SOLDIER_GLASS_MATERIAL_NAME,
+      )
+    ) {
+      return;
+    }
+    if (
+      materials.some(
+        ({ name }) => name !== REFERENCE_SOLDIER_GLASS_MATERIAL_NAME,
+      )
+    ) {
+      throw new Error(
+        "Reference soldier glass primitive is merged with another material",
+      );
+    }
+    const headJointIndex = object.skeleton.bones.findIndex(
+      ({ name }) => name === REFERENCE_SOLDIER_GLASS_HEAD_BONE_NAME,
+    );
+    if (headJointIndex < 0) {
+      throw new Error("Reference soldier glass is missing its head bone");
+    }
+    const vertexCount = object.geometry.getAttribute("position")?.count ?? 0;
+    if (vertexCount <= 0) {
+      throw new Error("Reference soldier glass contains no vertices");
+    }
+    const jointIndices = new Uint16Array(vertexCount * 4);
+    const jointWeights = new Float32Array(vertexCount * 4);
+    for (let vertex = 0; vertex < vertexCount; vertex += 1) {
+      jointIndices[vertex * 4] = headJointIndex;
+      jointWeights[vertex * 4] = 1;
+    }
+    object.geometry.setAttribute(
+      "skinIndex",
+      new THREE.Uint16BufferAttribute(jointIndices, 4),
+    );
+    object.geometry.setAttribute(
+      "skinWeight",
+      new THREE.Float32BufferAttribute(jointWeights, 4),
+    );
+    object.skeleton.update();
+    reboundMeshCount += 1;
+    reboundVertexCount += vertexCount;
+  });
+  if (reboundMeshCount === 0 || reboundVertexCount === 0) {
+    throw new Error("Reference soldier glass primitive was not found");
+  }
+  return { reboundMeshCount, reboundVertexCount };
+}
 
 function formatArmorThicknessLegendValue(thicknessMm: number) {
   const rounded = Math.round(thicknessMm * 10) / 10;
@@ -183,8 +350,14 @@ function relativeArmorThicknessLegendTicks(range: HitSceneArmorThicknessRange | 
   });
 }
 
-const MAX_SHOT_TRACES = 5;
+const MAX_SHOT_TRACES = 3;
+const MAX_SHOT_EXPLOSION_LAYERS = 4;
 const SHARED_SHOT_RAY_LEAD_M = 0.6;
+const SHOT_TRACE_MIN_DURATION_MS = 360;
+const SHOT_TRACE_MAX_DURATION_MS = 720;
+const SHOT_CONTINUATION_DURATION_MS = 180;
+const SHOT_EXPLOSION_LAYER_DELAY_MS = 105;
+const SHOT_EXPLOSION_DURATION_MS = 880;
 const PROTECTION_MAP_DEBOUNCE_MS = 150;
 const VIEWER_MODES: Array<[ViewerAssetMode, string]> = [
   ["armor", "装甲"],
@@ -196,6 +369,8 @@ interface SearchableSelectMetric {
   penetrationMm: number | null;
   penetrationKind: WeaponPenetrationKind;
   damage: number | null;
+  damageLabel?: string;
+  damageTypeKinds: VehicleDamageTypeIconKind[];
 }
 
 interface RuntimeTurretPreviewStation extends TurretPreviewStation {
@@ -206,6 +381,16 @@ interface RuntimeTurretPreviewStation extends TurretPreviewStation {
 interface RuntimeExteriorOccurrence {
   object: THREE.Group;
   baseMatrix: THREE.Matrix4;
+}
+
+interface RuntimeSkeletalPoseBinding {
+  controller: RuntimeSkeletalPoseController;
+  generatedClass: string | null;
+  stableOccurrenceId: string;
+  nativePlanarRecord: RuntimePlanarSuspensionPoseRecord | null;
+  skinnedMeshes: THREE.SkinnedMesh[];
+  model: THREE.Object3D;
+  placementMatrix: THREE.Matrix4;
 }
 
 interface RuntimeTurretPose {
@@ -476,116 +661,6 @@ function PathMetricLegend({
   );
 }
 
-const DAMAGE_BURST_RAYS = [
-  { angle: 0, scale: 1.22, tone: "hot", length: "long", delay: 0 },
-  { angle: 180, scale: 1.08, tone: "red", length: "long", delay: 18 },
-  { angle: -24, scale: 0.88, tone: "warm", length: "medium", delay: 32 },
-  { angle: 24, scale: 0.76, tone: "hot", length: "medium", delay: 46 },
-  { angle: 154, scale: 0.82, tone: "warm", length: "medium", delay: 24 },
-  { angle: 206, scale: 0.68, tone: "red", length: "short", delay: 58 },
-  { angle: -68, scale: 0.48, tone: "hot", length: "short", delay: 52 },
-  { angle: 72, scale: 0.44, tone: "warm", length: "short", delay: 70 },
-] as const;
-
-const DAMAGE_BURST_PARTICLES = [
-  { tx: 78, ty: -22, rot: 220, tone: "hot", shape: "bar", delay: 18 },
-  { tx: 84, ty: 19, rot: 145, tone: "warm", shape: "triangle", delay: 52 },
-  { tx: 56, ty: 30, rot: 310, tone: "red", shape: "square", delay: 82 },
-  { tx: 31, ty: -31, rot: 120, tone: "hot", shape: "triangle", delay: 66 },
-  { tx: -70, ty: -25, rot: -245, tone: "warm", shape: "bar", delay: 28 },
-  { tx: -83, ty: 15, rot: -140, tone: "red", shape: "triangle", delay: 64 },
-  { tx: -45, ty: 29, rot: -315, tone: "hot", shape: "square", delay: 92 },
-] as const;
-
-function GeometricDamageBurst() {
-  return (
-    <span className="viewer-geometric-burst" data-variant="ammo" aria-hidden="true">
-      <svg viewBox="0 0 240 64" role="presentation">
-        <g transform="translate(120 32)">
-          <polygon
-            className="viewer-geometric-burst__wave viewer-geometric-burst__wave--outer"
-            points="0,-20 14,-14 20,0 14,14 0,20 -14,14 -20,0 -14,-14"
-          />
-          <polygon
-            className="viewer-geometric-burst__wave viewer-geometric-burst__wave--inner"
-            points="0,-15 11,-11 15,0 11,11 0,15 -11,11 -15,0 -11,-11"
-          />
-          {DAMAGE_BURST_RAYS.map((ray) => (
-            <g key={`${ray.angle}:${ray.delay}`} transform={`rotate(${ray.angle}) scale(${ray.scale})`}>
-              <path
-                className="viewer-geometric-burst__ray"
-                data-tone={ray.tone}
-                style={{ animationDelay: `${ray.delay}ms` }}
-                d={
-                  ray.length === "long"
-                    ? "M 10 -4 L 68 -2 L 84 0 L 68 2 L 10 4 L 21 0 Z"
-                    : ray.length === "short"
-                      ? "M 9 -3 L 42 -1.4 L 53 0 L 42 1.4 L 9 3 L 17 0 Z"
-                      : "M 10 -3 L 54 -1.5 L 68 0 L 54 1.5 L 10 3 L 19 0 Z"
-                }
-              />
-            </g>
-          ))}
-          <polygon
-            className="viewer-geometric-burst__core viewer-geometric-burst__core--back"
-            points="-34,0 -19,-13 20,-13 35,0 20,13 -19,13"
-          />
-          <rect
-            className="viewer-geometric-burst__core viewer-geometric-burst__core--main"
-            x="-17"
-            y="-17"
-            width="34"
-            height="34"
-          />
-          <rect
-            className="viewer-geometric-burst__core viewer-geometric-burst__core--hot"
-            x="-9"
-            y="-9"
-            width="18"
-            height="18"
-          />
-          <polygon
-            className="viewer-geometric-burst__core viewer-geometric-burst__core--cut"
-            points="-12,-4 13,-8 8,5 -14,9"
-          />
-          {DAMAGE_BURST_PARTICLES.map((particle) => (
-            <g
-              key={`${particle.tx}:${particle.ty}`}
-              className="viewer-geometric-burst__particle"
-              data-tone={particle.tone}
-              style={{
-                "--burst-tx": `${particle.tx}px`,
-                "--burst-ty": `${particle.ty}px`,
-                "--burst-rotation": `${particle.rot}deg`,
-                animationDelay: `${particle.delay}ms`,
-              } as CSSProperties}
-            >
-              {particle.shape === "triangle" ? (
-                <polygon points="0,-3.4 3.2,2.2 -3.2,2.2" />
-              ) : particle.shape === "bar" ? (
-                <rect x="-3.4" y="-1.4" width="6.8" height="2.8" />
-              ) : (
-                <rect x="-2.3" y="-2.3" width="4.6" height="4.6" />
-              )}
-            </g>
-          ))}
-        </g>
-      </svg>
-    </span>
-  );
-}
-
-function EngineStyleDamageSweep() {
-  return (
-    <span className="viewer-engine-style-sweep" aria-hidden="true">
-      <b />
-      <i />
-      <i />
-      <i />
-    </span>
-  );
-}
-
 function SearchableSelect({
   ariaLabel,
   value,
@@ -702,19 +777,48 @@ function SearchableSelect({
     const penetrationLabel = metrics.penetrationKind === "shaped-charge"
       ? "破甲深度"
       : "穿深";
+    const damageTypeLabel = metrics.damageTypeKinds
+      .map(vehicleDamageTypeIconLabel)
+      .join("、");
+    const damageLabel = metrics.damageLabel ?? "伤害";
+    const hasPenetration = metrics.penetrationMm !== null;
     return (
       <span className="viewer-search-select__metrics">
         <span
-          data-term="penetration"
+          data-term="damage-types"
           data-penetration-kind={metrics.penetrationKind}
-          title={penetrationLabel}
-          aria-label={`${penetrationLabel} ${metricText(metrics.penetrationMm)} 毫米`}
+          data-has-penetration={hasPenetration}
+          title={hasPenetration
+            ? `${damageTypeLabel} · ${penetrationLabel} ${metricText(metrics.penetrationMm)} mm`
+            : damageTypeLabel}
+          aria-label={hasPenetration
+            ? `${damageTypeLabel}，${penetrationLabel} ${metricText(metrics.penetrationMm)} 毫米`
+            : damageTypeLabel}
         >
-          <WeaponPenetrationIcon kind={metrics.penetrationKind} size={16} />
-          {metricText(metrics.penetrationMm)}
+          {metrics.damageTypeKinds.map((kind, index) => (
+            <span
+              className="viewer-search-select__damage-type"
+              data-primary={index === 0}
+              key={kind}
+            >
+              <VehicleDamageTypeIcon kind={kind} size={17} />
+              {index === 0 && hasPenetration ? (
+                <b className="viewer-search-select__penetration">
+                  {metricText(metrics.penetrationMm)}
+                </b>
+              ) : null}
+            </span>
+          ))}
         </span>
-        <span data-term="damage" title="伤害" aria-label={`伤害 ${metricText(metrics.damage)}`}>
-          <Swords size={11} aria-hidden="true" />{metricText(metrics.damage)}
+        <span
+          data-term="damage"
+          title={damageLabel}
+          aria-label={`${damageLabel} ${metricText(metrics.damage)}`}
+        >
+          <Swords size={11} aria-hidden="true" />
+          <b className="viewer-search-select__damage-value">
+            {metricText(metrics.damage)}
+          </b>
         </span>
       </span>
     );
@@ -891,6 +995,10 @@ function resolveShotPathMarkerStyle(kind: ShotPathMarkerKind): ShotPathMarkerSty
 }
 
 function opaqueShotPathMarkerColor(color: string) {
+  const eightDigitHex = color.match(/^#([0-9a-f]{6})[0-9a-f]{2}$/iu);
+  if (eightDigitHex) return `#${eightDigitHex[1]}`;
+  const fourDigitHex = color.match(/^#([0-9a-f]{3})[0-9a-f]$/iu);
+  if (fourDigitHex) return `#${fourDigitHex[1]}`;
   const rgba = color.match(
     /^rgba\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*[^)]+\)$/u,
   );
@@ -1072,15 +1180,53 @@ interface ShotPathMarkerVisual {
   visibilityOpacity: number;
 }
 
+interface ShotExplosionLayerVisual {
+  root: THREE.Group;
+  core: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
+  pressureSurface: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
+  baseRing: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial>;
+  damageTypeIcon: THREE.Sprite;
+  damageTypeIconCanvas: HTMLCanvasElement;
+  damageTypeIconTexture: THREE.CanvasTexture;
+  iconAngleOffsetRad: number;
+  configured: boolean;
+  delayMs: number;
+  outerRadiusM: number;
+}
+
+interface ShotVisualAnimationLayout {
+  traceStart: THREE.Vector3;
+  traceEnd: THREE.Vector3;
+  continuationStart: THREE.Vector3;
+  continuationEnd: THREE.Vector3;
+  traceRotation: THREE.Quaternion;
+  traceLengthM: number;
+  continuationLengthM: number;
+  firstImpactProgress: number;
+  layerMarkerProgress: number[];
+  traceDurationMs: number;
+  continuationDurationMs: number;
+}
+
 interface ShotVisualRuntime {
   group: THREE.Group;
   trace: THREE.Mesh<THREE.CylinderGeometry, THREE.MeshBasicMaterial>;
   traceOutline: THREE.Mesh<THREE.CylinderGeometry, THREE.MeshBasicMaterial>;
+  continuationTrace: THREE.Line<THREE.BufferGeometry, THREE.LineDashedMaterial>;
+  continuationArrow: THREE.LineSegments<
+    THREE.BufferGeometry,
+    THREE.LineDashedMaterial
+  >;
   entryMarker: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
-  terminalMarker: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
+  terminalMarker: THREE.Group;
+  terminalMarkerMaterial: THREE.MeshBasicMaterial;
   layerMarkers: ShotPathMarkerVisual[];
+  explosionLayers: ShotExplosionLayerVisual[];
   traceOpacity: number;
   terminalVisible: boolean;
+  selected: boolean;
+  animationActive: boolean;
+  animationLayout: ShotVisualAnimationLayout | null;
   rayOrigin: THREE.Vector3 | null;
   rayDirection: THREE.Vector3 | null;
   firstHitDistanceM: number;
@@ -1123,6 +1269,185 @@ function disposeScene(root: THREE.Object3D) {
   textures.forEach((texture) => texture.dispose());
   materials.forEach((material) => material.dispose());
   geometries.forEach((geometry) => geometry.dispose());
+}
+
+function createRuntimeGroundScaleAxis(
+  lengthM: number,
+  axisName: "length" | "width",
+  labelSide: 1 | -1 = 1,
+) {
+  const group = new THREE.Group();
+  group.name = `runtime-ground-scale-${axisName}-axis`;
+  const segmentLengthM = lengthM / RUNTIME_GROUND_SCALE_SEGMENTS;
+  const thicknessM = THREE.MathUtils.clamp(lengthM * 0.004, 0.004, 0.018);
+  const depthM = thicknessM * 1.8;
+
+  const outline = new THREE.Mesh(
+    new THREE.BoxGeometry(
+      lengthM,
+      thicknessM * 0.45,
+      depthM * 0.7,
+    ),
+    new THREE.MeshBasicMaterial({
+      color: 0x66757b,
+      transparent: true,
+      opacity: 0.2,
+      depthTest: true,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  outline.name = "runtime-ground-scale-outline";
+  outline.position.set(lengthM / 2, thicknessM * 0.3, 0);
+  group.add(outline);
+
+  for (
+    let segmentIndex = 0;
+    segmentIndex < RUNTIME_GROUND_SCALE_SEGMENTS;
+    segmentIndex += 1
+  ) {
+    const segment = new THREE.Mesh(
+      new THREE.BoxGeometry(
+        Math.max(0.001, segmentLengthM - thicknessM * 0.8),
+        thicknessM * 0.55,
+        depthM,
+      ),
+      new THREE.MeshBasicMaterial({
+        color: segmentIndex % 2 === 0 ? 0x82939a : 0x596970,
+        transparent: true,
+        opacity: segmentIndex % 2 === 0 ? 0.34 : 0.22,
+        depthTest: true,
+        depthWrite: false,
+        toneMapped: false,
+      }),
+    );
+    segment.name = `runtime-ground-scale-segment-${segmentIndex + 1}`;
+    segment.position.set(
+      segmentLengthM * (segmentIndex + 0.5),
+      thicknessM * 1.15,
+      0,
+    );
+    group.add(segment);
+  }
+
+  for (
+    let tickIndex = 0;
+    tickIndex <= RUNTIME_GROUND_SCALE_SEGMENTS;
+    tickIndex += 1
+  ) {
+    const endpoint = tickIndex === 0 || tickIndex === RUNTIME_GROUND_SCALE_SEGMENTS;
+    const tick = new THREE.Mesh(
+      new THREE.BoxGeometry(
+        thicknessM * (endpoint ? 0.9 : 0.65),
+        thicknessM * 0.72,
+        depthM * (endpoint ? 3.2 : 2.4),
+      ),
+      new THREE.MeshBasicMaterial({
+        color: 0x8da0a7,
+        transparent: true,
+        opacity: endpoint ? 0.44 : 0.32,
+        depthTest: true,
+        depthWrite: false,
+        toneMapped: false,
+      }),
+    );
+    tick.name = `runtime-ground-scale-tick-${tickIndex}`;
+    tick.position.set(
+      segmentLengthM * tickIndex,
+      thicknessM * 1.2,
+      0,
+    );
+    group.add(tick);
+  }
+
+  const labelCanvas = document.createElement("canvas");
+  labelCanvas.width = 256;
+  labelCanvas.height = 72;
+  const context = labelCanvas.getContext("2d");
+  if (context) {
+    context.clearRect(0, 0, labelCanvas.width, labelCanvas.height);
+    context.font = '700 42px "Cascadia Mono", Consolas, monospace';
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.lineWidth = 5;
+    context.strokeStyle = "rgba(4, 8, 9, 0.55)";
+    context.strokeText(`${lengthM} m`, 128, 36);
+    context.fillStyle = "rgba(157, 176, 183, 0.72)";
+    context.fillText(`${lengthM} m`, 128, 36);
+  }
+  const labelTexture = new THREE.CanvasTexture(labelCanvas);
+  labelTexture.colorSpace = THREE.SRGBColorSpace;
+  const labelWidthM = Math.max(lengthM * 0.34, 0.16);
+  const label = new THREE.Mesh(
+    new THREE.PlaneGeometry(labelWidthM, labelWidthM * (72 / 256)),
+    new THREE.MeshBasicMaterial({
+      map: labelTexture,
+      transparent: true,
+      opacity: 0.72,
+      depthTest: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      toneMapped: false,
+    }),
+  );
+  label.name = "runtime-ground-scale-label";
+  label.rotation.x = -Math.PI / 2;
+  label.position.set(
+    lengthM / 2,
+    thicknessM * 1.7,
+    (depthM * 2.2 + labelWidthM * 0.18) * labelSide,
+  );
+  group.add(label);
+
+  return group;
+}
+
+function createRuntimeGroundScale(
+  lengthM: number,
+  widthM: number,
+) {
+  const group = new THREE.Group();
+  group.name = "runtime-ground-scale";
+  group.add(createRuntimeGroundScaleAxis(lengthM, "length"));
+  const widthAxis = createRuntimeGroundScaleAxis(widthM, "width", -1);
+  widthAxis.rotation.y = Math.PI / 2;
+  group.add(widthAxis);
+
+  const origin = new THREE.Mesh(
+    new THREE.RingGeometry(0.035, 0.052, 24),
+    new THREE.MeshBasicMaterial({
+      color: 0xb9c9cf,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.56,
+      depthTest: true,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  origin.name = "runtime-ground-scale-origin";
+  origin.rotation.x = -Math.PI / 2;
+  origin.position.y = 0.008;
+  group.add(origin);
+  return group;
+}
+
+function shotTerminalDistanceFromFirstHitM(result: EditorNativeShotResult) {
+  const traceDistanceAfterPenetrationM =
+    result.ballistics.traceDistanceAfterPenetrationM;
+  const lastLayerDistanceM = result.layers.at(-1)?.distanceFromFirstHitM ?? 0;
+  if (traceDistanceAfterPenetrationM === null) {
+    return Math.max(0, lastLayerDistanceM);
+  }
+  const stoppedLayer =
+    result.stoppedAtLayer === null
+      ? null
+      : result.layers[result.stoppedAtLayer] ?? null;
+  return editorNativeTraceTerminalDistanceM({
+    traceDistanceAfterPenetrationM,
+    stoppedDistanceFromFirstHitM:
+      stoppedLayer?.distanceFromFirstHitM ?? null,
+  });
 }
 
 interface RuntimeRendererLease {
@@ -1363,23 +1688,144 @@ function shotVerdict(result: EditorNativeShotResult | null) {
   return result.stoppedAtLayer === null ? "penetrated" : "stopped";
 }
 
-function shotStatusLabel(result: EditorNativeShotResult) {
-  if (result.resolution === "native-unknown" || result.layers.length === 0) {
-    return "原生证据不足，未作猜测";
-  }
-  if (result.stoppedAtLayer !== null) {
-    const layer = result.layers[result.stoppedAtLayer];
-    return layer?.stopReason === "penetration is disabled by the Editor surface"
-      ? "命中不可穿透表面"
-      : `第 ${result.stoppedAtLayer + 1} 层未击穿`;
-  }
-  if (result.damage.some(isEditorNativeVehicleDamageEvent)) {
-    return "贯穿并造成车辆伤害";
-  }
-  if (result.damage.some(isEditorNativeComponentOnlyDamageEvent)) {
-    return "贯穿并造成部件伤害（不传导车体）";
-  }
-  return "射线贯穿全部命中层但未造成有效伤害";
+function effectiveDamageEventsByKind(
+  result: EditorNativeShotResult,
+  damageKind: EditorNativeDamageEvent["damageKind"],
+) {
+  return result.damage.filter(
+    (damage) =>
+      damage.damageKind === damageKind
+      && editorNativeEffectiveDamageAmount(damage) > 0,
+  );
+}
+
+function shouldShowPenetrationDamageLane(
+  result: EditorNativeShotResult,
+  directFireRoute: boolean,
+) {
+  if (effectiveDamageEventsByKind(result, "point").length > 0) return true;
+  const hasDirectBallisticRoute =
+    directFireRoute && (
+      (result.ballistics.penetrationAtRangeMm ?? 0) > 0
+      || (result.ballistics.impactDamageAtRange ?? 0) > 0
+    );
+  return hasDirectBallisticRoute && result.stoppedAtLayer !== null;
+}
+
+function shouldShowExplosionDamageLane(result: EditorNativeShotResult) {
+  return effectiveDamageEventsByKind(result, "radial").length > 0;
+}
+
+function DamageEventListItems({
+  events,
+  animationKey,
+  penetrationKind,
+}: {
+  events: readonly EditorNativeDamageEvent[];
+  animationKey: string;
+  penetrationKind?: WeaponPenetrationKind;
+}) {
+  return events.map((damage, index) => {
+    const effectiveDamage = editorNativeEffectiveDamageAmount(damage);
+    const effect = editorDamageCardEffect(
+      damage.poolKind,
+      damage.poolDamage,
+      damage.maxHealth,
+    );
+    const damageTypeIconKind =
+      damage.damageKind === "radial"
+        ? explosiveDamageTypeIconKinds(
+            true,
+            damage.damageTypePath ?? null,
+          )[0] ?? "generic"
+        : null;
+    return (
+      <li
+        key={`${animationKey}:${damage.poolIndex}:${damage.route}:${index}:${effect?.id ?? "damage"}`}
+        data-penetrated="true"
+        data-no-damage="false"
+        data-damage-pool={damage.poolKind}
+        data-damage-kind={damage.damageKind}
+        data-damage-type-kind={damageTypeIconKind ?? undefined}
+        data-damage-effect={effect?.id}
+      >
+        <span className="viewer-damage-target">
+          {damage.damageKind === "radial" ? (
+            <span
+              className="viewer-damage-target__damage-type-icon"
+              title={vehicleDamageTypeIconLabel(damageTypeIconKind ?? "generic")}
+              aria-label={vehicleDamageTypeIconLabel(damageTypeIconKind ?? "generic")}
+            >
+              <VehicleDamageTypeIcon
+                kind={damageTypeIconKind ?? "generic"}
+                size={24}
+              />
+            </span>
+          ) : (
+            <span
+              className="viewer-damage-target__penetration-icon"
+              title={penetrationKind === "shaped-charge" ? "破甲弹" : "动能穿甲弹"}
+              aria-label={penetrationKind === "shaped-charge" ? "破甲弹" : "动能穿甲弹"}
+            >
+              <WeaponPenetrationIcon
+                kind={penetrationKind ?? "kinetic"}
+                size={24}
+              />
+            </span>
+          )}
+          {editorPoolLabel(damage.poolKind)}
+          {effect ? (
+            <em className="viewer-damage-outcome">{effect.label}</em>
+          ) : null}
+        </span>
+        <span
+          className="viewer-damage-equation"
+          aria-label={
+            damage.damageKind === "radial"
+              ? `爆炸伤害 ${metricText(damage.incomingDamage)} 乘伤害类型系数 ${damageModifierText(damage.damageTypeModifier)}，乘直接爆炸系数 ${damageModifierText(damage.routeMultiplier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`
+              : `直击伤害 ${metricText(damage.incomingDamage)} 乘伤害类型系数 ${damageModifierText(damage.damageTypeModifier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`
+          }
+        >
+          <span data-term="damage" title="伤害">
+            <Swords size={12} aria-hidden="true" />
+            {metricText(damage.incomingDamage)}
+          </span>
+          <i aria-hidden="true">×</i>
+          <span data-term="mitigation" title="伤害类型乘数">
+            <Shield size={12} aria-hidden="true" />
+            {damageModifierText(damage.damageTypeModifier)}
+          </span>
+          {damage.damageKind === "radial" ? (
+            <>
+              <i aria-hidden="true">×</i>
+              <span data-term="radial-route" title="直接爆炸乘数">
+                {damageModifierText(damage.routeMultiplier)}
+              </span>
+            </>
+          ) : null}
+          <i aria-hidden="true">=</i>
+          <strong>{metricText(effectiveDamage)}</strong>
+          {damage.maxHealth === null ? null : (
+            <span
+              className="viewer-damage-health"
+              title="总血量"
+              aria-hidden="true"
+            >
+              <HeartPulse size={12} />
+              {metricText(damage.maxHealth)}
+            </span>
+          )}
+        </span>
+        {effect ? (
+          <span className="viewer-damage-effect" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+        ) : null}
+      </li>
+    );
+  });
 }
 
 function paintShotPathMarker(
@@ -1505,6 +1951,511 @@ function shotTraceMarkerKind(
   return result.resolution === "resolved" ? "penetrated" : "other";
 }
 
+function shotExplosionColor(kind: VehicleDamageTypeIconKind | null) {
+  return ({
+    kinetic: 0xdde7eb,
+    "small-arms": 0xdde7eb,
+    generic: 0xd9f3ff,
+    fragmentation: 0xffd166,
+    heat: 0xff7a38,
+    hat: 0xff4136,
+    explosives: 0xffa12b,
+    thermite: 0xff4b28,
+  } satisfies Record<VehicleDamageTypeIconKind, number>)[kind ?? "generic"];
+}
+
+function paintShotExplosionDamageTypeIcon(
+  visual: ShotExplosionLayerVisual,
+  kind: VehicleDamageTypeIconKind,
+  color: number,
+) {
+  const canvas = visual.damageTypeIconCanvas;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  const accent = new THREE.Color(color).getStyle();
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  context.beginPath();
+  context.moveTo(18, 4);
+  context.lineTo(canvas.width - 18, 4);
+  context.quadraticCurveTo(canvas.width - 4, 4, canvas.width - 4, 18);
+  context.lineTo(canvas.width - 4, canvas.height - 18);
+  context.quadraticCurveTo(
+    canvas.width - 4,
+    canvas.height - 4,
+    canvas.width - 18,
+    canvas.height - 4,
+  );
+  context.lineTo(18, canvas.height - 4);
+  context.quadraticCurveTo(4, canvas.height - 4, 4, canvas.height - 18);
+  context.lineTo(4, 18);
+  context.quadraticCurveTo(4, 4, 18, 4);
+  context.closePath();
+  context.fillStyle = "rgba(3, 8, 11, 0.84)";
+  context.fill();
+  context.strokeStyle = accent;
+  context.lineWidth = 3;
+  context.stroke();
+
+  context.save();
+  context.translate(39, 8);
+  context.scale(3.4, 3.4);
+  context.strokeStyle = accent;
+  context.fillStyle = accent;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  context.lineWidth = 0.62;
+
+  if (kind === "fragmentation") {
+    context.beginPath();
+    for (let pointIndex = 0; pointIndex < 16; pointIndex += 1) {
+      const angle = -Math.PI / 2 + (pointIndex * Math.PI) / 8;
+      const radius = pointIndex % 2 === 0 ? 4.8 : 2.35;
+      const x = 8 + Math.cos(angle) * radius;
+      const y = 7.2 + Math.sin(angle) * radius;
+      if (pointIndex === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.closePath();
+    context.globalAlpha = 0.34;
+    context.fill();
+    context.globalAlpha = 1;
+    context.stroke();
+    for (const [x, y] of [[16, 2.5], [20.2, 5.7], [17.4, 10.8], [22, 12.4]]) {
+      context.fillRect(x, y, 1.8, 1.8);
+    }
+  } else if (kind === "heat") {
+    context.fill(new Path2D(LAT_ROLE_ICON_FRAME_PATH), "evenodd");
+    context.fill(new Path2D(LAT_ROLE_ICON_LAUNCHER_PATH));
+  } else if (kind === "hat") {
+    context.beginPath();
+    context.moveTo(2.2, 3.2);
+    context.lineTo(8.4, 7.2);
+    context.lineTo(2.2, 11.2);
+    context.closePath();
+    context.globalAlpha = 0.28;
+    context.fill();
+    context.globalAlpha = 1;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(8.2, 7.2);
+    context.lineTo(21.5, 7.2);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(17.5, 5.3);
+    context.lineTo(22, 7.2);
+    context.lineTo(17.5, 9.1);
+    context.moveTo(13.7, 4.7);
+    context.lineTo(17.5, 7.2);
+    context.lineTo(13.7, 9.7);
+    context.stroke();
+  } else if (kind === "thermite") {
+    context.beginPath();
+    context.moveTo(12, 1.3);
+    context.bezierCurveTo(16.3, 5, 16.1, 8.9, 12, 11.5);
+    context.bezierCurveTo(8.2, 9.3, 8, 6.1, 11.1, 3.5);
+    context.bezierCurveTo(10.8, 5.8, 12.1, 7, 13.2, 7.5);
+    context.bezierCurveTo(14.1, 5.3, 13.2, 3.1, 12, 1.3);
+    context.closePath();
+    context.globalAlpha = 0.42;
+    context.fill();
+    context.globalAlpha = 1;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(4, 12.8);
+    context.lineTo(20, 12.8);
+    context.moveTo(5, 15);
+    context.lineTo(19, 15);
+    context.stroke();
+  } else if (kind === "kinetic" || kind === "small-arms") {
+    context.beginPath();
+    context.moveTo(2, 7.2);
+    context.lineTo(17, 7.2);
+    context.moveTo(13, 3.8);
+    context.lineTo(21.2, 7.2);
+    context.lineTo(13, 10.6);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(3, 4.2);
+    context.lineTo(8.8, 4.2);
+    context.moveTo(3, 10.2);
+    context.lineTo(8.8, 10.2);
+    context.stroke();
+  } else {
+    context.beginPath();
+    context.arc(10, 8.2, 5.2, 0, Math.PI * 2);
+    context.globalAlpha = 0.3;
+    context.fill();
+    context.globalAlpha = 1;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(13.5, 4.2);
+    context.lineTo(17.5, 1.3);
+    context.lineTo(19.2, 3.2);
+    context.moveTo(18.6, 1.2);
+    context.lineTo(21.8, 0.5);
+    context.moveTo(19.8, 3.5);
+    context.lineTo(22.5, 4.8);
+    context.stroke();
+  }
+  context.restore();
+
+  context.fillStyle = accent;
+  context.font = "600 18px system-ui, sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(vehicleDamageTypeIconShortLabel(kind), canvas.width / 2, 91);
+  visual.damageTypeIconTexture.needsUpdate = true;
+  visual.damageTypeIcon.userData.damageTypeIconKind = kind;
+}
+
+function updateShotExplosionDamageTypeIconPosition(
+  visual: ShotExplosionLayerVisual,
+  camera: THREE.Camera,
+) {
+  if (!visual.configured || !visual.root.visible) return;
+  const radiusM = visual.pressureSurface.scale.x;
+  if (radiusM <= 0.0001) return;
+  const rootWorldPosition = visual.root.getWorldPosition(new THREE.Vector3());
+  const rootWorldQuaternion = visual.root.getWorldQuaternion(
+    new THREE.Quaternion(),
+  );
+  const localCameraDirection = camera
+    .getWorldPosition(new THREE.Vector3())
+    .sub(rootWorldPosition)
+    .applyQuaternion(rootWorldQuaternion.invert());
+  localCameraDirection.y = 0;
+  if (localCameraDirection.lengthSq() < 0.000001) {
+    localCameraDirection.set(0, 0, 1);
+  } else {
+    localCameraDirection.normalize();
+  }
+  localCameraDirection.applyAxisAngle(
+    new THREE.Vector3(0, 1, 0),
+    visual.iconAngleOffsetRad,
+  );
+  visual.damageTypeIcon.position.set(
+    localCameraDirection.x * radiusM,
+    Math.max(0.025, radiusM * 0.0025),
+    localCameraDirection.z * radiusM,
+  );
+  const iconWidthM = THREE.MathUtils.clamp(
+    visual.outerRadiusM * 0.065,
+    0.3,
+    0.78,
+  );
+  visual.damageTypeIcon.scale.set(iconWidthM, iconWidthM * 0.7, 1);
+}
+
+function createShotExplosionLayerVisual(
+  traceIndex: number,
+  layerIndex: number,
+): ShotExplosionLayerVisual {
+  const renderOrder = 29 + traceIndex * 12 + layerIndex;
+  const root = new THREE.Group();
+  root.name = `editor-native-shot-explosion-layer-${layerIndex + 1}`;
+  root.renderOrder = renderOrder;
+
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 16, 10),
+    new THREE.MeshBasicMaterial({
+      color: 0xffa12b,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  core.name = "editor-native-shot-explosion-core";
+  core.renderOrder = renderOrder + 3;
+  root.add(core);
+
+  const pressureSurface = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 32, 20, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.MeshBasicMaterial({
+      color: 0xffa12b,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0,
+      depthTest: true,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  pressureSurface.name = "editor-native-shot-explosion-pressure-surface";
+  pressureSurface.renderOrder = renderOrder;
+  root.add(pressureSurface);
+
+  const baseRing = new THREE.Mesh(
+    new THREE.TorusGeometry(1, 0.0075, 6, 64),
+    new THREE.MeshBasicMaterial({
+      color: 0xffa12b,
+      transparent: true,
+      opacity: 0,
+      depthTest: true,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  baseRing.name = "editor-native-shot-explosion-base-ring";
+  baseRing.rotation.x = Math.PI / 2;
+  baseRing.renderOrder = renderOrder + 1;
+  root.add(baseRing);
+
+  const damageTypeIconCanvas = document.createElement("canvas");
+  damageTypeIconCanvas.width = 160;
+  damageTypeIconCanvas.height = 112;
+  const damageTypeIconTexture = new THREE.CanvasTexture(
+    damageTypeIconCanvas,
+  );
+  damageTypeIconTexture.colorSpace = THREE.SRGBColorSpace;
+  damageTypeIconTexture.minFilter = THREE.LinearFilter;
+  damageTypeIconTexture.magFilter = THREE.LinearFilter;
+  damageTypeIconTexture.generateMipmaps = false;
+  const damageTypeIcon = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: damageTypeIconTexture,
+      transparent: true,
+      opacity: 0,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  damageTypeIcon.name = "editor-native-shot-explosion-damage-type-icon";
+  damageTypeIcon.center.set(0.5, 0);
+  damageTypeIcon.renderOrder = renderOrder + 4;
+  root.add(damageTypeIcon);
+
+  root.visible = false;
+  const visual: ShotExplosionLayerVisual = {
+    root,
+    core,
+    pressureSurface,
+    baseRing,
+    damageTypeIcon,
+    damageTypeIconCanvas,
+    damageTypeIconTexture,
+    iconAngleOffsetRad:
+      (layerIndex % 2 === 0 ? -1 : 1)
+      * (Math.floor(layerIndex / 2) + 1)
+      * 0.18,
+    configured: false,
+    delayMs: 0,
+    outerRadiusM: 0,
+  };
+  paintShotExplosionDamageTypeIcon(visual, "generic", 0xffa12b);
+  return visual;
+}
+
+function configureShotExplosionLayerVisual(
+  visual: ShotExplosionLayerVisual,
+  {
+    origin,
+    normal,
+    color,
+    damageTypeIconKind,
+    outerRadiusM,
+    innerRadiusM,
+    delayMs,
+    layerId,
+    damageTypePath,
+  }: {
+    origin: THREE.Vector3;
+    normal: THREE.Vector3;
+    color: number;
+    damageTypeIconKind: VehicleDamageTypeIconKind;
+    outerRadiusM: number;
+    innerRadiusM: number;
+    delayMs: number;
+    layerId: string;
+    damageTypePath: string;
+  },
+) {
+  visual.configured = true;
+  visual.delayMs = delayMs;
+  visual.outerRadiusM = Math.max(0, outerRadiusM);
+  visual.root.position.copy(origin);
+  const safeNormal = normal.lengthSq() < 0.000001
+    ? new THREE.Vector3(0, 1, 0)
+    : normal.clone().normalize();
+  visual.root.quaternion.setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0),
+    safeNormal,
+  );
+  visual.root.userData.layerId = layerId;
+  visual.root.userData.damageTypePath = damageTypePath;
+  visual.root.userData.damageTypeIconKind = damageTypeIconKind;
+  visual.root.userData.outerRadiusM = outerRadiusM;
+  visual.root.userData.innerRadiusM = innerRadiusM;
+  visual.root.userData.visualClip = "surface-normal-hemisphere";
+  visual.root.userData.surfaceNormal = safeNormal.toArray();
+  visual.core.material.color.setHex(color);
+  visual.pressureSurface.material.color.setHex(color);
+  visual.baseRing.material.color.setHex(color);
+  paintShotExplosionDamageTypeIcon(visual, damageTypeIconKind, color);
+}
+
+function clearShotExplosionLayerVisual(visual: ShotExplosionLayerVisual) {
+  visual.configured = false;
+  visual.root.visible = false;
+  visual.core.material.opacity = 0;
+  visual.pressureSurface.material.opacity = 0;
+  visual.baseRing.material.opacity = 0;
+  visual.damageTypeIcon.material.opacity = 0;
+}
+
+function settleShotExplosionLayerVisual(
+  visual: ShotExplosionLayerVisual,
+  selected: boolean,
+) {
+  if (!visual.configured || !selected) {
+    visual.root.visible = false;
+    return;
+  }
+  visual.root.visible = true;
+  visual.core.scale.setScalar(
+    THREE.MathUtils.clamp(visual.outerRadiusM * 0.018, 0.045, 0.18),
+  );
+  visual.pressureSurface.scale.setScalar(visual.outerRadiusM);
+  visual.baseRing.scale.setScalar(visual.outerRadiusM);
+  visual.core.material.opacity = 0.2;
+  visual.pressureSurface.material.opacity = 0.075;
+  visual.baseRing.material.opacity = 0.34;
+  visual.damageTypeIcon.material.opacity = 0.96;
+}
+
+function easeOutCubic(value: number) {
+  return 1 - (1 - value) ** 3;
+}
+
+function setShotExplosionLayerAnimationFrame(
+  visual: ShotExplosionLayerVisual,
+  elapsedMs: number,
+  selected: boolean,
+) {
+  if (!visual.configured || !selected || elapsedMs < visual.delayMs) {
+    visual.root.visible = false;
+    return;
+  }
+  const localElapsedMs = elapsedMs - visual.delayMs;
+  if (localElapsedMs >= SHOT_EXPLOSION_DURATION_MS) {
+    settleShotExplosionLayerVisual(visual, selected);
+    return;
+  }
+  const progress = THREE.MathUtils.clamp(
+    localElapsedMs / SHOT_EXPLOSION_DURATION_MS,
+    0,
+    1,
+  );
+  const expansion = easeOutCubic(progress);
+  const fade = 1 - THREE.MathUtils.smoothstep(progress, 0.46, 1);
+  visual.root.visible = true;
+  const currentRadiusM = Math.max(
+    0.001,
+    visual.outerRadiusM * expansion,
+  );
+  visual.pressureSurface.scale.setScalar(currentRadiusM);
+  visual.baseRing.scale.setScalar(currentRadiusM);
+  visual.core.scale.setScalar(
+    THREE.MathUtils.clamp(
+      visual.outerRadiusM
+        * (0.008 + Math.sin(Math.min(1, progress * 1.7) * Math.PI) * 0.024),
+      0.05,
+      0.28,
+    ),
+  );
+  visual.core.material.opacity = 0.16 + fade * 0.66;
+  visual.pressureSurface.material.opacity = 0.06 + fade * 0.1;
+  visual.baseRing.material.opacity = 0.18 + fade * 0.24;
+  visual.damageTypeIcon.material.opacity =
+    THREE.MathUtils.smoothstep(progress, 0.26, 0.64);
+}
+
+function setCylinderBetween(
+  mesh: THREE.Mesh<THREE.CylinderGeometry, THREE.MeshBasicMaterial>,
+  start: THREE.Vector3,
+  end: THREE.Vector3,
+  radiusM: number,
+) {
+  const direction = end.clone().sub(start);
+  const length = direction.length();
+  if (length < 0.0001) {
+    mesh.visible = false;
+    return;
+  }
+  mesh.visible = true;
+  mesh.position.copy(start).add(end).multiplyScalar(0.5);
+  mesh.quaternion.setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0),
+    direction.normalize(),
+  );
+  mesh.scale.set(radiusM, length, radiusM);
+}
+
+function setShotTraceAnimationProgress(
+  shotVisual: ShotVisualRuntime,
+  solidProgress: number,
+  continuationProgress: number,
+) {
+  const layout = shotVisual.animationLayout;
+  if (!layout) return;
+  const clampedSolid = THREE.MathUtils.clamp(solidProgress, 0, 1);
+  const clampedContinuation = THREE.MathUtils.clamp(
+    continuationProgress,
+    0,
+    1,
+  );
+  const animatedTraceEnd = layout.traceStart.clone().lerp(
+    layout.traceEnd,
+    clampedSolid,
+  );
+  setCylinderBetween(
+    shotVisual.trace,
+    layout.traceStart,
+    animatedTraceEnd,
+    0.012,
+  );
+  setCylinderBetween(
+    shotVisual.traceOutline,
+    layout.traceStart,
+    animatedTraceEnd,
+    0.024,
+  );
+  shotVisual.traceOutline.visible =
+    shotVisual.selected && shotVisual.trace.visible;
+  shotVisual.entryMarker.visible =
+    clampedSolid >= layout.firstImpactProgress;
+  shotVisual.layerMarkers.forEach((marker, index) => {
+    const markerProgress = layout.layerMarkerProgress[index];
+    marker.sphere.visible =
+      markerProgress !== undefined && clampedSolid >= markerProgress;
+  });
+
+  const hasContinuation = layout.continuationLengthM > 0.0001;
+  if (hasContinuation && clampedContinuation > 0) {
+    const animatedContinuationEnd = layout.continuationStart.clone().lerp(
+      layout.continuationEnd,
+      clampedContinuation,
+    );
+    shotVisual.continuationTrace.geometry.setFromPoints([
+      layout.continuationStart,
+      animatedContinuationEnd,
+    ]);
+    shotVisual.continuationTrace.computeLineDistances();
+    shotVisual.continuationTrace.visible = true;
+    shotVisual.continuationArrow.position.copy(animatedContinuationEnd);
+    shotVisual.continuationArrow.visible = clampedContinuation >= 0.92;
+  } else {
+    shotVisual.continuationTrace.visible = false;
+    shotVisual.continuationArrow.visible = false;
+  }
+  shotVisual.terminalMarker.visible =
+    shotVisual.terminalVisible && clampedSolid >= 0.999;
+}
+
 function createShotVisual(traceIndex: number): ShotVisualRuntime {
   const initialStyle = resolveShotPathMarkerStyle("blocked");
   const group = new THREE.Group();
@@ -1541,6 +2492,54 @@ function createShotVisual(traceIndex: number): ShotVisualRuntime {
   traceOutline.visible = false;
   group.add(traceOutline);
 
+  const continuationTrace = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(),
+      new THREE.Vector3(0, 0.8, 0),
+    ]),
+    new THREE.LineDashedMaterial({
+      color: initialStyle.stroke,
+      transparent: true,
+      opacity: 0.72,
+      dashSize: 0.16,
+      gapSize: 0.11,
+      depthTest: false,
+      depthWrite: false,
+    }),
+  );
+  continuationTrace.name = "editor-native-shot-continuation-omission";
+  continuationTrace.renderOrder = 21 + traceIndex * 12;
+  continuationTrace.visible = false;
+  continuationTrace.computeLineDistances();
+  group.add(continuationTrace);
+
+  const continuationArrow = new THREE.LineSegments(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(-0.14, -0.24, 0),
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0.14, -0.24, 0),
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, -0.24, -0.14),
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, -0.24, 0.14),
+    ]),
+    new THREE.LineDashedMaterial({
+      color: initialStyle.stroke,
+      transparent: true,
+      opacity: 0.72,
+      dashSize: 0.07,
+      gapSize: 0.045,
+      depthTest: false,
+      depthWrite: false,
+    }),
+  );
+  continuationArrow.name = "editor-native-shot-continuation-arrow";
+  continuationArrow.renderOrder = 22 + traceIndex * 12;
+  continuationArrow.visible = false;
+  continuationArrow.computeLineDistances();
+  group.add(continuationArrow);
+
   const entryMarker = new THREE.Mesh(
     new THREE.SphereGeometry(0.045, 12, 8),
     new THREE.MeshBasicMaterial({
@@ -1555,18 +2554,32 @@ function createShotVisual(traceIndex: number): ShotVisualRuntime {
   entryMarker.visible = false;
   group.add(entryMarker);
 
-  const terminalMarker = new THREE.Mesh(
-    new THREE.SphereGeometry(0.06, 14, 10),
-    new THREE.MeshBasicMaterial({
-      color: initialStyle.stroke,
-      transparent: true,
-      opacity: 0.92,
-      depthTest: false,
-      depthWrite: false,
-    }),
-  );
-  terminalMarker.name = "editor-native-terminal-marker";
+  const terminalMarkerMaterial = new THREE.MeshBasicMaterial({
+    color: initialStyle.stroke,
+    transparent: true,
+    opacity: 0.92,
+    depthTest: false,
+    depthWrite: false,
+  });
+  const terminalMarker = new THREE.Group();
+  terminalMarker.name = "editor-native-terminal-arrow";
   terminalMarker.renderOrder = 22 + traceIndex * 12;
+  const terminalArrowHead = new THREE.Mesh(
+    new THREE.ConeGeometry(0.06, 0.12, 12),
+    terminalMarkerMaterial,
+  );
+  terminalArrowHead.name = "editor-native-terminal-arrow-head";
+  terminalArrowHead.position.y = -0.06;
+  terminalArrowHead.renderOrder = terminalMarker.renderOrder;
+  terminalMarker.add(terminalArrowHead);
+  const terminalArrowShaft = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.014, 0.014, 0.12, 8),
+    terminalMarkerMaterial,
+  );
+  terminalArrowShaft.name = "editor-native-terminal-arrow-shaft";
+  terminalArrowShaft.position.y = -0.18;
+  terminalArrowShaft.renderOrder = terminalMarker.renderOrder;
+  terminalMarker.add(terminalArrowShaft);
   terminalMarker.visible = false;
   group.add(terminalMarker);
 
@@ -1574,17 +2587,29 @@ function createShotVisual(traceIndex: number): ShotVisualRuntime {
     createShotPathMarker(index + 1, 23 + traceIndex * 12 + index),
   );
   layerMarkers.forEach((marker) => group.add(marker.sphere));
+  const explosionLayers = Array.from(
+    { length: MAX_SHOT_EXPLOSION_LAYERS },
+    (_, layerIndex) => createShotExplosionLayerVisual(traceIndex, layerIndex),
+  );
+  explosionLayers.forEach((layer) => group.add(layer.root));
 
   group.visible = false;
   return {
     group,
     trace,
     traceOutline,
+    continuationTrace,
+    continuationArrow,
     entryMarker,
     terminalMarker,
+    terminalMarkerMaterial,
     layerMarkers,
+    explosionLayers,
     traceOpacity: 0.92,
     terminalVisible: false,
+    selected: false,
+    animationActive: false,
+    animationLayout: null,
     rayOrigin: null,
     rayDirection: null,
     firstHitDistanceM: 0,
@@ -1665,6 +2690,8 @@ export function RuntimeVehicleViewer({
   const shotRecordsRef = useRef<RuntimeShotRecord[]>([]);
   const activeShotIdRef = useRef<number | null>(null);
   const shotSequenceRef = useRef(0);
+  const shotAnimationFrameRef = useRef(0);
+  const animatedShotIdRef = useRef<number | null>(null);
   const navigationStateRef = useRef(navigationState);
   const onNavigationStateChangeRef = useRef(onNavigationStateChange);
   const pendingSharedShotsRef = useRef(
@@ -1674,6 +2701,8 @@ export function RuntimeVehicleViewer({
   const exteriorOccurrencesRef = useRef<Map<string, RuntimeExteriorOccurrence>>(
     new Map(),
   );
+  const applyChassisPoseRef = useRef<((enabled: boolean) => void) | null>(null);
+  const physicalPoseEnabledRef = useRef(true);
   const applyTurretPoseRef = useRef<(() => void) | null>(null);
   const turretPosesRef = useRef<RuntimeTurretPose[]>([]);
   const turretPoseStatesRef = useRef<Record<string, RuntimeTurretPoseState>>({});
@@ -1700,6 +2729,35 @@ export function RuntimeVehicleViewer({
   const cancelProtectionMapRef = useRef<(() => void) | null>(null);
   const visual = preview.visual;
   const hit = preview.hit;
+  const chassisPose = preview.chassisPose;
+  const vehicleMeshRuntimePosePlacement = visual?.placements.find(
+    (placement) =>
+      placement.name.trim().toLowerCase() === "vehicle mesh" &&
+      placement.runtimeBonePoseStatus === "observed",
+  );
+  const vehicleMeshSkeletalPoseEvidence = vehicleMeshRuntimePosePlacement
+    ? runtimeSkeletalPoseEvidence({
+        observedSampleCount:
+          vehicleMeshRuntimePosePlacement.runtimeBonePoseNormalTimeSampleCount ??
+          1,
+        referenceEquivalent:
+          vehicleMeshRuntimePosePlacement.runtimeBonePoseReferenceEquivalent ===
+          true,
+      })
+    : null;
+  const vehicleMeshPlanarSuspensionPose = vehicleMeshRuntimePosePlacement
+    ? runtimePlanarSuspensionPoseForVisualOccurrence(
+        preview.generatedClass,
+        vehicleMeshRuntimePosePlacement.stableOccurrenceId,
+      )
+    : null;
+  const vehiclePlanarSuspensionCoverage =
+    runtimePlanarSuspensionCoverageForGeneratedClass(preview.generatedClass);
+  const vehicleMeshPlanarNonzeroWheelCount =
+    vehicleMeshPlanarSuspensionPose?.wheels.filter(
+      ({ localTranslationOffsetGltfM: [x, y, z] }) =>
+        x !== 0 || y !== 0 || z !== 0,
+    ).length ?? 0;
   const uniqueAssetCount = visual ? new Set(visual.placements.map(({ assetUrl }) => assetUrl)).size : 0;
   const runtimeTurretStations = useMemo<RuntimeTurretPreviewStation[]>(() => {
     if (!referenceData || !visual) return [];
@@ -1928,6 +2986,7 @@ export function RuntimeVehicleViewer({
   const [specialArmorVisible, setSpecialArmorVisible] = useState(true);
   const [exteriorSpacedArmorHighlight, setExteriorSpacedArmorHighlight] =
     useState(false);
+  const [physicalPoseEnabled, setPhysicalPoseEnabled] = useState(true);
   const [relativeArmorScale, setRelativeArmorScale] = useState(false);
   const [armorThicknessRange, setArmorThicknessRange] =
     useState<HitSceneArmorThicknessRange | null>(null);
@@ -1981,6 +3040,7 @@ export function RuntimeVehicleViewer({
     attackHeader !== null &&
     weaponIndex >= 0;
   const protectionActive = protectionEnabled && protectionMapAvailable;
+  const physicalPoseActive = physicalPoseEnabled && chassisPose !== null;
   const relativeArmorScaleAvailable = Boolean(
     armorThicknessRange && armorThicknessRange.distinctThicknessCount > 1,
   );
@@ -2002,11 +3062,16 @@ export function RuntimeVehicleViewer({
       const infantryCategory = weapon.infantryCategory
         ? INFANTRY_WEAPON_CATEGORY_BY_ID.get(weapon.infantryCategory)
         : null;
+      const explosiveGroup = weapon.explosiveCategoryLabel ?? null;
       return {
         value: weaponSelectionValue(attackSource.cardId, optionIndex),
         label: weapon.displayNameZh,
-        group: infantryCategory?.label,
-        groupDescription: infantryCategory?.description,
+        group: explosiveGroup ?? infantryCategory?.label,
+        groupDescription: explosiveGroup
+          ? weapon.explosiveLayerOrderClosed
+            ? "官方 Editor 爆炸配方；多层顺序已有动态证据"
+            : "官方 Editor 爆炸配方；多层顺序仍按资产声明展示"
+          : infantryCategory?.description,
         searchText:
           `${weapon.displayNameEnglish} ${weapon.gunName} ${weapon.runtimeAssetPath ?? ""} ${(weapon.searchAliases ?? []).join(" ")}`,
         searchRank: (query) => rankVerifiedVehicleCandidateSearch({
@@ -2022,9 +3087,15 @@ export function RuntimeVehicleViewer({
           context: [attackSource.displayName, attackSource.groupName],
         }, query),
         metrics: {
-          penetrationMm: ballistics.penetrationAtRangeMm,
+          penetrationMm: weapon.directFireRoute
+            ? ballistics.penetrationAtRangeMm
+            : null,
           penetrationKind: weaponPenetrationKindForDamageTypePath(ballistics.damageTypePath),
-          damage: ballistics.impactDamageAtRange,
+          damage: selectorDamageMetric(weapon.directFireRoute, ballistics),
+          damageLabel: weapon.directFireRoute
+            ? undefined
+            : "各伤害类别事件的基础值合计",
+          damageTypeKinds: selectorDamageTypeIconKinds(ballistics),
         },
       };
     });
@@ -2062,11 +3133,16 @@ export function RuntimeVehicleViewer({
         const infantryCategory = weapon.infantryCategory
           ? INFANTRY_WEAPON_CATEGORY_BY_ID.get(weapon.infantryCategory)
           : null;
+        const explosiveGroup = weapon.explosiveCategoryLabel ?? null;
         return {
           value: weaponSelectionValue(source.cardId, optionIndex),
           label: `${weapon.displayNameZh} · ${source.displayName}`,
-          group: infantryCategory?.label ?? source.groupName,
-          groupDescription: infantryCategory?.description,
+          group: explosiveGroup ?? infantryCategory?.label ?? source.groupName,
+          groupDescription: explosiveGroup
+            ? weapon.explosiveLayerOrderClosed
+              ? "官方 Editor 爆炸配方；多层顺序已有动态证据"
+              : "官方 Editor 爆炸配方；多层顺序仍按资产声明展示"
+            : infantryCategory?.description,
           searchText: [
             weapon.displayNameEnglish,
             weapon.gunName,
@@ -2093,9 +3169,15 @@ export function RuntimeVehicleViewer({
             context: [source.displayName, source.groupName, source.groupId, ...source.types],
           }, query),
           metrics: {
-            penetrationMm: ballistics.penetrationAtRangeMm,
+            penetrationMm: weapon.directFireRoute
+              ? ballistics.penetrationAtRangeMm
+              : null,
             penetrationKind: weaponPenetrationKindForDamageTypePath(ballistics.damageTypePath),
-            damage: ballistics.impactDamageAtRange,
+            damage: selectorDamageMetric(weapon.directFireRoute, ballistics),
+            damageLabel: weapon.directFireRoute
+              ? undefined
+              : "各伤害类别事件的基础值合计",
+            damageTypeKinds: selectorDamageTypeIconKinds(ballistics),
           },
         };
       }),
@@ -2103,7 +3185,8 @@ export function RuntimeVehicleViewer({
   const attackSourceOptions = useMemo<SearchableSelectOption[]>(() =>
     [
       ...runtimeAttackSources.filter((source) => source.sourceKind === "wiki-infantry"),
-      ...runtimeAttackSources.filter((source) => source.sourceKind !== "wiki-infantry"),
+      ...runtimeAttackSources.filter((source) => source.sourceKind === "explosive-catalog"),
+      ...runtimeAttackSources.filter((source) => source.sourceKind === "vehicle"),
     ].map((source) => ({
       value: source.cardId,
       label: source.displayName,
@@ -2150,6 +3233,15 @@ export function RuntimeVehicleViewer({
       delete host.dataset.hitResolution;
       delete host.dataset.hitStoppedAtLayer;
       delete host.dataset.hitDamagePools;
+      delete host.dataset.hitTerminalDistanceFromFirstHitM;
+      delete host.dataset.hitRadialState;
+      delete host.dataset.hitExplosionLayerCount;
+      delete host.dataset.hitExplosionOrder;
+      delete host.dataset.hitExplosionOuterRadiiM;
+      delete host.dataset.shotExplosionIndicator;
+      delete host.dataset.shotExplosionVisualClip;
+      delete host.dataset.shotExplosionRadiusBasis;
+      delete host.dataset.shotExplosionNativeField;
       return;
     }
     host.dataset.hitResolution = result.resolution;
@@ -2157,16 +3249,51 @@ export function RuntimeVehicleViewer({
       ? "none"
       : String(result.stoppedAtLayer);
     host.dataset.hitDamagePools = String(result.damage.length);
+    host.dataset.hitTerminalDistanceFromFirstHitM = String(
+      shotTerminalDistanceFromFirstHitM(result),
+    );
+    host.dataset.hitRadialState = result.radial.state;
+    host.dataset.hitExplosionLayerCount = String(result.radial.layers.length);
+    host.dataset.hitExplosionOrder = result.radial.order ?? "none";
+    host.dataset.hitExplosionOuterRadiiM = result.radial.layers.length > 0
+      ? result.radial.layers.map((radialLayer) => {
+          const ballisticsLayer = result.ballistics.explosiveLayers.find(
+            (layer) => layer.layerId === radialLayer.layerId,
+          );
+          return ballisticsLayer
+            ? String(ballisticsLayer.outerRadiusCm / 100)
+            : "unknown";
+        }).join(",")
+      : "none";
+    host.dataset.shotExplosionIndicator =
+      result.radial.layers.length > 0
+        ? "surface-normal-pressure-hemisphere"
+        : "none";
+    host.dataset.shotExplosionVisualClip =
+      result.radial.layers.length > 0
+        ? "surface-normal-outward"
+        : "none";
+    host.dataset.shotExplosionRadiusBasis =
+      result.radial.layers.length > 0
+        ? "outer-radius-exact"
+        : "none";
+    host.dataset.shotExplosionNativeField =
+      result.radial.layers.length > 0
+        ? "radial-sphere-with-visibility"
+        : "none";
   }, []);
 
   const selectShotVisual = useCallback((shotId: number | null) => {
     shotRecordsRef.current.forEach((record) => {
       const active = record.shotId === shotId;
+      record.visual.selected = active;
       record.visual.trace.material.opacity = active ? record.visual.traceOpacity : 0.32;
       record.visual.traceOutline.visible = active && record.visual.group.visible;
+      record.visual.continuationTrace.material.opacity = active ? 0.72 : 0.28;
+      record.visual.continuationArrow.material.opacity = active ? 0.72 : 0.28;
       record.visual.entryMarker.material.transparent = true;
       record.visual.entryMarker.material.opacity = active ? 1 : 0.42;
-      record.visual.terminalMarker.material.opacity = active ? 0.92 : 0.38;
+      record.visual.terminalMarkerMaterial.opacity = active ? 0.92 : 0.38;
       record.visual.terminalMarker.visible = record.visual.terminalVisible;
       record.visual.layerMarkers.forEach((marker) => {
         marker.visibilityOpacity = active ? 1 : 0.42;
@@ -2174,6 +3301,11 @@ export function RuntimeVehicleViewer({
           marker.fillOpacity * marker.visibilityOpacity;
         marker.label.material.opacity = active ? 1 : 0.46;
       });
+      if (!record.visual.animationActive) {
+        record.visual.explosionLayers.forEach((layer) => {
+          settleShotExplosionLayerVisual(layer, active);
+        });
+      }
     });
   }, []);
 
@@ -2184,6 +3316,8 @@ export function RuntimeVehicleViewer({
     const shotVisual = record.visual;
     if (!shotVisual.rayOrigin || !shotVisual.rayDirection || result.layers.length === 0) {
       shotVisual.group.visible = false;
+      shotVisual.animationLayout = null;
+      shotVisual.explosionLayers.forEach(clearShotExplosionLayerVisual);
       return;
     }
     const ingressLength = Math.min(1.25, Math.max(0.45, shotVisual.firstHitDistanceM * 0.08));
@@ -2191,10 +3325,30 @@ export function RuntimeVehicleViewer({
       shotVisual.rayDirection,
       shotVisual.firstHitDistanceM - ingressLength,
     );
-    const lastLayer = result.layers.at(-1)!;
+    const terminalDistanceFromFirstHitM =
+      shotTerminalDistanceFromFirstHitM(result);
+    const lastVehicleIntersectionDistanceFromFirstHitM = Math.max(
+      0,
+      ...record.intersections.map(
+        (intersection) =>
+          intersection.distanceFromRayOriginM - shotVisual.firstHitDistanceM,
+      ),
+    );
+    const omittedDistanceM =
+      terminalDistanceFromFirstHitM
+      - lastVehicleIntersectionDistanceFromFirstHitM;
+    const omitContinuation =
+      result.stoppedAtLayer === null && omittedDistanceM > 0.2;
+    const traceEndsInsideVehicle =
+      result.stoppedAtLayer === null
+      && terminalDistanceFromFirstHitM
+        <= lastVehicleIntersectionDistanceFromFirstHitM + 0.01;
+    const solidEndDistanceFromFirstHitM = omitContinuation
+      ? lastVehicleIntersectionDistanceFromFirstHitM
+      : terminalDistanceFromFirstHitM;
     const end = shotVisual.rayOrigin.clone().addScaledVector(
       shotVisual.rayDirection,
-      shotVisual.firstHitDistanceM + Math.max(0, lastLayer.distanceFromFirstHitM),
+      shotVisual.firstHitDistanceM + solidEndDistanceFromFirstHitM,
     );
     const traceDirection = end.clone().sub(start);
     const traceLength = traceDirection.length();
@@ -2202,17 +3356,25 @@ export function RuntimeVehicleViewer({
       shotVisual.group.visible = false;
       return;
     }
-    const traceMidpoint = start.clone().add(end).multiplyScalar(0.5);
     const traceRotation = new THREE.Quaternion().setFromUnitVectors(
       new THREE.Vector3(0, 1, 0),
       traceDirection.normalize(),
     );
-    shotVisual.trace.position.copy(traceMidpoint);
-    shotVisual.trace.quaternion.copy(traceRotation);
-    shotVisual.trace.scale.set(0.012, traceLength, 0.012);
-    shotVisual.traceOutline.position.copy(traceMidpoint);
-    shotVisual.traceOutline.quaternion.copy(traceRotation);
-    shotVisual.traceOutline.scale.set(0.024, traceLength, 0.024);
+
+    const continuationStart = end.clone();
+    const continuationEnd = shotVisual.rayOrigin.clone().addScaledVector(
+      shotVisual.rayDirection,
+      shotVisual.firstHitDistanceM
+        + lastVehicleIntersectionDistanceFromFirstHitM
+        + Math.min(1.4, omittedDistanceM),
+    );
+    shotVisual.continuationTrace.geometry.setFromPoints([
+      continuationStart,
+      continuationEnd,
+    ]);
+    shotVisual.continuationTrace.computeLineDistances();
+    shotVisual.continuationArrow.position.copy(continuationEnd);
+    shotVisual.continuationArrow.quaternion.copy(traceRotation);
 
     const hitScene = parsedHitRef.current;
     const traceKind = shotTraceMarkerKind(result, hitScene);
@@ -2221,11 +3383,12 @@ export function RuntimeVehicleViewer({
     shotVisual.traceOutline.material.color.set(
       opaqueShotPathMarkerColor(traceStyle.glow),
     );
+    shotVisual.continuationTrace.material.color.set(traceStyle.stroke);
+    shotVisual.continuationArrow.material.color.set(traceStyle.stroke);
     shotVisual.traceOpacity = 0.92;
+    shotVisual.selected = activeShotIdRef.current === record.shotId;
     shotVisual.trace.material.opacity =
-      activeShotIdRef.current === record.shotId ? shotVisual.traceOpacity : 0.32;
-    shotVisual.trace.visible = true;
-    shotVisual.traceOutline.visible = activeShotIdRef.current === record.shotId;
+      shotVisual.selected ? shotVisual.traceOpacity : 0.32;
     shotVisual.entryMarker.position.copy(
       shotVisual.rayOrigin.clone().addScaledVector(
         shotVisual.rayDirection,
@@ -2233,11 +3396,13 @@ export function RuntimeVehicleViewer({
       ),
     );
     shotVisual.entryMarker.material.color.set(traceStyle.stroke);
-    shotVisual.entryMarker.visible = false;
+    const layerMarkerProgress: number[] = [];
     shotVisual.layerMarkers.forEach((marker, index) => {
       const layer = result.layers[index];
-      marker.sphere.visible = Boolean(layer);
-      if (!layer) return;
+      if (!layer) {
+        marker.sphere.visible = false;
+        return;
+      }
       const markerKind = editorPathMarkerKind(
         hitScene?.header ?? null,
         hitScene?.header.components[layer.componentIndex],
@@ -2251,12 +3416,106 @@ export function RuntimeVehicleViewer({
           shotVisual.firstHitDistanceM + layer.distanceFromFirstHitM,
         ),
       );
+      layerMarkerProgress[index] = THREE.MathUtils.clamp(
+        (
+          ingressLength
+          + Math.max(0, layer.distanceFromFirstHitM)
+        ) / traceLength,
+        0,
+        1,
+      );
     });
-    shotVisual.terminalMarker.position.copy(end);
-    shotVisual.terminalMarker.material.color.set(traceStyle.stroke);
-    shotVisual.terminalVisible = true;
-    shotVisual.terminalMarker.visible = true;
+    shotVisual.terminalMarker.position.copy(
+      shotVisual.rayOrigin.clone().addScaledVector(
+        shotVisual.rayDirection,
+        shotVisual.firstHitDistanceM + terminalDistanceFromFirstHitM,
+      ),
+    );
+    shotVisual.terminalMarker.quaternion.copy(traceRotation);
+    shotVisual.terminalMarkerMaterial.color.set(traceStyle.stroke);
+    shotVisual.terminalMarker.scale.setScalar(
+      traceEndsInsideVehicle ? 1.45 : 1,
+    );
+    shotVisual.terminalVisible = !omitContinuation;
+    shotVisual.animationActive = false;
+    shotVisual.animationLayout = {
+      traceStart: start,
+      traceEnd: end,
+      continuationStart,
+      continuationEnd,
+      traceRotation,
+      traceLengthM: traceLength,
+      continuationLengthM: omitContinuation
+        ? continuationEnd.distanceTo(continuationStart)
+        : 0,
+      firstImpactProgress: THREE.MathUtils.clamp(
+        ingressLength / traceLength,
+        0,
+        1,
+      ),
+      layerMarkerProgress,
+      traceDurationMs: THREE.MathUtils.clamp(
+        SHOT_TRACE_MIN_DURATION_MS + traceLength * 45,
+        SHOT_TRACE_MIN_DURATION_MS,
+        SHOT_TRACE_MAX_DURATION_MS,
+      ),
+      continuationDurationMs: omitContinuation
+        ? SHOT_CONTINUATION_DURATION_MS
+        : 0,
+    };
+
+    const firstLayer = result.layers[0];
+    const firstImpact = record.intersections.find((intersection) =>
+      intersection.componentIndex === firstLayer.componentIndex
+      && intersection.surfaceProfileIndex === firstLayer.surfaceProfileIndex
+      && intersection.triangleIndex === firstLayer.triangleIndex
+    ) ?? record.intersections[0];
+    const impactPoint = new THREE.Vector3().fromArray(firstImpact.point);
+    const impactNormal = new THREE.Vector3().fromArray(firstImpact.faceNormal);
+    if (impactNormal.lengthSq() < 0.000001) {
+      impactNormal.copy(shotVisual.rayDirection).multiplyScalar(-1);
+    } else {
+      impactNormal.normalize();
+    }
+    shotVisual.explosionLayers.forEach((visual, layerIndex) => {
+      const radialLayer = result.radial.layers[layerIndex];
+      if (!radialLayer) {
+        clearShotExplosionLayerVisual(visual);
+        return;
+      }
+      const ballisticsLayer = result.ballistics.explosiveLayers.find(
+        (layer) => layer.layerId === radialLayer.layerId,
+      );
+      if (!ballisticsLayer) {
+        clearShotExplosionLayerVisual(visual);
+        return;
+      }
+      const origin = impactPoint.clone().addScaledVector(
+        impactNormal,
+        radialLayer.explosionOriginOffsetCm / 100,
+      );
+      const damageTypeIconKind =
+        vehicleDamageTypeIconKindForPath(radialLayer.damageTypePath)
+        ?? "generic";
+      configureShotExplosionLayerVisual(visual, {
+        origin,
+        normal: impactNormal,
+        color: shotExplosionColor(damageTypeIconKind),
+        damageTypeIconKind,
+        outerRadiusM: ballisticsLayer.outerRadiusCm / 100,
+        innerRadiusM: ballisticsLayer.innerRadiusCm / 100,
+        delayMs: result.radial.layerOrderResolved === true
+          ? layerIndex * SHOT_EXPLOSION_LAYER_DELAY_MS
+          : 0,
+        layerId: radialLayer.layerId,
+        damageTypePath: radialLayer.damageTypePath,
+      });
+    });
     shotVisual.group.visible = true;
+    setShotTraceAnimationProgress(shotVisual, 1, 1);
+    shotVisual.explosionLayers.forEach((layer) => {
+      settleShotExplosionLayerVisual(layer, shotVisual.selected);
+    });
   }, []);
 
   const savedShotSnapshot = useCallback(() => shotRecordsRef.current.map((record) => ({
@@ -2283,7 +3542,136 @@ export function RuntimeVehicleViewer({
     updateHostShotState(record.result);
   }, [selectShotVisual, updateHostShotState]);
 
+  const cancelShotAnimation = useCallback((settle: boolean) => {
+    if (shotAnimationFrameRef.current !== 0) {
+      cancelAnimationFrame(shotAnimationFrameRef.current);
+      shotAnimationFrameRef.current = 0;
+    }
+    const animatedShotId = animatedShotIdRef.current;
+    animatedShotIdRef.current = null;
+    const animatedRecord = animatedShotId === null
+      ? null
+      : shotRecordsRef.current.find(
+          (record) => record.shotId === animatedShotId,
+        ) ?? null;
+    if (animatedRecord) {
+      animatedRecord.visual.animationActive = false;
+      if (settle) {
+        setShotTraceAnimationProgress(animatedRecord.visual, 1, 1);
+        animatedRecord.visual.explosionLayers.forEach((layer) => {
+          settleShotExplosionLayerVisual(
+            layer,
+            animatedRecord.visual.selected,
+          );
+        });
+      }
+    }
+    const host = hostRef.current;
+    if (host) {
+      if (settle && animatedRecord) {
+        host.dataset.shotAnimationState = "settled";
+      } else {
+        delete host.dataset.shotAnimationState;
+        delete host.dataset.shotAnimationShotId;
+        delete host.dataset.shotAnimationDurationMs;
+      }
+    }
+    if (settle && animatedRecord) renderRef.current?.();
+  }, []);
+
+  const startShotAnimation = useCallback((record: RuntimeShotRecord) => {
+    cancelShotAnimation(true);
+    const layout = record.visual.animationLayout;
+    if (!layout) return;
+    const host = hostRef.current;
+    const reducedMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches ?? false;
+    if (reducedMotion) {
+      record.visual.animationActive = false;
+      setShotTraceAnimationProgress(record.visual, 1, 1);
+      record.visual.explosionLayers.forEach((layer) => {
+        settleShotExplosionLayerVisual(layer, record.visual.selected);
+      });
+      if (host) {
+        host.dataset.shotAnimationState = "reduced-motion";
+        host.dataset.shotAnimationShotId = String(record.shotId);
+        host.dataset.shotAnimationDurationMs = "0";
+      }
+      renderRef.current?.();
+      return;
+    }
+
+    const configuredExplosionLayers = record.visual.explosionLayers.filter(
+      (layer) => layer.configured,
+    );
+    const impactAtMs = layout.traceDurationMs * layout.firstImpactProgress;
+    const explosionEndMs = configuredExplosionLayers.length > 0
+      ? impactAtMs
+        + Math.max(...configuredExplosionLayers.map((layer) => layer.delayMs))
+        + SHOT_EXPLOSION_DURATION_MS
+      : 0;
+    const traceEndMs =
+      layout.traceDurationMs + layout.continuationDurationMs;
+    const totalDurationMs = Math.max(traceEndMs, explosionEndMs);
+    const startedAt = performance.now();
+    record.visual.animationActive = true;
+    animatedShotIdRef.current = record.shotId;
+    setShotTraceAnimationProgress(record.visual, 0, 0);
+    record.visual.explosionLayers.forEach((layer) => {
+      layer.root.visible = false;
+    });
+    if (host) {
+      host.dataset.shotAnimationState = "playing";
+      host.dataset.shotAnimationShotId = String(record.shotId);
+      host.dataset.shotAnimationDurationMs = String(
+        Math.round(totalDurationMs),
+      );
+    }
+
+    const animateShot = (timestamp: number) => {
+      if (animatedShotIdRef.current !== record.shotId) return;
+      const elapsedMs = Math.max(0, timestamp - startedAt);
+      const solidProgress = layout.traceDurationMs > 0
+        ? elapsedMs / layout.traceDurationMs
+        : 1;
+      const continuationProgress = layout.continuationDurationMs > 0
+        ? (elapsedMs - layout.traceDurationMs)
+          / layout.continuationDurationMs
+        : 1;
+      setShotTraceAnimationProgress(
+        record.visual,
+        solidProgress,
+        continuationProgress,
+      );
+      const explosionElapsedMs = elapsedMs - impactAtMs;
+      record.visual.explosionLayers.forEach((layer) => {
+        setShotExplosionLayerAnimationFrame(
+          layer,
+          explosionElapsedMs,
+          record.visual.selected,
+        );
+      });
+      renderRef.current?.();
+      if (elapsedMs < totalDurationMs) {
+        shotAnimationFrameRef.current = requestAnimationFrame(animateShot);
+        return;
+      }
+      shotAnimationFrameRef.current = 0;
+      animatedShotIdRef.current = null;
+      record.visual.animationActive = false;
+      setShotTraceAnimationProgress(record.visual, 1, 1);
+      record.visual.explosionLayers.forEach((layer) => {
+        settleShotExplosionLayerVisual(layer, record.visual.selected);
+      });
+      if (host) host.dataset.shotAnimationState = "settled";
+      renderRef.current?.();
+    };
+    shotAnimationFrameRef.current = requestAnimationFrame(animateShot);
+  }, [cancelShotAnimation]);
+
   const clearShotVisual = useCallback(() => {
+    cancelShotAnimation(false);
     setShotResult(null);
     setSavedShots([]);
     setActiveShotId(null);
@@ -2294,16 +3682,21 @@ export function RuntimeVehicleViewer({
       shotVisual.rayOrigin = null;
       shotVisual.rayDirection = null;
       shotVisual.traceOutline.visible = false;
+      shotVisual.continuationTrace.visible = false;
+      shotVisual.continuationArrow.visible = false;
       shotVisual.terminalVisible = false;
       shotVisual.terminalMarker.visible = false;
+      shotVisual.animationActive = false;
+      shotVisual.animationLayout = null;
       shotVisual.layerMarkers.forEach((marker) => { marker.sphere.visible = false; });
+      shotVisual.explosionLayers.forEach(clearShotExplosionLayerVisual);
     });
     if (hitModelRef.current) {
       setHitSceneThreeModelHoveredProfile(hitModelRef.current, null);
     }
     updateHostShotState(null);
     renderRef.current?.();
-  }, [updateHostShotState]);
+  }, [cancelShotAnimation, updateHostShotState]);
 
   useEffect(() => {
     const requested = runtimeAttackSourceForId(navigationState?.attacker ?? "");
@@ -2440,6 +3833,7 @@ export function RuntimeVehicleViewer({
       (record) => record.shotId === activeShotIdRef.current,
     );
     if (!parsed || !weaponModel || !activeRecord || nextWeaponIndex < 0) return;
+    cancelShotAnimation(true);
     const result = simulateEditorNativeShot({
       model: parsed.header,
       weaponModel,
@@ -2447,7 +3841,7 @@ export function RuntimeVehicleViewer({
       targetDistanceM: nextDistanceM,
       shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
       intersections: activeRecord.intersections,
-      includeRadial: false,
+      includeRadial: true,
     });
     activeRecord.distanceM = nextDistanceM;
     activeRecord.result = result;
@@ -2455,32 +3849,41 @@ export function RuntimeVehicleViewer({
     setSavedShots(savedShotSnapshot());
     commitSelectedShot(activeRecord);
     renderRef.current?.();
-  }, [applyShotResultToVisual, commitSelectedShot, savedShotSnapshot]);
+  }, [
+    applyShotResultToVisual,
+    cancelShotAnimation,
+    commitSelectedShot,
+    savedShotSnapshot,
+  ]);
 
   const selectSavedShot = useCallback((shotId: number) => {
     const record = shotRecordsRef.current.find((candidate) => candidate.shotId === shotId);
     if (!record) return;
+    cancelShotAnimation(true);
     targetDistanceRef.current = record.distanceM;
     setTargetDistanceM(record.distanceM);
     commitSelectedShot(record);
     renderRef.current?.();
-  }, [commitSelectedShot, setTargetDistanceM]);
+  }, [cancelShotAnimation, commitSelectedShot, setTargetDistanceM]);
 
   const saveRayShot = useCallback(({
     intersections,
     rayOrigin,
     rayDirection,
     distanceM,
+    animate = true,
   }: {
     intersections: EditorNativeIntersection[];
     rayOrigin: THREE.Vector3;
     rayDirection: THREE.Vector3;
     distanceM: number;
+    animate?: boolean;
   }) => {
     const parsed = parsedHitRef.current;
     const weaponModel = attackModelRef.current;
     const selectedWeaponIndex = weaponIndexRef.current;
     if (!parsed || !weaponModel || selectedWeaponIndex < 0 || intersections.length === 0) return null;
+    cancelShotAnimation(true);
     const records = shotRecordsRef.current;
     const reusableRecord = records.length >= MAX_SHOT_TRACES ? records.shift() ?? null : null;
     const visual = reusableRecord?.visual ?? shotVisualsRef.current.find(
@@ -2489,9 +3892,15 @@ export function RuntimeVehicleViewer({
     if (!visual) return null;
     visual.group.visible = false;
     visual.traceOutline.visible = false;
+    visual.continuationTrace.visible = false;
+    visual.continuationArrow.visible = false;
     visual.terminalVisible = false;
     visual.terminalMarker.visible = false;
+    visual.selected = false;
+    visual.animationActive = false;
+    visual.animationLayout = null;
     visual.layerMarkers.forEach((marker) => { marker.sphere.visible = false; });
+    visual.explosionLayers.forEach(clearShotExplosionLayerVisual);
     visual.rayOrigin = rayOrigin.clone();
     visual.rayDirection = rayDirection.clone().normalize();
     visual.firstHitDistanceM = intersections[0].distanceFromRayOriginM;
@@ -2502,7 +3911,7 @@ export function RuntimeVehicleViewer({
       targetDistanceM: distanceM,
       shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
       intersections,
-      includeRadial: false,
+      includeRadial: true,
     });
     const entryPoint = intersections[0].point;
     const record: RuntimeShotRecord = {
@@ -2518,9 +3927,16 @@ export function RuntimeVehicleViewer({
     applyShotResultToVisual(record, result);
     setSavedShots(savedShotSnapshot());
     commitSelectedShot(record);
+    if (animate) startShotAnimation(record);
     renderRef.current?.();
     return record;
-  }, [applyShotResultToVisual, commitSelectedShot, savedShotSnapshot]);
+  }, [
+    applyShotResultToVisual,
+    cancelShotAnimation,
+    commitSelectedShot,
+    savedShotSnapshot,
+    startShotAnimation,
+  ]);
 
   useEffect(() => {
     navigationStateRef.current = navigationState;
@@ -2766,6 +4182,21 @@ export function RuntimeVehicleViewer({
     host.dataset.attackSourceBallisticsId = selectedAttackWeapon.ballisticsId;
     host.dataset.attackSourceBallisticsKind =
       selectedAttackWeapon.ballisticsSource.kind;
+    if (selectedAttackWeapon.sourceKind === "explosive-catalog") {
+      host.dataset.attackExplosiveCategory =
+        selectedAttackWeapon.explosiveCategory ?? "unknown";
+      host.dataset.attackExplosiveLayerCount = String(
+        selectedAttackWeapon.explosiveLayerCount ?? 0,
+      );
+      host.dataset.attackExplosiveLayerOrder =
+        selectedAttackWeapon.explosiveLayerOrderClosed
+          ? "closed"
+          : "native-unknown";
+    } else {
+      delete host.dataset.attackExplosiveCategory;
+      delete host.dataset.attackExplosiveLayerCount;
+      delete host.dataset.attackExplosiveLayerOrder;
+    }
     if (selectedAttackWeapon.weaponIndex >= 0) {
       host.dataset.attackSourceRuntimeWeaponIndex = String(
         selectedAttackWeapon.weaponIndex,
@@ -2884,6 +4315,11 @@ export function RuntimeVehicleViewer({
   ]);
 
   useEffect(() => {
+    physicalPoseEnabledRef.current = physicalPoseEnabled;
+    applyChassisPoseRef.current?.(physicalPoseEnabled);
+  }, [physicalPoseEnabled]);
+
+  useEffect(() => {
     const host = hostRef.current;
     if (!host || !visual) return;
     setArmorThicknessRange(null);
@@ -2909,7 +4345,15 @@ export function RuntimeVehicleViewer({
     let exteriorReady = false;
     let exteriorPromise: Promise<void> | null = null;
     let gridHelper: THREE.GridHelper | null = null;
+    let groundScale: THREE.Group | null = null;
+    let referenceSoldier: THREE.Group | null = null;
+    let referenceSoldierSettled = false;
+    let pendingReferenceFit: {
+      targetGroup: THREE.Object3D;
+      source: "hit" | "analysis" | "exterior";
+    } | null = null;
     let fittedSource: "hit" | "analysis" | "exterior" | null = null;
+    let fittedTargetGroup: THREE.Object3D | null = null;
     let pointerStart: { x: number; y: number } | null = null;
     let hoverFrame = 0;
     let pendingHover: { clientX: number; clientY: number } | null = null;
@@ -2950,6 +4394,225 @@ export function RuntimeVehicleViewer({
 
     const modelGroup = new THREE.Group();
     modelGroup.name = preview.visualVehicleId ?? "runtime-visual";
+    const skeletalPoseBindings = new Set<RuntimeSkeletalPoseBinding>();
+    const updateSkeletalPoseDataset = (enabled: boolean) => {
+      const selectedBoneNames = new Set<string>();
+      const changedBoneNames = new Set<string>();
+      const nativePlanarBoneNames = new Set<string>();
+      const nativePlanarIdentities = new Set<string>();
+      const nativePlanarOccurrenceIds = new Set<string>();
+      let maxAbsContactResidualCm = 0;
+      let declaredReferenceEquivalentMismatch = false;
+      for (const {
+        controller,
+        generatedClass,
+        stableOccurrenceId,
+        nativePlanarRecord,
+      } of skeletalPoseBindings) {
+        controller.selectedBoneNames.forEach((name) =>
+          selectedBoneNames.add(name),
+        );
+        controller.changedBoneNames.forEach((name) =>
+          changedBoneNames.add(name),
+        );
+        declaredReferenceEquivalentMismatch ||=
+          controller.declaredReferenceEquivalentMismatch;
+        if (nativePlanarRecord) {
+          nativePlanarIdentities.add(
+            `${generatedClass ?? "unknown"}\u0000${stableOccurrenceId}`,
+          );
+          nativePlanarOccurrenceIds.add(stableOccurrenceId);
+          maxAbsContactResidualCm = Math.max(
+            maxAbsContactResidualCm,
+            nativePlanarRecord.maxAbsContactResidualCm,
+          );
+          nativePlanarRecord.wheels.forEach((wheel) => {
+            const [x, y, z] = wheel.localTranslationOffsetGltfM;
+            if (x !== 0 || y !== 0 || z !== 0) {
+              nativePlanarBoneNames.add(wheel.boneName);
+            }
+          });
+        }
+      }
+      const nativePlanarActive =
+        enabled && nativePlanarIdentities.size > 0;
+      host.dataset.skeletalPoseState = enabled
+        ? nativePlanarActive
+          ? "native-planar"
+          : skeletalPoseBindings.size > 0
+            ? "observed-fallback"
+            : "unavailable"
+        : "reference";
+      host.dataset.skeletalPoseEvidence =
+        vehicleMeshSkeletalPoseEvidence ?? "unavailable";
+      host.dataset.skeletalPoseControllerCount = String(
+        skeletalPoseBindings.size,
+      );
+      host.dataset.skeletalPoseSelectedBoneCount = String(
+        selectedBoneNames.size,
+      );
+      host.dataset.skeletalPoseChangedBoneCount = String(changedBoneNames.size);
+      host.dataset.skeletalPoseVisualDifference =
+        changedBoneNames.size > 0 ? "observed-differs" : "none";
+      host.dataset.skeletalPoseReferenceMismatch =
+        declaredReferenceEquivalentMismatch ? "true" : "false";
+      host.dataset.suspensionPoseState = enabled
+        ? nativePlanarActive
+          ? "native-planar"
+          : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+            ? "not-applicable"
+            : skeletalPoseBindings.size > 0
+              ? "observed-fallback"
+              : "unavailable"
+        : "reference";
+      host.dataset.suspensionPoseAuthority = nativePlanarActive
+        ? "odk-native-planar-sweep-reconstruction"
+        : enabled &&
+            vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+          ? "explicit-not-applicable"
+          : enabled && skeletalPoseBindings.size > 0
+            ? "live-pie-observed-fallback"
+            : enabled
+              ? "unavailable"
+              : "inverse-bind-reference";
+      host.dataset.suspensionPoseRecordCount = String(
+        nativePlanarIdentities.size,
+      );
+      host.dataset.suspensionPoseAppliedWheelOffsetCount = String(
+        nativePlanarActive ? nativePlanarBoneNames.size : 0,
+      );
+      host.dataset.suspensionPoseMaxAbsContactResidualCm = String(
+        nativePlanarActive ? maxAbsContactResidualCm : 0,
+      );
+      host.dataset.suspensionPoseGeneratedClass =
+        preview.generatedClass ?? "unavailable";
+      host.dataset.suspensionPoseCoverageReason =
+        vehiclePlanarSuspensionCoverage?.reason ?? "resolved";
+      host.dataset.suspensionPoseStableOccurrenceIds = [
+        ...nativePlanarOccurrenceIds,
+      ]
+        .sort()
+        .join(",");
+    };
+    const applySkeletalPose = (enabled: boolean) => {
+      for (const {
+        controller,
+        nativePlanarRecord,
+        skinnedMeshes,
+      } of skeletalPoseBindings) {
+        if (!enabled) {
+          controller.apply("reference");
+        } else if (nativePlanarRecord) {
+          controller.apply(
+            "native-planar",
+            runtimePlanarSuspensionOffsetsByBoneName(nativePlanarRecord),
+          );
+        } else {
+          controller.apply("observed");
+        }
+        for (const mesh of skinnedMeshes) {
+          mesh.computeBoundingBox();
+          mesh.computeBoundingSphere();
+        }
+      }
+      updateSkeletalPoseDataset(enabled);
+    };
+    const registerSkeletalPose = (
+      model: THREE.Object3D,
+      placement: RuntimeVisualPlacement,
+    ) => {
+      if (
+        placement.name.trim().toLowerCase() !== "vehicle mesh" ||
+        placement.runtimeBonePoseStatus !== "observed"
+      ) {
+        return;
+      }
+      const nativePlanarRecord =
+        runtimePlanarSuspensionPoseForVisualOccurrence(
+          preview.generatedClass,
+          placement.stableOccurrenceId,
+        );
+      const skinnedMeshesBySkeleton = new Map<
+        THREE.Skeleton,
+        THREE.SkinnedMesh[]
+      >();
+      model.traverse((object) => {
+        if (object instanceof THREE.SkinnedMesh) {
+          const skinnedMeshes =
+            skinnedMeshesBySkeleton.get(object.skeleton) ?? [];
+          skinnedMeshes.push(object);
+          skinnedMeshesBySkeleton.set(object.skeleton, skinnedMeshes);
+        }
+      });
+      for (const [skeleton, skinnedMeshes] of skinnedMeshesBySkeleton) {
+        const controller = createRuntimeSkeletalPoseController(skeleton, {
+          observedSampleCount:
+            placement.runtimeBonePoseNormalTimeSampleCount ?? 1,
+          referenceEquivalent:
+            placement.runtimeBonePoseReferenceEquivalent === true,
+        });
+        if (!controller) continue;
+        if (!physicalPoseEnabledRef.current) {
+          controller.apply("reference");
+        } else if (nativePlanarRecord) {
+          controller.apply(
+            "native-planar",
+            runtimePlanarSuspensionOffsetsByBoneName(nativePlanarRecord),
+          );
+        } else {
+          controller.apply("observed");
+        }
+        for (const mesh of skinnedMeshes) {
+          mesh.computeBoundingBox();
+          mesh.computeBoundingSphere();
+        }
+        skeletalPoseBindings.add({
+          controller,
+          generatedClass: preview.generatedClass,
+          stableOccurrenceId: placement.stableOccurrenceId,
+          nativePlanarRecord,
+          skinnedMeshes,
+          model,
+          placementMatrix: new THREE.Matrix4().fromArray(placement.matrix),
+        });
+      }
+      updateSkeletalPoseDataset(physicalPoseEnabledRef.current);
+    };
+    updateSkeletalPoseDataset(physicalPoseEnabledRef.current);
+    const chassisPoseGroup = new THREE.Group();
+    chassisPoseGroup.name = "runtime-settled-chassis-pose";
+    chassisPoseGroup.matrixAutoUpdate = false;
+    const staticChassisPoseMatrix = new THREE.Matrix4();
+    const settledChassisPoseMatrix = chassisPose
+      ? new THREE.Matrix4().fromArray(chassisPose.gltfMatrix)
+      : staticChassisPoseMatrix;
+    const applyChassisPoseMatrix = (enabled: boolean) => {
+      const active = enabled && chassisPose !== null;
+      chassisPoseGroup.matrix.copy(
+        active ? settledChassisPoseMatrix : staticChassisPoseMatrix,
+      );
+      chassisPoseGroup.matrixWorldNeedsUpdate = true;
+      host.dataset.chassisPoseState = chassisPose
+        ? active
+          ? "settled"
+          : "static"
+        : "unavailable";
+      host.dataset.chassisPoseAuthority = chassisPose
+        ? "runtime-probe-map"
+        : "unavailable";
+      if (chassisPose) {
+        host.dataset.chassisPoseGeneratedClass = chassisPose.generatedClass;
+        host.dataset.chassisPoseCaptureSha256 = chassisPose.captureSha256;
+        host.dataset.chassisPosePitchDegrees = String(chassisPose.pitchDeg);
+        host.dataset.chassisPoseRollDegrees = String(chassisPose.rollDeg);
+        host.dataset.chassisPoseActorOriginHeightCm = String(
+          chassisPose.heightAbovePlaneCm,
+        );
+        host.dataset.chassisPoseWheelCompression =
+          chassisPose.wheelCompressionState;
+      }
+    };
+    applyChassisPoseMatrix(physicalPoseEnabledRef.current);
     const visualGroup = new THREE.Group();
     visualGroup.name = "runtime-visual-occurrences";
     const analysisVisualGroup = new THREE.Group();
@@ -2962,7 +4625,8 @@ export function RuntimeVehicleViewer({
     );
     visualGroup.visible = modeRef.current === "exterior";
     analysisVisualGroup.visible = modeRef.current !== "exterior";
-    modelGroup.add(visualGroup, analysisVisualGroup);
+    modelGroup.add(chassisPoseGroup);
+    chassisPoseGroup.add(visualGroup, analysisVisualGroup);
     visualGroupRef.current = visualGroup;
     analysisVisualGroupRef.current = analysisVisualGroup;
     scene.add(modelGroup);
@@ -2985,7 +4649,15 @@ export function RuntimeVehicleViewer({
     shotVisualsRef.current = shotVisuals;
     shotVisuals.forEach((shotVisual) => scene.add(shotVisual.group));
 
-    const render = () => renderer.render(scene, camera);
+    const render = () => {
+      scene.updateMatrixWorld(true);
+      shotVisuals.forEach((shotVisual) => {
+        shotVisual.explosionLayers.forEach((visual) => {
+          updateShotExplosionDamageTypeIconPosition(visual, camera);
+        });
+      });
+      renderer.render(scene, camera);
+    };
     renderRef.current = render;
     const applyTurretPose = () => {
       const appliedMatrices: string[] = [];
@@ -3064,13 +4736,79 @@ export function RuntimeVehicleViewer({
       }
       const hitModel = hitModelRef.current;
       const parsedHit = parsedHitRef.current;
-      const hitPoseKey = poses.length > 0
+      const turretHitPoseKey = poses.length > 0
         ? poses.map((pose) => [
             pose.stationId,
             pose.yawDegrees.toFixed(3),
             pose.pitchDegrees.toFixed(3),
           ].join(":")).join(";")
         : "none";
+      const runningGearBonePoseByIdentity = new Map<
+        string,
+        {
+          stableOccurrenceId: string;
+          boneName: string;
+          matrix: readonly number[];
+        }
+      >();
+      if (physicalPoseEnabledRef.current) {
+        for (const {
+          controller,
+          stableOccurrenceId,
+          nativePlanarRecord,
+          model,
+          placementMatrix,
+        } of skeletalPoseBindings) {
+          if (!nativePlanarRecord) continue;
+          const placementInverse = placementMatrix.clone().invert();
+          for (const wheel of nativePlanarRecord.wheels) {
+            const identity = `${stableOccurrenceId}\u0000${wheel.boneName}`;
+            if (runningGearBonePoseByIdentity.has(identity)) continue;
+            const componentPose = controller.componentPoseMatrixForBone(
+              wheel.boneName,
+              model,
+            );
+            if (!componentPose) continue;
+            runningGearBonePoseByIdentity.set(identity, {
+              stableOccurrenceId,
+              boneName: wheel.boneName,
+              matrix: placementMatrix
+                .clone()
+                .multiply(componentPose)
+                .multiply(placementInverse)
+                .elements.slice(),
+            });
+          }
+        }
+      }
+      const runningGearBonePoses = [...runningGearBonePoseByIdentity.values()];
+      const runningGearHitPoses =
+        parsedHit && physicalPoseEnabledRef.current
+          ? resolveRuntimeRunningGearHitComponentPoses(
+              parsedHit.header.components,
+              runningGearBonePoses,
+            )
+          : {
+              componentPoses: [],
+              unmatchedComponentIndices: [],
+              ambiguousComponentIndices: [],
+            };
+      const runningGearHitPoseKey = physicalPoseEnabledRef.current
+        ? runningGearBonePoses
+            .map(({ stableOccurrenceId, boneName, matrix }) =>
+              [
+                stableOccurrenceId,
+                boneName,
+                ...matrix.map((value) => value.toFixed(7)),
+              ].join(":"),
+            )
+            .sort()
+            .join(";")
+        : "reference";
+      const hitPoseKey = [
+        `turret:${turretHitPoseKey}`,
+        `running-gear:${runningGearHitPoseKey}`,
+      ].join("|");
       let hitPoseChanged = false;
       if (
         hitModel &&
@@ -3080,7 +4818,14 @@ export function RuntimeVehicleViewer({
           hitPoseKey !== lastAppliedHitPoseKey
         )
       ) {
-        const componentTransforms = new Map<number, THREE.Matrix4>();
+        const componentTransforms = new Map<number, THREE.Matrix4>(
+          runningGearHitPoses.componentPoses.map(
+            ({ componentIndex, matrix }) => [
+              componentIndex,
+              new THREE.Matrix4().fromArray(matrix),
+            ] as const,
+          ),
+        );
         for (const {
           pose,
           yawTransform,
@@ -3131,7 +4876,35 @@ export function RuntimeVehicleViewer({
         host.dataset.turretHitVertexConflictCount = String(
           result.conflictedVertexCount,
         );
-        host.dataset.turretAppliedHitPose = hitPoseKey;
+        host.dataset.turretAppliedHitPose = turretHitPoseKey;
+        host.dataset.runningGearAppliedHitPose = runningGearHitPoseKey;
+        host.dataset.runningGearAppliedHitComponentCount = String(
+          runningGearHitPoses.componentPoses.length,
+        );
+        host.dataset.runningGearUnmatchedHitComponentCount = String(
+          runningGearHitPoses.unmatchedComponentIndices.length,
+        );
+        host.dataset.runningGearAmbiguousHitComponentCount = String(
+          runningGearHitPoses.ambiguousComponentIndices.length,
+        );
+        const wheelHitComponentCount = parsedHit.header.components.filter(
+          ({ semanticKind }) => semanticKind === "wheel",
+        ).length;
+        const trackHitComponentCount = parsedHit.header.components.filter(
+          ({ semanticKind }) => semanticKind === "track",
+        ).length;
+        host.dataset.runningGearRigidTrackHitComponentCount =
+          String(trackHitComponentCount);
+        host.dataset.runningGearHitPoseState =
+          physicalPoseEnabledRef.current
+            ? runningGearHitPoses.componentPoses.length > 0
+              ? "native-planar"
+              : wheelHitComponentCount > 0
+                ? "unavailable"
+                : trackHitComponentCount > 0
+                  ? "rigid-chassis"
+                  : "not-applicable"
+            : "reference";
         lastAppliedHitModel = hitModel;
         lastAppliedHitPoseKey = hitPoseKey;
         hitPoseChanged = true;
@@ -3711,49 +5484,152 @@ export function RuntimeVehicleViewer({
     resizeObserver.observe(host);
     resize();
 
-    const fitViewToGroup = (targetGroup: THREE.Object3D, source: "hit" | "analysis" | "exterior") => {
-      if (fittedSource !== null) return;
+    const fitViewToGroup = (
+      targetGroup: THREE.Object3D,
+      source: "hit" | "analysis" | "exterior",
+      {
+        force = false,
+        preserveCamera = false,
+      }: { force?: boolean; preserveCamera?: boolean } = {},
+    ) => {
+      if (!referenceSoldierSettled) {
+        if (
+          pendingReferenceFit === null
+          || source === "hit"
+          || pendingReferenceFit.source !== "hit"
+        ) {
+          pendingReferenceFit = { targetGroup, source };
+        }
+        return;
+      }
+      if (fittedSource !== null && !force) return;
       modelGroup.position.set(0, 0, 0);
       modelGroup.updateMatrixWorld(true);
       targetGroup.updateMatrixWorld(true);
       const bounds = new THREE.Box3().setFromObject(targetGroup);
       if (bounds.isEmpty()) throw new Error(`Loaded ${source} package produced an empty scene`);
-      const center = bounds.getCenter(new THREE.Vector3());
-      const sphere = bounds.getBoundingSphere(new THREE.Sphere());
+      const runtimePoseGroundActive =
+        chassisPose !== null && physicalPoseEnabledRef.current;
+      let referenceSoldierBounds: THREE.Box3 | null = null;
+      if (referenceSoldier) {
+        referenceSoldier.position.set(0, 0, 0);
+        referenceSoldier.updateMatrixWorld(true);
+        const initialSoldierBounds = new THREE.Box3().setFromObject(
+          referenceSoldier,
+        );
+        const soldierSize = initialSoldierBounds.getSize(new THREE.Vector3());
+        const soldierCenter = initialSoldierBounds.getCenter(
+          new THREE.Vector3(),
+        );
+        referenceSoldier.position.set(
+          bounds.min.x - soldierCenter.x,
+          (runtimePoseGroundActive ? 0 : bounds.min.y) -
+            initialSoldierBounds.min.y,
+          bounds.min.z
+            - REFERENCE_SOLDIER_SIDE_CLEARANCE_M
+            - soldierSize.z / 2
+            - soldierCenter.z,
+        );
+        referenceSoldier.updateMatrixWorld(true);
+        referenceSoldierBounds = new THREE.Box3().setFromObject(
+          referenceSoldier,
+        );
+        host.dataset.referenceSoldierRearX = String(bounds.min.x);
+        host.dataset.referenceSoldierRightZ = String(
+          bounds.min.z - REFERENCE_SOLDIER_SIDE_CLEARANCE_M,
+        );
+        host.dataset.referenceSoldierSide = "right";
+        delete host.dataset.referenceSoldierLeftZ;
+        host.dataset.referenceSoldierHeightM = String(soldierSize.y);
+      }
+      const fitBounds = bounds.clone();
+      if (referenceSoldierBounds) fitBounds.union(referenceSoldierBounds);
+      const center = fitBounds.getCenter(new THREE.Vector3());
+      const sphere = fitBounds.getBoundingSphere(new THREE.Sphere());
       modelGroup.position.sub(center);
       modelGroup.updateMatrixWorld(true);
       const radius = Math.max(
         sphere.radius,
         compactPortableDrone ? 0.3 : 2.5,
       );
-      const groundY = bounds.min.y - center.y - 0.03;
+      const groundY = runtimePoseGroundActive
+        ? modelGroup.position.y
+        : Math.min(
+            bounds.min.y,
+            referenceSoldierBounds?.min.y ?? bounds.min.y,
+          ) -
+          center.y -
+          0.03;
       if (gridHelper) {
         scene.remove(gridHelper);
         disposeScene(gridHelper);
       }
+      if (groundScale) {
+        scene.remove(groundScale);
+        disposeScene(groundScale);
+      }
       gridHelper = new THREE.GridHelper(radius * 4, 28, 0x555555, 0x292929);
       gridHelper.position.y = groundY;
       host.dataset.referencePlaneY = String(groundY);
+      host.dataset.referencePlaneAuthority = runtimePoseGroundActive
+        ? "runtime-probe-map"
+        : "geometry-bounds";
       scene.add(gridHelper);
-      const resetView = (
-        { preserveShotVisual = false }: { preserveShotVisual?: boolean } = {},
-      ) => {
-        protectionCache = null;
-        controls.target.set(0, 0, 0);
+      const modelLengthM = bounds.max.x - bounds.min.x;
+      const modelWidthM = bounds.max.z - bounds.min.z;
+      const groundScaleLengthM = runtimeGroundScaleLengthM(modelLengthM);
+      const groundScaleWidthM = runtimeGroundScaleLengthM(modelWidthM);
+      groundScale = createRuntimeGroundScale(
+        groundScaleLengthM,
+        groundScaleWidthM,
+      );
+      const groundScaleOriginX = referenceSoldierBounds
+        ? (referenceSoldierBounds.min.x + referenceSoldierBounds.max.x) / 2
+          - center.x
+        : bounds.min.x - center.x;
+      const groundScaleOriginZ = referenceSoldierBounds
+        ? (referenceSoldierBounds.min.z + referenceSoldierBounds.max.z) / 2
+          - center.z
+        : bounds.min.z - center.z;
+      groundScale.position.set(
+        groundScaleOriginX,
+        groundY + 0.006,
+        groundScaleOriginZ,
+      );
+      host.dataset.groundScaleLengthM = String(groundScaleLengthM);
+      host.dataset.groundScaleWidthM = String(groundScaleWidthM);
+      host.dataset.vehicleLengthM = String(modelLengthM);
+      host.dataset.vehicleWidthM = String(modelWidthM);
+      host.dataset.groundScaleSegments = String(
+        RUNTIME_GROUND_SCALE_SEGMENTS,
+      );
+      host.dataset.groundScaleAxes = "length,width";
+      host.dataset.groundScaleOrigin = referenceSoldierBounds
+        ? "reference-soldier-feet"
+        : "vehicle-bounds-corner-fallback";
+      host.dataset.groundScaleDirection =
+        "toward-vehicle-positive-x-positive-z";
+      host.dataset.groundScaleOriginX = String(groundScaleOriginX);
+      host.dataset.groundScaleOriginY = String(groundY + 0.006);
+      host.dataset.groundScaleOriginZ = String(groundScaleOriginZ);
+      scene.add(groundScale);
+      const updateCameraRangeAndFitEvidence = () => {
         const verticalFovRadians = THREE.MathUtils.degToRad(camera.fov);
         const horizontalFovRadians = 2 * Math.atan(
           Math.tan(verticalFovRadians / 2) * Math.max(camera.aspect, 0.0001),
         );
-        const fitFovRadians = Math.min(verticalFovRadians, horizontalFovRadians);
-        const fitDistance = (radius / Math.sin(fitFovRadians / 2)) * 1.18;
-        camera.position.copy(
-          new THREE.Vector3(1.7, 1.25, 2.7).normalize().multiplyScalar(fitDistance),
+        const fitFovRadians = Math.min(
+          verticalFovRadians,
+          horizontalFovRadians,
         );
+        const fitDistance =
+          (radius / Math.sin(fitFovRadians / 2)) * 1.18;
         host.dataset.viewerFit = JSON.stringify({
           source,
+          physicalPose: runtimePoseGroundActive ? "settled" : "static",
           bounds: {
-            min: { x: bounds.min.x, y: bounds.min.y, z: bounds.min.z },
-            max: { x: bounds.max.x, y: bounds.max.y, z: bounds.max.z },
+            min: { x: fitBounds.min.x, y: fitBounds.min.y, z: fitBounds.min.z },
+            max: { x: fitBounds.max.x, y: fitBounds.max.y, z: fitBounds.max.z },
           },
           radius,
           aspect: camera.aspect,
@@ -3764,6 +5640,17 @@ export function RuntimeVehicleViewer({
         camera.far = radius * 30;
         controls.maxDistance = Math.max(40, radius * 50);
         camera.updateProjectionMatrix();
+        return fitDistance;
+      };
+      const resetView = (
+        { preserveShotVisual = false }: { preserveShotVisual?: boolean } = {},
+      ) => {
+        protectionCache = null;
+        controls.target.set(0, 0, 0);
+        const fitDistance = updateCameraRangeAndFitEvidence();
+        camera.position.copy(
+          new THREE.Vector3(1.7, 1.25, -2.7).normalize().multiplyScalar(fitDistance),
+        );
         controls.update();
         if (!preserveShotVisual) clearShotVisual();
         render();
@@ -3773,13 +5660,65 @@ export function RuntimeVehicleViewer({
       };
       resetViewRef.current = resetView;
       fittedSource = source;
-      resetView();
-      initialFitAspect = camera.aspect;
-      initialFitStabilizationPending = true;
-      scheduleInitialFitStabilization();
-      lastAppliedCameraNavigationKey = null;
-      applyCameraNavigation(navigationStateRef.current, false);
+      fittedTargetGroup = targetGroup;
+      if (preserveCamera) {
+        protectionCache = null;
+        controls.target.set(0, 0, 0);
+        updateCameraRangeAndFitEvidence();
+        controls.update();
+        clearShotVisual();
+        render();
+        if (protectionEnabledRef.current) {
+          scheduleProtectionMap({ invalidate: true });
+        }
+      } else {
+        resetView();
+        initialFitAspect = camera.aspect;
+        initialFitStabilizationPending = true;
+        scheduleInitialFitStabilization();
+        lastAppliedCameraNavigationKey = null;
+        applyCameraNavigation(navigationStateRef.current, false);
+      }
     };
+
+    const referenceSoldierLoader = new GLTFLoader();
+    referenceSoldierLoader.setMeshoptDecoder(MeshoptDecoder);
+    void referenceSoldierLoader
+      .loadAsync(REFERENCE_SOLDIER_MODEL_URL)
+      .then(({ scene: soldierScene }) => {
+        if (cancelled) {
+          disposeScene(soldierScene);
+          return;
+        }
+        const glassRebind = rebindReferenceSoldierGlassToHead(soldierScene);
+        applyReferenceSoldierStandingRiflePose(soldierScene);
+        soldierScene.name = "standing-rifle-reference-soldier";
+        referenceSoldier = soldierScene;
+        modelGroup.add(soldierScene);
+        referenceSoldierSettled = true;
+        host.dataset.referenceSoldierState = "ready";
+        host.dataset.referenceSoldierPose = "standing-rifle";
+        host.dataset.referenceSoldierGlassMeshes = String(
+          glassRebind.reboundMeshCount,
+        );
+        host.dataset.referenceSoldierGlassVertices = String(
+          glassRebind.reboundVertexCount,
+        );
+        const pending = pendingReferenceFit;
+        pendingReferenceFit = null;
+        if (pending) fitViewToGroup(pending.targetGroup, pending.source);
+        render();
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        referenceSoldierSettled = true;
+        host.dataset.referenceSoldierState = "error";
+        host.dataset.referenceSoldierError =
+          error instanceof Error ? error.message : String(error);
+        const pending = pendingReferenceFit;
+        pendingReferenceFit = null;
+        if (pending) fitViewToGroup(pending.targetGroup, pending.source);
+      });
 
     const lowerReferencePlaneToGroup = (
       targetGroup: THREE.Object3D,
@@ -3789,11 +5728,32 @@ export function RuntimeVehicleViewer({
       targetGroup.updateMatrixWorld(true);
       const bounds = new THREE.Box3().setFromObject(targetGroup);
       if (bounds.isEmpty()) return;
+      host.dataset[`${datasetPrefix}BoundsMinY`] = String(bounds.min.y);
+      if (chassisPose !== null && physicalPoseEnabledRef.current) return;
       const requiredGroundY = bounds.min.y - 0.03;
       gridHelper.position.y = Math.min(gridHelper.position.y, requiredGroundY);
       host.dataset.referencePlaneY = String(gridHelper.position.y);
-      host.dataset[`${datasetPrefix}BoundsMinY`] = String(bounds.min.y);
+      host.dataset.referencePlaneAuthority = "geometry-bounds";
     };
+
+    const applyChassisPose = (enabled: boolean) => {
+      physicalPoseEnabledRef.current = enabled;
+      applyChassisPoseMatrix(enabled);
+      applySkeletalPose(enabled);
+      applyTurretPose();
+      setRealtimePointer(null);
+      protectionCache = null;
+      if (fittedTargetGroup && fittedSource) {
+        fitViewToGroup(fittedTargetGroup, fittedSource, {
+          force: true,
+          preserveCamera: true,
+        });
+      } else {
+        modelGroup.updateMatrixWorld(true);
+        render();
+      }
+    };
+    applyChassisPoseRef.current = applyChassisPose;
 
     const normalizedPointerForEvent = (event: Pick<PointerEvent, "clientX" | "clientY">) => {
       const bounds = renderer.domElement.getBoundingClientRect();
@@ -3836,7 +5796,7 @@ export function RuntimeVehicleViewer({
           targetDistanceM: targetDistanceRef.current,
           shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
           intersections,
-          includeRadial: false,
+          includeRadial: true,
         });
         const firstLayer = result.layers[0];
         const vehicleDamage = result.damage.filter(isEditorNativeVehicleDamageEvent);
@@ -3966,6 +5926,7 @@ export function RuntimeVehicleViewer({
         const depthBaseMatrix = new THREE.Matrix4().fromArray(placement.matrix);
         depthOccurrence.matrix.copy(depthBaseMatrix);
         const depthModel = cloneSkeleton(source);
+        registerSkeletalPose(depthModel, placement);
         depthModel.traverse((object) => {
           if (!(object instanceof THREE.Mesh)) return;
           object.frustumCulled = false;
@@ -4007,6 +5968,7 @@ export function RuntimeVehicleViewer({
           stableSurfacePlacement;
         const placementMatrix = new THREE.Matrix4().fromArray(placement.matrix);
         const analysisModel = cloneSkeleton(source);
+        registerSkeletalPose(analysisModel, placement);
         analysisModel.updateMatrixWorld(true);
         const occurrenceMeshes: THREE.Mesh[] = [];
         let materialRequiresStableSurface = false;
@@ -4107,6 +6069,7 @@ export function RuntimeVehicleViewer({
             baseMatrix,
           });
           const model = cloneSkeleton(source);
+          registerSkeletalPose(model, placement);
           model.traverse((object) => {
             if (!(object instanceof THREE.Mesh)) return;
             object.frustumCulled = true;
@@ -4233,7 +6196,7 @@ export function RuntimeVehicleViewer({
               modeRef.current !== "exterior" ||
               exteriorSpacedArmorHighlightRef.current;
             hitGroupRef.current = hitGroup;
-            modelGroup.add(hitGroup);
+            chassisPoseGroup.add(hitGroup);
             lastAppliedHitModel = null;
             lastAppliedHitPoseKey = null;
             applyTurretPose();
@@ -4410,6 +6373,7 @@ export function RuntimeVehicleViewer({
               rayOrigin: origin,
               rayDirection: direction,
               distanceM: sharedShot.distanceM,
+              animate: false,
             });
             if (restored) restoredRecords.push(restored);
           });
@@ -4437,6 +6401,11 @@ export function RuntimeVehicleViewer({
       cancelled = true;
       cancelProtectionMap(true);
       cancelAnimationFrame(hoverFrame);
+      if (shotAnimationFrameRef.current !== 0) {
+        cancelAnimationFrame(shotAnimationFrameRef.current);
+        shotAnimationFrameRef.current = 0;
+      }
+      animatedShotIdRef.current = null;
       window.clearTimeout(initialFitStabilizationTimer);
       resetViewRef.current = null;
       activateAssetModeRef.current = null;
@@ -4453,6 +6422,9 @@ export function RuntimeVehicleViewer({
       renderRef.current = null;
       if (applyTurretPoseRef.current === applyTurretPose) {
         applyTurretPoseRef.current = null;
+      }
+      if (applyChassisPoseRef.current === applyChassisPose) {
+        applyChassisPoseRef.current = null;
       }
       if (exteriorOccurrencesRef.current === exteriorOccurrences) {
         exteriorOccurrencesRef.current = new Map();
@@ -4472,19 +6444,23 @@ export function RuntimeVehicleViewer({
       rendererLease.release();
     };
   }, [
+    chassisPose,
     clearShotVisual,
     hit,
     preview.cardId,
+    preview.generatedClass,
     preview.variantRawName,
     preview.visualVehicleId,
     saveRayShot,
     selectSavedShot,
+    vehiclePlanarSuspensionCoverage?.reason,
+    vehiclePlanarSuspensionCoverage?.status,
+    vehicleMeshSkeletalPoseEvidence,
     visual,
   ]);
 
   if (!visual) return null;
 
-  const selectedWeaponLabel = selectedAttackWeapon;
   const ballistics = shotResult?.ballistics ?? null;
   const ballisticsPenetrationKind = weaponPenetrationKindForDamageTypePath(
     ballistics?.damageTypePath ?? null,
@@ -4503,6 +6479,29 @@ export function RuntimeVehicleViewer({
         : protectionSampleProgress.completed >= protectionSampleProgress.total
           ? `本机防护图 ${protectionRenderedPrecision} 档完成`
           : `本机防护图计算中 ${protectionSampleProgress.completed}/${protectionSampleProgress.total}`;
+  const penetrationDamageEvents = shotResult
+    ? effectiveDamageEventsByKind(shotResult, "point")
+    : [];
+  const explosionDamageEvents = shotResult
+    ? effectiveDamageEventsByKind(shotResult, "radial")
+    : [];
+  const showPenetrationDamageLane = shotResult
+    ? shouldShowPenetrationDamageLane(
+        shotResult,
+        selectedAttackWeapon?.directFireRoute ?? false,
+      )
+    : false;
+  const showExplosionDamageLane = shotResult
+    ? shouldShowExplosionDamageLane(shotResult)
+    : false;
+  const stoppedPenetrationLayer =
+    shotResult?.stoppedAtLayer === null || shotResult?.stoppedAtLayer === undefined
+      ? null
+      : shotResult.layers[shotResult.stoppedAtLayer] ?? null;
+  const stoppedPenetrationComponent = stoppedPenetrationLayer && hitHeader
+    ? hitHeader.components[stoppedPenetrationLayer.componentIndex] ?? null
+    : null;
+  const damageAnimationKey = `${activeShotId}:${damageAnimationRevision}`;
 
   return (
     <div
@@ -4518,7 +6517,11 @@ export function RuntimeVehicleViewer({
       data-hit-weapon-label-source={attackReady
         ? attackSource?.sourceKind === "wiki-infantry"
           ? "weapon-wiki"
-          : "vehicle-encyclopedia-card"
+          : attackSource?.sourceKind === "explosive-catalog"
+            ? selectedAttackWeapon?.directFireRoute
+              ? "editor-production-explosive"
+              : "editor-explosive-catalog"
+            : "vehicle-encyclopedia-card"
         : undefined}
       data-attack-source-card-id={attackSource?.cardId}
       data-attack-source-canonical-raw-name={attackSource?.canonicalRawName}
@@ -4528,6 +6531,48 @@ export function RuntimeVehicleViewer({
       }
       data-show-chrome={showChrome}
       data-protection-map={protectionActive ? "active" : "inactive"}
+      data-physical-pose={chassisPose
+        ? physicalPoseActive
+          ? "settled"
+          : "static"
+        : "unavailable"}
+      data-physical-pose-generated-class={chassisPose?.generatedClass}
+      data-skeletal-pose-evidence={
+        vehicleMeshSkeletalPoseEvidence ?? "unavailable"
+      }
+      data-suspension-pose={
+        !physicalPoseEnabled
+          ? "reference"
+          : vehicleMeshPlanarSuspensionPose
+            ? "native-planar"
+            : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+              ? "not-applicable"
+              : vehicleMeshRuntimePosePlacement
+                ? "observed-fallback"
+                : "unavailable"
+      }
+      data-suspension-pose-authority={
+        !physicalPoseEnabled
+          ? "inverse-bind-reference"
+          : vehicleMeshPlanarSuspensionPose
+            ? "odk-native-planar-sweep-reconstruction"
+            : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+              ? "explicit-not-applicable"
+              : vehicleMeshRuntimePosePlacement
+                ? "live-pie-observed-fallback"
+                : "unavailable"
+      }
+      data-suspension-pose-coverage-reason={
+        vehiclePlanarSuspensionCoverage?.reason
+      }
+      data-suspension-pose-nonzero-wheel-count={
+        vehicleMeshPlanarNonzeroWheelCount
+      }
+      data-physical-pose-pitch-degrees={chassisPose?.pitchDeg}
+      data-physical-pose-roll-degrees={chassisPose?.rollDeg}
+      data-physical-pose-actor-origin-height-cm={
+        chassisPose?.heightAbovePlaneCm
+      }
       data-armor-thickness-scale={relativeArmorScaleActive ? "relative" : "absolute"}
       data-exterior-unavailable={exteriorUnavailableMessage ? "true" : undefined}
       data-exterior-streaming={exteriorStreaming ? "true" : "false"}
@@ -4540,6 +6585,9 @@ export function RuntimeVehicleViewer({
       data-turret-pitch-degrees={activeTurretStation ? clampedTurretPitch : undefined}
       data-turret-authority={
         activeTurretStation?.turret.limits?.authority ?? undefined
+      }
+      data-post-penetration-distance-m={
+        ballistics?.traceDistanceAfterPenetrationM ?? undefined
       }
     >
       <div className="viewer-canvas" aria-label={`${displayName} 交互式 3D 视图`}>
@@ -4735,8 +6783,11 @@ export function RuntimeVehicleViewer({
               : ""}
             options={weaponSelectOptions}
             searchOptions={allWeaponSearchOptions}
-            searchPlaceholder="搜索全部载具或步兵武器"
-            groupJumps={attackSource?.sourceKind === "wiki-infantry"}
+            searchPlaceholder="搜索全部载具、步兵武器或爆炸物"
+            groupJumps={
+              attackSource?.sourceKind === "wiki-infantry" ||
+              attackSource?.sourceKind === "explosive-catalog"
+            }
             sortGroupMetrics={attackSource?.sourceKind === "wiki-infantry"}
             onChange={(nextValue) => {
               const selection = parseWeaponSelectionValue(nextValue);
@@ -5008,8 +7059,60 @@ export function RuntimeVehicleViewer({
                     >
                       {label}
                     </button>
-                  ))}
+                ))}
               </div>
+            </div>
+            <div className="viewer-physical-pose-row">
+              <button
+                className="viewer-protection-switch viewer-physical-pose-switch"
+                type="button"
+                role="switch"
+                aria-label="真实物理状态"
+                aria-checked={physicalPoseActive}
+                data-active={physicalPoseActive}
+                disabled={!chassisPose}
+                title={chassisPose
+                  ? [
+                      "RuntimeProbeMap 绝对水平地面上的稳定刚体姿态。",
+                      `俯仰 ${chassisPose.pitchDeg >= 0 ? "+" : ""}${chassisPose.pitchDeg.toFixed(2)}°，`,
+                      `横滚 ${chassisPose.rollDeg >= 0 ? "+" : ""}${chassisPose.rollDeg.toFixed(2)}°，`,
+                      `Actor 原点相对地面 ${chassisPose.heightAbovePlaneCm >= 0 ? "+" : ""}${chassisPose.heightAbovePlaneCm.toFixed(2)} cm。`,
+                      vehicleMeshPlanarSuspensionPose
+                        ? [
+                            `Vehicle Mesh 使用 ODK 原生平面 sweep 关系重建 ${vehicleMeshPlanarNonzeroWheelCount} 个非零轮骨偏移，`,
+                            `最大接地残差 ${vehicleMeshPlanarSuspensionPose.maxAbsContactResidualCm.toExponential(2)} cm；`,
+                            "非物理辅助骨保留 live-PIE observed pose，关闭时全部恢复 inverse-bind reference。",
+                          ].join(" ")
+                        : vehiclePlanarSuspensionCoverage?.status ===
+                            "not-applicable"
+                          ? `该 exact generated class 已明确不适用可视轮骨 native-planar 变换（${vehiclePlanarSuspensionCoverage.reason}）；刚体仍使用稳定姿态。`
+                          : vehicleMeshSkeletalPoseEvidence ===
+                              "reference-equivalent"
+                            ? "当前 exact occurrence 没有 native-planar 记录；Vehicle Mesh 的 live-PIE 轮组骨与 reference 等价，关闭时仍恢复 reference。"
+                            : vehicleMeshSkeletalPoseEvidence ===
+                                "observed-stable"
+                              ? "当前 exact occurrence 没有 native-planar 记录，使用 normal-time observed fallback；关闭时恢复 inverse-bind reference。"
+                              : vehicleMeshSkeletalPoseEvidence ===
+                                  "observed-snapshot"
+                                ? "当前 exact occurrence 没有 native-planar 记录，使用 observed snapshot fallback；关闭时恢复 inverse-bind reference。"
+                                : "该视觉包没有可切换的 Vehicle Mesh 轮组骨姿态。",
+                    ].join(" ")
+                  : "该 exact generated class 没有稳定收敛的运行时底盘姿态；不会猜测或套用相近载具。"}
+                onClick={() => setPhysicalPoseEnabled((enabled) => !enabled)}
+              >
+                <span
+                  className="viewer-protection-switch__track"
+                  aria-hidden="true"
+                >
+                  <span />
+                </span>
+                <span>真实物理状态</span>
+                <strong>{chassisPose
+                  ? physicalPoseActive
+                    ? "开启"
+                    : "关闭"
+                  : "无数据"}</strong>
+              </button>
             </div>
             {mode === "armor" && hitState.kind === "ready" ? (
               <>
@@ -5151,6 +7254,14 @@ export function RuntimeVehicleViewer({
               <span title="基础伤害" aria-label={`基础伤害 ${metricText(ballistics?.impactDamageAtRange ?? null)}`}>
                 <Swords size={12} aria-hidden="true" />{metricText(ballistics?.impactDamageAtRange ?? null)}
               </span>
+              <span
+                data-metric="post-penetration-distance"
+                title="从首个有效命中点起算的最大后效距离"
+                aria-label={`最大后效距离 ${metricText(ballistics?.traceDistanceAfterPenetrationM ?? null)} 米`}
+              >
+                <MoveRight size={13} aria-hidden="true" />
+                {metricText(ballistics?.traceDistanceAfterPenetrationM ?? null)} m
+              </span>
             </div>
           </div>
           <PathMetricLegend
@@ -5177,17 +7288,40 @@ export function RuntimeVehicleViewer({
                   data-spaced-armor={isSpacedArmor}
                   data-no-penetration={isNoPenetration}
                   data-path-marker={markerKind}
+                  data-zero-thickness-behavior={layer.armorThicknessMm === 0
+                    ? isNoPenetration
+                      ? "explicitly-blocked"
+                      : layer.penetrated === true
+                        ? "penetrated"
+                        : layer.stopReason === "post-penetration trace distance is exhausted"
+                          ? "trace-exhausted"
+                          : "stopped"
+                    : undefined}
                 >
                   <i className="viewer-layer-list__outline" aria-hidden="true" />
                   <span title={physicalMaterial ? assetLabel(physicalMaterial) : undefined}>
                     {isSpacedArmor ? "附加装甲" : isNoPenetration ? <>无敌区<br />阻穿体</> : semanticLabel(layer.semanticKind)}
                   </span>
                   <span className="viewer-layer-metrics">
-                    <span data-metric="thickness" title="装甲厚度" aria-label={`装甲厚度 ${metricText(layer.armorThicknessMm)} 毫米`}>
+                    <span
+                      data-metric="thickness"
+                      title={layer.armorThicknessMm === 0
+                        ? isNoPenetration
+                          ? "该表面明确禁用穿透；0 mm 不会覆盖 NoPen 规则"
+                          : layer.penetrated === true
+                            ? "原生严格比较为可用穿深 > 0 mm，因此该层已穿透"
+                            : layer.stopReason ?? "0 mm 表面的穿透状态无法确认"
+                        : "装甲厚度"}
+                      aria-label={`装甲厚度 ${metricText(layer.armorThicknessMm)} 毫米`}
+                    >
                       <b className="viewer-layer-metric-label"><Layers3 size={14} aria-hidden="true" /></b>
                       <span className="viewer-layer-metric-value">{layer.armorThicknessMm === null ? "不可穿透" : `${layer.armorThicknessMm.toFixed(1)} mm`}</span>
                     </span>
-                    <span data-metric="remaining" title="剩余穿深" aria-label={`剩余穿深 ${layer.availablePenetrationMm.toFixed(1)} 毫米`}>
+                    <span
+                      data-metric="remaining"
+                      title={`剩余穿深；距首层 ${layer.distanceFromFirstHitM.toFixed(2)} m，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
+                      aria-label={`剩余穿深 ${layer.availablePenetrationMm.toFixed(1)} 毫米，距首层 ${layer.distanceFromFirstHitM.toFixed(2)} 米，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
+                    >
                       <b className="viewer-layer-metric-label"><RemainingPenetrationIcon /></b>
                       <span className="viewer-layer-metric-value">{layer.availablePenetrationMm.toFixed(1)} mm</span>
                     </span>
@@ -5203,74 +7337,160 @@ export function RuntimeVehicleViewer({
             })}
           </ol>
           {shotResult.layers.length > 8 ? <span className="viewer-more-layers">另有 {shotResult.layers.length - 8} 层</span> : null}
-          <div className="viewer-damage-section">
-            <div className="viewer-damage-heading">伤害计算</div>
-            <ol className="viewer-layer-list viewer-damage-list">
-              {shotResult.damage.some((damage) => editorNativeEffectiveDamageAmount(damage) > 0) ? (
-                shotResult.damage
-                  .filter((damage) => editorNativeEffectiveDamageAmount(damage) > 0)
-                  .map((damage, index) => {
-                    const effectiveDamage = editorNativeEffectiveDamageAmount(damage);
-                    const effect = editorDamageCardEffect(
-                      damage.poolKind,
-                      damage.poolDamage,
-                      damage.maxHealth,
-                    );
-                    return (
-                      <li
-                        key={`${activeShotId}:${damageAnimationRevision}:${damage.poolIndex}:${damage.route}:${index}:${effect?.id ?? "damage"}`}
-                        data-penetrated="true"
-                        data-no-damage="false"
-                        data-damage-pool={damage.poolKind}
-                        data-damage-effect={effect?.id}
+          {showPenetrationDamageLane || showExplosionDamageLane ? (
+            <div
+              className="viewer-damage-section"
+              data-penetration-damage-lane={
+                showPenetrationDamageLane ? "visible" : "hidden"
+              }
+              data-explosion-damage-lane={
+                showExplosionDamageLane ? "visible" : "hidden"
+              }
+            >
+              <div className="viewer-damage-lanes">
+                {showPenetrationDamageLane ? (
+                  <section
+                    className="viewer-damage-lane viewer-damage-lane--penetration"
+                    data-damage-lane="penetration"
+                  >
+                    <header className="viewer-damage-lane__header">
+                      <span>
+                        <strong>穿透伤害</strong>
+                      </span>
+                      <span
+                        className="viewer-damage-lane__legend viewer-damage-lane__legend--penetration"
+                        data-term="penetration-types"
+                        aria-label="穿透方式图例"
                       >
-                        <span className="viewer-damage-target">
-                          {editorPoolLabel(damage.poolKind)}
-                          {effect ? <em className="viewer-damage-outcome">{effect.label}</em> : null}
+                        <span
+                          className="viewer-damage-lane__legend-item"
+                          data-penetration-kind="kinetic"
+                          title="动能穿甲弹"
+                        >
+                          <WeaponPenetrationIcon kind="kinetic" size={14} />
+                          <small>动能穿甲</small>
                         </span>
                         <span
-                          className="viewer-damage-equation"
-                          aria-label={`伤害 ${metricText(damage.incomingDamage)} 乘减伤系数 ${damageModifierText(damage.modifier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`}
+                          className="viewer-damage-lane__legend-item"
+                          data-penetration-kind="shaped-charge"
+                          title="破甲弹"
                         >
-                          <span data-term="damage" title="伤害"><Swords size={12} aria-hidden="true" />{metricText(damage.incomingDamage)}</span>
-                          <i aria-hidden="true">×</i>
-                          <span data-term="mitigation" title="减伤乘数"><Shield size={12} aria-hidden="true" />{damageModifierText(damage.modifier)}</span>
-                          <i aria-hidden="true">=</i>
-                          <strong>{metricText(effectiveDamage)}</strong>
-                          {damage.maxHealth === null ? null : (
-                            <span className="viewer-damage-health" title="总血量" aria-hidden="true">
-                              <HeartPulse size={12} />{metricText(damage.maxHealth)}
-                            </span>
-                          )}
+                          <WeaponPenetrationIcon
+                            kind="shaped-charge"
+                            size={14}
+                          />
+                          <small>破甲弹</small>
                         </span>
-                        {effect ? (
-                          <span className="viewer-damage-effect" aria-hidden="true">
-                            {effect.id === "ammo-rack-destroyed" ? (
-                              <>
-                                <GeometricDamageBurst />
-                                <EngineStyleDamageSweep />
-                              </>
-                            ) : null}
-                            <i />
-                            <i />
-                            <i />
+                      </span>
+                    </header>
+                    <div className="viewer-damage-lane__body">
+                      <ol className="viewer-layer-list viewer-damage-list">
+                        {penetrationDamageEvents.length > 0 ? (
+                          <DamageEventListItems
+                            events={penetrationDamageEvents}
+                            animationKey={`${damageAnimationKey}:penetration`}
+                            penetrationKind={ballisticsPenetrationKind}
+                          />
+                        ) : (
+                          <li
+                            data-no-damage="true"
+                            data-no-pen="true"
+                            data-damage-kind="point"
+                          >
+                            <span className="viewer-damage-target">
+                              <span
+                                className="viewer-damage-target__penetration-icon"
+                                title={
+                                  ballisticsPenetrationKind === "shaped-charge"
+                                    ? "破甲弹"
+                                    : "动能穿甲弹"
+                                }
+                                aria-label={
+                                  ballisticsPenetrationKind === "shaped-charge"
+                                    ? "破甲弹"
+                                    : "动能穿甲弹"
+                                }
+                              >
+                                <WeaponPenetrationIcon
+                                  kind={ballisticsPenetrationKind}
+                                  size={24}
+                                />
+                              </span>
+                              {stoppedPenetrationComponent
+                                ? playerHitComponentLabel(
+                                    stoppedPenetrationComponent,
+                                  )
+                                : "命中表面"}
+                              <em className="viewer-damage-outcome">
+                                未击穿
+                              </em>
+                            </span>
+                            <span
+                              className="viewer-damage-equation"
+                              aria-label={
+                                stoppedPenetrationLayer?.stopReason
+                                  ? `未击穿，${stoppedPenetrationLayer.stopReason}`
+                                  : "未击穿，实际直击伤害为零"
+                              }
+                            >
+                              <span data-term="damage" title="实际直击伤害">
+                                <Swords size={12} aria-hidden="true" />0
+                              </span>
+                              <i aria-hidden="true">=</i>
+                              <strong>0</strong>
+                            </span>
+                          </li>
+                        )}
+                      </ol>
+                    </div>
+                  </section>
+                ) : null}
+
+                {showExplosionDamageLane ? (
+                  <section
+                    className="viewer-damage-lane viewer-damage-lane--explosion"
+                    data-damage-lane="explosion"
+                  >
+                    <header className="viewer-damage-lane__header">
+                      <span>
+                        <strong>爆炸伤害</strong>
+                      </span>
+                      <span
+                        className="viewer-damage-lane__legend"
+                        data-term="explosion-types"
+                        aria-label="爆炸伤害图例"
+                      >
+                        {VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS.map((kind) => (
+                          <span
+                            className="viewer-damage-lane__legend-item"
+                            data-damage-type-kind={kind}
+                            key={kind}
+                            title={vehicleDamageTypeIconLabel(kind)}
+                          >
+                            <VehicleDamageTypeIcon
+                              kind={kind}
+                              size={14}
+                            />
+                            <small>
+                              {vehicleDamageTypeIconShortLabel(kind)}
+                            </small>
                           </span>
-                        ) : null}
-                      </li>
-                    );
-                  })
-              ) : (
-                <li data-no-damage="true">
-                  <span>未造成伤害</span>
-                  <span className="viewer-layer-metrics"><span><b>减伤乘数</b>—</span></span>
-                </li>
-              )}
-            </ol>
-          </div>
-          <small>
-            {selectedWeaponLabel?.displayNameZh ?? shotResult.ballistics.weaponId} · {targetDistanceM.toFixed(0)} m · {shotStatusLabel(shotResult)}
-            {shotResult.unknowns.length > 0 ? ` · 证据边界：${shotResult.unknowns.slice(0, 2).join("；")}` : ""}
-          </small>
+                        ))}
+                      </span>
+                    </header>
+                    <div className="viewer-damage-lane__body">
+                      <ol className="viewer-layer-list viewer-damage-list">
+                        <DamageEventListItems
+                          events={explosionDamageEvents}
+                          animationKey={`${damageAnimationKey}:explosion`}
+                        />
+                      </ol>
+                    </div>
+                  </section>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>

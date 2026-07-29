@@ -10,7 +10,6 @@ import {
   Gauge,
   HeartPulse,
   HelpCircle,
-  KeyRound,
   Search,
   Shield,
   Target,
@@ -43,7 +42,9 @@ import {
   buildCatalogUrl,
   parseCatalogLocation,
 } from "../lib/catalog-navigation.mjs";
+import { visibleDamageResistanceOverrides } from "../lib/encyclopedia-damage-resistances";
 import { formatZoomLevel } from "../lib/reference-display.mjs";
+import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-icons";
 import { vehicleConfigurationNameZh } from "../lib/vehicle-configuration-name";
 import { weaponDisplayNameZh } from "../lib/weapon-display-name";
 import type {
@@ -78,10 +79,10 @@ import {
 import { DailyActiveDisplay } from "./DailyActiveBeacon";
 import { IronRiceHallWordmark } from "./IronRiceHallWordmark";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
+import { VehicleDamageTypeIcon } from "./VehicleDamageTypeIcon";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
 import type { ViewerNavigationState } from "./viewer-types";
 import { SiteFooterSupporters } from "./SiteFooterSupporters";
-import { SiteContentAdminModal } from "./SiteContentAdminModal";
 import {
   SiteFooterUpdatesModal,
   useSiteUpdates,
@@ -571,11 +572,32 @@ const DAMAGE_TYPE_LABELS: Record<string, string> = {
   BP_SmallArms_DamageType_C: "轻武器",
   SQBurningDamage: "燃烧伤害",
   SQDamageType_Collision: "碰撞伤害",
-  SQDamageType_Thermite: "铝热剂",
+  SQDamageType_Thermite: "热辐射",
 };
 
 function damageTypeLabel(damageClass: string) {
   return DAMAGE_TYPE_LABELS[damageClass] ?? cleanReferenceName(damageClass);
+}
+
+function DamageTypeMark({
+  damageClass,
+  size = 17,
+}: {
+  damageClass: string;
+  size?: number;
+}) {
+  const label = damageTypeLabel(damageClass);
+  const iconKind = vehicleDamageTypeIconKindForPath(damageClass);
+  return (
+    <span
+      className="damage-type-mark"
+      data-damage-type-kind={iconKind ?? undefined}
+      title={label}
+    >
+      {iconKind ? <VehicleDamageTypeIcon kind={iconKind} size={size} /> : null}
+      <span>{label}</span>
+    </span>
+  );
 }
 
 function damageBarStyle(value: number | null) {
@@ -1263,12 +1285,8 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
   }
 
   const { general, weapons, seats, components, damageResistances } = data;
-  const reducedDamageResistances = damageResistances.filter(
-    (item) =>
-      item.damageClass !== "BP_AmmoBox_Damage_C" &&
-      item.modifier !== null &&
-      item.modifier < 1,
-  );
+  const visibleHullDamageResistances =
+    visibleDamageResistanceOverrides(damageResistances);
   const weaponEquipment = weapons.filter((weapon) => !isOtherEquipment(weapon));
   const otherEquipment = weapons.filter(isOtherEquipment);
   const specialSeats = seats.filter((seat) => seat.role !== "passenger");
@@ -1489,7 +1507,12 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
                   </div>
                   <div>
                     <dt>伤害类型</dt>
-                    <dd>{damageTypeLabel(weapon.projectile.damageType ?? "")}</dd>
+                    <dd>
+                      <DamageTypeMark
+                        damageClass={weapon.projectile.damageType ?? ""}
+                        size={18}
+                      />
+                    </dd>
                   </div>
                 </dl>
               </li>
@@ -1576,11 +1599,8 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
         {componentGroups.length > 0 ? (
           <ul className="component-list">
             {componentGroups.map(({ key, label, component, count }) => {
-              const resistanceOverrides = component.damageResistances.filter(
-                (item) =>
-                  item.damageClass !== "BP_AmmoBox_Damage_C" &&
-                  item.modifier !== null &&
-                  Math.abs(item.modifier - 1) > 0.001,
+              const resistanceOverrides = visibleDamageResistanceOverrides(
+                component.damageResistances,
               );
               return (
               <li key={key}>
@@ -1610,9 +1630,10 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
                       <div className="component-list__resistance-bars">
                         {resistanceOverrides.map((item) => (
                           <div className="component-list__resistance-row" key={item.damageClass}>
-                            <span title={damageTypeLabel(item.damageClass)}>
-                              {damageTypeLabel(item.damageClass)}
-                            </span>
+                            <DamageTypeMark
+                              damageClass={item.damageClass}
+                              size={16}
+                            />
                             <span
                               className="resistance-chart__track"
                               aria-hidden="true"
@@ -1629,13 +1650,13 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
                       </div>
                       <small className="component-list__resistance-note" role="note">
                         <CircleAlert size={10} aria-hidden="true" />
-                        其余类型承伤 100%
+                        已配置且承伤为 100% 的类型已省略
                       </small>
                     </>
                   ) : (
                     <small className="component-list__resistance-note" role="note">
                       <CircleAlert size={10} aria-hidden="true" />
-                      承伤 100%
+                      未配置独立倍率，承伤 100%
                     </small>
                   )}
                 </div>
@@ -1652,13 +1673,18 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
         <div className="subsection-heading">
           <Shield size={17} aria-hidden="true" />
           <h4>车体伤害抗性</h4>
-          <span>{reducedDamageResistances.length}</span>
+          <span>{visibleHullDamageResistances.length}</span>
         </div>
         <div className="resistance-chart" role="list" aria-label="各类伤害的实际承伤比例">
-            {reducedDamageResistances.map((item, index) => (
+            {visibleHullDamageResistances.map((item, index) => (
                 <article className="resistance-chart__item" role="listitem" key={`${item.damageClass}-${index}`}>
                   <header>
-                    <h5>{damageTypeLabel(item.damageClass)}</h5>
+                    <h5>
+                      <DamageTypeMark
+                        damageClass={item.damageClass}
+                        size={18}
+                      />
+                    </h5>
                     <small>{damageResistanceSummary(item.modifier)}</small>
                   </header>
                   <div className="resistance-chart__bars">
@@ -1682,7 +1708,7 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
         </div>
         <p className="resistance-chart__note" role="note">
           <CircleAlert size={11} aria-hidden="true" />
-          未列出的伤害类型均承受完整伤害（100%）
+          已配置且承伤为 100% 的伤害类型已省略
         </p>
       </div>
 
@@ -2154,7 +2180,6 @@ function SiteFooterHelp({
   docked,
   helpButtonRef,
   helpId,
-  siteEdition,
   onToggle,
   onClose,
 }: {
@@ -2162,87 +2187,56 @@ function SiteFooterHelp({
   docked: boolean;
   helpButtonRef: { current: HTMLButtonElement | null };
   helpId: string;
-  siteEdition: SiteEdition;
   onToggle: () => void;
   onClose: () => void;
 }) {
-  const [adminOpen, setAdminOpen] = useState(false);
-  const closeAdmin = useCallback(() => {
-    setAdminOpen(false);
-    helpButtonRef.current?.focus();
-  }, [helpButtonRef]);
-
   return (
-    <>
-      <div
-        className="site-footer__help"
-        data-docked={docked}
+    <div
+      className="site-footer__help"
+      data-docked={docked}
+    >
+      <aside
+        id={helpId}
+        className="site-footer__help-panel"
+        aria-label="铁皮饭堂使用帮助"
+        hidden={!helpOpen}
       >
-        <aside
-          id={helpId}
-          className="site-footer__help-panel"
-          aria-label="铁皮饭堂使用帮助"
-          hidden={!helpOpen}
-        >
-          <header>
-            <div>
-              <strong>铁皮饭堂助手</strong>
-            </div>
-            <button type="button" aria-label="关闭帮助" onClick={onClose}>
-              <X size={16} aria-hidden="true" />
-            </button>
-          </header>
-          <ol>
-            <li>在顶栏按名称、俗称或拼音搜索载具。</li>
-            <li>打开载具卡片，切换外观、装甲与内构视图。</li>
-            <li>点击卡片上的圈问号，查看相应载具的百科资料。</li>
-            <li>选择武器后，在防护图中动态查看当前角度的击穿区域。</li>
-            <li>点击载具模型，模拟射击并展示完整击穿路径。</li>
-          </ol>
-          <p>数据仅供参考，实装情况以游戏内为准。</p>
-          <button
-            className="site-footer__content-admin-entry"
-            type="button"
-            onClick={() => {
-              onClose();
-              setAdminOpen(true);
-            }}
-          >
-            <span aria-hidden="true">
-              <KeyRound size={15} />
-            </span>
-            <span>
-              <small>CONTENT CONTROL</small>
-              <strong>管理更新日志与赞助名单</strong>
-            </span>
+        <header>
+          <div>
+            <strong>铁皮饭堂助手</strong>
+          </div>
+          <button type="button" aria-label="关闭帮助" onClick={onClose}>
+            <X size={16} aria-hidden="true" />
           </button>
-        </aside>
+        </header>
+        <ol>
+          <li>在顶栏按名称、俗称或拼音搜索载具。</li>
+          <li>打开载具卡片，切换外观、装甲与内构视图。</li>
+          <li>点击卡片上的圈问号，查看相应载具的百科资料。</li>
+          <li>选择武器后，在防护图中动态查看当前角度的击穿区域。</li>
+          <li>点击载具模型，模拟射击并展示完整击穿路径。</li>
+        </ol>
+        <p>数据仅供参考，实装情况以游戏内为准。</p>
+      </aside>
 
-        <button
-          ref={helpButtonRef}
-          className="site-footer__help-trigger"
-          type="button"
-          aria-expanded={helpOpen}
-          aria-controls={helpId}
-          onClick={onToggle}
-        >
-          <span className="site-footer__help-portrait" aria-hidden="true">
-            {/* eslint-disable-next-line @next/next/no-img-element -- optimized transparent local preview derivative avoids loading the full crew composition */}
-            <img src="/images/site/vehicle-crew-help.webp" alt="" />
-          </span>
-          <span className="site-footer__help-label">
-            <HelpCircle size={16} aria-hidden="true" />
-            帮助
-          </span>
-        </button>
-      </div>
-      {adminOpen ? (
-        <SiteContentAdminModal
-          initialEdition={siteEdition}
-          onClose={closeAdmin}
-        />
-      ) : null}
-    </>
+      <button
+        ref={helpButtonRef}
+        className="site-footer__help-trigger"
+        type="button"
+        aria-expanded={helpOpen}
+        aria-controls={helpId}
+        onClick={onToggle}
+      >
+        <span className="site-footer__help-portrait" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element -- optimized transparent local preview derivative avoids loading the full crew composition */}
+          <img src="/images/site/vehicle-crew-help.webp" alt="" />
+        </span>
+        <span className="site-footer__help-label">
+          <HelpCircle size={16} aria-hidden="true" />
+          帮助
+        </span>
+      </button>
+    </div>
   );
 }
 
@@ -4015,7 +4009,7 @@ export function CatalogApp({
               <div className="faction-selector__preview-identity" aria-hidden="true">
                 {/* eslint-disable-next-line @next/next/no-img-element -- compact local faction insignia */}
                 <img src={factionVisualAsset(previewFaction, siteEdition).logo} alt="" />
-                <strong>{factionDisplayName(previewFaction.id)}</strong>
+                <strong>{previewFaction.id.toUpperCase()}</strong>
                 <small className="faction-selector__project-note">
                   公益项目 · 以游戏内实装为准
                 </small>
@@ -4376,7 +4370,6 @@ export function CatalogApp({
         docked={selectedCard !== null}
         helpButtonRef={helpButtonRef}
         helpId="vehicle-crew-help"
-        siteEdition={siteEdition}
         onToggle={() => setHelpOpen((open) => !open)}
         onClose={() => {
           setHelpOpen(false);
