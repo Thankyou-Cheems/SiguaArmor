@@ -65,6 +65,8 @@ import {
 import {
   VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS,
   explosiveDamageTypeIconKinds,
+  vehicleDamageTypeIconColor,
+  vehicleDamageTypeIconColorNumber,
   vehicleDamageTypeIconKindForPath,
   vehicleDamageTypeIconLabel,
   vehicleDamageTypeIconShortLabel,
@@ -115,8 +117,7 @@ import {
   type TurretPreviewStation,
 } from "./TurretLimitsDisplay";
 import {
-  LAT_ROLE_ICON_FRAME_PATH,
-  LAT_ROLE_ICON_LAUNCHER_PATH,
+  paintVehicleDamageTypeIconCanvas,
   VehicleDamageTypeIcon,
 } from "./VehicleDamageTypeIcon";
 import {
@@ -1410,7 +1411,7 @@ function createRuntimeGroundScale(
   group.name = "runtime-ground-scale";
   group.add(createRuntimeGroundScaleAxis(lengthM, "length"));
   const widthAxis = createRuntimeGroundScaleAxis(widthM, "width", -1);
-  widthAxis.rotation.y = Math.PI / 2;
+  widthAxis.rotation.y = -Math.PI / 2;
   group.add(widthAxis);
 
   const origin = new THREE.Mesh(
@@ -1748,6 +1749,14 @@ function DamageEventListItems({
         data-damage-kind={damage.damageKind}
         data-damage-type-kind={damageTypeIconKind ?? undefined}
         data-damage-effect={effect?.id}
+        style={
+          damageTypeIconKind
+            ? {
+                "--explosion-type-color":
+                  vehicleDamageTypeIconColor(damageTypeIconKind),
+              } as CSSProperties
+            : undefined
+        }
       >
         <span className="viewer-damage-target">
           {damage.damageKind === "radial" ? (
@@ -1952,16 +1961,7 @@ function shotTraceMarkerKind(
 }
 
 function shotExplosionColor(kind: VehicleDamageTypeIconKind | null) {
-  return ({
-    kinetic: 0xdde7eb,
-    "small-arms": 0xdde7eb,
-    generic: 0xd9f3ff,
-    fragmentation: 0xffd166,
-    heat: 0xff7a38,
-    hat: 0xff4136,
-    explosives: 0xffa12b,
-    thermite: 0xff4b28,
-  } satisfies Record<VehicleDamageTypeIconKind, number>)[kind ?? "generic"];
+  return vehicleDamageTypeIconColorNumber(kind ?? "generic");
 }
 
 function paintShotExplosionDamageTypeIcon(
@@ -2000,104 +2000,7 @@ function paintShotExplosionDamageTypeIcon(
   context.save();
   context.translate(39, 8);
   context.scale(3.4, 3.4);
-  context.strokeStyle = accent;
-  context.fillStyle = accent;
-  context.lineCap = "round";
-  context.lineJoin = "round";
-  context.lineWidth = 0.62;
-
-  if (kind === "fragmentation") {
-    context.beginPath();
-    for (let pointIndex = 0; pointIndex < 16; pointIndex += 1) {
-      const angle = -Math.PI / 2 + (pointIndex * Math.PI) / 8;
-      const radius = pointIndex % 2 === 0 ? 4.8 : 2.35;
-      const x = 8 + Math.cos(angle) * radius;
-      const y = 7.2 + Math.sin(angle) * radius;
-      if (pointIndex === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
-    }
-    context.closePath();
-    context.globalAlpha = 0.34;
-    context.fill();
-    context.globalAlpha = 1;
-    context.stroke();
-    for (const [x, y] of [[16, 2.5], [20.2, 5.7], [17.4, 10.8], [22, 12.4]]) {
-      context.fillRect(x, y, 1.8, 1.8);
-    }
-  } else if (kind === "heat") {
-    context.fill(new Path2D(LAT_ROLE_ICON_FRAME_PATH), "evenodd");
-    context.fill(new Path2D(LAT_ROLE_ICON_LAUNCHER_PATH));
-  } else if (kind === "hat") {
-    context.beginPath();
-    context.moveTo(2.2, 3.2);
-    context.lineTo(8.4, 7.2);
-    context.lineTo(2.2, 11.2);
-    context.closePath();
-    context.globalAlpha = 0.28;
-    context.fill();
-    context.globalAlpha = 1;
-    context.stroke();
-    context.beginPath();
-    context.moveTo(8.2, 7.2);
-    context.lineTo(21.5, 7.2);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(17.5, 5.3);
-    context.lineTo(22, 7.2);
-    context.lineTo(17.5, 9.1);
-    context.moveTo(13.7, 4.7);
-    context.lineTo(17.5, 7.2);
-    context.lineTo(13.7, 9.7);
-    context.stroke();
-  } else if (kind === "thermite") {
-    context.beginPath();
-    context.moveTo(12, 1.3);
-    context.bezierCurveTo(16.3, 5, 16.1, 8.9, 12, 11.5);
-    context.bezierCurveTo(8.2, 9.3, 8, 6.1, 11.1, 3.5);
-    context.bezierCurveTo(10.8, 5.8, 12.1, 7, 13.2, 7.5);
-    context.bezierCurveTo(14.1, 5.3, 13.2, 3.1, 12, 1.3);
-    context.closePath();
-    context.globalAlpha = 0.42;
-    context.fill();
-    context.globalAlpha = 1;
-    context.stroke();
-    context.beginPath();
-    context.moveTo(4, 12.8);
-    context.lineTo(20, 12.8);
-    context.moveTo(5, 15);
-    context.lineTo(19, 15);
-    context.stroke();
-  } else if (kind === "kinetic" || kind === "small-arms") {
-    context.beginPath();
-    context.moveTo(2, 7.2);
-    context.lineTo(17, 7.2);
-    context.moveTo(13, 3.8);
-    context.lineTo(21.2, 7.2);
-    context.lineTo(13, 10.6);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(3, 4.2);
-    context.lineTo(8.8, 4.2);
-    context.moveTo(3, 10.2);
-    context.lineTo(8.8, 10.2);
-    context.stroke();
-  } else {
-    context.beginPath();
-    context.arc(10, 8.2, 5.2, 0, Math.PI * 2);
-    context.globalAlpha = 0.3;
-    context.fill();
-    context.globalAlpha = 1;
-    context.stroke();
-    context.beginPath();
-    context.moveTo(13.5, 4.2);
-    context.lineTo(17.5, 1.3);
-    context.lineTo(19.2, 3.2);
-    context.moveTo(18.6, 1.2);
-    context.lineTo(21.8, 0.5);
-    context.moveTo(19.8, 3.5);
-    context.lineTo(22.5, 4.8);
-    context.stroke();
-  }
+  paintVehicleDamageTypeIconCanvas(context, kind, accent);
   context.restore();
 
   context.fillStyle = accent;
@@ -2246,7 +2149,11 @@ function createShotExplosionLayerVisual(
     delayMs: 0,
     outerRadiusM: 0,
   };
-  paintShotExplosionDamageTypeIcon(visual, "generic", 0xffa12b);
+  paintShotExplosionDamageTypeIcon(
+    visual,
+    "generic",
+    shotExplosionColor("generic"),
+  );
   return visual;
 }
 
@@ -3238,7 +3145,10 @@ export function RuntimeVehicleViewer({
       delete host.dataset.hitExplosionLayerCount;
       delete host.dataset.hitExplosionOrder;
       delete host.dataset.hitExplosionOuterRadiiM;
+      delete host.dataset.hitExplosionDamageTypeKinds;
+      delete host.dataset.hitExplosionColors;
       delete host.dataset.shotExplosionIndicator;
+      delete host.dataset.shotExplosionIconSource;
       delete host.dataset.shotExplosionVisualClip;
       delete host.dataset.shotExplosionRadiusBasis;
       delete host.dataset.shotExplosionNativeField;
@@ -3265,9 +3175,28 @@ export function RuntimeVehicleViewer({
             : "unknown";
         }).join(",")
       : "none";
+    const explosionDamageTypeKinds = result.radial.layers.map(
+      (radialLayer) =>
+        vehicleDamageTypeIconKindForPath(radialLayer.damageTypePath)
+        ?? "generic",
+    );
+    host.dataset.hitExplosionDamageTypeKinds =
+      explosionDamageTypeKinds.length > 0
+        ? explosionDamageTypeKinds.join(",")
+        : "none";
+    host.dataset.hitExplosionColors =
+      explosionDamageTypeKinds.length > 0
+        ? explosionDamageTypeKinds
+            .map(vehicleDamageTypeIconColor)
+            .join(",")
+        : "none";
     host.dataset.shotExplosionIndicator =
       result.radial.layers.length > 0
         ? "surface-normal-pressure-hemisphere"
+        : "none";
+    host.dataset.shotExplosionIconSource =
+      result.radial.layers.length > 0
+        ? "damage-type-legend-svg-paths"
         : "none";
     host.dataset.shotExplosionVisualClip =
       result.radial.layers.length > 0
@@ -7466,6 +7395,10 @@ export function RuntimeVehicleViewer({
                             data-damage-type-kind={kind}
                             key={kind}
                             title={vehicleDamageTypeIconLabel(kind)}
+                            style={{
+                              "--explosion-type-color":
+                                vehicleDamageTypeIconColor(kind),
+                            } as CSSProperties}
                           >
                             <VehicleDamageTypeIcon
                               kind={kind}

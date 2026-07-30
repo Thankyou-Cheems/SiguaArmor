@@ -147,7 +147,8 @@ function turretProfileSamples(turret: ReferenceTurret) {
     Math.max(0, endDegrees - startDegrees) / COMPASS_SAMPLE_STEP,
   );
   return Array.from({ length: sampleCount }, (_, index) => {
-    const segmentStartDegrees = startDegrees + index * COMPASS_SAMPLE_STEP;
+    const segmentStartDegrees =
+      startDegrees + index * COMPASS_SAMPLE_STEP;
     const segmentEndDegrees = Math.min(
       endDegrees,
       segmentStartDegrees + COMPASS_SAMPLE_STEP,
@@ -475,26 +476,14 @@ export function TurretLimitCompass({
           <text
             x={minimumYawLabel.x}
             y={minimumYawLabel.y}
-            textAnchor={
-              minimumYawLabel.x < 48
-                ? "end"
-                : minimumYawLabel.x > 52
-                  ? "start"
-                  : "middle"
-            }
+            textAnchor={minimumYawLabel.x < 48 ? "end" : minimumYawLabel.x > 52 ? "start" : "middle"}
           >
             {angleLabel(bounds.minDegrees)}
           </text>
           <text
             x={maximumYawLabel.x}
             y={maximumYawLabel.y}
-            textAnchor={
-              maximumYawLabel.x < 48
-                ? "end"
-                : maximumYawLabel.x > 52
-                  ? "start"
-                  : "middle"
-            }
+            textAnchor={maximumYawLabel.x < 48 ? "end" : maximumYawLabel.x > 52 ? "start" : "middle"}
           >
             {angleLabel(bounds.maxDegrees)}
           </text>
@@ -635,7 +624,6 @@ export function TurretStationIndicator({
       <figcaption>
         <span className="turret-station-indicator__heading">
           <strong>{bounds.continuous ? "360° 全向" : "受限射界"}</strong>
-          <em>{authorityLabel(turret)}</em>
         </span>
         <dl>
           <div>
