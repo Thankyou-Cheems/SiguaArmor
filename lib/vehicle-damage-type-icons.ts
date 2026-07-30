@@ -18,6 +18,17 @@ export const VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS = Object.freeze([
   "thermite",
 ] as const satisfies readonly VehicleExplosionDamageTypeIconKind[]);
 
+export const VEHICLE_DAMAGE_TYPE_ICON_COLORS = Object.freeze({
+  kinetic: "#e1c89b",
+  "small-arms": "#a9c987",
+  generic: "#aeb6b2",
+  fragmentation: "#efb865",
+  heat: "#61d4e5",
+  hat: "#4fa4ed",
+  explosives: "#ef735a",
+  thermite: "#f29d4b",
+} as const satisfies Record<VehicleDamageTypeIconKind, `#${string}`>);
+
 const VEHICLE_EXPLOSIVE_ROUTE_DAMAGE_TYPE_ICON_KINDS = Object.freeze([
   "kinetic",
   "small-arms",
@@ -110,6 +121,18 @@ export function vehicleDamageTypeIconLabel(
   kind: VehicleDamageTypeIconKind,
 ) {
   return DAMAGE_TYPE_ICON_LABELS[kind];
+}
+
+export function vehicleDamageTypeIconColor(
+  kind: VehicleDamageTypeIconKind,
+) {
+  return VEHICLE_DAMAGE_TYPE_ICON_COLORS[kind];
+}
+
+export function vehicleDamageTypeIconColorNumber(
+  kind: VehicleDamageTypeIconKind,
+) {
+  return Number.parseInt(vehicleDamageTypeIconColor(kind).slice(1), 16);
 }
 
 export function vehicleDamageTypeIconShortLabel(

@@ -1237,6 +1237,27 @@ code {
   gap: clamp(10px, 1vw, 16px);
 }
 
+.faction-dock__home {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.faction-dock__home:focus-visible {
+  outline: 1px solid var(--brand);
+  outline-offset: 4px;
+}
+
+.faction-dock__home .faction-dock__wordmark {
+  pointer-events: none;
+}
+
 .faction-dock__wordmark {
   display: block;
   width: clamp(177px, 13.5vw, 252px);
@@ -5609,8 +5630,11 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   z-index: 12;
   bottom: calc(100% + 6px);
   left: 0;
+  display: flex;
   width: max(100%, 300px);
   max-width: min(460px, calc(100vw - 40px));
+  max-height: min(460px, calc(100dvh - 190px));
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid rgba(225, 200, 155, 0.34);
   background: rgba(10, 13, 11, 0.98);
@@ -5716,10 +5740,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-search-select__options {
-  max-height: 220px;
+  min-height: 0;
+  max-height: min(220px, calc(100dvh - 300px));
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0 8px 8px;
   scrollbar-color: var(--border-strong) var(--bg-1);
+  scrollbar-gutter: stable;
 }
 
 .viewer-search-select__group + .viewer-search-select__group {
@@ -6379,14 +6406,17 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   z-index: 10;
   right: 12px;
   bottom: 12px;
+  box-sizing: border-box;
   width: min(410px, calc(100% - 36px));
-  max-height: min(68%, 520px);
+  max-height: min(calc(100% - 24px), 520px);
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 9px 10px;
   border: 1px solid rgba(225, 200, 155, 0.32);
   background: rgba(11, 14, 12, 0.95);
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.48);
   scrollbar-color: var(--border-strong) var(--bg-1);
+  scrollbar-gutter: stable;
   backdrop-filter: blur(14px);
   transform-origin: right bottom;
   animation: viewer-shot-result-enter 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -9961,8 +9991,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .site-shell[data-site-edition="international"] .faction-selector__preview-identity small {
   color: rgba(231, 189, 104, 0.7);
   font-family: var(--font-mono-ui);
-  font-size: 9px;
-  letter-spacing: 0.18em;
+  font-size: 11px;
+  letter-spacing: 0.1em;
 }
 
 .site-shell[data-site-edition="international"] .faction-selector__preview-identity strong {
@@ -9981,8 +10011,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   overflow: hidden;
   padding-left: 12px;
   border-left: 1px solid rgba(225, 200, 155, 0.14);
-  color: rgba(241, 239, 226, 0.46);
-  font-size: 9px;
+  color: rgba(241, 239, 226, 0.62);
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.07em;
   line-height: 1.45;
@@ -10040,9 +10070,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .site-shell[data-site-edition="international"] .faction-selector__choice-panel-heading > span small {
   color: rgba(231, 189, 104, 0.68);
   font-family: var(--font-mono-ui);
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.19em;
+  letter-spacing: 0.12em;
 }
 
 .site-shell[data-site-edition="international"] .faction-selector__choice-panel-heading > span strong {
@@ -10058,9 +10088,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   grid-template-columns: auto auto;
   gap: 5px;
   align-items: baseline;
-  color: rgba(241, 239, 226, 0.42);
+  color: rgba(241, 239, 226, 0.62);
   font-family: var(--font-mono-ui);
-  font-size: 7px;
+  font-size: 10px;
   font-style: normal;
 }
 
@@ -10068,6 +10098,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: var(--brand);
   font-size: 20px;
   font-weight: 600;
+}
+
+.site-shell[data-site-edition="international"] .faction-selector__choice-panel-heading > em small {
+  font-size: 10px;
 }
 
 .site-shell[data-site-edition="international"] .faction-selector__choice-panel .faction-selector__choices {
@@ -10123,9 +10157,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .site-shell[data-site-edition="international"] .faction-selector__choice-index {
-  color: rgba(241, 239, 226, 0.28);
+  color: rgba(241, 239, 226, 0.52);
   font-family: var(--font-mono-ui);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
 }
@@ -10147,10 +10181,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .site-shell[data-site-edition="international"] .faction-selector__choice-panel .faction-selector__choice-label > span > small {
   overflow: hidden;
-  color: rgba(231, 189, 104, 0.58);
+  color: rgba(231, 189, 104, 0.76);
   font-family: var(--font-mono-ui);
-  font-size: 6px;
-  letter-spacing: 0.16em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -10167,7 +10201,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   display: grid;
   min-width: 30px;
   gap: 0;
-  color: rgba(241, 239, 226, 0.36);
+  color: rgba(241, 239, 226, 0.58);
   font-family: var(--font-mono-ui);
   font-style: normal;
   line-height: 1;
@@ -10175,13 +10209,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .site-shell[data-site-edition="international"] .faction-selector__choice-panel .faction-selector__choice-label > em b {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .site-shell[data-site-edition="international"] .faction-selector__choice-panel .faction-selector__choice-label > em small {
-  margin-top: 3px;
-  font-size: 6px;
+  margin-top: 2px;
+  font-size: 10px;
   letter-spacing: 0.08em;
 }
 
@@ -10237,14 +10271,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .site-shell[data-site-edition="international"] .faction-selector__choice-panel-hint {
   display: flex;
-  min-height: 32px;
+  min-height: 36px;
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
   border-top: 1px solid rgba(225, 200, 155, 0.15);
-  color: rgba(241, 239, 226, 0.34);
+  color: rgba(241, 239, 226, 0.62);
   font-family: var(--font-mono-ui);
-  font-size: 6px;
+  font-size: 10px;
   letter-spacing: 0.06em;
 }
 
@@ -10923,6 +10957,20 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     width: min(30vw, 120px);
   }
 
+  .site-shell[data-site-edition="international"]
+    .faction-selector__brand
+    > .global-vehicle-search {
+    width: clamp(136px, 38vw, 156px);
+  }
+
+  .site-shell[data-site-edition="international"] .faction-selector__ai-notice {
+    top: 146px;
+    right: 14px;
+    left: 14px;
+    width: auto;
+    transform: none;
+  }
+
   .site-shell[data-site-edition="international"] .faction-selector__preview-identity {
     grid-template-columns: 35px auto minmax(0, 1fr);
     gap: 9px;
@@ -10946,7 +10994,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     padding-left: 8px;
     border-top: 0;
     border-left: 1px solid rgba(225, 200, 155, 0.14);
-    font-size: 8px;
+    font-size: 10px;
     line-height: 1.35;
     white-space: normal;
   }
@@ -11018,6 +11066,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   .site-shell[data-site-edition="international"] .faction-selector__choice-panel .faction-selector__choice-label {
     grid-template-columns: 23px 31px minmax(0, 1fr) auto 14px;
     min-height: 48px;
+  }
+
+  .site-shell[data-site-edition="international"]
+    .faction-selector__choice-panel
+    .faction-selector__choice-label
+    > span
+    > strong {
+    writing-mode: horizontal-tb;
   }
 
   .site-shell[data-site-edition="international"] .faction-selector__choice-panel .faction-selector__choice-label > img {
@@ -11238,88 +11294,167 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   filter: brightness(1.08) saturate(1.08) contrast(1.06);
 }
 
-@media (max-width: 1040px) {
-  .site-shell[data-site-edition="international"] .faction-dock {
-    grid-template-areas:
-      "brand actions"
-      "flags flags";
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: 50px minmax(0, 1fr);
-    gap: 0 12px;
-    padding: 4px 14px 0;
+/* Keep the faction rail on the true center line. Equal side tracks prevent the
+   logo and search from shifting the thumbnails toward either edge. */
+.faction-dock {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.site-shell[data-site-edition="international"] .faction-dock {
+  grid-template-areas: "brand flags actions";
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(520px, min(52vw, 980px))
+    minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  gap: 0 clamp(8px, 1vw, 18px);
+  padding: 4px clamp(14px, 2vw, 34px) 0;
+}
+
+.site-shell[data-site-edition="international"]
+  .faction-selector[data-selected="true"]
+  .faction-dock {
+  height: 116px;
+}
+
+.site-shell[data-site-edition="international"] .faction-dock__brand {
+  justify-self: start;
+}
+
+.site-shell[data-site-edition="international"] .faction-dock__flags {
+  align-self: center;
+  justify-self: center;
+  gap: clamp(1px, 0.3vw, 4px);
+  padding: 0;
+}
+
+.site-shell[data-site-edition="international"] .faction-dock__actions {
+  justify-self: end;
+}
+
+@media (min-width: 681px) {
+  .site-shell[data-site-edition="international"] .catalog-reveal .catalog-main {
+    scroll-margin-top: 132px;
+    padding-top: 148px;
   }
 
   .site-shell[data-site-edition="international"]
-    .faction-selector[data-selected="true"]
-    .faction-dock {
-    height: 158px;
+    .catalog-workspace[data-detail-open="true"]
+    .catalog-results,
+  .site-shell[data-site-edition="international"] .detail-panel {
+    top: 132px;
+    max-height: calc(100dvh - 148px);
   }
 
-  .site-shell[data-site-edition="international"] .faction-dock__flags {
-    gap: 3px;
-    padding-top: 5px;
-  }
-
-  .site-shell[data-site-edition="international"] .faction-dock__flag-shape {
-    width: min(100%, 58px);
-    height: 44px;
+  .site-shell[data-site-edition="international"]
+    .detail-panel--viewer
+    .vehicle-viewer--data-loading,
+  .site-shell[data-site-edition="international"]
+    .detail-panel--viewer
+    .viewer-canvas {
+    height: calc(100dvh - 148px);
   }
 }
 
-@media (max-width: 900px) {
-  .site-shell[data-site-edition="international"] .faction-dock__flags {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 5px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-inline: 2px;
-    scrollbar-color: rgba(231, 189, 104, 0.38) transparent;
-    scrollbar-width: thin;
+@media (max-width: 1040px) and (min-width: 681px) {
+  .site-shell[data-site-edition="international"] .faction-dock {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(500px, 52vw)
+      minmax(0, 1fr);
+    padding-inline: 14px;
   }
 
-  .site-shell[data-site-edition="international"] .faction-dock__flag {
-    flex: 0 0 clamp(54px, 8vw, 66px);
-    width: clamp(54px, 8vw, 66px);
+  .site-shell[data-site-edition="international"] .faction-dock__brand h2 {
+    display: none;
   }
 
-  .site-shell[data-site-edition="international"] .faction-dock__flag-shape {
-    width: calc(100% - 4px);
-    height: clamp(40px, 6vw, 46px);
-    margin-inline: auto;
+  .site-shell[data-site-edition="international"] .global-vehicle-search--dock {
+    width: clamp(160px, 20vw, 200px);
   }
 }
 
 @media (max-width: 680px) {
   .site-shell[data-site-edition="international"] .faction-dock {
     grid-template-areas:
-      "actions actions"
+      "brand actions"
       "flags flags";
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: 48px minmax(0, 1fr);
-    gap: 0;
+    grid-template-rows: 44px minmax(0, 1fr);
+    gap: 0 8px;
     padding: 4px 8px 0;
   }
 
+  .site-shell[data-site-edition="international"] .faction-dock__brand {
+    display: flex;
+    grid-area: brand;
+  }
+
+  .site-shell[data-site-edition="international"] .faction-dock__brand h2,
+  .site-shell[data-site-edition="international"] .daily-active-display--dock {
+    display: none;
+  }
+
+  .site-shell[data-site-edition="international"] .faction-dock__home {
+    max-width: 112px;
+  }
+
+  .site-shell[data-site-edition="international"] .faction-dock__wordmark {
+    width: min(112px, 29vw);
+  }
+
   .site-shell[data-site-edition="international"] .faction-dock__actions {
-    grid-column: 1 / -1;
-    justify-content: flex-end;
+    grid-area: actions;
+    justify-self: end;
+  }
+
+  .site-shell[data-site-edition="international"] .global-vehicle-search--dock {
+    width: min(38vw, 156px);
   }
 
   .site-shell[data-site-edition="international"] .faction-dock__flags {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
     gap: 4px;
-    padding-top: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 3px max(2px, calc(50% - 28px)) 0;
+    scroll-padding-inline: calc(50% - 28px);
+    scrollbar-color: rgba(231, 189, 104, 0.38) transparent;
+    scrollbar-width: thin;
   }
 
   .site-shell[data-site-edition="international"] .faction-dock__flag {
-    flex-basis: 56px;
     width: 56px;
+    flex: 0 0 56px;
+    scroll-snap-align: center;
   }
 
   .site-shell[data-site-edition="international"] .faction-dock__flag-shape {
     width: 52px;
     height: 40px;
+  }
+
+  .site-shell[data-site-edition="international"] .catalog-reveal .catalog-main {
+    scroll-margin-top: 116px;
+    padding-top: 132px;
+  }
+
+  .site-shell[data-site-edition="international"] .detail-panel {
+    top: auto;
+    height: calc(100dvh - 116px);
+    max-height: none;
+  }
+
+  .site-shell[data-site-edition="international"]
+    .detail-panel--viewer
+    .vehicle-viewer--data-loading,
+  .site-shell[data-site-edition="international"]
+    .detail-panel--viewer
+    .viewer-canvas {
+    height: calc(100dvh - 116px);
   }
 }
 
@@ -11694,6 +11829,34 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   }
 }
 
+.site-shell[data-site-edition="international"] .site-footer__help,
+.site-shell[data-site-edition="international"] .site-footer__help-trigger {
+  width: 72px;
+  height: 40px;
+}
+
+.site-shell[data-site-edition="international"] .site-footer__help {
+  right: 10px;
+  bottom: 10px;
+}
+
+.site-shell[data-site-edition="international"]:has(> .faction-selector) .site-footer__help {
+  position: absolute;
+  z-index: 12;
+}
+
+.site-shell[data-site-edition="international"] .site-footer__help-portrait {
+  display: none;
+}
+
+.site-shell[data-site-edition="international"] .site-footer__help-label {
+  right: 0;
+  bottom: 0;
+  left: auto;
+  min-height: 40px;
+  padding: 7px 10px;
+}
+
 @media (max-width: 680px) {
   .faction-selector__brand-title .brand-wordmark.iron-rice-hall-wordmark {
     width: max-content;
@@ -11780,7 +11943,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   background: rgba(13, 16, 14, 0.66);
   color: rgba(241, 239, 226, 0.76);
   font-family: var(--font-mono-ui);
-  font-size: 9px;
+  font-size: 10px;
   font-style: normal;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -11847,8 +12010,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .international-nav__utility,
 .international-nav__link {
   font-family: var(--font-mono-ui);
-  font-size: 9px;
-  letter-spacing: 0.13em;
+  font-size: 11px;
+  letter-spacing: 0.1em;
 }
 
 .international-nav__brand > span,
@@ -12104,7 +12267,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   background: rgba(225, 200, 155, 0.06);
   color: var(--brand);
   font-family: var(--font-mono-ui);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.07em;
   line-height: 1;
   white-space: nowrap;
@@ -12653,7 +12816,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   }
 
   .international-nav__brand .iron-rice-hall-wordmark {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .international-nav__center {
@@ -12663,7 +12826,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
   .international-nav__link {
     padding: 20px 0 18px;
-    font-size: 8px;
+    font-size: 10px;
     letter-spacing: 0.08em;
   }
 
@@ -12704,7 +12867,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
   .international-nav__link {
     padding: 0 0 13px;
-    font-size: 7px;
+    font-size: 10px;
   }
 
   .international-nav__link::after {
@@ -12743,6 +12906,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   .sigua-wiki-show-all {
     width: 100%;
     justify-content: center;
+  }
+
+  .sigua-wiki-filter__menu {
+    position: static;
+    right: auto;
+    width: 100%;
+    max-height: min(320px, 45svh);
+    margin-top: 6px;
   }
 
   .sigua-wiki-faction-grid,

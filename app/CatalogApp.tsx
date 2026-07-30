@@ -3177,6 +3177,7 @@ export function CatalogApp({
   const selectorRef = useRef<HTMLElement | null>(null);
   const selectorTitleRef = useRef<HTMLHeadingElement | null>(null);
   const resultHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const factionDockFlagsRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef(new Map<string, HTMLButtonElement>());
   const factionButtonRefs = useRef(new Map<string, HTMLButtonElement>());
   const helpButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -3290,6 +3291,45 @@ export function CatalogApp({
       window.removeEventListener("resize", scheduleFit);
     };
   }, [activeGroupName]);
+
+  useEffect(() => {
+    if (siteEdition !== "international" || !hasGroupSelection) return undefined;
+    const rail = factionDockFlagsRef.current;
+    if (!rail) return undefined;
+
+    let frame = 0;
+    const centerActiveFlag = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const activeFlag = rail.querySelector<HTMLButtonElement>(
+          '.faction-dock__flag[data-active="true"]',
+        );
+        if (!activeFlag) return;
+        const railRect = rail.getBoundingClientRect();
+        const activeRect = activeFlag.getBoundingClientRect();
+        const activeCenter =
+          activeRect.left - railRect.left + rail.scrollLeft + activeRect.width / 2;
+        const maximumScrollLeft = Math.max(0, rail.scrollWidth - rail.clientWidth);
+        rail.scrollTo({
+          left: Math.min(
+            maximumScrollLeft,
+            Math.max(0, activeCenter - rail.clientWidth / 2),
+          ),
+          behavior: "auto",
+        });
+      });
+    };
+    const resizeObserver = new ResizeObserver(centerActiveFlag);
+    resizeObserver.observe(rail);
+    window.addEventListener("resize", centerActiveFlag);
+    centerActiveFlag();
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", centerActiveFlag);
+    };
+  }, [groupId, hasGroupSelection, siteEdition, visualGroups.length]);
 
   const globalSearchResults = useMemo(() => {
     return searchCatalogIndexRecords(catalogIndex.records, globalQuery);
@@ -3876,12 +3916,21 @@ export function CatalogApp({
                 aria-label={`铁皮饭堂 · ${activeGroupName}`}
               >
                 <div className="faction-dock__brand-identity">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- local CDN-ready brand asset preserves the complete official wordmark */}
-                  <img
-                    className="faction-dock__wordmark"
-                    src="/china-assets/local-preview/official/brand/iron-rice-hall-wordmark.png"
-                    alt="铁皮饭堂"
-                  />
+                  <button
+                    className="faction-dock__home"
+                    type="button"
+                    tabIndex={hasGroupSelection ? 0 : -1}
+                    aria-label="返回五阵营主界面"
+                    title="返回五阵营主界面"
+                    onClick={() => clearFactionSelection("pointer")}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- local CDN-ready brand asset preserves the complete official wordmark */}
+                    <img
+                      className="faction-dock__wordmark"
+                      src="/china-assets/local-preview/official/brand/iron-rice-hall-wordmark.png"
+                      alt="铁皮饭堂"
+                    />
+                  </button>
                   <DailyActiveDisplay variant="dock" />
                 </div>
                 <h2 id="catalog-title" ref={resultHeadingRef} tabIndex={-1}>
@@ -3890,7 +3939,7 @@ export function CatalogApp({
                   ))}
                 </h2>
               </div>
-              <div className="faction-dock__flags">
+              <div className="faction-dock__flags" ref={factionDockFlagsRef}>
                 {visualGroups.map((group) => (
                   <button
                     key={group.id}
@@ -3925,17 +3974,6 @@ export function CatalogApp({
                   onQueryChange={setGlobalQuery}
                   onSelect={selectGlobalSearchResult}
                 />
-                <button
-                  className="faction-dock__cancel"
-                  type="button"
-                  tabIndex={hasGroupSelection ? 0 : -1}
-                  aria-label="返回五阵营主界面（Esc）"
-                  onClick={() => clearFactionSelection("pointer")}
-                >
-                  <X size={17} aria-hidden="true" />
-                  <span>返回主界面</span>
-                  <kbd>ESC</kbd>
-                </button>
               </div>
             </nav>
           </>
@@ -4143,7 +4181,16 @@ export function CatalogApp({
             aria-label={`铁皮饭堂 · ${activeGroupName}`}
           >
             <div className="faction-dock__brand-identity">
-              <IronRiceHallWordmark className="faction-dock__wordmark" />
+              <button
+                className="faction-dock__home"
+                type="button"
+                tabIndex={hasGroupSelection ? 0 : -1}
+                aria-label="返回阵营选择主界面"
+                title="返回阵营选择主界面"
+                onClick={() => clearFactionSelection("pointer")}
+              >
+                <IronRiceHallWordmark className="faction-dock__wordmark" />
+              </button>
               <DailyActiveDisplay variant="dock" />
             </div>
             <h2 id="catalog-title" ref={resultHeadingRef} tabIndex={-1}>
@@ -4152,7 +4199,7 @@ export function CatalogApp({
               ))}
             </h2>
           </div>
-          <div className="faction-dock__flags">
+          <div className="faction-dock__flags" ref={factionDockFlagsRef}>
             {visualGroups.map((group) => {
               const flagAsset = factionVisualAsset(group, siteEdition);
 
@@ -4195,17 +4242,6 @@ export function CatalogApp({
               onQueryChange={setGlobalQuery}
               onSelect={selectGlobalSearchResult}
             />
-            <button
-              className="faction-dock__cancel"
-              type="button"
-              tabIndex={hasGroupSelection ? 0 : -1}
-              aria-label="返回阵营选择主界面（Esc）"
-              onClick={() => clearFactionSelection("pointer")}
-            >
-              <X size={17} aria-hidden="true" />
-              <span>返回主界面</span>
-              <kbd>ESC</kbd>
-            </button>
           </div>
         </nav>
           </>
