@@ -172,9 +172,12 @@ const STANDARD_SHOT_DAMAGE_MULTIPLIER = 1 as const;
 const MAX_VISIBLE_LAYERS = 8;
 const SHOT_GESTURE_THRESHOLD_PX = 5;
 const DEFAULT_TARGET_DISTANCE_M = 0;
-const REFERENCE_SOLDIER_MODEL_URL =
+const REFERENCE_SOLDIER_MODEL_PATH =
   "/infantry-hit-runtime/models/4b6caa60516b49563a968cbcf53875126157d15665cc54b9d8921d832d09ae14.glb";
-const REFERENCE_SOLDIER_SIDE_CLEARANCE_M = 1.6;
+const REFERENCE_SOLDIER_PRODUCTION_BASE_PATH = "/squad";
+const RUNTIME_GROUND_REFERENCE_MIN_CLEARANCE_M = 2.25;
+const RUNTIME_GROUND_REFERENCE_MAX_CLEARANCE_M = 4;
+const RUNTIME_GROUND_SCALE_RENDER_ORDER = 7;
 const REFERENCE_SOLDIER_GLASS_MATERIAL_NAME = "MI_USArmyGlass";
 const REFERENCE_SOLDIER_GLASS_HEAD_BONE_NAME = "Bip01_Head";
 type ReferenceSoldierBoneTransform = {
@@ -200,6 +203,28 @@ const INFANTRY_WEAPON_CATEGORY_BY_ID = new Map(
 const INFANTRY_WEAPON_CATEGORY_ORDER_BY_LABEL = new Map<string, number>(
   INFANTRY_WEAPON_CATEGORIES.map((category, order) => [category.label, order]),
 );
+
+function referenceSoldierModelUrl() {
+  if (typeof window === "undefined") return REFERENCE_SOLDIER_MODEL_PATH;
+  const localPreview =
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "::1";
+  return localPreview
+    ? REFERENCE_SOLDIER_MODEL_PATH
+    : `${REFERENCE_SOLDIER_PRODUCTION_BASE_PATH}${REFERENCE_SOLDIER_MODEL_PATH}`;
+}
+
+function runtimeGroundReferenceClearanceM(
+  vehicleLengthM: number,
+  vehicleWidthM: number,
+) {
+  return THREE.MathUtils.clamp(
+    Math.max(vehicleLengthM, vehicleWidthM) * 0.2,
+    RUNTIME_GROUND_REFERENCE_MIN_CLEARANCE_M,
+    RUNTIME_GROUND_REFERENCE_MAX_CLEARANCE_M,
+  );
+}
 
 function selectorDamageMetric(
   directFireRoute: boolean,
@@ -1293,13 +1318,14 @@ function createRuntimeGroundScaleAxis(
       color: 0x66757b,
       transparent: true,
       opacity: 0.2,
-      depthTest: true,
+      depthTest: false,
       depthWrite: false,
       toneMapped: false,
     }),
   );
   outline.name = "runtime-ground-scale-outline";
   outline.position.set(lengthM / 2, thicknessM * 0.3, 0);
+  outline.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
   group.add(outline);
 
   for (
@@ -1317,7 +1343,7 @@ function createRuntimeGroundScaleAxis(
         color: segmentIndex % 2 === 0 ? 0x82939a : 0x596970,
         transparent: true,
         opacity: segmentIndex % 2 === 0 ? 0.34 : 0.22,
-        depthTest: true,
+        depthTest: false,
         depthWrite: false,
         toneMapped: false,
       }),
@@ -1328,6 +1354,7 @@ function createRuntimeGroundScaleAxis(
       thicknessM * 1.15,
       0,
     );
+    segment.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
     group.add(segment);
   }
 
@@ -1347,7 +1374,7 @@ function createRuntimeGroundScaleAxis(
         color: 0x8da0a7,
         transparent: true,
         opacity: endpoint ? 0.44 : 0.32,
-        depthTest: true,
+        depthTest: false,
         depthWrite: false,
         toneMapped: false,
       }),
@@ -1358,6 +1385,7 @@ function createRuntimeGroundScaleAxis(
       thicknessM * 1.2,
       0,
     );
+    tick.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
     group.add(tick);
   }
 
@@ -1385,7 +1413,7 @@ function createRuntimeGroundScaleAxis(
       map: labelTexture,
       transparent: true,
       opacity: 0.72,
-      depthTest: true,
+      depthTest: false,
       depthWrite: false,
       side: THREE.DoubleSide,
       toneMapped: false,
@@ -1398,6 +1426,7 @@ function createRuntimeGroundScaleAxis(
     thicknessM * 1.7,
     (depthM * 2.2 + labelWidthM * 0.18) * labelSide,
   );
+  label.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
   group.add(label);
 
   return group;
@@ -1421,7 +1450,7 @@ function createRuntimeGroundScale(
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.56,
-      depthTest: true,
+      depthTest: false,
       depthWrite: false,
       toneMapped: false,
     }),
@@ -1429,6 +1458,7 @@ function createRuntimeGroundScale(
   origin.name = "runtime-ground-scale-origin";
   origin.rotation.x = -Math.PI / 2;
   origin.position.y = 0.008;
+  origin.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
   group.add(origin);
   return group;
 }
@@ -5437,6 +5467,12 @@ export function RuntimeVehicleViewer({
       targetGroup.updateMatrixWorld(true);
       const bounds = new THREE.Box3().setFromObject(targetGroup);
       if (bounds.isEmpty()) throw new Error(`Loaded ${source} package produced an empty scene`);
+      const modelLengthM = bounds.max.x - bounds.min.x;
+      const modelWidthM = bounds.max.z - bounds.min.z;
+      const groundReferenceClearanceM = runtimeGroundReferenceClearanceM(
+        modelLengthM,
+        modelWidthM,
+      );
       const runtimePoseGroundActive =
         chassisPose !== null && physicalPoseEnabledRef.current;
       let referenceSoldierBounds: THREE.Box3 | null = null;
@@ -5451,11 +5487,14 @@ export function RuntimeVehicleViewer({
           new THREE.Vector3(),
         );
         referenceSoldier.position.set(
-          bounds.min.x - soldierCenter.x,
+          bounds.min.x
+            - groundReferenceClearanceM
+            - soldierSize.x / 2
+            - soldierCenter.x,
           (runtimePoseGroundActive ? 0 : bounds.min.y) -
             initialSoldierBounds.min.y,
           bounds.min.z
-            - REFERENCE_SOLDIER_SIDE_CLEARANCE_M
+            - groundReferenceClearanceM
             - soldierSize.z / 2
             - soldierCenter.z,
         );
@@ -5463,13 +5502,18 @@ export function RuntimeVehicleViewer({
         referenceSoldierBounds = new THREE.Box3().setFromObject(
           referenceSoldier,
         );
-        host.dataset.referenceSoldierRearX = String(bounds.min.x);
+        host.dataset.referenceSoldierRearX = String(
+          bounds.min.x - groundReferenceClearanceM,
+        );
         host.dataset.referenceSoldierRightZ = String(
-          bounds.min.z - REFERENCE_SOLDIER_SIDE_CLEARANCE_M,
+          bounds.min.z - groundReferenceClearanceM,
         );
         host.dataset.referenceSoldierSide = "right";
         delete host.dataset.referenceSoldierLeftZ;
         host.dataset.referenceSoldierHeightM = String(soldierSize.y);
+        host.dataset.referenceSoldierClearanceM = String(
+          groundReferenceClearanceM,
+        );
       }
       const fitBounds = bounds.clone();
       if (referenceSoldierBounds) fitBounds.union(referenceSoldierBounds);
@@ -5504,8 +5548,6 @@ export function RuntimeVehicleViewer({
         ? "runtime-probe-map"
         : "geometry-bounds";
       scene.add(gridHelper);
-      const modelLengthM = bounds.max.x - bounds.min.x;
-      const modelWidthM = bounds.max.z - bounds.min.z;
       const groundScaleLengthM = runtimeGroundScaleLengthM(modelLengthM);
       const groundScaleWidthM = runtimeGroundScaleLengthM(modelWidthM);
       groundScale = createRuntimeGroundScale(
@@ -5515,11 +5557,11 @@ export function RuntimeVehicleViewer({
       const groundScaleOriginX = referenceSoldierBounds
         ? (referenceSoldierBounds.min.x + referenceSoldierBounds.max.x) / 2
           - center.x
-        : bounds.min.x - center.x;
+        : bounds.min.x - groundReferenceClearanceM - center.x;
       const groundScaleOriginZ = referenceSoldierBounds
         ? (referenceSoldierBounds.min.z + referenceSoldierBounds.max.z) / 2
           - center.z
-        : bounds.min.z - center.z;
+        : bounds.min.z - groundReferenceClearanceM - center.z;
       groundScale.position.set(
         groundScaleOriginX,
         groundY + 0.006,
@@ -5535,9 +5577,13 @@ export function RuntimeVehicleViewer({
       host.dataset.groundScaleAxes = "length,width";
       host.dataset.groundScaleOrigin = referenceSoldierBounds
         ? "reference-soldier-feet"
-        : "vehicle-bounds-corner-fallback";
+        : "vehicle-bounds-outer-corner-fallback";
       host.dataset.groundScaleDirection =
         "toward-vehicle-positive-x-positive-z";
+      host.dataset.groundScaleVehicleClearanceM = String(
+        groundReferenceClearanceM,
+      );
+      host.dataset.groundScaleDepthMode = "overlay";
       host.dataset.groundScaleOriginX = String(groundScaleOriginX);
       host.dataset.groundScaleOriginY = String(groundY + 0.006);
       host.dataset.groundScaleOriginZ = String(groundScaleOriginZ);
@@ -5612,8 +5658,10 @@ export function RuntimeVehicleViewer({
 
     const referenceSoldierLoader = new GLTFLoader();
     referenceSoldierLoader.setMeshoptDecoder(MeshoptDecoder);
+    const referenceSoldierUrl = referenceSoldierModelUrl();
+    host.dataset.referenceSoldierModelUrl = referenceSoldierUrl;
     void referenceSoldierLoader
-      .loadAsync(REFERENCE_SOLDIER_MODEL_URL)
+      .loadAsync(referenceSoldierUrl)
       .then(({ scene: soldierScene }) => {
         if (cancelled) {
           disposeScene(soldierScene);
