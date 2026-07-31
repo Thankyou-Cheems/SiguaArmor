@@ -1,34 +1,6 @@
-export interface ReferenceWeapon {
-  gunName: string;
-  displayName: string;
-  turretName: string | null;
-  numberOfMags: number | null;
-  magSize: number | null;
-  muzzleVelocityMps: number | null;
-  tacticalReloadDurationSeconds: number | null;
-  dryReloadDurationSeconds: number | null;
-  roundsPerMinute: number | null;
-  projectileName: string | null;
-  maxDamageToApply: number | null;
-  minDamageToApply: number | null;
-  armorPenetrationMm: number | null;
-  armorPenetrationCurve: string | null;
-  traceDistanceAfterPenM: number | null;
-  projectile: {
-    impactDamage: number | null;
-    damageType: string | null;
-    explosiveBaseDamage: number | null;
-  };
-  mechanics: {
-    equipDurationSeconds: number | null;
-    timeBetweenShotsSeconds: number | null;
-    damageFalloffCurve: string | null;
-    minimumRearmSeconds: number | null;
-    rearmOneMagazineAtATime: boolean | null;
-    rearmByRounds: boolean | null;
-    roundsPerRearm: number | null;
-  };
-}
+import type { WeaponCatalogVehicleEquipment } from "../lib/weapon-catalog";
+
+export type ReferenceWeapon = WeaponCatalogVehicleEquipment;
 
 export interface ReferenceDamageResistance {
   damageClass: string;
@@ -137,14 +109,58 @@ export interface ReferenceData {
     hasCommandZone: boolean | null;
     commandZoneRadius: number | null;
   };
-  weapons: ReferenceWeapon[];
+  weaponBindingIds: string[];
   seats: ReferenceSeat[];
   damageResistances: ReferenceDamageResistance[];
   components: ReferenceComponent[];
 }
 
+export type ReferenceGeneralProfile = Omit<
+  ReferenceData["general"],
+  "rawName"
+>;
+
+export type ReferenceComponentProfile = Omit<
+  ReferenceComponent,
+  "damageResistances"
+> & {
+  damageProfileRefs: number[];
+};
+
+export interface VehicleReferenceProfilePool<T> {
+  id: string;
+  values: T[];
+}
+
+export interface VehicleReferenceProfileDictionaries {
+  general: VehicleReferenceProfilePool<ReferenceGeneralProfile>;
+  seats: VehicleReferenceProfilePool<ReferenceSeat>;
+  damageResistances:
+    VehicleReferenceProfilePool<ReferenceDamageResistance>;
+  components:
+    VehicleReferenceProfilePool<ReferenceComponentProfile>;
+}
+
+export interface VehicleReferenceProjection {
+  rawName: string;
+  weaponBindingIds: string[];
+  generalProfileRef: number;
+  seatProfileRefs: number[];
+  hullDamageProfileRefs: number[];
+  componentProfileRefs: number[];
+}
+
+export interface VehicleReferencePool {
+  id: string;
+  values: VehicleReferenceProjection[];
+}
+
 export interface CatalogVariant {
   sourceRawName: string;
+  catalogBindingRef: string | null;
+  vehicleRef: string | null;
+  runtimeVehicleRef: string | null;
+  visualArtifactRef: string | null;
   alias: string;
   searchTerms?: string[];
   searchAliases?: string[];
@@ -187,6 +203,10 @@ export interface CatalogFactionSummary {
 
 export interface CatalogSearchVariant {
   sourceRawName: string;
+  catalogBindingRef: string | null;
+  vehicleRef: string | null;
+  runtimeVehicleRef: string | null;
+  visualArtifactRef: string | null;
   alias: string;
   displayName: string;
   searchTerms?: string[];
@@ -226,6 +246,7 @@ export interface PublicCatalogIndex {
   schemaVersion: "1.0.0";
   catalogId: string;
   dataRevision: string;
+  vehicleCatalogRevision: string;
   groups: CatalogFactionSummary[];
   records: CatalogSearchRecord[];
 }
@@ -234,6 +255,32 @@ export interface PublicFactionCatalog {
   schemaVersion: "1.0.0";
   catalogId: string;
   dataRevision: string;
+  vehicleCatalogRevision: string;
   group: CatalogFactionSummary;
   records: CatalogRecord[];
 }
+
+export type CompactCatalogVariant = Omit<
+  CatalogVariant,
+  "data"
+> & {
+  vehicleReferenceRef: number;
+};
+
+export type CompactCatalogRecord = Omit<
+  CatalogRecord,
+  "data" | "variants"
+> & {
+  data: null;
+  variants: CompactCatalogVariant[];
+};
+
+export type ProfiledPublicFactionCatalog = Omit<
+  PublicFactionCatalog,
+  "records"
+> & {
+  vehicleReferenceSchemaVersion: string;
+  vehicleProfiles: VehicleReferenceProfileDictionaries;
+  vehicleReferences: VehicleReferencePool;
+  records: CompactCatalogRecord[];
+};

@@ -4,6 +4,7 @@ import type {
   CatalogSearchVariant,
   CatalogVariant,
 } from "./catalog-types";
+import { runtimeVehicleEquipmentBindingForId } from "./runtime-vehicle-equipment.ts";
 
 interface VehicleSearchAliases {
   labels: readonly string[];
@@ -315,6 +316,16 @@ function vehicleVariantSearchTokens(
   variant: CatalogVariant,
 ): VehicleSearchTokenGroups {
   const aliases = VEHICLE_SEARCH_ALIASES[record.promoEntryId] ?? EMPTY_ALIASES;
+  const weapons = variant.data.weaponBindingIds.map((bindingId) => {
+    const binding =
+      runtimeVehicleEquipmentBindingForId(bindingId);
+    if (!binding) {
+      throw new Error(
+        `Vehicle search points to missing weapon binding ${bindingId}`,
+      );
+    }
+    return binding.equipment;
+  });
   return {
     primary: [
       variant.alias,
@@ -328,7 +339,7 @@ function vehicleVariantSearchTokens(
     ].map(normalizeVehicleSearch),
     context: [
       ...(variant.searchTerms ?? []),
-      ...variant.data.weapons
+      ...weapons
         .flatMap((weapon) => [weapon.displayName, weapon.gunName, weapon.projectileName ?? ""]),
     ]
       .map(normalizeVehicleSearch),

@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, HeartPulse, Layers3, MoveRight, Shield, Swords, X } from "lucide-react";
+import { CircleAlert, HeartPulse, Layers3, MoveRight, Shield, Swords } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
@@ -42,6 +42,7 @@ import {
 import {
   editorNativeEffectiveDamageAmount,
   isEditorNativeComponentOnlyDamageEvent,
+  isEditorNativeComponentForwardedDamageEvent,
   isEditorNativeVehicleDamageEvent,
   maxEditorNativeWeaponDistanceM,
   resolveEditorNativeBallistics,
@@ -55,7 +56,8 @@ import {
 import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
 import { editorDamageCardEffect } from "../lib/editor-damage-card-effects";
 import {
-  RUNTIME_GROUND_SCALE_SEGMENTS,
+  RUNTIME_GROUND_SCALE_LABEL_INTERVAL_M,
+  RUNTIME_GROUND_SCALE_TICK_INTERVAL_M,
   runtimeGroundScaleLengthM,
 } from "../lib/runtime-ground-scale";
 import {
@@ -95,6 +97,7 @@ import {
 } from "../lib/runtime-hit-scene";
 import { runtimeAnalysisVisualUrl } from "../lib/runtime-visual-lazy-load";
 import infantryPostureRuntime from "./infantry-posture-runtime.json";
+import { WeaponPenetrationIcon } from "./WeaponPenetrationIcon";
 import type {
   RuntimeVehiclePreview,
   RuntimeVisualPlacement,
@@ -121,12 +124,11 @@ import {
   VehicleDamageTypeIcon,
 } from "./VehicleDamageTypeIcon";
 import {
-  INFANTRY_WEAPON_CATEGORIES,
-  runtimeAttackWeaponSupportsHitAnalysis,
-  runtimeAttackSourceForId,
-  runtimeAttackSources,
   type RuntimeAttackSource,
 } from "./runtime-probe-weapon-labels";
+import {
+  runtimeVehicleEquipmentBindingForId,
+} from "./runtime-vehicle-equipment";
 import {
   RUNTIME_PROTECTION_MAP_BLOCK_SIZE,
   RUNTIME_PROTECTION_MAP_MAX_PRECISION,
@@ -161,10 +163,6 @@ import {
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
-import {
-  normalizeVehicleSearch,
-  rankVerifiedVehicleCandidateSearch,
-} from "./vehicle-search";
 
 THREE.Mesh.prototype.raycast = acceleratedRaycast;
 
@@ -180,6 +178,8 @@ const RUNTIME_GROUND_REFERENCE_MAX_CLEARANCE_M = 4;
 const RUNTIME_GROUND_SCALE_RENDER_ORDER = 7;
 const REFERENCE_SOLDIER_GLASS_MATERIAL_NAME = "MI_USArmyGlass";
 const REFERENCE_SOLDIER_GLASS_HEAD_BONE_NAME = "Bip01_Head";
+type RuntimeAttackSourceLibrary = typeof import("./runtime-probe-weapon-labels");
+
 type ReferenceSoldierBoneTransform = {
   translation: [number, number, number];
   rotation: [number, number, number, number];
@@ -194,16 +194,6 @@ const REFERENCE_SOLDIER_STANDING_RIFLE_POSE = (
     }
   >
 )["standing-rifle"];
-const INFANTRY_WEAPON_CATEGORY_BY_ID = new Map(
-  INFANTRY_WEAPON_CATEGORIES.map((category, order) => [
-    category.id,
-    { ...category, order },
-  ]),
-);
-const INFANTRY_WEAPON_CATEGORY_ORDER_BY_LABEL = new Map<string, number>(
-  INFANTRY_WEAPON_CATEGORIES.map((category, order) => [category.label, order]),
-);
-
 function referenceSoldierModelUrl() {
   if (typeof window === "undefined") return REFERENCE_SOLDIER_MODEL_PATH;
   const localPreview =
@@ -226,33 +216,80 @@ function runtimeGroundReferenceClearanceM(
   );
 }
 
-function selectorDamageMetric(
+type SearchableSelectEffectRole =
+  | "penetration"
+  | "direct-damage"
+  | "radial-damage";
+
+interface SearchableSelectEffect {
+  id: string;
+  role: SearchableSelectEffectRole;
+  damageTypeKind: VehicleDamageTypeIconKind;
+  penetrationKind: WeaponPenetrationKind | null;
+  value: number;
+  eventIndex: number | null;
+  title: string;
+}
+
+function selectorWeaponEffects(
   directFireRoute: boolean,
   ballistics: EditorNativeBallistics,
 ) {
-  return directFireRoute
-    ? ballistics.impactDamageAtRange
-    : ballistics.explosiveLayers.reduce(
-      (total, layer) => total + layer.baseDamage,
-      0,
+  const effects: SearchableSelectEffect[] = [];
+  if (directFireRoute) {
+    const penetrationKind = weaponPenetrationKindForDamageTypePath(
+      ballistics.damageTypePath,
     );
-}
-
-function selectorDamageTypeIconKinds(
-  ballistics: EditorNativeBallistics,
-): VehicleDamageTypeIconKind[] {
-  const kinds = new Set<VehicleDamageTypeIconKind>();
-  const directDamageKind = vehicleDamageTypeIconKindForPath(
-    ballistics.damageTypePath,
-  );
-  if (directDamageKind) kinds.add(directDamageKind);
-  for (const kind of explosiveDamageTypeIconKinds(
-    ballistics.isExplosive,
-    ballistics.explosiveLayers.map(({ damageTypePath }) => damageTypePath),
-  )) {
-    kinds.add(kind);
+    const penetrationMm = ballistics.penetrationAtRangeMm ?? 0;
+    const penetrationLabel = penetrationKind === "shaped-charge"
+      ? "破甲"
+      : "穿深";
+    const directDamageTypeKind =
+      vehicleDamageTypeIconKindForPath(ballistics.damageTypePath) ??
+      "generic";
+    const directDamage = ballistics.impactDamageAtRange ?? 0;
+    effects.push({
+      id: "penetration",
+      role: "penetration",
+      damageTypeKind:
+        penetrationKind === "shaped-charge" ? "heat" : "kinetic",
+      penetrationKind,
+      value: penetrationMm,
+      eventIndex: null,
+      title: `${penetrationLabel}能力：${metricText(
+        penetrationMm,
+      )} 毫米`,
+    });
+    effects.push({
+      id: "direct-damage",
+      role: "direct-damage",
+      damageTypeKind: directDamageTypeKind,
+      penetrationKind: null,
+      value: directDamage,
+      eventIndex: null,
+      title: `${vehicleDamageTypeIconLabel(
+        directDamageTypeKind,
+      )}：${metricText(directDamage)} 点直击伤害`,
+    });
   }
-  return kinds.size > 0 ? [...kinds] : ["generic"];
+  ballistics.explosiveLayers.forEach((layer, eventIndex) => {
+    const damageTypeKind =
+      vehicleDamageTypeIconKindForPath(layer.damageTypePath) ?? "generic";
+    effects.push({
+      id: `radial-${layer.layerId}-${eventIndex}`,
+      role: "radial-damage",
+      damageTypeKind,
+      penetrationKind: null,
+      value: layer.baseDamage,
+      eventIndex,
+      title: `${vehicleDamageTypeIconLabel(
+        damageTypeKind,
+      )}：${metricText(layer.baseDamage)} 点径向基础伤害（事件 ${
+        eventIndex + 1
+      }）`,
+    });
+  });
+  return effects;
 }
 
 const ARMOR_THICKNESS_LEGEND_GRADIENT = `linear-gradient(90deg, ${ARMOR_THICKNESS_LEGEND_STOPS.map(
@@ -391,14 +428,6 @@ const VIEWER_MODES: Array<[ViewerAssetMode, string]> = [
   ["exterior", "外观"],
 ];
 
-interface SearchableSelectMetric {
-  penetrationMm: number | null;
-  penetrationKind: WeaponPenetrationKind;
-  damage: number | null;
-  damageLabel?: string;
-  damageTypeKinds: VehicleDamageTypeIconKind[];
-}
-
 interface RuntimeTurretPreviewStation extends TurretPreviewStation {
   assembly: RuntimeTurretAssembly | null;
   seat: ReferenceSeat;
@@ -495,15 +524,18 @@ function orderedRuntimeTurretStations(
   );
 }
 
-interface SearchableSelectOption {
+interface RuntimeWeaponOption {
   value: string;
+  familyId: string;
   label: string;
-  group?: string;
-  groupDescription?: string;
-  searchText?: string;
-  searchRank?: (query: string) => number | null;
-  disabled?: boolean;
-  metrics?: SearchableSelectMetric;
+  triggerLabel: string;
+  weaponLabel: string;
+  source: RuntimeWeaponSourceIdentity;
+  provenanceLabels: string[];
+  group: string;
+  effects: SearchableSelectEffect[];
+  effectsLabel: string;
+  searchText: string;
 }
 
 type RuntimePointerOutline =
@@ -549,88 +581,6 @@ function viewerPointerOutlineLabel(outline: RuntimePointerOutline) {
     "penetrated-no-damage": "已穿透但无法造成车辆伤害",
     unknown: "无法确认",
   } as Record<RuntimePointerOutline, string>)[outline];
-}
-
-function ArmorPenetrationIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={Math.round(size * 0.68)}
-      viewBox="0 0 24 16"
-      fill="none"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M1 5.5h3M0.5 8h3M1 10.5h3" stroke="currentColor" strokeLinecap="round" opacity="0.52" />
-      <path
-        d="M4 8 8.2 4.7l3 1.45 3.3 1.1v1.5l-3.3 1.1-3 1.45L4 8Z"
-        fill="currentColor"
-        fillOpacity="0.16"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M15.8 1.25h3.1v4.5l-3.1 1.45V1.25ZM15.8 8.8l3.1 1.45v4.5h-3.1V8.8Z"
-        fill="currentColor"
-        fillOpacity="0.24"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path d="M6.4 7.3h10.5L22.5 8l-5.6.7H6.4V7.3Z" fill="currentColor" />
-      <path d="m20.1 5.8 2-1.15M20.8 8h2.4m-3.1 2.2 2 1.15" stroke="currentColor" strokeLinecap="round" opacity="0.7" />
-    </svg>
-  );
-}
-
-function ShapedChargePenetrationIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={Math.round(size * 0.68)}
-      viewBox="0 0 24 16"
-      fill="none"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path
-        d="M1.5 3.1h6.2v9.8H1.5V3.1Z"
-        fill="currentColor"
-        fillOpacity="0.08"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path
-        d="m2.8 4.4 4.9 3.6-4.9 3.6V4.4Z"
-        fill="currentColor"
-        fillOpacity="0.2"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path d="M7.7 8h9.15" stroke="currentColor" strokeWidth="1.45" strokeLinecap="round" />
-      <path d="m7.7 8 5.6-1.05v2.1L7.7 8Z" fill="currentColor" fillOpacity="0.76" />
-      <path
-        d="M16.2 1.25h3v4.55l-3 1.35v-5.9ZM16.2 8.85l3 1.35v4.55h-3v-5.9Z"
-        fill="currentColor"
-        fillOpacity="0.2"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path d="M16.8 7.35 22.6 8l-5.8.65v-1.3Z" fill="currentColor" />
-      <path d="m20 5.7 2.15-1.2M20.7 8h2.55M20 10.3l2.15 1.2" stroke="currentColor" strokeLinecap="round" opacity="0.76" />
-    </svg>
-  );
-}
-
-function WeaponPenetrationIcon({
-  kind,
-  size = 18,
-}: {
-  kind: WeaponPenetrationKind;
-  size?: number;
-}) {
-  return kind === "shaped-charge"
-    ? <ShapedChargePenetrationIcon size={size} />
-    : <ArmorPenetrationIcon size={size} />;
 }
 
 function RemainingPenetrationIcon({ size = 14 }: { size?: number }) {
@@ -687,85 +637,215 @@ function PathMetricLegend({
   );
 }
 
-function SearchableSelect({
-  ariaLabel,
+function normalizeWeaponQuery(value: string) {
+  return value
+    .normalize("NFKC")
+    .toLocaleLowerCase("zh-CN")
+    .replace(/[\s_\-./]+/gu, "");
+}
+
+const WEAPON_SELECT_VISIBLE_LIMIT = 160;
+
+interface RuntimeWeaponSourceIdentity {
+  id: string;
+  kind: RuntimeAttackSource["sourceKind"];
+  category: RuntimeAttackSource["sourceCategory"];
+  label: string;
+  menuLabel: string;
+  group: string;
+}
+
+interface RuntimeWeaponSourceOption extends RuntimeWeaponSourceIdentity {
+  count: number;
+}
+
+function runtimeWeaponSourceIdentity(
+  source: RuntimeAttackSource,
+): RuntimeWeaponSourceIdentity {
+  const vehicleSource = source.sourceCategory === "vehicle";
+  const supportSource =
+    source.sourceCategory === "emplaced" ||
+    source.sourceCategory === "commander-support";
+  return {
+    id: vehicleSource
+      ? `${source.sourceKind}::${source.cardId}`
+      : `category::${source.sourceCategory}`,
+    kind: source.sourceKind,
+    category: source.sourceCategory,
+    label: vehicleSource
+      ? `${source.groupName} · ${source.displayName}`
+      : source.displayName,
+    menuLabel: source.displayName,
+    group: vehicleSource
+      ? source.groupName
+      : supportSource
+        ? "支援武器"
+        : "步兵",
+  };
+}
+
+function runtimeWeaponSourceGroupRank(option: RuntimeWeaponSourceOption) {
+  if (option.category === "vehicle") return 2;
+  if (
+    option.category === "emplaced" ||
+    option.category === "commander-support"
+  ) {
+    return 1;
+  }
+  return 0;
+}
+
+function runtimeWeaponSourceOptions(
+  options: readonly RuntimeWeaponOption[],
+) {
+  const sourceOptions = new Map<string, RuntimeWeaponSourceOption>();
+  options.forEach((option) => {
+    const current = sourceOptions.get(option.source.id);
+    if (current) {
+      current.count += 1;
+      return;
+    }
+    sourceOptions.set(option.source.id, {
+      ...option.source,
+      count: 1,
+    });
+  });
+  return [...sourceOptions.values()].sort((left, right) => {
+    const groupRankDifference =
+      runtimeWeaponSourceGroupRank(left) -
+      runtimeWeaponSourceGroupRank(right);
+    return (
+      groupRankDifference ||
+      left.group.localeCompare(right.group, "zh-CN", {
+        numeric: true,
+        sensitivity: "base",
+      }) ||
+      left.label.localeCompare(right.label, "zh-CN", {
+        numeric: true,
+        sensitivity: "base",
+      })
+    );
+  });
+}
+
+function runtimeWeaponSourceOptionForWeapon(
+  sourceOptions: readonly RuntimeWeaponSourceOption[],
+  option: RuntimeWeaponOption | undefined,
+) {
+  if (!option) return null;
+  return sourceOptions.find(
+    (sourceOption) => sourceOption.id === option.source.id,
+  ) ?? null;
+}
+
+function RuntimeWeaponEffectLegend({
+  effects,
+}: {
+  effects: readonly SearchableSelectEffect[];
+}) {
+  const directEffects = effects.filter(
+    ({ role }) => role !== "radial-damage",
+  );
+  const radialEffects = effects.filter(
+    ({ role }) => role === "radial-damage",
+  );
+  const renderEffect = (effect: SearchableSelectEffect) => (
+    <span
+      className="infantry-weapon-effect-chip"
+      data-damage-type-kind={effect.damageTypeKind}
+      data-effect-role={effect.role}
+      data-event-index={effect.eventIndex}
+      data-zero={effect.value <= 0}
+      title={effect.title}
+      aria-label={effect.title}
+      key={effect.id}
+    >
+      {effect.role === "penetration" ? (
+        <WeaponPenetrationIcon
+          className="infantry-weapon-penetration-icon"
+          kind={effect.penetrationKind ?? "kinetic"}
+          size={17}
+        />
+      ) : effect.role === "direct-damage" ? (
+        <Swords
+          className="infantry-weapon-direct-damage-icon"
+          size={16}
+          strokeWidth={1.9}
+          aria-hidden="true"
+        />
+      ) : (
+        <VehicleDamageTypeIcon
+          kind={effect.damageTypeKind}
+          size={16}
+        />
+      )}
+      <b>{metricText(effect.value)}</b>
+    </span>
+  );
+  return (
+    <span
+      className="infantry-weapon-effect-legend"
+      data-density="compact"
+      data-term="effects"
+    >
+      <span
+        className="infantry-weapon-effect-legend__column infantry-weapon-effect-legend__column--direct"
+        data-empty={directEffects.length === 0}
+      >
+        {directEffects.map(renderEffect)}
+      </span>
+      <span
+        className="infantry-weapon-effect-legend__divider"
+        data-visible={directEffects.length > 0 && radialEffects.length > 0}
+        aria-hidden="true"
+      >
+        {directEffects.length > 0 && radialEffects.length > 0 ? "|" : ""}
+      </span>
+      <span
+        className="infantry-weapon-effect-legend__column infantry-weapon-effect-legend__column--radial"
+        data-empty={radialEffects.length === 0}
+      >
+        {radialEffects.map(renderEffect)}
+      </span>
+    </span>
+  );
+}
+
+function RuntimeWeaponSourceSelector({
   value,
   options,
-  searchOptions,
-  searchPlaceholder,
-  groupJumps = false,
-  sortGroupMetrics = false,
   onChange,
 }: {
-  ariaLabel: string;
   value: string;
-  options: SearchableSelectOption[];
-  searchOptions?: SearchableSelectOption[];
-  searchPlaceholder: string;
-  groupJumps?: boolean;
-  sortGroupMetrics?: boolean;
+  options: readonly RuntimeWeaponSourceOption[];
   onChange: (value: string) => void;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  const optionsRef = useRef<HTMLDivElement>(null);
-  const groupRefs = useRef(new Map<string, HTMLDivElement>());
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const selectedOption = options.find((option) => option.value === value) ?? null;
-  const normalizedQuery = normalizeVehicleSearch(query);
-  const filteredOptions = useMemo(() => {
-    if (!normalizedQuery) return options;
-    return (searchOptions ?? options)
-      .map((option, originalIndex) => {
-        const rank = option.searchRank
-          ? option.searchRank(normalizedQuery)
-          : normalizeVehicleSearch(
-              `${option.group ?? ""} ${option.label} ${option.searchText ?? ""}`,
-            ).includes(normalizedQuery)
-            ? 0
-            : null;
-        return { option, originalIndex, rank };
-      })
-      .filter((result): result is {
-        option: SearchableSelectOption;
-        originalIndex: number;
-        rank: number;
-      } => result.rank !== null)
-      .sort((left, right) => left.rank - right.rank || left.originalIndex - right.originalIndex)
-      .map(({ option }) => option);
-  }, [normalizedQuery, options, searchOptions]);
-  const groupedOptions = useMemo(() => {
-    const groups = new Map<string, SearchableSelectOption[]>();
-    filteredOptions.forEach((option) => {
-      const group = option.group ?? "";
-      groups.set(group, [...(groups.get(group) ?? []), option]);
-    });
-    return [...groups.entries()].map(([group, groupOptions]) => [
-      group,
-      sortGroupMetrics
-        ? groupOptions
-            .map((option, originalIndex) => ({ option, originalIndex }))
-            .sort((left, right) => {
-              const leftPenetration =
-                left.option.metrics?.penetrationMm ?? Number.NEGATIVE_INFINITY;
-              const rightPenetration =
-                right.option.metrics?.penetrationMm ?? Number.NEGATIVE_INFINITY;
-              return rightPenetration - leftPenetration ||
-                left.originalIndex - right.originalIndex;
-            })
-            .map(({ option }) => option)
-        : groupOptions,
-    ] as const);
-  }, [filteredOptions, sortGroupMetrics]);
-  const jumpGroups =
-    groupJumps && !normalizedQuery
-      ? groupedOptions.filter(([group]) => Boolean(group))
-      : [];
+  const selected = options.find((option) => option.id === value) ?? null;
+  const normalizedQuery = normalizeWeaponQuery(query);
+  const matchedOptions = options.filter((option) =>
+    normalizedQuery
+      ? normalizeWeaponQuery(`${option.group} ${option.label}`).includes(
+          normalizedQuery,
+        )
+      : true,
+  );
+  const visibleOptions = matchedOptions;
+  const groupedOptions = [
+    ...new Set(visibleOptions.map((option) => option.group)),
+  ].map((group) => ({
+    group,
+    options: visibleOptions.filter((option) => option.group === group),
+  }));
 
   useEffect(() => {
     if (!open) return;
-    const animationFrame = requestAnimationFrame(() => searchRef.current?.focus());
+    const animationFrame = window.requestAnimationFrame(() =>
+      searchRef.current?.focus(),
+    );
     const closeOnOutsidePointer = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
     };
@@ -775,94 +855,47 @@ function SearchableSelect({
     document.addEventListener("pointerdown", closeOnOutsidePointer);
     document.addEventListener("keydown", closeOnEscape);
     return () => {
-      cancelAnimationFrame(animationFrame);
+      window.cancelAnimationFrame(animationFrame);
       document.removeEventListener("pointerdown", closeOnOutsidePointer);
       document.removeEventListener("keydown", closeOnEscape);
     };
   }, [open]);
 
-  const selectOption = (option: SearchableSelectOption) => {
-    if (option.disabled) return;
-    onChange(option.value);
+  const choose = (nextValue: string) => {
+    onChange(nextValue);
     setQuery("");
     setOpen(false);
   };
-  const jumpToGroup = (group: string) => {
-    const optionsElement = optionsRef.current;
-    const groupElement = groupRefs.current.get(group);
-    if (!optionsElement || !groupElement) return;
-    optionsElement.scrollTo({
-      top: Math.max(0, groupElement.offsetTop - optionsElement.offsetTop),
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth",
-    });
-  };
-  const renderMetrics = (metrics: SearchableSelectMetric | undefined) => {
-    if (!metrics) return null;
-    const penetrationLabel = metrics.penetrationKind === "shaped-charge"
-      ? "破甲深度"
-      : "穿深";
-    const damageTypeLabel = metrics.damageTypeKinds
-      .map(vehicleDamageTypeIconLabel)
-      .join("、");
-    const damageLabel = metrics.damageLabel ?? "伤害";
-    const hasPenetration = metrics.penetrationMm !== null;
-    return (
-      <span className="viewer-search-select__metrics">
-        <span
-          data-term="damage-types"
-          data-penetration-kind={metrics.penetrationKind}
-          data-has-penetration={hasPenetration}
-          title={hasPenetration
-            ? `${damageTypeLabel} · ${penetrationLabel} ${metricText(metrics.penetrationMm)} mm`
-            : damageTypeLabel}
-          aria-label={hasPenetration
-            ? `${damageTypeLabel}，${penetrationLabel} ${metricText(metrics.penetrationMm)} 毫米`
-            : damageTypeLabel}
-        >
-          {metrics.damageTypeKinds.map((kind, index) => (
-            <span
-              className="viewer-search-select__damage-type"
-              data-primary={index === 0}
-              key={kind}
-            >
-              <VehicleDamageTypeIcon kind={kind} size={17} />
-              {index === 0 && hasPenetration ? (
-                <b className="viewer-search-select__penetration">
-                  {metricText(metrics.penetrationMm)}
-                </b>
-              ) : null}
-            </span>
-          ))}
-        </span>
-        <span
-          data-term="damage"
-          title={damageLabel}
-          aria-label={`${damageLabel} ${metricText(metrics.damage)}`}
-        >
-          <Swords size={11} aria-hidden="true" />
-          <b className="viewer-search-select__damage-value">
-            {metricText(metrics.damage)}
-          </b>
-        </span>
-      </span>
-    );
-  };
 
   return (
-    <div className="viewer-search-select" ref={rootRef} data-open={open}>
+    <div
+      className="viewer-search-select infantry-weapon-source-select"
+      data-open={open}
+      ref={rootRef}
+    >
       <button
         className="viewer-search-select__trigger"
         type="button"
-        aria-label={ariaLabel}
+        aria-label="选择伤害来源"
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
       >
-        <span className="viewer-search-select__value">{selectedOption?.label ?? "请选择"}</span>
-        {renderMetrics(selectedOption?.metrics)}
-        <span className="viewer-search-select__chevron" aria-hidden="true">⌄</span>
+        <span
+          className="viewer-search-select__value"
+          title={selected?.label}
+        >
+          {selected?.menuLabel ?? "选择伤害来源"}
+        </span>
+        <small className="infantry-weapon-source-select__count">
+          {selected?.count ?? 0} 弹种
+        </small>
+        <span
+          className="viewer-search-select__chevron"
+          aria-hidden="true"
+        >
+          ⌄
+        </span>
       </button>
       {open ? (
         <div className="viewer-search-select__menu">
@@ -871,89 +904,351 @@ function SearchableSelect({
               ref={searchRef}
               type="search"
               value={query}
-              placeholder={searchPlaceholder}
-              aria-label={searchPlaceholder}
-              onChange={(event) => setQuery(event.target.value)}
+              placeholder="搜索伤害来源"
+              aria-label="搜索伤害来源"
+              onChange={(event) => setQuery(event.currentTarget.value)}
               onKeyDown={(event) => {
                 if (event.key !== "Enter") return;
-                const firstEnabledOption = filteredOptions.find((option) => !option.disabled);
-                if (!firstEnabledOption) return;
+                const firstMatch = visibleOptions[0];
+                if (!firstMatch) return;
                 event.preventDefault();
-                selectOption(firstEnabledOption);
+                choose(firstMatch.id);
               }}
             />
             {query ? (
               <button
                 className="viewer-search-select__clear"
                 type="button"
-                aria-label="清除搜索关键词"
-                title="清除搜索"
+                aria-label="清除伤害来源搜索关键词"
                 onClick={() => {
                   setQuery("");
                   searchRef.current?.focus();
                 }}
               >
-                <X size={16} strokeWidth={2} aria-hidden="true" />
+                ×
               </button>
             ) : null}
           </div>
-          {jumpGroups.length > 1 ? (
-            <nav className="viewer-search-select__jumps" aria-label="武器分类快捷跳转">
-              {jumpGroups.map(([group, groupOptions]) => (
-                <button
-                  type="button"
-                  key={group}
-                  title={groupOptions[0]?.groupDescription}
-                  aria-label={`跳转到${group}，${groupOptions.length} 项`}
-                  onClick={() => jumpToGroup(group)}
-                >
-                  <span>{group}</span>
-                  <small>{groupOptions.length}</small>
-                </button>
-              ))}
-            </nav>
-          ) : null}
           <div
-            ref={optionsRef}
             className="viewer-search-select__options"
             role="listbox"
-            aria-label={ariaLabel}
+            aria-label="伤害来源列表"
           >
-            {groupedOptions.length > 0 ? groupedOptions.map(([group, groupOptions]) => (
-              <div
-                ref={(node) => {
-                  if (!group) return;
-                  if (node) groupRefs.current.set(group, node);
-                  else groupRefs.current.delete(group);
-                }}
-                className="viewer-search-select__group"
-                role="group"
-                aria-label={group || undefined}
-                key={group || "default"}
-              >
-                {group ? (
-                  <strong title={groupOptions[0]?.groupDescription}>{group}</strong>
-                ) : null}
-                {groupOptions.map((option) => (
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={option.value === value}
-                    disabled={option.disabled}
-                    data-selected={option.value === value}
-                    key={option.value}
-                    onClick={() => selectOption(option)}
-                  >
-                    <span>{option.label}</span>
-                    {renderMetrics(option.metrics)}
-                  </button>
-                ))}
-              </div>
-            )) : <span className="viewer-search-select__empty">没有匹配项</span>}
+            {groupedOptions.map(
+              ({ group, options: groupOptions }) => (
+                <div
+                  className="viewer-search-select__group"
+                  role="group"
+                  aria-label={group}
+                  key={group}
+                >
+                  <strong>{group}</strong>
+                  {groupOptions.map((option) => (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={option.id === value}
+                      data-selected={option.id === value}
+                      key={option.id}
+                      onClick={() => choose(option.id)}
+                    >
+                      <span>{option.menuLabel}</span>
+                      <small>{option.count} 弹种</small>
+                    </button>
+                  ))}
+                </div>
+              ),
+            )}
+            {groupedOptions.length === 0 ? (
+              <span className="viewer-search-select__empty">
+                没有匹配项
+              </span>
+            ) : null}
           </div>
         </div>
       ) : null}
     </div>
+  );
+}
+
+function RuntimeWeaponSelector({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: readonly RuntimeWeaponOption[];
+  onChange: (value: string) => void;
+}) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const sourceOptions = useMemo(
+    () => runtimeWeaponSourceOptions(options),
+    [options],
+  );
+  const selected =
+    options.find((option) => option.value === value) ?? options[0];
+  const selectedWeaponSource = runtimeWeaponSourceOptionForWeapon(
+    sourceOptions,
+    selected,
+  );
+  const selectedWeaponSourceId = selectedWeaponSource?.id ?? "";
+  const [selectedSourceId, setSelectedSourceId] = useState(
+    selectedWeaponSourceId,
+  );
+  const selectedSource =
+    sourceOptions.find((option) => option.id === selectedSourceId) ?? null;
+  const sourceFilteredOptions = useMemo(
+    () =>
+      selectedSource
+        ? options.filter((option) => option.source.id === selectedSource.id)
+        : options,
+    [options, selectedSource],
+  );
+  const normalizedQuery = normalizeWeaponQuery(query);
+  const showAllSources = !selectedSource || Boolean(normalizedQuery);
+  const matchedOptions = (
+    normalizedQuery ? options : sourceFilteredOptions
+  ).filter((option) =>
+    normalizedQuery
+      ? normalizeWeaponQuery(
+          `${option.group} ${option.weaponLabel} ${option.label} ${option.provenanceLabels.join(
+            " ",
+          )} ${option.searchText}`,
+        ).includes(normalizedQuery)
+      : true,
+  );
+  const hiddenCount = Math.max(
+    0,
+    matchedOptions.length - WEAPON_SELECT_VISIBLE_LIMIT,
+  );
+  const visibleOptions = matchedOptions.slice(
+    0,
+    WEAPON_SELECT_VISIBLE_LIMIT,
+  );
+  const groupedOptions = showAllSources
+    ? [...new Set(visibleOptions.map(({ familyId }) => familyId))]
+        .map((familyId) => ({
+          familyId,
+          group:
+            visibleOptions.find((option) => option.familyId === familyId)
+              ?.group ?? familyId,
+          options: visibleOptions.filter(
+            (option) => option.familyId === familyId,
+          ),
+        }))
+        .filter(({ options: groupOptions }) => groupOptions.length > 0)
+    : [
+        {
+          familyId: selectedSource?.id ?? "source-filtered",
+          group: selectedSource?.label ?? "伤害来源",
+          options: visibleOptions,
+        },
+      ];
+
+  useEffect(() => {
+    setSelectedSourceId(selectedWeaponSourceId);
+  }, [selected?.value, selectedWeaponSourceId]);
+
+  useEffect(() => {
+    if (!open) return;
+    const animationFrame = window.requestAnimationFrame(() =>
+      searchRef.current?.focus(),
+    );
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  if (!selected) return null;
+
+  const chooseSource = (nextSourceId: string) => {
+    setSelectedSourceId(nextSourceId);
+    setQuery("");
+    if (!nextSourceId) return;
+    const nextSource = sourceOptions.find(
+      (option) => option.id === nextSourceId,
+    );
+    if (!nextSource) return;
+    const currentMatchesSource = selected.source.id === nextSource.id;
+    if (currentMatchesSource) return;
+    const firstMatch = options.find(
+      (option) => option.source.id === nextSource.id,
+    );
+    if (firstMatch) onChange(firstMatch.value);
+  };
+
+  const choose = (option: RuntimeWeaponOption) => {
+    const nextSource = runtimeWeaponSourceOptionForWeapon(
+      sourceOptions,
+      option,
+    );
+    setSelectedSourceId(nextSource?.id ?? "");
+    onChange(option.value);
+    setQuery("");
+    setOpen(false);
+  };
+
+  const metrics = (option: RuntimeWeaponOption) => (
+    <span
+      className="infantry-weapon-select__metrics"
+      aria-label={option.effectsLabel}
+    >
+      <RuntimeWeaponEffectLegend effects={option.effects} />
+    </span>
+  );
+
+  return (
+    <>
+      <div className="viewer-attacker-control">
+        <span>
+          伤害来源
+          <b className="infantry-scene-field__count">
+            {sourceOptions.length}
+          </b>
+        </span>
+        <RuntimeWeaponSourceSelector
+          value={selectedSourceId}
+          options={sourceOptions}
+          onChange={chooseSource}
+        />
+      </div>
+      <div className="viewer-weapon-control">
+        <span>
+          武器 / 弹种
+          <b className="infantry-scene-field__count">
+            {sourceFilteredOptions.length}
+          </b>
+        </span>
+        <div
+          className="viewer-search-select infantry-weapon-select"
+          data-open={open}
+          data-source-filtered={!showAllSources}
+          ref={rootRef}
+        >
+          <button
+            className="viewer-search-select__trigger"
+            type="button"
+            aria-label="选择武器或弹种"
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            onClick={() => setOpen((current) => !current)}
+          >
+            <span className="viewer-search-select__value">
+              {selectedSource
+                ? selected.weaponLabel
+                : selected.triggerLabel}
+            </span>
+            {metrics(selected)}
+            <span
+              className="viewer-search-select__chevron"
+              aria-hidden="true"
+            >
+              ⌄
+            </span>
+          </button>
+          {open ? (
+            <div className="viewer-search-select__menu">
+              <div className="viewer-search-select__search">
+                <input
+                  ref={searchRef}
+                  type="search"
+                  value={query}
+                  placeholder="搜索全部武器或弹种"
+                  aria-label="搜索全部武器或弹种"
+                  onChange={(event) =>
+                    setQuery(event.currentTarget.value)
+                  }
+                  onKeyDown={(event) => {
+                    if (
+                      event.key !== "Enter" ||
+                      visibleOptions.length === 0
+                    ) {
+                      return;
+                    }
+                    event.preventDefault();
+                    choose(visibleOptions[0]);
+                  }}
+                />
+                {query ? (
+                  <button
+                    className="viewer-search-select__clear"
+                    type="button"
+                    aria-label="清除武器搜索关键词"
+                    onClick={() => {
+                      setQuery("");
+                      searchRef.current?.focus();
+                    }}
+                  >
+                    ×
+                  </button>
+                ) : null}
+              </div>
+              <div
+                className="viewer-search-select__options"
+                role="listbox"
+                aria-label="武器与弹种列表"
+              >
+                {groupedOptions.length > 0 ? (
+                  <>
+                    {groupedOptions.map(
+                      ({ familyId, group, options: groupOptions }) => (
+                        <div
+                          className="viewer-search-select__group"
+                          role="group"
+                          aria-label={group}
+                          key={familyId}
+                        >
+                          {showAllSources ? <strong>{group}</strong> : null}
+                          {groupOptions.map((option) => (
+                            <button
+                              type="button"
+                              role="option"
+                              aria-selected={option.value === value}
+                              data-selected={option.value === value}
+                              key={option.value}
+                              onClick={() => choose(option)}
+                            >
+                              <span>
+                                {showAllSources
+                                  ? option.label
+                                  : option.weaponLabel}
+                              </span>
+                              {metrics(option)}
+                            </button>
+                          ))}
+                        </div>
+                      ),
+                    )}
+                    {hiddenCount > 0 ? (
+                      <span className="viewer-search-select__empty">
+                        还有 {hiddenCount} 项，继续输入以缩小范围
+                      </span>
+                    ) : null}
+                  </>
+                ) : (
+                  <span className="viewer-search-select__empty">
+                    没有匹配项
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -1297,138 +1592,127 @@ function disposeScene(root: THREE.Object3D) {
   geometries.forEach((geometry) => geometry.dispose());
 }
 
-function createRuntimeGroundScaleAxis(
-  lengthM: number,
-  axisName: "length" | "width",
-  labelSide: 1 | -1 = 1,
+function createRuntimeGroundScaleNumberLabel(
+  valueM: number,
+  labelHeightM: number,
+  rotationZRad: number,
+  includeUnit: boolean,
 ) {
-  const group = new THREE.Group();
-  group.name = `runtime-ground-scale-${axisName}-axis`;
-  const segmentLengthM = lengthM / RUNTIME_GROUND_SCALE_SEGMENTS;
-  const thicknessM = THREE.MathUtils.clamp(lengthM * 0.004, 0.004, 0.018);
-  const depthM = thicknessM * 1.8;
-
-  const outline = new THREE.Mesh(
-    new THREE.BoxGeometry(
-      lengthM,
-      thicknessM * 0.45,
-      depthM * 0.7,
-    ),
-    new THREE.MeshBasicMaterial({
-      color: 0x66757b,
-      transparent: true,
-      opacity: 0.2,
-      depthTest: false,
-      depthWrite: false,
-      toneMapped: false,
-    }),
-  );
-  outline.name = "runtime-ground-scale-outline";
-  outline.position.set(lengthM / 2, thicknessM * 0.3, 0);
-  outline.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
-  group.add(outline);
-
-  for (
-    let segmentIndex = 0;
-    segmentIndex < RUNTIME_GROUND_SCALE_SEGMENTS;
-    segmentIndex += 1
-  ) {
-    const segment = new THREE.Mesh(
-      new THREE.BoxGeometry(
-        Math.max(0.001, segmentLengthM - thicknessM * 0.8),
-        thicknessM * 0.55,
-        depthM,
-      ),
-      new THREE.MeshBasicMaterial({
-        color: segmentIndex % 2 === 0 ? 0x82939a : 0x596970,
-        transparent: true,
-        opacity: segmentIndex % 2 === 0 ? 0.34 : 0.22,
-        depthTest: false,
-        depthWrite: false,
-        toneMapped: false,
-      }),
-    );
-    segment.name = `runtime-ground-scale-segment-${segmentIndex + 1}`;
-    segment.position.set(
-      segmentLengthM * (segmentIndex + 0.5),
-      thicknessM * 1.15,
-      0,
-    );
-    segment.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
-    group.add(segment);
-  }
-
-  for (
-    let tickIndex = 0;
-    tickIndex <= RUNTIME_GROUND_SCALE_SEGMENTS;
-    tickIndex += 1
-  ) {
-    const endpoint = tickIndex === 0 || tickIndex === RUNTIME_GROUND_SCALE_SEGMENTS;
-    const tick = new THREE.Mesh(
-      new THREE.BoxGeometry(
-        thicknessM * (endpoint ? 0.9 : 0.65),
-        thicknessM * 0.72,
-        depthM * (endpoint ? 3.2 : 2.4),
-      ),
-      new THREE.MeshBasicMaterial({
-        color: 0x8da0a7,
-        transparent: true,
-        opacity: endpoint ? 0.44 : 0.32,
-        depthTest: false,
-        depthWrite: false,
-        toneMapped: false,
-      }),
-    );
-    tick.name = `runtime-ground-scale-tick-${tickIndex}`;
-    tick.position.set(
-      segmentLengthM * tickIndex,
-      thicknessM * 1.2,
-      0,
-    );
-    tick.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
-    group.add(tick);
-  }
-
+  const text = includeUnit ? `${valueM} m` : String(valueM);
   const labelCanvas = document.createElement("canvas");
-  labelCanvas.width = 256;
-  labelCanvas.height = 72;
+  labelCanvas.width = Math.max(64, 38 + text.length * 30);
+  labelCanvas.height = 64;
   const context = labelCanvas.getContext("2d");
   if (context) {
     context.clearRect(0, 0, labelCanvas.width, labelCanvas.height);
-    context.font = '700 42px "Cascadia Mono", Consolas, monospace';
+    context.font = '600 54px "Cascadia Mono", Consolas, monospace';
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.lineWidth = 5;
-    context.strokeStyle = "rgba(4, 8, 9, 0.55)";
-    context.strokeText(`${lengthM} m`, 128, 36);
-    context.fillStyle = "rgba(157, 176, 183, 0.72)";
-    context.fillText(`${lengthM} m`, 128, 36);
+    context.lineWidth = 3;
+    context.strokeStyle = "rgba(4, 8, 9, 0.86)";
+    context.strokeText(text, labelCanvas.width / 2, labelCanvas.height / 2);
+    context.fillStyle = "rgba(240, 213, 154, 0.96)";
+    context.fillText(text, labelCanvas.width / 2, labelCanvas.height / 2);
   }
   const labelTexture = new THREE.CanvasTexture(labelCanvas);
   labelTexture.colorSpace = THREE.SRGBColorSpace;
-  const labelWidthM = Math.max(lengthM * 0.34, 0.16);
+  labelTexture.generateMipmaps = false;
+  labelTexture.minFilter = THREE.LinearFilter;
+  labelTexture.magFilter = THREE.LinearFilter;
   const label = new THREE.Mesh(
-    new THREE.PlaneGeometry(labelWidthM, labelWidthM * (72 / 256)),
+    new THREE.PlaneGeometry(
+      labelHeightM * (labelCanvas.width / labelCanvas.height),
+      labelHeightM,
+    ),
     new THREE.MeshBasicMaterial({
       map: labelTexture,
       transparent: true,
-      opacity: 0.72,
+      opacity: 0.96,
       depthTest: false,
       depthWrite: false,
       side: THREE.DoubleSide,
       toneMapped: false,
     }),
   );
-  label.name = "runtime-ground-scale-label";
+  label.name = `runtime-ground-scale-label-${valueM}`;
   label.rotation.x = -Math.PI / 2;
-  label.position.set(
-    lengthM / 2,
-    thicknessM * 1.7,
-    (depthM * 2.2 + labelWidthM * 0.18) * labelSide,
-  );
+  label.rotation.z = rotationZRad + Math.PI;
   label.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
-  group.add(label);
+  return label;
+}
 
+function createRuntimeGroundScaleAxis(
+  lengthM: number,
+  axisName: "length" | "width",
+  tickSide: 1 | -1,
+) {
+  const group = new THREE.Group();
+  group.name = `runtime-ground-scale-${axisName}-axis`;
+  const thicknessM = THREE.MathUtils.clamp(lengthM * 0.002, 0.006, 0.016);
+  const minorTickDepthM = THREE.MathUtils.clamp(lengthM * 0.018, 0.11, 0.18);
+  const majorTickDepthM = minorTickDepthM * 1.55;
+  const labelHeightM = THREE.MathUtils.clamp(lengthM * 0.014, 0.1, 0.15);
+  const tickCount = Math.round(
+    lengthM / RUNTIME_GROUND_SCALE_TICK_INTERVAL_M,
+  );
+
+  const baseline = new THREE.Mesh(
+    new THREE.BoxGeometry(lengthM, thicknessM * 0.55, thicknessM),
+    new THREE.MeshBasicMaterial({
+      color: 0xd3b979,
+      transparent: true,
+      opacity: 0.7,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  baseline.name = "runtime-ground-scale-baseline";
+  baseline.position.set(lengthM / 2, thicknessM * 0.7, 0);
+  baseline.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
+  group.add(baseline);
+
+  for (let tickIndex = 0; tickIndex <= tickCount; tickIndex += 1) {
+    const valueM = tickIndex * RUNTIME_GROUND_SCALE_TICK_INTERVAL_M;
+    const isMetreMark =
+      valueM % RUNTIME_GROUND_SCALE_LABEL_INTERVAL_M === 0;
+    const tickDepthM = isMetreMark ? majorTickDepthM : minorTickDepthM;
+    const tick = new THREE.Mesh(
+      new THREE.BoxGeometry(
+        thicknessM * (isMetreMark ? 1.05 : 0.72),
+        thicknessM * 0.75,
+        tickDepthM,
+      ),
+      new THREE.MeshBasicMaterial({
+        color: isMetreMark ? 0xf0d59a : 0xa28f64,
+        transparent: true,
+        opacity: isMetreMark ? 0.92 : 0.68,
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false,
+      }),
+    );
+    tick.name = `runtime-ground-scale-tick-${tickIndex}`;
+    tick.position.set(valueM, thicknessM, tickSide * tickDepthM / 2);
+    tick.renderOrder = RUNTIME_GROUND_SCALE_RENDER_ORDER;
+    group.add(tick);
+
+    if (!isMetreMark) continue;
+    // Viewer +X is vehicle-forward. The width axis group rotates -90 degrees
+    // around Y, so these local rotations leave every label facing world +X.
+    const label = createRuntimeGroundScaleNumberLabel(
+      valueM,
+      labelHeightM,
+      axisName === "length" ? -Math.PI / 2 : 0,
+      tickIndex === 0 || tickIndex === tickCount,
+    );
+    label.position.set(
+      valueM,
+      thicknessM * 1.35,
+      tickSide * (majorTickDepthM + labelHeightM * 0.62),
+    );
+    group.add(label);
+  }
   return group;
 }
 
@@ -1438,18 +1722,17 @@ function createRuntimeGroundScale(
 ) {
   const group = new THREE.Group();
   group.name = "runtime-ground-scale";
-  group.add(createRuntimeGroundScaleAxis(lengthM, "length"));
-  const widthAxis = createRuntimeGroundScaleAxis(widthM, "width", -1);
+  group.add(createRuntimeGroundScaleAxis(lengthM, "length", -1));
+  const widthAxis = createRuntimeGroundScaleAxis(widthM, "width", 1);
   widthAxis.rotation.y = -Math.PI / 2;
   group.add(widthAxis);
-
   const origin = new THREE.Mesh(
-    new THREE.RingGeometry(0.035, 0.052, 24),
+    new THREE.RingGeometry(0.026, 0.038, 20),
     new THREE.MeshBasicMaterial({
       color: 0xb9c9cf,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.56,
+      opacity: 0.5,
       depthTest: false,
       depthWrite: false,
       toneMapped: false,
@@ -1747,22 +2030,67 @@ function shouldShowExplosionDamageLane(result: EditorNativeShotResult) {
   return effectiveDamageEventsByKind(result, "radial").length > 0;
 }
 
+function forwardedDamageMatchesParent(
+  parent: EditorNativeDamageEvent,
+  forwarded: EditorNativeDamageEvent,
+) {
+  const expectedParentRoute = forwarded.damageKind === "radial"
+    ? "radial-direct"
+    : "direct";
+  return parent.route === expectedParentRoute &&
+    parent.poolKind === "seat" &&
+    parent.damageKind === forwarded.damageKind &&
+    parent.sourceComponentIndex === forwarded.sourceComponentIndex &&
+    (forwarded.damageKind !== "radial" || (
+      parent.radialLayerId === forwarded.radialLayerId &&
+      parent.radialLayerIndex === forwarded.radialLayerIndex
+    ));
+}
+
+function forwardedDamageGroups(
+  events: readonly EditorNativeDamageEvent[],
+) {
+  const forwardedByParentIndex = new Map<number, EditorNativeDamageEvent[]>();
+  const nestedIndexes = new Set<number>();
+  events.forEach((event, index) => {
+    if (!isEditorNativeComponentForwardedDamageEvent(event)) return;
+    for (let parentIndex = index - 1; parentIndex >= 0; parentIndex -= 1) {
+      if (!forwardedDamageMatchesParent(events[parentIndex], event)) continue;
+      const forwarded = forwardedByParentIndex.get(parentIndex) ?? [];
+      forwarded.push(event);
+      forwardedByParentIndex.set(parentIndex, forwarded);
+      nestedIndexes.add(index);
+      break;
+    }
+  });
+  return { forwardedByParentIndex, nestedIndexes };
+}
+
 function DamageEventListItems({
   events,
   animationKey,
   penetrationKind,
+  attached = false,
+  attachForwarded = false,
 }: {
   events: readonly EditorNativeDamageEvent[];
   animationKey: string;
   penetrationKind?: WeaponPenetrationKind;
+  attached?: boolean;
+  attachForwarded?: boolean;
 }) {
+  const { forwardedByParentIndex, nestedIndexes } = attachForwarded
+    ? forwardedDamageGroups(events)
+    : { forwardedByParentIndex: new Map<number, EditorNativeDamageEvent[]>(), nestedIndexes: new Set<number>() };
   return events.map((damage, index) => {
+    if (nestedIndexes.has(index)) return null;
     const effectiveDamage = editorNativeEffectiveDamageAmount(damage);
     const effect = editorDamageCardEffect(
       damage.poolKind,
       damage.poolDamage,
       damage.maxHealth,
     );
+    const forwardedEvents = forwardedByParentIndex.get(index) ?? [];
     const damageTypeIconKind =
       damage.damageKind === "radial"
         ? explosiveDamageTypeIconKinds(
@@ -1770,15 +2098,27 @@ function DamageEventListItems({
             damage.damageTypePath ?? null,
           )[0] ?? "generic"
         : null;
-    return (
+    const rowKey = `${animationKey}:${damage.poolIndex}:${damage.route}:${index}:${effect?.id ?? "damage"}`;
+    const card = (
       <li
-        key={`${animationKey}:${damage.poolIndex}:${damage.route}:${index}:${effect?.id ?? "damage"}`}
+        key={rowKey}
+        className={attached ? "viewer-attached-damage-list__item" : undefined}
         data-penetrated="true"
         data-no-damage="false"
         data-damage-pool={damage.poolKind}
         data-damage-kind={damage.damageKind}
         data-damage-type-kind={damageTypeIconKind ?? undefined}
         data-damage-effect={effect?.id}
+        data-damage-route={damage.route}
+        data-damage-attachment={attached
+          ? "component-forwarded"
+          : isEditorNativeComponentForwardedDamageEvent(damage)
+            ? "unmatched-forwarded"
+            : forwardedEvents.length > 0
+              ? "original-with-forwarding"
+              : "standalone"}
+        data-damage-source-component-index={damage.sourceComponentIndex}
+        data-damage-forwarded-count={forwardedEvents.length || undefined}
         style={
           damageTypeIconKind
             ? {
@@ -1864,6 +2204,34 @@ function DamageEventListItems({
         ) : null}
       </li>
     );
+    if (forwardedEvents.length === 0) return card;
+    return [
+      card,
+      <li
+        key={`${rowKey}:forwarded-row`}
+        className="viewer-damage-forwarded-row"
+        data-damage-attachment="component-forwarded"
+        data-damage-parent-component-index={damage.sourceComponentIndex}
+        data-damage-forwarded-count={forwardedEvents.length}
+      >
+        <div className="viewer-damage-forwarded">
+          <span className="viewer-damage-forwarded__arrow" aria-hidden="true">↳</span>
+          <div className="viewer-damage-forwarded__content">
+            <ul
+              className="viewer-damage-list viewer-attached-damage-list"
+              aria-label="挂接到原始组件伤害卡片下方的传导伤害"
+            >
+              <DamageEventListItems
+                events={forwardedEvents}
+                animationKey={`${animationKey}:forwarded:${index}`}
+                penetrationKind={penetrationKind}
+                attached
+              />
+            </ul>
+          </div>
+        </div>
+      </li>,
+    ];
   });
 }
 
@@ -2566,12 +2934,25 @@ function turretStationRoleLabel(role: ReferenceSeat["role"]) {
   } satisfies Record<ReferenceSeat["role"], string>)[role];
 }
 
+function referenceVehicleWeapons(referenceData: ReferenceData) {
+  return referenceData.weaponBindingIds.map((bindingId) => {
+    const binding =
+      runtimeVehicleEquipmentBindingForId(bindingId);
+    if (!binding) {
+      throw new Error(
+        `Vehicle reference data points to missing weapon binding ${bindingId}`,
+      );
+    }
+    return binding.equipment;
+  });
+}
+
 function turretStationEquipmentLabel(
   referenceData: ReferenceData,
   seat: ReferenceSeat,
 ) {
   const labels = [...new Set(
-    referenceData.weapons
+    referenceVehicleWeapons(referenceData)
       .filter((weapon) => weapon.turretName === seat.turretName)
       .map((weapon) => weapon.displayName)
       .filter(Boolean),
@@ -2726,7 +3107,7 @@ export function RuntimeVehicleViewer({
                 seat.stationKind === "weapon-station"
               ? "machine-gun"
               : "weapon-station";
-      const stationWeaponNames = referenceData.weapons
+      const stationWeaponNames = referenceVehicleWeapons(referenceData)
         .filter((weapon) => weapon.turretName === seat.turretName)
         .map((weapon) => weapon.gunName);
       const assembly = resolveRuntimeTurretAssembly({
@@ -2899,12 +3280,10 @@ export function RuntimeVehicleViewer({
   }, [mode, onExteriorStreamingChange, viewerState]);
   const [hitState, setHitState] = useState<HitState>(hit ? { kind: "loading" } : { kind: "absent" });
   const [hitHeader, setHitHeader] = useState<ParsedRuntimeHitScene["header"] | null>(null);
-  const [attackSourceCardId, setAttackSourceCardId] = useState(() =>
-    runtimeAttackSourceForId(navigationState?.attacker ?? "")?.cardId ??
-    runtimeAttackSourceForId(preview.cardId)?.cardId ??
-    runtimeAttackSources[0]?.cardId ??
-    ""
-  );
+  const [attackLibrary, setAttackLibrary] =
+    useState<RuntimeAttackSourceLibrary | null>(null);
+  const [attackLibraryError, setAttackLibraryError] = useState<string | null>(null);
+  const [attackSourceCardId, setAttackSourceCardId] = useState("");
   const [attackState, setAttackState] = useState<AttackState>({ kind: "loading" });
   const [loadedAttackSourceCardId, setLoadedAttackSourceCardId] = useState("");
   const [attackHeader, setAttackHeader] = useState<EditorNativeModel | null>(null);
@@ -2943,7 +3322,25 @@ export function RuntimeVehicleViewer({
     completed: 0,
     total: 0,
   });
-  const attackSource = runtimeAttackSourceForId(attackSourceCardId) ?? null;
+  useEffect(() => {
+    let active = true;
+    import("./runtime-probe-weapon-labels")
+      .then((library) => {
+        if (!active) return;
+        setAttackLibrary(library);
+        setAttackLibraryError(null);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        setAttackLibraryError(
+          error instanceof Error ? error.message : String(error),
+        );
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+  const attackSource = attackLibrary?.runtimeAttackSourceForId(attackSourceCardId) ?? null;
   const weaponOptions = useMemo(
     () => attackSource?.weapons.map((_, optionIndex) => optionIndex) ?? [],
     [attackSource],
@@ -2988,163 +3385,101 @@ export function RuntimeVehicleViewer({
       : ARMOR_THICKNESS_LEGEND_TICKS,
     [armorThicknessRange, relativeArmorScaleActive],
   );
-  const weaponSelectOptions = useMemo<SearchableSelectOption[]>(() => {
-    if (!attackSource) return [];
-    const selectOptions: SearchableSelectOption[] = attackSource.weapons.map((weapon, optionIndex) => {
-      const ballistics = resolveEditorNativeBallistics(
-        weapon.ballisticsModel,
-        weapon.ballisticsWeaponIndex,
-        targetDistanceM,
-      );
-      const infantryCategory = weapon.infantryCategory
-        ? INFANTRY_WEAPON_CATEGORY_BY_ID.get(weapon.infantryCategory)
-        : null;
-      const explosiveGroup = weapon.explosiveCategoryLabel ?? null;
-      return {
-        value: weaponSelectionValue(attackSource.cardId, optionIndex),
-        label: weapon.displayNameZh,
-        group: explosiveGroup ?? infantryCategory?.label,
-        groupDescription: explosiveGroup
-          ? weapon.explosiveLayerOrderClosed
-            ? "官方 Editor 爆炸配方；多层顺序已有动态证据"
-            : "官方 Editor 爆炸配方；多层顺序仍按资产声明展示"
-          : infantryCategory?.description,
-        searchText:
-          `${weapon.displayNameEnglish} ${weapon.gunName} ${weapon.runtimeAssetPath ?? ""} ${(weapon.searchAliases ?? []).join(" ")}`,
-        searchRank: (query) => rankVerifiedVehicleCandidateSearch({
-          primary: [weapon.displayNameZh, weapon.displayNameEnglish],
-          aliases: [
-            weapon.gunName,
-            weapon.projectileName ?? "",
-            weapon.runtimeAssetPath ?? "",
-            weapon.sourceCardId,
-            weapon.sourceRawName,
-            ...(weapon.searchAliases ?? []),
-          ],
-          context: [attackSource.displayName, attackSource.groupName],
-        }, query),
-        metrics: {
-          penetrationMm: weapon.directFireRoute
-            ? ballistics.penetrationAtRangeMm
-            : null,
-          penetrationKind: weaponPenetrationKindForDamageTypePath(ballistics.damageTypePath),
-          damage: selectorDamageMetric(weapon.directFireRoute, ballistics),
-          damageLabel: weapon.directFireRoute
-            ? undefined
-            : "各伤害类别事件的基础值合计",
-          damageTypeKinds: selectorDamageTypeIconKinds(ballistics),
-        },
-      };
-    });
-    if (attackSource.sourceKind === "wiki-infantry") {
-      return selectOptions
-        .map((option, originalIndex) => ({ option, originalIndex }))
-        .sort((left, right) => {
-          const categoryOrderDifference =
-            (INFANTRY_WEAPON_CATEGORY_ORDER_BY_LABEL.get(left.option.group ?? "") ??
-              Number.MAX_SAFE_INTEGER) -
-            (INFANTRY_WEAPON_CATEGORY_ORDER_BY_LABEL.get(right.option.group ?? "") ??
-              Number.MAX_SAFE_INTEGER);
-          if (categoryOrderDifference !== 0) return categoryOrderDifference;
-          const leftPenetration =
-            left.option.metrics?.penetrationMm ?? Number.NEGATIVE_INFINITY;
-          const rightPenetration =
-            right.option.metrics?.penetrationMm ?? Number.NEGATIVE_INFINITY;
-          if (leftPenetration !== rightPenetration) {
-            return rightPenetration - leftPenetration;
-          }
-          return left.originalIndex - right.originalIndex;
-        })
-        .map(({ option }) => option);
-    }
-    return selectOptions;
-  }, [attackSource, targetDistanceM]);
-  const allWeaponSearchOptions = useMemo<SearchableSelectOption[]>(() =>
-    runtimeAttackSources.flatMap((source) =>
-      source.weapons.map((weapon, optionIndex) => {
-        const ballistics = resolveEditorNativeBallistics(
-          weapon.ballisticsModel,
-          weapon.ballisticsWeaponIndex,
-          targetDistanceM,
-        );
-        const infantryCategory = weapon.infantryCategory
-          ? INFANTRY_WEAPON_CATEGORY_BY_ID.get(weapon.infantryCategory)
-          : null;
-        const explosiveGroup = weapon.explosiveCategoryLabel ?? null;
-        return {
-          value: weaponSelectionValue(source.cardId, optionIndex),
-          label: `${weapon.displayNameZh} · ${source.displayName}`,
-          group: explosiveGroup ?? infantryCategory?.label ?? source.groupName,
-          groupDescription: explosiveGroup
-            ? weapon.explosiveLayerOrderClosed
-              ? "官方 Editor 爆炸配方；多层顺序已有动态证据"
-              : "官方 Editor 爆炸配方；多层顺序仍按资产声明展示"
-            : infantryCategory?.description,
-          searchText: [
-            weapon.displayNameEnglish,
-            weapon.gunName,
-            weapon.projectileName ?? "",
-            weapon.runtimeAssetPath ?? "",
-            weapon.sourceCardId,
-            weapon.sourceRawName,
-            ...(weapon.searchAliases ?? []),
-            source.displayName,
-            source.groupName,
-            source.groupId,
-            ...source.types,
-          ].join(" "),
-          searchRank: (query: string) => rankVerifiedVehicleCandidateSearch({
-            primary: [weapon.displayNameZh, weapon.displayNameEnglish],
-            aliases: [
-              weapon.gunName,
-              weapon.projectileName ?? "",
-              weapon.runtimeAssetPath ?? "",
-              weapon.sourceCardId,
-              weapon.sourceRawName,
-              ...(weapon.searchAliases ?? []),
-            ],
-            context: [source.displayName, source.groupName, source.groupId, ...source.types],
-          }, query),
-          metrics: {
-            penetrationMm: weapon.directFireRoute
-              ? ballistics.penetrationAtRangeMm
-              : null,
-            penetrationKind: weaponPenetrationKindForDamageTypePath(ballistics.damageTypePath),
-            damage: selectorDamageMetric(weapon.directFireRoute, ballistics),
-            damageLabel: weapon.directFireRoute
-              ? undefined
-              : "各伤害类别事件的基础值合计",
-            damageTypeKinds: selectorDamageTypeIconKinds(ballistics),
-          },
-        };
-      }),
-    ), [targetDistanceM]);
-  const attackSourceOptions = useMemo<SearchableSelectOption[]>(() =>
-    [
-      ...runtimeAttackSources.filter((source) => source.sourceKind === "wiki-infantry"),
-      ...runtimeAttackSources.filter((source) => source.sourceKind === "explosive-catalog"),
-      ...runtimeAttackSources.filter((source) => source.sourceKind === "vehicle"),
-    ].map((source) => ({
-      value: source.cardId,
-      label: source.displayName,
-      group: source.groupName,
-      searchText: `${source.cardIds.join(" ")} ${source.types.join(" ")} ${source.variantRawNames.join(" ")}`,
-      searchRank: (query) => rankVerifiedVehicleCandidateSearch({
-        primary: [source.displayName],
-        aliases: [
-          ...source.cardIds,
-          ...source.variantRawNames,
-          ...source.weapons.flatMap((weapon) => [
-            weapon.displayNameZh,
-            weapon.displayNameEnglish,
-            weapon.gunName,
-            weapon.projectileName ?? "",
-            ...(weapon.searchAliases ?? []),
-          ]),
-        ],
-        context: [source.groupName, source.groupId, ...source.types],
-      }, query),
-    })), []);
+  const runtimeWeaponOptions = useMemo<RuntimeWeaponOption[]>(
+    () =>
+      (attackLibrary?.runtimeAttackSources ?? [])
+        .flatMap((source) =>
+          source.weapons.flatMap((weapon, optionIndex) => {
+            const selectorVariant = weapon.selectorVariant;
+            if (selectorVariant?.selectorVisibility === "debug") return [];
+            const ballistics = resolveEditorNativeBallistics(
+              weapon.ballisticsModel,
+              weapon.ballisticsWeaponIndex,
+              targetDistanceM,
+            );
+            const sourceIdentity = runtimeWeaponSourceIdentity(source);
+            const provenanceLabels = [
+              ...new Set(
+                (selectorVariant?.sourceLabels ?? [])
+                  .map((label) => label.trim())
+                  .filter(Boolean),
+              ),
+            ];
+            const sourceSummary = sourceIdentity.label;
+            const weaponLabel =
+              selectorVariant?.label ?? weapon.displayNameZh;
+            const familyLabel =
+              selectorVariant?.familyLabel ??
+              weapon.explosiveCategoryLabel ??
+              source.groupName;
+            const qualifier =
+              selectorVariant?.qualifier ?? weapon.displayNameZh;
+            const label = selectorVariant
+              ? selectorVariant.configurationKeys.length > 0 &&
+                sourceSummary
+                ? `${qualifier} · ${sourceSummary}`
+                : sourceSummary || qualifier
+              : sourceSummary;
+            const triggerLabel = sourceSummary
+              ? `${weaponLabel} · ${sourceSummary}`
+              : weaponLabel;
+            const effects = selectorWeaponEffects(
+              weapon.directFireRoute,
+              ballistics,
+            );
+            return [
+              {
+                value: weaponSelectionValue(source.cardId, optionIndex),
+                familyId:
+                  selectorVariant?.familyId ??
+                  `runtime-family::${normalizeWeaponQuery(familyLabel)}`,
+                label: label || weaponLabel,
+                triggerLabel,
+                weaponLabel,
+                source: sourceIdentity,
+                provenanceLabels,
+                group: familyLabel,
+                effects,
+                effectsLabel:
+                  effects.length > 0
+                    ? effects.map(({ title }) => title).join("；")
+                    : "无已解析伤害或穿透数据",
+                searchText: [
+                  weapon.displayNameEnglish,
+                  weapon.gunName,
+                  weapon.projectileName ?? "",
+                  weapon.runtimeAssetPath ?? "",
+                  weapon.sourceCardId,
+                  weapon.sourceRawName,
+                  ...(weapon.searchAliases ?? []),
+                  source.displayName,
+                  source.groupName,
+                  source.groupId,
+                  ...source.types,
+                  selectorVariant?.searchText ?? "",
+                  selectorVariant?.displayLabel ?? "",
+                  selectorVariant?.qualifier ?? "",
+                  ...(selectorVariant?.sourceLabels ?? []),
+                  ...(selectorVariant?.factionIds ?? []),
+                ].join(" "),
+              },
+            ];
+          }),
+        )
+        .sort(
+          (left, right) =>
+            left.group.localeCompare(right.group, "zh-CN", {
+              numeric: true,
+              sensitivity: "base",
+            }) ||
+            left.label.localeCompare(right.label, "zh-CN", {
+              numeric: true,
+              sensitivity: "base",
+            }) ||
+            left.value.localeCompare(right.value),
+        ),
+    [attackLibrary, targetDistanceM],
+  );
   const quickDistanceTicks = useMemo(() => distanceTicks(maxDistanceM), [maxDistanceM]);
   const sharedShotToken = useMemo(() => {
     if (savedShots.length === 0) return "";
@@ -3658,17 +3993,28 @@ export function RuntimeVehicleViewer({
   }, [cancelShotAnimation, updateHostShotState]);
 
   useEffect(() => {
-    const requested = runtimeAttackSourceForId(navigationState?.attacker ?? "");
-    if (requested) setAttackSourceCardId(requested.cardId);
-  }, [navigationState?.attacker]);
-
-  useEffect(() => {
-    if (navigationState?.attacker) return;
-    const preferred = runtimeAttackSourceForId(preview.cardId) ?? runtimeAttackSources[0];
+    if (!attackLibrary) return;
+    const requested = attackLibrary.runtimeAttackSourceForId(
+      navigationState?.attacker ?? "",
+    );
+    const preferred = requested ??
+      attackLibrary.runtimeAttackSourceForId(preview.cardId) ??
+      attackLibrary.runtimeAttackSources[0];
     if (preferred) setAttackSourceCardId(preferred.cardId);
-  }, [navigationState?.attacker, preview.cardId]);
+  }, [attackLibrary, navigationState?.attacker, preview.cardId]);
 
   useEffect(() => {
+    if (!attackLibrary) {
+      if (attackLibraryError) {
+        setAttackState({
+          kind: "error",
+          message: `武器选择器加载失败：${attackLibraryError}`,
+        });
+      } else {
+        setAttackState({ kind: "loading" });
+      }
+      return;
+    }
     const source = attackSource;
     setAttackState({ kind: "loading" });
     setLoadedAttackSourceCardId("");
@@ -3696,7 +4042,7 @@ export function RuntimeVehicleViewer({
         if (
           !modelWeapon ||
           modelWeapon.weaponId !== indexedWeapon.weaponId ||
-          !runtimeAttackWeaponSupportsHitAnalysis(indexedWeapon)
+          !attackLibrary.runtimeAttackWeaponSupportsHitAnalysis(indexedWeapon)
         ) {
           throw new Error(
             `攻击来源弹道索引不匹配：${source.cardId}/${indexedWeapon.ballisticsId}`,
@@ -3783,7 +4129,7 @@ export function RuntimeVehicleViewer({
       setAttackState({ kind: "error", message });
       if (host) host.dataset.attackSourceState = "error";
     }
-  }, [attackSource, clearShotVisual]);
+  }, [attackLibrary, attackLibraryError, attackSource, clearShotVisual]);
 
   const simulateCurrentShot = useCallback((nextWeaponIndex: number, nextDistanceM: number) => {
     const parsed = parsedHitRef.current;
@@ -4141,7 +4487,7 @@ export function RuntimeVehicleViewer({
     host.dataset.attackSourceBallisticsId = selectedAttackWeapon.ballisticsId;
     host.dataset.attackSourceBallisticsKind =
       selectedAttackWeapon.ballisticsSource.kind;
-    if (selectedAttackWeapon.sourceKind === "explosive-catalog") {
+    if (selectedAttackWeapon.explosiveCategory) {
       host.dataset.attackExplosiveCategory =
         selectedAttackWeapon.explosiveCategory ?? "unknown";
       host.dataset.attackExplosiveLayerCount = String(
@@ -4312,7 +4658,6 @@ export function RuntimeVehicleViewer({
       source: "hit" | "analysis" | "exterior";
     } | null = null;
     let fittedSource: "hit" | "analysis" | "exterior" | null = null;
-    let fittedTargetGroup: THREE.Object3D | null = null;
     let pointerStart: { x: number; y: number } | null = null;
     let hoverFrame = 0;
     let pendingHover: { clientX: number; clientY: number } | null = null;
@@ -5541,40 +5886,88 @@ export function RuntimeVehicleViewer({
         scene.remove(groundScale);
         disposeScene(groundScale);
       }
-      gridHelper = new THREE.GridHelper(radius * 4, 28, 0x555555, 0x292929);
-      gridHelper.position.y = groundY;
       host.dataset.referencePlaneY = String(groundY);
       host.dataset.referencePlaneAuthority = runtimePoseGroundActive
         ? "runtime-probe-map"
         : "geometry-bounds";
-      scene.add(gridHelper);
-      const groundScaleLengthM = runtimeGroundScaleLengthM(modelLengthM);
-      const groundScaleWidthM = runtimeGroundScaleLengthM(modelWidthM);
+      const groundScaleOriginWorldX = referenceSoldierBounds
+        ? (referenceSoldierBounds.min.x + referenceSoldierBounds.max.x) / 2
+        : bounds.min.x - groundReferenceClearanceM;
+      const groundScaleOriginWorldZ = referenceSoldierBounds
+        ? (referenceSoldierBounds.min.z + referenceSoldierBounds.max.z) / 2
+        : bounds.min.z - groundReferenceClearanceM;
+      const groundScaleLengthSpanM = Math.max(
+        modelLengthM,
+        bounds.max.x - groundScaleOriginWorldX,
+      );
+      const groundScaleWidthSpanM = Math.max(
+        modelWidthM,
+        bounds.max.z - groundScaleOriginWorldZ,
+      );
+      const groundScaleLengthM = runtimeGroundScaleLengthM(
+        groundScaleLengthSpanM,
+      );
+      const groundScaleWidthM = runtimeGroundScaleLengthM(
+        groundScaleWidthSpanM,
+      );
+      const groundGridSpacingM = RUNTIME_GROUND_SCALE_TICK_INTERVAL_M;
+      const groundGridDivisions = Math.max(
+        1,
+        Math.ceil(
+          Math.max(radius * 4, groundScaleLengthM, groundScaleWidthM) /
+            groundGridSpacingM,
+        ),
+      );
+      const groundGridSizeM = groundGridDivisions * groundGridSpacingM;
+      gridHelper = new THREE.GridHelper(
+        groundGridSizeM,
+        groundGridDivisions,
+        0x555555,
+        0x292929,
+      );
       groundScale = createRuntimeGroundScale(
         groundScaleLengthM,
         groundScaleWidthM,
       );
-      const groundScaleOriginX = referenceSoldierBounds
-        ? (referenceSoldierBounds.min.x + referenceSoldierBounds.max.x) / 2
-          - center.x
-        : bounds.min.x - groundReferenceClearanceM - center.x;
-      const groundScaleOriginZ = referenceSoldierBounds
-        ? (referenceSoldierBounds.min.z + referenceSoldierBounds.max.z) / 2
-          - center.z
-        : bounds.min.z - groundReferenceClearanceM - center.z;
+      const groundScaleOriginX = groundScaleOriginWorldX - center.x;
+      const groundScaleOriginZ = groundScaleOriginWorldZ - center.z;
       groundScale.position.set(
         groundScaleOriginX,
         groundY + 0.006,
         groundScaleOriginZ,
       );
+      gridHelper.position.set(groundScaleOriginX, groundY, groundScaleOriginZ);
+      scene.add(gridHelper);
+      host.dataset.groundScaleGridAlignment = "reference-soldier-feet";
+      host.dataset.groundScaleGridSpacingM = String(groundGridSpacingM);
       host.dataset.groundScaleLengthM = String(groundScaleLengthM);
       host.dataset.groundScaleWidthM = String(groundScaleWidthM);
       host.dataset.vehicleLengthM = String(modelLengthM);
       host.dataset.vehicleWidthM = String(modelWidthM);
+      const groundScaleLengthSegments =
+        groundScaleLengthM / RUNTIME_GROUND_SCALE_TICK_INTERVAL_M;
+      const groundScaleWidthSegments =
+        groundScaleWidthM / RUNTIME_GROUND_SCALE_TICK_INTERVAL_M;
       host.dataset.groundScaleSegments = String(
-        RUNTIME_GROUND_SCALE_SEGMENTS,
+        groundScaleLengthSegments + groundScaleWidthSegments,
       );
+      host.dataset.groundScaleLengthSegments = String(
+        groundScaleLengthSegments,
+      );
+      host.dataset.groundScaleWidthSegments = String(
+        groundScaleWidthSegments,
+      );
+      host.dataset.groundScaleTickIntervalM = String(
+        RUNTIME_GROUND_SCALE_TICK_INTERVAL_M,
+      );
+      host.dataset.groundScaleLabelIntervalM = String(
+        RUNTIME_GROUND_SCALE_LABEL_INTERVAL_M,
+      );
+      host.dataset.groundScaleLabelFacing = "vehicle-forward-positive-x";
       host.dataset.groundScaleAxes = "length,width";
+      host.dataset.groundScaleLayout = "two-axis";
+      host.dataset.groundScaleSpanBasis =
+        "reference-origin-to-opposite-vehicle-bounds";
       host.dataset.groundScaleOrigin = referenceSoldierBounds
         ? "reference-soldier-feet"
         : "vehicle-bounds-outer-corner-fallback";
@@ -5635,7 +6028,6 @@ export function RuntimeVehicleViewer({
       };
       resetViewRef.current = resetView;
       fittedSource = source;
-      fittedTargetGroup = targetGroup;
       if (preserveCamera) {
         protectionCache = null;
         controls.target.set(0, 0, 0);
@@ -5720,14 +6112,10 @@ export function RuntimeVehicleViewer({
       applyTurretPose();
       setRealtimePointer(null);
       protectionCache = null;
-      if (fittedTargetGroup && fittedSource) {
-        fitViewToGroup(fittedTargetGroup, fittedSource, {
-          force: true,
-          preserveCamera: true,
-        });
-      } else {
-        modelGroup.updateMatrixWorld(true);
-        render();
+      modelGroup.updateMatrixWorld(true);
+      render();
+      if (protectionEnabledRef.current) {
+        scheduleProtectionMap({ invalidate: true });
       }
     };
     applyChassisPoseRef.current = applyChassisPose;
@@ -6492,13 +6880,16 @@ export function RuntimeVehicleViewer({
       data-static-hit-runtime={hitState.kind === "ready" ? "true" : undefined}
       data-hit-solver={hitState.kind === "ready" ? "editor-native-direct-hit" : undefined}
       data-hit-weapon-label-source={attackReady
-        ? attackSource?.sourceKind === "wiki-infantry"
-          ? "weapon-wiki"
-          : attackSource?.sourceKind === "explosive-catalog"
-            ? selectedAttackWeapon?.directFireRoute
-              ? "editor-production-explosive"
-              : "editor-explosive-catalog"
-            : "vehicle-encyclopedia-card"
+        ? attackSource?.sourceCategory === "infantry"
+          ? selectedAttackWeapon?.sourceKind === "explosive-catalog"
+            ? "editor-explosive-catalog"
+            : "weapon-wiki"
+          : attackSource?.sourceCategory === "emplaced" ||
+              attackSource?.sourceCategory === "commander-support"
+            ? "editor-weapon-catalog"
+            : selectedAttackWeapon?.sourceKind === "explosive-catalog"
+              ? "editor-explosive-catalog"
+              : "vehicle-encyclopedia-card"
         : undefined}
       data-attack-source-card-id={attackSource?.cardId}
       data-attack-source-canonical-raw-name={attackSource?.canonicalRawName}
@@ -6689,7 +7080,7 @@ export function RuntimeVehicleViewer({
             data-scale={relativeArmorScaleActive ? "relative" : "absolute"}
             aria-label={relativeArmorScaleActive && armorThicknessRange
               ? `当前载具相对装甲厚度连续色阶，${formatArmorThicknessLegendValue(armorThicknessRange.minMm)} 至 ${formatArmorThicknessLegendValue(armorThicknessRange.maxMm)}`
-              : "装甲厚度绝对连续色阶，0 至 800 毫米"}
+              : "装甲厚度绝对连续色阶，0 至 890 毫米"}
           >
             <strong>{relativeArmorScaleActive ? "相对厚度" : "装甲厚度"}</strong>
             <div
@@ -6721,55 +7112,23 @@ export function RuntimeVehicleViewer({
       ) : null}
 
       <div className="viewer-engagement-controls" aria-label="命中分析参数">
-        <div className="viewer-attacker-control">
-          <span>攻击来源</span>
-          <SearchableSelect
-            ariaLabel="选择攻击来源"
-            value={attackSource?.cardId ?? ""}
-            options={attackSourceOptions}
-            searchPlaceholder="搜索攻击来源"
-            onChange={(nextCardId) => {
-              if (nextCardId === attackSource?.cardId) return;
-              const nextSource = runtimeAttackSourceForId(nextCardId);
-              if (!nextSource) return;
-              pendingAttackWeaponSelectionRef.current = null;
-              setPendingAttackWeaponSelection(null);
-              const current = navigationStateRef.current;
-              if (current) {
-                const next = {
-                  ...current,
-                  attacker: nextSource.shareSlug,
-                  weapon: "",
-                  weaponIndex: null,
-                  distance: 0,
-                  shots: "",
-                } satisfies ViewerNavigationState;
-                navigationStateRef.current = next;
-                onNavigationStateChangeRef.current?.(next);
-              }
-              setAttackSourceCardId(nextCardId);
-            }}
-          />
-        </div>
-        <div className="viewer-weapon-control">
-          <span>武器 / 弹药</span>
-          <SearchableSelect
-            ariaLabel="选择武器或弹药"
-            value={attackSource && displayedWeaponOptionIndex >= 0
-              ? weaponSelectionValue(attackSource.cardId, displayedWeaponOptionIndex)
-              : ""}
-            options={weaponSelectOptions}
-            searchOptions={allWeaponSearchOptions}
-            searchPlaceholder="搜索全部载具、步兵武器或爆炸物"
-            groupJumps={
-              attackSource?.sourceKind === "wiki-infantry" ||
-              attackSource?.sourceKind === "explosive-catalog"
+        {attackLibrary ? (
+          <RuntimeWeaponSelector
+            value={
+              attackSource && displayedWeaponOptionIndex >= 0
+                ? weaponSelectionValue(
+                    attackSource.cardId,
+                    displayedWeaponOptionIndex,
+                  )
+                : ""
             }
-            sortGroupMetrics={attackSource?.sourceKind === "wiki-infantry"}
+            options={runtimeWeaponOptions}
             onChange={(nextValue) => {
               const selection = parseWeaponSelectionValue(nextValue);
               if (!selection) return;
-              const nextSource = runtimeAttackSourceForId(selection.sourceCardId);
+              const nextSource = attackLibrary?.runtimeAttackSourceForId(
+                selection.sourceCardId,
+              ) ?? null;
               const nextWeapon = nextSource?.weapons[selection.optionIndex];
               if (!nextSource || !nextWeapon) return;
               if (nextSource.cardId !== attackSource?.cardId) {
@@ -6833,7 +7192,13 @@ export function RuntimeVehicleViewer({
               simulateCurrentShot(nextWeapon.ballisticsWeaponIndex, nextDistance);
             }}
           />
-        </div>
+        ) : (
+          <div className="viewer-attack-library-status" data-state={attackLibraryError ? "error" : "loading"}>
+            {attackLibraryError
+              ? `武器选择器加载失败：${attackLibraryError}`
+              : "正在加载完整武器选择器…"}
+          </div>
+        )}
         <div className="viewer-distance-control" data-disabled={maxDistanceM === 0}>
           <span><span>距离（衰减）</span><strong>{distanceLabel}</strong></span>
           <div className="viewer-distance-slider" data-has-ticks={quickDistanceTicks.length > 0}>
@@ -7265,6 +7630,7 @@ export function RuntimeVehicleViewer({
                   data-spaced-armor={isSpacedArmor}
                   data-no-penetration={isNoPenetration}
                   data-path-marker={markerKind}
+                  data-component-index={layer.componentIndex}
                   data-zero-thickness-behavior={layer.armorThicknessMm === 0
                     ? isNoPenetration
                       ? "explicitly-blocked"
@@ -7367,6 +7733,7 @@ export function RuntimeVehicleViewer({
                             events={penetrationDamageEvents}
                             animationKey={`${damageAnimationKey}:penetration`}
                             penetrationKind={ballisticsPenetrationKind}
+                            attachForwarded
                           />
                         ) : (
                           <li
@@ -7464,6 +7831,7 @@ export function RuntimeVehicleViewer({
                         <DamageEventListItems
                           events={explosionDamageEvents}
                           animationKey={`${damageAnimationKey}:explosion`}
+                          attachForwarded
                         />
                       </ol>
                     </div>

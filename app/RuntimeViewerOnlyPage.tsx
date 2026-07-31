@@ -25,6 +25,7 @@ export function RuntimeViewerOnlyPage() {
   const [state, setState] = useState<ViewerRouteState>({ kind: "loading" });
 
   useEffect(() => {
+    let cancelled = false;
     const params = new URLSearchParams(window.location.search);
     const cardId = params.get("cardId");
     const rawName = params.get("rawName");
@@ -36,27 +37,41 @@ export function RuntimeViewerOnlyPage() {
         kind: "error",
         message: "viewer-only requires exact cardId, rawName, and packageSha256",
       });
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
 
-    const preview = review
-      ? runtimeReviewPreviewForVariant(cardId, rawName)
-      : runtimePreviewForVariant(cardId, rawName);
-    if (!preview?.visual) {
+    void (async () => {
+      const preview = review
+        ? await runtimeReviewPreviewForVariant(cardId, rawName)
+        : await runtimePreviewForVariant(cardId, rawName);
+      if (cancelled) return;
+      if (!preview?.visual) {
+        setState({
+          kind: "error",
+          message: `No exact runtime visual descriptor for ${cardId} / ${rawName}`,
+        });
+        return;
+      }
+      if (preview.visual.packageSha256 !== packageSha256) {
+        setState({
+          kind: "error",
+          message: `Package hash mismatch: expected ${packageSha256}, got ${preview.visual.packageSha256}`,
+        });
+        return;
+      }
+      setState({ kind: "ready", preview });
+    })().catch((error: unknown) => {
+      if (cancelled) return;
       setState({
         kind: "error",
-        message: `No exact runtime visual descriptor for ${cardId} / ${rawName}`,
+        message: error instanceof Error ? error.message : "Runtime visual descriptor load failed",
       });
-      return;
-    }
-    if (preview.visual.packageSha256 !== packageSha256) {
-      setState({
-        kind: "error",
-        message: `Package hash mismatch: expected ${packageSha256}, got ${preview.visual.packageSha256}`,
-      });
-      return;
-    }
-    setState({ kind: "ready", preview });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (

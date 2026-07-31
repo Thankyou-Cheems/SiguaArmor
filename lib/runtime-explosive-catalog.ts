@@ -1,5 +1,6 @@
 export const RUNTIME_EXPLOSIVE_CATEGORY_ORDER = [
   "deployable",
+  "landmine",
   "hand-grenade",
   "grenade-launcher",
   "rifle-grenade",
@@ -12,7 +13,7 @@ export const RUNTIME_EXPLOSIVE_CATEGORY_ORDER = [
 ] as const;
 
 export const RUNTIME_EXPLOSIVE_CATALOG_SHA256 =
-  "c32cff37c9fc1b79e8175224dcc6eb97fa2333ebce13b5dfaee7ea9798b6582b";
+  "82443a781cd2598b9ba00e48029885ab5ee2f4f18fcf2b6fe37d68c648c06693";
 
 export type RuntimeExplosiveCategory =
   (typeof RUNTIME_EXPLOSIVE_CATEGORY_ORDER)[number];

@@ -5524,9 +5524,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .viewer-search-select__metrics {
   display: flex;
   width: auto;
-  min-width: 112px;
+  min-width: 146px;
   flex: none;
   align-items: center;
+  justify-content: flex-end;
   color: var(--brand);
   font-family: var(--font-mono-ui);
   font-size: 8px;
@@ -5535,82 +5536,74 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   white-space: nowrap;
 }
 
-.viewer-search-select__metrics > span {
-  display: grid;
+.viewer-search-select__effect-column {
+  display: inline-flex;
   box-sizing: border-box;
   align-items: center;
-  grid-template-columns: 18px minmax(0, 1fr);
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.viewer-search-select__effect-column--direct {
+  width: 76px;
+  min-width: 76px;
+}
+
+.viewer-search-select__effect-column--radial {
+  min-width: 36px;
+}
+
+.viewer-search-select__effect-column[data-empty="true"] {
+  visibility: hidden;
+}
+
+.viewer-search-select__effect-divider {
+  width: 12px;
+  flex: none;
+  color: rgba(216, 181, 92, 0.34);
+  text-align: center;
+}
+
+.viewer-search-select__effect-divider[data-visible="false"] {
+  color: transparent;
+}
+
+.viewer-search-select__effect {
+  display: inline-grid;
+  align-items: center;
+  grid-template-columns: auto minmax(18px, auto);
   gap: 3px;
 }
 
-.viewer-search-select__metrics > [data-term="damage"] {
-  width: 51px;
-}
-
-.viewer-search-select__metrics svg {
+.viewer-search-select__effect svg {
   flex: none;
   filter: drop-shadow(0 0 4px currentColor);
 }
 
-.viewer-search-select__metrics [data-term="damage"] svg {
-  color: #f06f57;
+.viewer-search-select__effect b {
+  min-width: 18px;
+  font: inherit;
+  font-weight: 650;
+  text-align: right;
 }
 
-.viewer-search-select__metrics > span + span {
-  padding-left: 8px;
-  border-left: 1px solid rgba(216, 181, 92, 0.24);
-  grid-template-columns: 15px minmax(0, 1fr);
-}
-
-.viewer-search-select__metrics > [data-term="damage-types"] {
-  display: flex;
-  width: 61px;
-  min-width: 61px;
-  justify-content: flex-end;
-  padding-right: 6px;
-  gap: 2px;
-}
-
-.viewer-search-select__damage-type {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.viewer-search-select__damage-type + .viewer-search-select__damage-type {
-  margin-left: -3px;
-}
-
-.viewer-search-select__damage-type[data-primary="true"] {
-  color: var(--brand);
-}
-
-.viewer-search-select__metrics
-  [data-term="damage-types"][data-penetration-kind="shaped-charge"]
-  .viewer-search-select__penetration {
+.viewer-search-select__effect[data-effect-role="penetration"]
+  [data-penetration-kind="shaped-charge"],
+.viewer-search-select__effect[data-effect-role="penetration"]
+  .weapon-penetration-icon[data-penetration-kind="shaped-charge"] {
   color: #61d4e5;
 }
 
-.viewer-search-select__penetration {
-  display: inline-block;
-  width: 28px;
-  color: var(--brand);
-  font: inherit;
-  font-weight: 650;
-  text-align: right;
+.viewer-search-select__effect[data-effect-role="direct-damage"] {
+  color: #f06f57;
 }
 
-.viewer-search-select__metrics > [data-term="damage"] {
-  grid-template-columns: 15px 28px;
-  justify-content: end;
+.viewer-search-select__effect[data-effect-role="radial-damage"] {
+  color: #e9bf71;
 }
 
-.viewer-search-select__damage-value {
-  display: block;
-  width: 28px;
-  font: inherit;
-  font-weight: 650;
-  text-align: right;
+.viewer-search-select__effect[data-zero="true"] {
+  opacity: 0.54;
 }
 
 .viewer-search-select__chevron {
@@ -5811,6 +5804,258 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: var(--text-dim);
   font-size: 9px;
   text-align: center;
+}
+
+.infantry-scene-field__count {
+  margin-left: 6px;
+  padding: 1px 5px;
+  border: 1px solid rgba(225, 200, 155, 0.24);
+  color: rgba(240, 226, 197, 0.7);
+  font-family: var(--font-mono-ui);
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.infantry-weapon-source-select .viewer-search-select__trigger {
+  height: 34px;
+  border-color: rgba(225, 200, 155, 0.2);
+  background: rgba(225, 200, 155, 0.025);
+}
+
+.infantry-weapon-source-select .viewer-search-select__menu {
+  width: max(100%, 440px);
+  max-width: min(500px, calc(100vw - 40px));
+}
+
+.infantry-weapon-source-select .viewer-search-select__options {
+  max-height: 310px;
+}
+
+.infantry-weapon-source-select__count,
+.infantry-weapon-source-select
+  .viewer-search-select__group
+  > button
+  > small {
+  flex: 0 0 auto;
+  color: rgba(225, 200, 155, 0.62);
+  font-family: var(--font-mono-ui);
+  font-size: 7px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.infantry-weapon-select .viewer-search-select__trigger {
+  display: grid;
+  height: auto;
+  min-height: 58px;
+  grid-template-areas:
+    "value"
+    "metrics";
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 5px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-color: rgba(225, 200, 155, 0.26);
+  background: rgba(225, 200, 155, 0.035);
+}
+
+.infantry-weapon-select[data-source-filtered="true"]
+  .viewer-search-select__trigger {
+  min-height: 50px;
+  grid-template-areas: "value metrics";
+  grid-template-columns: minmax(96px, 0.72fr) minmax(0, 1.28fr);
+  align-items: center;
+  column-gap: 8px;
+}
+
+.infantry-weapon-select .viewer-search-select__value {
+  grid-area: value;
+  color: #f7f2e4;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.infantry-weapon-select .viewer-search-select__menu {
+  width: max(100%, 560px);
+  max-width: min(620px, calc(100vw - 40px));
+}
+
+.infantry-weapon-select .viewer-search-select__group > button {
+  display: grid;
+  min-height: 44px;
+  grid-template-columns: minmax(126px, 0.78fr) minmax(0, 1.22fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.infantry-weapon-select[data-source-filtered="true"]
+  .viewer-search-select__group
+  > button {
+  grid-template-columns: minmax(180px, 0.8fr) minmax(300px, 1.2fr);
+}
+
+.infantry-weapon-select
+  .viewer-search-select__group
+  > button
+  > span:first-child {
+  flex: 1;
+  overflow: visible;
+  line-height: 1.35;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.infantry-weapon-select__metrics {
+  display: flex;
+  width: auto;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  color: var(--brand);
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.infantry-weapon-select
+  .viewer-search-select__trigger
+  > .infantry-weapon-select__metrics {
+  grid-area: metrics;
+  justify-content: flex-start;
+}
+
+.infantry-weapon-select[data-source-filtered="true"]
+  .viewer-search-select__trigger
+  > .infantry-weapon-select__metrics {
+  justify-content: flex-end;
+}
+
+.infantry-weapon-select[data-source-filtered="true"]
+  .viewer-search-select__trigger
+  .infantry-weapon-effect-legend {
+  --weapon-direct-column-width: 112px;
+}
+
+.infantry-weapon-effect-legend {
+  --weapon-direct-column-width: 132px;
+  display: grid;
+  width: 100%;
+  max-width: 316px;
+  min-width: 0;
+  grid-template-columns:
+    minmax(0, var(--weapon-direct-column-width))
+    9px
+    minmax(0, 1fr);
+  align-items: center;
+  column-gap: 4px;
+}
+
+.infantry-weapon-effect-legend__column {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 2px 4px;
+}
+
+.infantry-weapon-effect-legend__column--direct {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.infantry-weapon-effect-legend__column--radial {
+  flex-wrap: wrap;
+}
+
+.infantry-weapon-effect-chip {
+  --effect-color: #aeb6b2;
+  display: inline-flex;
+  min-width: 0;
+  min-height: 18px;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 2px;
+  color: var(--effect-color);
+  white-space: nowrap;
+}
+
+.infantry-weapon-effect-chip[data-damage-type-kind="kinetic"] {
+  --effect-color: #e1c89b;
+}
+
+.infantry-weapon-effect-chip[data-damage-type-kind="small-arms"] {
+  --effect-color: #a9c987;
+}
+
+.infantry-weapon-effect-chip[data-damage-type-kind="fragmentation"] {
+  --effect-color: #efb865;
+}
+
+.infantry-weapon-effect-chip[data-damage-type-kind="heat"] {
+  --effect-color: #61d4e5;
+}
+
+.infantry-weapon-effect-chip[data-damage-type-kind="hat"] {
+  --effect-color: #4fa4ed;
+}
+
+.infantry-weapon-effect-chip[data-damage-type-kind="explosives"] {
+  --effect-color: #ef735a;
+}
+
+.infantry-weapon-effect-chip[data-damage-type-kind="thermite"] {
+  --effect-color: #f29d4b;
+}
+
+.infantry-weapon-effect-chip[data-effect-role="direct-damage"] {
+  --effect-color: #ee5d61;
+}
+
+.infantry-weapon-effect-chip[data-effect-role="penetration"] {
+  color: var(--effect-color);
+}
+
+.infantry-weapon-effect-chip[data-zero="true"] {
+  opacity: 0.58;
+}
+
+.infantry-weapon-effect-chip > svg {
+  color: currentColor;
+  filter: drop-shadow(0 0 3px currentColor);
+}
+
+.infantry-weapon-penetration-icon {
+  flex: 0 0 auto;
+  overflow: visible;
+  color: currentColor;
+}
+
+.infantry-weapon-direct-damage-icon {
+  flex: 0 0 auto;
+  overflow: visible;
+  color: #ee5d61;
+}
+
+.infantry-weapon-effect-chip > b {
+  color: #fff4de;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.infantry-weapon-effect-legend__divider {
+  display: inline-flex;
+  min-height: 16px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1px;
+  color: rgba(228, 220, 202, 0.3);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
 }
 
 .viewer-distance-control {
@@ -6637,6 +6882,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-layer-list {
   --viewer-path-axis-x: -11px;
+  --viewer-path-marker-size: 26px;
+  --viewer-path-marker-radius: calc(var(--viewer-path-marker-size) / 2);
   position: relative;
   display: grid;
   gap: 5px;
@@ -6679,8 +6926,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   left: var(--viewer-path-axis-x);
   z-index: 2;
   display: grid;
-  width: 26px;
-  height: 26px;
+  width: var(--viewer-path-marker-size);
+  height: var(--viewer-path-marker-size);
   place-items: center;
   border-width: 3px;
   border-style: var(--path-marker-border-style);
@@ -6908,6 +7155,124 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   align-items: center;
   align-self: center;
   column-gap: 4px;
+}
+
+.viewer-damage-list > li.viewer-damage-forwarded-row {
+  display: block;
+  min-height: 0;
+  margin: -1px 0 0 calc(
+    var(--viewer-path-axis-x) - var(--viewer-path-marker-radius)
+  );
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  counter-increment: none;
+  font: inherit;
+}
+
+.viewer-damage-list > li.viewer-damage-forwarded-row::before,
+.viewer-damage-list > li.viewer-damage-forwarded-row::after {
+  display: none !important;
+  content: none;
+}
+
+.viewer-damage-list > li[data-damage-forwarded-count]:not(.viewer-damage-forwarded-row)::after {
+  display: none;
+}
+
+.viewer-damage-forwarded {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: var(--viewer-path-marker-size) minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+  min-width: 0;
+  margin: 0 -2px -2px;
+  padding: 6px 0 0;
+  border-top: 1px dashed color-mix(
+    in srgb,
+    var(--component-only-damage-accent) 56%,
+    transparent
+  );
+}
+
+.viewer-damage-forwarded__arrow {
+  display: grid;
+  width: var(--viewer-path-marker-size);
+  min-height: 22px;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in srgb, var(--component-only-damage-accent) 78%, white);
+  font: 800 20px/1 var(--font-mono-ui);
+  text-shadow: 0 0 5px color-mix(
+    in srgb,
+    var(--component-only-damage-accent) 72%,
+    transparent
+  );
+}
+
+.viewer-damage-forwarded__content {
+  min-width: 0;
+  padding-left: 8px;
+  border-left: 2px solid color-mix(
+    in srgb,
+    var(--component-only-damage-accent) 72%,
+    transparent
+  );
+}
+
+.viewer-attached-damage-list {
+  display: grid;
+  width: 100%;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.viewer-attached-damage-list li {
+  position: relative;
+  display: grid;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 4px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-left: 2px solid var(--path-accent);
+  background: linear-gradient(
+    90deg,
+    var(--path-fill),
+    rgba(0, 0, 0, 0.18) 72%
+  );
+  color: var(--path-accent);
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+
+.viewer-attached-damage-list li::before,
+.viewer-attached-damage-list li::after {
+  display: none;
+  content: none;
+}
+
+.viewer-attached-damage-list .viewer-damage-target__damage-type-icon,
+.viewer-attached-damage-list .viewer-damage-target__penetration-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.viewer-attached-damage-list .viewer-damage-equation {
+  gap: 4px;
+  padding: 2px 5px;
+  font-size: 8px;
 }
 
 .viewer-layer-metrics [data-metric="thickness"] {
@@ -9098,6 +9463,17 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     grid-template-columns: minmax(96px, 0.58fr) minmax(170px, 1.42fr);
     gap: 6px;
     padding: 8px;
+  }
+
+  .infantry-weapon-select[data-source-filtered="true"]
+    .viewer-search-select__group
+    > button {
+    grid-template-columns: minmax(112px, 0.72fr) minmax(0, 1.28fr);
+    align-items: center;
+  }
+
+  .infantry-weapon-select__metrics {
+    justify-content: flex-start;
   }
 
   .viewer-engagement-controls select {
@@ -12498,6 +12874,28 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   align-self: center;
 }
 
+.sigua-wiki-weapon-card__selector-summary {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  grid-column: 1 / -1;
+  gap: 8px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(225, 200, 155, 0.14);
+  color: var(--brand);
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
+}
+
+.sigua-wiki-weapon-card__selector-summary small {
+  overflow: hidden;
+  color: var(--text-dim);
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .sigua-wiki-vehicle-card {
   display: grid;
   min-width: 0;
@@ -12613,6 +13011,85 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .sigua-wiki-vehicle-card__chips svg {
   color: var(--brand);
+}
+
+.sigua-wiki-vehicle-card__weapons {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  margin-top: 3px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(225, 200, 155, 0.14);
+}
+
+.sigua-wiki-vehicle-card__weapon-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-dim);
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sigua-wiki-vehicle-card__weapon-heading b {
+  color: var(--brand);
+  font: inherit;
+}
+
+.sigua-wiki-vehicle-weapon {
+  display: grid;
+  min-width: 0;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.sigua-wiki-vehicle-weapon > span:first-child {
+  overflow: hidden;
+  color: #f4efdc;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sigua-wiki-vehicle-weapon__metrics {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  color: var(--brand);
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sigua-wiki-vehicle-weapon__metrics > span {
+  display: inline-grid;
+  align-items: center;
+  grid-template-columns: auto minmax(16px, auto);
+  gap: 2px;
+}
+
+.sigua-wiki-vehicle-weapon__metrics svg {
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.sigua-wiki-vehicle-weapon__metrics
+  [data-effect-role="direct-damage"] {
+  color: #f06f57;
+}
+
+.sigua-wiki-vehicle-weapon__metrics
+  [data-effect-role="radial-damage"] {
+  color: #e9bf71;
+}
+
+.sigua-wiki-vehicle-card__weapons > small {
+  color: var(--text-dim);
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
 }
 
 .sigua-wiki-empty-state {
