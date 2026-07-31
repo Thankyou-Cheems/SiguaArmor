@@ -1,47 +1,38 @@
 import wikiVehiclesJson from "../generated/wiki-vehicles.json";
 
-export interface WikiVehicleWeapon {
-  gunName: string;
-  displayName: string;
-  turretName: string | null;
-  projectileName: string | null;
-  muzzleVelocityMps: number | null;
-  armorPenetrationMm: number | null;
-}
-
 export interface WikiVehicleEntry {
+  catalogBindingRef: string;
+  vehicleRef: string;
+  runtimeVehicleRef: string;
   cardId: string;
   factionId: string;
   rawName: string;
-  catalogLabel: string;
-  catalogDisplayName: string;
   displayName: string;
-  details: string;
   icon: string;
   factions: string[];
   type: string;
   vehicleTags: string[];
-  spawnerSize: string | null;
-  respawnTime: number | null;
-  ticketValue: number | null;
   amphibious: boolean;
-  vehicleHealth: number | null;
-  repairToolLimit: number | null;
-  weapons: WikiVehicleWeapon[];
+  weaponVariantIds: string[];
 }
 
 interface WikiVehiclePayload {
-  schemaVersion: "sigua-wiki-vehicles/v1";
+  schemaVersion: "sigua-wiki-vehicles/v3";
+  vehicleCatalogRevision: string;
+  weaponCatalogRevision: string;
   summary: {
     catalogVariants: number;
     sourceVehicles: number;
+    runtimeVehicles: number;
+    weaponVariantReferences: number;
+    armedVariants: number;
   };
   items: WikiVehicleEntry[];
 }
 
 const payload = wikiVehiclesJson as unknown as WikiVehiclePayload;
 
-if (payload.schemaVersion !== "sigua-wiki-vehicles/v1") {
+if (payload.schemaVersion !== "sigua-wiki-vehicles/v3") {
   throw new Error("Unsupported Wiki vehicle metadata schema");
 }
 

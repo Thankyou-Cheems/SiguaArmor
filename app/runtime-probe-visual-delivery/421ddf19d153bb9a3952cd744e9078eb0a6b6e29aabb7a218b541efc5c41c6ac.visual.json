@@ -1,0 +1,53 @@
+{
+  "cardId": "afu--tb2--uav",
+  "factionId": "AFU",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_TB2.BP_CommandActor_UAV_TB2_C",
+  "identitySha256": "4dabc7cd53d3aa4dab7027c5cd6bf63b7ee259fd2bf106ae3cb353c4d4316311",
+  "packageSha256": "4d5c96f6799fc03a670ca2748aa5216e2c78fb14517b5ed524df0f437a036ef5",
+  "placements": [
+    {
+      "actor": "BP_CommandActor_UAV_TB2_C_0",
+      "assetUrl": "/assets/runtime-probe/models/4d0966c6d4202d3223d893fca7be13458da2e12108715d957fadfa02bf1ff839.gltf",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Mesh",
+      "runtimeBonePoseStatus": "not-applicable",
+      "sourceMeshPath": "/Game/Vehicles/TB2_UAV/Meshes/SM_TB2_UAV.SM_TB2_UAV",
+      "stableOccurrenceId": "occurrence-cd0ecd16559442f3fbe48b88cbff8a6da3330446c28038b0a4a91630b6fda396"
+    }
+  ],
+  "rawName": "BP_CommandActor_UAV_TB2",
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. The gameplay actor keeps its declared mesh at zero scale, so the viewer uses that exact runtime-referenced source mesh at an identity presentation transform; no collision or hit-runtime claim is made.",
+  "requiredOccurrences": 1,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseStatus": "observed",
+  "schemaVersion": "runtime-visual-preview/v1",
+  "sourceAssets": 1,
+  "status": "complete",
+  "targetKey": "afu--support-air--tb2",
+  "totalBytes": 1296013,
+  "variant": "Bayraktar TB2",
+  "vehicleId": "vehicle-4dabc7cd53d3aa4dab7027c5cd6bf63b7ee259fd2bf106ae3cb353c4d4316311",
+  "visualAcceptanceStatus": "web-usable",
+  "webUsable": true
+}

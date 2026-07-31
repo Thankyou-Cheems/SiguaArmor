@@ -1,6 +1,11 @@
 import { notFound } from "next/navigation";
 
 import { factionDisplayName } from "../../../faction-display-name";
+import {
+  weaponCatalogDirectModelForVariant,
+  weaponCatalogRadialAssetForVariant,
+  weaponCatalogVariantsForWikiConfigurations,
+} from "../../../../lib/wiki-weapon-catalog";
 import { internationalPath } from "../../../site-paths";
 import {
   factionLabels,
@@ -122,21 +127,57 @@ export default async function WeaponDetailPage({
   const description = stringValue(inventoryInfo, "description");
   const timeBetweenShots = numberValue(weaponInfo, "timeBetweenShots");
   const roundsPerMinute = timeBetweenShots && timeBetweenShots > 0 ? Math.round(60 / timeBetweenShots) : null;
-  const muzzleVelocity = numberValue(weaponInfo, "muzzleVelocity");
-  const damageCurveName = stringValue(weaponInfo, "damageFallOffType");
-  const damageCurve = damageCurveName ? wikiWeaponDamageCurves[damageCurveName] : undefined;
+  const selectorVariants =
+    weaponCatalogVariantsForWikiConfigurations([decodedKey]);
+  const selectedVariant =
+    selectorVariants.find(({ configurationKeys }) =>
+      configurationKeys.includes(decodedKey),
+    ) ?? selectorVariants[0] ?? null;
+  const directModel =
+    weaponCatalogDirectModelForVariant(selectedVariant);
+  const radialAsset =
+    weaponCatalogRadialAssetForVariant(selectedVariant);
+  const muzzleVelocity =
+    ((numberValue(weaponInfo, "muzzleVelocity") ?? 0) / 100);
+  const exactDamageCurveId = configuration.exactCurveIds.find(
+    (curveId) =>
+      asObject(
+        wikiWeaponDamageCurves[curveId] as WikiJsonValue,
+      )?.outputUnit === "damage",
+  );
+  const damageCurveName =
+    exactDamageCurveId ??
+    stringValue(weaponInfo, "damageFallOffType");
+  const exactDamageCurve = exactDamageCurveId
+    ? wikiWeaponDamageCurves[exactDamageCurveId]
+    : undefined;
+  const damageCurve = exactDamageCurve ??
+    (damageCurveName
+      ? wikiWeaponDamageCurves[damageCurveName]
+      : undefined);
 
   const mainStats = [
-    ["Damage Type", stringValue(projectileInfo, "damageType") ?? "Unknown"],
-    ["Muzzle Velocity", muzzleVelocity === null ? "Unknown" : `${formatNumber(muzzleVelocity / 100, 2)} m/s`],
-    ["Armor Penetration", numberValue(weaponInfo, "armorPenMM") === null
+    ["Damage Type", directModel?.damageType ?? stringValue(projectileInfo, "damageType") ?? "Unknown"],
+    ["Direct Damage", directModel
+      ? formatNumber(directModel.directImpactDamage)
+      : numberValue(weaponInfo, "maxDamageToApply") === null
+        ? "Unknown"
+        : formatNumber(numberValue(weaponInfo, "maxDamageToApply") ?? 0)],
+    ["Muzzle Velocity", muzzleVelocity > 0 ? `${formatNumber(muzzleVelocity, 2)} m/s` : "Unknown"],
+    ["Armor Penetration", directModel
+      ? `${formatNumber(directModel.penetrationMm ?? 0)} mm`
+      : numberValue(weaponInfo, "armorPenMM") === null
       ? "Unknown"
       : `${formatNumber(numberValue(weaponInfo, "armorPenMM") ?? 0)} mm`],
-    ["Post-Pen Distance", numberValue(weaponInfo, "traceDistanceAfterPen") === null
+    ["Post-Pen Distance", directModel
+      ? `${formatNumber(directModel.traceDistanceAfterPenetrationM)} m`
+      : numberValue(weaponInfo, "traceDistanceAfterPen") === null
       ? "Unknown"
       : `${formatNumber(numberValue(weaponInfo, "traceDistanceAfterPen") ?? 0)} m`],
     ["MOA", numberValue(weaponInfo, "moa") === null ? "Unknown" : formatNumber(numberValue(weaponInfo, "moa") ?? 0)],
-    ["Max Range", numberValue(weaponInfo, "maxTraceDistance") === null
+    ["Max Range", directModel
+      ? `${formatNumber(directModel.maxDistanceM)} m`
+      : numberValue(weaponInfo, "maxTraceDistance") === null
       ? "Unknown"
       : `${formatNumber(numberValue(weaponInfo, "maxTraceDistance") ?? 0)} m`],
     ["Rate of Fire", roundsPerMinute === null ? "Unknown" : `${roundsPerMinute} RPM`],
@@ -231,6 +272,46 @@ export default async function WeaponDetailPage({
           </div>
         </section>
 
+        {selectorVariants.length > 0 ? (
+          <section className="sigua-wiki-detail-panel">
+            <div className={styles.panelHeading}>
+              <h2>Normalized Selector Variants</h2>
+              <span>{selectorVariants.length} matched</span>
+            </div>
+            <div
+              className="sigua-wiki-config-table"
+              role="table"
+              aria-label="Normalized weapon selector variants"
+            >
+              <div role="row" className="sigua-wiki-config-table__row sigua-wiki-config-table__row--header">
+                <span role="columnheader">Weapon Family</span>
+                <span role="columnheader">Variant / Delivery</span>
+                <span role="columnheader">Source Scope</span>
+              </div>
+              {selectorVariants.map((variant) => (
+                <div
+                  role="row"
+                  className={styles.configurationRow}
+                  key={variant.id}
+                >
+                  <span role="cell">{variant.familyLabel}</span>
+                  <span role="cell">{variant.qualifier}</span>
+                  <span role="cell">
+                    {Object.entries(variant.factionByScope)
+                      .map(
+                        ([scope, factionIds]) =>
+                          `${scope}: ${factionIds
+                            .map((id) => id.toLocaleUpperCase())
+                            .join("/")}`,
+                      )
+                      .join(" · ")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="sigua-wiki-detail-panel sigua-wiki-detail-panel--stats">
           <div className={styles.panelHeading}>
             <h2>Weapon Statistics</h2>
@@ -243,7 +324,37 @@ export default async function WeaponDetailPage({
             <div className={styles.curveSummary}>
               <span>Damage Curve</span>
               <strong>{damageCurveName}</strong>
-              {Array.isArray(damageCurve) ? <code>{damageCurve.join(" · ")}</code> : null}
+              {exactDamageCurve ? (
+                <code>
+                  {exactDamageCurve.keys
+                    .map(
+                      ({ time, value }) =>
+                        `${formatNumber(time)}:${formatNumber(value)}`,
+                    )
+                    .join(" · ")}
+                </code>
+              ) : Array.isArray(damageCurve) ? (
+                <code>{damageCurve.join(" · ")}</code>
+              ) : null}
+            </div>
+          ) : null}
+          {radialAsset ? (
+            <div className={styles.curveSummary}>
+              <span>Radial Events</span>
+              <strong>{radialAsset.damageSummary.displayText}</strong>
+              <code>
+                {[
+                  radialAsset.damageSummary.primaryLayer,
+                  ...radialAsset.damageSummary.secondaryLayers,
+                ]
+                  .map(
+                    (layer, index) =>
+                      `${index + 1}. ${layer.label} ${formatNumber(
+                        layer.baseDamage,
+                      )}`,
+                  )
+                  .join(" · ")}
+              </code>
             </div>
           ) : null}
         </section>
@@ -256,7 +367,10 @@ export default async function WeaponDetailPage({
           <div className={styles.rawSections}>
             {rawSections.map(([key, value]) => <RawDataSection key={key} title={key} value={value} />)}
             {damageCurveName && damageCurve !== undefined ? (
-              <RawDataSection title={`damageCurves › ${damageCurveName}`} value={damageCurve} />
+              <RawDataSection
+                title={`damageCurves › ${damageCurveName}`}
+                value={damageCurve as WikiJsonValue}
+              />
             ) : null}
           </div>
         </details>

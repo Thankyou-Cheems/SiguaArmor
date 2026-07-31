@@ -1,0 +1,53 @@
+{
+  "cardId": "caf--mq9--uav",
+  "factionId": "CAF",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_MQ9.BP_CommandActor_UAV_MQ9_C",
+  "identitySha256": "6980977ec587fbf069ff9988a4171184fc8da923542d92fe76f1f4bfe22a1faa",
+  "packageSha256": "b87755f024aa4d8e12f8f8d73e733c30038a1a4c21030f9776f9e6c8405d1641",
+  "placements": [
+    {
+      "actor": "BP_CommandActor_UAV_MQ9_C_0",
+      "assetUrl": "/assets/runtime-probe/models/956ea53d65c12d79f3819c6c1c039caf3d712578c7a5640633fff756dfb7d045.gltf",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Mesh",
+      "runtimeBonePoseStatus": "not-applicable",
+      "sourceMeshPath": "/Game/Vehicles/MQ-9_UAV/Meshes/SM_MQ-9_UAV.SM_MQ-9_UAV",
+      "stableOccurrenceId": "occurrence-1c9a20e50b910974dae563607609d1915f1cf63f903d52089010ae7910103fdb"
+    }
+  ],
+  "rawName": "BP_CommandActor_UAV_MQ9",
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. The gameplay actor keeps its declared mesh at zero scale, so the viewer uses that exact runtime-referenced source mesh at an identity presentation transform; no collision or hit-runtime claim is made.",
+  "requiredOccurrences": 1,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseStatus": "observed",
+  "schemaVersion": "runtime-visual-preview/v1",
+  "sourceAssets": 1,
+  "status": "complete",
+  "targetKey": "caf-mq9-uav--bp-commandactor-uav-mq9",
+  "totalBytes": 1943702,
+  "variant": "MQ-9 Reaper",
+  "vehicleId": "vehicle-6980977ec587fbf069ff9988a4171184fc8da923542d92fe76f1f4bfe22a1faa",
+  "visualAcceptanceStatus": "web-usable",
+  "webUsable": true
+}

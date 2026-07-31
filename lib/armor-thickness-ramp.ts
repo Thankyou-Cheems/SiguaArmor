@@ -30,23 +30,39 @@ export type ArmorSurfaceVisualStyle = {
 
 export const ARMOR_THICKNESS_MIN_MM = 0;
 export const ARMOR_THICKNESS_MAX_MM = 890;
-/** Keep the ramp visually balanced while giving common thin armor blue and green room. */
+
+/**
+ * The current fleet snapshot is strongly right-skewed: about 80% of
+ * renderable armor profiles are at or below 20 mm, 88% at or below 40 mm,
+ * 96% at or below 100 mm, and 99% at or below 300 mm. A log-like axis gives
+ * those common thin surfaces readable color separation while retaining a
+ * visible heavy-armor tail through 890 mm.
+ */
+const ARMOR_THICKNESS_AXIS_LOG_DENOMINATOR = Math.log1p(ARMOR_THICKNESS_MAX_MM);
+
+function armorThicknessAxisPosition(thicknessMm: number): number {
+  const clamped = Math.min(
+    ARMOR_THICKNESS_MAX_MM,
+    Math.max(ARMOR_THICKNESS_MIN_MM, thicknessMm),
+  );
+  return Math.log1p(clamped) / ARMOR_THICKNESS_AXIS_LOG_DENOMINATOR;
+}
 
 export const ARMOR_THICKNESS_STOPS: ReadonlyArray<{
   readonly thicknessMm: number;
   readonly normalizedPosition: number;
   readonly rgb: ArmorRgb;
 }> = [
-  { thicknessMm: 0, normalizedPosition: 0, rgb: [86 / 255, 180 / 255, 233 / 255] },
-  { thicknessMm: 40, normalizedPosition: 0.16, rgb: [41 / 255, 171 / 255, 91 / 255] },
-  { thicknessMm: 80, normalizedPosition: 0.23, rgb: [41 / 255, 171 / 255, 91 / 255] },
-  { thicknessMm: 150, normalizedPosition: 0.32, rgb: [233 / 255, 204 / 255, 35 / 255] },
-  { thicknessMm: 200, normalizedPosition: 0.45, rgb: [233 / 255, 204 / 255, 35 / 255] },
-  { thicknessMm: 300, normalizedPosition: 0.56, rgb: [242 / 255, 111 / 255, 25 / 255] },
-  { thicknessMm: 400, normalizedPosition: 0.64, rgb: [232 / 255, 91 / 255, 36 / 255] },
-  { thicknessMm: 500, normalizedPosition: 0.72, rgb: [220 / 255, 38 / 255, 38 / 255] },
-  { thicknessMm: 600, normalizedPosition: 0.8, rgb: [127 / 255, 20 / 255, 20 / 255] },
-  { thicknessMm: 890, normalizedPosition: 1, rgb: [110 / 255, 74 / 255, 46 / 255] },
+  { thicknessMm: 0, normalizedPosition: armorThicknessAxisPosition(0), rgb: [86 / 255, 180 / 255, 233 / 255] },
+  { thicknessMm: 40, normalizedPosition: armorThicknessAxisPosition(40), rgb: [41 / 255, 171 / 255, 91 / 255] },
+  { thicknessMm: 80, normalizedPosition: armorThicknessAxisPosition(80), rgb: [41 / 255, 171 / 255, 91 / 255] },
+  { thicknessMm: 150, normalizedPosition: armorThicknessAxisPosition(150), rgb: [233 / 255, 204 / 255, 35 / 255] },
+  { thicknessMm: 200, normalizedPosition: armorThicknessAxisPosition(200), rgb: [233 / 255, 204 / 255, 35 / 255] },
+  { thicknessMm: 300, normalizedPosition: armorThicknessAxisPosition(300), rgb: [242 / 255, 111 / 255, 25 / 255] },
+  { thicknessMm: 400, normalizedPosition: armorThicknessAxisPosition(400), rgb: [232 / 255, 91 / 255, 36 / 255] },
+  { thicknessMm: 500, normalizedPosition: armorThicknessAxisPosition(500), rgb: [220 / 255, 38 / 255, 38 / 255] },
+  { thicknessMm: 600, normalizedPosition: armorThicknessAxisPosition(600), rgb: [127 / 255, 20 / 255, 20 / 255] },
+  { thicknessMm: 890, normalizedPosition: armorThicknessAxisPosition(890), rgb: [110 / 255, 74 / 255, 46 / 255] },
 ];
 
 const RELATIVE_ARMOR_THICKNESS_RED_END_MM = 600;
@@ -68,7 +84,7 @@ export const RELATIVE_ARMOR_THICKNESS_STOPS = ARMOR_THICKNESS_STOPS
       stop.normalizedPosition / RELATIVE_ARMOR_THICKNESS_RED_END_POSITION,
   }));
 
-const LEGEND_TICK_VALUES_MM = [0, 200, 400, 600, 800, 890] as const;
+const LEGEND_TICK_VALUES_MM = [0, 10, 20, 50, 100, 300, 890] as const;
 
 function assertFiniteThickness(thicknessMm: number): void {
   if (!Number.isFinite(thicknessMm)) {
@@ -87,34 +103,13 @@ function clampThickness(thicknessMm: number): number {
 
 export function normalizeArmorThickness(thicknessMm: number): number {
   assertFiniteThickness(thicknessMm);
-  const clamped = clampThickness(thicknessMm);
-  if (clamped <= ARMOR_THICKNESS_STOPS[0].thicknessMm) {
-    return ARMOR_THICKNESS_STOPS[0].normalizedPosition;
-  }
-
-  for (let index = 1; index < ARMOR_THICKNESS_STOPS.length; index += 1) {
-    const upper = ARMOR_THICKNESS_STOPS[index];
-    if (clamped <= upper.thicknessMm) {
-      const lower = ARMOR_THICKNESS_STOPS[index - 1];
-      const amount =
-        (clamped - lower.thicknessMm) / (upper.thicknessMm - lower.thicknessMm);
-      return (
-        lower.normalizedPosition +
-        (upper.normalizedPosition - lower.normalizedPosition) * amount
-      );
-    }
-  }
-
-  return ARMOR_THICKNESS_STOPS.at(-1)!.normalizedPosition;
+  return armorThicknessAxisPosition(clampThickness(thicknessMm));
 }
 
 export function armorThicknessLegendPosition(thicknessMm: number): number {
-  assertFiniteThickness(thicknessMm);
-  const clamped = clampThickness(thicknessMm);
-  return (
-    (clamped - ARMOR_THICKNESS_MIN_MM) /
-    (ARMOR_THICKNESS_MAX_MM - ARMOR_THICKNESS_MIN_MM)
-  );
+  // Keep the legend aligned with the same fleet-calibrated color axis used by
+  // armor surfaces. The high-thickness tail is intentionally compact there.
+  return normalizeArmorThickness(thicknessMm);
 }
 
 function mixRgb(from: ArmorRgb, to: ArmorRgb, amount: number): ArmorRgb {
@@ -257,7 +252,8 @@ export function armorSurfaceVisualStyle(
 }
 
 /**
- * Absolute mode uses a linear 0–890 mm presentation axis. Relative mode is
+ * Absolute mode uses the fleet-calibrated log-like presentation axis as the
+ * armor surface colors, keeping the 400–890 mm tail compact. Relative mode is
  * available separately when players need the full color range for one vehicle.
  */
 export const ARMOR_THICKNESS_LEGEND_STOPS = ARMOR_THICKNESS_STOPS.map(

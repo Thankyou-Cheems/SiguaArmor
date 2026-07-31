@@ -47,6 +47,7 @@ import { formatZoomLevel } from "../lib/reference-display.mjs";
 import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-icons";
 import { vehicleConfigurationNameZh } from "../lib/vehicle-configuration-name";
 import { weaponDisplayNameZh } from "../lib/weapon-display-name";
+import { runtimeVehicleEquipmentBindingForId } from "./runtime-vehicle-equipment";
 import type {
   CatalogRecord,
   CatalogSearchRecord,
@@ -57,6 +58,7 @@ import type {
   ReferenceData,
   ReferenceWeapon,
 } from "./catalog-types";
+import { parseFactionCatalog } from "./parse-faction-catalog";
 import {
   normalizeVehicleSearch,
   rankVehicleSearch,
@@ -225,6 +227,13 @@ interface CatalogCardGroup {
 
 interface VisibleCatalogCardGroup extends CatalogCardGroup {
   displayCard: CatalogCardEntry;
+}
+
+function viewerNavigationForVehicle(cardId: string): ViewerNavigationState {
+  return {
+    ...DEFAULT_VIEWER_NAVIGATION_STATE,
+    attacker: cardId,
+  } as ViewerNavigationState;
 }
 
 function VehicleCategoryIcon({ iconId }: { iconId: string }) {
@@ -905,40 +914,24 @@ function requiresVehicleKit(seat: ReferenceData["seats"][number]) {
   return seat.kitRequirement !== null && seat.kitRequirement !== "Light Vehicle";
 }
 
-function parseFactionCatalog(
-  value: unknown,
-  expectedGroupId: string,
-  expectedDataRevision: string,
-): PublicFactionCatalog {
-  if (!value || typeof value !== "object") throw new Error("阵营资料格式无效");
-  const document = value as Partial<PublicFactionCatalog>;
-  if (
-    document.schemaVersion !== "1.0.0" ||
-    document.dataRevision !== expectedDataRevision ||
-    document.group?.id !== expectedGroupId ||
-    !Array.isArray(document.records) ||
-    document.records.length !== document.group.recordCount ||
-    document.records.some((record) => record.official?.groupId !== expectedGroupId)
-  ) {
-    throw new Error("阵营资料身份或记录闭集不匹配");
-  }
-  return document as PublicFactionCatalog;
-}
-
 const factionCatalogRequests = new Map<string, Promise<PublicFactionCatalog>>();
 
 function requestFactionCatalog(
   groupId: string,
-  dataRevision: string,
+  expectedIndex: PublicCatalogIndex,
   siteEdition: SiteEdition,
 ) {
-  const requestKey = `${siteEdition}\u0000${dataRevision}\u0000${groupId}`;
+  const requestKey =
+    `${siteEdition}\u0000${expectedIndex.catalogId}\u0000` +
+    `${expectedIndex.dataRevision}\u0000` +
+    `${expectedIndex.vehicleCatalogRevision}\u0000${groupId}`;
   const existing = factionCatalogRequests.get(requestKey);
   if (existing) return existing;
   const request = fetch(
-    `${siteEditionCatalogDataRoot(siteEdition)}/${encodeURIComponent(groupId)}.json?v=${encodeURIComponent(dataRevision)}`,
+    `${siteEditionCatalogDataRoot(siteEdition)}/${encodeURIComponent(groupId)}.json?v=${encodeURIComponent(expectedIndex.dataRevision)}`,
     {
-      cache: "force-cache",
+      cache:
+        process.env.NODE_ENV === "development" ? "no-store" : "force-cache",
       credentials: "omit",
     },
   )
@@ -946,7 +939,13 @@ function requestFactionCatalog(
       if (!response.ok) throw new Error(`阵营资料加载失败（HTTP ${response.status}）`);
       return response.json() as Promise<unknown>;
     })
-    .then((value) => parseFactionCatalog(value, groupId, dataRevision))
+    .then((value) =>
+      parseFactionCatalog(
+        value,
+        expectedIndex,
+        groupId,
+      ),
+    )
     .catch((error) => {
       factionCatalogRequests.delete(requestKey);
       throw error;
@@ -1284,7 +1283,23 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
     );
   }
 
-  const { general, weapons, seats, components, damageResistances } = data;
+  const {
+    general,
+    weaponBindingIds,
+    seats,
+    components,
+    damageResistances,
+  } = data;
+  const weapons = weaponBindingIds.map((bindingId) => {
+    const binding =
+      runtimeVehicleEquipmentBindingForId(bindingId);
+    if (!binding) {
+      throw new Error(
+        `Vehicle reference data points to missing weapon binding ${bindingId}`,
+      );
+    }
+    return binding.equipment;
+  });
   const visibleHullDamageResistances =
     visibleDamageResistanceOverrides(damageResistances);
   const weaponEquipment = weapons.filter((weapon) => !isOtherEquipment(weapon));
@@ -2398,6 +2413,8 @@ function DetailPanel({
               siteEdition={siteEdition}
               cardId={record.promoEntryId}
               rawName={data?.general.rawName ?? record.mapping.selectedRawName ?? ""}
+              runtimeVehicleRef={card.variant?.runtimeVehicleRef ?? null}
+              visualArtifactRef={card.variant?.visualArtifactRef ?? null}
               displayName={displayName}
               referenceData={data}
               textureVariants={viewerTextureVariants}
@@ -3152,7 +3169,12 @@ export function CatalogApp({
   siteEdition: SiteEdition;
 }) {
   const editionProfile = siteEditionProfile(siteEdition);
-  const editionBasePath = siteEditionBasePath(siteEdition);
+  const editionBasePath =
+    process.env.NODE_ENV === "development"
+      ? siteEdition === "china"
+        ? "/china"
+        : ""
+      : siteEditionBasePath(siteEdition);
   const [query, setQuery] = useState("");
   const [globalQuery, setGlobalQuery] = useState("");
   const [groupId, setGroupId] = useState(ALL_GROUPS);
@@ -3357,12 +3379,19 @@ export function CatalogApp({
   useEffect(() => {
     setCatalogsByGroup({});
     setCatalogErrorsByGroup({});
-  }, [catalogIndex.dataRevision]);
+  }, [
+    catalogIndex.dataRevision,
+    catalogIndex.vehicleCatalogRevision,
+  ]);
 
   useEffect(() => {
     if (groupId === ALL_GROUPS || catalogsByGroup[groupId]) return undefined;
     let cancelled = false;
-    void requestFactionCatalog(groupId, catalogIndex.dataRevision, siteEdition)
+    void requestFactionCatalog(
+      groupId,
+      catalogIndex,
+      siteEdition,
+    )
       .then((document) => {
         if (cancelled) return;
         setCatalogsByGroup((current) => ({ ...current, [groupId]: document }));
@@ -3375,7 +3404,15 @@ export function CatalogApp({
     return () => {
       cancelled = true;
     };
-  }, [catalogIndex.dataRevision, catalogRetryToken, catalogsByGroup, groupId, siteEdition]);
+  }, [
+    catalogIndex,
+    catalogIndex.dataRevision,
+    catalogIndex.vehicleCatalogRevision,
+    catalogRetryToken,
+    catalogsByGroup,
+    groupId,
+    siteEdition,
+  ]);
 
   const runFactionMorph = useCallback(
     (factionId: string, update: () => void, afterUpdate?: () => void) => {
@@ -3555,7 +3592,7 @@ export function CatalogApp({
 
   const selectCard = (card: CatalogCardEntry) => {
     runDetailTransition(() => {
-      const nextViewer = { ...DEFAULT_VIEWER_NAVIGATION_STATE } as ViewerNavigationState;
+      const nextViewer = viewerNavigationForVehicle(card.record.promoEntryId);
       setHelpOpen(false);
       setSelectedId(card.cardId);
       setViewerNavigation(nextViewer);
@@ -3584,7 +3621,7 @@ export function CatalogApp({
       return;
     }
     runDetailTransition(() => {
-      const nextViewer = { ...DEFAULT_VIEWER_NAVIGATION_STATE } as ViewerNavigationState;
+      const nextViewer = viewerNavigationForVehicle(card.record.promoEntryId);
       setHelpOpen(false);
       setSelectedId(card.cardId);
       setViewerNavigation(nextViewer);
@@ -3605,7 +3642,7 @@ export function CatalogApp({
     setActiveCharacterId(null);
     setActiveFactionDustId(null);
     const update = () => {
-      const nextViewer = { ...DEFAULT_VIEWER_NAVIGATION_STATE } as ViewerNavigationState;
+      const nextViewer = viewerNavigationForVehicle(record.promoEntryId);
       setGlobalQuery("");
       setQuery("");
       setGroupId(nextGroupId);

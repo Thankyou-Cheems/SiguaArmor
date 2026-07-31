@@ -1,7 +1,5 @@
-import visualDescriptorIndexJson from "./runtime-probe-visual-release-index.json";
-import supportAirVisualDescriptorIndexJson from "./support-air-visual-release-index.json";
-import visualReviewDescriptorIndexJson from "./runtime-probe-visual-review-index.json";
-import chinaVisualDescriptorIndexJson from "./china-runtime-probe-visual-release-index.json";
+import visualDeliveryIndexJson from "./runtime-probe-visual-delivery-index.json";
+import visualArtifactIndexJson from "./runtime-probe-visual-artifact-index.json";
 import visualSelectionPolicyJson from "./runtime-probe-visual-selection-policy.json";
 import hitDescriptorIndexJson from "./runtime-probe-hit-release-index.json";
 import supportAirHitDescriptorIndexJson from "./support-air-hit-release-index.json";
@@ -105,6 +103,7 @@ export interface RuntimeVehiclePreview {
     residualActors: number | null;
   };
   visual: {
+    artifactRef: string | null;
     packageSha256: string;
     requiredOccurrences: number;
     sourceAssets: number;
@@ -162,6 +161,24 @@ interface RuntimeVisualDescriptor {
   reason: string;
 }
 
+type RuntimeVisualDeliveryEntry = Omit<RuntimeVisualDescriptor, "placements"> & {
+  file: string;
+  sourceFile: string;
+  sourceIndexSha256: string;
+  sourceSha256: string;
+  deliverySha256: string;
+  siteEdition: SiteEdition;
+};
+
+interface RuntimeVisualDeliveryIndex {
+  schemaVersion: "runtime-visual-delivery-index/v2";
+  indexRevision: string;
+  descriptorCount: number;
+  editionCounts: Record<SiteEdition, number>;
+  reviewDescriptorCount: number;
+  entries: RuntimeVisualDeliveryEntry[];
+}
+
 export interface RuntimeHitRecordReference {
   cardId: string;
   rawName: string;
@@ -194,27 +211,26 @@ type RuntimeVisualDescriptorIndex = {
   descriptorCount: number;
   descriptors: RuntimeVisualDescriptor[];
 };
-const coreVisualDescriptorIndex =
-  visualDescriptorIndexJson as unknown as RuntimeVisualDescriptorIndex;
-const supportAirVisualDescriptorIndex =
-  supportAirVisualDescriptorIndexJson as unknown as RuntimeVisualDescriptorIndex;
-const visualDescriptorIndex: RuntimeVisualDescriptorIndex = {
-  schemaVersion: "runtime-visual-descriptor-index/v1",
-  descriptorCount:
-    coreVisualDescriptorIndex.descriptorCount +
-    supportAirVisualDescriptorIndex.descriptorCount,
-  descriptors: [
-    ...coreVisualDescriptorIndex.descriptors,
-    ...supportAirVisualDescriptorIndex.descriptors,
-  ],
-};
-const chinaVisualDescriptorIndex = chinaVisualDescriptorIndexJson as unknown as {
-  schemaVersion: "runtime-visual-descriptor-index/v1";
-  descriptorCount: number;
-  descriptors: RuntimeVisualDescriptor[];
-};
-const visualReviewDescriptorIndex =
-  visualReviewDescriptorIndexJson as unknown as RuntimeVisualDescriptorIndex;
+
+interface RuntimeVisualArtifactProjection {
+  cardId: string;
+  rawName: string;
+  visualArtifactRef: string;
+  runtimeVehicleRef: string;
+  generatedClass: string;
+  identitySha256: string;
+  packageSha256: string;
+}
+
+interface RuntimeVisualArtifactIndex {
+  schemaVersion: "sigua-runtime-visual-artifact-index/v1";
+  catalogRevision: string;
+  editions: Record<SiteEdition, RuntimeVisualArtifactProjection[]>;
+}
+
+const visualDeliveryIndex = visualDeliveryIndexJson as unknown as RuntimeVisualDeliveryIndex;
+const visualArtifactIndex =
+  visualArtifactIndexJson as unknown as RuntimeVisualArtifactIndex;
 const visualSelectionRules = visualSelectionPolicyJson.rules as RuntimeVisualSelectionRule[];
 const visualComponentSuppressionRules = (visualSelectionPolicyJson.globalSuppressions ?? []) as
   RuntimeVisualComponentSuppressionRule[];
@@ -239,42 +255,27 @@ const hitDescriptorIndex: RuntimeHitDescriptorIndex = {
     ...supportAirHitDescriptorIndex.descriptors,
   ],
 };
-if (visualDescriptorIndex.schemaVersion !== "runtime-visual-descriptor-index/v1") {
-  throw new Error("Unsupported runtime visual descriptor index schema");
+if (
+  visualDeliveryIndex.schemaVersion !== "runtime-visual-delivery-index/v2" ||
+  !/^[a-f0-9]{64}$/u.test(visualDeliveryIndex.indexRevision) ||
+  visualDeliveryIndex.descriptorCount !== visualDeliveryIndex.entries.length ||
+  !visualDeliveryIndex.editionCounts ||
+  visualDeliveryIndex.editionCounts.international !== visualDeliveryIndex.entries.length
+) {
+  throw new Error("Unsupported runtime visual delivery index");
 }
-for (const [label, index] of [
-  ["core", coreVisualDescriptorIndex],
-  ["support-air", supportAirVisualDescriptorIndex],
-] as const) {
+for (const entry of visualDeliveryIndex.entries) {
   if (
-    index.schemaVersion !== "runtime-visual-descriptor-index/v1" ||
-    index.descriptorCount !== index.descriptors.length
+    entry.siteEdition !== "international" ||
+    entry.schemaVersion !== "runtime-visual-preview/v1" ||
+    !entry.file.startsWith("./runtime-probe-visual-delivery/") ||
+    !entry.sourceFile.startsWith("./runtime-probe-visuals/") ||
+    !/^[a-f0-9]{64}$/u.test(entry.sourceIndexSha256) ||
+    !/^[a-f0-9]{64}$/u.test(entry.sourceSha256) ||
+    !/^[a-f0-9]{64}$/u.test(entry.deliverySha256)
   ) {
-    throw new Error(`Unsupported ${label} runtime visual descriptor index`);
+    throw new Error(`Invalid runtime visual delivery entry: ${entry.cardId} / ${entry.rawName}`);
   }
-}
-if (visualDescriptorIndex.descriptorCount !== visualDescriptorIndex.descriptors.length) {
-  throw new Error("Runtime visual descriptor count does not match the generated index");
-}
-if (chinaVisualDescriptorIndex.schemaVersion !== "runtime-visual-descriptor-index/v1") {
-  throw new Error("Unsupported China runtime visual descriptor index schema");
-}
-if (
-  chinaVisualDescriptorIndex.descriptorCount !==
-  chinaVisualDescriptorIndex.descriptors.length
-) {
-  throw new Error("China runtime visual descriptor count does not match the generated index");
-}
-if (visualReviewDescriptorIndex.schemaVersion !== "runtime-visual-descriptor-index/v1") {
-  throw new Error("Unsupported runtime visual review descriptor index schema");
-}
-if (
-  visualReviewDescriptorIndex.descriptorCount !==
-  visualReviewDescriptorIndex.descriptors.length
-) {
-  throw new Error(
-    "Runtime visual review descriptor count does not match the generated index",
-  );
 }
 for (const [label, index] of [
   ["core", coreHitDescriptorIndex],
@@ -293,6 +294,256 @@ if (hitDescriptorIndex.descriptorCount !== hitDescriptorIndex.descriptors.length
 
 function descriptorIdentity(cardId: string, rawName: string) {
   return `${cardId}\u0000${rawName}`;
+}
+
+type RuntimeVisualIdentityDescriptor = RuntimeVisualDescriptor | RuntimeVisualDeliveryEntry;
+
+const visualDescriptorLoaders = (import.meta as ImportMeta & {
+  glob<T>(
+    pattern: string,
+    options?: { eager?: boolean; import?: string },
+  ): Record<string, () => Promise<T>>;
+}).glob<RuntimeVisualDescriptor>("./runtime-probe-visual-delivery/*.visual.json", {
+  import: "default",
+});
+const visualDeliveryByIdentity = new Map<string, RuntimeVisualDeliveryEntry>();
+const expectedVisualDeliveryFiles = new Set<string>();
+for (const entry of visualDeliveryIndex.entries) {
+  const identity = descriptorIdentity(entry.cardId, entry.rawName);
+  if (
+    visualDeliveryByIdentity.has(identity) ||
+    expectedVisualDeliveryFiles.has(entry.file)
+  ) {
+    throw new Error(`Duplicate runtime visual delivery identity: ${entry.cardId} / ${entry.rawName}`);
+  }
+  visualDeliveryByIdentity.set(identity, entry);
+  expectedVisualDeliveryFiles.add(entry.file);
+}
+const actualVisualDeliveryFiles = Object.keys(
+  visualDescriptorLoaders,
+);
+if (
+  actualVisualDeliveryFiles.length !==
+    expectedVisualDeliveryFiles.size ||
+  actualVisualDeliveryFiles.some(
+    (file) => !expectedVisualDeliveryFiles.has(file),
+  )
+) {
+  throw new Error(
+    "Runtime visual delivery loader set does not exactly match the delivery index",
+  );
+}
+const materializedVisualDescriptorCache = new Map<
+  string,
+  Promise<RuntimeVisualDescriptor>
+>();
+
+async function loadMaterializedVisualDescriptor(
+  entry: RuntimeVisualDeliveryEntry,
+): Promise<RuntimeVisualDescriptor> {
+  const cached = materializedVisualDescriptorCache.get(entry.file);
+  if (cached) return cached;
+  const loader = visualDescriptorLoaders[entry.file];
+  if (!loader) {
+    throw new Error(`Runtime visual source module is missing: ${entry.file}`);
+  }
+  const promise = loader().then((source) => {
+    if (!source || !Array.isArray(source.placements)) {
+      throw new Error(`Runtime visual source module is incomplete: ${entry.file}`);
+    }
+    for (const field of [
+      "generatedClass",
+      "vehicleId",
+      "identitySha256",
+      "packageSha256",
+      "runtimeBonePoseStatus",
+      "status",
+      "visualAcceptanceStatus",
+      "webUsable",
+    ] as const) {
+      if (source[field] !== entry[field]) {
+        throw new Error(
+          `Runtime visual delivery identity mismatch for ${entry.cardId} / ${entry.rawName}: ${field}`,
+        );
+      }
+    }
+    for (const placement of source.placements) {
+      if (!/^\/assets\/runtime-probe\/models\/[a-f0-9]{64}\.gltf$/u.test(placement.assetUrl)) {
+        throw new Error(
+          `Runtime visual delivery record does not reference a published model: ${entry.cardId} / ${entry.rawName}`,
+        );
+      }
+    }
+    return {
+      ...entry,
+      reason: source.reason,
+      placements: source.placements,
+    };
+  });
+  materializedVisualDescriptorCache.set(entry.file, promise);
+  return promise;
+}
+
+function validateVisualDescriptorIndex(
+  label: string,
+  index: RuntimeVisualDescriptorIndex,
+) {
+  if (
+    index.schemaVersion !== "runtime-visual-descriptor-index/v1" ||
+    index.descriptorCount !== index.descriptors.length
+  ) {
+    throw new Error(`Unsupported ${label} runtime visual descriptor index`);
+  }
+}
+
+let chinaVisualDescriptorIndexPromise: Promise<RuntimeVisualDescriptorIndex> | null = null;
+async function loadChinaVisualDescriptorIndex() {
+  chinaVisualDescriptorIndexPromise ??= import("./china-runtime-probe-visual-release-index.json")
+    .then((module) => {
+      const index = module.default as unknown as RuntimeVisualDescriptorIndex;
+      validateVisualDescriptorIndex("China", index);
+      setChinaRuntimeVisualArtifactProjection(index.descriptors);
+      return index;
+    });
+  return chinaVisualDescriptorIndexPromise;
+}
+
+let reviewVisualDescriptorIndexPromise: Promise<RuntimeVisualDescriptorIndex> | null = null;
+async function loadReviewVisualDescriptorIndex() {
+  reviewVisualDescriptorIndexPromise ??= import("./runtime-probe-visual-review-index.json")
+    .then((module) => {
+      const index = module.default as unknown as RuntimeVisualDescriptorIndex;
+      validateVisualDescriptorIndex("review", index);
+      return index;
+    });
+  return reviewVisualDescriptorIndexPromise;
+}
+
+const VISUAL_ARTIFACT_REF_PATTERN = /^visual-artifact-[a-f0-9]{64}$/;
+const RUNTIME_VEHICLE_REF_PATTERN = /^vehicle-[a-f0-9]{64}$/;
+const SHA256_PATTERN = /^[a-f0-9]{64}$/;
+
+if (
+  visualArtifactIndex.schemaVersion !==
+    "sigua-runtime-visual-artifact-index/v1" ||
+  !SHA256_PATTERN.test(visualArtifactIndex.catalogRevision) ||
+  !visualArtifactIndex.editions ||
+  typeof visualArtifactIndex.editions !== "object" ||
+  Array.isArray(visualArtifactIndex.editions) ||
+  Object.keys(visualArtifactIndex.editions)
+    .sort((left, right) => left.localeCompare(right, "en"))
+    .join("\n") !== "china\ninternational"
+) {
+  throw new Error("Unsupported runtime visual artifact index");
+}
+
+function buildRuntimeVisualArtifactProjection(
+  edition: SiteEdition,
+  descriptors: RuntimeVisualIdentityDescriptor[],
+) {
+  const entries = visualArtifactIndex.editions[edition];
+  if (!Array.isArray(entries) || entries.length !== descriptors.length) {
+    throw new Error(
+      `${edition} runtime visual artifact projection count does not match its descriptor index`,
+    );
+  }
+  const descriptorByIdentity = new Map<string, RuntimeVisualIdentityDescriptor>();
+  for (const descriptor of descriptors) {
+    const identity = descriptorIdentity(
+      descriptor.cardId,
+      descriptor.rawName,
+    );
+    if (descriptorByIdentity.has(identity)) {
+      throw new Error(
+        `Duplicate ${edition} runtime visual descriptor identity: ${descriptor.cardId} / ${descriptor.rawName}`,
+      );
+    }
+    descriptorByIdentity.set(identity, descriptor);
+  }
+
+  const projectionByIdentity =
+    new Map<string, RuntimeVisualArtifactProjection>();
+  const artifactRefs = new Set<string>();
+  for (const entry of entries) {
+    const identity = descriptorIdentity(entry?.cardId, entry?.rawName);
+    const descriptor = descriptorByIdentity.get(identity);
+    if (
+      !descriptor ||
+      projectionByIdentity.has(identity) ||
+      typeof entry.cardId !== "string" ||
+      entry.cardId.length === 0 ||
+      typeof entry.rawName !== "string" ||
+      entry.rawName.length === 0 ||
+      !VISUAL_ARTIFACT_REF_PATTERN.test(entry.visualArtifactRef) ||
+      artifactRefs.has(entry.visualArtifactRef) ||
+      !RUNTIME_VEHICLE_REF_PATTERN.test(entry.runtimeVehicleRef) ||
+      !SHA256_PATTERN.test(entry.identitySha256) ||
+      !SHA256_PATTERN.test(entry.packageSha256) ||
+      entry.runtimeVehicleRef !== `vehicle-${entry.identitySha256}` ||
+      typeof entry.generatedClass !== "string" ||
+      entry.generatedClass.length === 0 ||
+      entry.runtimeVehicleRef !== descriptor.vehicleId ||
+      entry.generatedClass !== descriptor.generatedClass ||
+      entry.identitySha256 !== descriptor.identitySha256 ||
+      entry.packageSha256 !== descriptor.packageSha256
+    ) {
+      throw new Error(
+        `Invalid ${edition} runtime visual artifact projection: ${entry?.cardId ?? "missing"} / ${entry?.rawName ?? "missing"}`,
+      );
+    }
+    projectionByIdentity.set(identity, entry);
+    artifactRefs.add(entry.visualArtifactRef);
+  }
+  if (
+    projectionByIdentity.size !== descriptorByIdentity.size ||
+    [...descriptorByIdentity.keys()].some(
+      (identity) => !projectionByIdentity.has(identity),
+    )
+  ) {
+    throw new Error(
+      `${edition} runtime visual artifact projection is not an exact descriptor closure`,
+    );
+  }
+  return projectionByIdentity;
+}
+
+const runtimeVisualArtifactProjectionByEdition: Record<
+  SiteEdition,
+  Map<string, RuntimeVisualArtifactProjection>
+> = {
+  international: buildRuntimeVisualArtifactProjection(
+    "international",
+    visualDeliveryIndex.entries,
+  ),
+  china: new Map(),
+};
+
+const runtimeVisualArtifactRefs = new Set<string>();
+for (const projection of [runtimeVisualArtifactProjectionByEdition.international]) {
+  for (const { visualArtifactRef } of projection.values()) {
+    if (runtimeVisualArtifactRefs.has(visualArtifactRef)) {
+      throw new Error(
+        `Runtime visual artifact ref is shared across editions: ${visualArtifactRef}`,
+      );
+    }
+    runtimeVisualArtifactRefs.add(visualArtifactRef);
+  }
+}
+
+function setChinaRuntimeVisualArtifactProjection(
+  descriptors: RuntimeVisualDescriptor[],
+) {
+  const projection = buildRuntimeVisualArtifactProjection("china", descriptors);
+  for (const { visualArtifactRef } of projection.values()) {
+    if (runtimeVisualArtifactRefs.has(visualArtifactRef)) {
+      throw new Error(
+        `Runtime visual artifact ref is shared across editions: ${visualArtifactRef}`,
+      );
+    }
+    runtimeVisualArtifactRefs.add(visualArtifactRef);
+  }
+  runtimeVisualArtifactProjectionByEdition.china = projection;
+  return projection;
 }
 
 function applySynchronizedWeaponPolicy(
@@ -473,6 +724,7 @@ function applyVisualSelection(descriptor: RuntimeVisualDescriptor) {
 function toRuntimePreview(
   descriptor: RuntimeVisualDescriptor,
   reviewOnly = false,
+  siteEdition: SiteEdition | null = null,
 ): RuntimeVehiclePreview {
   if (descriptor.schemaVersion !== "runtime-visual-preview/v1") {
     throw new Error(`Unsupported runtime visual descriptor for ${descriptor.cardId}`);
@@ -512,6 +764,17 @@ function toRuntimePreview(
     (placement) => placement.runtimeBonePoseReferenceEquivalent === true,
   ).length;
   const sourceAssets = new Set(placements.map(({ assetUrl }) => assetUrl)).size;
+  const visualArtifactProjection =
+    siteEdition === null
+      ? null
+      : runtimeVisualArtifactProjectionByEdition[siteEdition].get(
+          descriptorIdentity(descriptor.cardId, descriptor.rawName),
+        );
+  if (siteEdition !== null && !visualArtifactProjection) {
+    throw new Error(
+      `Runtime visual artifact projection is missing for ${siteEdition} ${descriptor.cardId} / ${descriptor.rawName}`,
+    );
+  }
   const hitDescriptor = hitDescriptorByIdentity.get(
     descriptorIdentity(descriptor.cardId, descriptor.rawName),
   );
@@ -555,6 +818,8 @@ function toRuntimePreview(
       residualActors: null,
     },
     visual: {
+      artifactRef:
+        visualArtifactProjection?.visualArtifactRef ?? null,
       packageSha256: descriptor.packageSha256,
       requiredOccurrences: placements.length,
       sourceAssets,
@@ -591,12 +856,8 @@ function toRuntimePreview(
 }
 
 function isWebUsableDescriptor(
-  descriptor: RuntimeVisualDescriptor,
-): descriptor is RuntimeVisualDescriptor & {
-  status: "complete";
-  visualAcceptanceStatus: "web-usable";
-  webUsable: true;
-} {
+  descriptor: RuntimeVisualIdentityDescriptor,
+) {
   return (
     descriptor.status === "complete" &&
     descriptor.visualAcceptanceStatus === "web-usable" &&
@@ -604,87 +865,132 @@ function isWebUsableDescriptor(
   );
 }
 
-const webUsableDescriptors = visualDescriptorIndex.descriptors.filter(isWebUsableDescriptor);
-if (webUsableDescriptors.length !== visualDescriptorIndex.descriptors.length) {
-  throw new Error("Public runtime visual index contains a non-web-usable descriptor");
-}
-export const runtimeVisualDescriptorCount = webUsableDescriptors.length;
-const chinaWebUsableDescriptors =
-  chinaVisualDescriptorIndex.descriptors.filter(isWebUsableDescriptor);
-if (chinaWebUsableDescriptors.length !== chinaVisualDescriptorIndex.descriptors.length) {
-  throw new Error("China public runtime visual index contains a non-web-usable descriptor");
-}
-export const chinaRuntimeVisualDescriptorCount = chinaWebUsableDescriptors.length;
-export const runtimeReviewVisualDescriptorCount =
-  visualReviewDescriptorIndex.descriptors.length;
+export const runtimeVisualDescriptorCount = visualDeliveryIndex.editionCounts.international;
+export const chinaRuntimeVisualDescriptorCount = visualDeliveryIndex.editionCounts.china;
+export const runtimeReviewVisualDescriptorCount = visualDeliveryIndex.reviewDescriptorCount;
 
-export const runtimePreviewByIdentity: Record<string, RuntimeVehiclePreview> = {};
-export const runtimePreviewsByCardId: Record<string, RuntimeVehiclePreview[]> = {};
-export const runtimeReviewPreviewByIdentity: Record<string, RuntimeVehiclePreview> = {};
-export const runtimeReviewPreviewsByCardId: Record<string, RuntimeVehiclePreview[]> = {};
-export const chinaRuntimePreviewByIdentity: Record<string, RuntimeVehiclePreview> = {};
 
-const publicDescriptorIdentities = new Set(
-  visualDescriptorIndex.descriptors.map((descriptor) =>
-    descriptorIdentity(descriptor.cardId, descriptor.rawName),
-  ),
-);
+const internationalPreviewCache = new Map<
+  string,
+  Promise<RuntimeVehiclePreview | null>
+>();
+const chinaPreviewCache = new Map<string, Promise<RuntimeVehiclePreview | null>>();
+const reviewPreviewCache = new Map<string, Promise<RuntimeVehiclePreview | null>>();
 
-for (const descriptor of visualReviewDescriptorIndex.descriptors) {
-  const descriptorKey = descriptorIdentity(descriptor.cardId, descriptor.rawName);
-  const reviewOnly = !publicDescriptorIdentities.has(descriptorKey);
-  const preview = toRuntimePreview(descriptor, reviewOnly);
-  const identity = descriptorIdentity(preview.cardId, preview.variantRawName);
-  if (runtimeReviewPreviewByIdentity[identity]) {
-    throw new Error(
-      `Duplicate runtime visual review identity: ${preview.cardId} / ${preview.variantRawName}`,
-    );
-  }
-  runtimeReviewPreviewByIdentity[identity] = preview;
-  (runtimeReviewPreviewsByCardId[preview.cardId] ??= []).push(preview);
+function descriptorFromIndex(
+  descriptors: RuntimeVisualDescriptor[],
+  cardId: string,
+  rawName: string,
+) {
+  return descriptors.find(
+    (descriptor) => descriptor.cardId === cardId && descriptor.rawName === rawName,
+  ) ?? null;
 }
 
-for (const descriptor of webUsableDescriptors) {
-  const preview = toRuntimePreview(descriptor);
-  const identity = descriptorIdentity(preview.cardId, preview.variantRawName);
-  if (runtimePreviewByIdentity[identity]) {
-    throw new Error(`Duplicate runtime visual preview identity: ${preview.cardId} / ${preview.variantRawName}`);
-  }
-  runtimePreviewByIdentity[identity] = preview;
-  (runtimePreviewsByCardId[preview.cardId] ??= []).push(preview);
-}
-for (const descriptor of chinaWebUsableDescriptors) {
-  const preview = toRuntimePreview(descriptor);
-  const identity = descriptorIdentity(preview.cardId, preview.variantRawName);
-  if (chinaRuntimePreviewByIdentity[identity]) {
-    throw new Error(
-      `Duplicate China runtime visual preview identity: ${preview.cardId} / ${preview.variantRawName}`,
-    );
-  }
-  chinaRuntimePreviewByIdentity[identity] = preview;
-}
-
-for (const previews of Object.values(runtimePreviewsByCardId)) {
-  previews.sort((left, right) => left.variantRawName.localeCompare(right.variantRawName));
-}
-for (const previews of Object.values(runtimeReviewPreviewsByCardId)) {
-  previews.sort((left, right) => left.variantRawName.localeCompare(right.variantRawName));
+async function loadInternationalPreview(cardId: string, rawName: string) {
+  const identity = descriptorIdentity(cardId, rawName);
+  const cached = internationalPreviewCache.get(identity);
+  if (cached) return cached;
+  const entry = visualDeliveryByIdentity.get(identity);
+  const promise = entry
+    ? (async () => {
+        if (!isWebUsableDescriptor(entry)) {
+          throw new Error(`Public runtime visual entry is not web-usable: ${identity}`);
+        }
+        return toRuntimePreview(
+          await loadMaterializedVisualDescriptor(entry),
+          false,
+          "international",
+        );
+      })()
+    : Promise.resolve(null);
+  internationalPreviewCache.set(identity, promise);
+  return promise;
 }
 
-export const runtimePreviewByCardId: Record<string, RuntimeVehiclePreview> = Object.fromEntries(
-  Object.entries(runtimePreviewsByCardId).map(([cardId, previews]) => [cardId, previews[0]]),
-);
+async function loadChinaPreview(cardId: string, rawName: string) {
+  const identity = descriptorIdentity(cardId, rawName);
+  const cached = chinaPreviewCache.get(identity);
+  if (cached) return cached;
+  const promise = (async () => {
+    const index = await loadChinaVisualDescriptorIndex();
+    const descriptor = descriptorFromIndex(index.descriptors, cardId, rawName);
+    if (!descriptor) return null;
+    if (!isWebUsableDescriptor(descriptor)) {
+      throw new Error(`China runtime visual entry is not web-usable: ${identity}`);
+    }
+    return toRuntimePreview(descriptor, false, "china");
+  })();
+  chinaPreviewCache.set(identity, promise);
+  return promise;
+}
 
-export function runtimePreviewForVariant(
+async function loadReviewPreview(cardId: string, rawName: string) {
+  const identity = descriptorIdentity(cardId, rawName);
+  const cached = reviewPreviewCache.get(identity);
+  if (cached) return cached;
+  const promise = (async () => {
+    const index = await loadReviewVisualDescriptorIndex();
+    const descriptor = descriptorFromIndex(index.descriptors, cardId, rawName);
+    if (!descriptor) return null;
+    return toRuntimePreview(descriptor, !visualDeliveryByIdentity.has(identity));
+  })();
+  reviewPreviewCache.set(identity, promise);
+  return promise;
+}
+
+export async function runtimePreviewForVariant(
   cardId: string,
   rawName: string,
   siteEdition: SiteEdition = "international",
 ) {
-  const previews =
-    siteEdition === "china" ? chinaRuntimePreviewByIdentity : runtimePreviewByIdentity;
-  return previews[descriptorIdentity(cardId, rawName)] ?? null;
+  return siteEdition === "china"
+    ? loadChinaPreview(cardId, rawName)
+    : loadInternationalPreview(cardId, rawName);
+}
+
+export async function runtimePreviewForCatalogBinding(
+  cardId: string,
+  rawName: string,
+  expectedRuntimeVehicleId: string | null,
+  expectedVisualArtifactRef: string | null,
+  siteEdition: SiteEdition = "international",
+) {
+  const preview = await runtimePreviewForVariant(cardId, rawName, siteEdition);
+  if (!preview) return null;
+  if (
+    expectedVisualArtifactRef === null ||
+    !VISUAL_ARTIFACT_REF_PATTERN.test(expectedVisualArtifactRef)
+  ) {
+    throw new Error(
+      `Vehicle catalog visual artifact identity is missing for ${cardId} / ${rawName}`,
+    );
+  }
+  if (preview.visual?.artifactRef !== expectedVisualArtifactRef) {
+    throw new Error(
+      `Vehicle catalog/visual artifact identity mismatch for ${cardId} / ${rawName}`,
+    );
+  }
+  if (
+    expectedRuntimeVehicleId !== null &&
+    (preview.latestRuntimeVehicleId !== expectedRuntimeVehicleId ||
+      (preview.hit !== null && preview.hit.vehicleId !== expectedRuntimeVehicleId))
+  ) {
+    throw new Error(
+      `Vehicle catalog/runtime identity mismatch for ${cardId} / ${rawName}`,
+    );
+  }
+  return preview;
+}
+
+export function loadRuntimePreviewForVariant(
+  cardId: string,
+  rawName: string,
+  siteEdition: SiteEdition = "international",
+) {
+  return runtimePreviewForVariant(cardId, rawName, siteEdition);
 }
 
 export function runtimeReviewPreviewForVariant(cardId: string, rawName: string) {
-  return runtimeReviewPreviewByIdentity[descriptorIdentity(cardId, rawName)] ?? null;
+  return loadReviewPreview(cardId, rawName);
 }

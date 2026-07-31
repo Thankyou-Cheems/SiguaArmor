@@ -1,4 +1,5 @@
 import { infantryWeaponDisplayNameZh } from "./weapon-display-name.ts";
+import type { EditorNativeCurveRecord } from "./editor-native-hit-model.ts";
 
 export interface InfantryHitAnalysisWeaponRecord {
   weaponKey: string;
@@ -9,11 +10,13 @@ export interface InfantryHitAnalysisWeaponRecord {
   projectileName: string | null;
   maxDistanceM: number;
   penetrationMm: number;
+  penetrationCurveObjectPath: string | null;
   traceDistanceAfterPenetrationM: number;
   directImpactDamage: number;
   damageTypePath: string;
   isExplosive: boolean;
   damageCurveName: string | null;
+  damageCurveObjectPath: string | null;
   searchAliases: string[];
 }
 
@@ -37,18 +40,29 @@ function playerFacingName(record: InfantryHitAnalysisWeaponRecord) {
 
 export function infantryHitAnalysisWeaponIdentity(
   record: InfantryHitAnalysisWeaponRecord,
-  damageCurves: Readonly<Record<string, readonly number[]>>,
+  curves: Readonly<Record<string, EditorNativeCurveRecord>>,
 ) {
-  const damageCurve = record.damageCurveName
-    ? damageCurves[record.damageCurveName]
+  const penetrationCurve = record.penetrationCurveObjectPath
+    ? curves[record.penetrationCurveObjectPath]
     : null;
-  if (record.damageCurveName && !damageCurve) {
-    throw new Error(`Missing infantry damage curve: ${record.damageCurveName}`);
+  if (record.penetrationCurveObjectPath && !penetrationCurve) {
+    throw new Error(
+      `Missing infantry penetration curve: ${record.penetrationCurveObjectPath}`,
+    );
+  }
+  const damageCurve = record.damageCurveObjectPath
+    ? curves[record.damageCurveObjectPath]
+    : null;
+  if (record.damageCurveObjectPath && !damageCurve) {
+    throw new Error(
+      `Missing infantry damage curve: ${record.damageCurveObjectPath}`,
+    );
   }
   return JSON.stringify({
     playerFacingName: playerFacingName(record),
     maxDistanceM: record.maxDistanceM,
     penetrationMm: record.penetrationMm,
+    penetrationCurve,
     traceDistanceAfterPenetrationM: record.traceDistanceAfterPenetrationM,
     directImpactDamage: record.directImpactDamage,
     damageTypePath: record.damageTypePath,
@@ -91,11 +105,11 @@ export function distinctInfantryHitAnalysisWeaponGroups<
   T extends InfantryHitAnalysisWeaponRecord,
 >(
   records: readonly T[],
-  damageCurves: Readonly<Record<string, readonly number[]>>,
+  curves: Readonly<Record<string, EditorNativeCurveRecord>>,
 ): InfantryHitAnalysisWeaponGroup<T>[] {
   const groupsByIdentity = new Map<string, InfantryHitAnalysisWeaponGroup<T>>();
   for (const record of records) {
-    const identity = infantryHitAnalysisWeaponIdentity(record, damageCurves);
+    const identity = infantryHitAnalysisWeaponIdentity(record, curves);
     const existing = groupsByIdentity.get(identity);
     if (!existing) {
       groupsByIdentity.set(identity, {
@@ -124,30 +138,4 @@ export function distinctInfantryHitAnalysisWeaponGroups<
     ]);
   }
   return [...groupsByIdentity.values()];
-}
-
-/**
- * Different native weapon fields can produce calculator-distinct groups with
- * the same translated name. Qualify only those collisions with the field that
- * makes their results differ; all other labels stay unchanged.
- */
-export function infantryHitAnalysisWeaponGroupLabels<
-  T extends InfantryHitAnalysisWeaponRecord,
->(
-  groups: readonly InfantryHitAnalysisWeaponGroup<T>[],
-) {
-  const baseLabels = groups.map(({ canonical }) => playerFacingName(canonical));
-  const counts = new Map<string, number>();
-  for (const label of baseLabels) {
-    counts.set(label, (counts.get(label) ?? 0) + 1);
-  }
-  return groups.map((group, index) => {
-    const label = baseLabels[index];
-    if ((counts.get(label) ?? 0) <= 1) return label;
-    const distance = group.canonical.traceDistanceAfterPenetrationM;
-    const formattedDistance = Number.isInteger(distance)
-      ? String(distance)
-      : String(Number(distance.toFixed(3)));
-    return `${label} · 后效 ${formattedDistance} m`;
-  });
 }

@@ -1,0 +1,53 @@
+{
+  "cardId": "gfi--pchela--uav",
+  "factionId": "GFI",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/UAV/BP_CommandActor_UAV_Pchela.BP_CommandActor_UAV_Pchela_C",
+  "identitySha256": "de83baa49420f9c350dc50585bcfec6d9aeeb9c500a3be6536f101318336416d",
+  "packageSha256": "1001cc31c8b8b50fc52d1cd400789bde69902c592950c55b287c886b53679915",
+  "placements": [
+    {
+      "actor": "BP_CommandActor_UAV_Pchela_C_0",
+      "assetUrl": "/assets/runtime-probe/models/7a9898f277972d60caabe230272e50df8f197f37ba665b3dfeb77d7348fdd3e8.gltf",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Mesh",
+      "runtimeBonePoseStatus": "not-applicable",
+      "sourceMeshPath": "/Game/Vehicles/Pchela_UAV/Meshes/SM_Pchela_UAV.SM_Pchela_UAV",
+      "stableOccurrenceId": "occurrence-34fdd78c056ecb8facffbef1361df47ed5ecb869836c447e00b3bf028eca4a98"
+    }
+  ],
+  "rawName": "BP_CommandActor_UAV_Pchela",
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. The gameplay actor keeps its declared mesh at zero scale, so the viewer uses that exact runtime-referenced source mesh at an identity presentation transform; no collision or hit-runtime claim is made.",
+  "requiredOccurrences": 1,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseStatus": "observed",
+  "schemaVersion": "runtime-visual-preview/v1",
+  "sourceAssets": 1,
+  "status": "complete",
+  "targetKey": "gfi--support-air--pchela",
+  "totalBytes": 1385812,
+  "variant": "Pchela-1T",
+  "vehicleId": "vehicle-de83baa49420f9c350dc50585bcfec6d9aeeb9c500a3be6536f101318336416d",
+  "visualAcceptanceStatus": "web-usable",
+  "webUsable": true
+}

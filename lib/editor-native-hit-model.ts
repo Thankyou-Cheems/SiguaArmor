@@ -316,6 +316,15 @@ export function isEditorNativeVehicleDamageEvent(event: EditorNativeDamageEvent)
     event.poolKind !== "seat";
 }
 
+export function isEditorNativeComponentForwardedDamageEvent(
+  event: EditorNativeDamageEvent,
+) {
+  return editorNativeEffectiveDamageAmount(event) > 0 && (
+    event.route === "seat-forwarded-to-hull" ||
+    event.route === "radial-direct-seat-forwarded-to-hull"
+  );
+}
+
 export function isEditorNativeComponentOnlyDamageEvent(event: EditorNativeDamageEvent) {
   return editorNativeEffectiveDamageAmount(event) > 0 &&
     (event.route === "direct" || event.route === "radial-direct") &&

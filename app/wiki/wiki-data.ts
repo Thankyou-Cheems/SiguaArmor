@@ -1,5 +1,16 @@
 import factionPayload from "../../generated/wiki-factions.json";
-import weaponPayload from "../../generated/wiki-weapons.json";
+import {
+  weaponCatalogCurves,
+  weaponCatalogSummary,
+  weaponCatalogWikiConfigurations,
+  weaponCatalogWikiFamilies,
+  weaponCatalogWikiTemplates,
+  type WeaponCatalogJsonObject,
+  type WeaponCatalogJsonValue,
+  type WeaponCatalogWikiConfiguration,
+  type WeaponCatalogWikiFamily,
+  type WeaponCatalogWikiTemplate,
+} from "../../lib/wiki-weapon-catalog";
 
 import { factionDisplayName } from "../faction-display-name";
 
@@ -11,74 +22,44 @@ export interface WikiFaction {
   setupCount: number;
 }
 
-export interface WikiWeapon {
-  displayName: string;
-  factions?: string[];
-  fullName: string;
-  imagePath: string;
-  order: number;
-  type: string;
-  variantCount: number;
-  weaponKeys?: string[];
-}
+export type WikiWeapon = WeaponCatalogWikiFamily;
 
 export type WikiJsonValue =
-  | boolean
-  | number
-  | string
-  | null
-  | WikiJsonValue[]
-  | { [key: string]: WikiJsonValue };
+  WeaponCatalogJsonValue;
 
-export type WikiJsonObject = { [key: string]: WikiJsonValue };
+export type WikiJsonObject = WeaponCatalogJsonObject;
 
-export type WikiWeaponConfiguration = WikiJsonObject & {
-  displayName: string;
-  factions: string[];
-  weaponKey: string;
-};
+export type WikiWeaponConfiguration =
+  WeaponCatalogWikiConfiguration;
 
-export type WikiWeaponTemplate = WikiJsonObject & {
-  weaponKey: string;
-};
+export type WikiWeaponTemplate = WeaponCatalogWikiTemplate;
 
 interface WikiFactionPayload {
   schemaVersion: "sigua-wiki-factions/v1";
   items: WikiFaction[];
 }
 
-interface WikiWeaponPayload {
-  schemaVersion: "sigua-wiki-weapons/v2";
-  dataRevision: string;
-  summary: {
-    configurations: number;
-    damageCurves: number;
-    groups: number;
-    templates: number;
-  };
-  items: WikiWeapon[];
-  configurations: WikiWeaponConfiguration[];
-  templates: WikiWeaponTemplate[];
-  damageCurves: Record<string, WikiJsonValue>;
-}
-
 const factions = factionPayload as unknown as WikiFactionPayload;
-const weapons = weaponPayload as unknown as WikiWeaponPayload;
 
 if (factions.schemaVersion !== "sigua-wiki-factions/v1") {
   throw new Error("Unsupported Wiki faction metadata schema");
 }
-if (weapons.schemaVersion !== "sigua-wiki-weapons/v2") {
-  throw new Error("Unsupported Wiki weapon metadata schema");
-}
 
 export const wikiFactions = factions.items;
-export const wikiWeapons = weapons.items;
-export const wikiWeaponConfigurations = weapons.configurations;
-export const wikiWeaponTemplates = weapons.templates;
-export const wikiWeaponDamageCurves = weapons.damageCurves;
-export const wikiWeaponDataRevision = weapons.dataRevision;
-export const wikiWeaponSummary = weapons.summary;
+export const wikiWeapons = weaponCatalogWikiFamilies;
+export const wikiWeaponConfigurations =
+  weaponCatalogWikiConfigurations;
+export const wikiWeaponTemplates = weaponCatalogWikiTemplates;
+export const wikiWeaponDamageCurves = weaponCatalogCurves;
+export const wikiWeaponDataRevision =
+  weaponCatalogSummary.dataRevision;
+export const wikiWeaponSummary = {
+  groups: weaponCatalogSummary.counts.wikiFamilies,
+  configurations:
+    weaponCatalogSummary.counts.wikiConfigurations,
+  templates: weaponCatalogSummary.counts.wikiTemplates,
+  damageCurves: weaponCatalogSummary.counts.exactCurves,
+};
 export const wikiWeaponConfigurationByKey = Object.fromEntries(
   wikiWeaponConfigurations.map((configuration) => [configuration.weaponKey, configuration]),
 ) as Record<string, WikiWeaponConfiguration>;

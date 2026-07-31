@@ -1,0 +1,53 @@
+{
+  "cardId": "baf--a10--cas",
+  "factionId": "BAF",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_A10_Strafe_2.BP_CommandActor_A10_Strafe_2_C",
+  "identitySha256": "70350146b4cb85440c98a02b95f74e086a8b48a962a97b02d75ab3790cddf93e",
+  "packageSha256": "cbce93a2d4a81c7eec22603b79d07d61ccee2d640ec29cd2808da5f144bbc3fc",
+  "placements": [
+    {
+      "actor": "BP_CommandActor_A10_Strafe_2_C_0",
+      "assetUrl": "/assets/runtime-probe/models/830ac6471d90926628144e6f8f2edb155e314903cab0c87a0866304c85ffc50d.gltf",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Aircraft",
+      "runtimeBonePoseStatus": "not-applicable",
+      "sourceMeshPath": "/Game/Vehicles/A10/Meshes/SM_A10.SM_A10",
+      "stableOccurrenceId": "occurrence-ff82b37b71250560aa8727dff3348c47ed2a540b2de11c06b9ae54bb59b9eb0a"
+    }
+  ],
+  "rawName": "BP_CommandActor_A10_Strafe_2",
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing normal-time visual dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "requiredOccurrences": 1,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseStatus": "observed",
+  "schemaVersion": "runtime-visual-preview/v1",
+  "sourceAssets": 1,
+  "status": "complete",
+  "targetKey": "baf--support-air--a10-strafe",
+  "totalBytes": 1538815,
+  "variant": "A-10A 30 mm Strafe",
+  "vehicleId": "vehicle-70350146b4cb85440c98a02b95f74e086a8b48a962a97b02d75ab3790cddf93e",
+  "visualAcceptanceStatus": "web-usable",
+  "webUsable": true
+}

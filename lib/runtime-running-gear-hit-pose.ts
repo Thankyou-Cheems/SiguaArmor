@@ -1,4 +1,4 @@
-import type { HitSceneComponent } from "./hit-scene-pack";
+import type { HitSceneComponent } from "./hit-scene-record";
 
 export interface RuntimeRunningGearBonePose {
   stableOccurrenceId: string;

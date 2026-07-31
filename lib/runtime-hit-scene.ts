@@ -3,16 +3,16 @@ import { MeshBVH, type SerializedBVH } from "three-mesh-bvh";
 import type {
   Evidence,
   HitSceneComponent,
-  HitScenePackHeader,
+  HitSceneRecordHeader,
   HitSceneSurfaceProfile,
-  ParsedHitScenePack,
-} from "./hit-scene-pack";
+  ParsedHitSceneRecord,
+} from "./hit-scene-record";
 
 export type {
   Evidence,
   HitSceneComponent,
   HitSceneSurfaceProfile,
-} from "./hit-scene-pack";
+} from "./hit-scene-record";
 
 
 export interface RuntimeHitArtifactDescriptor {
@@ -43,7 +43,7 @@ export type RuntimeHitRecordDescriptor = Pick<
 export type RuntimeHitEvidence<T> = Evidence<T>;
 export type RuntimeHitComponent = HitSceneComponent;
 export type RuntimeHitSurfaceProfile = HitSceneSurfaceProfile;
-export type ParsedHitSceneRuntime = ParsedHitScenePack;
+export type ParsedHitSceneRuntime = ParsedHitSceneRecord;
 
 interface RuntimeSection {
   byteOffset: number;
@@ -57,9 +57,9 @@ export interface RuntimeHitRecord {
   schemaVersion: "1.0.0";
   formatVersion: "hit-scene-runtime/v1";
   vehicleId: string;
-  header: HitScenePackHeader & {
+  header: HitSceneRecordHeader & {
     identitySha256: string;
-    counts: HitScenePackHeader["counts"] & { bvhNodes: number };
+    counts: HitSceneRecordHeader["counts"] & { bvhNodes: number };
   };
   geometry: {
     path: string;
@@ -84,7 +84,7 @@ export interface RuntimeHitRecord {
   };
 }
 
-export interface ParsedRuntimeHitScene extends ParsedHitScenePack {
+export interface ParsedRuntimeHitScene extends ParsedHitSceneRecord {
   record: RuntimeHitRecord;
   positions: Float32Array;
   indices: Uint32Array;
@@ -110,7 +110,12 @@ async function sha256Hex(buffer: ArrayBuffer) {
 async function fetchVerified(url: string, bytes: number, digest: string, label: string) {
   assert(/^\/[A-Za-z0-9_./-]+$/.test(url) && !url.includes(".."), `${label} URL is unsafe`);
   assert(/^[0-9a-f]{64}$/.test(digest), `${label} digest is invalid`);
-  const response = await fetch(url, { cache: "force-cache" });
+  let response = await fetch(url, { cache: "force-cache" });
+  if (!response.ok) {
+    // A stale cached 404 can survive after a missing CAS blob is restored.
+    // Revalidate the exact immutable URL once before failing closed.
+    response = await fetch(`${url}?cacheBust=${digest}`, { cache: "reload" });
+  }
   assert(response.ok, `${label} request returned HTTP ${response.status}`);
   const payload = await response.arrayBuffer();
   assert(payload.byteLength === bytes, `${label} byte length mismatch`);

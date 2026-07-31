@@ -1,11 +1,23 @@
 "use client";
 
-import { Search, Waves } from "lucide-react";
+import { Search, Swords, Waves } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import {
+  weaponCatalogDirectModelForVariant,
+  weaponCatalogRadialAssetForVariant,
+  weaponCatalogVariantForId,
+  type WeaponCatalogVariant,
+} from "../../lib/wiki-weapon-catalog";
 import { factionDisplayName } from "../faction-display-name";
 import { InternationalHeader } from "../InternationalHeader";
 import { runtimeCardImpressionForVariant } from "../runtime-probe-card-impressions";
+import { VehicleDamageTypeIcon } from "../VehicleDamageTypeIcon";
+import { WeaponPenetrationIcon } from "../WeaponPenetrationIcon";
+import {
+  vehicleDamageTypeIconKindForPath,
+  vehicleDamageTypeIconLabel,
+} from "../../lib/vehicle-damage-type-icons";
 import {
   wikiVehicleEntries,
   wikiVehicleSummary,
@@ -20,7 +32,93 @@ function uniqueVehicles() {
   return [...new Map(wikiVehicleEntries.map((entry) => [`${entry.cardId}\u0000${entry.rawName}`, entry])).values()];
 }
 
-function WikiVehicleCard({ vehicle }: { vehicle: WikiVehicleEntry }) {
+function WikiVehicleWeaponMetrics({
+  variant,
+}: {
+  variant: WeaponCatalogVariant;
+}) {
+  const directModel = weaponCatalogDirectModelForVariant(variant);
+  const radialAsset = weaponCatalogRadialAssetForVariant(variant);
+  const radialLayers = radialAsset
+    ? [
+        radialAsset.damageSummary.primaryLayer,
+        ...radialAsset.damageSummary.secondaryLayers,
+      ]
+    : [];
+  return (
+    <span
+      className="sigua-wiki-vehicle-weapon__metrics"
+      aria-label={[
+        directModel
+          ? `穿深 ${directModel.penetrationMm ?? 0} 毫米`
+          : null,
+        directModel
+          ? `直击伤害 ${directModel.directImpactDamage}`
+          : null,
+        ...radialLayers.map(
+          (layer, index) =>
+            `${vehicleDamageTypeIconLabel(
+              vehicleDamageTypeIconKindForPath(layer.damageType) ??
+                "generic",
+            )}径向事件 ${index + 1}：${layer.baseDamage}`,
+        ),
+      ]
+        .filter(Boolean)
+        .join("；")}
+    >
+      {directModel ? (
+        <>
+          <span
+            data-effect-role="penetration"
+            title={`${
+              directModel.penetrationKind === "shaped-charge"
+                ? "破甲"
+                : "穿深"
+            } ${directModel.penetrationMm ?? 0} 毫米`}
+          >
+            <WeaponPenetrationIcon
+              kind={directModel.penetrationKind ?? "kinetic"}
+              size={15}
+            />
+            <b>{directModel.penetrationMm ?? 0}</b>
+          </span>
+          <span
+            data-effect-role="direct-damage"
+            title={`直击伤害 ${directModel.directImpactDamage}`}
+          >
+            <Swords size={13} aria-hidden="true" />
+            <b>{directModel.directImpactDamage}</b>
+          </span>
+        </>
+      ) : null}
+      {radialLayers.map((layer, index) => {
+        const kind =
+          vehicleDamageTypeIconKindForPath(layer.damageType) ?? "generic";
+        return (
+          <span
+            data-effect-role="radial-damage"
+            data-event-index={index}
+            title={`${vehicleDamageTypeIconLabel(kind)}径向事件 ${
+              index + 1
+            }：${layer.baseDamage}`}
+            key={`${layer.id}-${index}`}
+          >
+            <VehicleDamageTypeIcon kind={kind} size={14} />
+            <b>{layer.baseDamage}</b>
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+function WikiVehicleCard({
+  vehicle,
+  weaponVariants,
+}: {
+  vehicle: WikiVehicleEntry;
+  weaponVariants: readonly WeaponCatalogVariant[];
+}) {
   const impression = runtimeCardImpressionForVariant(vehicle.cardId, vehicle.rawName);
   return (
     <article className="sigua-wiki-vehicle-card">
@@ -38,6 +136,28 @@ function WikiVehicleCard({ vehicle }: { vehicle: WikiVehicleEntry }) {
           {vehicle.factions.slice(0, 4).map((faction) => <span key={faction}>{factionDisplayName(faction)}</span>)}
           {vehicle.amphibious ? <Waves size={12} aria-label="Amphibious" /> : null}
         </div>
+        {weaponVariants.length > 0 ? (
+          <div className="sigua-wiki-vehicle-card__weapons">
+            <div className="sigua-wiki-vehicle-card__weapon-heading">
+              <span>精确武器配置</span>
+              <b>{weaponVariants.length}</b>
+            </div>
+            {weaponVariants.slice(0, 4).map((variant) => (
+              <div
+                className="sigua-wiki-vehicle-weapon"
+                key={variant.id}
+              >
+                <span title={variant.displayLabel}>
+                  {variant.label}
+                </span>
+                <WikiVehicleWeaponMetrics variant={variant} />
+              </div>
+            ))}
+            {weaponVariants.length > 4 ? (
+              <small>另有 {weaponVariants.length - 4} 个配置</small>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </article>
   );
@@ -48,11 +168,33 @@ export function WikiVehicles() {
   const [faction, setFaction] = useState("all");
   const [type, setType] = useState("all");
   const vehicles = useMemo(() => uniqueVehicles(), []);
+  const weaponVariantsByIdentity = useMemo(
+    () =>
+      new Map(
+        vehicles.map((vehicle) => [
+          `${vehicle.cardId}\u0000${vehicle.rawName}`,
+          vehicle.weaponVariantIds.map((variantId) => {
+            const variant = weaponCatalogVariantForId(variantId);
+            if (!variant) {
+              throw new Error(
+                `Vehicle ${vehicle.cardId}/${vehicle.rawName} references missing weapon ${variantId}`,
+              );
+            }
+            return variant;
+          }),
+        ]),
+      ),
+    [vehicles],
+  );
   const factionOptions = useMemo(() => [...new Set(vehicles.flatMap((vehicle) => vehicle.factions))].sort(), [vehicles]);
   const typeOptions = useMemo(() => [...new Set(vehicles.map((vehicle) => vehicle.type))].sort(), [vehicles]);
   const filtered = useMemo(() => {
     const needle = normalized(query);
     return vehicles.filter((vehicle) => {
+      const selectorWeapons =
+        weaponVariantsByIdentity.get(
+          `${vehicle.cardId}\u0000${vehicle.rawName}`,
+        ) ?? [];
       const matchesQuery = !needle || normalized([
         vehicle.displayName,
         vehicle.rawName,
@@ -60,12 +202,28 @@ export function WikiVehicles() {
         ...vehicle.vehicleTags,
         ...vehicle.factions,
         ...vehicle.factions.map((faction) => factionDisplayName(faction)),
+        ...selectorWeapons.flatMap((variant) => [
+          variant.familyLabel,
+          variant.label,
+          variant.qualifier,
+          variant.displayLabel,
+          variant.searchText,
+          ...variant.sourceLabels,
+          ...variant.factionIds,
+          ...variant.ballisticsIds,
+        ]),
       ].join(" ")).includes(needle);
       const matchesFaction = faction === "all" || vehicle.factions.includes(faction);
       const matchesType = type === "all" || vehicle.type === type;
       return matchesQuery && matchesFaction && matchesType;
     });
-  }, [faction, query, type, vehicles]);
+  }, [
+    faction,
+    query,
+    type,
+    vehicles,
+    weaponVariantsByIdentity,
+  ]);
 
   return (
     <div className="sigua-wiki-replica">
@@ -119,7 +277,17 @@ export function WikiVehicles() {
           </section>
           {filtered.length > 0 ? (
             <div className="sigua-wiki-vehicle-grid">
-              {filtered.map((vehicle) => <WikiVehicleCard key={`${vehicle.cardId}-${vehicle.rawName}`} vehicle={vehicle} />)}
+              {filtered.map((vehicle) => (
+                <WikiVehicleCard
+                  key={`${vehicle.cardId}-${vehicle.rawName}`}
+                  vehicle={vehicle}
+                  weaponVariants={
+                    weaponVariantsByIdentity.get(
+                      `${vehicle.cardId}\u0000${vehicle.rawName}`,
+                    ) ?? []
+                  }
+                />
+              ))}
             </div>
           ) : (
             <p className="sigua-wiki-empty-state">No vehicles found.</p>

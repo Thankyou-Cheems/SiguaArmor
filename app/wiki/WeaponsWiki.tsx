@@ -4,6 +4,10 @@ import { ChevronDown, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { factionDisplayName } from "../faction-display-name";
+import {
+  weaponCatalogVariantsForWikiConfigurations,
+  type WeaponCatalogVariant,
+} from "../../lib/wiki-weapon-catalog";
 import { internationalPath } from "../site-paths";
 import {
   factionLabels,
@@ -23,7 +27,27 @@ function weaponHref(weapon: WikiWeapon) {
   );
 }
 
-function WeaponCard({ weapon }: { weapon: WikiWeapon }) {
+function weaponIdentity(weapon: WikiWeapon) {
+  return `${weapon.order}\u0000${weapon.fullName}`;
+}
+
+function WeaponCard({
+  weapon,
+  selectorVariants,
+}: {
+  weapon: WikiWeapon;
+  selectorVariants: readonly WeaponCatalogVariant[];
+}) {
+  const directModelCount = new Set(
+    selectorVariants
+      .map(({ directDamageModelId }) => directDamageModelId)
+      .filter(Boolean),
+  ).size;
+  const radialAssetCount = new Set(
+    selectorVariants
+      .map(({ radialAssetId }) => radialAssetId)
+      .filter(Boolean),
+  ).size;
   return (
     <a className="sigua-wiki-weapon-card" href={weaponHref(weapon)}>
       <div className="sigua-wiki-weapon-card__image">
@@ -34,6 +58,22 @@ function WeaponCard({ weapon }: { weapon: WikiWeapon }) {
         <div className="sigua-wiki-weapon-card__type">{weapon.type}</div>
         {weapon.variantCount > 1 ? (
           <span className="sigua-wiki-weapon-card__variants">{weapon.variantCount} variants</span>
+        ) : null}
+        {selectorVariants.length > 0 ? (
+          <div
+            className="sigua-wiki-weapon-card__selector-summary"
+            title={selectorVariants
+              .map(({ displayLabel }) => displayLabel)
+              .join("；")}
+          >
+            <span>{selectorVariants.length} 个可选配置</span>
+            <small>
+              {directModelCount} 直射模型
+              {radialAssetCount > 0
+                ? ` · ${radialAssetCount} 径向资产`
+                : ""}
+            </small>
+          </div>
         ) : null}
       </div>
     </a>
@@ -128,19 +168,49 @@ export function WeaponsWiki() {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("all");
   const [faction, setFaction] = useState("all");
+  const selectorVariantsByWeapon = useMemo(
+    () =>
+      new Map(
+        wikiWeapons.map((weapon) => [
+          weaponIdentity(weapon),
+          weaponCatalogVariantsForWikiConfigurations(
+            weapon.weaponKeys ?? [],
+          ),
+        ]),
+      ),
+    [],
+  );
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase();
     return wikiWeapons.filter((weapon) => {
+      const selectorVariants =
+        selectorVariantsByWeapon.get(weaponIdentity(weapon)) ?? [];
       const configurationText = (weapon.weaponKeys ?? [])
         .map((key) => `${key} ${wikiWeaponConfigurationByKey[key]?.displayName ?? ""}`)
         .join(" ");
-      const matchesQuery = !needle || `${weapon.displayName} ${weapon.fullName} ${weapon.type} ${configurationText}`
+      const selectorText = selectorVariants
+        .flatMap((variant) => [
+          variant.familyLabel,
+          variant.label,
+          variant.qualifier,
+          variant.displayLabel,
+          variant.searchText,
+          ...variant.sourceLabels,
+          ...variant.factionIds,
+        ])
+        .join(" ");
+      const matchesQuery = !needle || `${weapon.displayName} ${weapon.fullName} ${weapon.type} ${configurationText} ${selectorText}`
         .toLocaleLowerCase().includes(needle);
       const matchesType = type === "all" || weapon.type === type;
-      const matchesFaction = faction === "all" || weapon.factions?.includes(faction);
+      const matchesFaction =
+        faction === "all" ||
+        weapon.factions?.includes(faction) ||
+        selectorVariants.some(({ factionIds }) =>
+          factionIds.includes(faction),
+        );
       return matchesQuery && matchesType && matchesFaction;
     });
-  }, [faction, query, type]);
+  }, [faction, query, selectorVariantsByWeapon, type]);
 
   return (
     <main className="sigua-wiki-wiki-main sigua-wiki-wiki-main--weapons">
@@ -168,7 +238,15 @@ export function WeaponsWiki() {
         </div>
         {filtered.length > 0 ? (
           <div className="sigua-wiki-weapon-grid">
-            {filtered.map((weapon) => <WeaponCard key={`${weapon.order}-${weapon.fullName}`} weapon={weapon} />)}
+            {filtered.map((weapon) => (
+              <WeaponCard
+                key={`${weapon.order}-${weapon.fullName}`}
+                weapon={weapon}
+                selectorVariants={
+                  selectorVariantsByWeapon.get(weaponIdentity(weapon)) ?? []
+                }
+              />
+            ))}
           </div>
         ) : (
           <p className="sigua-wiki-empty-state">No weapons found.</p>

@@ -1,0 +1,53 @@
+{
+  "cardId": "adf--fa18--cas",
+  "factionId": "ADF",
+  "generatedClass": "/Game/Blueprints/Commander/CommandActors/Airstrike/BP_CommandActor_FA18_Strafe.BP_CommandActor_FA18_Strafe_C",
+  "identitySha256": "0106401c2b5abc6d7f44815d89e1d94393129e8f03462fe0fe5b384818e9004a",
+  "packageSha256": "b46a4789be5f86a78092b7f06c5b56a6df7069cca11b75e31fa5577d10bb7e94",
+  "placements": [
+    {
+      "actor": "BP_CommandActor_FA18_Strafe_C_0",
+      "assetUrl": "/assets/runtime-probe/models/5e591ae17924c23c07217356dbe371f2db37213e83803c76a278a066178ce9f5.gltf",
+      "componentClassPath": "/Script/Engine.StaticMeshComponent",
+      "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Aircraft",
+      "runtimeBonePoseStatus": "not-applicable",
+      "sourceMeshPath": "/Game/Vehicles/FA-18/Meshes/FA18.FA18",
+      "stableOccurrenceId": "occurrence-4e3573ad12096cc48e90bf09a523471c718425316c0292bf8653661ab967e953"
+    }
+  ],
+  "rawName": "BP_CommandActor_FA18_Strafe",
+  "reason": "Exact generated-class runtime actor in initialized PIE, stable component transforms, and exact normal-time component-space bones plus parent-relative local reconstruction/recomposition proof are observed. Components with continuing normal-time visual dynamics remain explicitly classified. Runtime material parameter values remain unresolved.",
+  "requiredOccurrences": 1,
+  "runtimeBonePoseJointCount": 0,
+  "runtimeBonePoseOccurrenceCount": 0,
+  "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+  "runtimeBonePoseStatus": "observed",
+  "schemaVersion": "runtime-visual-preview/v1",
+  "sourceAssets": 1,
+  "status": "complete",
+  "targetKey": "adf--support-air--fa18-strafe",
+  "totalBytes": 1726513,
+  "variant": "F/A-18F 30 mm Strafe",
+  "vehicleId": "vehicle-0106401c2b5abc6d7f44815d89e1d94393129e8f03462fe0fe5b384818e9004a",
+  "visualAcceptanceStatus": "web-usable",
+  "webUsable": true
+}

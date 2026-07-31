@@ -1,7 +1,8 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-china-reference-2026-07-24",
-  "dataRevision": "encyclopedia-local-v1-63bc70ab5f097205-turret-2343956d90d4-cn-6bb470ba8d18",
+  "dataRevision": "vehicle-v3.1-ed29f3796d046d865537-projection-a81fe7e3fb7f-cn-6bb470ba8d18",
+  "vehicleCatalogRevision": "ed29f3796d046d8655377b4d420e35a949bce05202cc4ceb1b7f60f0cf131f3d",
   "groups": [
     {
       "id": "shenzhou",
@@ -55,6 +56,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZTZ99_wCage",
+          "catalogBindingRef": "catalog-vehicle-34f2e56420ab9cfc17259e69",
+          "vehicleRef": "vehicle-a833262494502f59adb075ca",
+          "runtimeVehicleRef": "vehicle-06473d7996c47e2f30509e3dd366f7321e1d366cb204d4f3ccabcdf16994ed80",
+          "visualArtifactRef": "visual-artifact-879c5d03d0136de2d2124a21a18d5f04c54f356b895d14ce1a8bfa899a62dab5",
           "alias": "",
           "displayName": "ZVT-9A（林地）",
           "searchTerms": [
@@ -77,6 +82,10 @@
         },
         {
           "sourceRawName": "BP_ZTZ99_Desert_wCage",
+          "catalogBindingRef": "catalog-vehicle-289d90fa64b80fe52b12671e",
+          "vehicleRef": "vehicle-2e3638cbc9b062fd276b86c2",
+          "runtimeVehicleRef": "vehicle-c708d44c546504683cfcb75276eff7eaf4a7904abd600c293252ffee10b5c15e",
+          "visualArtifactRef": "visual-artifact-7bcdfd5fce37f810f879280e0550dcc1d696441725b3d6c1f1505adc3da819f7",
           "alias": "",
           "displayName": "ZVT-9A（沙漠）",
           "searchTerms": [
@@ -126,6 +135,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZTD05_WoodLand",
+          "catalogBindingRef": "catalog-vehicle-d8ec52d8634aefb3e40ecb9f",
+          "vehicleRef": "vehicle-94e8838808561cf4d2bbdeee",
+          "runtimeVehicleRef": "vehicle-36b81f2601bf7779505865dce12e40f3e980e368f609f639e5ddc8e043f323c0",
+          "visualArtifactRef": "visual-artifact-001f4b93f87bf125b58b80246856adf62f0a10e981de5e1be88e134b256ffb4c",
           "alias": "",
           "displayName": "ZTD05（林地）",
           "searchTerms": [
@@ -175,6 +188,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CSK131_HJ-8ATGM",
+          "catalogBindingRef": "catalog-vehicle-ff07c4c9a11d4adad22a365a",
+          "vehicleRef": "vehicle-04df8c0372315a2fe648f436",
+          "runtimeVehicleRef": "vehicle-4138dd1fd1f1e6cc98431b745dc8c424dede2a73720f5994a7c9d671fe820eb8",
+          "visualArtifactRef": "visual-artifact-fec8e3b02183fe31e649cd7b3c8cf429536db00d161f7454c966101638f55614",
           "alias": "HJ8",
           "displayName": "CKS-02 HJ8（林地）",
           "searchTerms": [
@@ -197,6 +214,10 @@
         },
         {
           "sourceRawName": "BP_CSK131_HJ8ATGM_Desert",
+          "catalogBindingRef": "catalog-vehicle-2d52c980fb5e8fc1d200addc",
+          "vehicleRef": "vehicle-b7c745210769983452092f94",
+          "runtimeVehicleRef": "vehicle-c078a50be75dc18df562956b09d46cbb7e6f2af39714cbc9429e3688b8ee2860",
+          "visualArtifactRef": "visual-artifact-b4883e70da98708aa892f02e734e4aef274805920095a9991bc8fff9e0083bb2",
           "alias": "HJ8",
           "displayName": "CKS-02 HJ8（沙漠）",
           "searchTerms": [
@@ -246,6 +267,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZBD04A_Desert",
+          "catalogBindingRef": "catalog-vehicle-46ef8c342a70f00bd2690076",
+          "vehicleRef": "vehicle-f2aed64a497b4adcb804b650",
+          "runtimeVehicleRef": "vehicle-7322bc6e43b47f4ed04552ec4f3c8d7e90dc5abe01cecce4f16542e438fbf78c",
+          "visualArtifactRef": "visual-artifact-a72a24551526ff417d9f25c757dc93cf2dbf2709db49724202b08bbc02c6594a",
           "alias": "",
           "displayName": "ZVB-4A（沙漠）",
           "searchTerms": [
@@ -268,6 +293,10 @@
         },
         {
           "sourceRawName": "BP_ZBD04A",
+          "catalogBindingRef": "catalog-vehicle-9b3016ccc16072e5a99e82d5",
+          "vehicleRef": "vehicle-43082d29dc21406ec7380a3a",
+          "runtimeVehicleRef": "vehicle-0c9c3e4ad751051a80996c200698a091294b25d44509749b30adec98540df886",
+          "visualArtifactRef": "visual-artifact-64c1107e5c167e24c596fa57bf8ba9c3a125398ef6cb9104056e4c46d07e3599",
           "alias": "",
           "displayName": "ZVB-4A（林地）",
           "searchTerms": [
@@ -317,6 +346,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZBL08_HJ73C_Desert",
+          "catalogBindingRef": "catalog-vehicle-a333fb2043485450739d799d",
+          "vehicleRef": "vehicle-ca5f1d9942efef56956d16f4",
+          "runtimeVehicleRef": "vehicle-137839c24392594b33fba111a808022c0060278f83fc98f3c8c8504cb177c689",
+          "visualArtifactRef": "visual-artifact-1e315fecba76d3731391a602495a47d88843948c3d98957644b9414dcc06a4ff",
           "alias": "",
           "displayName": "ZLB-08（沙漠）",
           "searchTerms": [
@@ -339,6 +372,10 @@
         },
         {
           "sourceRawName": "BP_ZBL08_HJ73C",
+          "catalogBindingRef": "catalog-vehicle-bfd9a9ba3b175b9f89fcf252",
+          "vehicleRef": "vehicle-442b2013f03044f174f8caf2",
+          "runtimeVehicleRef": "vehicle-0ae1a4fa360e1b69217db6d85073e7767ef3f0162e8d5646dd8a748e00f43b40",
+          "visualArtifactRef": "visual-artifact-ea860052ea9442029f3c51fe7c2f49e4f845d8db6dbba4f85f2d71e77b163c17",
           "alias": "",
           "displayName": "ZLB-08（林地）",
           "searchTerms": [
@@ -388,6 +425,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZSD89II_Desert",
+          "catalogBindingRef": "catalog-vehicle-bafd2bc9d70905b012b90e03",
+          "vehicleRef": "vehicle-2357e0287d60ec4db75e9624",
+          "runtimeVehicleRef": "vehicle-b6f452f2f0393fcdc198c068e38dc055d052f65218c619dba55f7a310782254a",
+          "visualArtifactRef": "visual-artifact-4f488b7797a359ff2c91e7a717be49693956271b9ee87464a805ceaec60e0a5b",
           "alias": "",
           "displayName": "ZSD89II IFV（沙漠）",
           "searchTerms": [
@@ -410,6 +451,10 @@
         },
         {
           "sourceRawName": "BP_ZSD89II",
+          "catalogBindingRef": "catalog-vehicle-66db972056ce06c3bd17ce9a",
+          "vehicleRef": "vehicle-8c770060da299cf8fe2bce1e",
+          "runtimeVehicleRef": "vehicle-5c2eaab61a9a249dfa984ed9c08d0f2a6430ef91a35dc8942571ae539d7c11bd",
+          "visualArtifactRef": "visual-artifact-43e4fbe75d7e7082347d27da89b520740f6f6b38bfcf682a5ce8cf35a06ccb60",
           "alias": "",
           "displayName": "ZSD89II IFV（林地）",
           "searchTerms": [
@@ -459,6 +504,10 @@
       "variants": [
         {
           "sourceRawName": "BP_WZ551A_Desert",
+          "catalogBindingRef": "catalog-vehicle-9baa12d559f40cdf504aff6b",
+          "vehicleRef": "vehicle-0b77eb28cae4bfdda0b7392e",
+          "runtimeVehicleRef": "vehicle-eac0a3275f457d339c832ef76e5294f4dab6b675f4e474a7dad1d4220be40323",
+          "visualArtifactRef": "visual-artifact-843ffac9ab266b9e32cb51713bcc32b2f15d679504d4968794519ea84e69a10a",
           "alias": "",
           "displayName": "ZSL92 IFV（沙漠）",
           "searchTerms": [
@@ -481,6 +530,10 @@
         },
         {
           "sourceRawName": "BP_WZ551A",
+          "catalogBindingRef": "catalog-vehicle-dec6afa9e39e7576ff954d45",
+          "vehicleRef": "vehicle-6d80fcc0d820822782197f0e",
+          "runtimeVehicleRef": "vehicle-df7058a9c0cf03891b247db5cdef7f4356d2a4211e8f11c4ec401a9033c5425d",
+          "visualArtifactRef": "visual-artifact-20ab6a686d39baeb5008a6d4e4d27253863cf2c822ffc907fdfbaf4bdb62f0a5",
           "alias": "",
           "displayName": "ZSL92 IFV（林地）",
           "searchTerms": [
@@ -530,6 +583,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZSD89_Desert",
+          "catalogBindingRef": "catalog-vehicle-a7cab2d3568ae6307cfcdfaf",
+          "vehicleRef": "vehicle-791a301d7358bb2ca5db3037",
+          "runtimeVehicleRef": "vehicle-927d3be3b1fc634f0f1ca72fb9457b882fed002a044353d1d0362aca20eb3fb8",
+          "visualArtifactRef": "visual-artifact-857cbe22ec61b88a8baf1a306535cd7de7097cc1169fad57565d07de4b0a3e49",
           "alias": "QJZ89",
           "displayName": "ZSD89 QJZ89（沙漠）",
           "searchTerms": [
@@ -552,6 +609,10 @@
         },
         {
           "sourceRawName": "BP_ZSD89",
+          "catalogBindingRef": "catalog-vehicle-083042ce2112a96c27f707bf",
+          "vehicleRef": "vehicle-1cf6d30974a2d3983baaff1f",
+          "runtimeVehicleRef": "vehicle-bca5287899dfe048c3959feb1ab149d80020b10a7ea58f03eac838588d251a3a",
+          "visualArtifactRef": "visual-artifact-2b8f46d7d5441e067ee57d929170fd4c3c9cad183abc659cdbe9211088d88d50",
           "alias": "QJZ89",
           "displayName": "ZSD89 QJZ89（林地）",
           "searchTerms": [
@@ -601,6 +662,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZSD89_QLZ-87_Desert",
+          "catalogBindingRef": "catalog-vehicle-289bf3b7ab98446168207fdd",
+          "vehicleRef": "vehicle-9cf079e0ab1687109316ca85",
+          "runtimeVehicleRef": "vehicle-314bf225e4e3d24273af064ef85a2817e761a0419fda594835f427801adee6bc",
+          "visualArtifactRef": "visual-artifact-6744f91d5e6e0a6f9e14b09ceb132906f0401ea3dd40b1c16461c29911c8c04f",
           "alias": "QLZ87",
           "displayName": "ZSD89 QLZ87（沙漠）",
           "searchTerms": [
@@ -623,6 +688,10 @@
         },
         {
           "sourceRawName": "BP_ZSD89_QLZ-87",
+          "catalogBindingRef": "catalog-vehicle-84be26dfcd70a7d71cdf4630",
+          "vehicleRef": "vehicle-73aeec7d2d73cdcb7493d722",
+          "runtimeVehicleRef": "vehicle-de59ae79ea1d3fbe0432a464409fc23a67e8fb09df53f934cdf5c96491c04122",
+          "visualArtifactRef": "visual-artifact-bfc05177d1717a8b24346660612cbbfcb51a89e6bcf7f72cebee49e4f108985f",
           "alias": "QLZ87",
           "displayName": "ZSD89 QLZ87（林地）",
           "searchTerms": [
@@ -672,6 +741,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZSL10_QJZ-89_Desert",
+          "catalogBindingRef": "catalog-vehicle-641007009036bbe7319ef2ca",
+          "vehicleRef": "vehicle-7987f4847e2474dbb1db88d0",
+          "runtimeVehicleRef": "vehicle-bec1196b0a8585c088544243eb6b3e744fea308845ab09b16369c3c971d297f1",
+          "visualArtifactRef": "visual-artifact-56bd07d3276a838899c5dabee5bdb3b9a353f3b04f086efd787a79138c1544c3",
           "alias": "QJZ89",
           "displayName": "ZSL10 QJZ89（沙漠）",
           "searchTerms": [
@@ -694,6 +767,10 @@
         },
         {
           "sourceRawName": "BP_ZSL10_QJZ-89",
+          "catalogBindingRef": "catalog-vehicle-4583e7eb2ab704617f0d49cb",
+          "vehicleRef": "vehicle-de0b11b7faa0402f9694195f",
+          "runtimeVehicleRef": "vehicle-7b0910aa415b5bf1eac109244669c1a785c530b2b61eeb49352868cbc26cdb92",
+          "visualArtifactRef": "visual-artifact-1daf6c07938fbd418d3dd79a1ec2add91c9d6d8f9bedbdba56b3aecf0940c7b7",
           "alias": "QJZ89",
           "displayName": "ZSL10 QJZ89（林地）",
           "searchTerms": [
@@ -743,6 +820,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ZSL10_QLZ-87",
+          "catalogBindingRef": "catalog-vehicle-d741eb13dcbfb0b3f9de86b0",
+          "vehicleRef": "vehicle-d524a932dc9715c42107f402",
+          "runtimeVehicleRef": "vehicle-24ebf327623de06b48a87b3bb84cb4ba4534a75e82afc4654c1ea1e3a1998cd9",
+          "visualArtifactRef": "visual-artifact-cebfd2181f8b604a022985fce1b540a8c584966f1c289aa649803b7608343f40",
           "alias": "QLZ87",
           "displayName": "ZSL10 QLZ87",
           "searchTerms": [
@@ -788,6 +869,10 @@
       "variants": [
         {
           "sourceRawName": "BP_WZ551B_Desert",
+          "catalogBindingRef": "catalog-vehicle-2efa4effb210331489b4483f",
+          "vehicleRef": "vehicle-b7606d3a5ec67484f3076a21",
+          "runtimeVehicleRef": "vehicle-3e8a0b777aee5d221658683d421f213962e96980e70589c886b7fc3198b3e48b",
+          "visualArtifactRef": "visual-artifact-be10dd134734890c60a7c21bfb9b8634c840c9ffdbf6ee8b5e26210a4a1cdf81",
           "alias": "APC QJZ89",
           "displayName": "ZSL92A APC QJZ89（沙漠）",
           "searchTerms": [
@@ -810,6 +895,10 @@
         },
         {
           "sourceRawName": "BP_WZ551B",
+          "catalogBindingRef": "catalog-vehicle-61921cf4db06726312f136d6",
+          "vehicleRef": "vehicle-11f9e4e4935dd5aa3e06c71f",
+          "runtimeVehicleRef": "vehicle-06719c64d62a5e22b4e3f5fb10f04c0397b3e51ab2f6df3316d9325953c953d4",
+          "visualArtifactRef": "visual-artifact-c79e2c1d5e80e7b69fb15c18628e0993595acbffd6bee3b66e5b53970059e3fb",
           "alias": "APC QJZ89",
           "displayName": "ZSL92A APC QJZ89（林地）",
           "searchTerms": [
@@ -859,6 +948,10 @@
       "variants": [
         {
           "sourceRawName": "BP_WZ551B_QLZ-87_Desert",
+          "catalogBindingRef": "catalog-vehicle-e60c1985fba22426ba404fd9",
+          "vehicleRef": "vehicle-b073efd5039e930f68d68ca5",
+          "runtimeVehicleRef": "vehicle-973f21bd07537880a9888d67e603ccd8e3427793c128876cf924671003fedae8",
+          "visualArtifactRef": "visual-artifact-119daef07dc14ba8a7a61c80ddb33c8be886a973efbd3223ebfa952bb0df2f7e",
           "alias": "APC QLZ87",
           "displayName": "ZSL92A APC QLZ87（沙漠）",
           "searchTerms": [
@@ -881,6 +974,10 @@
         },
         {
           "sourceRawName": "BP_WZ551B_QLZ-87",
+          "catalogBindingRef": "catalog-vehicle-d499d5f532764638522d3232",
+          "vehicleRef": "vehicle-3f606ea4460f469871ce0395",
+          "runtimeVehicleRef": "vehicle-075bce3a3b373dd9a3bc41cafb87f47de84d4c190be59ccd13c5c6570acd4112",
+          "visualArtifactRef": "visual-artifact-537ce7a84da0bf8eeb50141ce18021cb641b0b4b0183f0335853d86c4d8d6897",
           "alias": "APC QLZ87",
           "displayName": "ZSL92A APC QLZ87（林地）",
           "searchTerms": [
@@ -930,6 +1027,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CSK131_RWS",
+          "catalogBindingRef": "catalog-vehicle-de78d9e844772995cf229c82",
+          "vehicleRef": "vehicle-38a681d0dea663778fbca5de",
+          "runtimeVehicleRef": "vehicle-ab73f7c315ec030058e5d31e6e2029e8c5153d79677784c18253d8b55db315be",
+          "visualArtifactRef": "visual-artifact-07c98a9f5cac9b179bfbbc9b9c63d0ce80a98cbfbb91a63f0f8b83bf4af791a3",
           "alias": "QJC88 RWS",
           "displayName": "CKS-02 QJC88 RWS（林地）",
           "searchTerms": [
@@ -952,6 +1053,10 @@
         },
         {
           "sourceRawName": "BP_CSK131_RWS_Desert",
+          "catalogBindingRef": "catalog-vehicle-6c9274c6c41a9c59a9e68e14",
+          "vehicleRef": "vehicle-b0fb10b024ea5ed79337ff10",
+          "runtimeVehicleRef": "vehicle-3675fcf952907648ee38058a6bddb5518e50741931d0c4d88a13cf3fc62c2d88",
+          "visualArtifactRef": "visual-artifact-93dc0b103970b33d665b40a5a6932d3eea2f5964d35319cfefc418ff61558485",
           "alias": "QJC88 RWS",
           "displayName": "CKS-02 QJC88 RWS（沙漠）",
           "searchTerms": [
@@ -1001,6 +1106,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CSK131_QJY88",
+          "catalogBindingRef": "catalog-vehicle-b87aa997e92dc073eebc4d36",
+          "vehicleRef": "vehicle-78431bceba8ad3a7c03c406e",
+          "runtimeVehicleRef": "vehicle-c4ee55186b8e25163f229921e63f4253910e32cf283adfbe96f809a92d1c8f5d",
+          "visualArtifactRef": "visual-artifact-ba8c1dc69bc016a8c0ff0a42ba193e1c9e4ebbdc2caefa63cce44ea3b39b1948",
           "alias": "QJY88",
           "displayName": "CKS-02 QJY88（林地）",
           "searchTerms": [
@@ -1023,6 +1132,10 @@
         },
         {
           "sourceRawName": "BP_CSK131_QJY88_Desert",
+          "catalogBindingRef": "catalog-vehicle-1057e3be8003098ccf4be941",
+          "vehicleRef": "vehicle-bf7775abbe1e76197c9cd09e",
+          "runtimeVehicleRef": "vehicle-aac114297bf21cfc535b17dbfe3cd0faf621d8aa0cb2c0724d23f7eb0f571094",
+          "visualArtifactRef": "visual-artifact-013522ae8eb7390dabae275319c0a5b71a60f5a0c23535b3905d0287f111ac42",
           "alias": "QJY88",
           "displayName": "CKS-02 QJY88（沙漠）",
           "searchTerms": [
@@ -1072,6 +1185,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CSK131_QJZ89",
+          "catalogBindingRef": "catalog-vehicle-89b49cddf8167710ae68dec0",
+          "vehicleRef": "vehicle-78373eb2cedcbc299b2617c7",
+          "runtimeVehicleRef": "vehicle-1ff3e7e19c1ef1e32ad862874e487c2173e879655a2516ed77bf36ce718f1154",
+          "visualArtifactRef": "visual-artifact-ca9c48d34ba998a85dbe23bef577749ef4dd31d008ec342b245b9ad6f1bd0e73",
           "alias": "QJZ89",
           "displayName": "CKS-02 QJZ89（林地）",
           "searchTerms": [
@@ -1094,6 +1211,10 @@
         },
         {
           "sourceRawName": "BP_CSK131_QJZ89_Desert",
+          "catalogBindingRef": "catalog-vehicle-709b77ce1fcdb44601d3e84e",
+          "vehicleRef": "vehicle-ba20e23ba1e4ca2680e85b16",
+          "runtimeVehicleRef": "vehicle-a3061eb7e04cb50387e48f8d9e2276be5203ad0c3ac494dccd67a82d5b3dedff",
+          "visualArtifactRef": "visual-artifact-58fc0442d4c6d6dbc3a54b976276ec20db63245a21e597aa011d9716d3bb8cb6",
           "alias": "QJZ89",
           "displayName": "CKS-02 QJZ89（沙漠）",
           "searchTerms": [
@@ -1143,6 +1264,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CSK131_QLZ87",
+          "catalogBindingRef": "catalog-vehicle-608c57a260581efc4830374e",
+          "vehicleRef": "vehicle-6982cbf485c52986bd19619f",
+          "runtimeVehicleRef": "vehicle-5010d473e09af6a446de58cc43a751516572c16c845cd49be766c52de5f403cf",
+          "visualArtifactRef": "visual-artifact-7254946c1f7fe62288809eaf517b4c2d637b69729cb6c769d5f464dabbadab07",
           "alias": "QLZ87",
           "displayName": "CKS-02 QLZ87（林地）",
           "searchTerms": [
@@ -1165,6 +1290,10 @@
         },
         {
           "sourceRawName": "BP_CSK131_QLZ87_Desert",
+          "catalogBindingRef": "catalog-vehicle-3fb2e6ebf777bfbfb9177e77",
+          "vehicleRef": "vehicle-2396de99a7bed9bbad7249b1",
+          "runtimeVehicleRef": "vehicle-ff508e56e593973edf0b8ba04827d6f6852713acbfa0fb0f34523eea574f1f08",
+          "visualArtifactRef": "visual-artifact-45c312e0c5da32b726f48ad5ef257a2fddbe135e9ab0a872aecd8fc3a5210cd6",
           "alias": "QLZ87",
           "displayName": "CKS-02 QLZ87（沙漠）",
           "searchTerms": [
@@ -1214,6 +1343,10 @@
       "variants": [
         {
           "sourceRawName": "BP_LynxATV_Rollcage_QJZ89",
+          "catalogBindingRef": "catalog-vehicle-14950fee1831cfaa6234c56d",
+          "vehicleRef": "vehicle-8589e9f89fa428db226af9e9",
+          "runtimeVehicleRef": "vehicle-146de8531e6262e40eebb35b0f4ad831e9c34176cb32fb906428a6eae1077dd3",
+          "visualArtifactRef": "visual-artifact-de31bbc4452e2cae49ace9f058fa092e548b84ec0be60fb82065784cbc1bad73",
           "alias": "QJZ89",
           "displayName": "Lynx8x8 QJZ89",
           "searchTerms": [
@@ -1259,6 +1392,10 @@
       "variants": [
         {
           "sourceRawName": "BP_LynxATV_Rollcage_QLZ87",
+          "catalogBindingRef": "catalog-vehicle-935376972c8f487c1f6811b7",
+          "vehicleRef": "vehicle-3f39fedb834e0b77813acfd0",
+          "runtimeVehicleRef": "vehicle-a805f4d5bf3b9237ab446e3c0310fefdc5a5baebde9dfd868922e613ed7524ed",
+          "visualArtifactRef": "visual-artifact-5f2557b894bf82007b6ca9515acbad36decefd0a816cbaa373054295e4787dc8",
           "alias": "QLZ87",
           "displayName": "Lynx8x8 QLZ87",
           "searchTerms": [
@@ -1304,6 +1441,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_QJY88",
+          "catalogBindingRef": "catalog-vehicle-dc4fa7238347fdf334151170",
+          "vehicleRef": "vehicle-39192f28f230fc07f2e3532a",
+          "runtimeVehicleRef": "vehicle-a3be24a7554b0313301fa79a765fee2db260762a30e5e2067b3c9e29d5538c91",
+          "visualArtifactRef": "visual-artifact-6c0711b0e7945233870ef9de36f350a666eac39af75437456a65854f87d77ee4",
           "alias": "QJY88",
           "displayName": "RHIB QJY88",
           "searchTerms": [
@@ -1349,6 +1490,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_QJZ89",
+          "catalogBindingRef": "catalog-vehicle-cf137347a4b22c36d95312cf",
+          "vehicleRef": "vehicle-64de0de20b0d3ec71c870536",
+          "runtimeVehicleRef": "vehicle-a72d5bccab4926273d49cd122cdca3b58503cd9175aa96c13ec7bbb7e6d83c98",
+          "visualArtifactRef": "visual-artifact-151014c65158d248fb52f2397fb3fbbdbd5cc7d409ec04883b5d898dfe64cb48",
           "alias": "QJZ89",
           "displayName": "RHIB QJZ89",
           "searchTerms": [
@@ -1394,6 +1539,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CTM131_Logistic",
+          "catalogBindingRef": "catalog-vehicle-f97deaad64a25124b658d011",
+          "vehicleRef": "vehicle-3ec3876c89cc27c842703ed2",
+          "runtimeVehicleRef": "vehicle-6931df87fe0e8d3d46ef042329a8388257036fadb235d3c56ef81ed81e2b7d52",
+          "visualArtifactRef": "visual-artifact-8962ebfdd5cc69ca2eb90883e52aa08d94ab4707e8e3567bace35336ab3930ac",
           "alias": "Logistics",
           "displayName": "CTM131 Logistics（林地）",
           "searchTerms": [
@@ -1416,6 +1565,10 @@
         },
         {
           "sourceRawName": "BP_CTM131_Logistic_Desert",
+          "catalogBindingRef": "catalog-vehicle-2411f57841f93f37904da196",
+          "vehicleRef": "vehicle-c80af3f5b9b3811b4df0abb8",
+          "runtimeVehicleRef": "vehicle-e3fc1758d48d76cb88a0b56551868068af3f97f1b4289fabaacb6597d297ba5b",
+          "visualArtifactRef": "visual-artifact-4a354d5c36c2f8452e93873c8e7520959768bc13ca8d6f3a26f01970046622e0",
           "alias": "Logistics",
           "displayName": "CTM131 Logistics（沙漠）",
           "searchTerms": [
@@ -1465,6 +1618,10 @@
       "variants": [
         {
           "sourceRawName": "BP_LynxATV_Logistic",
+          "catalogBindingRef": "catalog-vehicle-f5ee9a04a0608c2e3ec173f8",
+          "vehicleRef": "vehicle-d25c0cb9ef020b47c5baaacc",
+          "runtimeVehicleRef": "vehicle-98804700c1fe4f8538ef308c220dcc7dba94273ec2396729be84181659b50223",
+          "visualArtifactRef": "visual-artifact-6e2fa4827296d6a90024a6a4b1c8a982fcce96387d6026db163a1374bc29ef73",
           "alias": "Logistics",
           "displayName": "Lynx8x8 Logistics",
           "searchTerms": [
@@ -1510,6 +1667,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_Logistics",
+          "catalogBindingRef": "catalog-vehicle-788d6b3146b279a6d8901e40",
+          "vehicleRef": "vehicle-3889b0b7e7b6aa96f675cb4a",
+          "runtimeVehicleRef": "vehicle-e3158111f55763ac33ce995702445a4a02c63c38faea6ac5d693670a4e50a044",
+          "visualArtifactRef": "visual-artifact-a093dd03f439edffaa1e1f511f33318e564eb6bf07743ab0cd596607e9fac56f",
           "alias": "Logistics",
           "displayName": "RHIB Logistics",
           "searchTerms": [
@@ -1555,6 +1716,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CTM131",
+          "catalogBindingRef": "catalog-vehicle-1296db043023d7cdfa537703",
+          "vehicleRef": "vehicle-3b0a3cfc917c87e792da5727",
+          "runtimeVehicleRef": "vehicle-e662f375481df67893440199c070c8c83654a156f3793831a6777a98393426c9",
+          "visualArtifactRef": "visual-artifact-1b56bb2ebc16e10fe6d3d4bf2ba2086f9f2fc25efc63e0551ec5f7e9f9d0f9bf",
           "alias": "Transport QJY88",
           "displayName": "CTM131 Transport QJY88（林地）",
           "searchTerms": [
@@ -1577,6 +1742,10 @@
         },
         {
           "sourceRawName": "BP_CTM131_Desert",
+          "catalogBindingRef": "catalog-vehicle-75e502c3445634478f9d8749",
+          "vehicleRef": "vehicle-a5dafc1914dba10a8e9e7fda",
+          "runtimeVehicleRef": "vehicle-4dc2f38b9e5b2fe670c957c67a5b30e29620ef1dc6c324bb8797596e94176f33",
+          "visualArtifactRef": "visual-artifact-e19f2370fadb4ce4702cf91860291a4b6e75518bdfda40b35f07d7b4564989b1",
           "alias": "Transport QJY88",
           "displayName": "CTM131 Transport QJY88（沙漠）",
           "searchTerms": [
@@ -1626,6 +1795,10 @@
       "variants": [
         {
           "sourceRawName": "BP_CTM131_QJZ89",
+          "catalogBindingRef": "catalog-vehicle-99dc09909f316432ef502fac",
+          "vehicleRef": "vehicle-660e8ae42e397d51cc6297c0",
+          "runtimeVehicleRef": "vehicle-5696b03685abff26e86db213e2e5015f3e287ab5e20bda9754ae9ae310d3af97",
+          "visualArtifactRef": "visual-artifact-a9f222c43d3dd18669671eb9b90716a53f3802ab5a174db4f0126e6bfaf675b1",
           "alias": "Transport QJZ89",
           "displayName": "CTM131 Transport QJZ89（林地）",
           "searchTerms": [
@@ -1648,6 +1821,10 @@
         },
         {
           "sourceRawName": "BP_CTM131_QJZ89_Desert",
+          "catalogBindingRef": "catalog-vehicle-80bfc183cce59b84d1369fe1",
+          "vehicleRef": "vehicle-c999fd01af38e53925ee28dc",
+          "runtimeVehicleRef": "vehicle-9a87db71c7609021511dcea2a105f63c7bbe2b28e20f0b0cdc6c47b3d54eaed7",
+          "visualArtifactRef": "visual-artifact-3aa7893ff85f4988eb27fb02789afdcdbd12dc90130c05f7ff0d1c82636baea4",
           "alias": "Transport QJZ89",
           "displayName": "CTM131 Transport QJZ89（沙漠）",
           "searchTerms": [
@@ -1697,6 +1874,10 @@
       "variants": [
         {
           "sourceRawName": "BP_LynxATV",
+          "catalogBindingRef": "catalog-vehicle-1a2975faee57a0491917308e",
+          "vehicleRef": "vehicle-22bb27143903ee4d5cf918f1",
+          "runtimeVehicleRef": "vehicle-cfa8dd4bd8bd27299d02307ae3fd0f09d1c073d85c303a449e6ecebb4c0111c8",
+          "visualArtifactRef": "visual-artifact-60c682bc59f5d86feaa8d2ce2164e8717f0eafdf7f3a77d548a3cab07fa94b94",
           "alias": "Transport",
           "displayName": "Lynx8x8 Transport",
           "searchTerms": [
@@ -1742,6 +1923,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Z8G",
+          "catalogBindingRef": "catalog-vehicle-8ac4061ea66bdd6dbda88c9e",
+          "vehicleRef": "vehicle-98071ab9905b2418681cad6a",
+          "runtimeVehicleRef": "vehicle-90db8ef586bca5da3dd5c35f7c5e914067f74ad706c370e9fccbd74c57d4add8",
+          "visualArtifactRef": "visual-artifact-b122248cb0eb01dfce1e52aeaa432d2d83c7a5a2082dc98e1e38ef306e011c1c",
           "alias": "",
           "displayName": "SD-8H",
           "searchTerms": [
@@ -1787,6 +1972,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Z9A",
+          "catalogBindingRef": "catalog-vehicle-2246929440463c6ff909c018",
+          "vehicleRef": "vehicle-988f0ced2ba07d7e7984a738",
+          "runtimeVehicleRef": "vehicle-776621d0497ad52440c8a67d02f4804a3f13e3c1a5a693fa999034930202bb07",
+          "visualArtifactRef": "visual-artifact-7ac75d5d871304644635650f282f32fc36ca76cad4c88ce9624a6631b071a575",
           "alias": "",
           "displayName": "Z-9A",
           "searchTerms": [
@@ -1832,6 +2021,10 @@
       "variants": [
         {
           "sourceRawName": "BP_T72B3_Desert",
+          "catalogBindingRef": "catalog-vehicle-61dc69cc53774be0ce08ffc1",
+          "vehicleRef": "vehicle-8141cf0f3370a9e76ed3172a",
+          "runtimeVehicleRef": "vehicle-97bb30d9d56fc102388c3a3f6683b28cce62bba46f6e2308637a7bee81eadf60",
+          "visualArtifactRef": "visual-artifact-b2df5b66714a598633839b2f6942cace062ed7449e909ba52c3aaaf8ba76b378",
           "alias": "",
           "displayName": "T-72B3（沙漠）",
           "searchTerms": [
@@ -1854,6 +2047,10 @@
         },
         {
           "sourceRawName": "BP_T72B3",
+          "catalogBindingRef": "catalog-vehicle-2450c0bda83ad58797c14bb2",
+          "vehicleRef": "vehicle-a32e94fb6323ff54d9cbb4ce",
+          "runtimeVehicleRef": "vehicle-bc00a9913b63f5c4b91c4a2b9ffd5efbff8f067fbe633a9124eac5a032375fbe",
+          "visualArtifactRef": "visual-artifact-e2e4b7d6430d4ea51b10ef47f84d233f7874d1a77f2e00776eb1ea6b06c9c813",
           "alias": "",
           "displayName": "T-72B3（林地）",
           "searchTerms": [
@@ -1903,6 +2100,10 @@
       "variants": [
         {
           "sourceRawName": "BP_T90A_Desert",
+          "catalogBindingRef": "catalog-vehicle-095f7e8ca7dc75c2349fa42d",
+          "vehicleRef": "vehicle-e3788363ca711b141c7dc2db",
+          "runtimeVehicleRef": "vehicle-7418801baadababf3340c3f5bd6e8d40fb36724f1b3be70787854feaf4f32b66",
+          "visualArtifactRef": "visual-artifact-6fc49d02cabd59dfe1ef7f6c39a6ff25f5ec760078df6ad6ea0a3923d788430f",
           "alias": "",
           "displayName": "T-90A（沙漠）",
           "searchTerms": [
@@ -1925,6 +2126,10 @@
         },
         {
           "sourceRawName": "BP_T90A",
+          "catalogBindingRef": "catalog-vehicle-1afa16d04f51720429407a67",
+          "vehicleRef": "vehicle-6d7c3145097b18424bed781b",
+          "runtimeVehicleRef": "vehicle-73f07b41fc8bdb8aafb660394b66a720d7caee56d903447da5d424bf065d9445",
+          "visualArtifactRef": "visual-artifact-6bbffd8d15ef8aaaf471b5cd6ccf1e06d33f466edeba65e017e139db0e41eacb",
           "alias": "",
           "displayName": "T-90A（林地）",
           "searchTerms": [
@@ -1974,6 +2179,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BRDM-2_Spandrel_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-7b6fd875b119da0827186c16",
+          "vehicleRef": "vehicle-27974ca8492d663a67ad3b5f",
+          "runtimeVehicleRef": "vehicle-61037f2466ece9357abe8a1cef9f0b03f0aa6143bd0906683ba728484ad2123c",
+          "visualArtifactRef": "visual-artifact-b3275d51dc6e54e5b39ea776b35a011c9fea4557c8d3db90c283df4fe10f5bab",
           "alias": "Spandrel",
           "displayName": "BRDM-2 Spandrel（沙漠）",
           "searchTerms": [
@@ -1996,6 +2205,10 @@
         },
         {
           "sourceRawName": "BP_BRDM-2_Spandrel_RUS",
+          "catalogBindingRef": "catalog-vehicle-f65dd0c4aa539062931a3020",
+          "vehicleRef": "vehicle-34d99d0d65ea44abcfafd7f1",
+          "runtimeVehicleRef": "vehicle-369bb5f0fc189c6ad0afff74bb7cf08d27f1bd38436f41f10c3311186026540d",
+          "visualArtifactRef": "visual-artifact-c7117e2e752d880500c69dae154d63c708dae9332ceefddb955e446da8de8713",
           "alias": "Spandrel",
           "displayName": "BRDM-2 Spandrel（林地）",
           "searchTerms": [
@@ -2045,6 +2258,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BMP1AM_Desert",
+          "catalogBindingRef": "catalog-vehicle-33dfa364b29d2e5619245ae8",
+          "vehicleRef": "vehicle-372af5f4562166ed6abef8e9",
+          "runtimeVehicleRef": "vehicle-1b95f986c5ebc370a24640e1d4343e2b2e5bbba8775b6cdd06de92981ea50b92",
+          "visualArtifactRef": "visual-artifact-574be4ad89797230e4955495cb2496f0c1c0a41674100d925a9b2f103e00ece3",
           "alias": "",
           "displayName": "BMP-1AM（沙漠）",
           "searchTerms": [
@@ -2067,6 +2284,10 @@
         },
         {
           "sourceRawName": "BP_BMP1AM",
+          "catalogBindingRef": "catalog-vehicle-4a6c2fb06554645fda20a172",
+          "vehicleRef": "vehicle-ccc308f934562e1f72627e94",
+          "runtimeVehicleRef": "vehicle-cfaafa29d443009c3c5a345ac58bfbc3cd04b8b7ed0e0d1c25ae6a9142d15182",
+          "visualArtifactRef": "visual-artifact-b4e7ce4bbef38ac8c60631d72cdc90456e98680f153deaca0c9490e243a7debe",
           "alias": "",
           "displayName": "BMP-1AM（林地）",
           "searchTerms": [
@@ -2116,6 +2337,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BMP2_Desert",
+          "catalogBindingRef": "catalog-vehicle-1d431d6a1f33faa3df4b4240",
+          "vehicleRef": "vehicle-dd6a0675f4bd8c115e9e921d",
+          "runtimeVehicleRef": "vehicle-a32d456e5b5c1b7e89ae3f3d59492fe624876e7d8af280bc30d23aeec8529937",
+          "visualArtifactRef": "visual-artifact-374e86350a7e31993271f762823b74c49f3940ce1279acaf21b83b70bb67bcb0",
           "alias": "",
           "displayName": "BMP-2（沙漠）",
           "searchTerms": [
@@ -2138,6 +2363,10 @@
         },
         {
           "sourceRawName": "BP_BMP2",
+          "catalogBindingRef": "catalog-vehicle-80fd1c249e91b031935184d2",
+          "vehicleRef": "vehicle-1ba40db6157dca4dafb171b3",
+          "runtimeVehicleRef": "vehicle-78b9de4320f2ec2dacab3caed07d4d6340cf2f018e09a65c9e9bc22c9d429bbb",
+          "visualArtifactRef": "visual-artifact-1181f90a6d8061f4bbf8807f30be9305f2639bd169fb96c2df981652cbc7c58b",
           "alias": "",
           "displayName": "BMP-2（林地）",
           "searchTerms": [
@@ -2187,6 +2416,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BMP2M_Desert",
+          "catalogBindingRef": "catalog-vehicle-1c8c40a78cc95c9a331e6d68",
+          "vehicleRef": "vehicle-b8ec466cb8aef446529f2959",
+          "runtimeVehicleRef": "vehicle-f5ce106979b3c426533bda049ccc28637ea2330979b193972626a8e6041ff908",
+          "visualArtifactRef": "visual-artifact-abaf69b3330cfdce4b0f48420afa9af2a5b081ae83daba12429f42e78a42902f",
           "alias": "",
           "displayName": "BMP-2M（沙漠）",
           "searchTerms": [
@@ -2209,6 +2442,10 @@
         },
         {
           "sourceRawName": "BP_BMP2M",
+          "catalogBindingRef": "catalog-vehicle-9ffe9214edfb194cb6499c45",
+          "vehicleRef": "vehicle-0b5ad026206eb3e3c76d0c51",
+          "runtimeVehicleRef": "vehicle-bf48eb25a3ef2f2e71cbc12dcf70a31940b5da6a00feeb048140afb545a6a605",
+          "visualArtifactRef": "visual-artifact-4935c0a0284ab0d20784efbaf947b137399d8cd4e59c753272f565b21195dad5",
           "alias": "",
           "displayName": "BMP-2M（林地）",
           "searchTerms": [
@@ -2258,6 +2495,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BMP3M_Desert",
+          "catalogBindingRef": "catalog-vehicle-cc8f635bb4c3f521db2b8900",
+          "vehicleRef": "vehicle-c21461752a0310cef47a6f1e",
+          "runtimeVehicleRef": "vehicle-584196eb610acbb271a08a42b290fa905be9dc0c9e726625e85b6dbfceb8b3e5",
+          "visualArtifactRef": "visual-artifact-362be17cc9359ac46e85b3e101f20206491b71f737c9333391366b41125e0d74",
           "alias": "",
           "displayName": "BMP-3M（沙漠）",
           "searchTerms": [
@@ -2280,6 +2521,10 @@
         },
         {
           "sourceRawName": "BP_BMP3M",
+          "catalogBindingRef": "catalog-vehicle-d6bd936e3c7cfa82c7f7a509",
+          "vehicleRef": "vehicle-e19ac589461ff71df2d1e4a5",
+          "runtimeVehicleRef": "vehicle-1cd5531d7a9830a4bc9f879c62e038bf8dc6cb24cb4904e2bbbb05a647f65cb5",
+          "visualArtifactRef": "visual-artifact-b1eef8210b2d56e73b4e5e4d811c05cf88864906373f3aa27a962f6a47a8005a",
           "alias": "",
           "displayName": "BMP-3M（林地）",
           "searchTerms": [
@@ -2329,6 +2574,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLBM_6MB_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-6687463ed70b9689411255ca",
+          "vehicleRef": "vehicle-fe3d6b5b623365837847fe46",
+          "runtimeVehicleRef": "vehicle-dc2d1cab7d8e82451e1c991132cc5f1ecb9296b671a897cb35572ff195566708",
+          "visualArtifactRef": "visual-artifact-85ec13c0f01f27b4a0a7eadeb832022a87fea9466adddecbaa265c52d72b9862",
           "alias": "6MB",
           "displayName": "MT-LBM 6MB（沙漠）",
           "searchTerms": [
@@ -2351,6 +2600,10 @@
         },
         {
           "sourceRawName": "BP_MTLBM_6MB_RUS",
+          "catalogBindingRef": "catalog-vehicle-56720f6e6852954d34ffa623",
+          "vehicleRef": "vehicle-6052fe872aac6095e852bab1",
+          "runtimeVehicleRef": "vehicle-51bfb9c16c6a094112f4ef313ac44804b4b75c9d0f849fcf96f8899d12c0e245",
+          "visualArtifactRef": "visual-artifact-fe87d029dac270759f4fe4f9cac4481bb9a044c3ee0f1bcca208d7dc83af3f42",
           "alias": "6MB",
           "displayName": "MT-LBM 6MB（林地）",
           "searchTerms": [
@@ -2400,6 +2653,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BTR80_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-4258b546550e7cfd7fa5ce55",
+          "vehicleRef": "vehicle-0dbdedd581c96f64cdc7663a",
+          "runtimeVehicleRef": "vehicle-78ffd008de3a05259ad8c0eab31640536c24effe04da04d761970587a6d0af20",
+          "visualArtifactRef": "visual-artifact-6f64dd2700a331405bef1374f0df8959cb615aadfb7e952e8a6636a5b4a11e77",
           "alias": "",
           "displayName": "BTR-80（沙漠）",
           "searchTerms": [
@@ -2422,6 +2679,10 @@
         },
         {
           "sourceRawName": "BP_BTR80_RUS",
+          "catalogBindingRef": "catalog-vehicle-f979b893bc9c0a411a20382a",
+          "vehicleRef": "vehicle-eaec2cbb9c0ac7677a00f220",
+          "runtimeVehicleRef": "vehicle-e1e53f2bbc5b65acaa5fc3ea014a9ff34d2b2242b99950242afcab3ff103d373",
+          "visualArtifactRef": "visual-artifact-4a8e184023a9cb5a7711336a38879b820b0a0a2e498df40e518a39e3b9490ec4",
           "alias": "",
           "displayName": "BTR-80（林地）",
           "searchTerms": [
@@ -2471,6 +2732,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BTR82A_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-f33603c9148e092078ed0c42",
+          "vehicleRef": "vehicle-cbc7afcaafe1b8aa3b550cc1",
+          "runtimeVehicleRef": "vehicle-b6fff942a45c28e1562e8035a32453222e9fd32b3f0edec0e9846220fc5dae97",
+          "visualArtifactRef": "visual-artifact-4292d1c7b5a023e782aa1582e2f8a0d8b9a6fa7a958054f01e13872d753139cb",
           "alias": "",
           "displayName": "BTR-82A（沙漠）",
           "searchTerms": [
@@ -2493,6 +2758,10 @@
         },
         {
           "sourceRawName": "BP_BTR82A_RUS",
+          "catalogBindingRef": "catalog-vehicle-2d109a965acbc81746b62bdc",
+          "vehicleRef": "vehicle-c49b705a0df0b6aad08f0e10",
+          "runtimeVehicleRef": "vehicle-7f2d7cf60e622ce146df7ee159ab191b5b85cc343f28617df7e427bebf970a4f",
+          "visualArtifactRef": "visual-artifact-885e29bb6a952530254fdbb929b3113624ace8bc276c1fd1d577cfdc4243754f",
           "alias": "",
           "displayName": "BTR-82A（林地）",
           "searchTerms": [
@@ -2542,6 +2811,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLB_RGF",
+          "catalogBindingRef": "catalog-vehicle-06772f6ffb7a051cb0be5cd0",
+          "vehicleRef": "vehicle-166e9ee9ce977bf3d51c9cfe",
+          "runtimeVehicleRef": "vehicle-e3ed774fb5fb423f8d74839d94218ac5debb9d6c89217aa1af3fe1a1f0e1f5ec",
+          "visualArtifactRef": "visual-artifact-896c58bacf6b7fc316fa067fbc02002aabe8b8c305162e6adcc21b271b4ff95b",
           "alias": "PKT",
           "displayName": "MT-LB PKT（林地）",
           "searchTerms": [
@@ -2564,6 +2837,10 @@
         },
         {
           "sourceRawName": "BP_MTLB_RGF_Desert",
+          "catalogBindingRef": "catalog-vehicle-2889e2f1d755d48c40be32cf",
+          "vehicleRef": "vehicle-2705bd59e957ac1c623735dd",
+          "runtimeVehicleRef": "vehicle-ecf5e9475aed92bf304e062a97a53fecf01a5274040b6f93c4a46a55020fa385",
+          "visualArtifactRef": "visual-artifact-44fb402d7b90fe58045e0e811e21b4771a6515c937146a602ffad78cd047a3c6",
           "alias": "PKT",
           "displayName": "MT-LB PKT（沙漠）",
           "searchTerms": [
@@ -2613,6 +2890,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLB_VMK_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-2e2f642e3fcd86aa5f7ac2d6",
+          "vehicleRef": "vehicle-3a7fef85bab1febcc31159b3",
+          "runtimeVehicleRef": "vehicle-e45511400bc4eed265705d55998aa3e88075285ca8c9ab3ed2b1afdc5a79097e",
+          "visualArtifactRef": "visual-artifact-eb8e3347d053cdb60f32cf4e45a213270fea4f64b7ad0a8ef63839f2a00ea887",
           "alias": "VMK",
           "displayName": "MT-LB VMK（沙漠）",
           "searchTerms": [
@@ -2635,6 +2916,10 @@
         },
         {
           "sourceRawName": "BP_MTLB_VMK_RUS",
+          "catalogBindingRef": "catalog-vehicle-1e6716489a1afb017d579d7f",
+          "vehicleRef": "vehicle-fd9c8f3971aa3793d62144ea",
+          "runtimeVehicleRef": "vehicle-ef64011a29358baf31aa0b640c10df71607e7cd2bfe7aae0bdaae2c56b4ac5b0",
+          "visualArtifactRef": "visual-artifact-259365ed35a6c40add33a984448fba19863d8fd54f3db947066f35558079afa7",
           "alias": "VMK",
           "displayName": "MT-LB VMK（林地）",
           "searchTerms": [
@@ -2684,6 +2969,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLBM_6MA_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-b82979f148315b7a8725256c",
+          "vehicleRef": "vehicle-76eacd505d91c35356d1cb48",
+          "runtimeVehicleRef": "vehicle-43f2a9deebba9412a404086925b7e84267da4d3eb2918950743b1dccc4d7af4a",
+          "visualArtifactRef": "visual-artifact-3f69df4edb07592214972a59b9c04626726ce0065b1143d809463a9b66078c88",
           "alias": "6MA",
           "displayName": "MT-LBM 6MA（沙漠）",
           "searchTerms": [
@@ -2706,6 +2995,10 @@
         },
         {
           "sourceRawName": "BP_MTLBM_6MA_RUS",
+          "catalogBindingRef": "catalog-vehicle-28364aea77e9662ba3bf98a2",
+          "vehicleRef": "vehicle-4e8f4419cb3e66c74dfb8e57",
+          "runtimeVehicleRef": "vehicle-d90516f55317dd66033dac2af7619e08bdbd929187aa28c3e30b76807b5ef228",
+          "visualArtifactRef": "visual-artifact-10cd1afbb628c08273834ffb1319e593d961db2d7dfd5b38b5f10c8a1d8b06c4",
           "alias": "6MA",
           "displayName": "MT-LBM 6MA（林地）",
           "searchTerms": [
@@ -2755,6 +3048,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Tigr_AGS17_Desert",
+          "catalogBindingRef": "catalog-vehicle-566aa8a6be2c6184cfbd9cab",
+          "vehicleRef": "vehicle-baf8ee9d6991c5436fd81044",
+          "runtimeVehicleRef": "vehicle-4b7970200211ed9becc7f9d40e9750af62a15fa1e70b8679a835fd2fdaef4dbe",
+          "visualArtifactRef": "visual-artifact-6205ba5ab5a5a35848d3e688ac41c11eeda8508d05bfe04ca7cf12836723c0d2",
           "alias": "AGS-17",
           "displayName": "Tigr-M AGS-17（沙漠）",
           "searchTerms": [
@@ -2777,6 +3074,10 @@
         },
         {
           "sourceRawName": "BP_Tigr_AGS17",
+          "catalogBindingRef": "catalog-vehicle-4a28b48fbc63173bc450ce0f",
+          "vehicleRef": "vehicle-29d841bc12deaae960588399",
+          "runtimeVehicleRef": "vehicle-fdfc3e315b4b2b80b11b65ad03317b6a5758b509033a29dbb3fdad424f7afbb2",
+          "visualArtifactRef": "visual-artifact-8679195896dd509dc36bdd83a50dc27f5f36f5ca106cd378d831775ae8e89543",
           "alias": "AGS-17",
           "displayName": "Tigr-M AGS-17（林地）",
           "searchTerms": [
@@ -2826,6 +3127,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Tigr_Desert",
+          "catalogBindingRef": "catalog-vehicle-a4e895038ce7fc074ea6be6d",
+          "vehicleRef": "vehicle-e26ce7a615d4b11e2212cf3f",
+          "runtimeVehicleRef": "vehicle-433d5f58f8aee00a5a5f40c2911b0c44a86dd5494677277de806d3c12dc0c45e",
+          "visualArtifactRef": "visual-artifact-c8b95c722a7c54ad3e25a5f3b6e1a43d3f07fbaed86f9625b341fdaf12941799",
           "alias": "Kord",
           "displayName": "Tigr-M Kord（沙漠）",
           "searchTerms": [
@@ -2848,6 +3153,10 @@
         },
         {
           "sourceRawName": "BP_Tigr",
+          "catalogBindingRef": "catalog-vehicle-b32222caba8f24534e22057e",
+          "vehicleRef": "vehicle-b004e376674fb867738de7a0",
+          "runtimeVehicleRef": "vehicle-24e31e3c2be6a5c48ad47e1865452b58483f5409a9f4a56dd03ff572cc2603e5",
+          "visualArtifactRef": "visual-artifact-d629380f7a11a29040c5060b137bd93004a3866ffb5db5fa60d8e04397581a12",
           "alias": "Kord",
           "displayName": "Tigr-M Kord（林地）",
           "searchTerms": [
@@ -2897,6 +3206,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Tigr_RWS_Desert",
+          "catalogBindingRef": "catalog-vehicle-cd596f4587640aa99b707046",
+          "vehicleRef": "vehicle-6d975b461feae8bd6f623e2e",
+          "runtimeVehicleRef": "vehicle-edf4a042a6b031374d52f21724dfc64027792adac481e7515e2fc24cbb818d56",
+          "visualArtifactRef": "visual-artifact-844c78f5a06e689a60f00002c07d4f32f618d0009d07cd660244ec84997464f6",
           "alias": "RWS Kord",
           "displayName": "Tigr-M RWS Kord（沙漠）",
           "searchTerms": [
@@ -2919,6 +3232,10 @@
         },
         {
           "sourceRawName": "BP_Tigr_RWS",
+          "catalogBindingRef": "catalog-vehicle-47ff8ebb98e1bb007e928aed",
+          "vehicleRef": "vehicle-1738880505764eba3d3bd393",
+          "runtimeVehicleRef": "vehicle-3a6d44d1e2a1247e5341ad39a6cb08eb6ecc07caa47a909dba8c06a11ec2a2eb",
+          "visualArtifactRef": "visual-artifact-1f36f41c56b2079c30f862de30217ae2d273ffe8b14c90f7b3130fdc90ad6826",
           "alias": "RWS Kord",
           "displayName": "Tigr-M RWS Kord（林地）",
           "searchTerms": [
@@ -2968,6 +3285,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BRDM-2_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-bd53234a106a9c49f4b37342",
+          "vehicleRef": "vehicle-8acb173984be2738398f8aa4",
+          "runtimeVehicleRef": "vehicle-f937e7b86940188fe6da2e1c6062a9cae354dd7ecd5f3e5082efbfab74383450",
+          "visualArtifactRef": "visual-artifact-96e9e68dbb4d47dbed25a10bdbdf4c67a26cea012459f3437a70d7eefabe73c6",
           "alias": "",
           "displayName": "BRDM-2（沙漠）",
           "searchTerms": [
@@ -2990,6 +3311,10 @@
         },
         {
           "sourceRawName": "BP_BRDM-2_RUS",
+          "catalogBindingRef": "catalog-vehicle-07fd1d791a515a71610ba536",
+          "vehicleRef": "vehicle-412b8f49d20c49fff051d25f",
+          "runtimeVehicleRef": "vehicle-9e3b568f4eb65199d0a6f7f661477584bdb2559da1b9d8cd8f1e4ae2066c92de",
+          "visualArtifactRef": "visual-artifact-7c240f3d990f37710f62d7e0f037d1d61aacc36c09acd8d2107f106be032625c",
           "alias": "",
           "displayName": "BRDM-2（林地）",
           "searchTerms": [
@@ -3039,6 +3364,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_AGS17",
+          "catalogBindingRef": "catalog-vehicle-1d8312956799e2c90aa77d85",
+          "vehicleRef": "vehicle-534a650dc8031e2fde5d04be",
+          "runtimeVehicleRef": "vehicle-0364e9a9f0d91163dae6c1893a05702457b729cd9474cf709a9151a682d2de1d",
+          "visualArtifactRef": "visual-artifact-571a6ea9bc06475f8b97e2a6e4904e5c554b56580771f42e7082f2ca85a88680",
           "alias": "AGS-17",
           "displayName": "RHIB AGS-17",
           "searchTerms": [
@@ -3084,6 +3413,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_RUS_NSV",
+          "catalogBindingRef": "catalog-vehicle-d528d1e759b6e103c43f76da",
+          "vehicleRef": "vehicle-25055e47c60f96465c9233b8",
+          "runtimeVehicleRef": "vehicle-6c0f734cdaa788421ede4580b075f14e2e11693e091ed372137ef2b5a2ac206c",
+          "visualArtifactRef": "visual-artifact-c122277b698f55b7604829c5a583d383dccb4697bfd9826e24e8b04161b5395f",
           "alias": "NSV",
           "displayName": "RHIB NSV",
           "searchTerms": [
@@ -3129,6 +3462,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_RUS_PKP",
+          "catalogBindingRef": "catalog-vehicle-abe95ee4ba5314370bcffe99",
+          "vehicleRef": "vehicle-396aedf4b1e6f8d98bba8b5e",
+          "runtimeVehicleRef": "vehicle-287dddbc23d225fa8633fc948e9af66464990a21a4a5903760feda03990b7726",
+          "visualArtifactRef": "visual-artifact-68a627b2e503b4b1b8129a425f472ac4615ed19f0bb432f13c02fa7df5bea15e",
           "alias": "PKP",
           "displayName": "RHIB PKP",
           "searchTerms": [
@@ -3174,6 +3511,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Kamaz_5350_Logi_Desert",
+          "catalogBindingRef": "catalog-vehicle-927a8936a6f537bb201ef020",
+          "vehicleRef": "vehicle-3646d36f19f037e8cdbc58ef",
+          "runtimeVehicleRef": "vehicle-5916010eb8d36c0714637ab354b7ba5851931f56e13c11d0ac04b8c334e91642",
+          "visualArtifactRef": "visual-artifact-a19c99d61c5e9cdd70be2bac407c93451834a35272fea71c6f9a2b25f9714e63",
           "alias": "Logistics",
           "displayName": "KamAZ 5350 Logistics（沙漠）",
           "searchTerms": [
@@ -3196,6 +3537,10 @@
         },
         {
           "sourceRawName": "BP_Kamaz_5350_Logi",
+          "catalogBindingRef": "catalog-vehicle-b219b9ecbcf8e7cde946394f",
+          "vehicleRef": "vehicle-4406e936775cb28e3f4f80c9",
+          "runtimeVehicleRef": "vehicle-08cb3311c6ca4c046f6032d4e81945d462c65ad74443a18653de387496f5e969",
+          "visualArtifactRef": "visual-artifact-183a446167a3067bfc1730c6ed63bfd0643b6b2ba2c63a92f5c920f09a856564",
           "alias": "Logistics",
           "displayName": "KamAZ 5350 Logistics（林地）",
           "searchTerms": [
@@ -3245,6 +3590,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLB_LOGI_RUS_Desert",
+          "catalogBindingRef": "catalog-vehicle-ac811d867eeb45a1dc7547cf",
+          "vehicleRef": "vehicle-2bd298ff3cd89cd013d03de2",
+          "runtimeVehicleRef": "vehicle-863f2738099d570751f6c641393a17ab1368a0cc3e554848add48ff5ef705deb",
+          "visualArtifactRef": "visual-artifact-c9a3c814ccaa3d0afe7af12808564dd82df34341bd7d992868c86b2c6bcc5b21",
           "alias": "Logistics",
           "displayName": "MT-LB Logistics（沙漠）",
           "searchTerms": [
@@ -3267,6 +3616,10 @@
         },
         {
           "sourceRawName": "BP_MTLB_LOGI_RUS",
+          "catalogBindingRef": "catalog-vehicle-641ab7a0a3582b7ca7eb1607",
+          "vehicleRef": "vehicle-b6941d3db499332795f5b98f",
+          "runtimeVehicleRef": "vehicle-4d539a90c7cd86ebd93a294643b5135ace10905d6372d4330c9f4e832011fd05",
+          "visualArtifactRef": "visual-artifact-862ee06bd8244f3fcd6e0318382ca6382a2947186859c0bc21e684baaa7e127d",
           "alias": "Logistics",
           "displayName": "MT-LB Logistics（林地）",
           "searchTerms": [
@@ -3316,6 +3669,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_Logistics",
+          "catalogBindingRef": "catalog-vehicle-13fe0659672ed4ada9f1fc3d",
+          "vehicleRef": "vehicle-3889b0b7e7b6aa96f675cb4a",
+          "runtimeVehicleRef": "vehicle-e3158111f55763ac33ce995702445a4a02c63c38faea6ac5d693670a4e50a044",
+          "visualArtifactRef": "visual-artifact-295f2578e946ce916f20cbe852406a029353fc9788d728c31ca3fa12317f0308",
           "alias": "Logistics",
           "displayName": "RHIB Logistics",
           "searchTerms": [
@@ -3361,6 +3718,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Kamaz_5350_Desert",
+          "catalogBindingRef": "catalog-vehicle-9721d621e1592bb33abdb43b",
+          "vehicleRef": "vehicle-616841ff92ad2a702b9dc769",
+          "runtimeVehicleRef": "vehicle-e1d71471d585cd5daf17f9d327dee29719cd849c582219bded8adf3402d6ff80",
+          "visualArtifactRef": "visual-artifact-6f754902e9a5caf5629d7717c13c62ce27e75f7d17388ed0cdf2b68c25c4c828",
           "alias": "Transport",
           "displayName": "KamAZ 5350 Transport（沙漠）",
           "searchTerms": [
@@ -3383,6 +3744,10 @@
         },
         {
           "sourceRawName": "BP_Kamaz_5350",
+          "catalogBindingRef": "catalog-vehicle-8c35a0e9bafddf2c7801b66f",
+          "vehicleRef": "vehicle-0b35d567ccf3171a5d2652ed",
+          "runtimeVehicleRef": "vehicle-793bc37d723bfaae90933445c9b1bdb4036e117abf9f4cb863933dda5e7261ae",
+          "visualArtifactRef": "visual-artifact-dac442192cbecc4e0f93fdb548275d227bbb57432a39c1151519355b26142395",
           "alias": "Transport",
           "displayName": "KamAZ 5350 Transport（林地）",
           "searchTerms": [
@@ -3432,6 +3797,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MI8",
+          "catalogBindingRef": "catalog-vehicle-1601791ec771a3b25e6357ca",
+          "vehicleRef": "vehicle-868b6a4858f1c27d1a44a221",
+          "runtimeVehicleRef": "vehicle-f2503b1a6e4230c1db33be82236821e8dda70efedcf05fd46e099b13b0e52dae",
+          "visualArtifactRef": "visual-artifact-c3b0fe2fd3f0e6cd75fb205625859b56643cfe9e17c7358a4503407caa35551a",
           "alias": "",
           "displayName": "Mi-8",
           "searchTerms": [
@@ -3477,6 +3846,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1A2",
+          "catalogBindingRef": "catalog-vehicle-52a6801da66c87cb32e8cca4",
+          "vehicleRef": "vehicle-40cbdb73e42621bbbf2fc58e",
+          "runtimeVehicleRef": "vehicle-33b79632d00819b0ae91d5f85d018937de590ba6a99b146fe75b658665b7acc7",
+          "visualArtifactRef": "visual-artifact-e4997ee82d30839a8787587863565c54145a1eac8bfe97aa4a817b06e2e6f17b",
           "alias": "",
           "displayName": "M1A2（沙漠）",
           "searchTerms": [
@@ -3499,6 +3872,10 @@
         },
         {
           "sourceRawName": "BP_M1A2_Woodland",
+          "catalogBindingRef": "catalog-vehicle-506203dcb4ee556b04738946",
+          "vehicleRef": "vehicle-cb6d9836ac6ccd60b8305d89",
+          "runtimeVehicleRef": "vehicle-5c04dc3063a1daff89750d4ce106d4e2f2522ea865fb0187274583fb3b57abbf",
+          "visualArtifactRef": "visual-artifact-fce25a76e28bb029e6bf4b6d7785b88e050d58cfca2ec0d786be994c55dcff80",
           "alias": "",
           "displayName": "M1A2（林地）",
           "searchTerms": [
@@ -3548,6 +3925,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1128",
+          "catalogBindingRef": "catalog-vehicle-0b563c7c05f97f461cb90636",
+          "vehicleRef": "vehicle-ccd112749d4f58733cbef52b",
+          "runtimeVehicleRef": "vehicle-acf60bc423d14dc31d47d262141413cca077331a0024864cf1aa4439a80be254",
+          "visualArtifactRef": "visual-artifact-6912b1a9571bc84e7e831d317ab20408e32dc2020263b182e146f829a0c36b9b",
           "alias": "",
           "displayName": "M1128 MGS（沙漠）",
           "searchTerms": [
@@ -3570,6 +3951,10 @@
         },
         {
           "sourceRawName": "BP_M1128_Woodland",
+          "catalogBindingRef": "catalog-vehicle-289aa750730f064bee4240b2",
+          "vehicleRef": "vehicle-1de8ee7932ff0b212a690dfe",
+          "runtimeVehicleRef": "vehicle-8f844ae12ba70e094d19faa358634407598df88b02a38cfe4d43dfc36d41cfd0",
+          "visualArtifactRef": "visual-artifact-32d96506842fa113b446f0db4294d1de128bf39b505cd62b5bd31e1525726da2",
           "alias": "",
           "displayName": "M1128 MGS（林地）",
           "searchTerms": [
@@ -3619,6 +4004,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MATV_TOW",
+          "catalogBindingRef": "catalog-vehicle-ca205a2fd780f835be153b8d",
+          "vehicleRef": "vehicle-792a375a12a0541b3579bc6d",
+          "runtimeVehicleRef": "vehicle-aefa99d95ad1bb785ba7deb00d7ebacf369727555b926812d9fda357c8f2c68d",
+          "visualArtifactRef": "visual-artifact-739f2e50b9ab1d45c574a810c9e8fca9b9b1912a1d16fe0e03d79833a2feec54",
           "alias": "TOW",
           "displayName": "M-ATV TOW（沙漠）",
           "searchTerms": [
@@ -3641,6 +4030,10 @@
         },
         {
           "sourceRawName": "BP_MATV_TOW_Woodland",
+          "catalogBindingRef": "catalog-vehicle-815dc5c29281ae840450ba02",
+          "vehicleRef": "vehicle-13f9617b3945b47f04a693d9",
+          "runtimeVehicleRef": "vehicle-ccf3efee23296c7e5fec8cb6ee46815d23587e64a74448575d3a6813ec54763b",
+          "visualArtifactRef": "visual-artifact-81caaa80cb75b9898631f7a84249e9f1818c0ae857029d939ac00e2392127a2e",
           "alias": "TOW",
           "displayName": "M-ATV TOW（林地）",
           "searchTerms": [
@@ -3690,6 +4083,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1151_Light_TOW",
+          "catalogBindingRef": "catalog-vehicle-304bae6384fdc9769c2a4079",
+          "vehicleRef": "vehicle-d4c89840c04182d947bc9d1e",
+          "runtimeVehicleRef": "vehicle-1299009aaf44960b1f62ea354d45b04405a2e792e6e7f578fd46bb953b8a7c07",
+          "visualArtifactRef": "visual-artifact-1d03d14962ef7c611a3ab10fd0eaa779e56b89d074aaef7f517520dc7193b771",
           "alias": "TOW",
           "displayName": "M1151 TOW（沙漠）",
           "searchTerms": [
@@ -3712,6 +4109,10 @@
         },
         {
           "sourceRawName": "BP_M1151_Light_TOW_Woodland",
+          "catalogBindingRef": "catalog-vehicle-e3864a207fda0c543c922900",
+          "vehicleRef": "vehicle-0db6eb334e73255b5c2b5e13",
+          "runtimeVehicleRef": "vehicle-d064d93a32e4afb47a5f7ec85edafbef8fcdeea81b543eed9752b6a60f34a72d",
+          "visualArtifactRef": "visual-artifact-cac91070979c99f486cbffafbedee376d8d1c69395336ef2d6789d87584b4bde",
           "alias": "TOW",
           "displayName": "M1151 TOW（林地）",
           "searchTerms": [
@@ -3761,6 +4162,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BFV",
+          "catalogBindingRef": "catalog-vehicle-be2fc06994b23e4d44fd8eba",
+          "vehicleRef": "vehicle-648926d776f3e38177e70316",
+          "runtimeVehicleRef": "vehicle-afa03670212db8e3e281e901208f3392b6ef6836cfbe0d8f9e4af2a78c16fba9",
+          "visualArtifactRef": "visual-artifact-d42faf68d28d6e1871c90b8d47513e1c670e04ff66b7bd60fe439e4848838c3a",
           "alias": "",
           "displayName": "M2A3（沙漠）",
           "searchTerms": [
@@ -3783,6 +4188,10 @@
         },
         {
           "sourceRawName": "BP_BFV_Woodland",
+          "catalogBindingRef": "catalog-vehicle-677b6cca4f42406d06c246dd",
+          "vehicleRef": "vehicle-38c3572cc076db85b6de171b",
+          "runtimeVehicleRef": "vehicle-5b11244ecb06f844ebbef15bea75d1e8e4c82aaacae67478290fa066305d2b05",
+          "visualArtifactRef": "visual-artifact-10dd28cc6a525e905728467fc9ebf7a76d75ddafb2a918e8665a81a1f9c9d412",
           "alias": "",
           "displayName": "M2A3（林地）",
           "searchTerms": [
@@ -3832,6 +4241,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M7A3_IFV",
+          "catalogBindingRef": "catalog-vehicle-25ce14657420c4acf8c54973",
+          "vehicleRef": "vehicle-141a7606f03d264d01763956",
+          "runtimeVehicleRef": "vehicle-37b779df778c607cdb99999727ad668e593a770c8705ae043a107c99c2a60cc4",
+          "visualArtifactRef": "visual-artifact-7fc136a087b32aa62c0fe6dae2f22a929425cea2f787b5c1b0fbc09c5344e47e",
           "alias": "",
           "displayName": "M7A3（沙漠）",
           "searchTerms": [
@@ -3854,6 +4267,10 @@
         },
         {
           "sourceRawName": "BP_M7A3_IFV_Woodland",
+          "catalogBindingRef": "catalog-vehicle-a6934310bb253ddd02c66166",
+          "vehicleRef": "vehicle-27e2811d4bcffcb99d11ab87",
+          "runtimeVehicleRef": "vehicle-02bdbfb4b4d454f2ea66af76437dcc530e81d4c0dffcd6ba36fc49698282e8b9",
+          "visualArtifactRef": "visual-artifact-7dab1a30126be432de87a162fcc041f2ac8f77c8eca6fb0f9149186a5cfded3e",
           "alias": "",
           "displayName": "M7A3（林地）",
           "searchTerms": [
@@ -3903,6 +4320,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1126",
+          "catalogBindingRef": "catalog-vehicle-901de0fef01193b2f82fdc91",
+          "vehicleRef": "vehicle-e2441196e980e1c21f05f9ba",
+          "runtimeVehicleRef": "vehicle-9704a949d399f2f12d80ddab199b00f7e9b9ceb755087889629a7bb0f6389a98",
+          "visualArtifactRef": "visual-artifact-6022cce931db0cc32a5510cbbac76c50cd27232dc242a72b2c5e6caf985c1576",
           "alias": "CROWS M2",
           "displayName": "M1126 CROWS M2（沙漠）",
           "searchTerms": [
@@ -3925,6 +4346,10 @@
         },
         {
           "sourceRawName": "BP_M1126_Woodland",
+          "catalogBindingRef": "catalog-vehicle-34ac311b426c7ddc6b85aa31",
+          "vehicleRef": "vehicle-814bb76686deed01f4bdedaf",
+          "runtimeVehicleRef": "vehicle-50484d8f5cb3f4e598757e4aeae359d62481c361b666b3fab792fe784acb7e62",
+          "visualArtifactRef": "visual-artifact-ce7c7db2b3c5384209f90d85a9ac88ab43d28072fd195568dbbb97838db823b9",
           "alias": "CROWS M2",
           "displayName": "M1126 CROWS M2（林地）",
           "searchTerms": [
@@ -3974,6 +4399,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1126_M240",
+          "catalogBindingRef": "catalog-vehicle-442292aa7f2d1ac128b1212e",
+          "vehicleRef": "vehicle-441a4ebf7e480b4144efe5f4",
+          "runtimeVehicleRef": "vehicle-9a6fdae191341e7370e3a3dd23b692e8baabe27b6b7a95ad1334dd3369a17b50",
+          "visualArtifactRef": "visual-artifact-43b12042a20b7b4d4a7610330a7a5ce8a401e5de41210d357f952c1cad36c969",
           "alias": "CROWS M240",
           "displayName": "M1126 CROWS M240（沙漠）",
           "searchTerms": [
@@ -3996,6 +4425,10 @@
         },
         {
           "sourceRawName": "BP_M1126_M240_Woodland",
+          "catalogBindingRef": "catalog-vehicle-b452e15c0db560c6a1cd1a30",
+          "vehicleRef": "vehicle-65c840bc6d3312efee71cfd5",
+          "runtimeVehicleRef": "vehicle-75d742bdbc77f4816300ee675d9516740a5a5af460110adc552f0d8dc7f1a0fb",
+          "visualArtifactRef": "visual-artifact-23202341897cc10ab59f79ed07a69c052066b3c2fae91fc22b204cefa4da5e64",
           "alias": "CROWS M240",
           "displayName": "M1126 CROWS M240（林地）",
           "searchTerms": [
@@ -4045,6 +4478,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M113A3_M2_Desert",
+          "catalogBindingRef": "catalog-vehicle-0e4126d57940a8eaaaef09c1",
+          "vehicleRef": "vehicle-fe3809acb63aa3969b136b7a",
+          "runtimeVehicleRef": "vehicle-fd5eb16e9b5a5aa5f5c3ed3573bf73271f199737603a6f49de6f0a70146922df",
+          "visualArtifactRef": "visual-artifact-9104e5b8070540d03b3596bc6ec0f04d3e5771ddaf56bc29683ed0f1ec84f510",
           "alias": "M2",
           "displayName": "M113A3 M2（沙漠）",
           "searchTerms": [
@@ -4067,6 +4504,10 @@
         },
         {
           "sourceRawName": "BP_M113A3_M2_Desert_Cage",
+          "catalogBindingRef": "catalog-vehicle-2bb76a67980b0cb7471efd6f",
+          "vehicleRef": "vehicle-54d62773f3f8e8492874ebf3",
+          "runtimeVehicleRef": "vehicle-177867356ab5136150cfc97931fd651ac9f7753d39315d77b4021e8dd512dbef",
+          "visualArtifactRef": "visual-artifact-e8e57b2fd1278e9f5465b29a5ad3cae2798dca54b5d4162dc946e1c9bdac6561",
           "alias": "M2 · 笼式装甲",
           "displayName": "M113A3 M2 · 笼式装甲（沙漠）",
           "searchTerms": [
@@ -4092,6 +4533,10 @@
         },
         {
           "sourceRawName": "BP_M113A3_M2",
+          "catalogBindingRef": "catalog-vehicle-67a884fbbfea10d795d3bc41",
+          "vehicleRef": "vehicle-0f99369f29c910a816155039",
+          "runtimeVehicleRef": "vehicle-81f8c563e04fe91c8bc60e6d81fdda31650297a761c3490954ae32bfaf30b3a5",
+          "visualArtifactRef": "visual-artifact-c0e0028bcc561b48c38ed99481cbffa0006dbd99980ba0906badec369cd51282",
           "alias": "M2",
           "displayName": "M113A3 M2（林地）",
           "searchTerms": [
@@ -4141,6 +4586,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M113A3_MK19_Desert",
+          "catalogBindingRef": "catalog-vehicle-9a6a8cbcec8041f95d0a1c81",
+          "vehicleRef": "vehicle-741479354e4ddb1ce9ea969d",
+          "runtimeVehicleRef": "vehicle-160e28fbbcde6707a25686eab3e385af26eb199e3b949614c6691dce386c5ba5",
+          "visualArtifactRef": "visual-artifact-cd6a4daf0d1032903ec043ebf98473e1207f271408000e4c705ab9b6943ee970",
           "alias": "Mk19",
           "displayName": "M113A3 Mk19（沙漠）",
           "searchTerms": [
@@ -4163,6 +4612,10 @@
         },
         {
           "sourceRawName": "BP_M113A3_MK19_Desert_Cage",
+          "catalogBindingRef": "catalog-vehicle-ff83ad383254ab3c4a509311",
+          "vehicleRef": "vehicle-bcb3dd76112b1cf43cd34e7a",
+          "runtimeVehicleRef": "vehicle-d4a259fd3fe728e3ff9e2c9c17352c581b1c305051cebf82228ab52a93cbf6fb",
+          "visualArtifactRef": "visual-artifact-76c92c46b0d7c30b21be0ca215efdd55d41cbd01b0d0663d1da93db8793d1397",
           "alias": "Mk19 · 笼式装甲",
           "displayName": "M113A3 Mk19 · 笼式装甲（沙漠）",
           "searchTerms": [
@@ -4188,6 +4641,10 @@
         },
         {
           "sourceRawName": "BP_M113A3_MK19",
+          "catalogBindingRef": "catalog-vehicle-1c2958ffcac4220efdad073e",
+          "vehicleRef": "vehicle-b075aace40e572dfdf748da0",
+          "runtimeVehicleRef": "vehicle-3302b436bdbefd997ff79a2df6982dd31f1faf1b5f4d314b048466769568e5a9",
+          "visualArtifactRef": "visual-artifact-c849617dd5446a61b8c427f558546722b5203976c5f3cbbb535df4a2b6a26e76",
           "alias": "Mk19",
           "displayName": "M113A3 Mk19（林地）",
           "searchTerms": [
@@ -4237,6 +4694,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MATV_CROWS",
+          "catalogBindingRef": "catalog-vehicle-612746bfc19ffe3a4cdf0948",
+          "vehicleRef": "vehicle-d75d6d7a1e2c96c93ef51010",
+          "runtimeVehicleRef": "vehicle-66ad4f525449d273756c89181d0b05cf5a3783fb6bca9336bf947574bb27a76e",
+          "visualArtifactRef": "visual-artifact-1c1fb26da2af85ebc8884dfd6eee156e9756b2ba4ce18c43266ee50be1cb53ea",
           "alias": "CROWS M2",
           "displayName": "M-ATV CROWS M2（沙漠）",
           "searchTerms": [
@@ -4259,6 +4720,10 @@
         },
         {
           "sourceRawName": "BP_MATV_CROWS_Woodland",
+          "catalogBindingRef": "catalog-vehicle-3ffe0656a34328bc5b496975",
+          "vehicleRef": "vehicle-a94f43acaa6d3a7dd07b85cd",
+          "runtimeVehicleRef": "vehicle-03134221beff5a8529e71cc83f3ac2e336716fa95e375ec9ecee8f07e292cced",
+          "visualArtifactRef": "visual-artifact-33b893c4df31cdcc9cc14c8f7fb27d5d4ca62f5d5c65ff3e87b42ade66157123",
           "alias": "CROWS M2",
           "displayName": "M-ATV CROWS M2（林地）",
           "searchTerms": [
@@ -4308,6 +4773,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MATV_CROWS_M240",
+          "catalogBindingRef": "catalog-vehicle-a7a147eeb861044c5b56bfc2",
+          "vehicleRef": "vehicle-e10491af2b12282018ac5895",
+          "runtimeVehicleRef": "vehicle-aa9c480667c677662ea99868d17190dd51e837b8a48853f06db2a433354f71e3",
+          "visualArtifactRef": "visual-artifact-c26bc43275c4124839f56b0f33f5492863a7412e32bd0315f72ab56034254961",
           "alias": "CROWS M240",
           "displayName": "M-ATV CROWS M240（沙漠）",
           "searchTerms": [
@@ -4330,6 +4799,10 @@
         },
         {
           "sourceRawName": "BP_MATV_CROWS_M240_Woodland",
+          "catalogBindingRef": "catalog-vehicle-3d58e3b437b403aa854cfae0",
+          "vehicleRef": "vehicle-ebdd255d7cc25f120ec18153",
+          "runtimeVehicleRef": "vehicle-7c9ebd5b93380c793832aa3bbf314cf07477d49a0d30e7b47bbd689ce434a487",
+          "visualArtifactRef": "visual-artifact-a3da15484713786ebdaaed0b0bd347f4c16ab4fee5f7ff8b848db51e1ec1ccff",
           "alias": "CROWS M240",
           "displayName": "M-ATV CROWS M240（林地）",
           "searchTerms": [
@@ -4379,6 +4852,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MATV",
+          "catalogBindingRef": "catalog-vehicle-584a91fef9aab70fc6f7cd43",
+          "vehicleRef": "vehicle-fb8b1bc59b06a7e24fbf8520",
+          "runtimeVehicleRef": "vehicle-2f4b2eb494910cfbf81e1fe6adf205757996cbd695087b27266b6999bb57b3ea",
+          "visualArtifactRef": "visual-artifact-a964b24750342eac3de3bfaeb4394c01a0efa7785e0fdcd98addf77d23c00279",
           "alias": "M2",
           "displayName": "M-ATV M2（沙漠）",
           "searchTerms": [
@@ -4401,6 +4878,10 @@
         },
         {
           "sourceRawName": "BP_MATV_Woodland",
+          "catalogBindingRef": "catalog-vehicle-adab367cbb3f7e6c965b19b3",
+          "vehicleRef": "vehicle-14d6bc1295d69d38cd979665",
+          "runtimeVehicleRef": "vehicle-cc43959c47ebaefa7a9ba1faeb0e153b21ba7ebd1b15f9bcdf1452bde2b8c560",
+          "visualArtifactRef": "visual-artifact-f58df6660d11bd3d44699efe65fdf9af5ccf2e538553b786d129ba46b3e28961",
           "alias": "M2",
           "displayName": "M-ATV M2（林地）",
           "searchTerms": [
@@ -4450,6 +4931,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MATV_M240",
+          "catalogBindingRef": "catalog-vehicle-e67943c8c0b5d76d93c233d1",
+          "vehicleRef": "vehicle-353c06b08ca6edc0bce479fa",
+          "runtimeVehicleRef": "vehicle-4ca9ee7fc259c10747256754c4f3984a055880f28720dd4933c8629d967c0ac6",
+          "visualArtifactRef": "visual-artifact-2f7b2f1f2132ac6f9c29ba30ecce07afa03c1982e6c44f198632bd977448a1cb",
           "alias": "M240",
           "displayName": "M-ATV M240（沙漠）",
           "searchTerms": [
@@ -4472,6 +4957,10 @@
         },
         {
           "sourceRawName": "BP_MATV_M240_Woodland",
+          "catalogBindingRef": "catalog-vehicle-fb5b11c9af1906146556e1d4",
+          "vehicleRef": "vehicle-a06b677645f523748b53d5c4",
+          "runtimeVehicleRef": "vehicle-c6497143e94a60a1b507ffcc5f0c7493b8449d98472c8a6adbceaa6df95cdecd",
+          "visualArtifactRef": "visual-artifact-3aefee85ee0a2c09ea73d8142f585f2ce2f110d49a85536379c4db32add1506b",
           "alias": "M240",
           "displayName": "M-ATV M240（林地）",
           "searchTerms": [
@@ -4521,6 +5010,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MATV_Mk19",
+          "catalogBindingRef": "catalog-vehicle-de942420daca7c30024c4f81",
+          "vehicleRef": "vehicle-05f15b4a18feb05a32b681c9",
+          "runtimeVehicleRef": "vehicle-b456de0b88c3d030dfebe6955797428c56fad892ce4f445824521d184ea949f9",
+          "visualArtifactRef": "visual-artifact-3d8fb7a6a01a95d29a8290b69da3fe2488251cf7a5a6779ad743f7add4bb0fa1",
           "alias": "Mk19",
           "displayName": "M-ATV Mk19（沙漠）",
           "searchTerms": [
@@ -4543,6 +5036,10 @@
         },
         {
           "sourceRawName": "BP_MATV_Mk19_Woodland",
+          "catalogBindingRef": "catalog-vehicle-db0c985acc07e40e91a812df",
+          "vehicleRef": "vehicle-f93b878047f48d0ec202e0eb",
+          "runtimeVehicleRef": "vehicle-e603e93b3f085b9a789d38eca9045e282d3c08ac5c16b2fd4b81be7ef8f95712",
+          "visualArtifactRef": "visual-artifact-2046059f5d1edea0350d61a9562e2359f909a7e7f6a020498f046702c38075f1",
           "alias": "Mk19",
           "displayName": "M-ATV Mk19（林地）",
           "searchTerms": [
@@ -4592,6 +5089,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1151_CROWS",
+          "catalogBindingRef": "catalog-vehicle-6fa08cb19a19ca4e90bdf537",
+          "vehicleRef": "vehicle-e9b7318c2f58c60de625c701",
+          "runtimeVehicleRef": "vehicle-01efc5cc358d042a5a8499244dba08de000ef160cd1d24c434114c86a2263cbe",
+          "visualArtifactRef": "visual-artifact-ae79c29b8de302333367e48a120d475307ad9f85a9bfdb2659ba6bde8aebab63",
           "alias": "CROWS M2",
           "displayName": "M1151 CROWS M2（沙漠）",
           "searchTerms": [
@@ -4614,6 +5115,10 @@
         },
         {
           "sourceRawName": "BP_M1151_CROWS_Woodland",
+          "catalogBindingRef": "catalog-vehicle-92c4d4bdddd70f1c1800b3b6",
+          "vehicleRef": "vehicle-e47300396fa9ac3a63d5f5c7",
+          "runtimeVehicleRef": "vehicle-189001a66471e1f0ef667b5da2301daf29ec06d594c122b1626cc89f4a47f1ab",
+          "visualArtifactRef": "visual-artifact-bf9f8b361f88f39acd71f2fd08c1220c2bc8acd37f414bfef8b3a633750739ab",
           "alias": "CROWS M2",
           "displayName": "M1151 CROWS M2（林地）",
           "searchTerms": [
@@ -4663,6 +5168,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1151",
+          "catalogBindingRef": "catalog-vehicle-0ffdd6afada73a5fdf6e67be",
+          "vehicleRef": "vehicle-2c0f76032561c409f875227f",
+          "runtimeVehicleRef": "vehicle-a0c5235529ae4b304420ac5935dd91f681e505b27da4e1a0fb7f2150495c371e",
+          "visualArtifactRef": "visual-artifact-954a75cb42fdb51b33fbbbfee50fb59c2a29c683603aff2b7af0f5d7301d18d2",
           "alias": "M2",
           "displayName": "M1151 M2（沙漠）",
           "searchTerms": [
@@ -4685,6 +5194,10 @@
         },
         {
           "sourceRawName": "BP_M1151_Woodland",
+          "catalogBindingRef": "catalog-vehicle-42292726763033934940e1ab",
+          "vehicleRef": "vehicle-28d10074c082925a88b375c9",
+          "runtimeVehicleRef": "vehicle-c8c66d4491778514fdd1fe2d4af1a142e949ba0eb6e538ecee11477f0ae9a9e0",
+          "visualArtifactRef": "visual-artifact-2a435ef57cccc8fb56e01913308959ebed65e81408a2cfeca6a6fb313943c22e",
           "alias": "M2",
           "displayName": "M1151 M2（林地）",
           "searchTerms": [
@@ -4734,6 +5247,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1151_M240",
+          "catalogBindingRef": "catalog-vehicle-709ed51484cd7d891059fcb1",
+          "vehicleRef": "vehicle-2e50c7b0ebfdb3ce368f5e62",
+          "runtimeVehicleRef": "vehicle-e3edfb65a4b8027533fbeda93669edfdd0152926a674e6699e4c6e1118d20073",
+          "visualArtifactRef": "visual-artifact-e27a1ea6ead162f7afb3f211ad2c1450f6eeda9dc31c58b81e547c3eba2b09a3",
           "alias": "M240",
           "displayName": "M1151 M240（沙漠）",
           "searchTerms": [
@@ -4756,6 +5273,10 @@
         },
         {
           "sourceRawName": "BP_M1151_M240_Woodland",
+          "catalogBindingRef": "catalog-vehicle-8e161786d937855b67174021",
+          "vehicleRef": "vehicle-ad2508fac62a937fcc4cff48",
+          "runtimeVehicleRef": "vehicle-e881f3e61ad9cd1fcab59018695e96ea77b54c422167b1689c9b56598c8bb75b",
+          "visualArtifactRef": "visual-artifact-b3968a09a0cc974b5adade15c35baa7bb41b64a40113b345daf1dcb4c10a7cda",
           "alias": "M240",
           "displayName": "M1151 M240（林地）",
           "searchTerms": [
@@ -4805,6 +5326,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1151_Mk19",
+          "catalogBindingRef": "catalog-vehicle-2e30a7f2d7d59d8d6c12e5a1",
+          "vehicleRef": "vehicle-d31f7dc12f21bda0377f4d73",
+          "runtimeVehicleRef": "vehicle-12e5bb676759d598024e44d642801e7ee85791c976447e4f2d833701419b0e81",
+          "visualArtifactRef": "visual-artifact-ceab312ec5b45806f6a2d7a8e61af0d1a4de35429a14031244566a410105f068",
           "alias": "Mk19",
           "displayName": "M1151 Mk19（沙漠）",
           "searchTerms": [
@@ -4827,6 +5352,10 @@
         },
         {
           "sourceRawName": "BP_M1151_Mk19_Woodland",
+          "catalogBindingRef": "catalog-vehicle-c24b5127df9f6ccfc0d901f4",
+          "vehicleRef": "vehicle-a3d38b2dfac273d5e6528468",
+          "runtimeVehicleRef": "vehicle-f26a1b5703fc8f7bbe9a65c68b30d52b7f952c0791651bbf26473dff7e31b74b",
+          "visualArtifactRef": "visual-artifact-f3b0e8a9f170909493555be67d43330ccd2ab98b09292fe31112ebe0f9aee20e",
           "alias": "Mk19",
           "displayName": "M1151 Mk19（林地）",
           "searchTerms": [
@@ -4876,6 +5405,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MATV_USMC_CROWS",
+          "catalogBindingRef": "catalog-vehicle-45f8473a041c2020a64acd10",
+          "vehicleRef": "vehicle-164477af25ced9c8a2819413",
+          "runtimeVehicleRef": "vehicle-f7fa595b7534cf3c5923dd8d51ae5d4ec7063754bbdb8ecb276c817202817f73",
+          "visualArtifactRef": "visual-artifact-b9840cdcecd1559b4c2ea64f8f4f369fbaba01953bfb6152b38039561d4a00b2",
           "alias": "",
           "displayName": "MATV CROWS M2（沙漠）",
           "searchTerms": [
@@ -4898,6 +5431,10 @@
         },
         {
           "sourceRawName": "BP_MATV_USMC_CROWS_Woodland",
+          "catalogBindingRef": "catalog-vehicle-c1d8387d5f428f9d3f32e4a0",
+          "vehicleRef": "vehicle-1736e66b30db9a6eec9b2cd7",
+          "runtimeVehicleRef": "vehicle-51c408e67465e4f5ae3a998132e5f19934022d89967a64bbee18f71b86c2076c",
+          "visualArtifactRef": "visual-artifact-592f651c9cb4ca1e98eabb77c77a8619207740a02c971008365217b3ce0dd87c",
           "alias": "",
           "displayName": "MATV CROWS M2（林地）",
           "searchTerms": [
@@ -4947,6 +5484,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Quadbike_Desert",
+          "catalogBindingRef": "catalog-vehicle-7fa2fe1e5cc063221ce7cf62",
+          "vehicleRef": "vehicle-ea42c068e7702888d3a5d5f8",
+          "runtimeVehicleRef": "vehicle-efd410d8cefd9c8482c994a0285b75698ea574eeee163645fb94b5633ac91929",
+          "visualArtifactRef": "visual-artifact-544e4a4a9a786ede80ab97cd018b445b4e93fcb07e15d50ddc2e0c83aa4aa4a5",
           "alias": "",
           "displayName": "Quad Bike（沙漠）",
           "searchTerms": [
@@ -4969,6 +5510,10 @@
         },
         {
           "sourceRawName": "BP_Quadbike_Woodland",
+          "catalogBindingRef": "catalog-vehicle-d089ff30340ce7439e2c3230",
+          "vehicleRef": "vehicle-19a4f590a8fbe81d4f6cd644",
+          "runtimeVehicleRef": "vehicle-50ebc0e6342bf735b5e3a30d4da8d894e46bfc16c9593e203ad83a32d9ace3fb",
+          "visualArtifactRef": "visual-artifact-20bdf34054d471b34ff1ae3311e8ecfa92727b190416b129a0b640dbac984d9c",
           "alias": "",
           "displayName": "Quad Bike（林地）",
           "searchTerms": [
@@ -5018,6 +5563,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_US_M2",
+          "catalogBindingRef": "catalog-vehicle-b9f4f1740e882fb0f97bc526",
+          "vehicleRef": "vehicle-a559d9f2a103f9ff0b8f205e",
+          "runtimeVehicleRef": "vehicle-cd93a7c325bda01f1a0b3e602a7f88d0dc83d3768eda7429e38f96481efcefd8",
+          "visualArtifactRef": "visual-artifact-4c315b376f2a29d2998ffb4e8eff55b2e5800864b73fd4bd739309dada06bfcd",
           "alias": "M2",
           "displayName": "RHIB M2",
           "searchTerms": [
@@ -5063,6 +5612,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_US_M240",
+          "catalogBindingRef": "catalog-vehicle-c9fcbc88f9f4dd667cef6558",
+          "vehicleRef": "vehicle-551834167c74f99b42b1cdd2",
+          "runtimeVehicleRef": "vehicle-e30266fdc6f6060a1a5f55bbd2422392bf54aa7cfcd7c055fb8642451f302ab4",
+          "visualArtifactRef": "visual-artifact-85f1873b266f053c7168f67d14af89856ed000101795c6b55cf02d323002fdb8",
           "alias": "M240",
           "displayName": "RHIB M240",
           "searchTerms": [
@@ -5108,6 +5661,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M113A3_Logistics_Desert",
+          "catalogBindingRef": "catalog-vehicle-1a3b5cf76831e90863c509c3",
+          "vehicleRef": "vehicle-c723168d42d9451ed59bad3d",
+          "runtimeVehicleRef": "vehicle-1c8de59ca8c80c6d297618dd159aa2d8cc592ec1dfc53ac01bd461672cc603d3",
+          "visualArtifactRef": "visual-artifact-31f64fa1aa78b1fa68cec9c4b9a850cb5c4f7b5f73d4a82029d96266f8b99506",
           "alias": "Logistics",
           "displayName": "M113A3 Logistics（沙漠）",
           "searchTerms": [
@@ -5130,6 +5687,10 @@
         },
         {
           "sourceRawName": "BP_M113A3_Logistics",
+          "catalogBindingRef": "catalog-vehicle-ef60f54cb3255e652d17f18c",
+          "vehicleRef": "vehicle-4a2ad54256398b013aea747d",
+          "runtimeVehicleRef": "vehicle-b1941dad89588f7009f21c4d85131ab167b7d428e5e2acc98a59c50bb029c742",
+          "visualArtifactRef": "visual-artifact-db9f95e5326417c2a8f1307007653f569ea2ac3650f2c0903a6026dbd262c26a",
           "alias": "Logistics",
           "displayName": "M113A3 Logistics（林地）",
           "searchTerms": [
@@ -5179,6 +5740,10 @@
       "variants": [
         {
           "sourceRawName": "BP_US_Util_Desert_Logi",
+          "catalogBindingRef": "catalog-vehicle-63f302febc4b367182a22f61",
+          "vehicleRef": "vehicle-1c8a289f41d423a4ec903e39",
+          "runtimeVehicleRef": "vehicle-debe8e059936077c265d4414751b1ddfd4a20fc3adde0cd70fa015079bc7b0cd",
+          "visualArtifactRef": "visual-artifact-5c049d5c71fc4f3d0901ba13aafe39a3257848727f276f35a8831d83603dd8a7",
           "alias": "Logistics",
           "displayName": "M939 Logistics（沙漠）",
           "searchTerms": [
@@ -5201,6 +5766,10 @@
         },
         {
           "sourceRawName": "BP_US_Util_Woodland_Logi",
+          "catalogBindingRef": "catalog-vehicle-60beade1758a7850e58c1b1d",
+          "vehicleRef": "vehicle-05f6b96c6792ff9d31822d35",
+          "runtimeVehicleRef": "vehicle-38cd71b7218111a34cca063d1fd2835783f742a0ceb04f4f2026e4ebdbdacb12",
+          "visualArtifactRef": "visual-artifact-e50cd880e4ccd38a76d028d400892ad1b1e1608813751e2feebed1faded018e2",
           "alias": "Logistics",
           "displayName": "M939 Logistics（林地）",
           "searchTerms": [
@@ -5250,6 +5819,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_Logistics",
+          "catalogBindingRef": "catalog-vehicle-b2885ca9a334dca8eb244f1a",
+          "vehicleRef": "vehicle-3889b0b7e7b6aa96f675cb4a",
+          "runtimeVehicleRef": "vehicle-e3158111f55763ac33ce995702445a4a02c63c38faea6ac5d693670a4e50a044",
+          "visualArtifactRef": "visual-artifact-191dad39e6f5104c192416d530e2ec68d04e095116511200dc45e270c5d9572b",
           "alias": "Logistics",
           "displayName": "RHIB Logistics",
           "searchTerms": [
@@ -5295,6 +5868,10 @@
       "variants": [
         {
           "sourceRawName": "BP_US_Util_Desert",
+          "catalogBindingRef": "catalog-vehicle-5e615849a04ed77d95a9097d",
+          "vehicleRef": "vehicle-ce1e1f50b82db3aa949e21ba",
+          "runtimeVehicleRef": "vehicle-fee37d9c82a08190701a7c81d2ec85ee4905dcfdc26643a84cdf3f9bdfc9fd43",
+          "visualArtifactRef": "visual-artifact-bd3fdcd75cc89417d0930c7643f43e814c2536e39c67795453177b97179b1679",
           "alias": "Transport",
           "displayName": "M939 Transport（沙漠）",
           "searchTerms": [
@@ -5317,6 +5894,10 @@
         },
         {
           "sourceRawName": "BP_US_Util_Woodland",
+          "catalogBindingRef": "catalog-vehicle-e4255a64ed8a24f4184111b0",
+          "vehicleRef": "vehicle-eaf44d37a0413c4673da20bd",
+          "runtimeVehicleRef": "vehicle-a39fe4e588509bc19eea13742a95c5f61162fed9475d816819896f8bafb6d09d",
+          "visualArtifactRef": "visual-artifact-146f0a172034751a4bedf1e6ec2f9af6e833fd886b98eac81a96ed44cbe60cfe",
           "alias": "Transport",
           "displayName": "M939 Transport（林地）",
           "searchTerms": [
@@ -5366,6 +5947,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1064A3_M121_Desert",
+          "catalogBindingRef": "catalog-vehicle-7afc491d15cdd2d7f7fe4d62",
+          "vehicleRef": "vehicle-02465cd6d183d21bb472c2f8",
+          "runtimeVehicleRef": "vehicle-92aaf9ec311ad962014f0b784474d303e391f401c507fe8f0c048154f0c795b1",
+          "visualArtifactRef": "visual-artifact-e0c2fdf17224ec08af3372982fac186b5ca1209b5d59e951bf6992aa703560e2",
           "alias": "",
           "displayName": "M1064A3 M121（沙漠）",
           "searchTerms": [
@@ -5388,6 +5973,10 @@
         },
         {
           "sourceRawName": "BP_M1064A3_M121",
+          "catalogBindingRef": "catalog-vehicle-98e69fd3b90adf3c28db4e96",
+          "vehicleRef": "vehicle-003bbbe28e9f4384e92a26e7",
+          "runtimeVehicleRef": "vehicle-19930c46ce317cc6f3da6dc5643cb61e21e4c5136707a433611659c666367257",
+          "visualArtifactRef": "visual-artifact-b65ab900f209c0309c9439988c4f39d4e36a3075a6e52260abe99b81e084b7fa",
           "alias": "",
           "displayName": "M1064A3 M121（林地）",
           "searchTerms": [
@@ -5437,6 +6026,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MI8",
+          "catalogBindingRef": "catalog-vehicle-5ffa97d2d8579cab885a5cd2",
+          "vehicleRef": "vehicle-868b6a4858f1c27d1a44a221",
+          "runtimeVehicleRef": "vehicle-f2503b1a6e4230c1db33be82236821e8dda70efedcf05fd46e099b13b0e52dae",
+          "visualArtifactRef": "visual-artifact-8247a87a5622ad3ec2dce9938f1f458cb3c8448be11f59baf6d3836486ba9e61",
           "alias": "",
           "displayName": "Mi-8MTV-5",
           "searchTerms": [
@@ -5482,6 +6075,10 @@
       "variants": [
         {
           "sourceRawName": "BP_UH60",
+          "catalogBindingRef": "catalog-vehicle-9e23ea87007bb7f3d22c2210",
+          "vehicleRef": "vehicle-8ce25d90bc298e8a9056eaff",
+          "runtimeVehicleRef": "vehicle-67dc2bee269148c126b46f67866814790e6250d40b6222e6ac7c54fbc026ec7b",
+          "visualArtifactRef": "visual-artifact-aabd612d425fddaed4435a0db6873c2f9a83d206344d92fcb154f36d1d012c02",
           "alias": "",
           "displayName": "UH-60",
           "searchTerms": [
@@ -5527,6 +6124,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M60T",
+          "catalogBindingRef": "catalog-vehicle-7dd5096904af9d924afdcb21",
+          "vehicleRef": "vehicle-0febe972d7f65fa4d3625b13",
+          "runtimeVehicleRef": "vehicle-3bad7b5071eec767da200724bb90de603ec65bbebe5c0d7a25e38c649afcecc6",
+          "visualArtifactRef": "visual-artifact-3ec68c6534d617608e3d6f655e3bb7c6a0b8d52e0b9e9fce067511294dce634d",
           "alias": "",
           "displayName": "M60T（林地）",
           "searchTerms": [
@@ -5549,6 +6150,10 @@
         },
         {
           "sourceRawName": "BP_M60T_Desert",
+          "catalogBindingRef": "catalog-vehicle-1c7de585828f82d2b99edf35",
+          "vehicleRef": "vehicle-992b5c8f8a879863961ce9b8",
+          "runtimeVehicleRef": "vehicle-5eb4de3c902728d35d6d3fcdb68a467c61e3225ae2630859dee93528c149e230",
+          "visualArtifactRef": "visual-artifact-572d9b5f572c1deb31c31bbaaae4bf6b4c50733fd117c3213fc2dc6f4a352e01",
           "alias": "",
           "displayName": "M60T（沙漠）",
           "searchTerms": [
@@ -5598,6 +6203,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ACV-15",
+          "catalogBindingRef": "catalog-vehicle-0da3e301023a5770e186ba5e",
+          "vehicleRef": "vehicle-36bb9f42e6a40b41653b9701",
+          "runtimeVehicleRef": "vehicle-1650648ee7c3604091c8c8619737e53fd68f98b3e14c5b876887c50c15e65ca8",
+          "visualArtifactRef": "visual-artifact-0e5b31193cf634ffe363db79e664e6334e0224abf70672ff8bf9961f37680846",
           "alias": "25mm",
           "displayName": "ACV-15 25mm（林地）",
           "searchTerms": [
@@ -5620,6 +6229,10 @@
         },
         {
           "sourceRawName": "BP_ACV-15_Desert",
+          "catalogBindingRef": "catalog-vehicle-8f7e4d82d31bc21d883cb3ab",
+          "vehicleRef": "vehicle-b253e8180f853f1fb158c09a",
+          "runtimeVehicleRef": "vehicle-be2aba48baaaa96b2d19b21e36c96e28c0593a0211f1cee372ae546e4ea19b00",
+          "visualArtifactRef": "visual-artifact-b0edb9fc85d117dfb025150d7c1ea769b06c44aa9623793a7f0bb96a2ea709c5",
           "alias": "25mm",
           "displayName": "ACV-15 25mm（沙漠）",
           "searchTerms": [
@@ -5669,6 +6282,10 @@
       "variants": [
         {
           "sourceRawName": "BP_PARS3",
+          "catalogBindingRef": "catalog-vehicle-123b9f5c5295ab0431cc98e9",
+          "vehicleRef": "vehicle-dca3d2bb38ea7bce49ad97e4",
+          "runtimeVehicleRef": "vehicle-154f153d6f930e2b318b0b8c9ab3d8ac756d07ce1036b6b090d6b7ab86860cb7",
+          "visualArtifactRef": "visual-artifact-2f048c98b7d116990b98d6f7594041c25aef39935b9b39f0118da4e9a7a67665",
           "alias": "25mm",
           "displayName": "PARS III 25mm（林地）",
           "searchTerms": [
@@ -5691,6 +6308,10 @@
         },
         {
           "sourceRawName": "BP_PARS3_Desert",
+          "catalogBindingRef": "catalog-vehicle-f79e1e2250a4eecfd7badd91",
+          "vehicleRef": "vehicle-369a708c7848c6ef201f1321",
+          "runtimeVehicleRef": "vehicle-1230608ab4b92614731adb929c0ad94c89b00cc7ab6eb3fa83606365d770a1be",
+          "visualArtifactRef": "visual-artifact-01419da94b8fd2acb858724b3fe9cca2459e184276144f9517f5fb75c684f351",
           "alias": "25mm",
           "displayName": "PARS III 25mm（沙漠）",
           "searchTerms": [
@@ -5740,6 +6361,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ACV-15_M2",
+          "catalogBindingRef": "catalog-vehicle-b50b96aa1fd58dd3987b17d7",
+          "vehicleRef": "vehicle-528ce77d865d4ac9f4787715",
+          "runtimeVehicleRef": "vehicle-bc1a6ec2345ae791c3fb75fe4bb405705c0a55ed641b0b2feb4d695005c8ad33",
+          "visualArtifactRef": "visual-artifact-dd544f1ffd2788ea00bc24e2e294fc7674c77fd95e8b08ae56a758b1d9393a5d",
           "alias": "M2",
           "displayName": "ACV-15 M2（林地）",
           "searchTerms": [
@@ -5762,6 +6387,10 @@
         },
         {
           "sourceRawName": "BP_ACV-15_M2_Desert",
+          "catalogBindingRef": "catalog-vehicle-5e43ce3ccece24381f926e7c",
+          "vehicleRef": "vehicle-108a0724220ad0da3584c102",
+          "runtimeVehicleRef": "vehicle-fce2fb205da90bf927124e9993d2e6014da111e4feedf41a7ca5d7bfbaa53fcb",
+          "visualArtifactRef": "visual-artifact-5653699a8a9793774534896309400b9f20b77bd37ee98b9d8d66f50ea5ca9a83",
           "alias": "M2",
           "displayName": "ACV-15 M2（沙漠）",
           "searchTerms": [
@@ -5811,6 +6440,10 @@
       "variants": [
         {
           "sourceRawName": "BP_ACV-15_MG3",
+          "catalogBindingRef": "catalog-vehicle-6856ccf6eded0d52143520ea",
+          "vehicleRef": "vehicle-82c4947e93ac8238cd69995c",
+          "runtimeVehicleRef": "vehicle-3e1ef71dc628258a21ac1007d105e0e3ecdd2b48ff28ea4ae60de7e0d28ab288",
+          "visualArtifactRef": "visual-artifact-6899340df5feac791e8ba063e797fced72bb741f3aa7de8ce82a0e81479222c7",
           "alias": "MG3",
           "displayName": "ACV-15 MG3（林地）",
           "searchTerms": [
@@ -5833,6 +6466,10 @@
         },
         {
           "sourceRawName": "BP_ACV-15_MG3_Desert",
+          "catalogBindingRef": "catalog-vehicle-93bca55ac2fb085669c7ae75",
+          "vehicleRef": "vehicle-af9ac349fa8bb9544bd0b944",
+          "runtimeVehicleRef": "vehicle-0de0deaa1a765e6cd1cc9c843be5af4ad1baa0a192569967b81f0e5eef01a7cb",
+          "visualArtifactRef": "visual-artifact-75c6a59bb5a17e2e801716f60128a24d1015fdd19a3e9f4ac65a4398f0e7ef52",
           "alias": "MG3",
           "displayName": "ACV-15 MG3（沙漠）",
           "searchTerms": [
@@ -5882,6 +6519,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M113A2T_M2_TLF",
+          "catalogBindingRef": "catalog-vehicle-4cca06b59db6c03a6fb165af",
+          "vehicleRef": "vehicle-21c7dd102f5a2fd7dce38917",
+          "runtimeVehicleRef": "vehicle-a1995fdd1351b29ba6bcf44ed2db0666bf4989a93769da0156d64caa96abf863",
+          "visualArtifactRef": "visual-artifact-8d87a2d8604d8ea75cf361b70a0244a29f9ce73909c33359e72b70b54f15e570",
           "alias": "M2",
           "displayName": "M113A2T M2（林地）",
           "searchTerms": [
@@ -5904,6 +6545,10 @@
         },
         {
           "sourceRawName": "BP_M113A2T_M2_TLF_Desert",
+          "catalogBindingRef": "catalog-vehicle-089ddca3d65bf35519f44d45",
+          "vehicleRef": "vehicle-49edd8dbb551ef212ae380e7",
+          "runtimeVehicleRef": "vehicle-e729a66b0ed67f568fa7f71161bbd1015405940a816a375e8dc8711167e9f381",
+          "visualArtifactRef": "visual-artifact-5199473fae474d4615f9e3f5ed8336129b998b2b9b644c0c7cdd060adac7337b",
           "alias": "M2",
           "displayName": "M113A2T M2（沙漠）",
           "searchTerms": [
@@ -5953,6 +6598,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M113A2T_MK19_TLF",
+          "catalogBindingRef": "catalog-vehicle-54e5862dcf2879084a121125",
+          "vehicleRef": "vehicle-6b7b4d9c54a4360d8692ed1e",
+          "runtimeVehicleRef": "vehicle-d0c7a9bfef6c7001b251a43011f02d0350305b5d420a47771f3087c027d3511c",
+          "visualArtifactRef": "visual-artifact-d9a98dba7fe4de4202d3b6bc037746bf10010b453514646495743c7c211137f5",
           "alias": "Mk19",
           "displayName": "M113A2T Mk19（林地）",
           "searchTerms": [
@@ -5975,6 +6624,10 @@
         },
         {
           "sourceRawName": "BP_M113A2T_MK19_TLF_Desert",
+          "catalogBindingRef": "catalog-vehicle-6cf65474900b7a0aedc5c543",
+          "vehicleRef": "vehicle-1baa0f5929abd4b4adb3f8b0",
+          "runtimeVehicleRef": "vehicle-8c192e0219bd44d4c336d585523334fe61165a2500c8188b2f5ef984d3963f3e",
+          "visualArtifactRef": "visual-artifact-bb03b996a025dbdcb6b0051b9ecf5044689046263bb3450d16a11be23b7cf27a",
           "alias": "Mk19",
           "displayName": "M113A2T Mk19（沙漠）",
           "searchTerms": [
@@ -6024,6 +6677,10 @@
       "variants": [
         {
           "sourceRawName": "BP_PARS3_M2",
+          "catalogBindingRef": "catalog-vehicle-cf26b80c9fc1e1e1e6f92b75",
+          "vehicleRef": "vehicle-bb248d800254f657f690fa20",
+          "runtimeVehicleRef": "vehicle-0176be90e786a03c0ec4cdd2a3ca2559bce0948c969a6912add7e1cf3e217658",
+          "visualArtifactRef": "visual-artifact-8a1c766f1efdcb9f51f0b8856d140c2963d485b708791cc06590e9f917bddbec",
           "alias": "M2 RWS",
           "displayName": "PARS III M2 RWS（林地）",
           "searchTerms": [
@@ -6046,6 +6703,10 @@
         },
         {
           "sourceRawName": "BP_PARS3_M2_Desert",
+          "catalogBindingRef": "catalog-vehicle-b166d59e32c43071293f1510",
+          "vehicleRef": "vehicle-237704d3ec3fbb1025235abf",
+          "runtimeVehicleRef": "vehicle-220edc62717c26c92954ff34658a2347aa19a5e78d7d68807475bd297f7f583e",
+          "visualArtifactRef": "visual-artifact-656b07d48b02eed3b3cffc9f638869eaa2ab40101c1d0696c3e02471cb341352",
           "alias": "M2 RWS",
           "displayName": "PARS III M2 RWS（沙漠）",
           "searchTerms": [
@@ -6095,6 +6756,10 @@
       "variants": [
         {
           "sourceRawName": "BP_PARS3_MG3",
+          "catalogBindingRef": "catalog-vehicle-d203888f930dc0c460a886f4",
+          "vehicleRef": "vehicle-09cecda04a0325cee8f61e67",
+          "runtimeVehicleRef": "vehicle-4dda4a06271907b7702cd9eeea43dcbc097e10a600d6c52849549bd73de7d4f0",
+          "visualArtifactRef": "visual-artifact-6b3a220383d2e5988fe81d76d8151e0ea732c4308881efccecbda21f82937199",
           "alias": "MG3 RWS",
           "displayName": "PARS III MG3 RWS（林地）",
           "searchTerms": [
@@ -6117,6 +6782,10 @@
         },
         {
           "sourceRawName": "BP_PARS3_MG3_Desert",
+          "catalogBindingRef": "catalog-vehicle-8d768d2ecb607acd94c77a3e",
+          "vehicleRef": "vehicle-0f55116d18edac515bd24779",
+          "runtimeVehicleRef": "vehicle-8998d36071bb50ffede12ab86ead233d2963ca8d397b804c201580d303e86e0f",
+          "visualArtifactRef": "visual-artifact-06b477c050b302caa71112ef7e79594e82b920efbac9f8786a2b450d333cc2ec",
           "alias": "MG3 RWS",
           "displayName": "PARS III MG3 RWS（沙漠）",
           "searchTerms": [
@@ -6166,6 +6835,10 @@
       "variants": [
         {
           "sourceRawName": "BP_PARS3_MK19",
+          "catalogBindingRef": "catalog-vehicle-0fd653119d5652ad51b4bf4b",
+          "vehicleRef": "vehicle-adc7f2a71e5f8c06dee68c2b",
+          "runtimeVehicleRef": "vehicle-6b6bd00f53d6c3a2784fbc4e3450a864ea935fe09c76ccdbbe54a366f6f888ff",
+          "visualArtifactRef": "visual-artifact-3657088ad145020b075e2d6d54075d380821743d8f4082da45ac3611e905b620",
           "alias": "Mk19 RWS",
           "displayName": "PARS III Mk19 RWS（林地）",
           "searchTerms": [
@@ -6188,6 +6861,10 @@
         },
         {
           "sourceRawName": "BP_PARS3_MK19_Desert",
+          "catalogBindingRef": "catalog-vehicle-dfdd1ed7aad63fbb1bc579b2",
+          "vehicleRef": "vehicle-7edcda1a5668c00371b7e683",
+          "runtimeVehicleRef": "vehicle-24fcfd0f552f84992b0f9c57348298c4f4ac108158744c54716146ce1b4a11ee",
+          "visualArtifactRef": "visual-artifact-dbebf6efcec1607f088e4b8bfb1a66fd6c745e5b726fc7a31c097a6e436ee15d",
           "alias": "Mk19 RWS",
           "displayName": "PARS III Mk19 RWS（沙漠）",
           "searchTerms": [
@@ -6237,6 +6914,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Cobra2_M2",
+          "catalogBindingRef": "catalog-vehicle-7de4ff399295e6e926b000c9",
+          "vehicleRef": "vehicle-b8487ca85adcb6e82fbca292",
+          "runtimeVehicleRef": "vehicle-d4961c23878bbff4c7154362f27ca6e4a1c6d888399ceb9df0e1fbf3878b891e",
+          "visualArtifactRef": "visual-artifact-f3d8e80cc8375ec91f868582afafecdc05ab9c4882eef16eb96255c3115c2e16",
           "alias": "M2",
           "displayName": "Cobra II M2（林地）",
           "searchTerms": [
@@ -6259,6 +6940,10 @@
         },
         {
           "sourceRawName": "BP_Cobra2_M2_Desert",
+          "catalogBindingRef": "catalog-vehicle-1bf6ba55a51c2b4a7cbfd0b1",
+          "vehicleRef": "vehicle-10c370d867c2a9e9ef71a33e",
+          "runtimeVehicleRef": "vehicle-e54e07f89594ae70ac46633211cb0e6927fe25609b7f82b88a1fb650c86e558e",
+          "visualArtifactRef": "visual-artifact-fff2f2eca3b78d807d6fc6e208581de6c0de7c83ba22c100846bbbe5ba36ae20",
           "alias": "M2",
           "displayName": "Cobra II M2（沙漠）",
           "searchTerms": [
@@ -6308,6 +6993,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Cobra2_RWS_M2",
+          "catalogBindingRef": "catalog-vehicle-45d8c1388c975e6b6528198e",
+          "vehicleRef": "vehicle-7b70bbc19430b76d5a29eeda",
+          "runtimeVehicleRef": "vehicle-2179c25bc2af21fbdfd2cba081e0b6b14ffd59459fa26c5a6dc3892731815766",
+          "visualArtifactRef": "visual-artifact-1c5042b895d506bde4011d42b3bcd6e098d0ca187c0d5265a9cc8774b082443c",
           "alias": "M2 RWS",
           "displayName": "Cobra II M2 RWS（林地）",
           "searchTerms": [
@@ -6330,6 +7019,10 @@
         },
         {
           "sourceRawName": "BP_Cobra2_RWS_M2_Desert",
+          "catalogBindingRef": "catalog-vehicle-c805d98f32b59243c74fd929",
+          "vehicleRef": "vehicle-f3edd26c8bf218511e6820f7",
+          "runtimeVehicleRef": "vehicle-632b3df7655d26a76be214a287069e9d58ec5c9b91ce625f27171e73d7a93eff",
+          "visualArtifactRef": "visual-artifact-92d6ea173738905baff89669eb0eb184b60d115db3e4197b90f49412697c8c72",
           "alias": "M2 RWS",
           "displayName": "Cobra II M2 RWS（沙漠）",
           "searchTerms": [
@@ -6379,6 +7072,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Cobra2_MG3",
+          "catalogBindingRef": "catalog-vehicle-257781a322652fc14b10c918",
+          "vehicleRef": "vehicle-fab6f73131cb5c813885731c",
+          "runtimeVehicleRef": "vehicle-6f7e9337f77fc7fe61777295f4c49e17ed1f8066405fb4483bf923ded9424b3b",
+          "visualArtifactRef": "visual-artifact-150b2c786487b2d19cc0a51168751679b02462d603d3bf343bd19ba2f353823c",
           "alias": "MG3",
           "displayName": "Cobra II MG3（林地）",
           "searchTerms": [
@@ -6401,6 +7098,10 @@
         },
         {
           "sourceRawName": "BP_Cobra2_MG3_Desert",
+          "catalogBindingRef": "catalog-vehicle-8be1adb7e671d4a377cb6c69",
+          "vehicleRef": "vehicle-51bf7c47310a5f4446516eb3",
+          "runtimeVehicleRef": "vehicle-2ef75436133db6b24e8bca93220d46a8766a73be1842f0c349a2761e82158f1d",
+          "visualArtifactRef": "visual-artifact-c20eac4a78174679b32346527fc29951d30ca259c76e7a47447f4ac883161367",
           "alias": "MG3",
           "displayName": "Cobra II MG3（沙漠）",
           "searchTerms": [
@@ -6450,6 +7151,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Cobra2_RWS_MG3",
+          "catalogBindingRef": "catalog-vehicle-e00cd9815a1176a1e47f7401",
+          "vehicleRef": "vehicle-60ad382aa9b162a31e2f72cc",
+          "runtimeVehicleRef": "vehicle-7e2147c396d8d3224da47198f40f13b2fa8e1972766a723ac7f9a1f88f8cd8c0",
+          "visualArtifactRef": "visual-artifact-bd7a4e7e6ac45e238b26b67f4cc17e8dc48163aaa59f9672b5d8ebaaad98c0f3",
           "alias": "MG3 RWS",
           "displayName": "Cobra II MG3 RWS（林地）",
           "searchTerms": [
@@ -6472,6 +7177,10 @@
         },
         {
           "sourceRawName": "BP_Cobra2_RWS_MG3_Desert",
+          "catalogBindingRef": "catalog-vehicle-b66f3f613c7e81194622b892",
+          "vehicleRef": "vehicle-3264d1c29a8f98bbd5a7d2fc",
+          "runtimeVehicleRef": "vehicle-d46049ab5583ac4fdcfea12a354aa1a191ffe178022e27de6f2abbebd73ba716",
+          "visualArtifactRef": "visual-artifact-ff737242b757f9fb14f8094c5734436655908618505ed184c096488d09a12926",
           "alias": "MG3 RWS",
           "displayName": "Cobra II MG3 RWS（沙漠）",
           "searchTerms": [
@@ -6521,6 +7230,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_US_M2",
+          "catalogBindingRef": "catalog-vehicle-f6b171f30224abc7a885e41e",
+          "vehicleRef": "vehicle-a559d9f2a103f9ff0b8f205e",
+          "runtimeVehicleRef": "vehicle-cd93a7c325bda01f1a0b3e602a7f88d0dc83d3768eda7429e38f96481efcefd8",
+          "visualArtifactRef": "visual-artifact-ee192dca097a05a510c326a714bbcd877646a92b48d13da826f4a2da54770e0d",
           "alias": "M2",
           "displayName": "RHIB M2",
           "searchTerms": [
@@ -6566,6 +7279,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_GFI_MG3",
+          "catalogBindingRef": "catalog-vehicle-1881cee324bad6bc91a377de",
+          "vehicleRef": "vehicle-05ac1be96ad8e8d484bb3479",
+          "runtimeVehicleRef": "vehicle-02fe1f29dd72de3a2dd3634f7a1ffa59585eedbb2311c46c53bd813ae7367252",
+          "visualArtifactRef": "visual-artifact-a0c6688a8d9ed7a89cf2b96771f0be35dbc2a60dbd055d892744e9a76b7dd830",
           "alias": "MG3",
           "displayName": "RHIB MG3",
           "searchTerms": [
@@ -6611,6 +7328,10 @@
       "variants": [
         {
           "sourceRawName": "BP_TLF_Util_Truck_Logi",
+          "catalogBindingRef": "catalog-vehicle-421d9419203e128ebb459917",
+          "vehicleRef": "vehicle-98b41c955748486217a0d63b",
+          "runtimeVehicleRef": "vehicle-41a3faae1543b721520192356a80b1d28a49fdc85e97ca9b037888d2a1f2b90e",
+          "visualArtifactRef": "visual-artifact-eccf07455326fb9dcd77dfc84e775137703560aa858d14970e837ff36932a244",
           "alias": "Logistics",
           "displayName": "BMC-185 Logistics（林地）",
           "searchTerms": [
@@ -6633,6 +7354,10 @@
         },
         {
           "sourceRawName": "BP_TLF_Util_Truck_Logi_Desert",
+          "catalogBindingRef": "catalog-vehicle-7e2f9386dd3e6843e9d35d1a",
+          "vehicleRef": "vehicle-4e90101238a444a368c6839f",
+          "runtimeVehicleRef": "vehicle-b9792e7cc7cdb70e2f7f07a23bd6bd26c059ef203d79236977c535507a799026",
+          "visualArtifactRef": "visual-artifact-182b3e85668135fae4532fbb3883522e0fdc07a6096c85fedabb88b3406982a0",
           "alias": "Logistics",
           "displayName": "BMC-185 Logistics（沙漠）",
           "searchTerms": [
@@ -6682,6 +7407,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M113A2T_Logistics_TLF",
+          "catalogBindingRef": "catalog-vehicle-6dc9340b7eea2b95daf9b318",
+          "vehicleRef": "vehicle-b000d0fc057963d68bc94e1d",
+          "runtimeVehicleRef": "vehicle-d278b4240a35e1e02aab8bd05e09d342fdf63eede920465fdd58fe768dc2cc06",
+          "visualArtifactRef": "visual-artifact-31fd9c8a1b3bf681bdbc3338a635bf1b3b782df94a2b4325afccfffd97331e0d",
           "alias": "Logistics",
           "displayName": "M113A2 Logistics（林地）",
           "searchTerms": [
@@ -6704,6 +7433,10 @@
         },
         {
           "sourceRawName": "BP_M113A2T_Logistics_TLF_Desert",
+          "catalogBindingRef": "catalog-vehicle-ba0f66bc8b548e72ebca4e58",
+          "vehicleRef": "vehicle-f1fc573a84483044f3853ef5",
+          "runtimeVehicleRef": "vehicle-e364838676f7167c9f78385bed040fa8c45c75b4d9b3cdaf5252914ca244df95",
+          "visualArtifactRef": "visual-artifact-35197b83f1b3290826a9a69b09fa95abacfa76351f6b17c60078bc55225b2239",
           "alias": "Logistics",
           "displayName": "M113A2 Logistics（沙漠）",
           "searchTerms": [
@@ -6753,6 +7486,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M113A3_Logistics_Desert",
+          "catalogBindingRef": "catalog-vehicle-d7d46b0bbe87429b601b0b7a",
+          "vehicleRef": "vehicle-c723168d42d9451ed59bad3d",
+          "runtimeVehicleRef": "vehicle-1c8de59ca8c80c6d297618dd159aa2d8cc592ec1dfc53ac01bd461672cc603d3",
+          "visualArtifactRef": "visual-artifact-3a7891d3690452a2a19468d3858acc3ec960aa5bc52d520cca20dc7d79e766df",
           "alias": "Logistics",
           "displayName": "M113A3 Logistics（沙漠）",
           "searchTerms": [
@@ -6775,6 +7512,10 @@
         },
         {
           "sourceRawName": "BP_M113A3_Logistics",
+          "catalogBindingRef": "catalog-vehicle-3901502bed812732fc9dd3ff",
+          "vehicleRef": "vehicle-4a2ad54256398b013aea747d",
+          "runtimeVehicleRef": "vehicle-b1941dad89588f7009f21c4d85131ab167b7d428e5e2acc98a59c50bb029c742",
+          "visualArtifactRef": "visual-artifact-f9ae2f1bdf9fadcf147c5c48792703bf95818bf437eb04e9c0dada38482b9256",
           "alias": "Logistics",
           "displayName": "M113A3 Logistics（林地）",
           "searchTerms": [
@@ -6824,6 +7565,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_Logistics",
+          "catalogBindingRef": "catalog-vehicle-e620f6a1584369645851588f",
+          "vehicleRef": "vehicle-3889b0b7e7b6aa96f675cb4a",
+          "runtimeVehicleRef": "vehicle-e3158111f55763ac33ce995702445a4a02c63c38faea6ac5d693670a4e50a044",
+          "visualArtifactRef": "visual-artifact-1656f0db0e46e4b3a17d611074d5d8e0634d35591b495c624c28001636fc5517",
           "alias": "Logistics",
           "displayName": "RHIB Logistics",
           "searchTerms": [
@@ -6869,6 +7614,10 @@
       "variants": [
         {
           "sourceRawName": "BP_TLF_Util_Truck",
+          "catalogBindingRef": "catalog-vehicle-e417b34c312fd08878b83201",
+          "vehicleRef": "vehicle-d7c40ced85f69e6dcc48ed6e",
+          "runtimeVehicleRef": "vehicle-1d3b5c3e34937e1fe32cc55b8b0ef0102359e753a0beb50948812ff3064614ad",
+          "visualArtifactRef": "visual-artifact-2b6171cc88c2ba7f13a4ade1fb7a92410b3b59bea3a53d20361db3f9117c56b6",
           "alias": "Transport",
           "displayName": "BMC-185 Transport（林地）",
           "searchTerms": [
@@ -6891,6 +7640,10 @@
         },
         {
           "sourceRawName": "BP_TLF_Util_Truck_Desert",
+          "catalogBindingRef": "catalog-vehicle-af5bbd41668aa30179618670",
+          "vehicleRef": "vehicle-43a897c444f8d335538d5cac",
+          "runtimeVehicleRef": "vehicle-831fa880611690c005d52a09e65ae71a81ce2d599c574aa3b05869ee5141893c",
+          "visualArtifactRef": "visual-artifact-1b0fb1d9b0aa74dae74efc9bc98750724b9a7c4a84aeb721a8a0ebb4c2e0f30a",
           "alias": "Transport",
           "displayName": "BMC-185 Transport（沙漠）",
           "searchTerms": [
@@ -6940,6 +7693,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1064_M121_TLF",
+          "catalogBindingRef": "catalog-vehicle-0a7f9199f86a07c6f1a09e06",
+          "vehicleRef": "vehicle-ba17a835f27b1139543e87e1",
+          "runtimeVehicleRef": "vehicle-3f720ca2e6c44e11af196f28281265669c4ed6a9b5dfdbbe1ff8456f21b8ff0b",
+          "visualArtifactRef": "visual-artifact-846727030572610c273682d24ea29bb29813dcde6ec79a91548531c27f5d0c09",
           "alias": "M121",
           "displayName": "M113A2T M121（林地）",
           "searchTerms": [
@@ -6962,6 +7719,10 @@
         },
         {
           "sourceRawName": "BP_M1064_M121_TLF_Desert",
+          "catalogBindingRef": "catalog-vehicle-6c67481e4d0b407afe178998",
+          "vehicleRef": "vehicle-6d3394562bb13fa21fdb35af",
+          "runtimeVehicleRef": "vehicle-01a0559fa5cb741648391e8e6783c526157d903ffa88e756322a9c7dcd072e94",
+          "visualArtifactRef": "visual-artifact-2a79c0ea4468f86f9636ed0a0adaf682f4c0cf2e57961ef494ac863b79d3db03",
           "alias": "M121",
           "displayName": "M113A2T M121（沙漠）",
           "searchTerms": [
@@ -7011,6 +7772,10 @@
       "variants": [
         {
           "sourceRawName": "BP_UH60_TLF_PKM",
+          "catalogBindingRef": "catalog-vehicle-4812a8974f3140529bcfff62",
+          "vehicleRef": "vehicle-1a403604aa21dd5251e02d3e",
+          "runtimeVehicleRef": "vehicle-1dcf81e2ba3cbbcdde2f07551f50c9a777a30288a21685f219133511684fd30c",
+          "visualArtifactRef": "visual-artifact-fbb1393a90178e7b55b4f9ae2ea02ea7c0d668b2a02daaa6a8d941d50646ee1b",
           "alias": "",
           "displayName": "UH60 PKM",
           "searchTerms": [
@@ -7056,6 +7821,10 @@
       "variants": [
         {
           "sourceRawName": "BP_T62_GFI",
+          "catalogBindingRef": "catalog-vehicle-85783965afb2546e53a51fcb",
+          "vehicleRef": "vehicle-8025e4a2c9dd99d352cfe0c1",
+          "runtimeVehicleRef": "vehicle-7b9154074942b7fe87116ffb6d201a7599c013aeb13387116442426bc2f31fe0",
+          "visualArtifactRef": "visual-artifact-6c686ee1e6f24f328402309a4034eb013e948f8a13c7dc8c506a4bc45e992ee1",
           "alias": "",
           "displayName": "T-62",
           "searchTerms": [
@@ -7101,6 +7870,10 @@
       "variants": [
         {
           "sourceRawName": "BP_T72S_GFI",
+          "catalogBindingRef": "catalog-vehicle-5bc99295a76b15017ea119b2",
+          "vehicleRef": "vehicle-53d39cbaf976b0df0989827a",
+          "runtimeVehicleRef": "vehicle-41e7d3c40395bd1621281d3c93ed23d2e21c671563e939ffa2470ff71c80a1f1",
+          "visualArtifactRef": "visual-artifact-bcbeaf2bc59554cd62d4db2f00a6fbd7eff8280d35f96ec3d949336877f3c99e",
           "alias": "",
           "displayName": "T-72S",
           "searchTerms": [
@@ -7146,6 +7919,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BRDM-2_GFI_Spandrel",
+          "catalogBindingRef": "catalog-vehicle-6b565445ac4fd1c1f87550c4",
+          "vehicleRef": "vehicle-71076b5196a3bdb7ef1c3ebc",
+          "runtimeVehicleRef": "vehicle-1f55da8a2d204e95678c6380c49cff3f89b4cba18a4feb5d480407e7f8e64c8d",
+          "visualArtifactRef": "visual-artifact-4d3338d14cc154bf056f75347cdfe8b4326ca7c430d5717c73e1795f2f142aa1",
           "alias": "Spandrel",
           "displayName": "BRDM-2 Spandrel",
           "searchTerms": [
@@ -7191,6 +7968,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1151_TOW_GFI",
+          "catalogBindingRef": "catalog-vehicle-81c9dacf8deaf7c28df178a0",
+          "vehicleRef": "vehicle-009ebfc06ada6d40858f62a8",
+          "runtimeVehicleRef": "vehicle-d32d774755b5d0601897ef9fc9615484fae3b58eab7217aeff2c16d2d14caea4",
+          "visualArtifactRef": "visual-artifact-747f2ea117715f9b2670cd0747261266611585935d55350f1b015c9b3a1f6bda",
           "alias": "TOW",
           "displayName": "M1151 TOW",
           "searchTerms": [
@@ -7236,6 +8017,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Safir_Kornet",
+          "catalogBindingRef": "catalog-vehicle-149951b3f92db2f149ff6d42",
+          "vehicleRef": "vehicle-3bae9b081a7e28d561660389",
+          "runtimeVehicleRef": "vehicle-4c8e40841ab0f0a8c6470a410ee0088bbbbc163c85e7fb1d6c9951b5d006f9a4",
+          "visualArtifactRef": "visual-artifact-3a8412719f664636eb0b7929d4f235db4abb515cda0a166f535f0ace818015c0",
           "alias": "Kornet",
           "displayName": "Simir Kornet",
           "searchTerms": [
@@ -7281,6 +8066,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BMP1_GFI",
+          "catalogBindingRef": "catalog-vehicle-01d6e8929f071ab7e498f382",
+          "vehicleRef": "vehicle-a57fd8d5436f4c7e0e93f274",
+          "runtimeVehicleRef": "vehicle-3e0c60625cc6996d379f59d718741d1cbf5c42f367c71bb62dc5db79e4ddd970",
+          "visualArtifactRef": "visual-artifact-4aea4ae487d29467db5978af31681821c293587c9d849178d4b2daa36bae9fad",
           "alias": "",
           "displayName": "BMP-1",
           "searchTerms": [
@@ -7326,6 +8115,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BMP2_GFI",
+          "catalogBindingRef": "catalog-vehicle-4e6f693320cc56e6ff474090",
+          "vehicleRef": "vehicle-500ddc39cc71e5c979aad141",
+          "runtimeVehicleRef": "vehicle-7ddf92c88bacf9eb25276981cc602c2911da88d396f7fdeb3ebff4989dbe5d88",
+          "visualArtifactRef": "visual-artifact-ceeb600e091dd14b0f7f44488fc26efb00bceaeedd0cdd8142cd99a8e6345713",
           "alias": "",
           "displayName": "BMP-2",
           "searchTerms": [
@@ -7371,6 +8164,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLBM_6MA_GFI",
+          "catalogBindingRef": "catalog-vehicle-27ae0f8ca95d848e4186f6bd",
+          "vehicleRef": "vehicle-d5f266bbb02a75784e733211",
+          "runtimeVehicleRef": "vehicle-3c10f04922f2de9af382f89185341986b8b4a83e0605994ebc029be79e95eb75",
+          "visualArtifactRef": "visual-artifact-df2ee532a55611d21594ecf122719c137f03867749cdeb38b7740bd2e99129f8",
           "alias": "6MA UB-32",
           "displayName": "MTLB 6MA UB-32",
           "searchTerms": [
@@ -7416,6 +8213,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLB_VMK_GFI",
+          "catalogBindingRef": "catalog-vehicle-a8a37a70737be69c6447cde8",
+          "vehicleRef": "vehicle-4bff6d6f804d494c16e22008",
+          "runtimeVehicleRef": "vehicle-34eaca8e9b79d0612f39b0afeb936904e3a3ce1bee9d4763767e0b723e707155",
+          "visualArtifactRef": "visual-artifact-9e94784b092f6bcb8c11d73b94e8c63af7a8b1f29b7ca9f30313b349bc17f76b",
           "alias": "VMK",
           "displayName": "MTLB VMK",
           "searchTerms": [
@@ -7461,6 +8262,10 @@
       "variants": [
         {
           "sourceRawName": "BP_M1151_GFI",
+          "catalogBindingRef": "catalog-vehicle-529308924c7167f27f5236c5",
+          "vehicleRef": "vehicle-2d908fb043f3131d331bdbcb",
+          "runtimeVehicleRef": "vehicle-ebea6a78ed7a6e49fec0d06d53ba13c1783b1c79118dcb076da1e9dcaba431b5",
+          "visualArtifactRef": "visual-artifact-fb09a5088e72bb88f1753fd7bf6e7a0f62b4125eb2a457f886eed140dba4dacd",
           "alias": "M2",
           "displayName": "M1151 M2",
           "searchTerms": [
@@ -7506,6 +8311,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Safir_AGS-17",
+          "catalogBindingRef": "catalog-vehicle-5069592515fc38cb9c88c9a1",
+          "vehicleRef": "vehicle-b4d455601b10012edb26504b",
+          "runtimeVehicleRef": "vehicle-e32aa45a75e2be69643bf8289ef2fc133efce9ba91c1ff3aa3b5ce4423c0c0bc",
+          "visualArtifactRef": "visual-artifact-7896fb19cdf0edeb5d1e4af32da3be15ca0ab69b56db97ba63231b506e5f8492",
           "alias": "AGS-17",
           "displayName": "Simir AGS-17",
           "searchTerms": [
@@ -7551,6 +8360,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Safir_Kord",
+          "catalogBindingRef": "catalog-vehicle-a3a4559b219573ac442ec172",
+          "vehicleRef": "vehicle-cfc60172b2aaaf5536045a1e",
+          "runtimeVehicleRef": "vehicle-30a47c461549473e9d2db75c81abb4b60d11c0a8c7b69ca37103cc7436a78ebc",
+          "visualArtifactRef": "visual-artifact-b7b6658631744f97e6929cb5a92a86b174561c005cebf9af71d4c6c1be07dca5",
           "alias": "Kord",
           "displayName": "Simir Kord",
           "searchTerms": [
@@ -7596,6 +8409,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Safir_MG3",
+          "catalogBindingRef": "catalog-vehicle-8216636add208a8dc7b7b72c",
+          "vehicleRef": "vehicle-4b488530bb8ba68d21101fda",
+          "runtimeVehicleRef": "vehicle-99a646a3957e288894a305dedee64fa70a4f4a1bafb8a5c803204a2d28f3b24c",
+          "visualArtifactRef": "visual-artifact-f60fe4d3dbb729571542fda8e061ed3b7c6173b1b0ad953e0f76327a2a60b761",
           "alias": "MG3",
           "displayName": "Simir MG3",
           "searchTerms": [
@@ -7641,6 +8458,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_GFI_MG3",
+          "catalogBindingRef": "catalog-vehicle-4a65372b05d5237b720ad669",
+          "vehicleRef": "vehicle-05ac1be96ad8e8d484bb3479",
+          "runtimeVehicleRef": "vehicle-02fe1f29dd72de3a2dd3634f7a1ffa59585eedbb2311c46c53bd813ae7367252",
+          "visualArtifactRef": "visual-artifact-7695c6ef509bc7ae07142d691749c99259afb02ec4a910b634d1c6bc728fe381",
           "alias": "MG3",
           "displayName": "RHIB MG3",
           "searchTerms": [
@@ -7686,6 +8507,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_RUS_NSV",
+          "catalogBindingRef": "catalog-vehicle-3140d3cdbae4fdd8a3f5ee14",
+          "vehicleRef": "vehicle-25055e47c60f96465c9233b8",
+          "runtimeVehicleRef": "vehicle-6c0f734cdaa788421ede4580b075f14e2e11693e091ed372137ef2b5a2ac206c",
+          "visualArtifactRef": "visual-artifact-0369c4e91eaf25760bc489567cc8f4a7e3de25f4b6d10eb91004d96ea4a20cf3",
           "alias": "NSV",
           "displayName": "RHIB NSV",
           "searchTerms": [
@@ -7731,6 +8556,10 @@
       "variants": [
         {
           "sourceRawName": "BP_MTLB_LOGI_GFI",
+          "catalogBindingRef": "catalog-vehicle-e763e265d5eb9c64bb8527ee",
+          "vehicleRef": "vehicle-d1332934bd5c9957bc8b5b97",
+          "runtimeVehicleRef": "vehicle-f140d4d14112027f1522a599fef874277e93a471965f9cf11074b283c7d62bd5",
+          "visualArtifactRef": "visual-artifact-87edc8dfbad443efa5b23c7e1a52c4e7d29b79ccfea68cf1a1dc02709e0d1f06",
           "alias": "Logistics",
           "displayName": "MT-LB Logistics",
           "searchTerms": [
@@ -7776,6 +8605,10 @@
       "variants": [
         {
           "sourceRawName": "BP_RHIB_Logistics",
+          "catalogBindingRef": "catalog-vehicle-4943273ae4c459d76f032ec4",
+          "vehicleRef": "vehicle-3889b0b7e7b6aa96f675cb4a",
+          "runtimeVehicleRef": "vehicle-e3158111f55763ac33ce995702445a4a02c63c38faea6ac5d693670a4e50a044",
+          "visualArtifactRef": "visual-artifact-2b966ba0e8fd2451377a187530e073d72fcffb32760aa81ce14f9653f63b850c",
           "alias": "Logistics",
           "displayName": "RHIB Logistics",
           "searchTerms": [
@@ -7821,6 +8654,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Safir",
+          "catalogBindingRef": "catalog-vehicle-17465ddbb2c7248b68d1c46b",
+          "vehicleRef": "vehicle-5fca9ee9141f6387a30ec158",
+          "runtimeVehicleRef": "vehicle-a04c8b7caa2b809b59f243e887d5418a9cb96acd68716088a47145dcdb6103f8",
+          "visualArtifactRef": "visual-artifact-4ab5e540bc084c21a66d1894c95fd91d169ac30287d782f225dea14b90393808",
           "alias": "Logistics",
           "displayName": "Simir Logistics",
           "searchTerms": [
@@ -7866,6 +8703,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Ural_4320_logi_GFI",
+          "catalogBindingRef": "catalog-vehicle-b550967904ea15460d980a21",
+          "vehicleRef": "vehicle-fc1daf382089b2feed1744a6",
+          "runtimeVehicleRef": "vehicle-9ccf8ea450a3e8c84df4aa692b2438011690be51698d085ab121817c09c47a4b",
+          "visualArtifactRef": "visual-artifact-38277ff048968bb10f6e34f4226cdc0712c02f599b2c6a330550e5e13139e254",
           "alias": "Logistics",
           "displayName": "Ural-4320 Logistics",
           "searchTerms": [
@@ -7911,6 +8752,10 @@
       "variants": [
         {
           "sourceRawName": "BP_Ural_4320_GFI",
+          "catalogBindingRef": "catalog-vehicle-4b331fa3c5cee70837f07bfd",
+          "vehicleRef": "vehicle-75b58686ebe7ba3e17387027",
+          "runtimeVehicleRef": "vehicle-c27b853d245ea12cfbd227959d77ddc1e1e19fa8f340d43ed43e1a6e8e0ad988",
+          "visualArtifactRef": "visual-artifact-5c6ce660ac819aac60f20ddd8da17ec2acf239bbdf856d1fd8ad4e86532e9930",
           "alias": "Transport",
           "displayName": "Ural-4320 Transport",
           "searchTerms": [
@@ -7956,6 +8801,10 @@
       "variants": [
         {
           "sourceRawName": "BP_UH1H_GFI",
+          "catalogBindingRef": "catalog-vehicle-e23034fdf264348a7863ac48",
+          "vehicleRef": "vehicle-fa0122de955892b764653422",
+          "runtimeVehicleRef": "vehicle-0505d767a30e410c50a8be261f78a630ed2f450fa2938d5b499b186a2fb437a2",
+          "visualArtifactRef": "visual-artifact-df7cd51e0f6c80387c7c623b17d2f795e02d4efac7791189bcc9b7468361510b",
           "alias": "",
           "displayName": "UH-1H MG3",
           "searchTerms": [
@@ -8001,6 +8850,10 @@
       "variants": [
         {
           "sourceRawName": "BP_BRDM-2_GFI",
+          "catalogBindingRef": "catalog-vehicle-47118e95bd2254115a7f79c8",
+          "vehicleRef": "vehicle-c0018cfb567e0bb222d15767",
+          "runtimeVehicleRef": "vehicle-3404e5f863d0ea3bc2c841b302950ce4d6ef99cef0c50ba6e528f6f11eaf7554",
+          "visualArtifactRef": "visual-artifact-e7e1e72bf393d7671724f7da0082ff3481b489895c59ecfc5f5500cf107a243b",
           "alias": "UB-32",
           "displayName": "BRDM-2 UB-32",
           "searchTerms": [

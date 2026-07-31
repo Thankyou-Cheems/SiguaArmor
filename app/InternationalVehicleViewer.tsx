@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { runtimePreviewForVariant } from "./runtime-probe-preview-data";
+import {
+  runtimePreviewForCatalogBinding,
+  type RuntimeVehiclePreview,
+} from "./runtime-probe-preview-data";
 import { RuntimeVehicleViewer } from "./RuntimeVehicleViewer";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
 import type { ReferenceData } from "./catalog-types";
@@ -24,6 +27,8 @@ interface InternationalVehicleViewerProps {
   siteEdition: SiteEdition;
   cardId: string;
   rawName: string;
+  runtimeVehicleRef: string | null;
+  visualArtifactRef: string | null;
   displayName: string;
   referenceData: ReferenceData | null;
   textureVariants?: TextureVariantOption[];
@@ -41,6 +46,8 @@ export default function InternationalVehicleViewer({
   siteEdition,
   cardId,
   rawName,
+  runtimeVehicleRef,
+  visualArtifactRef,
   displayName,
   referenceData,
   textureVariants = [],
@@ -49,22 +56,58 @@ export default function InternationalVehicleViewer({
   navigationState,
   onNavigationStateChange,
 }: InternationalVehicleViewerProps) {
-  const preview = runtimePreviewForVariant(cardId, rawName, siteEdition);
   const requestedMode = initialMode(navigationState);
   const previewIssue = officialVehiclePreviewIssue(rawName);
   const mode = previewIssue && requestedMode === "exterior" ? "armor" : requestedMode;
+  const [preview, setPreview] = useState<RuntimeVehiclePreview | null>(null);
+  const [previewLoadError, setPreviewLoadError] = useState<string | null>(null);
   const [textureStreaming, setTextureStreaming] = useState<TextureStreamingState | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setPreview(null);
+    setPreviewLoadError(null);
+    void runtimePreviewForCatalogBinding(
+      cardId,
+      rawName,
+      runtimeVehicleRef,
+      visualArtifactRef,
+      siteEdition,
+    )
+      .then((nextPreview) => {
+        if (cancelled) return;
+        setPreview(nextPreview);
+        if (!nextPreview) {
+          setPreviewLoadError(
+            rawName
+              ? `尚未找到 ${rawName} 的可用运行时视觉包。`
+              : "当前卡片缺少变体身份。",
+          );
+        }
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setPreviewLoadError(error instanceof Error ? error.message : "运行时视觉包加载失败。");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [cardId, rawName, runtimeVehicleRef, siteEdition, visualArtifactRef]);
 
   useEffect(() => {
     if (!previewIssue || requestedMode !== "exterior") return;
     onNavigationStateChange({ ...navigationState, view: "armor" });
   }, [navigationState, onNavigationStateChange, previewIssue, requestedMode]);
 
-  if (!preview?.visual) {
+  if (!preview || !preview.visual) {
     return (
-      <div className="vehicle-viewer vehicle-viewer--error" role="status">
-        <strong>3D 研究预览当前不可用</strong>
-        <span>{rawName ? `尚未找到 ${rawName} 的可用运行时视觉包。` : "当前卡片缺少变体身份。"}</span>
+      <div
+        className={`vehicle-viewer vehicle-viewer--${previewLoadError ? "error" : "loading"}`}
+        role="status"
+        aria-busy={!previewLoadError}
+      >
+        <strong>{previewLoadError ? "3D 研究预览当前不可用" : "正在加载 3D 研究预览"}</strong>
+        <span>{previewLoadError ?? "正在按当前载具身份载入视觉包。"}</span>
         {onClose ? (
           <button className="viewer-close" type="button" onClick={onClose} aria-label="关闭载具详情">
             <span aria-hidden="true">×</span>
@@ -86,6 +129,8 @@ export default function InternationalVehicleViewer({
       data-site-edition={siteEdition}
       data-card-id={cardId}
       data-variant-raw-name={rawName}
+      data-runtime-vehicle-ref={runtimeVehicleRef ?? undefined}
+      data-visual-artifact-ref={visualArtifactRef ?? undefined}
       data-package-sha256={visual.packageSha256}
       data-hit-access={preview.hit?.status ?? "absent"}
       data-official-preview-issue={previewIssue?.code}
