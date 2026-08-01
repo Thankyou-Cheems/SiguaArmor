@@ -10,6 +10,7 @@ import {
   Gauge,
   HeartPulse,
   HelpCircle,
+  KeyRound,
   Search,
   Shield,
   Target,
@@ -527,6 +528,11 @@ function chinaFactionVisualStyle(group: FactionGroup): CSSProperties {
   } as CSSProperties;
 }
 const VehicleViewer = lazy(() => import("./InternationalVehicleViewer"));
+const SiteContentAdminModal = lazy(() =>
+  import("./SiteContentAdminModal").then(({ SiteContentAdminModal: Modal }) => ({
+    default: Modal,
+  })),
+);
 
 function formatNumber(value: number | null, suffix = "") {
   if (value === null || !Number.isFinite(value)) {
@@ -2178,6 +2184,7 @@ function SiteFooterHelp({
   helpId,
   onToggle,
   onClose,
+  onOpenContentAdmin,
 }: {
   helpOpen: boolean;
   docked: boolean;
@@ -2185,6 +2192,7 @@ function SiteFooterHelp({
   helpId: string;
   onToggle: () => void;
   onClose: () => void;
+  onOpenContentAdmin: () => void;
 }) {
   return (
     <div
@@ -2213,6 +2221,14 @@ function SiteFooterHelp({
           <li>点击载具模型，模拟射击并展示完整击穿路径。</li>
         </ol>
         <p>数据仅供参考，实装情况以游戏内为准。</p>
+        <button
+          className="site-footer__help-admin"
+          type="button"
+          onClick={onOpenContentAdmin}
+        >
+          <KeyRound size={14} aria-hidden="true" />
+          管理员内容更新
+        </button>
       </aside>
 
       <button
@@ -3170,6 +3186,7 @@ export function CatalogApp({
   );
   const [choicePanelActive, setChoicePanelActive] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [contentAdminOpen, setContentAdminOpen] = useState(false);
   const [dataAccuracyNoticeOpen, setDataAccuracyNoticeOpen] = useState(true);
   const [dataAccuracyNoticeSecondsLeft, setDataAccuracyNoticeSecondsLeft] = useState(10);
   const [catalogsByGroup, setCatalogsByGroup] = useState<Record<string, PublicFactionCatalog>>({});
@@ -3188,6 +3205,10 @@ export function CatalogApp({
   const factionViewTransitionRef = useRef<ViewTransition | null>(null);
   const detailViewTransitionRef = useRef<ViewTransition | null>(null);
   const detailTransitionCardRef = useRef<HTMLButtonElement | null>(null);
+  const closeContentAdmin = useCallback(() => {
+    setContentAdminOpen(false);
+    window.requestAnimationFrame(() => helpButtonRef.current?.focus());
+  }, []);
 
   useEffect(() => {
     if (!dataAccuracyNoticeOpen) return undefined;
@@ -3542,6 +3563,7 @@ export function CatalogApp({
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
+      if (contentAdminOpen) return;
       if (helpOpen) {
         setHelpOpen(false);
         window.requestAnimationFrame(() => helpButtonRef.current?.focus());
@@ -3570,7 +3592,7 @@ export function CatalogApp({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [clearFactionSelection, commitNavigation, groupId, hasGroupSelection, helpOpen, query, runDetailTransition, selectedId]);
+  }, [clearFactionSelection, commitNavigation, contentAdminOpen, groupId, hasGroupSelection, helpOpen, query, runDetailTransition, selectedId]);
 
   const selectCard = (card: CatalogCardEntry) => {
     runDetailTransition(() => {
@@ -4430,7 +4452,19 @@ export function CatalogApp({
           setHelpOpen(false);
           helpButtonRef.current?.focus();
         }}
+        onOpenContentAdmin={() => {
+          setHelpOpen(false);
+          setContentAdminOpen(true);
+        }}
       />
+      {contentAdminOpen ? (
+        <Suspense fallback={null}>
+          <SiteContentAdminModal
+            initialEdition={siteEdition}
+            onClose={closeContentAdmin}
+          />
+        </Suspense>
+      ) : null}
     </div>
   );
 }
