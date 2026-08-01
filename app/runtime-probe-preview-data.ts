@@ -3,6 +3,7 @@ import visualArtifactIndexJson from "./runtime-probe-visual-artifact-index.json"
 import visualSelectionPolicyJson from "./runtime-probe-visual-selection-policy.json";
 import hitDescriptorIndexJson from "./runtime-probe-hit-release-index.json";
 import supportAirHitDescriptorIndexJson from "./support-air-hit-release-index.json";
+import supportAirHitAvailabilityIndexJson from "./support-air-hit-availability-index.json";
 import type { SiteEdition } from "./site-edition";
 import {
   runtimeChassisPoseForGeneratedClass,
@@ -134,6 +135,12 @@ export interface RuntimeVehiclePreview {
     bvhNodes: number;
     reason: string;
   } | null;
+  hitAvailability: {
+    status: "hit-runtime" | "runtime-no-hit-geometry";
+    reasonCode: string;
+    reason: string;
+    runtimeEvidenceSha256: string;
+  } | null;
 }
 
 interface RuntimeVisualDescriptor {
@@ -241,10 +248,26 @@ type RuntimeHitDescriptorIndex = {
   descriptorCount: number;
   descriptors: RuntimeHitDescriptor[];
 };
+type SupportAirHitAvailabilityIndex = {
+  schemaVersion: "support-air-hit-availability-index/v1";
+  sourceBuildId: string;
+  entryCount: number;
+  entries: Array<{
+    cardId: string;
+    rawName: string;
+    generatedClass: string;
+    status: "hit-runtime" | "runtime-no-hit-geometry";
+    reasonCode: string;
+    reason: string;
+    runtimeEvidenceSha256: string;
+  }>;
+};
 const coreHitDescriptorIndex =
   hitDescriptorIndexJson as unknown as RuntimeHitDescriptorIndex;
 const supportAirHitDescriptorIndex =
   supportAirHitDescriptorIndexJson as unknown as RuntimeHitDescriptorIndex;
+const supportAirHitAvailabilityIndex =
+  supportAirHitAvailabilityIndexJson as unknown as SupportAirHitAvailabilityIndex;
 const hitDescriptorIndex: RuntimeHitDescriptorIndex = {
   schemaVersion: "runtime-hit-preview-index/v1",
   descriptorCount:
@@ -290,6 +313,14 @@ for (const [label, index] of [
 }
 if (hitDescriptorIndex.descriptorCount !== hitDescriptorIndex.descriptors.length) {
   throw new Error("Runtime hit descriptor count does not match the generated index");
+}
+if (
+  supportAirHitAvailabilityIndex.schemaVersion !==
+    "support-air-hit-availability-index/v1" ||
+  supportAirHitAvailabilityIndex.entryCount !==
+    supportAirHitAvailabilityIndex.entries.length
+) {
+  throw new Error("Unsupported support-air hit availability index");
 }
 
 function descriptorIdentity(cardId: string, rawName: string) {
@@ -617,6 +648,31 @@ for (const descriptor of hitDescriptorIndex.descriptors) {
   }
   hitDescriptorByIdentity.set(identity, descriptor);
 }
+const supportAirHitAvailabilityByIdentity = new Map(
+  supportAirHitAvailabilityIndex.entries.map((entry) => {
+    const identity = descriptorIdentity(entry.cardId, entry.rawName);
+    if (
+      !entry.reason ||
+      !entry.reasonCode ||
+      !/^[a-f0-9]{64}$/u.test(entry.runtimeEvidenceSha256)
+    ) {
+      throw new Error(`Invalid support-air hit availability: ${identity}`);
+    }
+    return [identity, entry] as const;
+  }),
+);
+if (
+  supportAirHitAvailabilityByIdentity.size !==
+  supportAirHitAvailabilityIndex.entryCount
+) {
+  throw new Error("Duplicate support-air hit availability identity");
+}
+for (const [identity, availability] of supportAirHitAvailabilityByIdentity) {
+  const hasDescriptor = hitDescriptorByIdentity.has(identity);
+  if ((availability.status === "hit-runtime") !== hasDescriptor) {
+    throw new Error(`Support-air hit availability mismatch: ${identity}`);
+  }
+}
 
 export function runtimeHitRecordReferenceForVariant(
   cardId: string,
@@ -778,6 +834,9 @@ function toRuntimePreview(
   const hitDescriptor = hitDescriptorByIdentity.get(
     descriptorIdentity(descriptor.cardId, descriptor.rawName),
   );
+  const hitAvailability = supportAirHitAvailabilityByIdentity.get(
+    descriptorIdentity(descriptor.cardId, descriptor.rawName),
+  );
   const chassisPose = runtimeChassisPoseForGeneratedClass(
     descriptor.generatedClass,
   );
@@ -850,6 +909,14 @@ function toRuntimePreview(
           surfaceProfiles: hitDescriptor.surfaceProfiles,
           bvhNodes: hitDescriptor.bvhNodes,
           reason: hitDescriptor.reason,
+        }
+      : null,
+    hitAvailability: hitAvailability
+      ? {
+          status: hitAvailability.status,
+          reasonCode: hitAvailability.reasonCode,
+          reason: hitAvailability.reason,
+          runtimeEvidenceSha256: hitAvailability.runtimeEvidenceSha256,
         }
       : null,
   };

@@ -132,7 +132,7 @@ export default function InternationalVehicleViewer({
       data-runtime-vehicle-ref={runtimeVehicleRef ?? undefined}
       data-visual-artifact-ref={visualArtifactRef ?? undefined}
       data-package-sha256={visual.packageSha256}
-      data-hit-access={preview.hit?.status ?? "absent"}
+      data-hit-access={preview.hit?.status ?? preview.hitAvailability?.status ?? "absent"}
       data-official-preview-issue={previewIssue?.code}
       data-has-texture-variants={!previewIssue && textureVariants.length > 1 ? "true" : undefined}
       data-texture-streaming={textureStreaming ? "true" : "false"}

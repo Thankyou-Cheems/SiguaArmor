@@ -95,7 +95,10 @@ import {
   observedValue,
   type ParsedRuntimeHitScene,
 } from "../lib/runtime-hit-scene";
-import { runtimeAnalysisVisualUrl } from "../lib/runtime-visual-lazy-load";
+import {
+  runtimeAnalysisVisualUrl,
+  runtimeViewerPresentation,
+} from "../lib/runtime-visual-lazy-load";
 import infantryPostureRuntime from "./infantry-posture-runtime.json";
 import { WeaponPenetrationIcon } from "./WeaponPenetrationIcon";
 import type {
@@ -1838,6 +1841,7 @@ const ANALYSIS_VISUAL_DEPTH_RESET_RENDER_ORDER = 4;
 const ANALYSIS_VISUAL_DEPTH_OCCLUDER_RENDER_ORDER = 5;
 const ANALYSIS_VISUAL_SURFACE_RENDER_ORDER = 6;
 const ANALYSIS_VISUAL_STABLE_SURFACE_RENDER_ORDER = 7;
+type AnalysisVisualPresentation = "analysis" | "exterior-placeholder";
 
 function sourceMeshRequiresStableAnalysisSurface(mesh: THREE.Mesh) {
   const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
@@ -1890,16 +1894,20 @@ function createAnalysisVisualDepthReset() {
   return reset;
 }
 
-function createAnalysisVisualMaterial(stableSurface = false) {
+function createAnalysisVisualMaterial(
+  stableSurface = false,
+  presentation: AnalysisVisualPresentation = "analysis",
+) {
+  const exteriorPlaceholder = presentation === "exterior-placeholder";
   const shared = {
-    color: new THREE.Color("#89949a"),
+    color: new THREE.Color(exteriorPlaceholder ? "#ffffff" : "#89949a"),
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.28,
+    opacity: exteriorPlaceholder ? 0.24 : 0.28,
     depthTest: true,
     depthWrite: false,
   } as const;
-  if (stableSurface) {
+  if (stableSurface || exteriorPlaceholder) {
     return new THREE.MeshBasicMaterial({
       ...shared,
       // Appearance-only sheets must not brighten or darken as the camera
@@ -1919,18 +1927,41 @@ function replaceAnalysisVisualMaterial(
   mesh: THREE.Mesh,
   stableSurface: boolean,
   disposePrevious = false,
+  presentation: AnalysisVisualPresentation = "analysis",
 ) {
   const previousMaterials = Array.isArray(mesh.material)
     ? mesh.material
     : [mesh.material];
   mesh.material = Array.isArray(mesh.material)
     ? previousMaterials.map(() =>
-        createAnalysisVisualMaterial(stableSurface)
+        createAnalysisVisualMaterial(stableSurface, presentation)
       )
-    : createAnalysisVisualMaterial(stableSurface);
+    : createAnalysisVisualMaterial(stableSurface, presentation);
   if (disposePrevious) {
     previousMaterials.forEach((material) => material.dispose());
   }
+}
+
+function setAnalysisVisualPresentation(
+  group: THREE.Group,
+  presentation: AnalysisVisualPresentation,
+) {
+  if (group.userData.analysisVisualPresentation === presentation) return;
+  group.traverse((object) => {
+    if (
+      !(object instanceof THREE.Mesh) ||
+      object.userData.analysisVisualOnly !== true
+    ) {
+      return;
+    }
+    replaceAnalysisVisualMaterial(
+      object,
+      object.userData.analysisVisualStableSurface === true,
+      true,
+      presentation,
+    );
+  });
+  group.userData.analysisVisualPresentation = presentation;
 }
 
 function analysisVisualGeometryScore(source: THREE.Object3D) {
@@ -3270,6 +3301,8 @@ export function RuntimeVehicleViewer({
     loaded: 0,
     total: uniqueAssetCount,
   });
+  const [initialCameraFitReady, setInitialCameraFitReady] = useState(false);
+  const [exteriorPlaceholderReady, setExteriorPlaceholderReady] = useState(false);
   useEffect(() => {
     if (!onExteriorStreamingChange) return;
     onExteriorStreamingChange(
@@ -4628,7 +4661,11 @@ export function RuntimeVehicleViewer({
     const host = hostRef.current;
     if (!host || !visual) return;
     setArmorThicknessRange(null);
+    setInitialCameraFitReady(false);
+    setExteriorPlaceholderReady(false);
     host.dataset.armorThicknessScale = "absolute";
+    host.dataset.viewerInitialFitState = "pending";
+    host.dataset.exteriorPlaceholderState = "loading";
 
     const dedupedVisual = dedupeIdenticalVisualPlacements(visual.placements);
     const renderPlacements = dedupedVisual.placements;
@@ -4649,6 +4686,7 @@ export function RuntimeVehicleViewer({
     let exteriorLoaded = 0;
     let exteriorReady = false;
     let exteriorPromise: Promise<void> | null = null;
+    let startExteriorAssets: (() => void) | null = null;
     let gridHelper: THREE.GridHelper | null = null;
     let groundScale: THREE.Group | null = null;
     let referenceSoldier: THREE.Group | null = null;
@@ -4937,6 +4975,42 @@ export function RuntimeVehicleViewer({
     host.dataset.visualTexturePolicy = "exterior-tab-only";
     host.dataset.analysisVisualAssetState = "deferred";
     host.dataset.exteriorAssetState = "deferred";
+
+    const syncAnalysisVisualPresentation = () => {
+      const exteriorPlaceholderActive =
+        modeRef.current === "exterior" && analysisVisualReady && !exteriorReady;
+      analysisVisualGroup.visible = exteriorPlaceholderActive || (
+        modeRef.current !== "exterior" && Boolean(hitGroupRef.current)
+      );
+      if (
+        analysisVisualReady &&
+        (exteriorPlaceholderActive || modeRef.current !== "exterior")
+      ) {
+        setAnalysisVisualPresentation(
+          analysisVisualGroup,
+          exteriorPlaceholderActive ? "exterior-placeholder" : "analysis",
+        );
+      }
+      let visiblePlaceholderOccurrences = 0;
+      analysisOccurrences.forEach((occurrences, stableOccurrenceId) => {
+        const occurrenceVisible =
+          !exteriorPlaceholderActive || !exteriorOccurrences.has(stableOccurrenceId);
+        occurrences.forEach(({ object }) => {
+          object.visible = occurrenceVisible;
+        });
+        if (exteriorPlaceholderActive && occurrenceVisible) {
+          visiblePlaceholderOccurrences += 1;
+        }
+      });
+      host.dataset.exteriorPlaceholderState = !analysisVisualReady
+        ? "loading"
+        : exteriorPlaceholderActive
+          ? "visible"
+          : "hidden";
+      host.dataset.exteriorPlaceholderOccurrenceCount = String(
+        visiblePlaceholderOccurrences,
+      );
+    };
 
     scene.add(new THREE.HemisphereLight(0xf3f3f0, 0x242424, 2.15));
     const keyLight = new THREE.DirectionalLight(0xfff4d2, 3.2);
@@ -6046,6 +6120,11 @@ export function RuntimeVehicleViewer({
         lastAppliedCameraNavigationKey = null;
         applyCameraNavigation(navigationStateRef.current, false);
       }
+      host.dataset.viewerInitialFitState = "ready";
+      setInitialCameraFitReady(true);
+      if (modeRef.current === "exterior" && analysisVisualReady) {
+        startExteriorAssets?.();
+      }
     };
 
     const referenceSoldierLoader = new GLTFLoader();
@@ -6458,6 +6537,7 @@ export function RuntimeVehicleViewer({
           visualGroup.add(occurrence);
         }
         applyTurretPose();
+        syncAnalysisVisualPresentation();
       };
       exteriorPromise = Promise.all(urls.map(async (url) => {
         const gltf = await exteriorLoader.loadAsync(url);
@@ -6483,6 +6563,7 @@ export function RuntimeVehicleViewer({
           if (cancelled) return;
           exteriorReady = true;
           host.dataset.exteriorAssetState = "ready";
+          syncAnalysisVisualPresentation();
           if (
             fittedSource === null &&
             hitSettled &&
@@ -6506,6 +6587,7 @@ export function RuntimeVehicleViewer({
           setViewerState({ kind: "error", message });
         });
     };
+    startExteriorAssets = loadExteriorAssets;
 
     const hitPromise = hit
       ? loadRuntimeHitScene({ ...hit, accessStatus: hit.status })
@@ -6618,8 +6700,16 @@ export function RuntimeVehicleViewer({
       : Promise.resolve(null);
 
     activateAssetModeRef.current = (nextMode) => {
+      syncAnalysisVisualPresentation();
       if (nextMode === "exterior") {
-        loadExteriorAssets();
+        if (analysisVisualReady && fittedSource !== null) {
+          loadExteriorAssets();
+        } else {
+          host.dataset.exteriorAssetState = analysisVisualReady
+            ? "waiting-for-fit"
+            : "waiting-for-placeholder";
+          setViewerState({ kind: "loading", loaded: 0, total: urls.length });
+        }
         return;
       }
       if (hitLoadSucceeded && hitGroupRef.current) {
@@ -6712,12 +6802,21 @@ export function RuntimeVehicleViewer({
         host.dataset.analysisStableSurfaceSubordinateCount = String(
           reasonCounts.get("subordinate-geometry") ?? 0,
         );
+        setExteriorPlaceholderReady(true);
+        syncAnalysisVisualPresentation();
         if (
           !hitLoadSucceeded &&
-          fittedSource === null &&
-          modeRef.current !== "exterior"
+          fittedSource === null
         ) {
           fitViewToGroup(analysisVisualDepthGroup, "analysis");
+        }
+        if (modeRef.current === "exterior") {
+          render();
+          if (fittedSource !== null) {
+            loadExteriorAssets();
+          } else {
+            host.dataset.exteriorAssetState = "waiting-for-fit";
+          }
         }
         const pendingSharedShots = pendingSharedShotsRef.current;
         if (
@@ -6758,7 +6857,11 @@ export function RuntimeVehicleViewer({
         if (cancelled) return;
         host.dataset.analysisVisualAssetState = "error";
         analysisVisualErrorMessage = error instanceof Error ? error.message : String(error);
-        if (hitLoadSucceeded || modeRef.current === "exterior") return;
+        if (modeRef.current === "exterior") {
+          loadExteriorAssets();
+          return;
+        }
+        if (hitLoadSucceeded) return;
         setViewerState({ kind: "error", message: analysisVisualErrorMessage });
       });
 
@@ -6835,6 +6938,13 @@ export function RuntimeVehicleViewer({
     : "穿深";
   const distanceLabel = maxDistanceM === 0 ? "无距离衰减" : `${targetDistanceM.toFixed(0)} m`;
   const exteriorStreaming = mode === "exterior" && viewerState.kind === "loading";
+  const viewerPresentation = runtimeViewerPresentation({
+    mode,
+    viewerState: viewerState.kind,
+    initialCameraFitReady,
+    exteriorPlaceholderReady,
+  });
+  const showSceneLoadingOverlay = viewerPresentation === "loading";
   const protectionStatus = !protectionMapAvailable
     ? "当前模式不可用"
     : !protectionActive
@@ -6872,6 +6982,7 @@ export function RuntimeVehicleViewer({
     <div
       className="viewer-stage runtime-vehicle-viewer"
       data-viewer-state={viewerState.kind}
+      data-viewer-presentation={viewerPresentation}
       data-viewer-package-sha256={visual.packageSha256}
       data-viewer-variant-raw-name={preview.variantRawName}
       data-hit-state={hitState.kind}
@@ -6968,7 +7079,7 @@ export function RuntimeVehicleViewer({
         />
       </div>
 
-      {viewerState.kind === "loading" && !exteriorStreaming ? (
+      {showSceneLoadingOverlay ? (
         <VehicleViewerLoading
           vehicleName={displayName}
           onClose={onClose}
@@ -7547,7 +7658,9 @@ export function RuntimeVehicleViewer({
             ? " · SOURCE-NATIVE GLTF + SPLIT HIT RUNTIME"
             : " · SPLIT HIT RUNTIME"}
           {hitState.kind === "loading" ? " · 校验 record / geometry / BVH" : ""}
-          {hitState.kind === "absent" ? " · 该 exact 变体尚无命中模型" : ""}
+          {hitState.kind === "absent"
+            ? ` · ${preview.hitAvailability?.reason ?? "该 exact 变体尚无命中模型"}`
+            : ""}
           {hitState.kind === "error" ? ` · 命中模型加载失败：${hitState.message}` : ""}
           {hitState.kind === "ready"
             ? ` · ${hitState.components} 命中组件 / ${hitState.triangles.toLocaleString()} 三角形`

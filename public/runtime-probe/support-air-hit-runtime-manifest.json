@@ -19,18 +19,18 @@
           "rawName": "BP_FlyingDrone"
         }
       ],
-      "bvhBytes": 13280,
-      "bvhPath": "assets/runtime-probe/hit-runtime/bvh/d91aa52dc719362c45a16b10f8dd22db0a24d138010cb24bf6fbd63afad4cc65.bin",
-      "bvhSha256": "d91aa52dc719362c45a16b10f8dd22db0a24d138010cb24bf6fbd63afad4cc65",
+      "bvhBytes": 25568,
+      "bvhPath": "assets/runtime-probe/hit-runtime/bvh/2e7aca4e97621fd722945ebe920d7033e6ea6670004891d8ba4e5bc075913b75.bin",
+      "bvhSha256": "2e7aca4e97621fd722945ebe920d7033e6ea6670004891d8ba4e5bc075913b75",
       "formatVersion": "hit-scene-runtime/v1",
       "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone.BP_FlyingDrone_C",
-      "geometryBytes": 32664,
-      "geometryPath": "assets/runtime-probe/hit-runtime/geometry/0f4f145d171f654e522d3a0281c8edd0f193edd987c2e0b9881de5953906c23d.bin",
-      "geometrySha256": "0f4f145d171f654e522d3a0281c8edd0f193edd987c2e0b9881de5953906c23d",
+      "geometryBytes": 65328,
+      "geometryPath": "assets/runtime-probe/hit-runtime/geometry/c8361675cdd94084120684d87d6403d38a8a6995deb6ba2373ee26bac5b0e6e1.bin",
+      "geometrySha256": "c8361675cdd94084120684d87d6403d38a8a6995deb6ba2373ee26bac5b0e6e1",
       "promoEntryId": "support-air-source-2c7c90faa71c8a8ebd9c5c85cc53fec2",
-      "recordBytes": 22883,
-      "recordPath": "assets/runtime-probe/hit-runtime/records/0009f7c65cb50d183b526126f0cdc724ebd2469d12d201eeb2e2b4f5ff8ad6dc.json",
-      "recordSha256": "0009f7c65cb50d183b526126f0cdc724ebd2469d12d201eeb2e2b4f5ff8ad6dc",
+      "recordBytes": 29172,
+      "recordPath": "assets/runtime-probe/hit-runtime/records/ab720cb4a78f2e1df9d1596ec988f611991a5146effdb1832650550d0fb54455.json",
+      "recordSha256": "ab720cb4a78f2e1df9d1596ec988f611991a5146effdb1832650550d0fb54455",
       "sourceVehicleId": "support-air-source-2c7c90faa71c8a8ebd9c5c85cc53fec2",
       "targetPackage": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone",
       "vehicleId": "vehicle-2ce3b2a66f8d62b5bff2b01f02a703a71df35252a5fb641499b1a9050f45778d"
@@ -70,21 +70,44 @@
           "rawName": "BP_FlyingDrone_Recoverable"
         }
       ],
-      "bvhBytes": 13280,
-      "bvhPath": "assets/runtime-probe/hit-runtime/bvh/cb80d5c390f6669cca36ec0952a92a2fa0fb37a6dd830ef3dcc3c49651eac832.bin",
-      "bvhSha256": "cb80d5c390f6669cca36ec0952a92a2fa0fb37a6dd830ef3dcc3c49651eac832",
+      "bvhBytes": 25568,
+      "bvhPath": "assets/runtime-probe/hit-runtime/bvh/9b5436b2c0b6dc1d7d2efb2b0ce3097b0cacb260ebeecc8fdd12922c3a518b5e.bin",
+      "bvhSha256": "9b5436b2c0b6dc1d7d2efb2b0ce3097b0cacb260ebeecc8fdd12922c3a518b5e",
       "formatVersion": "hit-scene-runtime/v1",
       "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_Recoverable.BP_FlyingDrone_Recoverable_C",
-      "geometryBytes": 32664,
-      "geometryPath": "assets/runtime-probe/hit-runtime/geometry/89acc00489f59cbf498bed3a7bafb27bad8f7acbb4e95026a0107d11fa81690a.bin",
-      "geometrySha256": "89acc00489f59cbf498bed3a7bafb27bad8f7acbb4e95026a0107d11fa81690a",
+      "geometryBytes": 65328,
+      "geometryPath": "assets/runtime-probe/hit-runtime/geometry/c7a6ae7506adfc82cc55e05b7ff5c8dc7dbb2c1bbdc4acdb69ba32d25db45d5e.bin",
+      "geometrySha256": "c7a6ae7506adfc82cc55e05b7ff5c8dc7dbb2c1bbdc4acdb69ba32d25db45d5e",
       "promoEntryId": "support-air-source-100ce2d922896b3cef6a234889e10b78",
-      "recordBytes": 23042,
-      "recordPath": "assets/runtime-probe/hit-runtime/records/7cf129eec42bbbff17d820a884f469d9c3bd37e4fa6838e1d37253501b7460a5.json",
-      "recordSha256": "7cf129eec42bbbff17d820a884f469d9c3bd37e4fa6838e1d37253501b7460a5",
+      "recordBytes": 29391,
+      "recordPath": "assets/runtime-probe/hit-runtime/records/96fb1b5d888f78d5718c07826ada7f764646cbb9d888f91af7042065bda4bed9.json",
+      "recordSha256": "96fb1b5d888f78d5718c07826ada7f764646cbb9d888f91af7042065bda4bed9",
       "sourceVehicleId": "support-air-source-100ce2d922896b3cef6a234889e10b78",
       "targetPackage": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_Recoverable",
       "vehicleId": "vehicle-66eced3a5918cfdee68d89691f429d10804e7a9d9224b74f2d77ed6a53935fe1"
+    },
+    {
+      "bindings": [
+        {
+          "cardId": "wpmc--portable-recon-drone--drone",
+          "rawName": "BP_FlyingDrone_WPMC"
+        }
+      ],
+      "bvhBytes": 25568,
+      "bvhPath": "assets/runtime-probe/hit-runtime/bvh/2e7aca4e97621fd722945ebe920d7033e6ea6670004891d8ba4e5bc075913b75.bin",
+      "bvhSha256": "2e7aca4e97621fd722945ebe920d7033e6ea6670004891d8ba4e5bc075913b75",
+      "formatVersion": "hit-scene-runtime/v1",
+      "generatedClass": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_WPMC.BP_FlyingDrone_WPMC_C",
+      "geometryBytes": 65328,
+      "geometryPath": "assets/runtime-probe/hit-runtime/geometry/c8361675cdd94084120684d87d6403d38a8a6995deb6ba2373ee26bac5b0e6e1.bin",
+      "geometrySha256": "c8361675cdd94084120684d87d6403d38a8a6995deb6ba2373ee26bac5b0e6e1",
+      "promoEntryId": "support-air-source-bd8305235b8e5835f47856ad9d2046fc",
+      "recordBytes": 29255,
+      "recordPath": "assets/runtime-probe/hit-runtime/records/a6fa1a37ccf7b93820760da7f15492dc07baaa6c980541f89b71c83f43950fb4.json",
+      "recordSha256": "a6fa1a37ccf7b93820760da7f15492dc07baaa6c980541f89b71c83f43950fb4",
+      "sourceVehicleId": "support-air-source-bd8305235b8e5835f47856ad9d2046fc",
+      "targetPackage": "/Game/Blueprints/Commander/CommandActors/Drone/BP_FlyingDrone_WPMC",
+      "vehicleId": "vehicle-f530afb9759555d4ed8d30180c62991a029a31f18fe2626e6aba469497288a8e"
     }
   ],
   "schemaVersion": "1.0.0"
