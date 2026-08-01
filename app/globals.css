@@ -5881,6 +5881,22 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   max-width: min(620px, calc(100vw - 40px));
 }
 
+.infantry-weapon-select__option-scroll {
+  min-height: 0;
+  max-height: min(220px, calc(100dvh - 300px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--border-strong) var(--bg-1);
+  scrollbar-gutter: stable;
+}
+
+.infantry-weapon-select__option-scroll
+  > .viewer-search-select__options {
+  max-height: none;
+  overflow: visible;
+  scrollbar-gutter: auto;
+}
+
 .infantry-weapon-select__legend,
 .infantry-weapon-select .viewer-search-select__group > button {
   display: grid;
@@ -5894,9 +5910,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-select__legend {
+  position: sticky;
+  z-index: 2;
+  top: 0;
   margin: 0 8px 5px;
   padding: 0 7px 7px;
   border-bottom: 1px solid rgba(225, 200, 155, 0.2);
+  background: rgba(10, 13, 11, 0.98);
   color: rgba(225, 200, 155, 0.64);
   font-size: 8px;
   font-weight: 700;
@@ -5927,7 +5947,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   min-width: 0;
   min-height: 22px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding-inline: 6px;
   border-left: 1px solid rgba(225, 200, 155, 0.16);
   white-space: nowrap;
@@ -6013,12 +6033,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-effect-legend__column--penetration,
+.infantry-weapon-effect-legend__column--direct,
 .infantry-weapon-effect-legend__column--radial {
   justify-content: flex-start;
-}
-
-.infantry-weapon-effect-legend__column--direct {
-  justify-content: center;
 }
 
 .infantry-weapon-effect-legend__column--radial {
@@ -6068,7 +6085,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .infantry-weapon-effect-chip[data-effect-role="direct-damage"] {
   --effect-color: #ee5d61;
   width: 100%;
-  justify-content: center;
+  justify-content: flex-start;
   padding-inline: 0;
 }
 
@@ -6124,7 +6141,11 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .infantry-weapon-effect-chip[data-effect-role="direct-damage"] > b {
   width: 100%;
-  text-align: center;
+  color: #ff7378;
+  text-align: left;
+  text-shadow:
+    0 0 4px rgba(255, 82, 89, 0.88),
+    0 0 10px rgba(255, 56, 64, 0.52);
 }
 
 .viewer-distance-control {

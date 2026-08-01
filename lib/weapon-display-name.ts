@@ -26,7 +26,10 @@ const EXACT_EQUIPMENT_NAMES_ZH: Readonly<Record<string, string>> = {
 };
 
 const NAMED_WEAPON_TRANSLATIONS: ReadonlyArray<readonly [RegExp, string]> = [
-  [/\bKornet[“"]康纳特[”"]/giu, "Kornet“短号”"],
+  [
+    /\b(?:9M133\s+)?Kornet\s*[“"]\s*康纳特\s*[”"]/giu,
+    "9M133 Kornet“短号”",
+  ],
   [/\bBGM-71\s+TOW\b(?![“"])/giu, "BGM-71 TOW“陶式”"],
   [/\bHJ8L\b(?![“"])/giu, "HJ-8L“红箭-8L”"],
   [/\b9M119M\s+Refleks\b(?![“"])/giu, "9M119M Refleks“反射”"],
