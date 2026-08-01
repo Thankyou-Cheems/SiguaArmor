@@ -5877,14 +5877,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-select .viewer-search-select__menu {
-  width: max(100%, 620px);
-  max-width: min(700px, calc(100vw - 40px));
+  width: max(100%, 540px);
+  max-width: min(620px, calc(100vw - 40px));
 }
 
 .infantry-weapon-select__legend,
 .infantry-weapon-select .viewer-search-select__group > button {
   display: grid;
-  grid-template-columns: minmax(126px, 0.78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(180px, 1fr) minmax(0, 250px);
   align-items: center;
   gap: 8px;
 }
@@ -5909,26 +5909,28 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-effect-header {
-  --weapon-penetration-column-width: 106px;
-  --weapon-direct-column-width: 70px;
+  --weapon-penetration-column-width: 80px;
+  --weapon-direct-column-width: 62px;
   display: grid;
   width: 100%;
-  max-width: 340px;
+  max-width: 250px;
   grid-template-columns:
     minmax(0, var(--weapon-penetration-column-width))
     minmax(0, var(--weapon-direct-column-width))
     minmax(0, 1fr);
   justify-self: end;
-  column-gap: 8px;
+  column-gap: 0;
 }
 
 .infantry-weapon-effect-header > span {
+  display: flex;
   min-width: 0;
+  min-height: 22px;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 6px;
+  border-left: 1px solid rgba(225, 200, 155, 0.16);
   white-space: nowrap;
-}
-
-.infantry-weapon-effect-header > span:nth-child(2) {
-  text-align: center;
 }
 
 .infantry-weapon-select[data-source-filtered="true"]
@@ -5936,7 +5938,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .infantry-weapon-select[data-source-filtered="true"]
   .viewer-search-select__group
   > button {
-  grid-template-columns: minmax(180px, 0.8fr) minmax(300px, 1.2fr);
+  grid-template-columns: minmax(180px, 1fr) minmax(0, 250px);
 }
 
 .infantry-weapon-select
@@ -5981,30 +5983,33 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .infantry-weapon-select[data-source-filtered="true"]
   .viewer-search-select__trigger
   .infantry-weapon-effect-legend {
-  --weapon-penetration-column-width: 106px;
-  --weapon-direct-column-width: 70px;
+  --weapon-penetration-column-width: 80px;
+  --weapon-direct-column-width: 62px;
 }
 
 .infantry-weapon-effect-legend {
-  --weapon-penetration-column-width: 106px;
-  --weapon-direct-column-width: 70px;
+  --weapon-penetration-column-width: 80px;
+  --weapon-direct-column-width: 62px;
   display: grid;
   width: 100%;
-  max-width: 340px;
+  max-width: 250px;
   min-width: 0;
   grid-template-columns:
     minmax(0, var(--weapon-penetration-column-width))
     minmax(0, var(--weapon-direct-column-width))
     minmax(0, 1fr);
   align-items: center;
-  column-gap: 8px;
+  column-gap: 0;
 }
 
 .infantry-weapon-effect-legend__column {
   display: flex;
   min-width: 0;
+  min-height: 26px;
   align-items: center;
   gap: 2px 4px;
+  padding-inline: 6px;
+  border-left: 1px solid rgba(225, 200, 155, 0.16);
 }
 
 .infantry-weapon-effect-legend__column--penetration,
@@ -6068,7 +6073,19 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-effect-chip[data-effect-role="penetration"] {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 3px;
+  padding-inline: 0;
   color: var(--effect-color);
+}
+
+.infantry-weapon-effect-chip[data-effect-role="radial-damage"] {
+  display: grid;
+  grid-template-columns: 24px minmax(0, auto);
+  gap: 3px;
+  padding-inline: 0;
 }
 
 .infantry-weapon-effect-chip[data-zero="true"] {
@@ -6076,6 +6093,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-effect-chip > svg {
+  justify-self: center;
   color: currentColor;
   filter: drop-shadow(0 0 3px currentColor);
 }
@@ -6096,10 +6114,17 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-effect-chip > b {
+  min-width: 0;
   color: #fff4de;
   font: inherit;
   font-size: 9px;
   font-weight: 800;
+  text-align: left;
+}
+
+.infantry-weapon-effect-chip[data-effect-role="direct-damage"] > b {
+  width: 100%;
+  text-align: center;
 }
 
 .viewer-distance-control {
