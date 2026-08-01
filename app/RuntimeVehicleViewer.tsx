@@ -64,6 +64,7 @@ import {
   weaponPenetrationKindForDamageTypePath,
   type WeaponPenetrationKind,
 } from "../lib/weapon-penetration-kind";
+import { weaponNameZh } from "../lib/weapon-display-name";
 import {
   VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS,
   explosiveDamageTypeIconKinds,
@@ -1210,54 +1211,56 @@ function RuntimeWeaponSelector({
                   </button>
                 ) : null}
               </div>
-              <RuntimeWeaponSelectorLegend />
-              <div
-                className="viewer-search-select__options"
-                role="listbox"
-                aria-label="武器与弹种列表"
-              >
-                {groupedOptions.length > 0 ? (
-                  <>
-                    {groupedOptions.map(
-                      ({ familyId, group, options: groupOptions }) => (
-                        <div
-                          className="viewer-search-select__group"
-                          role="group"
-                          aria-label={group}
-                          key={familyId}
-                        >
-                          {showAllSources ? <strong>{group}</strong> : null}
-                          {groupOptions.map((option) => (
-                            <button
-                              type="button"
-                              role="option"
-                              aria-selected={option.value === value}
-                              data-selected={option.value === value}
-                              key={option.value}
-                              onClick={() => choose(option)}
-                            >
-                              <span>
-                                {showAllSources
-                                  ? option.label
-                                  : option.weaponLabel}
-                              </span>
-                              {metrics(option)}
-                            </button>
-                          ))}
-                        </div>
-                      ),
-                    )}
-                    {hiddenCount > 0 ? (
-                      <span className="viewer-search-select__empty">
-                        还有 {hiddenCount} 项，继续输入以缩小范围
-                      </span>
-                    ) : null}
-                  </>
-                ) : (
-                  <span className="viewer-search-select__empty">
-                    没有匹配项
-                  </span>
-                )}
+              <div className="infantry-weapon-select__option-scroll">
+                <RuntimeWeaponSelectorLegend />
+                <div
+                  className="viewer-search-select__options"
+                  role="listbox"
+                  aria-label="武器与弹种列表"
+                >
+                  {groupedOptions.length > 0 ? (
+                    <>
+                      {groupedOptions.map(
+                        ({ familyId, group, options: groupOptions }) => (
+                          <div
+                            className="viewer-search-select__group"
+                            role="group"
+                            aria-label={group}
+                            key={familyId}
+                          >
+                            {showAllSources ? <strong>{group}</strong> : null}
+                            {groupOptions.map((option) => (
+                              <button
+                                type="button"
+                                role="option"
+                                aria-selected={option.value === value}
+                                data-selected={option.value === value}
+                                key={option.value}
+                                onClick={() => choose(option)}
+                              >
+                                <span>
+                                  {showAllSources
+                                    ? option.label
+                                    : option.weaponLabel}
+                                </span>
+                                {metrics(option)}
+                              </button>
+                            ))}
+                          </div>
+                        ),
+                      )}
+                      {hiddenCount > 0 ? (
+                        <span className="viewer-search-select__empty">
+                          还有 {hiddenCount} 项，继续输入以缩小范围
+                        </span>
+                      ) : null}
+                    </>
+                  ) : (
+                    <span className="viewer-search-select__empty">
+                      没有匹配项
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ) : null}
@@ -3451,14 +3454,17 @@ export function RuntimeVehicleViewer({
               ),
             ];
             const sourceSummary = sourceIdentity.label;
-            const weaponLabel =
-              selectorVariant?.label ?? weapon.displayNameZh;
-            const familyLabel =
+            const weaponLabel = weaponNameZh(
+              selectorVariant?.label ?? weapon.displayNameZh,
+            );
+            const familyLabel = weaponNameZh(
               selectorVariant?.familyLabel ??
-              weapon.explosiveCategoryLabel ??
-              source.groupName;
-            const qualifier =
-              selectorVariant?.qualifier ?? weapon.displayNameZh;
+                weapon.explosiveCategoryLabel ??
+                source.groupName,
+            );
+            const qualifier = weaponNameZh(
+              selectorVariant?.qualifier ?? weapon.displayNameZh,
+            );
             const label = selectorVariant
               ? selectorVariant.configurationKeys.length > 0 &&
                 sourceSummary
