@@ -17,3 +17,32 @@ export function runtimeAnalysisVisualUrl(url: string) {
     ? RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL
     : url;
 }
+
+export type RuntimeViewerPresentation =
+  | "loading"
+  | "exterior-placeholder"
+  | "scene"
+  | "error";
+
+export function runtimeViewerPresentation({
+  mode,
+  viewerState,
+  initialCameraFitReady,
+  exteriorPlaceholderReady,
+}: {
+  mode: "exterior" | "armor" | "interior";
+  viewerState: "loading" | "ready" | "error";
+  initialCameraFitReady: boolean;
+  exteriorPlaceholderReady: boolean;
+}): RuntimeViewerPresentation {
+  if (viewerState === "error") return "error";
+  if (!initialCameraFitReady) return "loading";
+  if (
+    mode === "exterior" &&
+    viewerState === "loading" &&
+    exteriorPlaceholderReady
+  ) {
+    return "exterior-placeholder";
+  }
+  return viewerState === "loading" ? "loading" : "scene";
+}
