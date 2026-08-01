@@ -19,6 +19,11 @@ import {
   vehicleDamageTypeIconLabel,
 } from "../../lib/vehicle-damage-type-icons";
 import {
+  vehicleDisplayNameZh,
+  vehicleTypeNameZh,
+} from "../../lib/vehicle-display-name";
+import { weaponNameZh } from "../../lib/weapon-display-name";
+import {
   wikiVehicleEntries,
   wikiVehicleSummary,
   type WikiVehicleEntry,
@@ -128,9 +133,11 @@ function WikiVehicleCard({
       </div>
       <div className="sigua-wiki-vehicle-card__body">
         <div className="sigua-wiki-vehicle-card__topline">
-          <span>{vehicle.type}</span>
+          <span>{vehicleTypeNameZh(vehicle.type) ?? vehicle.type}</span>
         </div>
-        <strong className="sigua-wiki-vehicle-card__name">{vehicle.displayName}</strong>
+        <strong className="sigua-wiki-vehicle-card__name">
+          {vehicleDisplayNameZh(vehicle.displayName)}
+        </strong>
         <code className="sigua-wiki-vehicle-card__raw-name">{vehicle.rawName}</code>
         <div className="sigua-wiki-vehicle-card__chips">
           {vehicle.factions.slice(0, 4).map((faction) => <span key={faction}>{factionDisplayName(faction)}</span>)}
@@ -147,8 +154,8 @@ function WikiVehicleCard({
                 className="sigua-wiki-vehicle-weapon"
                 key={variant.id}
               >
-                <span title={variant.displayLabel}>
-                  {variant.label}
+                <span title={weaponNameZh(variant.displayLabel)}>
+                  {weaponNameZh(variant.label)}
                 </span>
                 <WikiVehicleWeaponMetrics variant={variant} />
               </div>
@@ -197,8 +204,10 @@ export function WikiVehicles() {
         ) ?? [];
       const matchesQuery = !needle || normalized([
         vehicle.displayName,
+        vehicleDisplayNameZh(vehicle.displayName),
         vehicle.rawName,
         vehicle.type,
+        vehicleTypeNameZh(vehicle.type) ?? "",
         ...vehicle.vehicleTags,
         ...vehicle.factions,
         ...vehicle.factions.map((faction) => factionDisplayName(faction)),
@@ -207,6 +216,7 @@ export function WikiVehicles() {
           variant.label,
           variant.qualifier,
           variant.displayLabel,
+          weaponNameZh(variant.displayLabel),
           variant.searchText,
           ...variant.sourceLabels,
           ...variant.factionIds,
@@ -270,7 +280,11 @@ export function WikiVehicles() {
               <span className="sigua-wiki-visually-hidden">Filter by type</span>
               <select value={type} onChange={(event) => setType(event.target.value)}>
                 <option value="all">All Types</option>
-                {typeOptions.map((value) => <option key={value} value={value}>{value}</option>)}
+                {typeOptions.map((value) => (
+                  <option key={value} value={value}>
+                    {vehicleTypeNameZh(value) ?? value}
+                  </option>
+                ))}
               </select>
             </label>
             <span className="sigua-wiki-result-count">{filtered.length} catalog variants</span>

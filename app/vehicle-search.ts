@@ -4,6 +4,12 @@ import type {
   CatalogSearchVariant,
   CatalogVariant,
 } from "./catalog-types";
+import { vehicleConfigurationNameZh } from "../lib/vehicle-configuration-name.ts";
+import {
+  vehicleDisplayNameZh,
+  vehicleTypeNameZh,
+} from "../lib/vehicle-display-name.ts";
+import { weaponDisplayNameZh } from "../lib/weapon-display-name.ts";
 import { runtimeVehicleEquipmentBindingForId } from "./runtime-vehicle-equipment.ts";
 
 interface VehicleSearchAliases {
@@ -291,6 +297,7 @@ function vehicleSearchTokens(record: CatalogRecord): VehicleSearchTokenGroups {
   return {
     primary: [
       record.official.nameZh,
+      vehicleDisplayNameZh(record.official.nameZh),
       record.data?.general.displayName ?? "",
       record.mapping.selectedRawName ?? "",
     ].map(normalizeVehicleSearch),
@@ -302,6 +309,7 @@ function vehicleSearchTokens(record: CatalogRecord): VehicleSearchTokenGroups {
     ].map(normalizeVehicleSearch),
     context: [
       record.official.typeZh,
+      vehicleTypeNameZh(record.official.typeZh) ?? "",
       record.official.groupNameZh,
       record.official.groupId,
       ...(record.searchTerms ?? []),
@@ -329,7 +337,9 @@ function vehicleVariantSearchTokens(
   return {
     primary: [
       variant.alias,
+      vehicleConfigurationNameZh(variant.alias),
       variant.data.general.displayName,
+      vehicleDisplayNameZh(variant.data.general.displayName),
       variant.sourceRawName,
       variant.data.general.rawName,
     ].map(normalizeVehicleSearch),
@@ -340,7 +350,12 @@ function vehicleVariantSearchTokens(
     context: [
       ...(variant.searchTerms ?? []),
       ...weapons
-        .flatMap((weapon) => [weapon.displayName, weapon.gunName, weapon.projectileName ?? ""]),
+        .flatMap((weapon) => [
+          weapon.displayName,
+          weaponDisplayNameZh(weapon),
+          weapon.gunName,
+          weapon.projectileName ?? "",
+        ]),
     ]
       .map(normalizeVehicleSearch),
   };
@@ -482,7 +497,9 @@ function rankCatalogIndexRecord(record: CatalogSearchRecord, query: string) {
       promoEntryId: record.promoEntryId,
       primary: [
         record.official.nameZh,
+        vehicleDisplayNameZh(record.official.nameZh),
         record.selectedDisplayName ?? "",
+        vehicleDisplayNameZh(record.selectedDisplayName ?? ""),
         record.selectedRawName ?? "",
       ],
       aliases: record.searchAliases ?? [],
@@ -491,6 +508,7 @@ function rankCatalogIndexRecord(record: CatalogSearchRecord, query: string) {
       context: [
         record.official.groupNameZh,
         record.official.typeZh,
+        vehicleTypeNameZh(record.official.typeZh) ?? "",
         ...(record.searchTerms ?? []),
       ],
     },
@@ -506,7 +524,13 @@ function rankCatalogIndexVariant(
   return rankVehicleCandidateSearch(
     {
       promoEntryId: variant.cardId,
-      primary: [variant.alias, variant.displayName, variant.sourceRawName],
+      primary: [
+        variant.alias,
+        vehicleConfigurationNameZh(variant.alias),
+        variant.displayName,
+        vehicleDisplayNameZh(variant.displayName),
+        variant.sourceRawName,
+      ],
       aliases: variant.searchAliases ?? [],
       rawName: variant.sourceRawName,
       groupId: record.official.groupId,

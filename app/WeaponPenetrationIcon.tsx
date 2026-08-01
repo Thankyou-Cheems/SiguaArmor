@@ -10,84 +10,110 @@ interface WeaponPenetrationIconProps
 
 function ArmorPenetrationIconPaths() {
   return (
-    <>
+    <g data-icon-motif="apfsds-separated-sabots">
       <path
-        d="M1 5.5h3M0.5 8h3M1 10.5h3"
-        stroke="currentColor"
-        strokeLinecap="round"
-        opacity="0.52"
+        d="M2.2 7.25h18.15L26.2 8l-5.85.75H2.2v-1.5Z"
+        fill="currentColor"
       />
       <path
-        d="M4 8 8.2 4.7l3 1.45 3.3 1.1v1.5l-3.3 1.1-3 1.45L4 8Z"
+        d="M2.2 8 5.8 5.45v1.8h2.1v1.5H5.8v1.8L2.2 8Z"
         fill="currentColor"
-        fillOpacity="0.16"
+        fillOpacity="0.46"
+      />
+      <path
+        d="m8.8 5.75 4.9-4.45 3.4-.65-4.35 4.7-3.95.4Z"
+        fill="currentColor"
+        fillOpacity="0.13"
         stroke="currentColor"
         strokeLinejoin="round"
+        strokeWidth="0.82"
       />
       <path
-        d="M15.8 1.25h3.1v4.5l-3.1 1.45V1.25ZM15.8 8.8l3.1 1.45v4.5h-3.1V8.8Z"
-        fill="currentColor"
-        fillOpacity="0.24"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M6.4 7.3h10.5L22.5 8l-5.6.7H6.4V7.3Z"
-        fill="currentColor"
-      />
-      <path
-        d="m20.1 5.8 2-1.15M20.8 8h2.4m-3.1 2.2 2 1.15"
+        d="m12.15 4.45 2.4-2.3m-4.65 2.7 1.7-1.65"
         stroke="currentColor"
         strokeLinecap="round"
-        opacity="0.7"
+        strokeWidth="0.72"
+        opacity="0.58"
       />
-    </>
+      <path
+        d="m8.8 10.25 4.9 4.45 3.4.65-4.35-4.7-3.95-.4Z"
+        fill="currentColor"
+        fillOpacity="0.13"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="0.82"
+      />
+      <path
+        d="m12.15 11.55 2.4 2.3m-4.65-2.7 1.7 1.65"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="0.72"
+        opacity="0.58"
+      />
+      <path
+        d="M21.3 1.15h3.1v5.15L21.75 8l2.65 1.7v7.15h-3.1v-5.9L19.65 8l1.65-2.95v-3.9Z"
+        fill="currentColor"
+        fillOpacity="0.17"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="1.1"
+      />
+      <path
+        d="m25.4 5.15 2.05-1.3M26.2 8h2.75m-3.55 2.85 2.05 1.3"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.05"
+        opacity="0.72"
+      />
+    </g>
   );
 }
 
 function ShapedChargePenetrationIconPaths() {
   return (
-    <>
+    <g data-icon-motif="shaped-charge-jet">
       <path
-        d="M1.5 3.1h6.2v9.8H1.5V3.1Z"
+        d="M1.5 2.2h8.8v11.6H1.5V2.2Z"
         fill="currentColor"
-        fillOpacity="0.08"
+        fillOpacity="0.07"
+        stroke="currentColor"
+        strokeWidth="1.25"
+      />
+      <path
+        d="m3.1 3.8 6.7 4.2-6.7 4.2V3.8Z"
+        fill="currentColor"
+        fillOpacity="0.22"
         stroke="currentColor"
         strokeLinejoin="round"
+        strokeWidth="1.2"
       />
       <path
-        d="m2.8 4.4 4.9 3.6-4.9 3.6V4.4Z"
+        d="M10.2 8 20 6.75v2.5L10.2 8Z"
         fill="currentColor"
-        fillOpacity="0.2"
-        stroke="currentColor"
-        strokeLinejoin="round"
+        fillOpacity="0.78"
       />
       <path
-        d="M7.7 8h9.15"
-        stroke="currentColor"
-        strokeWidth="1.45"
-        strokeLinecap="round"
-      />
-      <path
-        d="m7.7 8 5.6-1.05v2.1L7.7 8Z"
-        fill="currentColor"
-        fillOpacity="0.76"
-      />
-      <path
-        d="M16.2 1.25h3v4.55l-3 1.35v-5.9ZM16.2 8.85l3 1.35v4.55h-3v-5.9Z"
-        fill="currentColor"
-        fillOpacity="0.2"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path d="M16.8 7.35 22.6 8l-5.8.65v-1.3Z" fill="currentColor" />
-      <path
-        d="m20 5.7 2.15-1.2M20.7 8h2.55M20 10.3l2.15 1.2"
+        d="M10.2 8h17.9"
         stroke="currentColor"
         strokeLinecap="round"
-        opacity="0.76"
+        strokeWidth="1.25"
       />
-    </>
+      <path
+        d="M19.6 1.3h3.15v5.05L20.1 8l2.65 1.65v7.05H19.6v-5.75L17.9 8l1.7-2.95V1.3Z"
+        fill="currentColor"
+        fillOpacity="0.16"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="1.15"
+      />
+      <path
+        d="m24.1 5.15 2.15-1.35M25 8h3.35m-4.25 2.85 2.15 1.35"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.1"
+        opacity="0.78"
+      />
+    </g>
   );
 }
 
@@ -105,8 +131,8 @@ export function WeaponPenetrationIcon({
         .join(" ")}
       data-penetration-kind={kind}
       width={size}
-      height={Math.round(size * 0.68)}
-      viewBox="0 0 24 16"
+      height={Math.round(size * 0.6)}
+      viewBox="0 0 30 18"
       fill="none"
       focusable="false"
       aria-hidden="true"

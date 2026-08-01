@@ -1,4 +1,7 @@
-import { weaponDisplayNameZh } from "../lib/weapon-display-name.ts";
+import {
+  weaponDisplayNameZh,
+  weaponNameZh,
+} from "../lib/weapon-display-name.ts";
 import type {
   RuntimeWeaponLabel,
   RuntimeWeaponLabelMatchBasis,
@@ -11,6 +14,7 @@ import {
 import {
   runtimeExplosiveCanonicalName,
   runtimeExplosiveLayerOrderIsClosed,
+  withRuntimeExplosiveSourceBallistics,
   type RuntimeExplosiveCategory,
   type RuntimeExplosiveSource,
 } from "../lib/runtime-explosive-catalog.ts";
@@ -583,7 +587,7 @@ function runtimeCatalogAttackSourceWeapon(
       "catalog:generated/internal/weapon-catalog.json",
     sourceRecordSha256: weaponCatalogSummary.catalogRevision,
     sourceRecordBytes: 0,
-    displayNameZh: selectorVariant.displayLabel,
+    displayNameZh: weaponNameZh(selectorVariant.displayLabel),
     displayNameEnglish: selectorVariant.label,
     sourceKind: "explosive-catalog",
     selectorVariant,
@@ -598,7 +602,9 @@ function runtimeCatalogAttackSourceWeapon(
     searchAliases: [
       selectorVariant.searchText,
       selectorVariant.familyLabel,
+      weaponNameZh(selectorVariant.familyLabel),
       selectorVariant.label,
+      weaponNameZh(selectorVariant.label),
       selectorVariant.qualifier,
       ...(selectorVariant.sourceLabels ?? []),
       ...(selectorVariant.factionIds ?? []),
@@ -739,6 +745,11 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
             weaponCatalogBallisticProfileForId(
               weapon.ballisticsId,
             );
+          const radialSource = selectorVariant?.radialAssetId
+            ? runtimeExplosiveCatalog.sources.find(
+                ({ id }) => id === selectorVariant.radialAssetId,
+              ) ?? null
+            : null;
           const releaseRecord = runtimeHitRecordReferenceForVariant(
             weapon.sourceCardId,
             weapon.sourceRawName,
@@ -757,6 +768,8 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
             !/^[0-9a-f]{64}$/.test(weapon.ballisticsId) ||
             weapon.ballisticsWeaponIndex !== 0 ||
             !selectorVariant ||
+            (selectorVariant.radialAssetId !== null &&
+              radialSource === null) ||
             !selectorVariant.ballisticProfileIds.includes(
               weapon.ballisticsId,
             ) ||
@@ -789,7 +802,13 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
           ballisticsIds.add(sourceIdentity);
           return {
             ...weapon,
-            ballisticsModel: ballisticProfile.model,
+            ballisticsModel: radialSource
+              ? withRuntimeExplosiveSourceBallistics(
+                  ballisticProfile.model,
+                  weapon.ballisticsWeaponIndex,
+                  radialSource,
+                )
+              : ballisticProfile.model,
             ballisticsSource: {
               kind: weapon.evidence.kind,
               catalogFingerprintSha256:
@@ -798,13 +817,29 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
                 weapon.evidence.runtimeRecordSha256 ?? undefined,
               runtimeWeaponIndex:
                 weapon.evidence.runtimeWeaponIndex ?? undefined,
-              projectileEvidence: null,
+              projectileEvidence: radialSource
+                ? {
+                    recordSha256:
+                      weaponCatalogSummary.catalogRevision,
+                    projectileIndex: 0,
+                    assetPath: radialSource.assetPath,
+                  }
+                : null,
               curveEvidence: [],
               baseCurveFallbacks: [],
             },
             sourceKind: "vehicle",
             selectorVariant,
             directFireRoute: true,
+            explosiveCategory: radialSource?.category,
+            explosiveCategoryLabel:
+              radialSource?.categoryLabel,
+            explosiveLayerOrderEvidence:
+              radialSource?.layerOrderEvidence,
+            explosiveLayerOrderClosed: radialSource
+              ? runtimeExplosiveLayerOrderIsClosed(radialSource)
+              : undefined,
+            explosiveLayerCount: radialSource?.layers.length,
             sourceVehicleId: releaseRecord.vehicleId,
             sourceRecordUrl: releaseRecord.recordUrl,
             sourceRecordSha256: releaseRecord.recordSha256,
@@ -959,7 +994,7 @@ const wikiInfantryDirectAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
         "catalog:generated/internal/weapon-catalog.json",
       sourceRecordSha256: weaponCatalogSummary.catalogRevision,
       sourceRecordBytes: 0,
-      displayNameZh: selectorVariant.displayLabel,
+      displayNameZh: weaponNameZh(selectorVariant.displayLabel),
       displayNameEnglish: configuration.displayName,
       sourceKind: "wiki-infantry",
       selectorVariant,
@@ -977,7 +1012,9 @@ const wikiInfantryDirectAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
       searchAliases: [
         selectorVariant.searchText,
         selectorVariant.familyLabel,
+        weaponNameZh(selectorVariant.familyLabel),
         selectorVariant.label,
+        weaponNameZh(selectorVariant.label),
         configuration.weaponKey,
         configuration.displayName,
         ...configuration.factions,

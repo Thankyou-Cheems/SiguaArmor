@@ -5877,18 +5877,62 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-select .viewer-search-select__menu {
-  width: max(100%, 560px);
-  max-width: min(620px, calc(100vw - 40px));
+  width: max(100%, 620px);
+  max-width: min(700px, calc(100vw - 40px));
 }
 
+.infantry-weapon-select__legend,
 .infantry-weapon-select .viewer-search-select__group > button {
   display: grid;
-  min-height: 44px;
   grid-template-columns: minmax(126px, 0.78fr) minmax(0, 1.22fr);
   align-items: center;
   gap: 8px;
 }
 
+.infantry-weapon-select .viewer-search-select__group > button {
+  min-height: 48px;
+}
+
+.infantry-weapon-select__legend {
+  margin: 0 8px 5px;
+  padding: 0 7px 7px;
+  border-bottom: 1px solid rgba(225, 200, 155, 0.2);
+  color: rgba(225, 200, 155, 0.64);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  line-height: 1.1;
+}
+
+.infantry-weapon-select__legend > span:first-child {
+  white-space: nowrap;
+}
+
+.infantry-weapon-effect-header {
+  --weapon-penetration-column-width: 106px;
+  --weapon-direct-column-width: 70px;
+  display: grid;
+  width: 100%;
+  max-width: 340px;
+  grid-template-columns:
+    minmax(0, var(--weapon-penetration-column-width))
+    minmax(0, var(--weapon-direct-column-width))
+    minmax(0, 1fr);
+  justify-self: end;
+  column-gap: 8px;
+}
+
+.infantry-weapon-effect-header > span {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.infantry-weapon-effect-header > span:nth-child(2) {
+  text-align: center;
+}
+
+.infantry-weapon-select[data-source-filtered="true"]
+  .infantry-weapon-select__legend,
 .infantry-weapon-select[data-source-filtered="true"]
   .viewer-search-select__group
   > button {
@@ -5937,21 +5981,23 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .infantry-weapon-select[data-source-filtered="true"]
   .viewer-search-select__trigger
   .infantry-weapon-effect-legend {
-  --weapon-direct-column-width: 112px;
+  --weapon-penetration-column-width: 106px;
+  --weapon-direct-column-width: 70px;
 }
 
 .infantry-weapon-effect-legend {
-  --weapon-direct-column-width: 132px;
+  --weapon-penetration-column-width: 106px;
+  --weapon-direct-column-width: 70px;
   display: grid;
   width: 100%;
-  max-width: 316px;
+  max-width: 340px;
   min-width: 0;
   grid-template-columns:
+    minmax(0, var(--weapon-penetration-column-width))
     minmax(0, var(--weapon-direct-column-width))
-    9px
     minmax(0, 1fr);
   align-items: center;
-  column-gap: 4px;
+  column-gap: 8px;
 }
 
 .infantry-weapon-effect-legend__column {
@@ -5961,9 +6007,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   gap: 2px 4px;
 }
 
+.infantry-weapon-effect-legend__column--penetration,
+.infantry-weapon-effect-legend__column--radial {
+  justify-content: flex-start;
+}
+
 .infantry-weapon-effect-legend__column--direct {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: center;
 }
 
 .infantry-weapon-effect-legend__column--radial {
@@ -6012,6 +6062,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .infantry-weapon-effect-chip[data-effect-role="direct-damage"] {
   --effect-color: #ee5d61;
+  width: 100%;
+  justify-content: center;
+  padding-inline: 0;
 }
 
 .infantry-weapon-effect-chip[data-effect-role="penetration"] {
@@ -6027,16 +6080,19 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   filter: drop-shadow(0 0 3px currentColor);
 }
 
+.infantry-weapon-effect-chip[data-effect-role="radial-damage"]
+  > .vehicle-damage-type-icon:is(
+    [data-damage-type-kind="heat"],
+    [data-damage-type-kind="hat"]
+  ) {
+  width: 24px;
+  height: 18px;
+}
+
 .infantry-weapon-penetration-icon {
   flex: 0 0 auto;
   overflow: visible;
   color: currentColor;
-}
-
-.infantry-weapon-direct-damage-icon {
-  flex: 0 0 auto;
-  overflow: visible;
-  color: #ee5d61;
 }
 
 .infantry-weapon-effect-chip > b {
@@ -6044,18 +6100,6 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   font: inherit;
   font-size: 9px;
   font-weight: 800;
-}
-
-.infantry-weapon-effect-legend__divider {
-  display: inline-flex;
-  min-height: 16px;
-  align-items: center;
-  justify-content: center;
-  margin: 0 1px;
-  color: rgba(228, 220, 202, 0.3);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
 }
 
 .viewer-distance-control {
@@ -9465,6 +9509,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     padding: 8px;
   }
 
+  .infantry-weapon-select[data-source-filtered="true"]
+    .infantry-weapon-select__legend,
   .infantry-weapon-select[data-source-filtered="true"]
     .viewer-search-select__group
     > button {

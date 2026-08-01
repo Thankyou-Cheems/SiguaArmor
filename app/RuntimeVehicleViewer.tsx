@@ -746,8 +746,11 @@ function RuntimeWeaponEffectLegend({
 }: {
   effects: readonly SearchableSelectEffect[];
 }) {
-  const directEffects = effects.filter(
-    ({ role }) => role !== "radial-damage",
+  const penetrationEffects = effects.filter(
+    ({ role }) => role === "penetration",
+  );
+  const directDamageEffects = effects.filter(
+    ({ role }) => role === "direct-damage",
   );
   const radialEffects = effects.filter(
     ({ role }) => role === "radial-damage",
@@ -767,21 +770,14 @@ function RuntimeWeaponEffectLegend({
         <WeaponPenetrationIcon
           className="infantry-weapon-penetration-icon"
           kind={effect.penetrationKind ?? "kinetic"}
-          size={17}
+          size={29}
         />
-      ) : effect.role === "direct-damage" ? (
-        <Swords
-          className="infantry-weapon-direct-damage-icon"
-          size={16}
-          strokeWidth={1.9}
-          aria-hidden="true"
-        />
-      ) : (
+      ) : effect.role === "radial-damage" ? (
         <VehicleDamageTypeIcon
           kind={effect.damageTypeKind}
-          size={16}
+          size={18}
         />
-      )}
+      ) : null}
       <b>{metricText(effect.value)}</b>
     </span>
   );
@@ -792,17 +788,16 @@ function RuntimeWeaponEffectLegend({
       data-term="effects"
     >
       <span
-        className="infantry-weapon-effect-legend__column infantry-weapon-effect-legend__column--direct"
-        data-empty={directEffects.length === 0}
+        className="infantry-weapon-effect-legend__column infantry-weapon-effect-legend__column--penetration"
+        data-empty={penetrationEffects.length === 0}
       >
-        {directEffects.map(renderEffect)}
+        {penetrationEffects.map(renderEffect)}
       </span>
       <span
-        className="infantry-weapon-effect-legend__divider"
-        data-visible={directEffects.length > 0 && radialEffects.length > 0}
-        aria-hidden="true"
+        className="infantry-weapon-effect-legend__column infantry-weapon-effect-legend__column--direct"
+        data-empty={directDamageEffects.length === 0}
       >
-        {directEffects.length > 0 && radialEffects.length > 0 ? "|" : ""}
+        {directDamageEffects.map(renderEffect)}
       </span>
       <span
         className="infantry-weapon-effect-legend__column infantry-weapon-effect-legend__column--radial"
@@ -811,6 +806,22 @@ function RuntimeWeaponEffectLegend({
         {radialEffects.map(renderEffect)}
       </span>
     </span>
+  );
+}
+
+function RuntimeWeaponSelectorLegend() {
+  return (
+    <div
+      className="infantry-weapon-select__legend"
+      aria-label="武器与弹种伤害指标图例"
+    >
+      <span>武器 / 弹种</span>
+      <span className="infantry-weapon-effect-header">
+        <span>穿深（mm）</span>
+        <span>直击伤害</span>
+        <span>范围伤害</span>
+      </span>
+    </div>
   );
 }
 
@@ -1199,6 +1210,7 @@ function RuntimeWeaponSelector({
                   </button>
                 ) : null}
               </div>
+              <RuntimeWeaponSelectorLegend />
               <div
                 className="viewer-search-select__options"
                 role="listbox"

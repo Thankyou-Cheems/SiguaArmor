@@ -36,14 +36,10 @@ export const FRAGMENTATION_ICON_PARTICLES_PATH =
   "m12.2 2.6 2.4-1.2.95 1.75-2.7.75-.65-1.3Zm3.25 4.25 3.05-1 .6 2-3.2.35-.45-1.35Zm-2.7 4.4 2.75.65-.55 2-2.55-1.25.35-1.4Zm7.2-8.4 2.15-.6.55 1.65-2.35.15-.35-1.2Zm.1 8.15 2.35.25-.3 1.7-2.2-.75.15-1.2Z";
 export const FRAGMENTATION_ICON_STREAKS_PATH =
   "m11.2 5.15 2.3-1.05m-1.65 3.35 2.75-.45m-3.2 2.95 2.5 1";
-export const EXPLOSIVES_ICON_FUSE_CAP_PATH =
-  "m12.65 5.8 2.1-2.3 1.85 1.65-2.15 2.25-1.8-1.6Z";
-export const EXPLOSIVES_ICON_FUSE_PATH =
-  "M15.55 4c.65-1.55 1.95-2.25 3.45-1.65";
-export const EXPLOSIVES_ICON_SPARKS_PATH =
-  "m19.55.8.25 1.35m2.35-.8-1.15 1m1.65 1.35-1.4-.25";
-export const EXPLOSIVES_ICON_HIGHLIGHT_PATH =
-  "M6.15 8.25c.45-1.35 1.55-2.2 2.95-2.45";
+export const EXPLOSIVES_ICON_BURST_PATH =
+  "m12 3.15 1.05 2.65 2.55-1.25-1.25 2.55L17 8.15 14.35 9.2l1.25 2.55-2.55-1.25L12 13.15l-1.05-2.65-2.55 1.25L9.65 9.2 7 8.15 9.65 7.1 8.4 4.55l2.55 1.25L12 3.15Z";
+export const EXPLOSIVES_ICON_WAVES_PATH =
+  "M5.25 4.15A7.15 7.15 0 0 0 5.2 12M18.75 4.15A7.15 7.15 0 0 1 18.8 12M2.75 2.4A10.4 10.4 0 0 0 2.7 13.6M21.25 2.4a10.4 10.4 0 0 1 .05 11.2";
 export const THERMITE_ICON_FLAME_PATH =
   "M9.7 1.2c1.9 2.15 3.4 3.85 2.7 6.15-.35 1.2-1.35 2.2-2.7 2.2-1.75 0-3-1.2-3-2.85 0-1.45.9-2.45 2-3.5-.05 1.2.45 1.85 1.05 2.25.5-1.2.4-2.6-.05-4.25Z";
 export const THERMITE_ICON_PLATE_PATH = "M1.5 9.65h14.7M1.5 11.55h14.7";
@@ -125,42 +121,23 @@ function FragmentationIconPaths() {
 
 function ExplosivesIconPaths() {
   return (
-    <g data-icon-motif="bomb">
-      <circle
-        cx="9.35"
-        cy="9.65"
-        r="5.15"
-        fill="currentColor"
-        fillOpacity="0.22"
-        stroke="currentColor"
-        strokeWidth="1.25"
-      />
+    <g data-icon-motif="shockwave">
       <path
-        d={EXPLOSIVES_ICON_FUSE_CAP_PATH}
+        d={EXPLOSIVES_ICON_BURST_PATH}
         fill="currentColor"
-        fillOpacity="0.72"
+        fillOpacity="0.3"
         stroke="currentColor"
         strokeLinejoin="round"
+        strokeWidth="1.05"
       />
       <path
-        d={EXPLOSIVES_ICON_FUSE_PATH}
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="1.25"
-      />
-      <path
-        d={EXPLOSIVES_ICON_SPARKS_PATH}
+        d={EXPLOSIVES_ICON_WAVES_PATH}
         stroke="currentColor"
         strokeLinecap="round"
         strokeWidth="1.15"
+        opacity="0.78"
       />
-      <path
-        d={EXPLOSIVES_ICON_HIGHLIGHT_PATH}
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="1.2"
-        opacity="0.72"
-      />
+      <circle cx="12" cy="8.15" r="1.45" fill="currentColor" />
     </g>
   );
 }
@@ -307,36 +284,20 @@ export function paintVehicleDamageTypeIconCanvas(
       lineDash: [1.1, 1.4],
     });
   } else {
-    context.beginPath();
-    context.arc(9.35, 9.65, 5.15, 0, Math.PI * 2);
-    context.save();
-    context.globalAlpha = 0.22;
-    context.fill();
-    context.restore();
-    context.save();
-    context.lineWidth = 1.25;
-    context.stroke();
-    context.restore();
-    paintCanvasPath(context, EXPLOSIVES_ICON_FUSE_CAP_PATH, {
-      fillOpacity: 0.72,
+    paintCanvasPath(context, EXPLOSIVES_ICON_BURST_PATH, {
+      fillOpacity: 0.3,
       strokeOpacity: 1,
       lineJoin: "round",
+      strokeWidth: 1.05,
     });
-    paintCanvasPath(context, EXPLOSIVES_ICON_FUSE_PATH, {
-      strokeOpacity: 1,
-      strokeWidth: 1.25,
-      lineCap: "round",
-    });
-    paintCanvasPath(context, EXPLOSIVES_ICON_SPARKS_PATH, {
-      strokeOpacity: 1,
+    paintCanvasPath(context, EXPLOSIVES_ICON_WAVES_PATH, {
+      strokeOpacity: 0.78,
       strokeWidth: 1.15,
       lineCap: "round",
     });
-    paintCanvasPath(context, EXPLOSIVES_ICON_HIGHLIGHT_PATH, {
-      strokeOpacity: 0.72,
-      strokeWidth: 1.2,
-      lineCap: "round",
-    });
+    context.beginPath();
+    context.arc(12, 8.15, 1.45, 0, Math.PI * 2);
+    context.fill();
   }
 
   context.restore();

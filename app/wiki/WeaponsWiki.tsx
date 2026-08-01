@@ -8,6 +8,11 @@ import {
   weaponCatalogVariantsForWikiConfigurations,
   type WeaponCatalogVariant,
 } from "../../lib/wiki-weapon-catalog";
+import {
+  infantryWeaponDisplayNameZh,
+  infantryWeaponTypeNameZh,
+  weaponNameZh,
+} from "../../lib/weapon-display-name";
 import { internationalPath } from "../site-paths";
 import {
   factionLabels,
@@ -31,6 +36,15 @@ function weaponIdentity(weapon: WikiWeapon) {
   return `${weapon.order}\u0000${weapon.fullName}`;
 }
 
+function wikiWeaponDisplayNameZh(weapon: WikiWeapon) {
+  return infantryWeaponDisplayNameZh({
+    displayName: weapon.displayName,
+    gunName: weapon.fullName,
+    projectileName: null,
+    type: weapon.type,
+  });
+}
+
 function WeaponCard({
   weapon,
   selectorVariants,
@@ -51,11 +65,13 @@ function WeaponCard({
   return (
     <a className="sigua-wiki-weapon-card" href={weaponHref(weapon)}>
       <div className="sigua-wiki-weapon-card__image">
-        <img src={weapon.imagePath} alt={weapon.fullName} loading="lazy" />
+        <img src={weapon.imagePath} alt={wikiWeaponDisplayNameZh(weapon)} loading="lazy" />
       </div>
       <div className="sigua-wiki-weapon-card__body">
-        <div className="sigua-wiki-weapon-card__name">{weapon.displayName}</div>
-        <div className="sigua-wiki-weapon-card__type">{weapon.type}</div>
+        <div className="sigua-wiki-weapon-card__name">{wikiWeaponDisplayNameZh(weapon)}</div>
+        <div className="sigua-wiki-weapon-card__type">
+          {infantryWeaponTypeNameZh(weapon.type)}
+        </div>
         {weapon.variantCount > 1 ? (
           <span className="sigua-wiki-weapon-card__variants">{weapon.variantCount} variants</span>
         ) : null}
@@ -63,7 +79,7 @@ function WeaponCard({
           <div
             className="sigua-wiki-weapon-card__selector-summary"
             title={selectorVariants
-              .map(({ displayLabel }) => displayLabel)
+              .map(({ displayLabel }) => weaponNameZh(displayLabel))
               .join("；")}
           >
             <span>{selectorVariants.length} 个可选配置</span>
@@ -95,14 +111,16 @@ function FilterMenu({
   const [query, setQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
   const allLabel = kind === "type" ? "All Types" : "All Factions";
+  const typeLabel = (optionValue: string) =>
+    kind === "type" ? infantryWeaponTypeNameZh(optionValue) : optionValue;
   const selectedLabel = value === "all"
     ? allLabel
     : kind === "type"
-      ? value
+      ? typeLabel(value)
       : factionLabels[value] ?? factionDisplayName(value);
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const visibleOptions = options.filter((option) => {
-    const label = Array.isArray(option) ? option[1] : option;
+    const label = typeof option === "string" ? typeLabel(option) : option[1];
     return !normalizedQuery || label.toLocaleLowerCase().includes(normalizedQuery);
   });
 
@@ -144,8 +162,8 @@ function FilterMenu({
             {allLabel}
           </button>
           {visibleOptions.map((option) => {
-            const optionValue = Array.isArray(option) ? option[0] : option;
-            const label = Array.isArray(option) ? option[1] : option;
+            const optionValue = typeof option === "string" ? option : option[0];
+            const label = typeof option === "string" ? typeLabel(option) : option[1];
             return (
               <button
                 key={optionValue}
@@ -186,20 +204,26 @@ export function WeaponsWiki() {
       const selectorVariants =
         selectorVariantsByWeapon.get(weaponIdentity(weapon)) ?? [];
       const configurationText = (weapon.weaponKeys ?? [])
-        .map((key) => `${key} ${wikiWeaponConfigurationByKey[key]?.displayName ?? ""}`)
+        .map((key) => {
+          const displayName = wikiWeaponConfigurationByKey[key]?.displayName ?? "";
+          return `${key} ${displayName} ${weaponNameZh(displayName)}`;
+        })
         .join(" ");
       const selectorText = selectorVariants
         .flatMap((variant) => [
           variant.familyLabel,
+          weaponNameZh(variant.familyLabel),
           variant.label,
+          weaponNameZh(variant.label),
           variant.qualifier,
           variant.displayLabel,
+          weaponNameZh(variant.displayLabel),
           variant.searchText,
           ...variant.sourceLabels,
           ...variant.factionIds,
         ])
         .join(" ");
-      const matchesQuery = !needle || `${weapon.displayName} ${weapon.fullName} ${weapon.type} ${configurationText} ${selectorText}`
+      const matchesQuery = !needle || `${weapon.displayName} ${wikiWeaponDisplayNameZh(weapon)} ${weapon.fullName} ${weapon.type} ${infantryWeaponTypeNameZh(weapon.type)} ${configurationText} ${selectorText}`
         .toLocaleLowerCase().includes(needle);
       const matchesType = type === "all" || weapon.type === type;
       const matchesFaction =

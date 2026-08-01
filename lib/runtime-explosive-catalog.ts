@@ -1,3 +1,9 @@
+import type {
+  EditorEvidenceLike,
+  EditorField,
+  EditorNativeModel,
+} from "./editor-native-hit-model.ts";
+
 export const RUNTIME_EXPLOSIVE_CATEGORY_ORDER = [
   "deployable",
   "landmine",
@@ -227,4 +233,106 @@ export function runtimeExplosiveLayerOrderIsClosed(
   source: RuntimeExplosiveSource,
 ) {
   return !source.layerOrderEvidence.includes("unknown");
+}
+
+function editorFieldValue<T>(field: EditorField<T>): T | null {
+  if (field === null) return null;
+  if (
+    typeof field === "object" &&
+    "state" in field &&
+    "value" in field
+  ) {
+    return (field as EditorEvidenceLike<T>).value;
+  }
+  return field as T;
+}
+
+export function withRuntimeExplosiveSourceBallistics(
+  model: EditorNativeModel,
+  weaponIndex: number,
+  source: Pick<
+    RuntimeExplosiveSource,
+    "id" | "layers" | "layerOrderEvidence"
+  >,
+): EditorNativeModel {
+  const weapon = model.weapons[weaponIndex];
+  if (!weapon) {
+    throw new Error(
+      `Cannot attach radial source ${source.id}: weapon index ${weaponIndex} is missing`,
+    );
+  }
+  const projectileIndex = editorFieldValue(weapon.projectileIndex);
+  if (
+    typeof projectileIndex !== "number" ||
+    !Number.isInteger(projectileIndex) ||
+    projectileIndex < 0
+  ) {
+    throw new Error(
+      `Cannot attach radial source ${source.id}: projectile index is unresolved`,
+    );
+  }
+  const projectile = model.projectiles[projectileIndex];
+  if (!projectile) {
+    throw new Error(
+      `Cannot attach radial source ${source.id}: projectile ${projectileIndex} is missing`,
+    );
+  }
+  const explosiveFlag = editorFieldValue(projectile.isExplosive);
+  if (explosiveFlag === false) {
+    throw new Error(
+      `Cannot attach radial source ${source.id}: projectile is explicitly non-explosive`,
+    );
+  }
+  const [primaryLayer] = source.layers;
+  if (!primaryLayer) {
+    throw new Error(
+      `Cannot attach radial source ${source.id}: radial layer table is empty`,
+    );
+  }
+  const explosiveLayers = source.layers.map((layer) => ({
+    layerId: layer.id,
+    label: layer.label,
+    shortLabel: layer.shortLabel,
+    damageTypePath:
+      layer.damageTypeClassPath ?? layer.damageType,
+    baseDamage: layer.baseDamage,
+    minimumDamage: layer.minimumDamage,
+    innerRadiusCm: layer.innerRadiusMeters * 100,
+    outerRadiusCm: layer.outerRadiusMeters * 100,
+    falloff: layer.falloff,
+    impactNormalOffsetCm:
+      layer.originNormalOffsetMeters * 100,
+    onlyDamageMeshes: layer.onlyDamageMeshes,
+    orderEvidence: source.layerOrderEvidence,
+  }));
+  return {
+    ...model,
+    projectiles: model.projectiles.map((candidate, index) =>
+      index === projectileIndex
+        ? {
+            ...candidate,
+            isExplosive:
+              explosiveFlag === true
+                ? candidate.isExplosive
+                : {
+                    state: "derived",
+                    value: true,
+                    reason: `canonical radial source ${source.id}`,
+                  },
+            explosiveBaseDamage: primaryLayer.baseDamage,
+            explosiveMinimumDamage: primaryLayer.minimumDamage,
+            explosiveInnerRadiusCm:
+              primaryLayer.innerRadiusMeters * 100,
+            explosiveOuterRadiusCm:
+              primaryLayer.outerRadiusMeters * 100,
+            explosiveFalloff: primaryLayer.falloff,
+            impactNormalOffsetCm:
+              primaryLayer.originNormalOffsetMeters * 100,
+            explosiveLayerOrderEvidence:
+              source.layerOrderEvidence,
+            explosiveLayers,
+          }
+        : candidate,
+    ),
+  };
 }

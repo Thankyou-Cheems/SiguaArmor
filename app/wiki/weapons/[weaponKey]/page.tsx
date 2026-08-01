@@ -6,6 +6,11 @@ import {
   weaponCatalogRadialAssetForVariant,
   weaponCatalogVariantsForWikiConfigurations,
 } from "../../../../lib/wiki-weapon-catalog";
+import {
+  infantryWeaponDisplayNameZh,
+  infantryWeaponTypeNameZh,
+  weaponNameZh,
+} from "../../../../lib/weapon-display-name";
 import { internationalPath } from "../../../site-paths";
 import {
   factionLabels,
@@ -104,6 +109,15 @@ function StatCell({ label, value }: { label: string; value: string }) {
 
 function configurationFactions(configuration: WikiWeaponConfiguration) {
   return configuration.factions.map((code) => factionLabels[code] ?? factionDisplayName(code));
+}
+
+function weaponConfigurationNameZh(displayName: string, type: string) {
+  return infantryWeaponDisplayNameZh({
+    displayName,
+    gunName: displayName,
+    projectileName: null,
+    type,
+  });
 }
 
 export default async function WeaponDetailPage({
@@ -228,11 +242,16 @@ export default async function WeaponDetailPage({
         <a className="sigua-wiki-back-link" href={internationalPath("/wiki/weapons")}>← Weapons</a>
         <section className="sigua-wiki-weapon-detail">
           <div className="sigua-wiki-weapon-detail__image">
-            <img src={weapon.imagePath} alt={configuration.displayName} />
+            <img
+              src={weapon.imagePath}
+              alt={weaponConfigurationNameZh(configuration.displayName, weapon.type)}
+            />
           </div>
           <div className="sigua-wiki-weapon-detail__content">
-            <div className="sigua-wiki-detail-kicker">{weapon.type}</div>
-            <h1>{configuration.displayName}</h1>
+            <div className="sigua-wiki-detail-kicker">
+              {infantryWeaponTypeNameZh(weapon.type)}
+            </div>
+            <h1>{weaponConfigurationNameZh(configuration.displayName, weapon.type)}</h1>
             <div className="sigua-wiki-detail-tags">
               {factions.length > 0 ? factions.map((faction) => <span key={faction}>{faction}</span>) : <span>Unknown</span>}
             </div>
@@ -264,7 +283,9 @@ export default async function WeaponDetailPage({
                   <span role="cell">
                     <a href={internationalPath(`/wiki/weapons/${encodeURIComponent(key)}`)}>{key}</a>
                   </span>
-                  <span role="cell">{item.displayName}</span>
+                  <span role="cell">
+                    {weaponConfigurationNameZh(item.displayName, weapon.type)}
+                  </span>
                   <span role="cell">{itemFactions.join(", ") || "Unknown"}</span>
                 </div>
               );
@@ -294,8 +315,8 @@ export default async function WeaponDetailPage({
                   className={styles.configurationRow}
                   key={variant.id}
                 >
-                  <span role="cell">{variant.familyLabel}</span>
-                  <span role="cell">{variant.qualifier}</span>
+                  <span role="cell">{weaponNameZh(variant.familyLabel)}</span>
+                  <span role="cell">{weaponNameZh(variant.qualifier)}</span>
                   <span role="cell">
                     {Object.entries(variant.factionByScope)
                       .map(
