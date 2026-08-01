@@ -276,6 +276,23 @@ export interface WeaponCatalogVehicleEquipmentBinding {
   projectileClass: string | null;
   sourceIndex: number;
   weaponVariantIds: string[];
+  selectorRelation: {
+    state:
+      | "exact"
+      | "normalized"
+      | "non-selector"
+      | "evidence-required";
+    basis:
+      | "exact-card-raw-weapon-projectile-source-ref"
+      | "exact-card-variant-ballistics-source-ref"
+      | "selector-policy"
+      | "fail-closed";
+    sourceRefIds: string[];
+    sourceRawNames: string[];
+    ballisticsIds: string[];
+    candidateVariantIds: string[];
+    reasonCodes: string[];
+  };
   equipment: WeaponCatalogVehicleEquipment;
 }
 
@@ -308,7 +325,11 @@ interface WeaponCatalog {
     runtimeWeapons: number;
     vehicleEquipmentBindings: number;
     referencedVehicleEquipmentBindings: number;
-    unmodeledVehicleEquipmentBindings: number;
+    exactVehicleEquipmentSelectorRelations: number;
+    normalizedVehicleEquipmentSelectorRelations: number;
+    nonSelectorVehicleEquipmentBindings: number;
+    evidenceRequiredVehicleEquipmentBindings: number;
+    ambiguousVehicleEquipmentSelectorRelations: number;
   };
   wiki: {
     summary: {
@@ -361,6 +382,8 @@ interface WeaponCatalog {
     noLegacySnapshots: boolean;
     noCompatibilityPayloads: boolean;
     vehicleEquipmentReferenceClosure: boolean;
+    vehicleEquipmentSelectorRelationClosure: boolean;
+    vehicleEquipmentSelectorResolutionUnambiguous: boolean;
   };
 }
 
@@ -509,7 +532,11 @@ const weaponCatalog = {
     runtimeWeapons: 0,
     vehicleEquipmentBindings: 0,
     referencedVehicleEquipmentBindings: 0,
-    unmodeledVehicleEquipmentBindings: 0,
+    exactVehicleEquipmentSelectorRelations: 0,
+    normalizedVehicleEquipmentSelectorRelations: 0,
+    nonSelectorVehicleEquipmentBindings: 0,
+    evidenceRequiredVehicleEquipmentBindings: 0,
+    ambiguousVehicleEquipmentSelectorRelations: 0,
   },
   wiki: {
     summary: {
