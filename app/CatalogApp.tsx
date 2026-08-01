@@ -46,6 +46,10 @@ import { visibleDamageResistanceOverrides } from "../lib/encyclopedia-damage-res
 import { formatZoomLevel } from "../lib/reference-display.mjs";
 import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-icons";
 import { vehicleConfigurationNameZh } from "../lib/vehicle-configuration-name";
+import {
+  vehicleDisplayNameZh,
+  vehicleTypeNameZh,
+} from "../lib/vehicle-display-name";
 import { weaponDisplayNameZh } from "../lib/weapon-display-name";
 import { runtimeVehicleEquipmentBindingForId } from "./runtime-vehicle-equipment";
 import type {
@@ -128,27 +132,6 @@ const CATEGORY_ICON_BY_TYPE: Record<string, string> = {
   UAV: "map_uav",
   UH: "transporthelo",
   ULTV: "jeep",
-};
-const VEHICLE_TYPE_NAME_ZH: Record<string, string> = {
-  AH: "攻击直升机",
-  APC: "装甲输送车",
-  CAS: "攻击机",
-  DRONE: "便携侦察无人机",
-  IFV: "步兵战车",
-  LOGI: "补给载具",
-  LTV: "轻型战术载具",
-  MBT: "主战坦克",
-  MGS: "机动火炮系统",
-  MRAP: "防雷反伏击车",
-  MSV: "机动出生点载具",
-  RSV: "火箭支援车",
-  SPA: "自行火炮",
-  SPAA: "自行防空炮",
-  TD: "坦克歼击车",
-  TRAN: "运输载具",
-  UAV: "大型侦察无人机",
-  UH: "通用直升机",
-  ULTV: "超轻型战术载具",
 };
 const DONATE_QR_SRC = new URL("../donateQR.jpg", import.meta.url).href;
 const FEEDBACK_EMAIL = "thankucheems@gmail.com";
@@ -269,13 +252,9 @@ function vehiclePresentationName(
   record: Pick<CatalogRecord, "official">,
   variant: Pick<CatalogVariant, "presentation"> | null = null,
 ) {
-  return variant?.presentation?.vehicleNameZh
+  return vehicleDisplayNameZh(variant?.presentation?.vehicleNameZh
     ?? record.official.presentation?.vehicleNameZh
-    ?? record.official.nameZh;
-}
-
-function vehicleTypeNameZh(typeName: string) {
-  return VEHICLE_TYPE_NAME_ZH[typeName.trim().toUpperCase()] ?? null;
+    ?? record.official.nameZh);
 }
 
 function vehicleConfiguration(
@@ -470,7 +449,9 @@ function vehicleDisplayName(
 }
 
 function searchVariantLabel(record: CatalogSearchRecord, variant: CatalogSearchVariant) {
-  const vehicleName = variant.presentation?.vehicleNameZh?.trim() || null;
+  const vehicleName = variant.presentation?.vehicleNameZh?.trim()
+    ? vehicleDisplayNameZh(variant.presentation.vehicleNameZh)
+    : null;
   const variantConfiguration = variant.presentation
     ? variant.presentation.configurationZh
     : variant.alias;
@@ -2549,15 +2530,15 @@ function GlobalVehicleSearch({
                   <section
                     className="global-vehicle-search__result-group"
                     key={record.promoEntryId}
-                    aria-label={`${record.official.nameZh}搜索结果`}
+                    aria-label={`${vehicleDisplayNameZh(record.official.nameZh)}搜索结果`}
                   >
                     <header className="global-vehicle-search__result-heading">
                       <span className="global-vehicle-search__result-main">
-                        <strong>{record.official.nameZh}</strong>
+                        <strong>{vehicleDisplayNameZh(record.official.nameZh)}</strong>
                         <small>{factionDisplayName(record.official.groupId)}</small>
                       </span>
                       <span className="global-vehicle-search__result-count">
-                        {record.official.typeZh}
+                        {vehicleTypeNameZh(record.official.typeZh) ?? record.official.typeZh}
                         {variants.length > 0 ? ` · ${searchVariantSummary(variants)}` : ""}
                       </span>
                     </header>
@@ -2565,10 +2546,11 @@ function GlobalVehicleSearch({
                       <div
                         className="global-vehicle-search__result-variants"
                         role="group"
-                        aria-label={`${record.official.nameZh}具体配置`}
+                        aria-label={`${vehicleDisplayNameZh(record.official.nameZh)}具体配置`}
                       >
                         {variants.map((variant, variantIndex) => {
                           const displayName = variant.displayName || variant.alias;
+                          const localizedDisplayName = vehicleDisplayNameZh(displayName);
                           const label = searchVariantLabel(record, variant);
                           return (
                             <button
@@ -2584,12 +2566,12 @@ function GlobalVehicleSearch({
                               type="button"
                               role="option"
                               aria-selected="false"
-                              aria-label={displayName}
-                              title={displayName}
+                              aria-label={localizedDisplayName}
+                              title={localizedDisplayName}
                               onClick={() => onSelect(record, variant)}
                             >
                               <span>{label}</span>
-                              <small>{displayName}</small>
+                              <small>{localizedDisplayName}</small>
                               <ChevronRight size={14} aria-hidden="true" />
                             </button>
                           );
@@ -2611,7 +2593,7 @@ function GlobalVehicleSearch({
                         onClick={() => onSelect(record)}
                       >
                         <span className="global-vehicle-search__result-main">
-                          <strong>{record.official.nameZh}</strong>
+                          <strong>{vehicleDisplayNameZh(record.official.nameZh)}</strong>
                           <small>{factionDisplayName(record.official.groupId)}</small>
                         </span>
                         <ChevronRight size={16} aria-hidden="true" />
