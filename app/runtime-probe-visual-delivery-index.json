@@ -18798,14 +18798,14 @@
       "webUsable": true
     }
   ],
-  "indexRevision": "d6f87929cb0321afeb1de97bbad5f91fbc45b8299a76ea81afd9ba260fc80c47",
+  "indexRevision": "218d1d7a0be1fb9c7640a6681e2aee8a7427ed2f3b5cf3dfd8b94d1b13bd67bb",
   "reviewDescriptorCount": 648,
   "schemaVersion": "runtime-visual-delivery-index/v2",
   "sourceIndexes": {
     "chinaRelease": {
-      "bytes": 1728784,
+      "bytes": 1685001,
       "path": "app/china-runtime-probe-visual-release-index.json",
-      "sha256": "6631c723a18ea37d802be869a5b12c12cd346c1d5753f3048c7c9bf60612f225"
+      "sha256": "f87de2fb3b4135ffa60d3ac5af580a9677609a20e6b9c39cc525e21dfb32be09"
     },
     "coreIndex": {
       "bytes": 10495146,
@@ -18828,9 +18828,9 @@
       "sha256": "23693745067f636ea210ed6b1596f4d080a7986efe280633e147bf63cc27b773"
     },
     "supportRelease": {
-      "bytes": 164971,
+      "bytes": 161009,
       "path": "app/support-air-visual-release-index.json",
-      "sha256": "e252b6fa3eeef0eaecfeb72a43e7a2979014d1457b08c7670976fea2262fe5fc"
+      "sha256": "dd103d36f3e8f5b0125e83e1f3a3b157e823b0e34d42867dd92d30078eacdb43"
     }
   }
 }

@@ -53588,14 +53588,14 @@
     }
   ],
   "catalog": {
-    "bytes": 12026311,
-    "catalogRevision": "c1712f94ab761fe08f51b951bcc17819c69d1d13234e5046e7085f2d3b8f4f99",
+    "bytes": 12639090,
+    "catalogRevision": "99b42ba4114336274b42584e36b19082e2c2ed77ff44f3c88f56f1f83d780519",
     "schemaVersion": "sigua-weapon-catalog/v2",
-    "sha256": "3cb9dcb563ae25c1a657f67565c26e434cd59a32aa1cc5678ee2d8333882ff52"
+    "sha256": "cf8bc0474e42b3ac28e7ab62766a434ab631353d95658c90fa60e97e8f0ec3eb"
   },
   "counts": {
     "bindings": 1374
   },
-  "projectionRevision": "7f6af18c29515f7f5cd6e7f2451fb1d6b2dd3ad9ba2f828c060e8af2855eeca1",
+  "projectionRevision": "8c532b15bccbc892edcd65c03579c0668f539cab529a7ad35a4377e006b224f2",
   "schemaVersion": "sigua-runtime-vehicle-equipment-index/v2"
 }

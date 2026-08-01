@@ -1,13 +1,13 @@
 {
   "schemaVersion": "sigua-wiki-vehicles/v3",
-  "vehicleCatalogRevision": "ed29f3796d046d8655377b4d420e35a949bce05202cc4ceb1b7f60f0cf131f3d",
-  "weaponCatalogRevision": "c1712f94ab761fe08f51b951bcc17819c69d1d13234e5046e7085f2d3b8f4f99",
+  "vehicleCatalogRevision": "eed95ad3d4575eeed370bf339ecabf7f07441d2001722dbb457b1a77fbb189c2",
+  "weaponCatalogRevision": "99b42ba4114336274b42584e36b19082e2c2ed77ff44f3c88f56f1f83d780519",
   "summary": {
     "catalogVariants": 604,
     "sourceVehicles": 470,
     "runtimeVehicles": 471,
-    "weaponVariantReferences": 519,
-    "armedVariants": 287
+    "weaponVariantReferences": 679,
+    "armedVariants": 379
   },
   "items": [
     {
@@ -120,7 +120,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-7d5b674c9268d0091eed"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-4aa050af44c6413033ec2400",
@@ -185,7 +187,9 @@
         "Low Caliber"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-c594bcf88f78d0a86a40"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-95391612119c4369dfb857df",
@@ -962,7 +966,11 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-587383ce2229b514f6bb",
+        "weapon-variant-74d75cbd1759208a8c28",
+        "weapon-variant-7e80588229744cf227f6"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-c395cd2a3b8e54b539e70ed1",
@@ -1418,7 +1426,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-7d5b674c9268d0091eed"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-a8552a7ae53c6b5fe4350dea",
@@ -1571,7 +1581,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-e8e4e60abb68e392eefc"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-42dd212bfabfa7b12d95dfdd",
@@ -1612,7 +1624,10 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-894ada3fa49636c9e7d5",
+        "weapon-variant-f47bdc0b5970fa948beb"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-5e7c9140bf699e62711454a5",
@@ -1739,7 +1754,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-628a87d837d27a7b83c6"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-b988232280bf448fd22b0898",
@@ -1847,7 +1864,12 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0b629a07ac65fc8e79a2",
+        "weapon-variant-3ca9af98639c6a6f732c",
+        "weapon-variant-628a87d837d27a7b83c6",
+        "weapon-variant-def340c191a6474b8522"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-4edae2386c04ec61ec88d58e",
@@ -1866,7 +1888,11 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0b629a07ac65fc8e79a2",
+        "weapon-variant-3ca9af98639c6a6f732c",
+        "weapon-variant-def340c191a6474b8522"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-5b36e661357349b4de900ec4",
@@ -1885,7 +1911,11 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0b629a07ac65fc8e79a2",
+        "weapon-variant-3ca9af98639c6a6f732c",
+        "weapon-variant-def340c191a6474b8522"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-5af09a31e7c0b00b9f5f0d96",
@@ -2334,7 +2364,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-7d5b674c9268d0091eed"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-047d7b167cec8eea41f4aafe",
@@ -3919,7 +3951,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-575a5f289eec3e1cfdcb"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-37ba57f047e53cf43f19cec5",
@@ -3980,7 +4014,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-5d3d547dac8a52fea1b4"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-9dd4cbfccba9940de32bfb68",
@@ -3999,7 +4035,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-949f5cab49702720c4df343a",
@@ -4062,7 +4100,10 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-816ddc93ce9e9dc694d3",
+        "weapon-variant-f3ef34f63087e06ad74e"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-f293e329c0a52a676530f7d1",
@@ -4632,7 +4673,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-575a5f289eec3e1cfdcb"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-3ab2f35559d2143af30f4e9a",
@@ -4739,7 +4782,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-5d3d547dac8a52fea1b4"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-e581525737790cb13d9f55c3",
@@ -4821,7 +4866,10 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-816ddc93ce9e9dc694d3",
+        "weapon-variant-f3ef34f63087e06ad74e"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-4fc47378191d9bfe18ee66d9",
@@ -5011,7 +5059,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-4254f8881424d2396c2b"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-de78d9e844772995cf229c82",
@@ -5097,7 +5147,9 @@
         "Low Caliber"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-bb6ea9cc0365762800c6"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-89b49cddf8167710ae68dec0",
@@ -5139,7 +5191,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00b8f7530f63c5c67630"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-608c57a260581efc4830374e",
@@ -5181,7 +5235,9 @@
         "RWS"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-50e0646d7c91949a0aad"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-f97deaad64a25124b658d011",
@@ -5263,7 +5319,9 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-bb6ea9cc0365762800c6"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-99dc09909f316432ef502fac",
@@ -5305,7 +5363,9 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00b8f7530f63c5c67630"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-f5ee9a04a0608c2e3ec173f8",
@@ -5542,7 +5602,13 @@
         "Watercraft"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-46bca2ef14ec13c37cba",
+        "weapon-variant-c3f08aee6436e05563d9",
+        "weapon-variant-d47ecf6d4a574b16aea3",
+        "weapon-variant-d49b29e597e062a4d176",
+        "weapon-variant-ee59d0eb051df0d40410"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-46ef8c342a70f00bd2690076",
@@ -5682,7 +5748,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d4681e287a26f2edccb0"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-289bf3b7ab98446168207fdd",
@@ -5772,7 +5840,9 @@
         "Watercraft"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-011826042ec0e457ea03"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-641007009036bbe7319ef2ca",
@@ -5929,7 +5999,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d4681e287a26f2edccb0"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-e60c1985fba22426ba404fd9",
@@ -5998,7 +6070,13 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-048c803b3c89f11b05ad",
+        "weapon-variant-373ff9e42a7b94709578",
+        "weapon-variant-6d975ab8ca2f16fa00f4",
+        "weapon-variant-a0c0d814a7013ae18997",
+        "weapon-variant-c327fc514746ddc4f4ca"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-34f2e56420ab9cfc17259e69",
@@ -6069,7 +6147,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-4254f8881424d2396c2b"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-c62df8a8455e1e024d25f7d8",
@@ -6090,7 +6170,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-4254f8881424d2396c2b"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-baa3674d0338ac1027d3c77c",
@@ -6134,7 +6216,9 @@
         "Low Caliber"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-bb6ea9cc0365762800c6"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-a6ca4a5262864d52478445d4",
@@ -6176,7 +6260,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00b8f7530f63c5c67630"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-0ac4d0080bfdb16c610e4c4a",
@@ -6258,7 +6344,9 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-bb6ea9cc0365762800c6"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-47df08d70b2eb2dcd3f3528c",
@@ -6300,7 +6388,9 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00b8f7530f63c5c67630"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-e06ede438cc892d21333ceeb",
@@ -6537,7 +6627,13 @@
         "Watercraft"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-46bca2ef14ec13c37cba",
+        "weapon-variant-c3f08aee6436e05563d9",
+        "weapon-variant-d47ecf6d4a574b16aea3",
+        "weapon-variant-d49b29e597e062a4d176",
+        "weapon-variant-ee59d0eb051df0d40410"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-26970457c7a5236f9e100bb6",
@@ -6747,7 +6843,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d4681e287a26f2edccb0"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-61e686783c04204c61013256",
@@ -6837,7 +6935,9 @@
         "Watercraft"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-011826042ec0e457ea03"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-386600c5ab69465dd5978d83",
@@ -6994,7 +7094,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d4681e287a26f2edccb0"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-362e22404460c206ac9402e0",
@@ -7063,7 +7165,13 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-048c803b3c89f11b05ad",
+        "weapon-variant-373ff9e42a7b94709578",
+        "weapon-variant-6d975ab8ca2f16fa00f4",
+        "weapon-variant-a0c0d814a7013ae18997",
+        "weapon-variant-c327fc514746ddc4f4ca"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-d436a4ee9ea5b883034653d7",
@@ -7715,7 +7823,14 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-21920ec3af50de6eb12d",
+        "weapon-variant-3ceb3f7e691bb5ae23d4",
+        "weapon-variant-862c65bc159d55fa3dd3",
+        "weapon-variant-afb5edd13996e30d24d3",
+        "weapon-variant-db7bf91244ae36006d0f",
+        "weapon-variant-f72819c8c50f1d34397d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-cc8f635bb4c3f521db2b8900",
@@ -8360,7 +8475,13 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0eeb23263839c58d6623",
+        "weapon-variant-7b21c4617ac1c6fb1cf2",
+        "weapon-variant-afb5edd13996e30d24d3",
+        "weapon-variant-d31c6dd719b79ce08882",
+        "weapon-variant-f0dd114acf19b1678dfd"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-61dc69cc53774be0ce08ffc1",
@@ -8408,7 +8529,13 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0eeb23263839c58d6623",
+        "weapon-variant-7b21c4617ac1c6fb1cf2",
+        "weapon-variant-afb5edd13996e30d24d3",
+        "weapon-variant-d31c6dd719b79ce08882",
+        "weapon-variant-f0dd114acf19b1678dfd"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-095f7e8ca7dc75c2349fa42d",
@@ -8456,7 +8583,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-2c1940eaad83c817b457"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-566aa8a6be2c6184cfbd9cab",
@@ -8499,7 +8628,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00c69a7257b6aec33438"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-a4e895038ce7fc074ea6be6d",
@@ -8649,7 +8780,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-6856ccf6eded0d52143520ea",
@@ -8691,7 +8824,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-4b17828f63f8537afa8a"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-421d9419203e128ebb459917",
@@ -8807,7 +8942,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-45d8c1388c975e6b6528198e",
@@ -8887,7 +9024,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-4b17828f63f8537afa8a"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-e00cd9815a1176a1e47f7401",
@@ -9005,7 +9144,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-4cca06b59db6c03a6fb165af",
@@ -9085,7 +9226,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-3901502bed812732fc9dd3ff",
@@ -9171,7 +9314,12 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0b629a07ac65fc8e79a2",
+        "weapon-variant-3ee5bfc82f9c395c5559",
+        "weapon-variant-4953c5d15bad7be40059",
+        "weapon-variant-a1265019d86f867b0a6b"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-123b9f5c5295ab0431cc98e9",
@@ -9652,7 +9800,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-ca205a2fd780f835be153b8d",
@@ -9694,7 +9844,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-7d5b674c9268d0091eed"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-98e69fd3b90adf3c28db4e96",
@@ -9774,7 +9926,9 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-48debc59f9b1366ca4e2"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-442292aa7f2d1ac128b1212e",
@@ -9816,7 +9970,9 @@
         "Low Caliber"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-bd021243295c1a8ae6c9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-0b563c7c05f97f461cb90636",
@@ -9859,7 +10015,11 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0b629a07ac65fc8e79a2",
+        "weapon-variant-580d0c402ad0cebeb0d0",
+        "weapon-variant-f5887fab619f3fcc60d0"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-ef60f54cb3255e652d17f18c",
@@ -9960,7 +10120,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-1c2958ffcac4220efdad073e",
@@ -9979,7 +10141,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-9a6a8cbcec8041f95d0a1c81",
@@ -10019,7 +10183,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-6fa08cb19a19ca4e90bdf537",
@@ -10191,7 +10357,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-304bae6384fdc9769c2a4079",
@@ -10241,7 +10409,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-7d5b674c9268d0091eed"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-52a6801da66c87cb32e8cca4",
@@ -10285,7 +10455,11 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0b629a07ac65fc8e79a2",
+        "weapon-variant-8ec765e6038b80ee8b5a",
+        "weapon-variant-d027ea873b6361255f06"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-be2fc06994b23e4d44fd8eba",
@@ -10892,7 +11066,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-725d18102a25291e9b91e920",
@@ -10952,7 +11128,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-6ad41bd8da63326040e3"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-fed17beea2f4410a44c9a0ef",
@@ -11033,7 +11211,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-db4e38f37af5be0acdb0bdb0",
@@ -11053,7 +11233,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-218b8bdea31c339b4c549d03",
@@ -11097,7 +11279,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-17726548fb6678398f089839",
@@ -11147,7 +11331,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-7d5b674c9268d0091eed"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-d557b70a4f878dbc37c08f74",
@@ -11192,7 +11378,11 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0b629a07ac65fc8e79a2",
+        "weapon-variant-8ec765e6038b80ee8b5a",
+        "weapon-variant-d027ea873b6361255f06"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-ce468c6ace43d9ea4a9c34ac",
@@ -11396,7 +11586,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-54782ceb6227ce66b69d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-99b1b5d550d8b340299be06e",
@@ -11438,7 +11630,9 @@
         "ATGM"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-7d5b674c9268d0091eed"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-05ed8e4dde290d650dbbe9d4",
@@ -11668,7 +11862,11 @@
         "Class_Light"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-6c7016e3af0158e98eba",
+        "weapon-variant-aca9a9efe1d6d13b2076",
+        "weapon-variant-b11e51c2648902cd1409"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-5772cd5c86b06c6f31a7d7c9",
@@ -11689,7 +11887,13 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-21920ec3af50de6eb12d",
+        "weapon-variant-862c65bc159d55fa3dd3",
+        "weapon-variant-afb5edd13996e30d24d3",
+        "weapon-variant-db7bf91244ae36006d0f",
+        "weapon-variant-f72819c8c50f1d34397d"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-a2df5de5b4507ed1703c791e",
@@ -11846,7 +12050,10 @@
         "Class_Light"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-2c1940eaad83c817b457",
+        "weapon-variant-b11e51c2648902cd1409"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-96d27e01e8221bc49ba3f281",
@@ -11888,7 +12095,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00c69a7257b6aec33438"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-ab42ff950bd3a96ac0dbf254",
@@ -11930,7 +12139,9 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-a9eda6a0027ea4624346"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-4c735852a6d4383cbe58b5a4",
@@ -11990,7 +12201,10 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-02b3c79b76c4dfea8c22",
+        "weapon-variant-b11e51c2648902cd1409"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-dc9bf491721c0e4c15fb0974",
@@ -12057,7 +12271,10 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00c69a7257b6aec33438",
+        "weapon-variant-b11e51c2648902cd1409"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-2bd22b09ba8d2dcd8d811814",
@@ -12286,7 +12503,14 @@
         "Watercraft"
       ],
       "amphibious": true,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0eeb23263839c58d6623",
+        "weapon-variant-16cadcb3cbd02db29ecc",
+        "weapon-variant-7b21c4617ac1c6fb1cf2",
+        "weapon-variant-afb5edd13996e30d24d3",
+        "weapon-variant-d31c6dd719b79ce08882",
+        "weapon-variant-f0dd114acf19b1678dfd"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-a758540c2f485dc181c7806d",
@@ -12334,7 +12558,13 @@
         "Class_Heavy"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-0eeb23263839c58d6623",
+        "weapon-variant-7b21c4617ac1c6fb1cf2",
+        "weapon-variant-afb5edd13996e30d24d3",
+        "weapon-variant-d31c6dd719b79ce08882",
+        "weapon-variant-f0dd114acf19b1678dfd"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-6dae8885a6d71678d852792b",
@@ -12383,7 +12613,9 @@
         "AGL"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-2c1940eaad83c817b457"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-062a335079fa148383925351",
@@ -12426,7 +12658,9 @@
         "Class_Medium"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-00c69a7257b6aec33438"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-33b0f80936a67b2dfc2398ab",
@@ -12490,7 +12724,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-b94b298188cf3c0d9aa5"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-c299ec7ef1311905834da6d6",
@@ -12510,7 +12746,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-b94b298188cf3c0d9aa5"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-f667dfcd61e7bc4594e72ba3",
@@ -13148,7 +13386,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-992bdd5cd14bb9504428"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-c1f2686f2429ccddda6e8479",
@@ -13167,7 +13407,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-992bdd5cd14bb9504428"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-abb9d791e8533c0e9243b38f",
@@ -13186,7 +13428,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-992bdd5cd14bb9504428"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-77848f01bcecc588a70e9264",
@@ -13205,7 +13449,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-992bdd5cd14bb9504428"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-e8348b1453fe88410896adb9",
@@ -13224,7 +13470,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-992bdd5cd14bb9504428"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-551257d5de365bde48b4353d",
@@ -13264,7 +13512,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-5f94faff773e8be95aee0c0c",
@@ -13283,7 +13533,9 @@
         "Class_Light"
       ],
       "amphibious": false,
-      "weaponVariantIds": []
+      "weaponVariantIds": [
+        "weapon-variant-d22ddc07a4bbd7ad3fc9"
+      ]
     },
     {
       "catalogBindingRef": "catalog-vehicle-b76783efbaf78162c0060d1d",

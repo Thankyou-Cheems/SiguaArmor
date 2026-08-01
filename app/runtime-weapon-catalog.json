@@ -1,10 +1,10 @@
 {
   "catalog": {
-    "bytes": 12026311,
-    "catalogRevision": "c1712f94ab761fe08f51b951bcc17819c69d1d13234e5046e7085f2d3b8f4f99",
+    "bytes": 12639090,
+    "catalogRevision": "99b42ba4114336274b42584e36b19082e2c2ed77ff44f3c88f56f1f83d780519",
     "dataRevision": "28768f969703eabd749e50c4d007b0e7da0a343f38beefe8bd63b9556682ff3e",
     "schemaVersion": "sigua-weapon-catalog/v2",
-    "sha256": "3cb9dcb563ae25c1a657f67565c26e434cd59a32aa1cc5678ee2d8333882ff52",
+    "sha256": "cf8bc0474e42b3ac28e7ab62766a434ab631353d95658c90fa60e97e8f0ec3eb",
     "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8"
   },
   "counts": {
@@ -245627,6 +245627,6 @@
     }
   },
   "projectionKind": "runtime-selector",
-  "projectionRevision": "66bd4ad57e8d9f2716f682bbee68638cb6c180b26bcde083599f877427168f6a",
+  "projectionRevision": "c83a0efc7b48c9da3c7283f5df595e56e34f4ae507a03be25a036c6ddcf58bc2",
   "schemaVersion": "sigua-weapon-client-projection/v1"
 }
