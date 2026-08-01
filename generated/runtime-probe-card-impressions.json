@@ -3,7 +3,7 @@
   "complete": true,
   "source": {
     "catalogId": "sigua-armor-international-reference-2026-07-16",
-    "catalogSha256": "faab774c9ae43841a31b5d351e0e78bb44c6603e9426cb4ec88dea7b0e38e398",
+    "catalogSha256": "b501ed78b0eec4e48c70f703c47613c3eecc376f7aa6275f4ee63083b10c5bdc",
     "visualIndexSha256": "a258dd78229c2648a7130dc6b4e1a68e8ae3367a172e4e3d850b371c1b134ec3",
     "selectionPolicySha256": "f35e6c15bf6014821eabc771c960b6d97446f24ae0e23ae34d4a48f92b6c4276"
   },
@@ -3875,7 +3875,7 @@
     {
       "cardId": "adf--fa18--cas",
       "rawName": "BP_CommandActor_FA18_Rockets_Strafe",
-      "variant": "F/A-18F Rocket Strike",
+      "variant": "F/A-18F 火箭弹空袭",
       "displayName": "F/A-18F",
       "type": "CAS",
       "factionId": "adf",
@@ -3892,12 +3892,12 @@
       "sourceOccurrenceCount": 3,
       "selection": null,
       "renderSourceSha256": "88d7255f0a97c06622af6dcb5396b4efb4e0a8f9c23586e1eb435fd8686a8496",
-      "sourceCatalogVariant": "F/A-18F Rocket Strike"
+      "sourceCatalogVariant": "F/A-18F 火箭弹空袭"
     },
     {
       "cardId": "adf--fa18--cas",
       "rawName": "BP_CommandActor_FA18_Strafe",
-      "variant": "F/A-18F 30 mm Strafe",
+      "variant": "F/A-18F 30 mm 机炮扫射",
       "displayName": "F/A-18F",
       "type": "CAS",
       "factionId": "adf",
@@ -3914,7 +3914,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "d38a8515c29f6ffcda1b2ff5585ddab90f968fa43f06af2558fccf175f3cacc3",
-      "sourceCatalogVariant": "F/A-18F 30 mm Strafe"
+      "sourceCatalogVariant": "F/A-18F 30 mm 机炮扫射"
     },
     {
       "cardId": "adf--hx60-logistics--logi",
@@ -4029,7 +4029,7 @@
     {
       "cardId": "adf--mq9--uav",
       "rawName": "BP_CommandActor_UAV_MQ9",
-      "variant": "MQ-9 Reaper",
+      "variant": "MQ-9 Reaper“死神”无人机",
       "displayName": "MQ-9 Reaper",
       "type": "UAV",
       "factionId": "adf",
@@ -4046,7 +4046,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "1d3e56d6485374fbd841be6ac6a216c375258c63c826079d90e338ea626764be",
-      "sourceCatalogVariant": "MQ-9 Reaper"
+      "sourceCatalogVariant": "MQ-9 Reaper“死神”无人机"
     },
     {
       "cardId": "adf--mrh-90--uh",
@@ -4535,7 +4535,7 @@
     {
       "cardId": "afu--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "afu",
@@ -4552,7 +4552,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "9ee7553ed4fa71c723b2123f5b78451c63f2e7130cb826b0e4d025e7c02e7bc2",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "afu--quad-bike--ultv",
@@ -4711,7 +4711,7 @@
     {
       "cardId": "afu--su25--cas",
       "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
-      "variant": "Su-25 Precision Bomb Strike",
+      "variant": "Su-25 精确制导炸弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "afu",
@@ -4728,12 +4728,12 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "6bf3f29ccc8fcb4a0c8e5df08b0fca453d679559fe265ad4f5c0bc4c3fab44cf",
-      "sourceCatalogVariant": "Su-25 Precision Bomb Strike"
+      "sourceCatalogVariant": "Su-25 精确制导炸弹空袭"
     },
     {
       "cardId": "afu--su25--cas",
       "rawName": "BP_CommandActor_SU25_Rockets_Strafe",
-      "variant": "Su-25 S-8 Rocket Strike",
+      "variant": "Su-25 S-8 火箭弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "afu",
@@ -4750,7 +4750,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "9b35e4f02742a8555b7a88d70c0b8425d85b5fa5eb773f4b4c2e0f3f790489e6",
-      "sourceCatalogVariant": "Su-25 S-8 Rocket Strike"
+      "sourceCatalogVariant": "Su-25 S-8 火箭弹空袭"
     },
     {
       "cardId": "afu--t-64bm2--mbt",
@@ -4777,7 +4777,7 @@
     {
       "cardId": "afu--tb2--uav",
       "rawName": "BP_CommandActor_UAV_TB2",
-      "variant": "Bayraktar TB2",
+      "variant": "Bayraktar TB2 “旗手”无人机",
       "displayName": "Bayraktar TB2",
       "type": "UAV",
       "factionId": "afu",
@@ -4794,7 +4794,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "cfb9d427f0556a46abbb40fff73e24abb90ea2924a19dc57476b82dfd0b3d3bf",
-      "sourceCatalogVariant": "Bayraktar TB2"
+      "sourceCatalogVariant": "Bayraktar TB2 “旗手”无人机"
     },
     {
       "cardId": "afu--technical-kornet--td",
@@ -4821,7 +4821,7 @@
     {
       "cardId": "baf--a10--cas",
       "rawName": "BP_CommandActor_A10_Strafe_2",
-      "variant": "A-10A",
+      "variant": "A-10A 30 mm 机炮扫射",
       "displayName": "A-10A",
       "type": "CAS",
       "factionId": "baf",
@@ -4838,7 +4838,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "1cda2089af0eb10f6eac0d7bc7239f50938052bf728865912b52e2714f46f21f",
-      "sourceCatalogVariant": "A-10A"
+      "sourceCatalogVariant": "A-10A 30 mm 机炮扫射"
     },
     {
       "cardId": "baf--fv107--apc",
@@ -5415,7 +5415,7 @@
     {
       "cardId": "baf--mq9--uav",
       "rawName": "BP_CommandActor_UAV_MQ9",
-      "variant": "MQ-9 Reaper",
+      "variant": "MQ-9 Reaper“死神”无人机",
       "displayName": "MQ-9 Reaper",
       "type": "UAV",
       "factionId": "baf",
@@ -5432,7 +5432,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "62bebba3133c351572dff38ed107939f046d6ba5943197cc050e127041d41cb9",
-      "sourceCatalogVariant": "MQ-9 Reaper"
+      "sourceCatalogVariant": "MQ-9 Reaper“死神”无人机"
     },
     {
       "cardId": "baf--rhib-logistics--logi",
@@ -5525,7 +5525,7 @@
     {
       "cardId": "caf--a10--cas",
       "rawName": "BP_CommandActor_A10_Strafe_2",
-      "variant": "A-10A",
+      "variant": "A-10A 30 mm 机炮扫射",
       "displayName": "A-10A",
       "type": "CAS",
       "factionId": "caf",
@@ -5542,12 +5542,12 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "519579b35bb37d1a8c69c79d3f6b66ffe7b33a24635919797416b5fa79aa6da0",
-      "sourceCatalogVariant": "A-10A"
+      "sourceCatalogVariant": "A-10A 30 mm 机炮扫射"
     },
     {
       "cardId": "caf--cf18--cas",
       "rawName": "BP_CommandActor_CF18_Bomb_Strafe_NEW",
-      "variant": "CF-18 Precision Bomb Strike",
+      "variant": "CF-18 精确制导炸弹空袭",
       "displayName": "CF-18",
       "type": "CAS",
       "factionId": "caf",
@@ -5564,12 +5564,12 @@
       "sourceOccurrenceCount": 3,
       "selection": null,
       "renderSourceSha256": "957f1bc27676cc0bd1a3d08f3118f910020ff919b9cc519c3462b42983a5de5b",
-      "sourceCatalogVariant": "CF-18 Precision Bomb Strike"
+      "sourceCatalogVariant": "CF-18 精确制导炸弹空袭"
     },
     {
       "cardId": "caf--cf18--cas",
       "rawName": "BP_CommandActor_FA18_Rockets_Strafe_CAF",
-      "variant": "CF-18 Rocket Strike",
+      "variant": "CF-18 火箭弹空袭",
       "displayName": "CF-18",
       "type": "CAS",
       "factionId": "caf",
@@ -5586,7 +5586,7 @@
       "sourceOccurrenceCount": 3,
       "selection": null,
       "renderSourceSha256": "78ef6451d30b56b2212d05b6387040673ed1ed57caf33fbcd9b5afd23dbd934f",
-      "sourceCatalogVariant": "CF-18 Rocket Strike"
+      "sourceCatalogVariant": "CF-18 火箭弹空袭"
     },
     {
       "cardId": "caf--ch-146--uh",
@@ -6449,7 +6449,7 @@
     {
       "cardId": "caf--mq9--uav",
       "rawName": "BP_CommandActor_UAV_MQ9",
-      "variant": "MQ-9 Reaper",
+      "variant": "MQ-9 Reaper“死神”无人机",
       "displayName": "MQ-9 Reaper",
       "type": "UAV",
       "factionId": "caf",
@@ -6466,7 +6466,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "bc15e8edfd3a5146cad5ea32f97208976e82f3306f1414f254ee58dc24ff7cc1",
-      "sourceCatalogVariant": "MQ-9 Reaper"
+      "sourceCatalogVariant": "MQ-9 Reaper“死神”无人机"
     },
     {
       "cardId": "caf--msvs-logistics--logi",
@@ -6867,7 +6867,7 @@
     {
       "cardId": "crf--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone",
-      "variant": "Portable Recon Drone Portable Recon Drone",
+      "variant": "侦察无人机 便携式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "crf",
@@ -6884,12 +6884,12 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "fc0a61d4175859ffab10826a575c28f72b83accc47165ec40e4b317073ab39f8",
-      "sourceCatalogVariant": "Portable Recon Drone Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 便携式"
     },
     {
       "cardId": "crf--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone Recoverable Scout Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "crf",
@@ -6906,7 +6906,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "de60cf10f262d13700e19a0b3b7852ad8ba9547289fe622005e5f4df91d25343",
-      "sourceCatalogVariant": "Portable Recon Drone Recoverable Scout Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "crf--quad-bike--ultv",
@@ -7246,7 +7246,7 @@
     {
       "cardId": "gfi--pchela--uav",
       "rawName": "BP_CommandActor_UAV_Pchela",
-      "variant": "Pchela-1T",
+      "variant": "Pchela-1T “蜜蜂-1T”侦察无人机",
       "displayName": "Pchela-1T",
       "type": "UAV",
       "factionId": "gfi",
@@ -7263,7 +7263,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "7a7a33a7a83a9f9f3fc6622ac0db1d1e07f7e83af540b76f7b9bedac096d9e82",
-      "sourceCatalogVariant": "Pchela-1T"
+      "sourceCatalogVariant": "Pchela-1T “蜜蜂-1T”侦察无人机"
     },
     {
       "cardId": "gfi--rhib-logistics--logi",
@@ -7444,7 +7444,7 @@
     {
       "cardId": "gfi--su25--cas",
       "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
-      "variant": "Su-25 Precision Bomb Strike",
+      "variant": "Su-25 精确制导炸弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "gfi",
@@ -7461,12 +7461,12 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "ccac269b4d9678f3920552d0ea68cf87816bb6fa8202cffdfcc8e2a668c1fdc4",
-      "sourceCatalogVariant": "Su-25 Precision Bomb Strike"
+      "sourceCatalogVariant": "Su-25 精确制导炸弹空袭"
     },
     {
       "cardId": "gfi--su25--cas",
       "rawName": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
-      "variant": "Su-25 S-8 Rocket Strike",
+      "variant": "Su-25 S-8 火箭弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "gfi",
@@ -7483,7 +7483,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "c1f5df507520fe978c0e7c4548b91e0b71ef1c52e181a82ce1300c0d952d4ceb",
-      "sourceCatalogVariant": "Su-25 S-8 Rocket Strike"
+      "sourceCatalogVariant": "Su-25 S-8 火箭弹空袭"
     },
     {
       "cardId": "gfi--t-62--mbt",
@@ -7950,7 +7950,7 @@
     {
       "cardId": "imf--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone",
-      "variant": "Portable Recon Drone Portable Recon Drone",
+      "variant": "侦察无人机 便携式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "imf",
@@ -7967,12 +7967,12 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "ecc4691786f3d2a4085756980935235274241bcab4221df6c1c914b0873146d2",
-      "sourceCatalogVariant": "Portable Recon Drone Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 便携式"
     },
     {
       "cardId": "imf--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone Recoverable Scout Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "imf",
@@ -7989,7 +7989,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "4037d4a6093f47eb1137c9fce558f7844f05308f17fdc19abb099954cc18e627",
-      "sourceCatalogVariant": "Portable Recon Drone Recoverable Scout Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "imf--rhib-dshk--ultv",
@@ -8774,7 +8774,7 @@
     {
       "cardId": "mei--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 便携式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "mei",
@@ -8791,7 +8791,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "6af27b3d0cbfcb248077b5d423358a62cc5199d1bdaebc1aa5efa94f0589aac8",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 便携式"
     },
     {
       "cardId": "mei--rhib-dshk--ultv",
@@ -9268,7 +9268,7 @@
     {
       "cardId": "pla--ch4a--uav",
       "rawName": "BP_CommandActor_UAV_CH4A",
-      "variant": "CH-4A",
+      "variant": "CH-4A “彩虹-4A”无人机",
       "displayName": "CH-4A",
       "type": "UAV",
       "factionId": "pla",
@@ -9285,7 +9285,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "5f544030a615e108dce22fc7f90f22ec4778d5d61568b8a62ecc8c12b3def098",
-      "sourceCatalogVariant": "CH-4A"
+      "sourceCatalogVariant": "CH-4A “彩虹-4A”无人机"
     },
     {
       "cardId": "pla--csk131-hj8--td",
@@ -9642,7 +9642,7 @@
     {
       "cardId": "pla--jh7a--cas",
       "rawName": "BP_CommandActor_JH7A_Rockets_Strafe",
-      "variant": "JH-7A",
+      "variant": "JH-7A 火箭弹空袭",
       "displayName": "JH-7A",
       "type": "CAS",
       "factionId": "pla",
@@ -9659,7 +9659,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "1be3334384d816f9c74f9429d18031e7e72ad897fe92a220dd0b85bcaa868e61",
-      "sourceCatalogVariant": "JH-7A"
+      "sourceCatalogVariant": "JH-7A 火箭弹空袭"
     },
     {
       "cardId": "pla--lynx8x8-logistics--logi",
@@ -9752,7 +9752,7 @@
     {
       "cardId": "pla--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "pla",
@@ -9769,7 +9769,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "34ef074648ce5cbb52f3c1be47dace0971cebd3187fed6a8f889676f817bbd4a",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "pla--rhib-logistics--logi",
@@ -10742,7 +10742,7 @@
     {
       "cardId": "plaagf--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "plaagf",
@@ -10759,7 +10759,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "f27e70fa441d849a624ea270072a9230b565adbbe0ebf4f7239343c0920fc027",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "plaagf--rhib-logistics--logi",
@@ -11434,7 +11434,7 @@
     {
       "cardId": "planmc--ch4a--uav",
       "rawName": "BP_CommandActor_UAV_CH4A",
-      "variant": "CH-4A",
+      "variant": "CH-4A “彩虹-4A”无人机",
       "displayName": "CH-4A",
       "type": "UAV",
       "factionId": "planmc",
@@ -11451,7 +11451,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "98073ec7082e2f322226fa8e2cc3ff4e99cf1d789efbef0fc6abab0ddfbc5b79",
-      "sourceCatalogVariant": "CH-4A"
+      "sourceCatalogVariant": "CH-4A “彩虹-4A”无人机"
     },
     {
       "cardId": "planmc--csk131-hj8--td",
@@ -11610,7 +11610,7 @@
     {
       "cardId": "planmc--jh7a--cas",
       "rawName": "BP_CommandActor_JH7A_Rockets_Strafe",
-      "variant": "JH-7A",
+      "variant": "JH-7A 火箭弹空袭",
       "displayName": "JH-7A",
       "type": "CAS",
       "factionId": "planmc",
@@ -11627,7 +11627,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "5df864c27a6eaac155ecb31ec157397337109c6966e2f06dee5d62b5a6b006cc",
-      "sourceCatalogVariant": "JH-7A"
+      "sourceCatalogVariant": "JH-7A 火箭弹空袭"
     },
     {
       "cardId": "planmc--lynx8x8-logistics--logi",
@@ -11698,7 +11698,7 @@
     {
       "cardId": "planmc--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "planmc",
@@ -11715,7 +11715,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "813f9dccf30d3b5caf1c6e5f836018949e4a3ef4382e88486a5027dde6a650dd",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "planmc--rhib-logistics--logi",
@@ -12627,7 +12627,7 @@
     {
       "cardId": "rgf--pchela--uav",
       "rawName": "BP_CommandActor_UAV_Pchela",
-      "variant": "Pchela-1T",
+      "variant": "Pchela-1T “蜜蜂-1T”侦察无人机",
       "displayName": "Pchela-1T",
       "type": "UAV",
       "factionId": "rgf",
@@ -12644,12 +12644,12 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "063c7a77405e5137fa77498bee124a51e106d33329c2699dac2ebbace16cf54f",
-      "sourceCatalogVariant": "Pchela-1T"
+      "sourceCatalogVariant": "Pchela-1T “蜜蜂-1T”侦察无人机"
     },
     {
       "cardId": "rgf--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "rgf",
@@ -12666,7 +12666,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "0d867fe0c540965f9e1acf444e2cc9278d3efc39f3b33441a9da15fcf0210964",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "rgf--rhib-ags-17--ultv",
@@ -12759,7 +12759,7 @@
     {
       "cardId": "rgf--su25--cas",
       "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
-      "variant": "Su-25 Precision Bomb Strike",
+      "variant": "Su-25 精确制导炸弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "rgf",
@@ -12776,12 +12776,12 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "e918e8534ca5fde70fb8ee0624b63ed2bc6646e4020a20d5a1d3f06413a7bfa3",
-      "sourceCatalogVariant": "Su-25 Precision Bomb Strike"
+      "sourceCatalogVariant": "Su-25 精确制导炸弹空袭"
     },
     {
       "cardId": "rgf--su25--cas",
       "rawName": "BP_CommandActor_SU25_Rockets_Strafe",
-      "variant": "Su-25 S-8 Rocket Strike",
+      "variant": "Su-25 S-8 火箭弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "rgf",
@@ -12798,7 +12798,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "e098849c55fdacc91aaf119faf9f99b1dc86ac6258127908b0018c084262a1dd",
-      "sourceCatalogVariant": "Su-25 S-8 Rocket Strike"
+      "sourceCatalogVariant": "Su-25 S-8 火箭弹空袭"
     },
     {
       "cardId": "rgf--t-72b3--mbt",
@@ -13419,7 +13419,7 @@
     {
       "cardId": "tlf--f16--cas",
       "rawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
-      "variant": "F-16C",
+      "variant": "F-16C 火箭弹空袭",
       "displayName": "F-16C",
       "type": "CAS",
       "factionId": "tlf",
@@ -13436,7 +13436,7 @@
       "sourceOccurrenceCount": 3,
       "selection": null,
       "renderSourceSha256": "7b5a569be3f700fabd97de59ee9df326883249583cf5095e38f839a7787d7138",
-      "sourceCatalogVariant": "F-16C"
+      "sourceCatalogVariant": "F-16C 火箭弹空袭"
     },
     {
       "cardId": "tlf--m113a2-logistics--logi",
@@ -13947,7 +13947,7 @@
     {
       "cardId": "tlf--tb2--uav",
       "rawName": "BP_CommandActor_UAV_TB2",
-      "variant": "Bayraktar TB2",
+      "variant": "Bayraktar TB2 “旗手”无人机",
       "displayName": "Bayraktar TB2",
       "type": "UAV",
       "factionId": "tlf",
@@ -13964,7 +13964,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "7a4f5b2da63bc3d610d274d66b29489defaba19c96b5b8fd458d8c3f03973606",
-      "sourceCatalogVariant": "Bayraktar TB2"
+      "sourceCatalogVariant": "Bayraktar TB2 “旗手”无人机"
     },
     {
       "cardId": "tlf--uh60-pkm--uh",
@@ -13991,7 +13991,7 @@
     {
       "cardId": "usa--a10--cas",
       "rawName": "BP_CommandActor_A10_Strafe_2",
-      "variant": "A-10A",
+      "variant": "A-10A 30 mm 机炮扫射",
       "displayName": "A-10A",
       "type": "CAS",
       "factionId": "usa",
@@ -14008,7 +14008,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "fa4bcb808bf924c1f3d5ce991c9da5e449ea2202fc3b3aebf28fffdf1a760422",
-      "sourceCatalogVariant": "A-10A"
+      "sourceCatalogVariant": "A-10A 30 mm 机炮扫射"
     },
     {
       "cardId": "usa--m-atv-crows-m2--mrap",
@@ -15135,7 +15135,7 @@
     {
       "cardId": "usa--mq9--uav",
       "rawName": "BP_CommandActor_UAV_MQ9",
-      "variant": "MQ-9 Reaper",
+      "variant": "MQ-9 Reaper“死神”无人机",
       "displayName": "MQ-9 Reaper",
       "type": "UAV",
       "factionId": "usa",
@@ -15152,7 +15152,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "f8d73e89f645199f105d4d73edcb9bc95491c76d14b8a577ce27ccaaf2e4c9f5",
-      "sourceCatalogVariant": "MQ-9 Reaper"
+      "sourceCatalogVariant": "MQ-9 Reaper“死神”无人机"
     },
     {
       "cardId": "usa--quad-bike--ultv",
@@ -15289,7 +15289,7 @@
     {
       "cardId": "usmc--a10--cas",
       "rawName": "BP_CommandActor_A10_Strafe_2",
-      "variant": "A-10A",
+      "variant": "A-10A 30 mm 机炮扫射",
       "displayName": "A-10A",
       "type": "CAS",
       "factionId": "usmc",
@@ -15306,7 +15306,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "9f3b1a0358c1906666d2902a74e6a63884dea45858ae491f38b1604f1795abd8",
-      "sourceCatalogVariant": "A-10A"
+      "sourceCatalogVariant": "A-10A 30 mm 机炮扫射"
     },
     {
       "cardId": "usmc--aavc-7a1-logistics--logi",
@@ -16103,7 +16103,7 @@
     {
       "cardId": "usmc--mq9--uav",
       "rawName": "BP_CommandActor_UAV_MQ9",
-      "variant": "MQ-9 Reaper",
+      "variant": "MQ-9 Reaper“死神”无人机",
       "displayName": "MQ-9 Reaper",
       "type": "UAV",
       "factionId": "usmc",
@@ -16120,7 +16120,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "99ca064a167724065bbb548a0a81cd4d244c346cc1390bdcf091a3f3a445967e",
-      "sourceCatalogVariant": "MQ-9 Reaper"
+      "sourceCatalogVariant": "MQ-9 Reaper“死神”无人机"
     },
     {
       "cardId": "usmc--quad-bike--ultv",
@@ -16829,7 +16829,7 @@
     {
       "cardId": "vdv--pchela--uav",
       "rawName": "BP_CommandActor_UAV_Pchela",
-      "variant": "Pchela-1T",
+      "variant": "Pchela-1T “蜜蜂-1T”侦察无人机",
       "displayName": "Pchela-1T",
       "type": "UAV",
       "factionId": "vdv",
@@ -16846,12 +16846,12 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "b34d82e710525af1fa04ad08b25ef189648d8f812e0d3d8400be892dab41cb74",
-      "sourceCatalogVariant": "Pchela-1T"
+      "sourceCatalogVariant": "Pchela-1T “蜜蜂-1T”侦察无人机"
     },
     {
       "cardId": "vdv--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_Recoverable",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 可回收式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "vdv",
@@ -16868,7 +16868,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "2b5bd6ed094d9731ef782c565761087b70679005f55b62937c614b292c047f23",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 可回收式"
     },
     {
       "cardId": "vdv--rhib-ags-17--ultv",
@@ -17005,7 +17005,7 @@
     {
       "cardId": "vdv--su25--cas",
       "rawName": "BP_CommandActor_SU25_Bomb_Strafe",
-      "variant": "Su-25 Precision Bomb Strike",
+      "variant": "Su-25 精确制导炸弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "vdv",
@@ -17022,12 +17022,12 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "048504fc84b4298420c959db016aa8acab5b8693bd5064ce614be40f91207b72",
-      "sourceCatalogVariant": "Su-25 Precision Bomb Strike"
+      "sourceCatalogVariant": "Su-25 精确制导炸弹空袭"
     },
     {
       "cardId": "vdv--su25--cas",
       "rawName": "BP_CommandActor_SU25_Rockets_Strafe",
-      "variant": "Su-25 S-8 Rocket Strike",
+      "variant": "Su-25 S-8 火箭弹空袭",
       "displayName": "Su-25",
       "type": "CAS",
       "factionId": "vdv",
@@ -17044,7 +17044,7 @@
       "sourceOccurrenceCount": 1,
       "selection": null,
       "renderSourceSha256": "c9faa8349223cc3487839e75d2b5b315b6af46f981e47482a1e980a2a4ff10f9",
-      "sourceCatalogVariant": "Su-25 S-8 Rocket Strike"
+      "sourceCatalogVariant": "Su-25 S-8 火箭弹空袭"
     },
     {
       "cardId": "vdv--t-72b3--mbt",
@@ -17313,7 +17313,7 @@
     {
       "cardId": "wpmc--f16--cas",
       "rawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
-      "variant": "F-16C",
+      "variant": "F-16C 火箭弹空袭",
       "displayName": "F-16C",
       "type": "CAS",
       "factionId": "wpmc",
@@ -17330,7 +17330,7 @@
       "sourceOccurrenceCount": 3,
       "selection": null,
       "renderSourceSha256": "64558c923fbe3746acae33794541f702bbecd1c8c5c3e337a3fbd720ba77cea3",
-      "sourceCatalogVariant": "F-16C"
+      "sourceCatalogVariant": "F-16C 火箭弹空袭"
     },
     {
       "cardId": "wpmc--loach-cas-small--ah",
@@ -17643,7 +17643,7 @@
     {
       "cardId": "wpmc--portable-recon-drone--drone",
       "rawName": "BP_FlyingDrone_WPMC",
-      "variant": "Portable Recon Drone",
+      "variant": "侦察无人机 便携式",
       "displayName": "Portable Recon Drone",
       "type": "DRONE",
       "factionId": "wpmc",
@@ -17660,7 +17660,7 @@
       "sourceOccurrenceCount": 5,
       "selection": null,
       "renderSourceSha256": "55a79b592736e187b3676af05707f3f1eb8ae120efe071d7dc468f0f8d49b900",
-      "sourceCatalogVariant": "Portable Recon Drone"
+      "sourceCatalogVariant": "侦察无人机 便携式"
     },
     {
       "cardId": "wpmc--quad-bike--ultv",

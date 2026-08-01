@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "vehicle-v3.1-eed95ad3d4575eeed370-projection-399295012186-support-air-1c7075afd4c5",
+  "dataRevision": "vehicle-v3.1-eed95ad3d4575eeed370-projection-399295012186-support-air-8d9a1b9f59ff-cards-63600a42ac23",
   "vehicleCatalogRevision": "eed95ad3d4575eeed370bf339ecabf7f07441d2001722dbb457b1a77fbb189c2",
   "groups": [
     {
@@ -152,8 +152,8 @@
         "nameZh": "M1151 TOW",
         "typeZh": "TD",
         "presentation": {
-          "vehicleNameZh": "M1151 TOW",
-          "configurationZh": null
+          "vehicleNameZh": "M1151",
+          "configurationZh": "TOW"
         }
       },
       "selectedRawName": "BP_M1151_Light_TOW",
@@ -167,7 +167,7 @@
           "vehicleRef": "vehicle-d4c89840c04182d947bc9d1e",
           "runtimeVehicleRef": "vehicle-1299009aaf44960b1f62ea354d45b04405a2e792e6e7f578fd46bb953b8a7c07",
           "visualArtifactRef": "visual-artifact-97ed6345a053094aa7304d09dce269388af760bf577ddf09c1f4bbc7e7bd71e9",
-          "alias": "",
+          "alias": "TOW",
           "displayName": "M1151 TOW（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -189,7 +189,7 @@
           "vehicleRef": "vehicle-0db6eb334e73255b5c2b5e13",
           "runtimeVehicleRef": "vehicle-d064d93a32e4afb47a5f7ec85edafbef8fcdeea81b543eed9752b6a60f34a72d",
           "visualArtifactRef": "visual-artifact-74379dd78e92fe1401d1014b2434c5f489c0f52d1047c7468d65f408017f50b6",
-          "alias": "",
+          "alias": "TOW",
           "displayName": "M1151 TOW（林地）",
           "searchTerms": [
             "林地"
@@ -623,8 +623,8 @@
         "nameZh": "Technical Kornet",
         "typeZh": "TD",
         "presentation": {
-          "vehicleNameZh": "Technical Kornet",
-          "configurationZh": null
+          "vehicleNameZh": "Technical",
+          "configurationZh": "Kornet"
         }
       },
       "selectedRawName": "BP_Technical2Seater_AFU_Kornet",
@@ -638,7 +638,7 @@
           "vehicleRef": "vehicle-08e29bb658925fa05dcb0af4",
           "runtimeVehicleRef": "vehicle-5e13c44017a56bef1ba55ac825a61161e8599985dd979ad0c12f1784fe9f96a5",
           "visualArtifactRef": "visual-artifact-3341ce5e24bd1992ee319baa1608e13498b570b70081bc0518d62c4fa1fac2ee",
-          "alias": "",
+          "alias": "Kornet",
           "displayName": "Technical Kornet",
           "presentation": {
             "liveryZh": null,
@@ -1451,8 +1451,8 @@
         "nameZh": "M1151 TOW",
         "typeZh": "TD",
         "presentation": {
-          "vehicleNameZh": "M1151 TOW",
-          "configurationZh": null
+          "vehicleNameZh": "M1151",
+          "configurationZh": "TOW"
         }
       },
       "selectedRawName": "BP_M1151_Light_TOW",
@@ -1466,7 +1466,7 @@
           "vehicleRef": "vehicle-d4c89840c04182d947bc9d1e",
           "runtimeVehicleRef": "vehicle-1299009aaf44960b1f62ea354d45b04405a2e792e6e7f578fd46bb953b8a7c07",
           "visualArtifactRef": "visual-artifact-a371f04e175c2f8dcd1232a4a2ae54db8659555ae5b97cad31dad26b2ee71946",
-          "alias": "",
+          "alias": "TOW",
           "displayName": "M1151 TOW（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -1488,7 +1488,7 @@
           "vehicleRef": "vehicle-0db6eb334e73255b5c2b5e13",
           "runtimeVehicleRef": "vehicle-d064d93a32e4afb47a5f7ec85edafbef8fcdeea81b543eed9752b6a60f34a72d",
           "visualArtifactRef": "visual-artifact-52915c70dabe399269d7f42a02f2373c0275be4f846475dc24d4b8d877cd9d90",
-          "alias": "",
+          "alias": "TOW",
           "displayName": "M1151 TOW（林地）",
           "searchTerms": [
             "林地"
@@ -1643,8 +1643,8 @@
         "nameZh": "FV520 CTAS40",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "FV520 CTAS40",
-          "configurationZh": null
+          "vehicleNameZh": "FV520",
+          "configurationZh": "CTAS40"
         }
       },
       "selectedRawName": "BP_FV510UA_CTAS40",
@@ -1658,7 +1658,7 @@
           "vehicleRef": "vehicle-5dad3397c4f72f1dd86c4bce",
           "runtimeVehicleRef": "vehicle-64d1424dddc075ba851b531578306ca34a24a1484d61db2d6a8debd363691a36",
           "visualArtifactRef": "visual-artifact-06a9fbd9e10b03ef77ccc1da510d034ec9474b306f812e68624c750e2d05db1d",
-          "alias": "",
+          "alias": "CTAS40",
           "displayName": "FV520 CTAS40（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -1680,7 +1680,7 @@
           "vehicleRef": "vehicle-d394e71e979ab01cc41288b5",
           "runtimeVehicleRef": "vehicle-53eccbaf91872e0dafab817adf809af1377d1cc7fc7bd5ee4d49e04590093fd3",
           "visualArtifactRef": "visual-artifact-02e8388c38e16ee2f9561cac131782cdcbac25101e93c7a5b6fa58642b02e14c",
-          "alias": "",
+          "alias": "CTAS40",
           "displayName": "FV520 CTAS40（林地）",
           "searchTerms": [
             "林地"
@@ -2473,8 +2473,8 @@
         "nameZh": "M1151 TOW",
         "typeZh": "TD",
         "presentation": {
-          "vehicleNameZh": "M1151 TOW",
-          "configurationZh": null
+          "vehicleNameZh": "M1151",
+          "configurationZh": "TOW"
         }
       },
       "selectedRawName": "BP_M1151_Light_TOW",
@@ -2488,7 +2488,7 @@
           "vehicleRef": "vehicle-d4c89840c04182d947bc9d1e",
           "runtimeVehicleRef": "vehicle-1299009aaf44960b1f62ea354d45b04405a2e792e6e7f578fd46bb953b8a7c07",
           "visualArtifactRef": "visual-artifact-fef47970b68c0d34a37ef26d4e0a5174c301ddc1daa9c8895898dea25fd4eef2",
-          "alias": "",
+          "alias": "TOW",
           "displayName": "M1151 TOW（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -2510,7 +2510,7 @@
           "vehicleRef": "vehicle-0db6eb334e73255b5c2b5e13",
           "runtimeVehicleRef": "vehicle-d064d93a32e4afb47a5f7ec85edafbef8fcdeea81b543eed9752b6a60f34a72d",
           "visualArtifactRef": "visual-artifact-77ed600e795c822e19c6e8a489836d3a5f8d685edcfd273f80939177156fbd57",
-          "alias": "",
+          "alias": "TOW",
           "displayName": "M1151 TOW（林地）",
           "searchTerms": [
             "林地"
@@ -3893,8 +3893,8 @@
         "nameZh": "M1151 TOW",
         "typeZh": "TD",
         "presentation": {
-          "vehicleNameZh": "M1151 TOW",
-          "configurationZh": null
+          "vehicleNameZh": "M1151",
+          "configurationZh": "TOW"
         }
       },
       "selectedRawName": "BP_M1151_Light_TOW_Woodland_CRF",
@@ -3908,7 +3908,7 @@
           "vehicleRef": "vehicle-af43fe4ece7877b10efb9de8",
           "runtimeVehicleRef": "vehicle-076c4af4e2534eb52c4c7dc821686da189b0354f040bd4e78400fc211da95e5a",
           "visualArtifactRef": "visual-artifact-a63b3a443dd23321527a99297ddc7cf60b1920898d628ab89e7e80fbe0821edc",
-          "alias": "",
+          "alias": "TOW",
           "displayName": "M1151 TOW（林地）",
           "searchTerms": [
             "林地"
@@ -5088,8 +5088,8 @@
         "nameZh": "UH-1H MG3",
         "typeZh": "UH",
         "presentation": {
-          "vehicleNameZh": "UH-1H MG3",
-          "configurationZh": null
+          "vehicleNameZh": "UH-1H",
+          "configurationZh": "MG3"
         }
       },
       "selectedRawName": "BP_UH1H_GFI",
@@ -5103,7 +5103,7 @@
           "vehicleRef": "vehicle-fa0122de955892b764653422",
           "runtimeVehicleRef": "vehicle-0505d767a30e410c50a8be261f78a630ed2f450fa2938d5b499b186a2fb437a2",
           "visualArtifactRef": "visual-artifact-dc0eb8e512ec5117e7d78be4067d8b604f8ebf53b9e075f0a9032e1ba4b224c8",
-          "alias": "",
+          "alias": "MG3",
           "displayName": "UH-1H MG3",
           "presentation": {
             "liveryZh": null,
@@ -5390,8 +5390,8 @@
         "nameZh": "MT-LBM 6MB",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "MT-LBM 6MB",
-          "configurationZh": null
+          "vehicleNameZh": "MT-LBM",
+          "configurationZh": "6MB"
         }
       },
       "selectedRawName": "BP_MTLBM_6MB_MIL",
@@ -5405,7 +5405,7 @@
           "vehicleRef": "vehicle-8cdb2cf22523ff6ae970ebf0",
           "runtimeVehicleRef": "vehicle-a89b5059b51f620f679b8ba9bfcdd14f3e7fa529e7058527ba713bda03d15f10",
           "visualArtifactRef": "visual-artifact-e94c39c7ec861ad546bbec77312d3dc24d6830e2c5301a4cead88b749e5b459d",
-          "alias": "",
+          "alias": "6MB",
           "displayName": "MT-LBM 6MB",
           "presentation": {
             "liveryZh": null,
@@ -5495,8 +5495,8 @@
         "nameZh": "Tigr-M Kord",
         "typeZh": "MRAP",
         "presentation": {
-          "vehicleNameZh": "Tigr-M Kord",
-          "configurationZh": null
+          "vehicleNameZh": "Tigr-M",
+          "configurationZh": "Kord"
         }
       },
       "selectedRawName": "BP_Tigr_MIL",
@@ -5510,7 +5510,7 @@
           "vehicleRef": "vehicle-217b050493dd3548b23bc214",
           "runtimeVehicleRef": "vehicle-cd74616c7d9d38f1665a0db74e6fb860a0fe5420779ee643c02faa57259c00b2",
           "visualArtifactRef": "visual-artifact-d5ebe656724567dc052fd39f9e523da7580942d5fb54286ab32dcde7d862946e",
-          "alias": "",
+          "alias": "Kord",
           "displayName": "Tigr-M Kord",
           "presentation": {
             "liveryZh": null,
@@ -6297,8 +6297,8 @@
         "nameZh": "Modern Technical UB-32",
         "typeZh": "SPA",
         "presentation": {
-          "vehicleNameZh": "Modern Technical UB-32",
-          "configurationZh": null
+          "vehicleNameZh": "Modern Technical",
+          "configurationZh": "UB-32"
         }
       },
       "selectedRawName": "BP_Technical2Seater_Camo_UB32",
@@ -6312,7 +6312,7 @@
           "vehicleRef": "vehicle-0c8f4d10981668079f2077b8",
           "runtimeVehicleRef": "vehicle-e4c70a18539cd8b80393b08a29b991eacbc53463956e01f611256e473bbae54e",
           "visualArtifactRef": "visual-artifact-8dbaa758aa5c723c9c1a13b6a6af19189cdfe61e247edf0343155a439ea426e5",
-          "alias": "",
+          "alias": "UB-32",
           "displayName": "Modern Technical UB-32",
           "presentation": {
             "liveryZh": null,
@@ -6747,8 +6747,8 @@
         "nameZh": "M1151 Technical DSHK",
         "typeZh": "LTV",
         "presentation": {
-          "vehicleNameZh": "M1151 Technical DSHK",
-          "configurationZh": null
+          "vehicleNameZh": "M1151",
+          "configurationZh": "Technical DSHK"
         }
       },
       "selectedRawName": "BP_M1151_Technical",
@@ -6762,7 +6762,7 @@
           "vehicleRef": "vehicle-7c819bf0914e59dbdb32fbeb",
           "runtimeVehicleRef": "vehicle-562eeca0c06b1b5e1d80a5b44da373e7b435f9fca41c5fbd648359c0e73e6b89",
           "visualArtifactRef": "visual-artifact-74ef9b380ff9ccef4fe248a6d25b84df6d7cf07bb7e337e035cb5fd37e520446",
-          "alias": "",
+          "alias": "Technical DSHK",
           "displayName": "M1151 Technical DSHK",
           "presentation": {
             "liveryZh": null,
@@ -7788,8 +7788,8 @@
         "nameZh": "ZSD89II IFV",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "ZSD89II IFV",
-          "configurationZh": null
+          "vehicleNameZh": "ZSD89II",
+          "configurationZh": "IFV"
         }
       },
       "selectedRawName": "BP_ZSD89II_Desert",
@@ -7803,7 +7803,7 @@
           "vehicleRef": "vehicle-2357e0287d60ec4db75e9624",
           "runtimeVehicleRef": "vehicle-b6f452f2f0393fcdc198c068e38dc055d052f65218c619dba55f7a310782254a",
           "visualArtifactRef": "visual-artifact-78a863d4ef4ee8bde7ecd637dffafc7537b130732bb5fee5b6e22208eb9b1a2b",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSD89II IFV（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -7825,7 +7825,7 @@
           "vehicleRef": "vehicle-8c770060da299cf8fe2bce1e",
           "runtimeVehicleRef": "vehicle-5c2eaab61a9a249dfa984ed9c08d0f2a6430ef91a35dc8942571ae539d7c11bd",
           "visualArtifactRef": "visual-artifact-f7bd0505fd2279108249365809719825589c721416ac43f106f66627cbdafc4f",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSD89II IFV（林地）",
           "searchTerms": [
             "林地"
@@ -7852,8 +7852,8 @@
         "nameZh": "ZSL92 IFV",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "ZSL92 IFV",
-          "configurationZh": null
+          "vehicleNameZh": "ZSL92",
+          "configurationZh": "IFV"
         }
       },
       "selectedRawName": "BP_WZ551A_Desert",
@@ -7867,7 +7867,7 @@
           "vehicleRef": "vehicle-0b77eb28cae4bfdda0b7392e",
           "runtimeVehicleRef": "vehicle-eac0a3275f457d339c832ef76e5294f4dab6b675f4e474a7dad1d4220be40323",
           "visualArtifactRef": "visual-artifact-1b3a5feef8b64fd18a895cfd5a768adceda52f0ca4058b19cb03b8eff209d9ae",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSL92 IFV（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -7889,7 +7889,7 @@
           "vehicleRef": "vehicle-6d80fcc0d820822782197f0e",
           "runtimeVehicleRef": "vehicle-df7058a9c0cf03891b247db5cdef7f4356d2a4211e8f11c4ec401a9033c5425d",
           "visualArtifactRef": "visual-artifact-233bb18f06cf1af1979c9de60311a9ebef1a2ca5d887fcf838add647dc391dc4",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSL92 IFV（林地）",
           "searchTerms": [
             "林地"
@@ -9396,8 +9396,8 @@
         "nameZh": "ZSD89II IFV",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "ZSD89II IFV",
-          "configurationZh": null
+          "vehicleNameZh": "ZSD89II",
+          "configurationZh": "IFV"
         }
       },
       "selectedRawName": "BP_ZSD89II_Desert",
@@ -9411,7 +9411,7 @@
           "vehicleRef": "vehicle-2357e0287d60ec4db75e9624",
           "runtimeVehicleRef": "vehicle-b6f452f2f0393fcdc198c068e38dc055d052f65218c619dba55f7a310782254a",
           "visualArtifactRef": "visual-artifact-b5721010aa627b38fbf98135fa1fa276a7aaadddd7fa0b2f543046801b1193cd",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSD89II IFV（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -9433,7 +9433,7 @@
           "vehicleRef": "vehicle-8c770060da299cf8fe2bce1e",
           "runtimeVehicleRef": "vehicle-5c2eaab61a9a249dfa984ed9c08d0f2a6430ef91a35dc8942571ae539d7c11bd",
           "visualArtifactRef": "visual-artifact-4fd95065fa14ff187317d1414d3f50932e68ccc49422bc6365aa8a480624b076",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSD89II IFV（林地）",
           "searchTerms": [
             "林地"
@@ -9460,8 +9460,8 @@
         "nameZh": "ZSL92 IFV",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "ZSL92 IFV",
-          "configurationZh": null
+          "vehicleNameZh": "ZSL92",
+          "configurationZh": "IFV"
         }
       },
       "selectedRawName": "BP_WZ551A_Desert",
@@ -9475,7 +9475,7 @@
           "vehicleRef": "vehicle-0b77eb28cae4bfdda0b7392e",
           "runtimeVehicleRef": "vehicle-eac0a3275f457d339c832ef76e5294f4dab6b675f4e474a7dad1d4220be40323",
           "visualArtifactRef": "visual-artifact-988553a5662313138b0737ee83013eeb33ef93024ddcc5ab4631055a888b685f",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSL92 IFV（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -9497,7 +9497,7 @@
           "vehicleRef": "vehicle-6d80fcc0d820822782197f0e",
           "runtimeVehicleRef": "vehicle-df7058a9c0cf03891b247db5cdef7f4356d2a4211e8f11c4ec401a9033c5425d",
           "visualArtifactRef": "visual-artifact-7f42b0ad4182d10f7ec7bce50ad276d8553c24f8a4439d64926a5dde7c187054",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSL92 IFV（林地）",
           "searchTerms": [
             "林地"
@@ -14137,8 +14137,8 @@
         "nameZh": "UH60 PKM",
         "typeZh": "UH",
         "presentation": {
-          "vehicleNameZh": "UH60 PKM",
-          "configurationZh": null
+          "vehicleNameZh": "UH60",
+          "configurationZh": "PKM"
         }
       },
       "selectedRawName": "BP_UH60_TLF_PKM",
@@ -14152,7 +14152,7 @@
           "vehicleRef": "vehicle-1a403604aa21dd5251e02d3e",
           "runtimeVehicleRef": "vehicle-1dcf81e2ba3cbbcdde2f07551f50c9a777a30288a21685f219133511684fd30c",
           "visualArtifactRef": "visual-artifact-fc9c46052825dc6cf5bd8493895f6f54d23b903a49980fb5f6e9e829a79b8088",
-          "alias": "",
+          "alias": "PKM",
           "displayName": "UH60 PKM",
           "presentation": {
             "liveryZh": null,
@@ -14236,8 +14236,8 @@
         "nameZh": "M1128 MGS",
         "typeZh": "MGS",
         "presentation": {
-          "vehicleNameZh": "M1128 MGS",
-          "configurationZh": null
+          "vehicleNameZh": "M1128",
+          "configurationZh": "MGS"
         }
       },
       "selectedRawName": "BP_M1128",
@@ -14251,7 +14251,7 @@
           "vehicleRef": "vehicle-ccd112749d4f58733cbef52b",
           "runtimeVehicleRef": "vehicle-acf60bc423d14dc31d47d262141413cca077331a0024864cf1aa4439a80be254",
           "visualArtifactRef": "visual-artifact-37acd1514bfad57c49486146be28b9d1b024ca8edd01a977aed53edc0fce5b6a",
-          "alias": "",
+          "alias": "MGS",
           "displayName": "M1128 MGS（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -14273,7 +14273,7 @@
           "vehicleRef": "vehicle-1de8ee7932ff0b212a690dfe",
           "runtimeVehicleRef": "vehicle-8f844ae12ba70e094d19faa358634407598df88b02a38cfe4d43dfc36d41cfd0",
           "visualArtifactRef": "visual-artifact-b5b7a8401cb81ac88d26dc04f2e194eba2095312efb58741245a436730d29938",
-          "alias": "",
+          "alias": "MGS",
           "displayName": "M1128 MGS（林地）",
           "searchTerms": [
             "林地"
@@ -15438,8 +15438,8 @@
         "nameZh": "MATV CROWS M2",
         "typeZh": "MRAP",
         "presentation": {
-          "vehicleNameZh": "MATV CROWS M2",
-          "configurationZh": null
+          "vehicleNameZh": "MATV",
+          "configurationZh": "CROWS M2"
         }
       },
       "selectedRawName": "BP_MATV_USMC_CROWS",
@@ -15453,7 +15453,7 @@
           "vehicleRef": "vehicle-164477af25ced9c8a2819413",
           "runtimeVehicleRef": "vehicle-f7fa595b7534cf3c5923dd8d51ae5d4ec7063754bbdb8ecb276c817202817f73",
           "visualArtifactRef": "visual-artifact-c751a762ec559d6f2a0d13ad79849af03edf33af0e1af052a8805561cb4613db",
-          "alias": "",
+          "alias": "CROWS M2",
           "displayName": "MATV CROWS M2（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -15475,7 +15475,7 @@
           "vehicleRef": "vehicle-1736e66b30db9a6eec9b2cd7",
           "runtimeVehicleRef": "vehicle-51c408e67465e4f5ae3a998132e5f19934022d89967a64bbee18f71b86c2076c",
           "visualArtifactRef": "visual-artifact-2cacfadb79fd0a334b19504c4ce91469af85d9ed168dec5e7dd1794ea90ff833",
-          "alias": "",
+          "alias": "CROWS M2",
           "displayName": "MATV CROWS M2（林地）",
           "searchTerms": [
             "林地"
@@ -15863,8 +15863,8 @@
         "nameZh": "M1064A3 M121",
         "typeZh": "SPA",
         "presentation": {
-          "vehicleNameZh": "M1064A3 M121",
-          "configurationZh": null
+          "vehicleNameZh": "M1064A3",
+          "configurationZh": "M121"
         }
       },
       "selectedRawName": "BP_M1064A3_M121_Desert",
@@ -15878,7 +15878,7 @@
           "vehicleRef": "vehicle-02465cd6d183d21bb472c2f8",
           "runtimeVehicleRef": "vehicle-92aaf9ec311ad962014f0b784474d303e391f401c507fe8f0c048154f0c795b1",
           "visualArtifactRef": "visual-artifact-2b0efecd876343ba911b2e5fad07cb785131e28f781668fd311e1985894caeeb",
-          "alias": "",
+          "alias": "M121",
           "displayName": "M1064A3 M121（沙漠）",
           "searchTerms": [
             "沙漠"
@@ -15900,7 +15900,7 @@
           "vehicleRef": "vehicle-003bbbe28e9f4384e92a26e7",
           "runtimeVehicleRef": "vehicle-19930c46ce317cc6f3da6dc5643cb61e21e4c5136707a433611659c666367257",
           "visualArtifactRef": "visual-artifact-10d8946dcdf8045cb42fff0c3e949fc4e9f8f23ecf16c1876acb6d8ecc0504d6",
-          "alias": "",
+          "alias": "M121",
           "displayName": "M1064A3 M121（林地）",
           "searchTerms": [
             "林地"
@@ -19864,9 +19864,14 @@
       "promoEntryId": "adf--mq9--uav",
       "promotionOrder": 385,
       "searchTerms": [
+        "Reaper“死神”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "sishen",
+        "ss",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -19876,7 +19881,7 @@
         "nameZh": "MQ-9 Reaper",
         "typeZh": "UAV",
         "presentation": {
-          "vehicleNameZh": "MQ-9 Reaper",
+          "vehicleNameZh": "MQ-9",
           "configurationZh": null
         }
       },
@@ -19891,18 +19896,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-e79eff0a4d3905fd5abe9b068f8dd9fe3c5d588900c768f8077b14b1ae5eb0b2",
-          "alias": "",
-          "displayName": "MQ-9 Reaper",
+          "alias": "Reaper“死神”无人机",
+          "displayName": "MQ-9 Reaper“死神”无人机",
           "searchTerms": [
+            "Reaper“死神”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "sishen",
+            "ss",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "MQ-9",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "Reaper“死神”无人机"
           },
           "cardId": "adf--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "adf--mq9--uav--commandactor-uav-mq9"
@@ -19913,9 +19924,15 @@
       "promoEntryId": "adf--fa18--cas",
       "promotionOrder": 386,
       "searchTerms": [
+        "30 mm 机炮扫射",
+        "火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "jipaosaoshe",
+        "jpss",
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -19940,18 +19957,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-24dbeeb206a78f84ddd0f1c361939c05566d0ed87b8f86ec2d354104ad6f84f9",
-          "alias": "30 mm Strafe",
-          "displayName": "F/A-18F 30 mm Strafe",
+          "alias": "30 mm 机炮扫射",
+          "displayName": "F/A-18F 30 mm 机炮扫射",
           "searchTerms": [
+            "30 mm 机炮扫射",
             "攻击机"
           ],
           "searchAliases": [
+            "jipaosaoshe",
+            "jpss",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "F/A-18F",
             "liveryZh": null,
-            "configurationZh": "30 mm Strafe"
+            "configurationZh": "30 mm 机炮扫射"
           },
           "cardId": "adf--fa18--cas--commandactor-fa18-strafe",
           "routeSlug": "adf--fa18--cas--commandactor-fa18-strafe"
@@ -19962,18 +19983,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-dad7b8b14897e986173a8c6007ea5e22bfae1bc47f430ad6f573a8bafa4d4213",
-          "alias": "Rocket Strike",
-          "displayName": "F/A-18F Rocket Strike",
+          "alias": "火箭弹空袭",
+          "displayName": "F/A-18F 火箭弹空袭",
           "searchTerms": [
+            "火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "F/A-18F",
             "liveryZh": null,
-            "configurationZh": "Rocket Strike"
+            "configurationZh": "火箭弹空袭"
           },
           "cardId": "adf--fa18--cas--commandactor-fa18-rockets-strafe",
           "routeSlug": "adf--fa18--cas--commandactor-fa18-rockets-strafe"
@@ -19984,9 +20009,14 @@
       "promoEntryId": "afu--tb2--uav",
       "promotionOrder": 387,
       "searchTerms": [
+        "“旗手”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "qishou",
+        "qs",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -20011,18 +20041,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-45da972cf04d880cfb436c6e289ac4ae2c1c53f597b40e984fa6175f20c5b82a",
-          "alias": "",
-          "displayName": "Bayraktar TB2",
+          "alias": "“旗手”无人机",
+          "displayName": "Bayraktar TB2 “旗手”无人机",
           "searchTerms": [
+            "“旗手”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "qishou",
+            "qs",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "Bayraktar TB2",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "“旗手”无人机"
           },
           "cardId": "afu--tb2--uav--commandactor-uav-tb2",
           "routeSlug": "afu--tb2--uav--commandactor-uav-tb2"
@@ -20033,9 +20069,15 @@
       "promoEntryId": "afu--su25--cas",
       "promotionOrder": 388,
       "searchTerms": [
+        "精确制导炸弹空袭",
+        "S-8 火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "jingquezhidaozhadankongxi",
+        "jqzdzdkx",
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -20060,18 +20102,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-f1f74fca66e822514755d7a4fa5eaf54fd44f557b3be6210dd4354c37981f1c8",
-          "alias": "Precision Bomb Strike",
-          "displayName": "Su-25 Precision Bomb Strike",
+          "alias": "精确制导炸弹空袭",
+          "displayName": "Su-25 精确制导炸弹空袭",
           "searchTerms": [
+            "精确制导炸弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "jingquezhidaozhadankongxi",
+            "jqzdzdkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "Precision Bomb Strike"
+            "configurationZh": "精确制导炸弹空袭"
           },
           "cardId": "afu--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "afu--su25--cas--commandactor-su25-bomb-strafe"
@@ -20082,18 +20128,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-e31ee62f0c3bb4bac54008643d296cce41a65424a44e20fefaed8aaee9f65e86",
-          "alias": "S-8 Rocket Strike",
-          "displayName": "Su-25 S-8 Rocket Strike",
+          "alias": "S-8 火箭弹空袭",
+          "displayName": "Su-25 S-8 火箭弹空袭",
           "searchTerms": [
+            "S-8 火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "S-8 Rocket Strike"
+            "configurationZh": "S-8 火箭弹空袭"
           },
           "cardId": "afu--su25--cas--commandactor-su25-rockets-strafe",
           "routeSlug": "afu--su25--cas--commandactor-su25-rockets-strafe"
@@ -20104,9 +20154,15 @@
       "promoEntryId": "afu--portable-recon-drone--drone",
       "promotionOrder": 389,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -20116,7 +20172,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -20131,18 +20187,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-9f7b2c2ef5cbe64ecdb486157cb4728bee5640d823d2b35fc78c07032b707295",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "可回收式"
           },
           "cardId": "afu--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "afu--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -20153,9 +20216,14 @@
       "promoEntryId": "baf--mq9--uav",
       "promotionOrder": 390,
       "searchTerms": [
+        "Reaper“死神”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "sishen",
+        "ss",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -20165,7 +20233,7 @@
         "nameZh": "MQ-9 Reaper",
         "typeZh": "UAV",
         "presentation": {
-          "vehicleNameZh": "MQ-9 Reaper",
+          "vehicleNameZh": "MQ-9",
           "configurationZh": null
         }
       },
@@ -20180,18 +20248,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-2e91fdf41742baae8e080d5f50235af1620f51a627346bcba8d2cffaa18ab505",
-          "alias": "",
-          "displayName": "MQ-9 Reaper",
+          "alias": "Reaper“死神”无人机",
+          "displayName": "MQ-9 Reaper“死神”无人机",
           "searchTerms": [
+            "Reaper“死神”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "sishen",
+            "ss",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "MQ-9",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "Reaper“死神”无人机"
           },
           "cardId": "baf--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "baf--mq9--uav--commandactor-uav-mq9"
@@ -20202,9 +20276,12 @@
       "promoEntryId": "baf--a10--cas",
       "promotionOrder": 391,
       "searchTerms": [
+        "30 mm 机炮扫射",
         "攻击机"
       ],
       "searchAliases": [
+        "jipaosaoshe",
+        "jpss",
         "gongjiji",
         "gjj"
       ],
@@ -20229,18 +20306,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-5a4ad2c773493ba5573a7715d0fa4482cb711a8262c049c7e1954aa5dd78c153",
-          "alias": "",
-          "displayName": "A-10A",
+          "alias": "30 mm 机炮扫射",
+          "displayName": "A-10A 30 mm 机炮扫射",
           "searchTerms": [
+            "30 mm 机炮扫射",
             "攻击机"
           ],
           "searchAliases": [
+            "jipaosaoshe",
+            "jpss",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "A-10A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "30 mm 机炮扫射"
           },
           "cardId": "baf--a10--cas--commandactor-a10-strafe-2",
           "routeSlug": "baf--a10--cas--commandactor-a10-strafe-2"
@@ -20251,9 +20332,14 @@
       "promoEntryId": "caf--mq9--uav",
       "promotionOrder": 392,
       "searchTerms": [
+        "Reaper“死神”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "sishen",
+        "ss",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -20263,7 +20349,7 @@
         "nameZh": "MQ-9 Reaper",
         "typeZh": "UAV",
         "presentation": {
-          "vehicleNameZh": "MQ-9 Reaper",
+          "vehicleNameZh": "MQ-9",
           "configurationZh": null
         }
       },
@@ -20278,18 +20364,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-eb8c923752fbfd1e68a297ee69e9dbfa6ef952d83e2001635d3383f1f57bb5ec",
-          "alias": "",
-          "displayName": "MQ-9 Reaper",
+          "alias": "Reaper“死神”无人机",
+          "displayName": "MQ-9 Reaper“死神”无人机",
           "searchTerms": [
+            "Reaper“死神”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "sishen",
+            "ss",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "MQ-9",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "Reaper“死神”无人机"
           },
           "cardId": "caf--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "caf--mq9--uav--commandactor-uav-mq9"
@@ -20300,9 +20392,12 @@
       "promoEntryId": "caf--a10--cas",
       "promotionOrder": 393,
       "searchTerms": [
+        "30 mm 机炮扫射",
         "攻击机"
       ],
       "searchAliases": [
+        "jipaosaoshe",
+        "jpss",
         "gongjiji",
         "gjj"
       ],
@@ -20327,18 +20422,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-6c9a501dc8db4a2b2bf67aa7c400aeb62345f0255f3b6e1c52d22b46405fe357",
-          "alias": "",
-          "displayName": "A-10A",
+          "alias": "30 mm 机炮扫射",
+          "displayName": "A-10A 30 mm 机炮扫射",
           "searchTerms": [
+            "30 mm 机炮扫射",
             "攻击机"
           ],
           "searchAliases": [
+            "jipaosaoshe",
+            "jpss",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "A-10A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "30 mm 机炮扫射"
           },
           "cardId": "caf--a10--cas--commandactor-a10-strafe-2",
           "routeSlug": "caf--a10--cas--commandactor-a10-strafe-2"
@@ -20349,9 +20448,15 @@
       "promoEntryId": "caf--cf18--cas",
       "promotionOrder": 394,
       "searchTerms": [
+        "精确制导炸弹空袭",
+        "火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "jingquezhidaozhadankongxi",
+        "jqzdzdkx",
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -20376,18 +20481,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-2b559d774ec205ecd4185bb1da9b79d131d3e67a46aa84e9d7a7e48c73b38008",
-          "alias": "Precision Bomb Strike",
-          "displayName": "CF-18 Precision Bomb Strike",
+          "alias": "精确制导炸弹空袭",
+          "displayName": "CF-18 精确制导炸弹空袭",
           "searchTerms": [
+            "精确制导炸弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "jingquezhidaozhadankongxi",
+            "jqzdzdkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "CF-18",
             "liveryZh": null,
-            "configurationZh": "Precision Bomb Strike"
+            "configurationZh": "精确制导炸弹空袭"
           },
           "cardId": "caf--cf18--cas--commandactor-cf18-bomb-strafe-new",
           "routeSlug": "caf--cf18--cas--commandactor-cf18-bomb-strafe-new"
@@ -20398,18 +20507,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-c5d497c61e84f980db70bd9c064dbd2af213603efc2d6e51238e99835187d2b4",
-          "alias": "Rocket Strike",
-          "displayName": "CF-18 Rocket Strike",
+          "alias": "火箭弹空袭",
+          "displayName": "CF-18 火箭弹空袭",
           "searchTerms": [
+            "火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "CF-18",
             "liveryZh": null,
-            "configurationZh": "Rocket Strike"
+            "configurationZh": "火箭弹空袭"
           },
           "cardId": "caf--cf18--cas--commandactor-fa18-rockets-strafe-caf",
           "routeSlug": "caf--cf18--cas--commandactor-fa18-rockets-strafe-caf"
@@ -20420,9 +20533,18 @@
       "promoEntryId": "crf--portable-recon-drone--drone",
       "promotionOrder": 395,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
+        "便携式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
+        "bianxieshi",
+        "bxs",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -20432,7 +20554,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -20447,18 +20569,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-57ead171beb18e2d201bc4a17903ca17a067d6846515fcb5962cb3e6a2469a48",
-          "alias": "Recoverable Scout Drone",
-          "displayName": "Portable Recon Drone Recoverable Scout Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": "Recoverable Scout Drone"
+            "configurationZh": "可回收式"
           },
           "cardId": "crf--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "crf--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -20469,18 +20598,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-e6a388354fb3b4f4024e9b3def1f54a8cd533eeb12bd9988cc74af8fc7e17a1f",
-          "alias": "Portable Recon Drone",
-          "displayName": "Portable Recon Drone Portable Recon Drone",
+          "alias": "便携式",
+          "displayName": "侦察无人机 便携式",
           "searchTerms": [
+            "侦察无人机",
+            "便携式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "bianxieshi",
+            "bxs",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": "Portable Recon Drone"
+            "configurationZh": "便携式"
           },
           "cardId": "crf--portable-recon-drone--drone--flyingdrone",
           "routeSlug": "crf--portable-recon-drone--drone--flyingdrone"
@@ -20491,9 +20627,14 @@
       "promoEntryId": "gfi--pchela--uav",
       "promotionOrder": 396,
       "searchTerms": [
+        "“蜜蜂-1T”侦察无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "mifeng",
+        "mf",
+        "zhenchawurenji",
+        "zcwrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -20518,18 +20659,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-84cd4f8190542a45044bfac42a5e3c03e961462fced277c00b4f8e4a706f0316",
-          "alias": "",
-          "displayName": "Pchela-1T",
+          "alias": "“蜜蜂-1T”侦察无人机",
+          "displayName": "Pchela-1T “蜜蜂-1T”侦察无人机",
           "searchTerms": [
+            "“蜜蜂-1T”侦察无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "mifeng",
+            "mf",
+            "zhenchawurenji",
+            "zcwrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "Pchela-1T",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "“蜜蜂-1T”侦察无人机"
           },
           "cardId": "gfi--pchela--uav--commandactor-uav-pchela",
           "routeSlug": "gfi--pchela--uav--commandactor-uav-pchela"
@@ -20540,9 +20687,15 @@
       "promoEntryId": "gfi--su25--cas",
       "promotionOrder": 397,
       "searchTerms": [
+        "精确制导炸弹空袭",
+        "S-8 火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "jingquezhidaozhadankongxi",
+        "jqzdzdkx",
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -20567,18 +20720,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-b86cf7ca458331dd0f9b83f2a5df71ecc280049c3f6a79d1355615aecf7a2f81",
-          "alias": "Precision Bomb Strike",
-          "displayName": "Su-25 Precision Bomb Strike",
+          "alias": "精确制导炸弹空袭",
+          "displayName": "Su-25 精确制导炸弹空袭",
           "searchTerms": [
+            "精确制导炸弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "jingquezhidaozhadankongxi",
+            "jqzdzdkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "Precision Bomb Strike"
+            "configurationZh": "精确制导炸弹空袭"
           },
           "cardId": "gfi--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "gfi--su25--cas--commandactor-su25-bomb-strafe"
@@ -20589,18 +20746,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-208aa16aa16ac54518e80e87479203147d5264a24da79c2ac6402d377436753a",
-          "alias": "S-8 Rocket Strike",
-          "displayName": "Su-25 S-8 Rocket Strike",
+          "alias": "S-8 火箭弹空袭",
+          "displayName": "Su-25 S-8 火箭弹空袭",
           "searchTerms": [
+            "S-8 火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "S-8 Rocket Strike"
+            "configurationZh": "S-8 火箭弹空袭"
           },
           "cardId": "gfi--su25--cas--commandactor-su25-gfi-rockets-strafe",
           "routeSlug": "gfi--su25--cas--commandactor-su25-gfi-rockets-strafe"
@@ -20611,9 +20772,18 @@
       "promoEntryId": "imf--portable-recon-drone--drone",
       "promotionOrder": 398,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
+        "便携式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
+        "bianxieshi",
+        "bxs",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -20623,7 +20793,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -20638,18 +20808,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-7c0ba609da2a56aa5472cbf379911fd58b336e2f4db6ed36267e552646ab3643",
-          "alias": "Recoverable Scout Drone",
-          "displayName": "Portable Recon Drone Recoverable Scout Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": "Recoverable Scout Drone"
+            "configurationZh": "可回收式"
           },
           "cardId": "imf--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "imf--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -20660,18 +20837,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-1fc67144e476f18d0d1274c16588dde2d3033d231717f204e470245683898cee",
-          "alias": "Portable Recon Drone",
-          "displayName": "Portable Recon Drone Portable Recon Drone",
+          "alias": "便携式",
+          "displayName": "侦察无人机 便携式",
           "searchTerms": [
+            "侦察无人机",
+            "便携式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "bianxieshi",
+            "bxs",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": "Portable Recon Drone"
+            "configurationZh": "便携式"
           },
           "cardId": "imf--portable-recon-drone--drone--flyingdrone",
           "routeSlug": "imf--portable-recon-drone--drone--flyingdrone"
@@ -20682,9 +20866,15 @@
       "promoEntryId": "mei--portable-recon-drone--drone",
       "promotionOrder": 399,
       "searchTerms": [
+        "侦察无人机",
+        "便携式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "bianxieshi",
+        "bxs",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -20694,7 +20884,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -20709,18 +20899,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-f51859c34e206b1e1286d87e9c795500c394fd250e74031c05f507a36c09fd02",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "便携式",
+          "displayName": "侦察无人机 便携式",
           "searchTerms": [
+            "侦察无人机",
+            "便携式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "bianxieshi",
+            "bxs",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "便携式"
           },
           "cardId": "mei--portable-recon-drone--drone--flyingdrone",
           "routeSlug": "mei--portable-recon-drone--drone--flyingdrone"
@@ -20731,9 +20928,14 @@
       "promoEntryId": "pla--ch4a--uav",
       "promotionOrder": 400,
       "searchTerms": [
+        "“彩虹-4A”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "caihong",
+        "ch",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -20758,18 +20960,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-c16a645ba8028900ba24bbf8e220aed045a05f93c08e92bfbeb3ab64a31f5cb4",
-          "alias": "",
-          "displayName": "CH-4A",
+          "alias": "“彩虹-4A”无人机",
+          "displayName": "CH-4A “彩虹-4A”无人机",
           "searchTerms": [
+            "“彩虹-4A”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "caihong",
+            "ch",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "CH-4A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "“彩虹-4A”无人机"
           },
           "cardId": "pla--ch4a--uav--commandactor-uav-ch4a",
           "routeSlug": "pla--ch4a--uav--commandactor-uav-ch4a"
@@ -20780,9 +20988,12 @@
       "promoEntryId": "pla--jh7a--cas",
       "promotionOrder": 401,
       "searchTerms": [
+        "火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -20807,18 +21018,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-21562bd53ffae767ac3a18c00ed542ba8540dffdc73765f399dd0f289a50395d",
-          "alias": "",
-          "displayName": "JH-7A",
+          "alias": "火箭弹空袭",
+          "displayName": "JH-7A 火箭弹空袭",
           "searchTerms": [
+            "火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "JH-7A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "火箭弹空袭"
           },
           "cardId": "pla--jh7a--cas--commandactor-jh7a-rockets-strafe",
           "routeSlug": "pla--jh7a--cas--commandactor-jh7a-rockets-strafe"
@@ -20829,9 +21044,15 @@
       "promoEntryId": "pla--portable-recon-drone--drone",
       "promotionOrder": 402,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -20841,7 +21062,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -20856,18 +21077,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-a1351c168b562c477bfebee371c01e778b66d05db2e4f775d0fbbb51d80afbdb",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "可回收式"
           },
           "cardId": "pla--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "pla--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -20878,9 +21106,15 @@
       "promoEntryId": "plaagf--portable-recon-drone--drone",
       "promotionOrder": 403,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -20890,7 +21124,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -20905,18 +21139,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-662fb5351fa644e3d2d0cfd2dc451043a7ede7ebe68e7db585ccb79fcc344df5",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "可回收式"
           },
           "cardId": "plaagf--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "plaagf--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -20927,9 +21168,14 @@
       "promoEntryId": "planmc--ch4a--uav",
       "promotionOrder": 404,
       "searchTerms": [
+        "“彩虹-4A”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "caihong",
+        "ch",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -20954,18 +21200,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-014667927a65b33d683cb9ca857bed4389763a1659476d925831babf19ddfb14",
-          "alias": "",
-          "displayName": "CH-4A",
+          "alias": "“彩虹-4A”无人机",
+          "displayName": "CH-4A “彩虹-4A”无人机",
           "searchTerms": [
+            "“彩虹-4A”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "caihong",
+            "ch",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "CH-4A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "“彩虹-4A”无人机"
           },
           "cardId": "planmc--ch4a--uav--commandactor-uav-ch4a",
           "routeSlug": "planmc--ch4a--uav--commandactor-uav-ch4a"
@@ -20976,9 +21228,12 @@
       "promoEntryId": "planmc--jh7a--cas",
       "promotionOrder": 405,
       "searchTerms": [
+        "火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -21003,18 +21258,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-5a121d83cff8a7cd1e0c1c4580df0008d43036d02310b6e82c7713a9fa44ac04",
-          "alias": "",
-          "displayName": "JH-7A",
+          "alias": "火箭弹空袭",
+          "displayName": "JH-7A 火箭弹空袭",
           "searchTerms": [
+            "火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "JH-7A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "火箭弹空袭"
           },
           "cardId": "planmc--jh7a--cas--commandactor-jh7a-rockets-strafe",
           "routeSlug": "planmc--jh7a--cas--commandactor-jh7a-rockets-strafe"
@@ -21025,9 +21284,15 @@
       "promoEntryId": "planmc--portable-recon-drone--drone",
       "promotionOrder": 406,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -21037,7 +21302,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -21052,18 +21317,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-8b6a0a5db3d1ec26670ee64e28506288b57ff55adea726e2a79ccffe6489837b",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "可回收式"
           },
           "cardId": "planmc--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "planmc--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -21074,9 +21346,14 @@
       "promoEntryId": "rgf--pchela--uav",
       "promotionOrder": 407,
       "searchTerms": [
+        "“蜜蜂-1T”侦察无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "mifeng",
+        "mf",
+        "zhenchawurenji",
+        "zcwrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -21101,18 +21378,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-d7a9473e21c49eb9703b9670e48fe7098c1347f2e09bf930058dad81383b32ba",
-          "alias": "",
-          "displayName": "Pchela-1T",
+          "alias": "“蜜蜂-1T”侦察无人机",
+          "displayName": "Pchela-1T “蜜蜂-1T”侦察无人机",
           "searchTerms": [
+            "“蜜蜂-1T”侦察无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "mifeng",
+            "mf",
+            "zhenchawurenji",
+            "zcwrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "Pchela-1T",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "“蜜蜂-1T”侦察无人机"
           },
           "cardId": "rgf--pchela--uav--commandactor-uav-pchela",
           "routeSlug": "rgf--pchela--uav--commandactor-uav-pchela"
@@ -21123,9 +21406,15 @@
       "promoEntryId": "rgf--su25--cas",
       "promotionOrder": 408,
       "searchTerms": [
+        "精确制导炸弹空袭",
+        "S-8 火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "jingquezhidaozhadankongxi",
+        "jqzdzdkx",
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -21150,18 +21439,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-54289559db64bbb142530014eed904d652fd13517a3b30be5321fb7da5b0815c",
-          "alias": "Precision Bomb Strike",
-          "displayName": "Su-25 Precision Bomb Strike",
+          "alias": "精确制导炸弹空袭",
+          "displayName": "Su-25 精确制导炸弹空袭",
           "searchTerms": [
+            "精确制导炸弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "jingquezhidaozhadankongxi",
+            "jqzdzdkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "Precision Bomb Strike"
+            "configurationZh": "精确制导炸弹空袭"
           },
           "cardId": "rgf--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "rgf--su25--cas--commandactor-su25-bomb-strafe"
@@ -21172,18 +21465,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-8c4f460ce8334e859a40f53aed65e59f3d74dce61dc9ba2d01535a5a1f493c42",
-          "alias": "S-8 Rocket Strike",
-          "displayName": "Su-25 S-8 Rocket Strike",
+          "alias": "S-8 火箭弹空袭",
+          "displayName": "Su-25 S-8 火箭弹空袭",
           "searchTerms": [
+            "S-8 火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "S-8 Rocket Strike"
+            "configurationZh": "S-8 火箭弹空袭"
           },
           "cardId": "rgf--su25--cas--commandactor-su25-rockets-strafe",
           "routeSlug": "rgf--su25--cas--commandactor-su25-rockets-strafe"
@@ -21194,9 +21491,15 @@
       "promoEntryId": "rgf--portable-recon-drone--drone",
       "promotionOrder": 409,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -21206,7 +21509,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -21221,18 +21524,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-9376d1fcce160f413da2cd6ef209d0d1a6675f95f4f6bd0ea9bd1aa7ef1b89f7",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "可回收式"
           },
           "cardId": "rgf--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "rgf--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -21243,9 +21553,14 @@
       "promoEntryId": "tlf--tb2--uav",
       "promotionOrder": 410,
       "searchTerms": [
+        "“旗手”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "qishou",
+        "qs",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -21270,18 +21585,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-e0f4f044e5b1b15a7090ddb0eb38ae5bf4f57f540e2d6924ce87a7488ef30462",
-          "alias": "",
-          "displayName": "Bayraktar TB2",
+          "alias": "“旗手”无人机",
+          "displayName": "Bayraktar TB2 “旗手”无人机",
           "searchTerms": [
+            "“旗手”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "qishou",
+            "qs",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "Bayraktar TB2",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "“旗手”无人机"
           },
           "cardId": "tlf--tb2--uav--commandactor-uav-tb2",
           "routeSlug": "tlf--tb2--uav--commandactor-uav-tb2"
@@ -21292,9 +21613,12 @@
       "promoEntryId": "tlf--f16--cas",
       "promotionOrder": 411,
       "searchTerms": [
+        "火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -21319,18 +21643,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-b4c500731860cf5e7e33eb568360e21a40d38abfddac86371066f6a31a2e499d",
-          "alias": "",
-          "displayName": "F-16C",
+          "alias": "火箭弹空袭",
+          "displayName": "F-16C 火箭弹空袭",
           "searchTerms": [
+            "火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "F-16C",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "火箭弹空袭"
           },
           "cardId": "tlf--f16--cas--commandactor-f16-rockets-strafe-tlf",
           "routeSlug": "tlf--f16--cas--commandactor-f16-rockets-strafe-tlf"
@@ -21341,9 +21669,14 @@
       "promoEntryId": "usa--mq9--uav",
       "promotionOrder": 412,
       "searchTerms": [
+        "Reaper“死神”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "sishen",
+        "ss",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -21353,7 +21686,7 @@
         "nameZh": "MQ-9 Reaper",
         "typeZh": "UAV",
         "presentation": {
-          "vehicleNameZh": "MQ-9 Reaper",
+          "vehicleNameZh": "MQ-9",
           "configurationZh": null
         }
       },
@@ -21368,18 +21701,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-c291311e6bf1a99e6f70ed3902e60c59b485006b0738a821706ff11665303f42",
-          "alias": "",
-          "displayName": "MQ-9 Reaper",
+          "alias": "Reaper“死神”无人机",
+          "displayName": "MQ-9 Reaper“死神”无人机",
           "searchTerms": [
+            "Reaper“死神”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "sishen",
+            "ss",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "MQ-9",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "Reaper“死神”无人机"
           },
           "cardId": "usa--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "usa--mq9--uav--commandactor-uav-mq9"
@@ -21390,9 +21729,12 @@
       "promoEntryId": "usa--a10--cas",
       "promotionOrder": 413,
       "searchTerms": [
+        "30 mm 机炮扫射",
         "攻击机"
       ],
       "searchAliases": [
+        "jipaosaoshe",
+        "jpss",
         "gongjiji",
         "gjj"
       ],
@@ -21417,18 +21759,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-509be3788a097a23c2c1e4d0a2c8153aed2b5b6645984c3357fd16da18c0a65b",
-          "alias": "",
-          "displayName": "A-10A",
+          "alias": "30 mm 机炮扫射",
+          "displayName": "A-10A 30 mm 机炮扫射",
           "searchTerms": [
+            "30 mm 机炮扫射",
             "攻击机"
           ],
           "searchAliases": [
+            "jipaosaoshe",
+            "jpss",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "A-10A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "30 mm 机炮扫射"
           },
           "cardId": "usa--a10--cas--commandactor-a10-strafe-2",
           "routeSlug": "usa--a10--cas--commandactor-a10-strafe-2"
@@ -21439,9 +21785,14 @@
       "promoEntryId": "usmc--mq9--uav",
       "promotionOrder": 414,
       "searchTerms": [
+        "Reaper“死神”无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "sishen",
+        "ss",
+        "wurenji",
+        "wrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -21451,7 +21802,7 @@
         "nameZh": "MQ-9 Reaper",
         "typeZh": "UAV",
         "presentation": {
-          "vehicleNameZh": "MQ-9 Reaper",
+          "vehicleNameZh": "MQ-9",
           "configurationZh": null
         }
       },
@@ -21466,18 +21817,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-f4cdf74a58e39433518d50a496e2166f4c00b073c4a3cc2c42188a9ae4f96347",
-          "alias": "",
-          "displayName": "MQ-9 Reaper",
+          "alias": "Reaper“死神”无人机",
+          "displayName": "MQ-9 Reaper“死神”无人机",
           "searchTerms": [
+            "Reaper“死神”无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "sishen",
+            "ss",
+            "wurenji",
+            "wrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "MQ-9",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "Reaper“死神”无人机"
           },
           "cardId": "usmc--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "usmc--mq9--uav--commandactor-uav-mq9"
@@ -21488,9 +21845,12 @@
       "promoEntryId": "usmc--a10--cas",
       "promotionOrder": 415,
       "searchTerms": [
+        "30 mm 机炮扫射",
         "攻击机"
       ],
       "searchAliases": [
+        "jipaosaoshe",
+        "jpss",
         "gongjiji",
         "gjj"
       ],
@@ -21515,18 +21875,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-4ff8757ae5aeb6000a2fc66ab6d4d9cad3b09318c38dffd16902e10b74b2ad41",
-          "alias": "",
-          "displayName": "A-10A",
+          "alias": "30 mm 机炮扫射",
+          "displayName": "A-10A 30 mm 机炮扫射",
           "searchTerms": [
+            "30 mm 机炮扫射",
             "攻击机"
           ],
           "searchAliases": [
+            "jipaosaoshe",
+            "jpss",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "A-10A",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "30 mm 机炮扫射"
           },
           "cardId": "usmc--a10--cas--commandactor-a10-strafe-2",
           "routeSlug": "usmc--a10--cas--commandactor-a10-strafe-2"
@@ -21537,9 +21901,14 @@
       "promoEntryId": "vdv--pchela--uav",
       "promotionOrder": 416,
       "searchTerms": [
+        "“蜜蜂-1T”侦察无人机",
         "大型侦察无人机"
       ],
       "searchAliases": [
+        "mifeng",
+        "mf",
+        "zhenchawurenji",
+        "zcwrj",
         "daxingzhenchawurenji",
         "dxzcwrj"
       ],
@@ -21564,18 +21933,24 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-427f8658310f489524933f5b1e48cc48220ff782c16b05b75a788937771e09ab",
-          "alias": "",
-          "displayName": "Pchela-1T",
+          "alias": "“蜜蜂-1T”侦察无人机",
+          "displayName": "Pchela-1T “蜜蜂-1T”侦察无人机",
           "searchTerms": [
+            "“蜜蜂-1T”侦察无人机",
             "大型侦察无人机"
           ],
           "searchAliases": [
+            "mifeng",
+            "mf",
+            "zhenchawurenji",
+            "zcwrj",
             "daxingzhenchawurenji",
             "dxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "Pchela-1T",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "“蜜蜂-1T”侦察无人机"
           },
           "cardId": "vdv--pchela--uav--commandactor-uav-pchela",
           "routeSlug": "vdv--pchela--uav--commandactor-uav-pchela"
@@ -21586,9 +21961,15 @@
       "promoEntryId": "vdv--su25--cas",
       "promotionOrder": 417,
       "searchTerms": [
+        "精确制导炸弹空袭",
+        "S-8 火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "jingquezhidaozhadankongxi",
+        "jqzdzdkx",
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -21613,18 +21994,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-2dc0e9f31aabe8df69d1e5ab278bc76a0446e693d9d658353bc9bb403293d42b",
-          "alias": "Precision Bomb Strike",
-          "displayName": "Su-25 Precision Bomb Strike",
+          "alias": "精确制导炸弹空袭",
+          "displayName": "Su-25 精确制导炸弹空袭",
           "searchTerms": [
+            "精确制导炸弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "jingquezhidaozhadankongxi",
+            "jqzdzdkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "Precision Bomb Strike"
+            "configurationZh": "精确制导炸弹空袭"
           },
           "cardId": "vdv--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "vdv--su25--cas--commandactor-su25-bomb-strafe"
@@ -21635,18 +22020,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-b46460252a68fdb51c9c51e05ed39fdd2da64cb95843a6452c66c08f65895d3d",
-          "alias": "S-8 Rocket Strike",
-          "displayName": "Su-25 S-8 Rocket Strike",
+          "alias": "S-8 火箭弹空袭",
+          "displayName": "Su-25 S-8 火箭弹空袭",
           "searchTerms": [
+            "S-8 火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "Su-25",
             "liveryZh": null,
-            "configurationZh": "S-8 Rocket Strike"
+            "configurationZh": "S-8 火箭弹空袭"
           },
           "cardId": "vdv--su25--cas--commandactor-su25-rockets-strafe",
           "routeSlug": "vdv--su25--cas--commandactor-su25-rockets-strafe"
@@ -21657,9 +22046,15 @@
       "promoEntryId": "vdv--portable-recon-drone--drone",
       "promotionOrder": 418,
       "searchTerms": [
+        "侦察无人机",
+        "可回收式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "kehuishoushi",
+        "khss",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -21669,7 +22064,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -21684,18 +22079,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-3dd0382a0dad3e1b9f4cea6056b153e3977a5ea6f451ff12ed166fcce41719de",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "可回收式",
+          "displayName": "侦察无人机 可回收式",
           "searchTerms": [
+            "侦察无人机",
+            "可回收式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "kehuishoushi",
+            "khss",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "可回收式"
           },
           "cardId": "vdv--portable-recon-drone--drone--flyingdrone-recoverable",
           "routeSlug": "vdv--portable-recon-drone--drone--flyingdrone-recoverable"
@@ -21706,9 +22108,12 @@
       "promoEntryId": "wpmc--f16--cas",
       "promotionOrder": 419,
       "searchTerms": [
+        "火箭弹空袭",
         "攻击机"
       ],
       "searchAliases": [
+        "huojiantankongxi",
+        "hjtkx",
         "gongjiji",
         "gjj"
       ],
@@ -21733,18 +22138,22 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-e40e49f02ec83158491bfc1ad68d90c4afdda84fd647315a09e33e899d973eb1",
-          "alias": "",
-          "displayName": "F-16C",
+          "alias": "火箭弹空袭",
+          "displayName": "F-16C 火箭弹空袭",
           "searchTerms": [
+            "火箭弹空袭",
             "攻击机"
           ],
           "searchAliases": [
+            "huojiantankongxi",
+            "hjtkx",
             "gongjiji",
             "gjj"
           ],
           "presentation": {
+            "vehicleNameZh": "F-16C",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "火箭弹空袭"
           },
           "cardId": "wpmc--f16--cas--commandactor-f16-rockets-strafe-tlf",
           "routeSlug": "wpmc--f16--cas--commandactor-f16-rockets-strafe-tlf"
@@ -21755,9 +22164,15 @@
       "promoEntryId": "wpmc--portable-recon-drone--drone",
       "promotionOrder": 420,
       "searchTerms": [
+        "侦察无人机",
+        "便携式",
         "便携侦察无人机"
       ],
       "searchAliases": [
+        "zhenchawurenji",
+        "zcwrj",
+        "bianxieshi",
+        "bxs",
         "bianxiezhenchawurenji",
         "bxzcwrj"
       ],
@@ -21767,7 +22182,7 @@
         "nameZh": "Portable Recon Drone",
         "typeZh": "DRONE",
         "presentation": {
-          "vehicleNameZh": "Portable Recon Drone",
+          "vehicleNameZh": "侦察无人机",
           "configurationZh": null
         }
       },
@@ -21782,18 +22197,25 @@
           "vehicleRef": null,
           "runtimeVehicleRef": null,
           "visualArtifactRef": "visual-artifact-af9ebcaabfbf99cf5e187c31d5a6948cdfdff8e548bdca22530f0462fcbb0ae7",
-          "alias": "",
-          "displayName": "Portable Recon Drone",
+          "alias": "便携式",
+          "displayName": "侦察无人机 便携式",
           "searchTerms": [
+            "侦察无人机",
+            "便携式",
             "便携侦察无人机"
           ],
           "searchAliases": [
+            "zhenchawurenji",
+            "zcwrj",
+            "bianxieshi",
+            "bxs",
             "bianxiezhenchawurenji",
             "bxzcwrj"
           ],
           "presentation": {
+            "vehicleNameZh": "侦察无人机",
             "liveryZh": null,
-            "configurationZh": null
+            "configurationZh": "便携式"
           },
           "cardId": "wpmc--portable-recon-drone--drone--flyingdrone-wpmc",
           "routeSlug": "wpmc--portable-recon-drone--drone--flyingdrone-wpmc"

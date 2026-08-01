@@ -768,11 +768,19 @@ function RuntimeWeaponEffectLegend({
       key={effect.id}
     >
       {effect.role === "penetration" ? (
-        <WeaponPenetrationIcon
-          className="infantry-weapon-penetration-icon"
-          kind={effect.penetrationKind ?? "kinetic"}
-          size={29}
-        />
+        effect.penetrationKind === "shaped-charge" ? (
+          <WeaponPenetrationIcon
+            className="infantry-weapon-penetration-icon"
+            kind="shaped-charge"
+            size={29}
+          />
+        ) : (
+          <VehicleDamageTypeIcon
+            className="infantry-weapon-penetration-icon"
+            kind="kinetic"
+            size={26}
+          />
+        )
       ) : effect.role === "radial-damage" ? (
         <VehicleDamageTypeIcon
           kind={effect.damageTypeKind}
@@ -810,6 +818,17 @@ function RuntimeWeaponEffectLegend({
   );
 }
 
+const RUNTIME_WEAPON_DAMAGE_LEGEND_KINDS = [
+  "kinetic",
+  "small-arms",
+  "fragmentation",
+  "heat",
+  "hat",
+  "explosives",
+  "thermite",
+  "generic",
+] as const satisfies readonly VehicleDamageTypeIconKind[];
+
 function RuntimeWeaponSelectorLegend() {
   return (
     <div
@@ -821,6 +840,28 @@ function RuntimeWeaponSelectorLegend() {
         <span>穿深（mm）</span>
         <span>直击伤害</span>
         <span>范围伤害</span>
+      </span>
+      <span className="infantry-weapon-select__damage-key">
+        <span className="infantry-weapon-select__damage-key-group">
+          <b>穿深</b>
+          <span title="动能穿深">
+            <VehicleDamageTypeIcon kind="kinetic" size={17} />
+            动能
+          </span>
+          <span title="破甲射流穿深">
+            <WeaponPenetrationIcon kind="shaped-charge" size={19} />
+            射流
+          </span>
+        </span>
+        <span className="infantry-weapon-select__damage-key-group">
+          <b>伤害类型</b>
+          {RUNTIME_WEAPON_DAMAGE_LEGEND_KINDS.map((kind) => (
+            <span title={vehicleDamageTypeIconLabel(kind)} key={kind}>
+              <VehicleDamageTypeIcon kind={kind} size={17} />
+              {vehicleDamageTypeIconShortLabel(kind)}
+            </span>
+          ))}
+        </span>
       </span>
     </div>
   );

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-china-reference-2026-07-24",
-  "dataRevision": "vehicle-v3.1-eed95ad3d4575eeed370-projection-399295012186-cn-6bb470ba8d18",
+  "dataRevision": "vehicle-v3.1-eed95ad3d4575eeed370-projection-399295012186-cn-6bb470ba8d18-cards-63600a42ac23",
   "vehicleCatalogRevision": "eed95ad3d4575eeed370bf339ecabf7f07441d2001722dbb457b1a77fbb189c2",
   "groups": [
     {
@@ -414,8 +414,8 @@
         "nameZh": "ZSD89II IFV",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "ZSD89II IFV",
-          "configurationZh": null
+          "vehicleNameZh": "ZSD89II",
+          "configurationZh": "IFV"
         }
       },
       "selectedRawName": "BP_ZSD89II_Desert",
@@ -429,7 +429,7 @@
           "vehicleRef": "vehicle-2357e0287d60ec4db75e9624",
           "runtimeVehicleRef": "vehicle-b6f452f2f0393fcdc198c068e38dc055d052f65218c619dba55f7a310782254a",
           "visualArtifactRef": "visual-artifact-4f488b7797a359ff2c91e7a717be49693956271b9ee87464a805ceaec60e0a5b",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSD89II IFV（沙漠）",
           "searchTerms": [
             "沙漠",
@@ -455,7 +455,7 @@
           "vehicleRef": "vehicle-8c770060da299cf8fe2bce1e",
           "runtimeVehicleRef": "vehicle-5c2eaab61a9a249dfa984ed9c08d0f2a6430ef91a35dc8942571ae539d7c11bd",
           "visualArtifactRef": "visual-artifact-43e4fbe75d7e7082347d27da89b520740f6f6b38bfcf682a5ce8cf35a06ccb60",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSD89II IFV（林地）",
           "searchTerms": [
             "林地",
@@ -493,8 +493,8 @@
         "nameZh": "ZSL92 IFV",
         "typeZh": "IFV",
         "presentation": {
-          "vehicleNameZh": "ZSL92 IFV",
-          "configurationZh": null
+          "vehicleNameZh": "ZSL92",
+          "configurationZh": "IFV"
         }
       },
       "selectedRawName": "BP_WZ551A_Desert",
@@ -508,7 +508,7 @@
           "vehicleRef": "vehicle-0b77eb28cae4bfdda0b7392e",
           "runtimeVehicleRef": "vehicle-eac0a3275f457d339c832ef76e5294f4dab6b675f4e474a7dad1d4220be40323",
           "visualArtifactRef": "visual-artifact-843ffac9ab266b9e32cb51713bcc32b2f15d679504d4968794519ea84e69a10a",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSL92 IFV（沙漠）",
           "searchTerms": [
             "沙漠",
@@ -534,7 +534,7 @@
           "vehicleRef": "vehicle-6d80fcc0d820822782197f0e",
           "runtimeVehicleRef": "vehicle-df7058a9c0cf03891b247db5cdef7f4356d2a4211e8f11c4ec401a9033c5425d",
           "visualArtifactRef": "visual-artifact-20ab6a686d39baeb5008a6d4e4d27253863cf2c822ffc907fdfbaf4bdb62f0a5",
-          "alias": "",
+          "alias": "IFV",
           "displayName": "ZSL92 IFV（林地）",
           "searchTerms": [
             "林地",
@@ -3914,8 +3914,8 @@
         "nameZh": "M1128 MGS",
         "typeZh": "MGS",
         "presentation": {
-          "vehicleNameZh": "M1128 MGS",
-          "configurationZh": null
+          "vehicleNameZh": "M1128",
+          "configurationZh": "MGS"
         }
       },
       "selectedRawName": "BP_M1128",
@@ -3929,7 +3929,7 @@
           "vehicleRef": "vehicle-ccd112749d4f58733cbef52b",
           "runtimeVehicleRef": "vehicle-acf60bc423d14dc31d47d262141413cca077331a0024864cf1aa4439a80be254",
           "visualArtifactRef": "visual-artifact-6912b1a9571bc84e7e831d317ab20408e32dc2020263b182e146f829a0c36b9b",
-          "alias": "",
+          "alias": "MGS",
           "displayName": "M1128 MGS（沙漠）",
           "searchTerms": [
             "沙漠",
@@ -3955,7 +3955,7 @@
           "vehicleRef": "vehicle-1de8ee7932ff0b212a690dfe",
           "runtimeVehicleRef": "vehicle-8f844ae12ba70e094d19faa358634407598df88b02a38cfe4d43dfc36d41cfd0",
           "visualArtifactRef": "visual-artifact-32d96506842fa113b446f0db4294d1de128bf39b505cd62b5bd31e1525726da2",
-          "alias": "",
+          "alias": "MGS",
           "displayName": "M1128 MGS（林地）",
           "searchTerms": [
             "林地",
@@ -5394,8 +5394,8 @@
         "nameZh": "MATV CROWS M2",
         "typeZh": "MRAP",
         "presentation": {
-          "vehicleNameZh": "MATV CROWS M2",
-          "configurationZh": null
+          "vehicleNameZh": "MATV",
+          "configurationZh": "CROWS M2"
         }
       },
       "selectedRawName": "BP_MATV_USMC_CROWS",
@@ -5409,7 +5409,7 @@
           "vehicleRef": "vehicle-164477af25ced9c8a2819413",
           "runtimeVehicleRef": "vehicle-f7fa595b7534cf3c5923dd8d51ae5d4ec7063754bbdb8ecb276c817202817f73",
           "visualArtifactRef": "visual-artifact-b9840cdcecd1559b4c2ea64f8f4f369fbaba01953bfb6152b38039561d4a00b2",
-          "alias": "",
+          "alias": "CROWS M2",
           "displayName": "MATV CROWS M2（沙漠）",
           "searchTerms": [
             "沙漠",
@@ -5435,7 +5435,7 @@
           "vehicleRef": "vehicle-1736e66b30db9a6eec9b2cd7",
           "runtimeVehicleRef": "vehicle-51c408e67465e4f5ae3a998132e5f19934022d89967a64bbee18f71b86c2076c",
           "visualArtifactRef": "visual-artifact-592f651c9cb4ca1e98eabb77c77a8619207740a02c971008365217b3ce0dd87c",
-          "alias": "",
+          "alias": "CROWS M2",
           "displayName": "MATV CROWS M2（林地）",
           "searchTerms": [
             "林地",
@@ -5936,8 +5936,8 @@
         "nameZh": "M1064A3 M121",
         "typeZh": "SPA",
         "presentation": {
-          "vehicleNameZh": "M1064A3 M121",
-          "configurationZh": null
+          "vehicleNameZh": "M1064A3",
+          "configurationZh": "M121"
         }
       },
       "selectedRawName": "BP_M1064A3_M121_Desert",
@@ -5951,7 +5951,7 @@
           "vehicleRef": "vehicle-02465cd6d183d21bb472c2f8",
           "runtimeVehicleRef": "vehicle-92aaf9ec311ad962014f0b784474d303e391f401c507fe8f0c048154f0c795b1",
           "visualArtifactRef": "visual-artifact-e0c2fdf17224ec08af3372982fac186b5ca1209b5d59e951bf6992aa703560e2",
-          "alias": "",
+          "alias": "M121",
           "displayName": "M1064A3 M121（沙漠）",
           "searchTerms": [
             "沙漠",
@@ -5977,7 +5977,7 @@
           "vehicleRef": "vehicle-003bbbe28e9f4384e92a26e7",
           "runtimeVehicleRef": "vehicle-19930c46ce317cc6f3da6dc5643cb61e21e4c5136707a433611659c666367257",
           "visualArtifactRef": "visual-artifact-b65ab900f209c0309c9439988c4f39d4e36a3075a6e52260abe99b81e084b7fa",
-          "alias": "",
+          "alias": "M121",
           "displayName": "M1064A3 M121（林地）",
           "searchTerms": [
             "林地",
@@ -7761,8 +7761,8 @@
         "nameZh": "UH60 PKM",
         "typeZh": "UH",
         "presentation": {
-          "vehicleNameZh": "UH60 PKM",
-          "configurationZh": null
+          "vehicleNameZh": "UH60",
+          "configurationZh": "PKM"
         }
       },
       "selectedRawName": "BP_UH60_TLF_PKM",
@@ -7776,7 +7776,7 @@
           "vehicleRef": "vehicle-1a403604aa21dd5251e02d3e",
           "runtimeVehicleRef": "vehicle-1dcf81e2ba3cbbcdde2f07551f50c9a777a30288a21685f219133511684fd30c",
           "visualArtifactRef": "visual-artifact-fbb1393a90178e7b55b4f9ae2ea02ea7c0d668b2a02daaa6a8d941d50646ee1b",
-          "alias": "",
+          "alias": "PKM",
           "displayName": "UH60 PKM",
           "searchTerms": [
             "埃克切公国"
@@ -8790,8 +8790,8 @@
         "nameZh": "UH-1H MG3",
         "typeZh": "UH",
         "presentation": {
-          "vehicleNameZh": "UH-1H MG3",
-          "configurationZh": null
+          "vehicleNameZh": "UH-1H",
+          "configurationZh": "MG3"
         }
       },
       "selectedRawName": "BP_UH1H_GFI",
@@ -8805,7 +8805,7 @@
           "vehicleRef": "vehicle-fa0122de955892b764653422",
           "runtimeVehicleRef": "vehicle-0505d767a30e410c50a8be261f78a630ed2f450fa2938d5b499b186a2fb437a2",
           "visualArtifactRef": "visual-artifact-df7cd51e0f6c80387c7c623b17d2f795e02d4efac7791189bcc9b7468361510b",
-          "alias": "",
+          "alias": "MG3",
           "displayName": "UH-1H MG3",
           "searchTerms": [
             "卡维尔盟约国"
