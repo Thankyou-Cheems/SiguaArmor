@@ -103,6 +103,10 @@ export interface EditorNativeExplosiveLayerRecord {
   orderEvidence?: string;
 }
 
+export type EditorNativeImpactRadialOrder =
+  | "point-before-radial"
+  | "secondary-radial-before-point-before-primary-radial";
+
 export interface EditorNativeProjectileRecord {
   projectileId: string;
   role: string;
@@ -119,6 +123,7 @@ export interface EditorNativeProjectileRecord {
   impactNormalOffsetCm?: EditorField<number>;
   explosiveLayers?: readonly EditorNativeExplosiveLayerRecord[];
   explosiveLayerOrderEvidence?: string;
+  impactRadialOrder?: EditorField<EditorNativeImpactRadialOrder>;
 }
 
 export interface EditorNativeWeaponRecord {
@@ -139,6 +144,7 @@ export interface EditorNativeCapabilityRecord {
 }
 
 export interface EditorNativeModel {
+  vehicleId?: string;
   owners?: readonly EditorNativeOwnerRecord[];
   healthPools: readonly EditorNativeHealthPoolRecord[];
   components: readonly EditorNativeComponentRecord[];
@@ -176,6 +182,7 @@ export interface EditorNativeBallistics {
   damageTypePath: string | null;
   targetDistanceM: number;
   penetrationAtRangeMm: number | null;
+  penetrationTraceDistanceM: number | null;
   impactDamageAtRange: number | null;
   traceDistanceAfterPenetrationM: number | null;
   isExplosive: boolean | null;
@@ -183,6 +190,7 @@ export interface EditorNativeBallistics {
   explosiveLayers: readonly EditorNativeExplosiveLayerBallistics[];
   explosiveLayerOrderEvidence: string | null;
   explosiveLayerOrderResolved: boolean | null;
+  impactRadialOrder: EditorNativeImpactRadialOrder | null;
   unknowns: string[];
 }
 
@@ -213,6 +221,7 @@ export interface EditorNativeHitLayer {
   surfaceProfileIndex: number;
   surfaceProfileId: string;
   distanceFromFirstHitM: number;
+  distanceFromPenetrationTraceStartM: number;
   incidenceFactor: number;
   postPenetrationTraceFactor: number;
   remainingDamage: number;
@@ -239,6 +248,7 @@ export interface EditorNativeDamageEvent {
     | "direct"
     | "seat-forwarded-to-hull"
     | "radial-direct"
+    | "radial-indirect"
     | "radial-direct-seat-forwarded-to-hull";
   damageKind: "point" | "radial";
   damageTypePath?: string;
@@ -275,7 +285,7 @@ export interface EditorNativeRadialResult {
     | "resolved"
     | "partial"
     | "native-unknown";
-  order: "radial-before-point" | null;
+  order: EditorNativeImpactRadialOrder | null;
   directHit: boolean | null;
   explosionOriginOffsetCm: number | null;
   nearestImpactDistanceCm: number | null;
@@ -287,7 +297,7 @@ export interface EditorNativeRadialResult {
   layerOrderEvidence: string | null;
   layerOrderResolved: boolean | null;
   guaranteedPoolIndices: number[];
-  componentFanout: "first-impact-and-hull" | "native-unknown";
+  componentFanout: "root-hull-resolved" | "native-unknown";
 }
 
 export interface EditorNativeShotResult {
@@ -477,6 +487,7 @@ export function resolveEditorNativeBallistics(
       damageTypePath: null,
       targetDistanceM,
       penetrationAtRangeMm: null,
+      penetrationTraceDistanceM: null,
       impactDamageAtRange: null,
       traceDistanceAfterPenetrationM: null,
       isExplosive: null,
@@ -484,6 +495,7 @@ export function resolveEditorNativeBallistics(
       explosiveLayers: [],
       explosiveLayerOrderEvidence: null,
       explosiveLayerOrderResolved: null,
+      impactRadialOrder: null,
       unknowns: ["weapon index is outside the Editor evidence table"],
     };
   }
@@ -496,17 +508,32 @@ export function resolveEditorNativeBallistics(
   const projectile = model.projectiles[projectileIndex];
   if (!projectile) addUnknown(unknowns, `${weapon.weaponId} projectile lineage is unresolved`);
 
+  const damageCurve = curveIndex(
+    weapon.damageFalloffCurveIndex,
+    model.curves,
+    `${weapon.weaponId} damage curve`,
+    unknowns,
+  );
   const penetrationCurve = curveIndex(
     weapon.armorPenetrationCurveIndex,
     model.curves,
     `${weapon.weaponId} penetration curve`,
     unknowns,
   );
+  const projectileImpact = readField(projectile?.impactDamage ?? null);
+  const usesProjectileDirectConfig =
+    projectileImpact.known &&
+    projectileImpact.value !== null &&
+    projectileImpact.value > 0;
   let penetrationAtRangeMm: number | null = null;
-  if (penetrationCurve === null) {
+  if (usesProjectileDirectConfig || penetrationCurve === null) {
     const rawPenetration = preferredNumber(
-      weapon.armorPenetrationDepthMm,
-      projectile?.armorPenetrationDepthMm ?? null,
+      usesProjectileDirectConfig
+        ? projectile?.armorPenetrationDepthMm ?? null
+        : weapon.armorPenetrationDepthMm,
+      usesProjectileDirectConfig
+        ? weapon.armorPenetrationDepthMm
+        : projectile?.armorPenetrationDepthMm ?? null,
       `${weapon.weaponId} armor penetration`,
       unknowns,
     );
@@ -522,14 +549,8 @@ export function resolveEditorNativeBallistics(
     }
   }
 
-  const damageCurve = curveIndex(
-    weapon.damageFalloffCurveIndex,
-    model.curves,
-    `${weapon.weaponId} damage curve`,
-    unknowns,
-  );
   let impactDamageAtRange: number | null = null;
-  if (damageCurve === null) {
+  if (usesProjectileDirectConfig || damageCurve === null) {
     impactDamageAtRange = preferredNumber(
       projectile?.impactDamage ?? null,
       weapon.maxDamage,
@@ -557,6 +578,23 @@ export function resolveEditorNativeBallistics(
       `${weapon.weaponId} weapon post-penetration trace distance is unreadable`,
     );
   }
+  const projectileTrace = readField(
+    projectile?.traceDistanceAfterPenetrationMeters ?? null,
+  );
+  let penetrationTraceDistanceM: number | null = null;
+  const penetrationTrace = usesProjectileDirectConfig
+    ? projectileTrace
+    : weaponTrace;
+  if (penetrationTrace.known && penetrationTrace.value !== null) {
+    penetrationTraceDistanceM = penetrationTrace.value;
+  } else {
+    addUnknown(
+      unknowns,
+      `${weapon.weaponId} ${
+        usesProjectileDirectConfig ? "projectile" : "weapon"
+      } penetration trace distance is unreadable`,
+    );
+  }
 
   const damageType = readField(projectile?.damageTypePath ?? null);
   if (!damageType.known) addUnknown(unknowns, `${weapon.weaponId} damage type is unresolved`);
@@ -569,6 +607,14 @@ export function resolveEditorNativeBallistics(
   const explosiveLayerOrderResolved = explosiveLayerOrderEvidence === null
     ? null
     : !explosiveLayerOrderEvidence.includes("unknown");
+  const impactRadialOrderField = readField(
+    projectile?.impactRadialOrder ?? null,
+  );
+  const impactRadialOrder = impactRadialOrderField.known
+    ? impactRadialOrderField.value
+    : explosive.known && explosive.value === true
+      ? "point-before-radial"
+      : null;
   if (explosive.known && explosive.value === true) {
     const readExplosiveNumber = (
       field: EditorField<number>,
@@ -685,6 +731,7 @@ export function resolveEditorNativeBallistics(
 
   const hasBallistics =
     penetrationAtRangeMm !== null &&
+    penetrationTraceDistanceM !== null &&
     impactDamageAtRange !== null &&
     traceDistanceAfterPenetrationM !== null;
   return {
@@ -696,6 +743,7 @@ export function resolveEditorNativeBallistics(
     damageTypePath: damageType.known ? damageType.value : null,
     targetDistanceM,
     penetrationAtRangeMm,
+    penetrationTraceDistanceM,
     impactDamageAtRange,
     traceDistanceAfterPenetrationM,
     isExplosive: explosive.known ? explosive.value : null,
@@ -703,6 +751,7 @@ export function resolveEditorNativeBallistics(
     explosiveLayers,
     explosiveLayerOrderEvidence,
     explosiveLayerOrderResolved,
+    impactRadialOrder,
     unknowns,
   };
 }
@@ -1018,22 +1067,6 @@ function parentHealthPoolIndex(
   return model.owners?.[owner.parentOwnerIndex]?.healthPoolIndex ?? null;
 }
 
-function isDetachedZeroHealthWeaponStationEntry(
-  model: EditorNativeModel,
-  component: EditorNativeComponentRecord | undefined,
-) {
-  if (!component || component.semanticKind !== "gun-collision") return false;
-  const owner = model.owners?.[component.ownerIndex];
-  if (!owner || owner.kind !== "seat") return false;
-  const poolIndex = owner.healthPoolIndex;
-  if (typeof poolIndex !== "number" || !Number.isInteger(poolIndex)) return false;
-  const pool = model.healthPools[poolIndex];
-  if (!pool || pool.kind !== "seat") return false;
-  const maxHealth = readField(pool.maxHealth);
-  const directDamagePool = readField(component.directDamagePoolIndex);
-  return maxHealth.known && maxHealth.value === 0 && directDamagePool.confirmedAbsent;
-}
-
 export function simulateEditorNativeShot({
   model,
   weaponModel = model,
@@ -1061,6 +1094,7 @@ export function simulateEditorNativeShot({
   const unknowns = [...ballistics.unknowns];
   const layers: EditorNativeHitLayer[] = [];
   const damage: EditorNativeDamageEvent[] = [];
+  const radialDamageEvents: EditorNativeDamageEvent[] = [];
   const pointDamagedPools = new Set<number>();
   // A ray that lands exactly on a shared triangle edge can report both faces.
   // Normalize those geometry duplicates before any armor, absorption, or damage
@@ -1091,16 +1125,6 @@ export function simulateEditorNativeShot({
     );
   });
   const firstDistance = ordered[0]?.distanceFromRayOriginM ?? 0;
-  // A zero-health child weapon station whose direct pool was explicitly detached
-  // is a standalone collision target, regardless of noisy native forwarding
-  // flags. Penetrating its launcher/shield must not leak a second damage event
-  // into the parent vehicle merely because the analysis ray also intersects hull
-  // geometry behind it. Component pools physically behind the station remain
-  // eligible; only parent hull routing is suppressed.
-  const suppressParentHullDamage = isDetachedZeroHealthWeaponStationEntry(
-    model,
-    ordered.length > 0 ? model.components[ordered[0].componentIndex] : undefined,
-  );
   let cumulativeDamageAbsorbed = 0;
   let stoppedAtLayer: number | null = null;
   let radial: EditorNativeRadialResult = {
@@ -1118,6 +1142,21 @@ export function simulateEditorNativeShot({
     layerOrderResolved: null,
     guaranteedPoolIndices: [],
     componentFanout: "native-unknown",
+  };
+  const orderedDamageEvents = () => {
+    if (
+      ballistics.impactRadialOrder ===
+      "secondary-radial-before-point-before-primary-radial"
+    ) {
+      const secondaryRadial = radialDamageEvents.filter(
+        ({ radialLayerIndex }) => (radialLayerIndex ?? 0) > 0,
+      );
+      const primaryRadial = radialDamageEvents.filter(
+        ({ radialLayerIndex }) => (radialLayerIndex ?? 0) === 0,
+      );
+      return [...secondaryRadial, ...damage, ...primaryRadial];
+    }
+    return [...damage, ...radialDamageEvents];
   };
 
   const appendPointDamageEvent = (
@@ -1173,8 +1212,7 @@ export function simulateEditorNativeShot({
     radial = {
       ...radial,
       state: "native-unknown",
-      order: "radial-before-point",
-      directHit: true,
+      order: ballistics.impactRadialOrder,
     };
     const explosive = ballistics.explosive;
     const explosiveLayers = ballistics.explosiveLayers;
@@ -1189,28 +1227,39 @@ export function simulateEditorNativeShot({
     } else {
       const guaranteedPools = new Set<number>();
       const firstComponent = model.components[firstImpact.componentIndex];
+      let rootActorDirectHit: boolean | null = null;
+      // A full projectile hit does not re-submit radial damage to the struck
+      // seat/component pool. The native helper aggregates one event for the
+      // root vehicle actor; child-owned impacts make that root event indirect.
       if (!firstComponent) {
         addUnknown(unknowns, "direct radial impact component is unresolved");
       } else {
-        const directPool = readField(firstComponent.directDamagePoolIndex);
-        if (
-          directPool.known &&
-          directPool.value !== null &&
-          model.healthPools[directPool.value]
-        ) {
-          guaranteedPools.add(directPool.value);
-        } else if (!directPool.confirmedAbsent) {
+        const firstOwner = model.owners?.[firstComponent.ownerIndex];
+        if (!firstOwner) {
           addUnknown(
             unknowns,
-            `${firstComponent.componentId} radial damage pool is unresolved`,
+            `${firstComponent.componentId} radial actor owner is unresolved`,
           );
+        } else {
+          rootActorDirectHit = firstOwner.kind === "vehicle-root";
         }
       }
       const hullPoolIndex = vehicleHullPoolIndex(model);
       if (hullPoolIndex === null) {
         addUnknown(unknowns, "vehicle hull radial damage pool is unresolved");
-      } else if (!suppressParentHullDamage) {
+      } else if (rootActorDirectHit === true) {
         guaranteedPools.add(hullPoolIndex);
+      } else if (rootActorDirectHit === false) {
+        // A child-owned impact only seeds that child HitResult. Whether the
+        // root vehicle is admitted by the native overlap/visibility pass is a
+        // geometry result, not a consequence of the owner graph. Armored and
+        // unarmored Technical variants have identical radial multipliers but
+        // opposite observed outcomes at their weapon shields, so treating the
+        // root hull as unconditional here would manufacture damage.
+        addUnknown(
+          unknowns,
+          `${model.healthPools[hullPoolIndex]?.poolId ?? "vehicle hull"} indirect radial overlap/visibility is unresolved`,
+        );
       }
 
       const radialLayers: EditorNativeRadialLayerResult[] = [];
@@ -1228,11 +1277,18 @@ export function simulateEditorNativeShot({
         for (const poolIndex of guaranteedPools) {
           const pool = model.healthPools[poolIndex];
           if (!pool) continue;
+          if (rootActorDirectHit === null) {
+            addUnknown(
+              unknowns,
+              `${pool.poolId} radial direct-hit routing is unresolved`,
+            );
+            continue;
+          }
           const factors = radialDamageFactors(
             model,
             poolIndex,
             layer.damageTypePath,
-            true,
+            rootActorDirectHit,
             unknowns,
           );
           if (factors === null) continue;
@@ -1243,7 +1299,7 @@ export function simulateEditorNativeShot({
           const poolDamage = f32(
             f32(radialDamage.rawDamage) * combinedModifier,
           );
-          damage.push({
+          radialDamageEvents.push({
             poolIndex,
             poolId: pool.poolId,
             poolKind: pool.kind,
@@ -1254,7 +1310,7 @@ export function simulateEditorNativeShot({
             damageTypeModifier: factors.modifier,
             routeMultiplier: factors.routeMultiplier,
             modifierSourcePoolIndex: factors.modifierSourcePoolIndex,
-            route: "radial-direct",
+            route: rootActorDirectHit ? "radial-direct" : "radial-indirect",
             damageKind: "radial",
             damageTypePath: layer.damageTypePath,
             radialLayerId: layer.layerId,
@@ -1287,8 +1343,8 @@ export function simulateEditorNativeShot({
       const primaryRadial = radialLayers[0];
       radial = {
         state: "partial",
-        order: "radial-before-point",
-        directHit: true,
+        order: ballistics.impactRadialOrder,
+        directHit: rootActorDirectHit,
         explosionOriginOffsetCm:
           primaryRadial?.explosionOriginOffsetCm ?? null,
         nearestImpactDistanceCm:
@@ -1301,7 +1357,10 @@ export function simulateEditorNativeShot({
         layerOrderEvidence: ballistics.explosiveLayerOrderEvidence,
         layerOrderResolved: ballistics.explosiveLayerOrderResolved,
         guaranteedPoolIndices: [...guaranteedPools],
-        componentFanout: "first-impact-and-hull",
+        componentFanout:
+          guaranteedPools.size > 0
+            ? "root-hull-resolved"
+            : "native-unknown",
       };
       if (
         radialLayers.length > 1 &&
@@ -1314,22 +1373,24 @@ export function simulateEditorNativeShot({
       }
       addUnknown(
         unknowns,
-        "additional radial component visibility fan-out is not reconstructed",
+        "additional radial actor/component visibility fan-out is not reconstructed",
       );
     }
   }
 
   if (
     ballistics.penetrationAtRangeMm === null ||
+    ballistics.penetrationTraceDistanceM === null ||
     ballistics.impactDamageAtRange === null ||
     ballistics.traceDistanceAfterPenetrationM === null
   ) {
+    const orderedDamage = orderedDamageEvents();
     return {
-      resolution: resolutionForUnknowns(unknowns, damage.length > 0),
+      resolution: resolutionForUnknowns(unknowns, orderedDamage.length > 0),
       ballistics,
       shotDamageMultiplier,
       layers,
-      damage,
+      damage: orderedDamage,
       stoppedAtLayer,
       radial,
       unknowns,
@@ -1352,6 +1413,7 @@ export function simulateEditorNativeShot({
     const traceDistance = ballistics.traceDistanceAfterPenetrationM;
     const {
       distanceFromFirstHitM,
+      distanceFromPenetrationTraceStartM,
       postPenetrationTraceFactor,
       remainingDamage,
       remainingDamageRatio,
@@ -1359,7 +1421,7 @@ export function simulateEditorNativeShot({
     } = resolveEditorNativePenetrationArithmetic({
       distanceFromRayOriginM: intersection.distanceFromRayOriginM,
       firstDistanceFromRayOriginM: firstDistance,
-      traceDistanceAfterPenetrationM: traceDistance,
+      penetrationTraceDistanceM: ballistics.penetrationTraceDistanceM,
       baseDamage,
       cumulativeDamageAbsorbed,
       penetrationAtRangeMm: ballistics.penetrationAtRangeMm,
@@ -1418,6 +1480,7 @@ export function simulateEditorNativeShot({
       surfaceProfileIndex: intersection.surfaceProfileIndex,
       surfaceProfileId: surface.surfaceProfileId,
       distanceFromFirstHitM,
+      distanceFromPenetrationTraceStartM,
       incidenceFactor: intersection.incidenceFactor,
       postPenetrationTraceFactor,
       remainingDamage,
@@ -1447,14 +1510,12 @@ export function simulateEditorNativeShot({
         addUnknown(unknowns, `${component.componentId} direct damage pool is unresolved`);
       } else {
         const pool = model.healthPools[poolIndex.value];
-        if (!(suppressParentHullDamage && pool.kind === "hull")) {
-          appendPointDamageEvent(
-            poolIndex.value,
-            intersection.componentIndex,
-            remainingDamage,
-            "direct",
-          );
-        }
+        appendPointDamageEvent(
+          poolIndex.value,
+          intersection.componentIndex,
+          remainingDamage,
+          "direct",
+        );
 
         if (pool.kind === "seat") {
           const passDamage = readField(pool.passDamageToParent ?? null);
@@ -1463,8 +1524,7 @@ export function simulateEditorNativeShot({
             addUnknown(unknowns, `${pool.poolId} point-damage forwarding flags are unreadable`);
           } else if (
             passDamage.value === true &&
-            passPoint.value === true &&
-            !suppressParentHullDamage
+            passPoint.value === true
           ) {
             const parentPoolIndex = parentHealthPoolIndex(model, pool);
             if (parentPoolIndex === null || !model.healthPools[parentPoolIndex]) {
@@ -1491,12 +1551,13 @@ export function simulateEditorNativeShot({
     cumulativeDamageAbsorbed = f32(cumulativeDamageAbsorbed + absorbed.value);
   }
 
+  const orderedDamage = orderedDamageEvents();
   return {
     resolution: resolutionForUnknowns(unknowns, layers.length > 0),
     ballistics,
     shotDamageMultiplier,
     layers,
-    damage,
+    damage: orderedDamage,
     stoppedAtLayer,
     radial,
     unknowns,

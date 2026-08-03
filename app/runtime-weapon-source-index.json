@@ -2,9 +2,9 @@
   "schemaVersion": "sigua-runtime-weapon-source-index/v1",
   "catalog": {
     "schemaVersion": "sigua-weapon-catalog/v2",
-    "catalogRevision": "99b42ba4114336274b42584e36b19082e2c2ed77ff44f3c88f56f1f83d780519",
-    "bytes": 12639090,
-    "sha256": "cf8bc0474e42b3ac28e7ab62766a434ab631353d95658c90fa60e97e8f0ec3eb"
+    "catalogRevision": "e01b509c8900209dae3e8781b45d4c94c03739eaa14367e9c5ae368e22a7865f",
+    "bytes": 12699017,
+    "sha256": "88ee2890f810acc01df07cf91d100e3780c08940e1165614602fcf6b3ef68f39"
   },
   "sourceEvidence": {
     "schemaVersion": "runtime-hit-weapon-label-index/v4",
@@ -19856,7 +19856,7 @@
           "sourceVehicleId": "vehicle-137839c24392594b33fba111a808022c0060278f83fc98f3c8c8504cb177c689",
           "weaponId": "weapon:weapon:bp-zbl08-zpt-99-hefrag-desert:9f2bf51dc5",
           "weaponIndex": 7,
-          "weaponVariantId": "weapon-variant-ee59d0eb051df0d40410",
+          "weaponVariantId": "weapon-variant-53f2d166573c53a9b944",
           "evidence": {
             "kind": "exact-runtime-record",
             "runtimeRecordSha256": "485dbd813cc5e5d161698b96db50710153fd03aa976318ceef3e3431acfe033a",
@@ -21365,7 +21365,7 @@
           "sourceVehicleId": "vehicle-137839c24392594b33fba111a808022c0060278f83fc98f3c8c8504cb177c689",
           "weaponId": "weapon:weapon:bp-zbl08-zpt-99-hefrag-desert:9f2bf51dc5",
           "weaponIndex": 7,
-          "weaponVariantId": "weapon-variant-ee59d0eb051df0d40410",
+          "weaponVariantId": "weapon-variant-53f2d166573c53a9b944",
           "evidence": {
             "kind": "exact-runtime-record",
             "runtimeRecordSha256": "485dbd813cc5e5d161698b96db50710153fd03aa976318ceef3e3431acfe033a",
@@ -22697,7 +22697,7 @@
           "sourceVehicleId": "vehicle-a1652cbeeb884c75f38251b0afd5b80e15c6d0f3ba23b3ec07ab12c6f2b4df1a",
           "weaponId": "weapon:weapon:bp-zbd05-zpt-99-he:e380b58994",
           "weaponIndex": 5,
-          "weaponVariantId": "weapon-variant-ee59d0eb051df0d40410",
+          "weaponVariantId": "weapon-variant-53f2d166573c53a9b944",
           "evidence": {
             "kind": "exact-runtime-record",
             "runtimeRecordSha256": "0e830d729c11dcef1c9d9beea1ee68d2a9911a144739523aa4044d5108fa5f7d",
@@ -23592,7 +23592,7 @@
           "sourceVehicleId": "vehicle-584196eb610acbb271a08a42b290fa905be9dc0c9e726625e85b6dbfceb8b3e5",
           "weaponId": "weapon:encyclopedia:2db9f8ed0b6386417c38e769",
           "weaponIndex": -1,
-          "weaponVariantId": "weapon-variant-f72819c8c50f1d34397d",
+          "weaponVariantId": "weapon-variant-3618db3aad5915bb8d8c",
           "evidence": {
             "kind": "encyclopedia-weapon-closure",
             "runtimeRecordSha256": null,
@@ -28020,7 +28020,7 @@
           "sourceVehicleId": "vehicle-8deed5c686152772f833b20a489d25eef61d2618403a340a15a8fb7c71210011",
           "weaponId": "weapon:encyclopedia:9188b0e93234a4c0c70dc4c9",
           "weaponIndex": -1,
-          "weaponVariantId": "weapon-variant-f72819c8c50f1d34397d",
+          "weaponVariantId": "weapon-variant-3618db3aad5915bb8d8c",
           "evidence": {
             "kind": "encyclopedia-weapon-closure",
             "runtimeRecordSha256": null,

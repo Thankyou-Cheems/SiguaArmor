@@ -1,7 +1,7 @@
 {
   "schemaVersion": "sigua-wiki-vehicles/v3",
-  "vehicleCatalogRevision": "eed95ad3d4575eeed370bf339ecabf7f07441d2001722dbb457b1a77fbb189c2",
-  "weaponCatalogRevision": "99b42ba4114336274b42584e36b19082e2c2ed77ff44f3c88f56f1f83d780519",
+  "vehicleCatalogRevision": "4c01df280389195eaf0559c98f8a24f3e0062b78513558d09beb659d0d32acaa",
+  "weaponCatalogRevision": "e01b509c8900209dae3e8781b45d4c94c03739eaa14367e9c5ae368e22a7865f",
   "summary": {
     "catalogVariants": 604,
     "sourceVehicles": 470,
@@ -5682,7 +5682,7 @@
         "weapon-variant-099316a7ee7250a8f4d3",
         "weapon-variant-0c75dbaa6e5589abbdbe",
         "weapon-variant-46bca2ef14ec13c37cba",
-        "weapon-variant-ee59d0eb051df0d40410"
+        "weapon-variant-53f2d166573c53a9b944"
       ]
     },
     {
@@ -6733,7 +6733,7 @@
         "weapon-variant-099316a7ee7250a8f4d3",
         "weapon-variant-0c75dbaa6e5589abbdbe",
         "weapon-variant-46bca2ef14ec13c37cba",
-        "weapon-variant-ee59d0eb051df0d40410"
+        "weapon-variant-53f2d166573c53a9b944"
       ]
     },
     {
@@ -7545,7 +7545,7 @@
         "weapon-variant-099316a7ee7250a8f4d3",
         "weapon-variant-0c75dbaa6e5589abbdbe",
         "weapon-variant-46bca2ef14ec13c37cba",
-        "weapon-variant-ee59d0eb051df0d40410"
+        "weapon-variant-53f2d166573c53a9b944"
       ]
     },
     {
@@ -7825,11 +7825,11 @@
       "amphibious": true,
       "weaponVariantIds": [
         "weapon-variant-21920ec3af50de6eb12d",
+        "weapon-variant-3618db3aad5915bb8d8c",
         "weapon-variant-3ceb3f7e691bb5ae23d4",
         "weapon-variant-862c65bc159d55fa3dd3",
         "weapon-variant-afb5edd13996e30d24d3",
-        "weapon-variant-db7bf91244ae36006d0f",
-        "weapon-variant-f72819c8c50f1d34397d"
+        "weapon-variant-db7bf91244ae36006d0f"
       ]
     },
     {
@@ -7853,11 +7853,11 @@
       "amphibious": true,
       "weaponVariantIds": [
         "weapon-variant-21920ec3af50de6eb12d",
+        "weapon-variant-3618db3aad5915bb8d8c",
         "weapon-variant-3ceb3f7e691bb5ae23d4",
         "weapon-variant-862c65bc159d55fa3dd3",
         "weapon-variant-afb5edd13996e30d24d3",
-        "weapon-variant-db7bf91244ae36006d0f",
-        "weapon-variant-f72819c8c50f1d34397d"
+        "weapon-variant-db7bf91244ae36006d0f"
       ]
     },
     {
@@ -11889,10 +11889,10 @@
       "amphibious": true,
       "weaponVariantIds": [
         "weapon-variant-21920ec3af50de6eb12d",
+        "weapon-variant-3618db3aad5915bb8d8c",
         "weapon-variant-862c65bc159d55fa3dd3",
         "weapon-variant-afb5edd13996e30d24d3",
-        "weapon-variant-db7bf91244ae36006d0f",
-        "weapon-variant-f72819c8c50f1d34397d"
+        "weapon-variant-db7bf91244ae36006d0f"
       ]
     },
     {
@@ -11916,10 +11916,10 @@
       "amphibious": true,
       "weaponVariantIds": [
         "weapon-variant-21920ec3af50de6eb12d",
+        "weapon-variant-3618db3aad5915bb8d8c",
         "weapon-variant-862c65bc159d55fa3dd3",
         "weapon-variant-afb5edd13996e30d24d3",
-        "weapon-variant-db7bf91244ae36006d0f",
-        "weapon-variant-f72819c8c50f1d34397d"
+        "weapon-variant-db7bf91244ae36006d0f"
       ]
     },
     {

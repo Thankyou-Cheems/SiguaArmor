@@ -1,6 +1,7 @@
 import {
   BufferAttribute,
   BufferGeometry,
+  Color,
   DoubleSide,
   Mesh,
   ShaderMaterial,
@@ -22,12 +23,14 @@ const VERTEX_SHADER = `
   attribute float surfaceOpacity;
   attribute float patternCode;
   attribute float surfaceProfileCode;
+  attribute float damageHighlight;
   attribute vec3 outlineBarycentric;
   attribute vec3 spacedArmorEdgeMask;
   varying vec3 vColor;
   varying float vOpacity;
   varying float vPatternCode;
   varying float vSurfaceProfileCode;
+  varying float vDamageHighlight;
   varying vec3 vLocalPosition;
   varying vec3 vLocalNormal;
   varying vec3 vViewNormal;
@@ -39,6 +42,7 @@ const VERTEX_SHADER = `
     vOpacity = surfaceOpacity;
     vPatternCode = patternCode;
     vSurfaceProfileCode = surfaceProfileCode;
+    vDamageHighlight = damageHighlight;
     vLocalPosition = position;
     vLocalNormal = normal;
     vViewNormal = normalize(normalMatrix * normal);
@@ -58,10 +62,13 @@ const FRAGMENT_SHADER = `
   uniform float spacedArmorAlphaScale;
   uniform float spacedArmorDashOffset;
   uniform float outlineStrength;
+  uniform vec3 damageHighlightColor;
+  uniform float damageHighlightStrength;
   varying vec3 vColor;
   varying float vOpacity;
   varying float vPatternCode;
   varying float vSurfaceProfileCode;
+  varying float vDamageHighlight;
   varying vec3 vLocalPosition;
   varying vec3 vLocalNormal;
   varying vec3 vViewNormal;
@@ -258,6 +265,22 @@ const FRAGMENT_SHADER = `
       );
     }
 
+    float settledDamageHighlight = clamp(
+      vDamageHighlight * damageHighlightStrength,
+      0.0,
+      1.0
+    );
+    if (settledDamageHighlight > 0.001) {
+      float damageRim = pow(
+        1.0 - abs(normalize(vViewNormal).z),
+        1.45
+      );
+      float damageTint = settledDamageHighlight * mix(0.68, 0.94, damageRim);
+      shaded = mix(shaded, damageHighlightColor, damageTint);
+      shaded += damageHighlightColor * settledDamageHighlight * (0.2 + damageRim * 0.24);
+      alpha = max(alpha, settledDamageHighlight * 0.9);
+    }
+
     // A spaced plate is an analysis surface, not an opaque replacement for
     // the armor/components behind it. Keep its thickness color in the
     // vertex data, lower only the face alpha, and restore an opaque core for
@@ -419,6 +442,7 @@ function createGeometry(batch: HitSceneRenderBatch) {
   const geometry = new BufferGeometry();
   const { outlineBarycentrics, spacedArmorEdgeMasks } = spacedArmorOutlineAttributes(batch);
   const surfaceProfileCodes = new Float32Array(batch.triangleCount * 3);
+  const damageHighlights = new Float32Array(batch.triangleCount * 3);
   for (let triangleIndex = 0; triangleIndex < batch.triangleCount; triangleIndex += 1) {
     surfaceProfileCodes.fill(
       batch.surfaceProfileIndices[triangleIndex],
@@ -432,6 +456,7 @@ function createGeometry(batch: HitSceneRenderBatch) {
   geometry.setAttribute("surfaceOpacity", new BufferAttribute(batch.opacities, 1));
   geometry.setAttribute("patternCode", new BufferAttribute(batch.patternCodes, 1));
   geometry.setAttribute("surfaceProfileCode", new BufferAttribute(surfaceProfileCodes, 1));
+  geometry.setAttribute("damageHighlight", new BufferAttribute(damageHighlights, 1));
   geometry.setAttribute("outlineBarycentric", new BufferAttribute(outlineBarycentrics, 3));
   geometry.setAttribute("spacedArmorEdgeMask", new BufferAttribute(spacedArmorEdgeMasks, 3));
   geometry.computeBoundingBox();
@@ -463,6 +488,8 @@ function createMaterial(layer: HitSceneRenderLayer) {
       spacedArmorAlphaScale: { value: SPACED_ARMOR_ALPHA_SCALE },
       spacedArmorDashOffset: { value: 0 },
       outlineStrength: { value: 1 },
+      damageHighlightColor: { value: new Color(0xffc45c) },
+      damageHighlightStrength: { value: 0 },
     },
     side: DoubleSide,
     transparent: layer !== "interior",
@@ -494,6 +521,11 @@ function createMesh(batch: HitSceneRenderBatch): HitSceneRenderMesh {
 function modelMeshes(model: HitSceneThreeModel) {
   return [model.armor, model.armorOverlay, model.blockerOverlay, model.interior] as const;
 }
+
+const hitSceneDamageHighlightStates = new WeakMap<
+  HitSceneThreeModel,
+  { componentKey: string; colorHex: number }
+>();
 
 function armorThicknessRange(
   meshes: readonly HitSceneRenderMesh[],
@@ -859,6 +891,82 @@ export function setHitSceneThreeModelMode(
   model.blockerOverlay.material.uniforms.outlineStrength.value =
     nonInteriorOutlineStrength;
   model.interior.material.uniforms.outlineStrength.value = 1;
+}
+
+export function setHitSceneThreeModelDamageHighlight(
+  model: HitSceneThreeModel,
+  {
+    componentIndices,
+    colorHex,
+    strength,
+  }: {
+    componentIndices: readonly number[];
+    colorHex: number;
+    strength: number;
+  },
+) {
+  const normalizedComponentIndices = Array.from(new Set(
+    componentIndices.filter(
+      (componentIndex) =>
+        Number.isInteger(componentIndex) && componentIndex >= 0,
+    ),
+  )).sort((left, right) => left - right);
+  const componentKey = normalizedComponentIndices.join(",");
+  const safeColorHex = Number.isFinite(colorHex)
+    ? Math.trunc(colorHex) & 0xffffff
+    : 0xffc45c;
+  const previous = hitSceneDamageHighlightStates.get(model);
+
+  if (previous?.componentKey !== componentKey) {
+    const highlightedComponents = new Set(normalizedComponentIndices);
+    for (const mesh of modelMeshes(model)) {
+      const highlightAttribute = mesh.geometry.getAttribute("damageHighlight");
+      const highlightValues = highlightAttribute.array as Float32Array;
+      for (
+        let triangleIndex = 0;
+        triangleIndex < mesh.userData.componentIndices.length;
+        triangleIndex += 1
+      ) {
+        highlightValues.fill(
+          highlightedComponents.has(
+            mesh.userData.componentIndices[triangleIndex],
+          )
+            ? 1
+            : 0,
+          triangleIndex * 3,
+          triangleIndex * 3 + 3,
+        );
+      }
+      highlightAttribute.needsUpdate = true;
+    }
+  }
+
+  if (previous?.colorHex !== safeColorHex) {
+    for (const mesh of modelMeshes(model)) {
+      mesh.material.uniforms.damageHighlightColor.value.setHex(safeColorHex);
+    }
+  }
+
+  const safeStrength = Number.isFinite(strength)
+    ? Math.max(0, Math.min(1, strength))
+    : 0;
+  for (const mesh of modelMeshes(model)) {
+    mesh.material.uniforms.damageHighlightStrength.value = safeStrength;
+  }
+  hitSceneDamageHighlightStates.set(model, {
+    componentKey,
+    colorHex: safeColorHex,
+  });
+}
+
+export function clearHitSceneThreeModelDamageHighlight(
+  model: HitSceneThreeModel,
+) {
+  setHitSceneThreeModelDamageHighlight(model, {
+    componentIndices: [],
+    colorHex: 0xffc45c,
+    strength: 0,
+  });
 }
 
 export function setHitSceneThreeModelHoveredProfile(

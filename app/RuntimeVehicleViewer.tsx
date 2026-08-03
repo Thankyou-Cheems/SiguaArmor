@@ -53,6 +53,10 @@ import {
   type EditorNativeModel,
   type EditorNativeShotResult,
 } from "../lib/editor-native-hit-model";
+import {
+  buildRadialDamageVisualizationPlan,
+  type RadialDamageVisualizationPlan,
+} from "../lib/radial-damage-visualization";
 import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
 import { editorDamageCardEffect } from "../lib/editor-damage-card-effects";
 import {
@@ -82,9 +86,11 @@ import {
   spacedArmorSurfaceInfo,
 } from "../lib/hit-scene-render-batches";
 import {
+  clearHitSceneThreeModelDamageHighlight,
   createHitSceneThreeModel,
   setHitSceneThreeModelArmorThicknessScale,
   setHitSceneThreeModelComponentPoses,
+  setHitSceneThreeModelDamageHighlight,
   setHitSceneThreeModelHoveredProfile,
   setHitSceneThreeModelMode,
   setHitSceneThreeModelSpecialArmorVisible,
@@ -423,8 +429,11 @@ const SHARED_SHOT_RAY_LEAD_M = 0.6;
 const SHOT_TRACE_MIN_DURATION_MS = 360;
 const SHOT_TRACE_MAX_DURATION_MS = 720;
 const SHOT_CONTINUATION_DURATION_MS = 180;
-const SHOT_EXPLOSION_LAYER_DELAY_MS = 105;
-const SHOT_EXPLOSION_DURATION_MS = 880;
+const SHOT_EXPLOSION_LAYER_DELAY_MS = 90;
+const SHOT_EXPLOSION_EXPANSION_DURATION_MS = 360;
+const SHOT_EXPLOSION_FADE_DURATION_MS = 190;
+const SHOT_EXPLOSION_DURATION_MS =
+  SHOT_EXPLOSION_EXPANSION_DURATION_MS + SHOT_EXPLOSION_FADE_DURATION_MS;
 const PROTECTION_MAP_DEBOUNCE_MS = 150;
 const VIEWER_MODES: Array<[ViewerAssetMode, string]> = [
   ["armor", "装甲"],
@@ -1562,16 +1571,25 @@ interface ShotPathMarkerVisual {
 
 interface ShotExplosionLayerVisual {
   root: THREE.Group;
-  core: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
   pressureSurface: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
-  baseRing: THREE.Mesh<THREE.TorusGeometry, THREE.MeshBasicMaterial>;
+  exactRadiusRing: THREE.LineLoop<
+    THREE.BufferGeometry,
+    THREE.LineBasicMaterial
+  >;
+  originTether: THREE.Line<THREE.BufferGeometry, THREE.LineDashedMaterial>;
+  originLabel: THREE.Sprite;
+  originLabelCanvas: HTMLCanvasElement;
+  originLabelTexture: THREE.CanvasTexture;
   damageTypeIcon: THREE.Sprite;
   damageTypeIconCanvas: HTMLCanvasElement;
   damageTypeIconTexture: THREE.CanvasTexture;
   iconAngleOffsetRad: number;
+  showOriginLabel: boolean;
   configured: boolean;
   delayMs: number;
+  innerRadiusM: number;
   outerRadiusM: number;
+  settledComponentIndices: number[];
 }
 
 interface ShotVisualAnimationLayout {
@@ -2114,7 +2132,78 @@ function shouldShowPenetrationDamageLane(
 }
 
 function shouldShowExplosionDamageLane(result: EditorNativeShotResult) {
-  return effectiveDamageEventsByKind(result, "radial").length > 0;
+  return result.radial.layers.length > 0;
+}
+
+function RadialDamageRouteSummary({
+  plan,
+}: {
+  plan: RadialDamageVisualizationPlan;
+}) {
+  const outcomePools = Array.from(new Set(
+    plan.outcomes.map((outcome) => editorPoolLabel(outcome.poolKind)),
+  ));
+  const settledComponentCount = new Set(
+    plan.outcomes.flatMap((outcome) => outcome.componentIndices),
+  ).size;
+  const outcomeLabel = plan.outcomeState === "resolved"
+    ? outcomePools.join("、")
+    : plan.outcomeState === "native-unknown"
+      ? "原生待定"
+      : "无已结算伤害";
+  const outcomeDetail = plan.outcomeState === "resolved"
+    ? settledComponentCount > 0
+      ? `扩散时高亮 ${settledComponentCount} 个已结算组件${
+          plan.componentFanout === "native-unknown"
+            ? "；其他候选仍需原生可见性判定"
+            : ""
+        }`
+      : "血池已结算；当前记录没有可映射的组件几何"
+    : plan.outcomeState === "native-unknown"
+      ? "浏览器未重建逐组件 overlap / visibility"
+      : "当前径向层没有产生有效血量变化";
+  const radiusDetail = "平滑球面按真实半径扩散；淡出后仅保留实距环";
+  return (
+    <div
+      className="viewer-radial-route-summary"
+      data-radial-geometry={plan.geometry}
+      data-radial-target-selection={plan.targetSelection}
+      data-radial-exact-radius-reference={plan.exactRadiusReference}
+      data-radial-outcome={plan.outcomeState}
+      data-radial-radius-presentation={plan.radiusPresentation}
+      data-radial-origin-component-index={plan.origin.componentIndex}
+    >
+      <div className="viewer-radial-route-summary__flow">
+        <span data-node="origin">
+          <small>爆心来源</small>
+          <strong>{plan.origin.componentLabel}</strong>
+          <em>命中组件</em>
+        </span>
+        <i aria-hidden="true">→</i>
+        <span data-node="volume">
+          <small>候选搜索</small>
+          <strong>完整球体</strong>
+          <em>逐组件可见性</em>
+        </span>
+        <i aria-hidden="true">→</i>
+        <span data-node="outcome" data-state={plan.outcomeState}>
+          <small>实际收伤</small>
+          <strong>{outcomeLabel}</strong>
+          <em>{plan.outcomeState === "resolved" ? "已结算血池" : "组件准入状态"}</em>
+        </span>
+      </div>
+      <ul className="viewer-radial-layer-summary" aria-label="径向伤害层半径">
+        {plan.layers.map((layer) => (
+          <li key={layer.layerId} data-radial-layer={layer.layerId}>
+            <b>{layer.shortLabel || layer.label}</b>
+            <span>全伤 ≤ {metricText(layer.innerRadiusM)} m</span>
+            <span>截止 {metricText(layer.outerRadiusM)} m</span>
+          </li>
+        ))}
+      </ul>
+      <p>{radiusDetail} · {outcomeDetail}</p>
+    </div>
+  );
 }
 
 function forwardedDamageMatchesParent(
@@ -2248,7 +2337,7 @@ function DamageEventListItems({
           className="viewer-damage-equation"
           aria-label={
             damage.damageKind === "radial"
-              ? `爆炸伤害 ${metricText(damage.incomingDamage)} 乘伤害类型系数 ${damageModifierText(damage.damageTypeModifier)}，乘直接爆炸系数 ${damageModifierText(damage.routeMultiplier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`
+              ? `爆炸伤害 ${metricText(damage.incomingDamage)} 乘伤害类型系数 ${damageModifierText(damage.damageTypeModifier)}，乘${damage.route === "radial-indirect" ? "间接" : "直接"}爆炸系数 ${damageModifierText(damage.routeMultiplier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`
               : `直击伤害 ${metricText(damage.incomingDamage)} 乘伤害类型系数 ${damageModifierText(damage.damageTypeModifier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`
           }
         >
@@ -2264,7 +2353,10 @@ function DamageEventListItems({
           {damage.damageKind === "radial" ? (
             <>
               <i aria-hidden="true">×</i>
-              <span data-term="radial-route" title="直接爆炸乘数">
+              <span
+                data-term="radial-route"
+                title={damage.route === "radial-indirect" ? "间接爆炸乘数" : "直接爆炸乘数"}
+              >
                 {damageModifierText(damage.routeMultiplier)}
               </span>
             </>
@@ -2497,6 +2589,35 @@ function paintShotExplosionDamageTypeIcon(
   visual.damageTypeIcon.userData.damageTypeIconKind = kind;
 }
 
+function paintShotExplosionOriginLabel(
+  visual: ShotExplosionLayerVisual,
+  componentLabel: string,
+  originOffsetM: number,
+) {
+  const canvas = visual.originLabelCanvas;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "rgba(3, 8, 11, 0.9)";
+  context.fillRect(3, 3, canvas.width - 6, canvas.height - 6);
+  context.strokeStyle = "rgba(255, 188, 84, 0.92)";
+  context.lineWidth = 3;
+  context.strokeRect(4.5, 4.5, canvas.width - 9, canvas.height - 9);
+  context.fillStyle = "#ffbc54";
+  context.font = "700 19px system-ui, sans-serif";
+  context.textAlign = "left";
+  context.textBaseline = "middle";
+  context.fillText(
+    `爆心${Math.abs(originOffsetM) > 0.0001 ? ` · 法线偏移 ${(originOffsetM * 100).toFixed(0)} cm` : ""}`,
+    14,
+    28,
+  );
+  context.fillStyle = "#f4f7f5";
+  context.font = "600 18px system-ui, sans-serif";
+  context.fillText(`命中组件：${componentLabel}`, 14, 62);
+  visual.originLabelTexture.needsUpdate = true;
+}
+
 function updateShotExplosionDamageTypeIconPosition(
   visual: ShotExplosionLayerVisual,
   camera: THREE.Camera,
@@ -2544,24 +2665,8 @@ function createShotExplosionLayerVisual(
   root.name = `editor-native-shot-explosion-layer-${layerIndex + 1}`;
   root.renderOrder = renderOrder;
 
-  const core = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 16, 10),
-    new THREE.MeshBasicMaterial({
-      color: 0xffa12b,
-      transparent: true,
-      opacity: 0,
-      blending: THREE.AdditiveBlending,
-      depthTest: false,
-      depthWrite: false,
-      toneMapped: false,
-    }),
-  );
-  core.name = "editor-native-shot-explosion-core";
-  core.renderOrder = renderOrder + 3;
-  root.add(core);
-
   const pressureSurface = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 32, 20, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.SphereGeometry(1, 48, 32),
     new THREE.MeshBasicMaterial({
       color: 0xffa12b,
       side: THREE.DoubleSide,
@@ -2576,10 +2681,14 @@ function createShotExplosionLayerVisual(
   pressureSurface.renderOrder = renderOrder;
   root.add(pressureSurface);
 
-  const baseRing = new THREE.Mesh(
-    new THREE.TorusGeometry(1, 0.0075, 6, 64),
-    new THREE.MeshBasicMaterial({
-      color: 0xffa12b,
+  const exactRadiusRingPoints = Array.from({ length: 96 }, (_, pointIndex) => {
+    const angle = pointIndex / 96 * Math.PI * 2;
+    return new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle));
+  });
+  const exactRadiusRing = new THREE.LineLoop(
+    new THREE.BufferGeometry().setFromPoints(exactRadiusRingPoints),
+    new THREE.LineBasicMaterial({
+      color: 0xffd166,
       transparent: true,
       opacity: 0,
       depthTest: true,
@@ -2587,10 +2696,52 @@ function createShotExplosionLayerVisual(
       toneMapped: false,
     }),
   );
-  baseRing.name = "editor-native-shot-explosion-base-ring";
-  baseRing.rotation.x = Math.PI / 2;
-  baseRing.renderOrder = renderOrder + 1;
-  root.add(baseRing);
+  exactRadiusRing.name = "editor-native-shot-explosion-exact-radius-ring";
+  exactRadiusRing.renderOrder = renderOrder + 1;
+  root.add(exactRadiusRing);
+
+  const originTether = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+    ]),
+    new THREE.LineDashedMaterial({
+      color: 0xffd166,
+      transparent: true,
+      opacity: 0,
+      dashSize: 0.055,
+      gapSize: 0.035,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  originTether.name = "editor-native-shot-explosion-origin-tether";
+  originTether.renderOrder = renderOrder + 3;
+  root.add(originTether);
+
+  const originLabelCanvas = document.createElement("canvas");
+  originLabelCanvas.width = 320;
+  originLabelCanvas.height = 88;
+  const originLabelTexture = new THREE.CanvasTexture(originLabelCanvas);
+  originLabelTexture.colorSpace = THREE.SRGBColorSpace;
+  originLabelTexture.minFilter = THREE.LinearFilter;
+  originLabelTexture.magFilter = THREE.LinearFilter;
+  originLabelTexture.generateMipmaps = false;
+  const originLabel = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: originLabelTexture,
+      transparent: true,
+      opacity: 0,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  originLabel.name = "editor-native-shot-explosion-origin-label";
+  originLabel.center.set(0, 0.5);
+  originLabel.renderOrder = renderOrder + 5;
+  root.add(originLabel);
 
   const damageTypeIconCanvas = document.createElement("canvas");
   damageTypeIconCanvas.width = 160;
@@ -2620,9 +2771,12 @@ function createShotExplosionLayerVisual(
   root.visible = false;
   const visual: ShotExplosionLayerVisual = {
     root,
-    core,
     pressureSurface,
-    baseRing,
+    exactRadiusRing,
+    originTether,
+    originLabel,
+    originLabelCanvas,
+    originLabelTexture,
     damageTypeIcon,
     damageTypeIconCanvas,
     damageTypeIconTexture,
@@ -2630,15 +2784,19 @@ function createShotExplosionLayerVisual(
       (layerIndex % 2 === 0 ? -1 : 1)
       * (Math.floor(layerIndex / 2) + 1)
       * 0.18,
+    showOriginLabel: layerIndex === 0,
     configured: false,
     delayMs: 0,
+    innerRadiusM: 0,
     outerRadiusM: 0,
+    settledComponentIndices: [],
   };
   paintShotExplosionDamageTypeIcon(
     visual,
     "generic",
     shotExplosionColor("generic"),
   );
+  paintShotExplosionOriginLabel(visual, "车辆部件", 0);
   return visual;
 }
 
@@ -2654,6 +2812,9 @@ function configureShotExplosionLayerVisual(
     delayMs,
     layerId,
     damageTypePath,
+    settledComponentIndices,
+    originComponentLabel,
+    originOffsetM,
   }: {
     origin: THREE.Vector3;
     normal: THREE.Vector3;
@@ -2664,38 +2825,61 @@ function configureShotExplosionLayerVisual(
     delayMs: number;
     layerId: string;
     damageTypePath: string;
+    settledComponentIndices: readonly number[];
+    originComponentLabel: string;
+    originOffsetM: number;
   },
 ) {
   visual.configured = true;
   visual.delayMs = delayMs;
+  visual.innerRadiusM = Math.max(0, Math.min(innerRadiusM, outerRadiusM));
   visual.outerRadiusM = Math.max(0, outerRadiusM);
+  visual.settledComponentIndices = [...new Set(settledComponentIndices)];
   visual.root.position.copy(origin);
   const safeNormal = normal.lengthSq() < 0.000001
     ? new THREE.Vector3(0, 1, 0)
     : normal.clone().normalize();
-  visual.root.quaternion.setFromUnitVectors(
-    new THREE.Vector3(0, 1, 0),
-    safeNormal,
-  );
+  visual.root.quaternion.identity();
   visual.root.userData.layerId = layerId;
   visual.root.userData.damageTypePath = damageTypePath;
   visual.root.userData.damageTypeIconKind = damageTypeIconKind;
   visual.root.userData.outerRadiusM = outerRadiusM;
   visual.root.userData.innerRadiusM = innerRadiusM;
-  visual.root.userData.visualClip = "surface-normal-hemisphere";
+  visual.root.userData.explosionOriginOffsetM = originOffsetM;
+  visual.root.userData.settledComponentIndices = visual.settledComponentIndices;
+  visual.root.userData.visualGeometry = "smooth-full-sphere-with-exact-ring";
+  visual.root.userData.visualClip = "none";
+  visual.root.userData.exactRadiusReference =
+    "horizontal-outer-boundary-ring";
+  visual.root.userData.targetSelection =
+    "per-component-native-overlap-visibility";
   visual.root.userData.surfaceNormal = safeNormal.toArray();
-  visual.core.material.color.setHex(color);
   visual.pressureSurface.material.color.setHex(color);
-  visual.baseRing.material.color.setHex(color);
+  visual.exactRadiusRing.material.color.setHex(color);
+  visual.originTether.material.color.setHex(color).offsetHSL(0, -0.08, 0.12);
+  visual.originTether.geometry.setFromPoints([
+    new THREE.Vector3(),
+    safeNormal.clone().multiplyScalar(-originOffsetM),
+  ]);
+  visual.originTether.computeLineDistances();
+  visual.originLabel.position.copy(safeNormal).multiplyScalar(0.24);
+  visual.originLabel.scale.set(1.28, 0.352, 1);
   paintShotExplosionDamageTypeIcon(visual, damageTypeIconKind, color);
+  paintShotExplosionOriginLabel(
+    visual,
+    originComponentLabel,
+    originOffsetM,
+  );
 }
 
 function clearShotExplosionLayerVisual(visual: ShotExplosionLayerVisual) {
   visual.configured = false;
+  visual.settledComponentIndices = [];
   visual.root.visible = false;
-  visual.core.material.opacity = 0;
   visual.pressureSurface.material.opacity = 0;
-  visual.baseRing.material.opacity = 0;
+  visual.exactRadiusRing.material.opacity = 0;
+  visual.originTether.material.opacity = 0;
+  visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = 0;
 }
 
@@ -2708,14 +2892,17 @@ function settleShotExplosionLayerVisual(
     return;
   }
   visual.root.visible = true;
-  visual.core.scale.setScalar(
-    THREE.MathUtils.clamp(visual.outerRadiusM * 0.018, 0.045, 0.18),
+  visual.pressureSurface.scale.setScalar(
+    Math.max(0.001, visual.outerRadiusM),
   );
-  visual.pressureSurface.scale.setScalar(visual.outerRadiusM);
-  visual.baseRing.scale.setScalar(visual.outerRadiusM);
-  visual.core.material.opacity = 0.2;
-  visual.pressureSurface.material.opacity = 0.075;
-  visual.baseRing.material.opacity = 0.34;
+  visual.exactRadiusRing.scale.setScalar(
+    Math.max(0.001, visual.outerRadiusM),
+  );
+  visual.pressureSurface.material.opacity = 0;
+  visual.exactRadiusRing.material.opacity = 0.72;
+  visual.originTether.visible = false;
+  visual.originTether.material.opacity = 0;
+  visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = 0.96;
 }
 
@@ -2730,40 +2917,55 @@ function setShotExplosionLayerAnimationFrame(
 ) {
   if (!visual.configured || !selected || elapsedMs < visual.delayMs) {
     visual.root.visible = false;
-    return;
+    return 0;
   }
   const localElapsedMs = elapsedMs - visual.delayMs;
   if (localElapsedMs >= SHOT_EXPLOSION_DURATION_MS) {
     settleShotExplosionLayerVisual(visual, selected);
-    return;
+    return 0;
   }
-  const progress = THREE.MathUtils.clamp(
-    localElapsedMs / SHOT_EXPLOSION_DURATION_MS,
+  const expansionProgress = THREE.MathUtils.clamp(
+    localElapsedMs / SHOT_EXPLOSION_EXPANSION_DURATION_MS,
     0,
     1,
   );
-  const expansion = easeOutCubic(progress);
-  const fade = 1 - THREE.MathUtils.smoothstep(progress, 0.46, 1);
+  const fadeProgress = THREE.MathUtils.clamp(
+    (
+      localElapsedMs - SHOT_EXPLOSION_EXPANSION_DURATION_MS
+    ) / SHOT_EXPLOSION_FADE_DURATION_MS,
+    0,
+    1,
+  );
+  const expansion = easeOutCubic(expansionProgress);
+  const surfaceVisibility =
+    1 - THREE.MathUtils.smoothstep(fadeProgress, 0, 1);
+  const ringReveal = THREE.MathUtils.smoothstep(fadeProgress, 0.08, 0.82);
   visual.root.visible = true;
   const currentRadiusM = Math.max(
     0.001,
     visual.outerRadiusM * expansion,
   );
   visual.pressureSurface.scale.setScalar(currentRadiusM);
-  visual.baseRing.scale.setScalar(currentRadiusM);
-  visual.core.scale.setScalar(
-    THREE.MathUtils.clamp(
-      visual.outerRadiusM
-        * (0.008 + Math.sin(Math.min(1, progress * 1.7) * Math.PI) * 0.024),
-      0.05,
-      0.28,
-    ),
+  visual.exactRadiusRing.scale.setScalar(
+    Math.max(0.001, visual.outerRadiusM),
   );
-  visual.core.material.opacity = 0.16 + fade * 0.66;
-  visual.pressureSurface.material.opacity = 0.06 + fade * 0.1;
-  visual.baseRing.material.opacity = 0.18 + fade * 0.24;
-  visual.damageTypeIcon.material.opacity =
-    THREE.MathUtils.smoothstep(progress, 0.26, 0.64);
+  visual.pressureSurface.material.opacity =
+    surfaceVisibility * (0.105 + (1 - expansionProgress) * 0.055);
+  visual.exactRadiusRing.material.opacity = ringReveal * 0.72;
+  visual.originTether.visible = false;
+  visual.originTether.material.opacity = 0;
+  visual.originLabel.material.opacity = 0;
+  visual.damageTypeIcon.material.opacity = ringReveal * 0.96;
+
+  if (visual.settledComponentIndices.length === 0) return 0;
+  const highlightRise = THREE.MathUtils.smoothstep(
+    expansionProgress,
+    0.02,
+    0.28,
+  );
+  const highlightFade =
+    1 - THREE.MathUtils.smoothstep(fadeProgress, 0.08, 1);
+  return highlightRise * highlightFade;
 }
 
 function setCylinderBetween(
@@ -3601,6 +3803,7 @@ export function RuntimeVehicleViewer({
       delete host.dataset.hitRadialState;
       delete host.dataset.hitExplosionLayerCount;
       delete host.dataset.hitExplosionOrder;
+      delete host.dataset.hitExplosionInnerRadiiM;
       delete host.dataset.hitExplosionOuterRadiiM;
       delete host.dataset.hitExplosionDamageTypeKinds;
       delete host.dataset.hitExplosionColors;
@@ -3608,9 +3811,21 @@ export function RuntimeVehicleViewer({
       delete host.dataset.shotExplosionIconSource;
       delete host.dataset.shotExplosionVisualClip;
       delete host.dataset.shotExplosionRadiusBasis;
+      delete host.dataset.shotExplosionRadiusPresentation;
+      delete host.dataset.shotExplosionSurfaceLifecycle;
+      delete host.dataset.shotExplosionExactRadiusReference;
       delete host.dataset.shotExplosionNativeField;
+      delete host.dataset.shotExplosionOriginComponent;
+      delete host.dataset.shotExplosionOutcomeState;
+      delete host.dataset.shotExplosionResolvedPools;
+      delete host.dataset.shotExplosionSettledComponents;
+      delete host.dataset.shotExplosionTargetSelection;
       return;
     }
+    const radialVisualization = buildRadialDamageVisualizationPlan(
+      result,
+      parsedHitRef.current?.header.components ?? [],
+    );
     host.dataset.hitResolution = result.resolution;
     host.dataset.hitStoppedAtLayer = result.stoppedAtLayer === null
       ? "none"
@@ -3622,6 +3837,9 @@ export function RuntimeVehicleViewer({
     host.dataset.hitRadialState = result.radial.state;
     host.dataset.hitExplosionLayerCount = String(result.radial.layers.length);
     host.dataset.hitExplosionOrder = result.radial.order ?? "none";
+    host.dataset.hitExplosionInnerRadiiM = radialVisualization
+      ? radialVisualization.layers.map((layer) => String(layer.innerRadiusM)).join(",")
+      : "none";
     host.dataset.hitExplosionOuterRadiiM = result.radial.layers.length > 0
       ? result.radial.layers.map((radialLayer) => {
           const ballisticsLayer = result.ballistics.explosiveLayers.find(
@@ -3648,25 +3866,46 @@ export function RuntimeVehicleViewer({
             .join(",")
         : "none";
     host.dataset.shotExplosionIndicator =
-      result.radial.layers.length > 0
-        ? "surface-normal-pressure-hemisphere"
+      radialVisualization
+        ? radialVisualization.geometry
         : "none";
     host.dataset.shotExplosionIconSource =
       result.radial.layers.length > 0
         ? "damage-type-legend-svg-paths"
         : "none";
-    host.dataset.shotExplosionVisualClip =
-      result.radial.layers.length > 0
-        ? "surface-normal-outward"
-        : "none";
+    host.dataset.shotExplosionVisualClip = "none";
     host.dataset.shotExplosionRadiusBasis =
-      result.radial.layers.length > 0
-        ? "outer-radius-exact"
+      radialVisualization
+        ? "outer-radius-true-scale-surface-and-ring"
         : "none";
+    host.dataset.shotExplosionRadiusPresentation =
+      radialVisualization?.radiusPresentation ?? "none";
+    host.dataset.shotExplosionSurfaceLifecycle = radialVisualization
+      ? "true-scale-expand-fade-to-ring"
+      : "none";
+    host.dataset.shotExplosionExactRadiusReference =
+      radialVisualization?.exactRadiusReference ?? "none";
     host.dataset.shotExplosionNativeField =
-      result.radial.layers.length > 0
-        ? "radial-sphere-with-visibility"
+      radialVisualization
+        ? "full-sphere-candidate-search-with-per-component-visibility"
         : "none";
+    host.dataset.shotExplosionOriginComponent = radialVisualization
+      ? String(radialVisualization.origin.componentIndex)
+      : "none";
+    host.dataset.shotExplosionOutcomeState =
+      radialVisualization?.outcomeState ?? "none";
+    host.dataset.shotExplosionResolvedPools = radialVisualization
+      ? radialVisualization.outcomes.map((outcome) => outcome.poolId).join(",") || "none"
+      : "none";
+    host.dataset.shotExplosionSettledComponents = radialVisualization
+      ? [...new Set(
+          radialVisualization.outcomes.flatMap(
+            (outcome) => outcome.componentIndices,
+          ),
+        )].join(",") || "none"
+      : "none";
+    host.dataset.shotExplosionTargetSelection =
+      radialVisualization?.targetSelection ?? "none";
   }, []);
 
   const selectShotVisual = useCallback((shotId: number | null) => {
@@ -3850,6 +4089,10 @@ export function RuntimeVehicleViewer({
         : 0,
     };
 
+    const radialVisualization = buildRadialDamageVisualizationPlan(
+      result,
+      parsedHitRef.current?.header.components ?? [],
+    );
     const firstLayer = result.layers[0];
     const firstImpact = record.intersections.find((intersection) =>
       intersection.componentIndex === firstLayer.componentIndex
@@ -3895,6 +4138,14 @@ export function RuntimeVehicleViewer({
           : 0,
         layerId: radialLayer.layerId,
         damageTypePath: radialLayer.damageTypePath,
+        settledComponentIndices: radialVisualization?.outcomes
+          .filter((outcome) => outcome.radialLayerId === radialLayer.layerId)
+          .flatMap((outcome) => outcome.componentIndices) ?? [],
+        originComponentLabel: playerHitComponentLabel(
+          parsedHitRef.current?.header.components[firstLayer.componentIndex]
+          ?? firstLayer,
+        ),
+        originOffsetM: radialLayer.explosionOriginOffsetCm / 100,
       });
     });
     shotVisual.group.visible = true;
@@ -3952,6 +4203,9 @@ export function RuntimeVehicleViewer({
         });
       }
     }
+    if (hitModelRef.current) {
+      clearHitSceneThreeModelDamageHighlight(hitModelRef.current);
+    }
     const host = hostRef.current;
     if (host) {
       if (settle && animatedRecord) {
@@ -3979,6 +4233,9 @@ export function RuntimeVehicleViewer({
       record.visual.explosionLayers.forEach((layer) => {
         settleShotExplosionLayerVisual(layer, record.visual.selected);
       });
+      if (hitModelRef.current) {
+        clearHitSceneThreeModelDamageHighlight(hitModelRef.current);
+      }
       if (host) {
         host.dataset.shotAnimationState = "reduced-motion";
         host.dataset.shotAnimationShotId = String(record.shotId);
@@ -4031,13 +4288,38 @@ export function RuntimeVehicleViewer({
         continuationProgress,
       );
       const explosionElapsedMs = elapsedMs - impactAtMs;
+      const highlightedComponentIndices = new Set<number>();
+      let damageHighlightStrength = 0;
+      let damageHighlightColor = shotExplosionColor("generic");
       record.visual.explosionLayers.forEach((layer) => {
-        setShotExplosionLayerAnimationFrame(
+        const layerHighlightStrength = setShotExplosionLayerAnimationFrame(
           layer,
           explosionElapsedMs,
           record.visual.selected,
         );
+        if (layerHighlightStrength <= 0) return;
+        layer.settledComponentIndices.forEach((componentIndex) => {
+          highlightedComponentIndices.add(componentIndex);
+        });
+        if (layerHighlightStrength > damageHighlightStrength) {
+          damageHighlightStrength = layerHighlightStrength;
+          damageHighlightColor = layer.pressureSurface.material.color.getHex();
+        }
       });
+      if (hitModelRef.current) {
+        if (
+          damageHighlightStrength > 0 &&
+          highlightedComponentIndices.size > 0
+        ) {
+          setHitSceneThreeModelDamageHighlight(hitModelRef.current, {
+            componentIndices: [...highlightedComponentIndices],
+            colorHex: damageHighlightColor,
+            strength: damageHighlightStrength,
+          });
+        } else {
+          clearHitSceneThreeModelDamageHighlight(hitModelRef.current);
+        }
+      }
       renderRef.current?.();
       if (elapsedMs < totalDurationMs) {
         shotAnimationFrameRef.current = requestAnimationFrame(animateShot);
@@ -4050,6 +4332,9 @@ export function RuntimeVehicleViewer({
       record.visual.explosionLayers.forEach((layer) => {
         settleShotExplosionLayerVisual(layer, record.visual.selected);
       });
+      if (hitModelRef.current) {
+        clearHitSceneThreeModelDamageHighlight(hitModelRef.current);
+      }
       if (host) host.dataset.shotAnimationState = "settled";
       renderRef.current?.();
     };
@@ -7019,6 +7304,12 @@ export function RuntimeVehicleViewer({
   const explosionDamageEvents = shotResult
     ? effectiveDamageEventsByKind(shotResult, "radial")
     : [];
+  const radialDamageVisualization = shotResult
+    ? buildRadialDamageVisualizationPlan(
+        shotResult,
+        hitHeader?.components ?? [],
+      )
+    : null;
   const showPenetrationDamageLane = shotResult
     ? shouldShowPenetrationDamageLane(
         shotResult,
@@ -7999,12 +8290,45 @@ export function RuntimeVehicleViewer({
                       </span>
                     </header>
                     <div className="viewer-damage-lane__body">
-                      <ol className="viewer-layer-list viewer-damage-list">
-                        <DamageEventListItems
-                          events={explosionDamageEvents}
-                          animationKey={`${damageAnimationKey}:explosion`}
-                          attachForwarded
+                      {radialDamageVisualization ? (
+                        <RadialDamageRouteSummary
+                          plan={radialDamageVisualization}
                         />
+                      ) : null}
+                      <ol className="viewer-layer-list viewer-damage-list">
+                        {explosionDamageEvents.length > 0 ? (
+                          <DamageEventListItems
+                            events={explosionDamageEvents}
+                            animationKey={`${damageAnimationKey}:explosion`}
+                            attachForwarded
+                          />
+                        ) : (
+                          <li
+                            data-no-damage="true"
+                            data-native-unknown={
+                              radialDamageVisualization?.outcomeState === "native-unknown"
+                            }
+                            data-damage-kind="radial"
+                          >
+                            <span className="viewer-damage-target">
+                              <span
+                                className="viewer-damage-target__damage-type-icon"
+                                aria-hidden="true"
+                              >
+                                <CircleAlert size={22} />
+                              </span>
+                              组件收伤准入
+                              <em className="viewer-damage-outcome">
+                                {radialDamageVisualization?.outcomeState === "native-unknown"
+                                  ? "原生待定"
+                                  : "未造成伤害"}
+                              </em>
+                            </span>
+                            <span className="viewer-damage-equation">
+                              overlap / visibility
+                            </span>
+                          </li>
+                        )}
                       </ol>
                     </div>
                   </section>

@@ -5,11 +5,18 @@ export type EditorNativePenetrationPrefilter =
 
 export interface EditorNativePenetrationArithmetic {
   distanceFromFirstHitM: number;
+  distanceFromPenetrationTraceStartM: number;
   postPenetrationTraceFactor: number;
   remainingDamage: number;
   remainingDamageRatio: number;
   availablePenetrationMm: number;
 }
+
+// ASQWeapon::DealDamage builds the armor-test trace 1 cm before the first
+// impact surface. DidPenetrateArmor measures every hit from that trace start,
+// so even the first armor layer consumes 1 cm of the projectile penetration
+// trace. Same-build 2A70/100 mm Frag Dedicated PIE read back 0.01 m exactly.
+export const EDITOR_NATIVE_ARMOR_TRACE_ENTRY_OFFSET_M = Math.fround(0.01);
 
 export function editorNativeTraceIncludesDistance({
   distanceFromFirstHitM,
@@ -53,7 +60,7 @@ export function editorNativePenetrationPrefilter(
 export function resolveEditorNativePenetrationArithmetic({
   distanceFromRayOriginM,
   firstDistanceFromRayOriginM,
-  traceDistanceAfterPenetrationM,
+  penetrationTraceDistanceM,
   baseDamage,
   cumulativeDamageAbsorbed,
   penetrationAtRangeMm,
@@ -61,7 +68,7 @@ export function resolveEditorNativePenetrationArithmetic({
 }: {
   distanceFromRayOriginM: number;
   firstDistanceFromRayOriginM: number;
-  traceDistanceAfterPenetrationM: number;
+  penetrationTraceDistanceM: number;
   baseDamage: number;
   cumulativeDamageAbsorbed: number;
   penetrationAtRangeMm: number;
@@ -71,11 +78,16 @@ export function resolveEditorNativePenetrationArithmetic({
   const distanceFromFirstHitM = f32(
     distanceFromRayOriginM - firstDistanceFromRayOriginM,
   );
+  const distanceFromPenetrationTraceStartM = f32(
+    EDITOR_NATIVE_ARMOR_TRACE_ENTRY_OFFSET_M + distanceFromFirstHitM,
+  );
   const postPenetrationTraceFactor =
-    traceDistanceAfterPenetrationM > 0
+    penetrationTraceDistanceM > 0
       ? f32(
-          f32(traceDistanceAfterPenetrationM - distanceFromFirstHitM) /
-            traceDistanceAfterPenetrationM,
+          f32(
+            penetrationTraceDistanceM -
+              distanceFromPenetrationTraceStartM,
+          ) / penetrationTraceDistanceM,
         )
       : 0;
   const remainingDamage = f32(baseDamage - cumulativeDamageAbsorbed);
@@ -89,6 +101,7 @@ export function resolveEditorNativePenetrationArithmetic({
   );
   return {
     distanceFromFirstHitM,
+    distanceFromPenetrationTraceStartM,
     postPenetrationTraceFactor,
     remainingDamage,
     remainingDamageRatio,

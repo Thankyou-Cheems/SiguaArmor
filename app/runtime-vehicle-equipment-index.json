@@ -498,7 +498,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_ZBL08_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-03ef35098024d310acef",
@@ -1486,7 +1486,7 @@
       "cardId": "imf--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_2A42_HE",
@@ -1603,7 +1603,7 @@
       "cardId": "pla--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 70,
         "displayName": "DTC10-30 30mm Armor Piercing",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_AP",
@@ -2305,7 +2305,7 @@
       "cardId": "usmc--matv-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -2331,7 +2331,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-0e52020049ba08223b8b",
@@ -2500,7 +2500,7 @@
       "cardId": "rgf--mt-lbm-6mb--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 High Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_MTLB_30mm_HE_gun_Desert",
@@ -2617,7 +2617,7 @@
       "cardId": "imf--ural-375d-zu-23-2--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon",
@@ -2760,7 +2760,7 @@
         "projectileName": "BP_SPG9_og9v_Frag_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 7.5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 1,
         "turretName": "BP_BMD1M_Turret_C"
       },
       "id": "vehicle-equipment-105e5f6a481b1f1dadc7",
@@ -2994,7 +2994,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Technical_Turret_AGS17_C"
       },
       "id": "vehicle-equipment-11b219624280d94f45c0",
@@ -3280,7 +3280,7 @@
       "cardId": "vdv--bmd-4m--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "3UOF19 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_BMD4M_2A70_HEFrag",
@@ -3306,7 +3306,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_BMD4M_Turret_C"
       },
       "id": "vehicle-equipment-13cc7be084acdc1850d2",
@@ -3423,7 +3423,7 @@
         "projectileName": "BP_SPG9_og9v_Frag_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 7.5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 1,
         "turretName": "BP_BMP1_Turret_Technical_C"
       },
       "id": "vehicle-equipment-147c9cb705608e71e2a4",
@@ -3826,7 +3826,7 @@
       "cardId": "rgf--bmp-2m--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2M_2A42_HE_Desert",
@@ -4021,7 +4021,7 @@
       "cardId": "afu--bmp-1ts--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP1TS_ZTM1_AP",
@@ -4450,7 +4450,7 @@
       "cardId": "afu--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_AFU_2A42_HE",
@@ -4567,7 +4567,7 @@
       "cardId": "usmc--rhib-mk19--ultv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_RHIB_Weapon",
@@ -4593,7 +4593,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_RHIB_Turret_Mk19_C"
       },
       "id": "vehicle-equipment-19147f0e6e06567cca74",
@@ -4918,7 +4918,7 @@
       "cardId": "imf--mt-lb-vmk--apc",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_MTLB_NSV",
@@ -5230,7 +5230,7 @@
       "cardId": "usa--m1151-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -5256,7 +5256,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-1bb22cfca4e7664cd039",
@@ -5464,7 +5464,7 @@
       "cardId": "afu--brdm-2l1--ltv",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BRDM2_AFU_KPVT",
@@ -5542,7 +5542,7 @@
       "cardId": "afu--btr-4--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR4_ZTM1_HE",
@@ -5958,7 +5958,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_BTR-D_AGS17_Turret_C"
       },
       "id": "vehicle-equipment-1fa4d9f97bd7eb834f46",
@@ -6166,7 +6166,7 @@
       "cardId": "usmc--m1151-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -6192,7 +6192,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-2099b52b1c68fe233dba",
@@ -6985,7 +6985,7 @@
       "cardId": "vdv--btr-zd--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon",
@@ -7297,7 +7297,7 @@
       "cardId": "imf--bmp-1-zu-23-2--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon",
@@ -7362,7 +7362,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-2688f649463c563f4a14",
@@ -7453,7 +7453,7 @@
       "cardId": "usmc--m1151-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -7479,7 +7479,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-27474462f5cbfd5b83da",
@@ -7765,7 +7765,7 @@
       "cardId": "rgf--bmp-3m--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP3M_2A72_AP",
@@ -7908,7 +7908,7 @@
         "projectileName": "BP_SPG9_og9v_Frag_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 7.5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 1,
         "turretName": "BP_BMP1_Turret_IMF_C"
       },
       "id": "vehicle-equipment-2aa2f49d1f19aa0cb523",
@@ -8077,7 +8077,7 @@
       "cardId": "tlf--acv-15-25mm--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M791 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "ACV_M252_AP",
@@ -8142,7 +8142,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_Lynx8x8_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-2c0c035e9e8d573b4921",
@@ -8181,7 +8181,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Tigr_AGS17_Turret_Desert_C"
       },
       "id": "vehicle-equipment-2c2f8016c9b0473f5702",
@@ -8506,7 +8506,7 @@
       "cardId": "plaagf--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "DTB02-100 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_ZBD04A_2A70_HEFrag",
@@ -8532,7 +8532,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_ZBD04A_Turret_Desert_C"
       },
       "id": "vehicle-equipment-2dd89f7321271f87849b",
@@ -9273,7 +9273,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_Lynx8x8_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-30cb8ac68400119dc373",
@@ -9468,7 +9468,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Technical_Turret_AGS17_C"
       },
       "id": "vehicle-equipment-317281b4e999e6c314a0",
@@ -9507,7 +9507,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-31768814714b369789bb",
@@ -10131,7 +10131,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_RHIB_Turret_AGS17_C"
       },
       "id": "vehicle-equipment-34f14b15b218a280c66a",
@@ -10612,7 +10612,7 @@
       "cardId": "rgf--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_2A42_AP_Desert",
@@ -10963,7 +10963,7 @@
       "cardId": "rgf--mt-lbm-6ma--apc",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR80_RUS_KPVT_Desert",
@@ -11028,7 +11028,7 @@
         "projectileName": "BP_Konkurs_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 6.539999961853027,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_Spandrel_Turret_Tan_C"
       },
       "id": "vehicle-equipment-38910f1c182f328f1d37",
@@ -11158,7 +11158,7 @@
       "cardId": "plaagf--zbl08--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBL08_ZPT-99_HEFrag_Desert",
@@ -11236,7 +11236,7 @@
       "cardId": "rgf--btr-80--apc",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR80_RUS_KPVT_Desert",
@@ -11743,7 +11743,7 @@
       "cardId": "plaagf--zsl92-ifv--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 70,
         "displayName": "25mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_ZSL92_ZPT90_AP_Desert",
@@ -11808,7 +11808,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Tigr_AGS17_Turret_Desert_C"
       },
       "id": "vehicle-equipment-3b6bb8a12f20484e5076",
@@ -11938,7 +11938,7 @@
       "cardId": "baf--fv107--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "NM232 30mm High Explosive Tracer",
         "dryReloadDurationSeconds": 1.2000000476837158,
         "gunName": "BP_Scimitar_Rarden_HE",
@@ -12523,7 +12523,7 @@
       "cardId": "rgf--bmp-3m--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "3UOF19 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_BMP3M_2A70_HEFrag",
@@ -12549,7 +12549,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_BMP3M_Turret_Desert_C"
       },
       "id": "vehicle-equipment-3d6d310204671699eb11",
@@ -12562,7 +12562,7 @@
       "cardId": "caf--tapv--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Protector C16",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_C16_MK19_Desert",
@@ -12588,7 +12588,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_C16_Turret_Desert_C"
       },
       "id": "vehicle-equipment-3d93458b70f64aa1e3ab",
@@ -13095,7 +13095,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Tigr_AGS17_Turret_C"
       },
       "id": "vehicle-equipment-3fe449beee8964c7bbb1",
@@ -13186,7 +13186,7 @@
       "cardId": "tlf--pars-iii-25mm--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M791 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "IFV25_M252_AP",
@@ -13303,7 +13303,7 @@
       "cardId": "tlf--m113a2t-mk19--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -13329,7 +13329,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M113A2T_TLF_Desert_OpenTurret_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-40f4c35fe0f77591e051",
@@ -13485,7 +13485,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_Desert_C"
       },
       "id": "vehicle-equipment-41be80be1a158d5f5773",
@@ -13680,7 +13680,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_CSK_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-429adb93fe1073160b33",
@@ -14070,7 +14070,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-454441e2407540095db0",
@@ -14395,7 +14395,7 @@
       "cardId": "adf--aslav--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M919 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "ASLAV_M252_AP",
@@ -14785,7 +14785,7 @@
       "cardId": "baf--fv520-ctas40--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "Telescoped 40mm General-Purpose Tracer",
         "dryReloadDurationSeconds": 1.2000000476837158,
         "gunName": "BP_Warrior_CTAS_HE",
@@ -14902,7 +14902,7 @@
       "cardId": "plaagf--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 70,
         "displayName": "DTC10-30 30mm Armor Piercing",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_AP",
@@ -15136,7 +15136,7 @@
       "cardId": "imf--btr-80--apc",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR80_Militia_KPVT",
@@ -15526,7 +15526,7 @@
       "cardId": "imf--t-72a--mbt",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_T72A_Kord_Cupola_Weapon",
@@ -15916,7 +15916,7 @@
       "cardId": "pla--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 70,
         "displayName": "DTC10-30 30mm Armor Piercing",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_AP",
@@ -16384,7 +16384,7 @@
       "cardId": "usmc--lav-25--apc",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M919 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "LAV25_M252_AP",
@@ -16774,7 +16774,7 @@
       "cardId": "tlf--m113a2t-mk19--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -16800,7 +16800,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M113A2T_TLF_OpenTurret_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-51f60c14eb84f1c82d7f",
@@ -17346,7 +17346,7 @@
         "projectileName": "BP_Konkurs_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 6.539999961853027,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_Spandrel_GFI_Turret_Static_C"
       },
       "id": "vehicle-equipment-53982bdec1b1dc79a4cc",
@@ -17385,7 +17385,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-53b4cc0d486580b2e0f1",
@@ -17671,7 +17671,7 @@
       "cardId": "wpmc--m1117--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "MK19",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_M1117_MK19",
@@ -17697,7 +17697,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1117_Turret_C"
       },
       "id": "vehicle-equipment-5539e480ebc442f8aafe",
@@ -17866,7 +17866,7 @@
       "cardId": "usa--m113a3-mk19--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -17892,7 +17892,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M113A3_OpenTurret_Mk19_Turret_Desert_C"
       },
       "id": "vehicle-equipment-563d2cbb5f4508f935ff",
@@ -18451,7 +18451,7 @@
       "cardId": "rgf--bmp-1am--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR82A_RUS_2A72_HE_Desert",
@@ -18867,7 +18867,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_C"
       },
       "id": "vehicle-equipment-5a35165e34d1b4893548",
@@ -19348,7 +19348,7 @@
       "cardId": "pla--zsd89ii-ifv--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 70,
         "displayName": "25mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_ZSL92_ZPT90_AP_Desert",
@@ -19582,7 +19582,7 @@
       "cardId": "wpmc--loach-cas-small--ah",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 400,
+        "armorPenetrationMm": 200,
         "displayName": "M151 HEDP",
         "dryReloadDurationSeconds": 6.599999904632568,
         "gunName": "BP_Hydra_Loach_Small_Single_Right",
@@ -19647,7 +19647,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-5ea1fef20796644eff27",
@@ -19686,7 +19686,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_RHIB_Turret_AGS17_C"
       },
       "id": "vehicle-equipment-5ed4b7d9f902c0fbd03c",
@@ -20323,7 +20323,7 @@
       "cardId": "caf--coyote--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M919 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "Coyote_M252_AP_Desert",
@@ -20895,7 +20895,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Technical_Turret_AGS17_C"
       },
       "id": "vehicle-equipment-6526e2001b84c8d9b768",
@@ -21883,7 +21883,7 @@
       "cardId": "rgf--t-90a--mbt",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_T90A_Kord_Cupola_Weapon_Desert",
@@ -22351,7 +22351,7 @@
       "cardId": "baf--fv520-ctas40--ifv",
       "equipment": {
         "armorPenetrationCurve": "40Telescoped-APFSDS-T_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 180,
         "displayName": "Telescoped 40mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 1.2000000476837158,
         "gunName": "BP_Warrior_CTAS_AP",
@@ -22650,7 +22650,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-6cea5387292eefd811db",
@@ -22702,7 +22702,7 @@
       "cardId": "afu--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_AFU_2A42_AP",
@@ -22845,7 +22845,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_C"
       },
       "id": "vehicle-equipment-6d7c3e71d32f8126c333",
@@ -23781,7 +23781,7 @@
         "projectileName": "BP_SPG9_og9v_Frag_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 7.5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 1,
         "turretName": "BP_BMP1_Turret_MEI_C"
       },
       "id": "vehicle-equipment-71cadd8e6a605fa5c722",
@@ -24015,7 +24015,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_RHIB_Turret_AGS17_C"
       },
       "id": "vehicle-equipment-725dfc31cc9dc0e2f760",
@@ -24093,7 +24093,7 @@
         "projectileName": "BP_Konkurs_Proj2_C",
         "roundsPerMinute": 5,
         "tacticalReloadDurationSeconds": 12,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_BMP2_Turret_AFU_C"
       },
       "id": "vehicle-equipment-729401f8dafffe4c0bac",
@@ -24457,7 +24457,7 @@
       "cardId": "baf--fv510--ifv",
       "equipment": {
         "armorPenetrationCurve": "30x170-APDS-T_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 105,
         "displayName": "NM225 30mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 1.2000000476837158,
         "gunName": "BP_Warrior_Rarden_AP_Tan",
@@ -24834,7 +24834,7 @@
         "projectileName": "BP_SPG9_og9v_Frag_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 7.5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 1,
         "turretName": "BP_BMD1M_Turret_Desert_C"
       },
       "id": "vehicle-equipment-7707c038801bd2a182f1",
@@ -24925,7 +24925,7 @@
       "cardId": "vdv--bmd-4m--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "3UOF19 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_BMD4M_2A70_HEFrag",
@@ -24951,7 +24951,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_BMD4M_Turret_Desert_C"
       },
       "id": "vehicle-equipment-773dc249209048a584c8",
@@ -25042,7 +25042,7 @@
       "cardId": "afu--bmp-1ts--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP1TS_ZTM1_HE",
@@ -25198,7 +25198,7 @@
       "cardId": "mei--bmp-1-zu-23-2--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon_INS",
@@ -25419,7 +25419,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Tigr_AGS17_Turret_C"
       },
       "id": "vehicle-equipment-7a4ac64727a155566512",
@@ -25705,7 +25705,7 @@
       "cardId": "gfi--brdm-2-ub-32--rsv",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BRDM2_GFI_KPVT",
@@ -26368,7 +26368,7 @@
       "cardId": "rgf--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_2A42_HE_Desert",
@@ -26407,7 +26407,7 @@
       "cardId": "imf--brdm-2--ltv",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BRDM2_MIL_KPVT",
@@ -26589,7 +26589,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_Lynx8x8_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-823c5c7f010e8eea1bd3",
@@ -26875,7 +26875,7 @@
       "cardId": "mei--technical-zu-23-2--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon_INS",
@@ -26914,7 +26914,7 @@
       "cardId": "rgf--bmp-3m--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP3M_2A72_AP",
@@ -27109,7 +27109,7 @@
       "cardId": "baf--fv510--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "NM232 30mm High Explosive Tracer",
         "dryReloadDurationSeconds": 1.2000000476837158,
         "gunName": "BP_Warrior_Rarden_HE_Tan",
@@ -27265,7 +27265,7 @@
       "cardId": "rgf--mt-lb-vmk--apc",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_MTLB_NSV_Desert",
@@ -27408,7 +27408,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Black1_C"
       },
       "id": "vehicle-equipment-8626dd6fbc65ccf86435",
@@ -27525,7 +27525,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_CSK_OpenTop_Turret_Desert_C"
       },
       "id": "vehicle-equipment-870435a78ab7c700ce68",
@@ -27733,7 +27733,7 @@
       "cardId": "pla--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_HEFrag",
@@ -27772,7 +27772,7 @@
       "cardId": "rgf--btr-82a--apc",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR82A_RUS_2A72_AP_Desert",
@@ -27850,7 +27850,7 @@
       "cardId": "usa--m-atv-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -27876,7 +27876,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_Green_C"
       },
       "id": "vehicle-equipment-8803470762c015cf5dad",
@@ -28123,7 +28123,7 @@
       "cardId": "gfi--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 70,
         "displayName": "3UBR6 30mm Armor Piercing",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_GFI_2A42_AP",
@@ -28318,7 +28318,7 @@
       "cardId": "rgf--bmp-3m--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "3UOF19 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_BMP3M_2A70_HEFrag",
@@ -28344,7 +28344,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_BMP3M_Turret_C"
       },
       "id": "vehicle-equipment-8ad9f4a419c46ff35b75",
@@ -28474,7 +28474,7 @@
       "cardId": "imf--mt-lbm-6mb--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 60,
+        "armorPenetrationMm": 70,
         "displayName": "3UBR6 30mm Armor Piercing",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_MTLB_30mm_AP_gun",
@@ -28695,7 +28695,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_GFI_C"
       },
       "id": "vehicle-equipment-8c5ecbf12bba1d49e3e5",
@@ -28747,7 +28747,7 @@
       "cardId": "usa--m2a3--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M919 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BFV_M252_AP",
@@ -28929,7 +28929,7 @@
         "projectileName": "BP_SPG9_og9v_Frag_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 7.5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 1,
         "turretName": "BP_BMP1_Turret_GFI_C"
       },
       "id": "vehicle-equipment-8d2781e3e784945f7c9b",
@@ -29020,7 +29020,7 @@
       "cardId": "usa--m7a3--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M919 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BFV_M252_AP",
@@ -29137,7 +29137,7 @@
       "cardId": "gfi--t-62--mbt",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_T72S_Kord_Cupola_Weapon",
@@ -29254,7 +29254,7 @@
       "cardId": "mei--mt-lb-zu-23-2--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon_INS",
@@ -29644,7 +29644,7 @@
       "cardId": "rgf--tigr-m-rws-kord--mrap",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "Arbalet Kord",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_Arbalet_Kord_Desert",
@@ -29683,7 +29683,7 @@
       "cardId": "tlf--pars-iii-mk19-rws--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "RWS MK19",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_SancakRWS_MK19",
@@ -29709,7 +29709,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_SancakRWS_MK19_Turret_C"
       },
       "id": "vehicle-equipment-906cf691ad9cd0b8b1d3",
@@ -30112,7 +30112,7 @@
       "cardId": "plaagf--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "DTB02-100 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_ZBD04A_2A70_HEFrag",
@@ -30138,7 +30138,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_ZBD04A_Turret_C"
       },
       "id": "vehicle-equipment-924be96442c7602f311a",
@@ -30177,7 +30177,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-929cdf225d3b1c867f8b",
@@ -30567,7 +30567,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-942b9c6864a21b2babef",
@@ -30736,7 +30736,7 @@
       "cardId": "usmc--m1151-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -30762,7 +30762,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-9521ef3e1129a264af37",
@@ -31074,7 +31074,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Safir_Turret_AGS-17_C"
       },
       "id": "vehicle-equipment-95e0a2aaef647d7ef9c1",
@@ -31542,7 +31542,7 @@
         "projectileName": "BP_SPG9_og9v_Frag_Proj2_C",
         "roundsPerMinute": 8,
         "tacticalReloadDurationSeconds": 7.5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 1,
         "turretName": "BP_BMP1_Turret_AFU_C"
       },
       "id": "vehicle-equipment-97eb9006ec38c6ed6670",
@@ -31789,7 +31789,7 @@
       "cardId": "vdv--bmd-4m--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMD4M_2A72_AP",
@@ -32049,7 +32049,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-9a09e4af4ee6b2044643",
@@ -33193,7 +33193,7 @@
       "cardId": "vdv--brdm-2--ltv",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BRDM2_RUS_Desert_KPVT",
@@ -33778,7 +33778,7 @@
       "cardId": "usa--m113a3-mk19--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -33804,7 +33804,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M113A3_OpenTurret_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-a2154c2cfc1d0f662e36",
@@ -33895,7 +33895,7 @@
       "cardId": "rgf--mt-lbm-6mb--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 60,
+        "armorPenetrationMm": 70,
         "displayName": "3UBR6 30mm Armor Piercing",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_MTLB_30mm_AP_gun_Desert",
@@ -34207,7 +34207,7 @@
       "cardId": "vdv--bmd-4m--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMD4M_2A72_AP",
@@ -34363,7 +34363,7 @@
       "cardId": "wpmc--rhib-mk19--ultv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_RHIB_Weapon",
@@ -34389,7 +34389,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_RHIB_Turret_Mk19_C"
       },
       "id": "vehicle-equipment-a4f01ff362fa41625136",
@@ -34441,7 +34441,7 @@
       "cardId": "baf--fv107--apc",
       "equipment": {
         "armorPenetrationCurve": "30x170-APDS-T_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 105,
         "displayName": "NM225 30mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 1.2000000476837158,
         "gunName": "BP_Scimitar_Rarden_AP",
@@ -35052,7 +35052,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-a8bb0933f9d0f2f8c3ad",
@@ -35143,7 +35143,7 @@
       "cardId": "rgf--bmp-2m--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 500,
+        "armorPenetrationMm": 900,
         "displayName": "9M133 Kornet High Explosive Anti-Tank",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_BMP2M_Kornet_Desert",
@@ -35169,7 +35169,7 @@
         "projectileName": "BP_Kornet_Proj2_C",
         "roundsPerMinute": 30,
         "tacticalReloadDurationSeconds": 12,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_BMP2M_Turret_Desert_C"
       },
       "id": "vehicle-equipment-a8da371a7138dd05cc60",
@@ -35494,7 +35494,7 @@
       "cardId": "rgf--t-72b3--mbt",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_Kord_Cupola_Weapon_Desert",
@@ -35650,7 +35650,7 @@
       "cardId": "usmc--aavp-7a1--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "MK19",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_AAVP7A1_MK19",
@@ -35676,7 +35676,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_AAVP7A1_Turret_C"
       },
       "id": "vehicle-equipment-aa257e2070e6a08b7f32",
@@ -36001,7 +36001,7 @@
       "cardId": "pla--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_HEFrag",
@@ -36625,7 +36625,7 @@
       "cardId": "imf--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_2A42_AP",
@@ -36898,7 +36898,7 @@
       "cardId": "afu--btr-4--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 500,
+        "armorPenetrationMm": 900,
         "displayName": "RK-2M-K Skif High Explosive Anti-Tank",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_BTR4_StugnaP",
@@ -36924,7 +36924,7 @@
         "projectileName": "BP_Kornet_Proj2_C",
         "roundsPerMinute": 30,
         "tacticalReloadDurationSeconds": 12,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_BTR4_Turret_C"
       },
       "id": "vehicle-equipment-af1c694ea7dc2186100f",
@@ -37912,7 +37912,7 @@
       "cardId": "crf--coyote--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M919 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "Coyote_M252_AP_Woodland",
@@ -38679,7 +38679,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-b4b8bbcfeb9810908563",
@@ -38848,7 +38848,7 @@
       "cardId": "plaagf--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_HEFrag",
@@ -39199,7 +39199,7 @@
       "cardId": "planmc--zbl08--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBL08_ZPT-99_HEFrag",
@@ -39394,7 +39394,7 @@
       "cardId": "imf--ural-375d-bm-21-grad--spa",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 130,
+        "armorPenetrationMm": 900,
         "displayName": "9M22U 122mm Rocket",
         "dryReloadDurationSeconds": 6.599999904632568,
         "gunName": "BP_BM21Grad_Weapon_IMF",
@@ -39420,7 +39420,7 @@
         "projectileName": "BP_BM21_Rocket_Proj2_C",
         "roundsPerMinute": 240,
         "tacticalReloadDurationSeconds": 6.599999904632568,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 100,
         "turretName": "BP_BM21Grad_Turret_MEI_C"
       },
       "id": "vehicle-equipment-b6c50885b5afbcc8354f",
@@ -40096,7 +40096,7 @@
       "cardId": "pla--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "DTB02-100 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_ZBD04A_2A70_HEFrag",
@@ -40122,7 +40122,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_ZBD04A_Turret_C"
       },
       "id": "vehicle-equipment-b9593e5b06c54add241b",
@@ -40369,7 +40369,7 @@
       "cardId": "usa--m113a3-mk19--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -40395,7 +40395,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M113A3_OpenTurret_Mk19_Turret_Desert_C"
       },
       "id": "vehicle-equipment-baa7d2f4353b21bd102a",
@@ -40551,7 +40551,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_ZBL08_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-bb4f84dae32deac0b63d",
@@ -40564,7 +40564,7 @@
       "cardId": "plaagf--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 70,
         "displayName": "DTC10-30 30mm Armor Piercing",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_AP",
@@ -40837,7 +40837,7 @@
       "cardId": "pla--zsl92-ifv--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 70,
         "displayName": "25mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_ZSL92_ZPT90_AP_Desert",
@@ -41149,7 +41149,7 @@
       "cardId": "rgf--bmp-2m--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2M_2A42_AP_Desert",
@@ -41266,7 +41266,7 @@
       "cardId": "usmc--matv-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -41292,7 +41292,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-bf280df5a71b194c325c",
@@ -41487,7 +41487,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_BTR-D_AGS17_Turret_C"
       },
       "id": "vehicle-equipment-c00745286e5bab946a2c",
@@ -41734,7 +41734,7 @@
       "cardId": "caf--lav-6--ifv",
       "equipment": {
         "armorPenetrationCurve": "25mm_M919_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 95,
         "displayName": "M919 25mm Armor-Piercing Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "LAV_M252_AP_Desert",
@@ -41799,7 +41799,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_C"
       },
       "id": "vehicle-equipment-c1aac42c001bea2b0988",
@@ -41877,7 +41877,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Kozak_AGS-17_Turret_C"
       },
       "id": "vehicle-equipment-c1dae273a42f663e1709",
@@ -42709,7 +42709,7 @@
       "cardId": "mei--brdm-2--ltv",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BRDM2_INS_KPVT",
@@ -42865,7 +42865,7 @@
       "cardId": "usmc--m1151-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -42891,7 +42891,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-c6cc459efe1d747a6938",
@@ -42982,7 +42982,7 @@
       "cardId": "afu--t-64bm2--mbt",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_Kord_Cupola_Weapon_T64BM2",
@@ -43099,7 +43099,7 @@
       "cardId": "rgf--bmp-1am--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR82A_RUS_2A72_AP_Desert",
@@ -43684,7 +43684,7 @@
       "cardId": "pla--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 450,
+        "armorPenetrationMm": 10,
         "displayName": "DTB02-100 100mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 5,
         "gunName": "BP_ZBD04A_2A70_HEFrag",
@@ -43710,7 +43710,7 @@
         "projectileName": "BP_Projectile_100mm_Frag_C",
         "roundsPerMinute": 12,
         "tacticalReloadDurationSeconds": 5,
-        "traceDistanceAfterPenM": 2,
+        "traceDistanceAfterPenM": 0.10000000149011612,
         "turretName": "BP_ZBD04A_Turret_Desert_C"
       },
       "id": "vehicle-equipment-cab0dd68fe7c7b28add4",
@@ -44061,7 +44061,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_Desert_C"
       },
       "id": "vehicle-equipment-cc98ac80c1ed01f51f6d",
@@ -44217,7 +44217,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_C"
       },
       "id": "vehicle-equipment-cd6d8671f8b5d44c2f8a",
@@ -44698,7 +44698,7 @@
       "cardId": "plaagf--zbd05--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD05_ZPT-99_HE",
@@ -44802,7 +44802,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-cfe774f289a2852ddc4f",
@@ -44919,7 +44919,7 @@
         "projectileName": "BP_30mm_VOG19_Proj_C",
         "roundsPerMinute": 399.99998410542867,
         "tacticalReloadDurationSeconds": 8.880000114440918,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_Technical_Turret_AGS17_C"
       },
       "id": "vehicle-equipment-d044b34a7097a36cbba5",
@@ -45244,7 +45244,7 @@
       "cardId": "gfi--mtlb-6ma-ub-32--apc",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR80_GFI_KPVT",
@@ -45361,7 +45361,7 @@
       "cardId": "planmc--zbd05--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD05_ZPT-99_HE",
@@ -46492,7 +46492,7 @@
       "cardId": "vdv--t-72b3--mbt",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_Kord_Cupola_Weapon_Desert",
@@ -46687,7 +46687,7 @@
       "cardId": "rgf--btr-82a--apc",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR82A_RUS_2A72_HE_Desert",
@@ -47064,7 +47064,7 @@
         "projectileName": "BP_Konkurs_Proj2_C",
         "roundsPerMinute": 5,
         "tacticalReloadDurationSeconds": 12,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_BMP2_GFI_Turret_C"
       },
       "id": "vehicle-equipment-dc7a59c84dbe57b33065",
@@ -47298,7 +47298,7 @@
         "projectileName": "BP_Konkurs_Proj2_C",
         "roundsPerMinute": 5,
         "tacticalReloadDurationSeconds": 12,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_BMP2_Turret_Desert_C"
       },
       "id": "vehicle-equipment-dd3b7f76f17fe2ed837a",
@@ -47545,7 +47545,7 @@
       "cardId": "afu--btr-4--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR8-APDS_ArmorPenetrationCurve",
-        "armorPenetrationMm": 62,
+        "armorPenetrationMm": 95,
         "displayName": "3UBR8 30mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BTR4_ZTM1_AP",
@@ -47584,7 +47584,7 @@
       "cardId": "afu--bmp-1ts--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 500,
+        "armorPenetrationMm": 900,
         "displayName": "RK-2M-K Skif High Explosive Anti-Tank",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_BMP1TS_StugnaP",
@@ -47610,7 +47610,7 @@
         "projectileName": "BP_Kornet_Proj2_C",
         "roundsPerMinute": 30,
         "tacticalReloadDurationSeconds": 12,
-        "traceDistanceAfterPenM": 10,
+        "traceDistanceAfterPenM": 1.5,
         "turretName": "BP_BMP1TS_Turret_C"
       },
       "id": "vehicle-equipment-deced0cb87eaa8b81d91",
@@ -47701,7 +47701,7 @@
       "cardId": "gfi--mtlb-vmk--apc",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_MTLB_NSV",
@@ -47857,7 +47857,7 @@
       "cardId": "plaagf--zbd04a--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High-Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBD04A_ZPT99_HEFrag",
@@ -48013,7 +48013,7 @@
       "cardId": "gfi--bmp-2--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 30mm Fragmentation Tracer",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BMP2_GFI_2A42_HE",
@@ -48754,7 +48754,7 @@
       "cardId": "usa--m-atv-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -48780,7 +48780,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-e57612152bff6f121556",
@@ -48819,7 +48819,7 @@
         "projectileName": "BP_35MM_Proj_QLZ87_HEDP_C",
         "roundsPerMinute": 480,
         "tacticalReloadDurationSeconds": 5.570000171661377,
-        "traceDistanceAfterPenM": 20,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_QLZ87_WZ551_OpenTop_Turret_C"
       },
       "id": "vehicle-equipment-e5da7fc6d79a254ae63c",
@@ -49222,7 +49222,7 @@
       "cardId": "pla--zbl08--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "DTB02-30 30mm High Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_ZBL08_ZPT-99_HEFrag_Desert",
@@ -49261,7 +49261,7 @@
       "cardId": "afu--kraz-6322-bm-21-grad--spa",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 130,
+        "armorPenetrationMm": 900,
         "displayName": "9M22U 122mm Rocket",
         "dryReloadDurationSeconds": 6.599999904632568,
         "gunName": "BP_BM21Grad_Weapon_AFU_Kraz",
@@ -49287,7 +49287,7 @@
         "projectileName": "BP_BM21_Rocket_Proj2_C",
         "roundsPerMinute": 240,
         "tacticalReloadDurationSeconds": 6.599999904632568,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 100,
         "turretName": "BP_BM21Grad_Turret_Kraz_AFU_C"
       },
       "id": "vehicle-equipment-e8ef396655d525432380",
@@ -49534,7 +49534,7 @@
       "cardId": "rgf--brdm-2--ltv",
       "equipment": {
         "armorPenetrationCurve": "14_5mm_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 42,
         "displayName": "KPVT BZT Armor-Piercing Incendiary",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_BRDM2_RUS_Desert_KPVT",
@@ -49612,7 +49612,7 @@
       "cardId": "imf--mt-lb-zu-23-2--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon",
@@ -49651,7 +49651,7 @@
       "cardId": "plaagf--zsd89ii-ifv--ifv",
       "equipment": {
         "armorPenetrationCurve": "30mm_3UBR6-AP_ArmorPenetrationCurve",
-        "armorPenetrationMm": 100,
+        "armorPenetrationMm": 70,
         "displayName": "25mm Armor Piercing Discarding Sabot",
         "dryReloadDurationSeconds": 12.5,
         "gunName": "BP_ZSL92_ZPT90_AP_Desert",
@@ -49690,7 +49690,7 @@
       "cardId": "afu--mtlb-zu23--apc",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon",
@@ -50002,7 +50002,7 @@
       "cardId": "usa--m1151-mk19--mrap",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 20,
+        "armorPenetrationMm": 12,
         "displayName": "Mk19 Grenade Machine Gun",
         "dryReloadDurationSeconds": 13,
         "gunName": "BP_Mk19_OpenTurret_Weapon",
@@ -50028,7 +50028,7 @@
         "projectileName": "BP_40MM_MK19_Proj_C",
         "roundsPerMinute": 350.87718515502786,
         "tacticalReloadDurationSeconds": 9.399999618530273,
-        "traceDistanceAfterPenM": 1,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_Mk19_Turret_C"
       },
       "id": "vehicle-equipment-ec8b1c590c552f119700",
@@ -50808,7 +50808,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_C"
       },
       "id": "vehicle-equipment-f08737da4ce4d4145faa",
@@ -50860,7 +50860,7 @@
       "cardId": "mei--ural-375d-zu-23-2--spaa",
       "equipment": {
         "armorPenetrationCurve": "23mmAPI_ArmorPenetrationCurve",
-        "armorPenetrationMm": 30,
+        "armorPenetrationMm": 35,
         "displayName": "ZU-23 OFZT Fragmentation Tracer",
         "dryReloadDurationSeconds": 12,
         "gunName": "BP_Emplaced_ZU23-2_Antiaircannon_Weapon_INS",
@@ -51211,7 +51211,7 @@
       "cardId": "imf--mt-lbm-6mb--ifv",
       "equipment": {
         "armorPenetrationCurve": null,
-        "armorPenetrationMm": 9,
+        "armorPenetrationMm": 8,
         "displayName": "3UOR6 High Explosive Fragmentation",
         "dryReloadDurationSeconds": 11.279999732971191,
         "gunName": "BP_MTLB_30mm_HE_gun",
@@ -51315,7 +51315,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_C"
       },
       "id": "vehicle-equipment-f2dcd38eb202cafa47a7",
@@ -51549,7 +51549,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_C"
       },
       "id": "vehicle-equipment-f3f4599506012e7e140c",
@@ -51783,7 +51783,7 @@
         "projectileName": "BP_TOW_Proj_C",
         "roundsPerMinute": 4.8,
         "tacticalReloadDurationSeconds": 12.5,
-        "traceDistanceAfterPenM": 1.5,
+        "traceDistanceAfterPenM": 10,
         "turretName": "BP_M1151_TOW_Turret_Woodland_C"
       },
       "id": "vehicle-equipment-f529b29d2fc6fa534be0",
@@ -53473,7 +53473,7 @@
       "cardId": "gfi--t-72s--mbt",
       "equipment": {
         "armorPenetrationCurve": "50cal_ArmorPenetrationCurve",
-        "armorPenetrationMm": 40,
+        "armorPenetrationMm": 28,
         "displayName": "NSVT",
         "dryReloadDurationSeconds": 20,
         "gunName": "BP_T72S_Kord_Cupola_Weapon",
@@ -53588,14 +53588,14 @@
     }
   ],
   "catalog": {
-    "bytes": 12639090,
-    "catalogRevision": "99b42ba4114336274b42584e36b19082e2c2ed77ff44f3c88f56f1f83d780519",
+    "bytes": 12699017,
+    "catalogRevision": "e01b509c8900209dae3e8781b45d4c94c03739eaa14367e9c5ae368e22a7865f",
     "schemaVersion": "sigua-weapon-catalog/v2",
-    "sha256": "cf8bc0474e42b3ac28e7ab62766a434ab631353d95658c90fa60e97e8f0ec3eb"
+    "sha256": "88ee2890f810acc01df07cf91d100e3780c08940e1165614602fcf6b3ef68f39"
   },
   "counts": {
     "bindings": 1374
   },
-  "projectionRevision": "8c532b15bccbc892edcd65c03579c0668f539cab529a7ad35a4377e006b224f2",
+  "projectionRevision": "fd685a65bdb001a4d76628346fdea6eb8657f36d3731d285835e2dfe65615bd8",
   "schemaVersion": "sigua-runtime-vehicle-equipment-index/v2"
 }

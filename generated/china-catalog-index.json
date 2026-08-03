@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-china-reference-2026-07-24",
-  "dataRevision": "vehicle-v3.1-eed95ad3d4575eeed370-projection-399295012186-cn-6bb470ba8d18-cards-63600a42ac23",
-  "vehicleCatalogRevision": "eed95ad3d4575eeed370bf339ecabf7f07441d2001722dbb457b1a77fbb189c2",
+  "dataRevision": "vehicle-v3.1-4c01df280389195eaf05-projection-399295012186-cn-6bb470ba8d18-cards-63600a42ac23",
+  "vehicleCatalogRevision": "4c01df280389195eaf0559c98f8a24f3e0062b78513558d09beb659d0d32acaa",
   "groups": [
     {
       "id": "shenzhou",
