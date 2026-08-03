@@ -143,8 +143,13 @@ export interface WeaponCatalogDirectDamageModel {
   penetrationMm: number | null;
   penetrationKind: "kinetic" | "shaped-charge" | null;
   traceDistanceAfterPenetrationM: number;
+  weaponTraceDistanceAfterPenetrationM?: number;
   maxDistanceM: number;
   damageType: string;
+  impactRadialOrder:
+    | "not-applicable"
+    | "point-before-radial"
+    | "secondary-radial-before-point-before-primary-radial";
 }
 
 export interface WeaponCatalogRadialLayer {

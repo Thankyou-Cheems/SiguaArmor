@@ -1,6 +1,7 @@
 import type {
   EditorEvidenceLike,
   EditorField,
+  EditorNativeImpactRadialOrder,
   EditorNativeModel,
 } from "./editor-native-hit-model.ts";
 
@@ -254,6 +255,7 @@ export function withRuntimeExplosiveSourceBallistics(
     RuntimeExplosiveSource,
     "id" | "layers" | "layerOrderEvidence"
   >,
+  impactRadialOrder?: EditorNativeImpactRadialOrder,
 ): EditorNativeModel {
   const weapon = model.weapons[weaponIndex];
   if (!weapon) {
@@ -330,6 +332,9 @@ export function withRuntimeExplosiveSourceBallistics(
               primaryLayer.originNormalOffsetMeters * 100,
             explosiveLayerOrderEvidence:
               source.layerOrderEvidence,
+            ...(impactRadialOrder
+              ? { impactRadialOrder }
+              : {}),
             explosiveLayers,
           }
         : candidate,
