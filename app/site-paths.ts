@@ -1,4 +1,6 @@
-export const INTERNATIONAL_BASE_PATH = "/squad";
+import { ARMOR_EDITIONS } from "../lib/public-site-topology.mjs";
+
+export const INTERNATIONAL_BASE_PATH = ARMOR_EDITIONS.international.basePath;
 
 export function internationalPath(pathname = "/") {
   const normalized = pathname.startsWith("/") ? pathname : `/${pathname}`;
