@@ -37,6 +37,7 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import categoryIconConfig from "../config/vehicle-category-icons.json";
+import { ICP_RECORD } from "../lib/public-site-topology.mjs";
 import {
   ALL_CATALOG_GROUPS,
   DEFAULT_VIEWER_NAVIGATION_STATE,
@@ -1955,7 +1956,9 @@ function SiteFooterCopy({
           <span>{updateDateLabel}</span>
         </strong>
         <span className="site-footer__filing" aria-label="工业和信息化部备案信息">
-          <span>黑ICP备2025043874号-1</span>
+          <a href={ICP_RECORD.url} target="_blank" rel="noreferrer">
+            {ICP_RECORD.number}
+          </a>
         </span>
       </div>
 

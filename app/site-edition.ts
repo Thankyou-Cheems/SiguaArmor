@@ -1,4 +1,8 @@
 import type { FactionVisualAsset } from "./international-faction-visuals";
+import {
+  ARMOR_EDITIONS,
+  armorPath,
+} from "../lib/public-site-topology.mjs";
 
 export type SiteEdition = "international" | "china";
 
@@ -14,9 +18,9 @@ interface SiteEditionProfile {
 
 const SITE_EDITION_PROFILES: Record<SiteEdition, SiteEditionProfile> = {
   international: {
-    basePath: "/squad",
+    basePath: ARMOR_EDITIONS.international.basePath,
     catalogDataRoot: "/catalog-data/factions",
-    switchHref: "/sigua/",
+    switchHref: armorPath("china"),
     switchLabel: "前往国服站",
     noticeLines: [
       "首次载入大型载具组件包可能需要片刻，请以游戏内实际内容为准。",
@@ -24,9 +28,9 @@ const SITE_EDITION_PROFILES: Record<SiteEdition, SiteEditionProfile> = {
     showNoticeCountdown: false,
   },
   china: {
-    basePath: "/sigua",
+    basePath: ARMOR_EDITIONS.china.basePath,
     catalogDataRoot: "/catalog-data/china/factions",
-    switchHref: "/squad/",
+    switchHref: armorPath("international"),
     switchLabel: "前往国际站",
     noticeTitle: "国服载具资料库",
     noticeLines: [

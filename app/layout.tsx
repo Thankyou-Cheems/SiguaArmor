@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { ARMOR_ORIGIN } from "../lib/public-site-topology.mjs";
 import "./globals.css";
 import { DailyActiveProvider } from "./DailyActiveBeacon";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(ARMOR_ORIGIN),
   title: {
     default: "丝瓜：铁皮大饭堂",
     template: "%s｜丝瓜：铁皮大饭堂",
