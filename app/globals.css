@@ -960,7 +960,7 @@ code {
 .vehicle-encyclopedia__heading h3,
 .faction-dock__cancel > span,
 .site-footer__identity strong > span,
-.site-footer__filing > span,
+.site-footer__filing > a,
 .site-footer__help-panel header strong {
   display: inline-block;
   font-family: var(--font-faction-display);
@@ -8763,7 +8763,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   text-underline-offset: 3px;
 }
 
-.site-footer__filing > span {
+.site-footer__filing > a {
   display: inline-block;
   padding-bottom: 2px;
   border-bottom: 1px solid var(--brand);
@@ -8772,18 +8772,19 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   filter:
     drop-shadow(0 1px 7px rgba(255, 255, 255, 0.22))
     drop-shadow(0 2px 10px rgba(225, 200, 155, 0.14));
+  text-decoration: none;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .site-footer__filing:hover,
-.site-footer__filing:focus-visible {
+.site-footer__filing:focus-within {
   color: var(--status-reference);
   text-decoration: none;
 }
 
-.site-footer__filing:hover > span,
-.site-footer__filing:focus-visible > span {
+.site-footer__filing:hover > a,
+.site-footer__filing:focus-within > a {
   border-bottom-color: var(--status-reference);
 }
 
