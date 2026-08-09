@@ -2,7 +2,8 @@
 
 SiguaArmor is the public source repository for the vehicle and weapon reference website at [armor.siguad.icu](https://armor.siguad.icu/).
 
-- `/` opens the SiguaD.icu site selector.
+- `https://siguad.icu/` and `https://armor.siguad.icu/` open the same Armor edition selector.
+- `https://siguad.icu/navigator` (and `/navigator/`) opens the SiguaD.icu product navigator.
 - `/sigua/` opens the China edition.
 - `/squad/` opens the international edition.
 

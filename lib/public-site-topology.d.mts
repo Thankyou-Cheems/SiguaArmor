@@ -2,6 +2,8 @@ export type ArmorEdition = "international" | "china";
 
 export const LANDING_ORIGIN: "https://siguad.icu";
 export const ARMOR_ORIGIN: "https://armor.siguad.icu";
+export const NAVIGATOR_PATH: "/navigator";
+export const NAVIGATOR_URL: "https://siguad.icu/navigator";
 export const ICP_RECORD: Readonly<{
   number: "黑ICP备2025043874号-2";
   url: "https://beian.miit.gov.cn/";

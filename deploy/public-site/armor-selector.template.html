@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#080a08" />
+    <title>藤瓜 / 丝瓜：战术小队铁皮饭堂</title>
+    <meta
+      name="description"
+      content="选择进入战术小队铁皮饭堂国服载具资料站或国际服载具资料站。"
+    />
+    <link rel="canonical" href="{{LANDING_ORIGIN}}/" />
+    <meta property="og:url" content="{{LANDING_ORIGIN}}/" />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+        background: #070907;
+        color: #eee8d6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        min-height: 100svh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 26%, rgba(177, 154, 99, 0.12), transparent 32%),
+          linear-gradient(180deg, #10140f 0%, #070907 58%, #030403 100%);
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        pointer-events: none;
+        content: "";
+        opacity: 0.14;
+        background-image:
+          repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.035) 4px),
+          radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1.5px);
+        background-size: auto, 7px 7px;
+        mix-blend-mode: soft-light;
+      }
+
+      .portal {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        min-height: 100svh;
+        isolation: isolate;
+      }
+
+      .portal::after {
+        position: absolute;
+        top: 12%;
+        bottom: 10%;
+        left: 50%;
+        z-index: 8;
+        width: 1px;
+        content: "";
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(214, 194, 140, 0.64) 18%,
+          rgba(214, 194, 140, 0.2) 82%,
+          transparent
+        );
+        box-shadow: 0 0 24px rgba(214, 194, 140, 0.18);
+      }
+
+      .portal__masthead {
+        position: absolute;
+        top: clamp(18px, 3.6vh, 42px);
+        left: 50%;
+        z-index: 10;
+        display: grid;
+        justify-items: center;
+        width: min(680px, 78vw);
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      .portal__wordmark {
+        width: min(420px, 54vw);
+        height: auto;
+        filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.66));
+      }
+
+      .portal__eyebrow {
+        margin-top: 10px;
+        color: rgba(226, 215, 184, 0.7);
+        font: 600 clamp(9px, 0.78vw, 12px) / 1.3 ui-monospace, "Cascadia Mono", monospace;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+      }
+
+      .portal__choice {
+        --accent: #b89e62;
+        position: relative;
+        display: grid;
+        min-width: 0;
+        overflow: hidden;
+        color: inherit;
+        text-decoration: none;
+        outline: 0;
+      }
+
+      .portal__choice--china {
+        background:
+          radial-gradient(circle at 54% 44%, rgba(126, 42, 29, 0.25), transparent 34%),
+          linear-gradient(108deg, rgba(18, 23, 17, 0.82) 0%, rgba(23, 21, 15, 0.56) 56%, rgba(10, 12, 9, 0.88) 100%),
+          url("{{ARMOR_ORIGIN}}/squad/images/faction-bg/PLA.webp") center / cover no-repeat;
+      }
+
+      .portal__choice--international {
+        --accent: #b9ad7d;
+        background:
+          radial-gradient(circle at 46% 42%, rgba(62, 83, 51, 0.28), transparent 35%),
+          linear-gradient(252deg, rgba(17, 24, 16, 0.82) 0%, rgba(22, 23, 15, 0.56) 56%, rgba(9, 12, 9, 0.88) 100%),
+          url("{{ARMOR_ORIGIN}}/squad/images/faction-bg/PLAAGF.webp") center / cover no-repeat;
+      }
+
+      .portal__choice::before {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        content: "";
+        opacity: 0.42;
+        transition: opacity 480ms ease;
+        background:
+          linear-gradient(180deg, rgba(2, 3, 2, 0.54) 0%, transparent 24%, transparent 60%, rgba(2, 3, 2, 0.94) 100%),
+          repeating-linear-gradient(118deg, transparent 0 40px, rgba(255, 255, 255, 0.018) 41px 42px);
+      }
+
+      .portal__choice::after {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        content: "";
+        opacity: 0;
+        transition: opacity 420ms ease;
+        background:
+          linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 14%, transparent), transparent),
+          radial-gradient(circle at 50% 56%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 44%);
+      }
+
+      .portal__figure {
+        position: absolute;
+        bottom: 5.5vh;
+        left: 50%;
+        z-index: 2;
+        display: block;
+        width: auto;
+        max-width: 76%;
+        height: min(82vh, 940px);
+        object-fit: contain;
+        object-position: center bottom;
+        transform: translateX(-50%) scale(1);
+        transform-origin: center bottom;
+        filter: brightness(0.68) saturate(0.76) contrast(1.08) drop-shadow(0 24px 28px rgba(0, 0, 0, 0.68));
+        transition: filter 500ms ease, transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      .portal__choice--china .portal__figure {
+        height: min(85.5vh, 980px);
+      }
+
+      .portal__content {
+        position: relative;
+        z-index: 5;
+        align-self: end;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        padding: 0 clamp(18px, 5vw, 80px) clamp(44px, 7.5vh, 86px);
+        text-align: center;
+      }
+
+      .portal__index {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: color-mix(in srgb, var(--accent) 82%, white);
+        font: 700 10px / 1 ui-monospace, "Cascadia Mono", monospace;
+        letter-spacing: 0.25em;
+      }
+
+      .portal__index::before,
+      .portal__index::after {
+        width: 34px;
+        height: 1px;
+        content: "";
+        background: currentColor;
+        opacity: 0.52;
+      }
+
+      .portal__title {
+        margin: 0;
+        color: #f2ead4;
+        font-size: clamp(24px, 3.1vw, 50px);
+        font-weight: 900;
+        line-height: 1.08;
+        letter-spacing: 0.08em;
+        text-shadow: 0 3px 16px #000;
+      }
+
+      .portal__subtitle {
+        color: rgba(232, 225, 205, 0.72);
+        font: 650 clamp(10px, 0.92vw, 14px) / 1.4 ui-monospace, "Cascadia Mono", monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .portal__enter {
+        display: inline-flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 168px;
+        margin-top: 8px;
+        padding: 10px 17px;
+        border: 1px solid color-mix(in srgb, var(--accent) 54%, transparent);
+        background: rgba(4, 6, 4, 0.62);
+        color: #ede4ca;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        transition: border-color 300ms ease, background 300ms ease, transform 300ms ease;
+      }
+
+      .portal__enter::after {
+        content: "→";
+        color: var(--accent);
+        font-size: 16px;
+        transition: transform 300ms ease;
+      }
+
+      .portal__choice:is(:hover, :focus-visible)::before {
+        opacity: 0.2;
+      }
+
+      .portal__choice:is(:hover, :focus-visible)::after {
+        opacity: 1;
+      }
+
+      .portal__choice:is(:hover, :focus-visible) .portal__figure {
+        transform: translateX(-50%) scale(1.035);
+        filter: brightness(1) saturate(0.96) contrast(1.04) drop-shadow(0 30px 34px rgba(0, 0, 0, 0.72));
+      }
+
+      .portal__choice:is(:hover, :focus-visible) .portal__enter {
+        border-color: color-mix(in srgb, var(--accent) 86%, white);
+        background: rgba(20, 22, 15, 0.82);
+        transform: translateY(-2px);
+      }
+
+      .portal__choice:is(:hover, :focus-visible) .portal__enter::after {
+        transform: translateX(4px);
+      }
+
+      .portal__footer {
+        position: absolute;
+        right: 18px;
+        bottom: 13px;
+        left: 18px;
+        z-index: 12;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: rgba(222, 214, 190, 0.5);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        pointer-events: none;
+      }
+
+      .portal__footer a {
+        color: inherit;
+        pointer-events: auto;
+      }
+
+      @media (max-width: 720px) {
+        body {
+          overflow: auto;
+        }
+
+        .portal {
+          grid-template-columns: 1fr;
+          grid-template-rows: minmax(420px, 52svh) minmax(420px, 52svh);
+        }
+
+        .portal::after {
+          top: 50%;
+          right: 8%;
+          bottom: auto;
+          left: 8%;
+          width: auto;
+          height: 1px;
+        }
+
+        .portal__masthead {
+          position: fixed;
+          top: 13px;
+          width: 86vw;
+        }
+
+        .portal__wordmark {
+          width: min(320px, 68vw);
+        }
+
+        .portal__eyebrow {
+          margin-top: 6px;
+          font-size: 8px;
+        }
+
+        .portal__figure {
+          bottom: 1vh;
+          max-width: 58%;
+          height: 46svh;
+        }
+
+        .portal__choice--china .portal__figure {
+          height: 48svh;
+        }
+
+        .portal__content {
+          justify-items: end;
+          padding: 0 20px 30px;
+          text-align: right;
+        }
+
+        .portal__choice--international .portal__content {
+          align-self: end;
+        }
+
+        .portal__title {
+          font-size: clamp(23px, 7vw, 34px);
+        }
+
+        .portal__subtitle {
+          font-size: 9px;
+        }
+
+        .portal__enter {
+          min-width: 142px;
+          padding: 8px 12px;
+          font-size: 10px;
+        }
+
+        .portal__footer {
+          position: absolute;
+          bottom: 6px;
+          font-size: 8px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="portal" aria-label="选择载具资料站">
+      <header class="portal__masthead">
+        <img
+          class="portal__wordmark"
+          src="/portal-assets/tactical-squad-wordmark-62bff6fb051e.png"
+          alt="战术小队铁皮饭堂"
+          width="650"
+          height="150"
+        />
+        <div class="portal__eyebrow">Select database · 选择数据版本</div>
+      </header>
+
+      <a class="portal__choice portal__choice--china" href="{{ARMOR_CHINA_URL}}">
+        <img
+          class="portal__figure"
+          src="/portal-assets/shenzhou-soldier-clean-ddd587081da0.webp"
+          alt=""
+          width="399"
+          height="1043"
+        />
+        <div class="portal__content">
+          <span class="portal__index">01 · CN</span>
+          <h1 class="portal__title">藤瓜 · 国服载具资料</h1>
+          <span class="portal__subtitle">Shenzhou Defense Community</span>
+          <span class="portal__enter">进入国服站</span>
+        </div>
+      </a>
+
+      <a class="portal__choice portal__choice--international" href="{{ARMOR_INTERNATIONAL_URL}}">
+        <img
+          class="portal__figure"
+          src="/portal-assets/pla-soldier-clean-ccb90707110a.webp"
+          alt=""
+          width="368"
+          height="879"
+        />
+        <div class="portal__content">
+          <span class="portal__index">02 · INTL</span>
+          <h1 class="portal__title">丝瓜 · 国际服载具资料</h1>
+          <span class="portal__subtitle">People's Liberation Army</span>
+          <span class="portal__enter">进入国际站</span>
+        </div>
+      </a>
+    </main>
+
+    <footer class="portal__footer">
+      <span>藤瓜 / 丝瓜：战术小队铁皮饭堂</span>
+      <a href="{{ICP_RECORD_URL}}" rel="noreferrer">{{ICP_RECORD_NUMBER}}</a>
+    </footer>
+  </body>
+</html>

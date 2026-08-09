@@ -2,6 +2,7 @@ import {
   ARMOR_EDITIONS,
   ARMOR_ORIGIN,
   LANDING_ORIGIN,
+  NAVIGATOR_PATH,
   landingArmorRedirectUrl,
   originHostname,
 } from "../../lib/public-site-topology.mjs";
@@ -73,6 +74,16 @@ export function classifyPublicDocumentRequest({
         cacheControl: PUBLIC_DOCUMENT_CACHE.landing,
       });
     }
+    if (
+      pathname === NAVIGATOR_PATH ||
+      pathname === `${NAVIGATOR_PATH}/` ||
+      pathname === `${NAVIGATOR_PATH}/index.html`
+    ) {
+      return Object.freeze({
+        kind: "navigator-html",
+        cacheControl: PUBLIC_DOCUMENT_CACHE.landing,
+      });
+    }
     return Object.freeze({ kind: "not-found", status: 404 });
   }
 
@@ -83,6 +94,12 @@ export function classifyPublicDocumentRequest({
     return Object.freeze({
       kind: "dynamic-control",
       cacheControl: PUBLIC_DOCUMENT_CACHE.private,
+    });
+  }
+  if (pathname === "/") {
+    return Object.freeze({
+      kind: "landing-html",
+      cacheControl: PUBLIC_DOCUMENT_CACHE.landing,
     });
   }
   if (!isArmorPath(pathname)) {

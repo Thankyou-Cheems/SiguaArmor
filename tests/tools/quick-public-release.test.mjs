@@ -137,6 +137,44 @@ test("delta packaging accepts a bounded non-generated release overlay", async (c
     bytes: 11,
     sha256: "fcaa64b465d14ae7d3d78d6379f506875f3b24e22f5fc8c3f3bc7831d0d83e4b",
   });
+  assert.equal(overlay.entries[0].create, false);
+
+  await writeFile(
+    overlayPath,
+    JSON.stringify({
+      schemaVersion: "sigua-unified-public-overlay/v1",
+      entries: [
+        {
+          path: "navigator/index.html",
+          source: "mobile.html",
+          create: true,
+        },
+      ],
+    }),
+    "utf8",
+  );
+  const creationOverlay = await readReleaseOverlayEntries(overlayPath);
+  assert.equal(creationOverlay.entries[0].create, true);
+  assert.equal(creationOverlay.entries[0].entry.path, "navigator/index.html");
+
+  await writeFile(
+    overlayPath,
+    JSON.stringify({
+      schemaVersion: "sigua-unified-public-overlay/v1",
+      entries: [
+        {
+          path: "navigator/index.html",
+          source: "mobile.html",
+          create: "yes",
+        },
+      ],
+    }),
+    "utf8",
+  );
+  await assert.rejects(
+    readReleaseOverlayEntries(overlayPath),
+    /create flag must be boolean/u,
+  );
 
   await writeFile(
     overlayPath,

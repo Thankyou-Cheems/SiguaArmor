@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -6,10 +6,12 @@ import {
   ARMOR_ORIGIN,
   ICP_RECORD,
   LANDING_ORIGIN,
+  NAVIGATOR_URL,
   armorUrl,
   originHostname,
 } from "../../lib/public-site-topology.mjs";
 import { PUBLIC_DOCUMENT_CACHE } from "./public-document-policy.mjs";
+import { ARMOR_SELECTOR_ASSETS } from "./armor-selector-assets.mjs";
 import { SITE_PORTAL_BRAND } from "./site-portal-brand.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -18,6 +20,7 @@ const TOKEN_PATTERN = /\{\{([A-Z0-9_]+)\}\}/gu;
 
 const VALUES = Object.freeze({
   LANDING_ORIGIN,
+  NAVIGATOR_URL,
   LANDING_HOST: originHostname(LANDING_ORIGIN),
   ARMOR_ORIGIN,
   ARMOR_HOST: originHostname(ARMOR_ORIGIN),
@@ -69,15 +72,18 @@ export async function renderPublicSiteConfig(outputRoot) {
     throw new Error(`public-site output must stay inside outputs/: ${resolvedOutput}`);
   }
   const templates = [
-    ["landing.template.html", "index.html"],
+    ["armor-selector.template.html", "index.html"],
+    ["landing.template.html", "navigator/index.html"],
     ["Caddyfile.template", "Caddyfile"],
     ["docker-compose.template.yml", "docker-compose.yml"],
   ];
   await mkdir(resolvedOutput, { recursive: true });
   for (const [templateName, outputName] of templates) {
     const source = await readFile(path.join(TEMPLATE_ROOT, templateName), "utf8");
+    const outputPath = path.join(resolvedOutput, outputName);
+    await mkdir(path.dirname(outputPath), { recursive: true });
     await writeFile(
-      path.join(resolvedOutput, outputName),
+      outputPath,
       renderPublicSiteTemplate(source, templateName),
       "utf8",
     );
@@ -86,6 +92,14 @@ export async function renderPublicSiteConfig(outputRoot) {
     path.join(TEMPLATE_ROOT, "assets"),
     path.join(resolvedOutput, "portal-assets"),
     { recursive: true, force: true },
+  );
+  await Promise.all(
+    ARMOR_SELECTOR_ASSETS.map(({ fileName, sourceFileName }) =>
+      copyFile(
+        path.join(TEMPLATE_ROOT, "assets", sourceFileName),
+        path.join(resolvedOutput, "portal-assets", fileName),
+      ),
+    ),
   );
   return resolvedOutput;
 }

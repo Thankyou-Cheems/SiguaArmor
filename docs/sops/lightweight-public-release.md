@@ -123,8 +123,9 @@ When a release also replaces an existing root or China-site file that is outside
 generated `/squad/` closure, pass `--overlay-manifest <path>`. The manifest schema is
 `sigua-unified-public-overlay/v1`; each entry supplies the release-relative `path` and a
 `source` path resolved from the overlay manifest. Overlays fail closed for missing live
-targets and cannot replace `/squad/`, the international server runtime, or the combined
-release manifest.
+replacement targets. A deliberately new non-generated path must set `"create": true`;
+creation fails closed if that path already exists. Overlays cannot replace `/squad/`, the
+international server runtime, or the combined release manifest.
 
 Refetch the live baseline immediately before upload. If it changed, discard the delta and
 regenerate against the new baseline.
