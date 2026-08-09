@@ -41,14 +41,14 @@ services:
 
   sigua-international:
     container_name: sigua-international
-    image: node:20.18.2-alpine3.21@sha256:2cd2a6f4cb37cf8a007d5f1e9aef090ade6b62974c7a274098c390599e8c72b4
+    image: node:22-alpine
     restart: unless-stopped
     stop_grace_period: 15s
     environment:
       NODE_ENV: production
-      SIGUA_INTERNATIONAL_LISTEN_HOST: 0.0.0.0
-      SIGUA_INTERNATIONAL_PORT: "8082"
-    command: ["node", "/app/server.mjs"]
+      HOST: 0.0.0.0
+      PORT: "8082"
+    command: ["node", "/app/server.js"]
     volumes:
       - ./release/international-runtime:/app:ro
     working_dir: /app
@@ -75,7 +75,7 @@ services:
 
   sigua-content-admin:
     container_name: sigua-content-admin
-    image: node:20.18.2-alpine3.21@sha256:2cd2a6f4cb37cf8a007d5f1e9aef090ade6b62974c7a274098c390599e8c72b4
+    image: node:22-alpine
     restart: unless-stopped
     stop_grace_period: 15s
     env_file:
@@ -89,7 +89,7 @@ services:
       SIGUA_CONTENT_ADMIN_SESSION_TTL_SECONDS: "900"
     command: ["node", "/app/server.mjs"]
     volumes:
-      - ./release/content-admin:/app:ro
+      - ./services/content-admin:/app:ro
       - ./data/content:/srv/content
     working_dir: /app
     networks:
@@ -116,7 +116,7 @@ services:
   sigua-analytics:
     container_name: sigua-analytics
     build:
-      context: ./analytics
+      context: ./services/analytics
       dockerfile: Dockerfile
     restart: unless-stopped
     stop_grace_period: 15s

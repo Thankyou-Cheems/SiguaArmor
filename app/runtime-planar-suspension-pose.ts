@@ -1,10 +1,7 @@
-import runtimePlanarSuspensionPoseIndexJson from "./runtime-suspension-pose-index.json" with { type: "json" };
+import { loadWikiDataset } from "../lib/wiki-source.ts";
 
 export const RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA =
   "runtime-planar-suspension-pose-index/v1" as const;
-
-export type RuntimePlanarSuspensionPoseState =
-  "native-planar-reconstructed";
 
 export interface RuntimePlanarSuspensionWheelPose {
   boneName: string;
@@ -16,19 +13,10 @@ export interface RuntimePlanarSuspensionWheelPose {
 export interface RuntimePlanarSuspensionPoseRecord {
   generatedClass: string;
   stableOccurrenceId: string;
-  poseState: RuntimePlanarSuspensionPoseState;
+  poseState: "native-planar-reconstructed";
   wheelCount: number;
   maxAbsContactResidualCm: number;
   wheels: RuntimePlanarSuspensionWheelPose[];
-}
-
-interface RuntimePlanarSuspensionPoseIndexSource {
-  method: "odk-native-planar-sweep-reconstruction/v1";
-  sourceMap: string;
-  sourceBuildId: string;
-  odkDllSha256: string;
-  chassisPoseRecordsSha256: string;
-  visualIndexSha256: string;
 }
 
 export interface RuntimePlanarSuspensionCoverageEntry {
@@ -52,153 +40,98 @@ interface RuntimePlanarSuspensionPoseCoverage {
 
 export interface RuntimePlanarSuspensionPoseIndex {
   schemaVersion: typeof RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA;
-  source: RuntimePlanarSuspensionPoseIndexSource;
   coverage: RuntimePlanarSuspensionPoseCoverage;
   recordCount: number;
-  recordsSha256: string;
   records: RuntimePlanarSuspensionPoseRecord[];
 }
 
-function requireObject(
-  value: unknown,
-  label: string,
-): Record<string, unknown> {
+function objectValue(value: unknown, label: string) {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new Error(`${label} must be an object`);
   }
   return value as Record<string, unknown>;
 }
 
-function requireString(value: unknown, label: string) {
+function stringValue(value: unknown, label: string) {
   if (typeof value !== "string" || value.trim() === "") {
     throw new Error(`${label} must be a non-empty string`);
   }
   return value;
 }
 
-function requireSha256(value: unknown, label: string) {
-  const stringValue = requireString(value, label);
-  if (!/^[0-9a-f]{64}$/u.test(stringValue)) {
-    throw new Error(`${label} must be a lowercase SHA-256`);
-  }
-  return stringValue;
-}
-
-function requireFinite(value: unknown, label: string) {
+function finiteNumber(value: unknown, label: string) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     throw new Error(`${label} must be a finite number`);
   }
   return value;
 }
 
-function requireNonNegativeInteger(value: unknown, label: string) {
-  const numberValue = requireFinite(value, label);
-  if (!Number.isInteger(numberValue) || numberValue < 0) {
+function countValue(value: unknown, label: string) {
+  const count = finiteNumber(value, label);
+  if (!Number.isInteger(count) || count < 0) {
     throw new Error(`${label} must be a non-negative integer`);
   }
-  return numberValue;
+  return count;
 }
 
-function requireBoolean(value: unknown, label: string) {
-  if (typeof value !== "boolean") {
-    throw new Error(`${label} must be a boolean`);
-  }
-  return value;
-}
-
-function requireGeneratedClass(value: unknown, label: string) {
-  const generatedClass = requireString(value, label);
-  if (
-    !generatedClass.startsWith("/Game/") ||
-    !generatedClass.includes(".") ||
-    generatedClass.length > 512
-  ) {
-    throw new Error(`${label} must be an exact generated class`);
-  }
-  return generatedClass;
-}
-
-function requireReasonCode(value: unknown, label: string) {
-  const reason = requireString(value, label);
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(reason)) {
-    throw new Error(`${label} must be a sanitized reason code`);
-  }
-  return reason;
-}
-
-function requireFiniteTuple3(
-  value: unknown,
-  label: string,
-): [number, number, number] {
-  if (!Array.isArray(value) || value.length !== 3) {
-    throw new Error(`${label} must contain exactly three numbers`);
-  }
-  return [
-    requireFinite(value[0], `${label}[0]`),
-    requireFinite(value[1], `${label}[1]`),
-    requireFinite(value[2], `${label}[2]`),
-  ];
-}
-
-function parseWheel(
-  value: unknown,
-  label: string,
-): RuntimePlanarSuspensionWheelPose {
-  const object = requireObject(value, label);
+function parseCoverageEntry(value: unknown, label: string) {
+  const entry = objectValue(value, label);
   return {
-    boneName: requireString(object.boneName, `${label}.boneName`),
-    localTranslationOffsetGltfM: requireFiniteTuple3(
-      object.localTranslationOffsetGltfM,
-      `${label}.localTranslationOffsetGltfM`,
-    ),
-    contactState: requireString(object.contactState, `${label}.contactState`),
-    clamped: requireBoolean(object.clamped, `${label}.clamped`),
+    generatedClass: stringValue(entry.generatedClass, `${label}.generatedClass`),
+    reason: stringValue(entry.reason, `${label}.reason`),
   };
 }
 
-function parseRecord(
-  value: unknown,
-  label: string,
-): RuntimePlanarSuspensionPoseRecord {
-  const object = requireObject(value, label);
-  if (!Array.isArray(object.wheels)) {
-    throw new Error(`${label}.wheels must be an array`);
+function parseWheel(value: unknown, label: string) {
+  const wheel = objectValue(value, label);
+  if (
+    !Array.isArray(wheel.localTranslationOffsetGltfM) ||
+    wheel.localTranslationOffsetGltfM.length !== 3
+  ) {
+    throw new Error(`${label}.localTranslationOffsetGltfM must contain three numbers`);
   }
-  const wheels = object.wheels.map((wheel, index) =>
-    parseWheel(wheel, `${label}.wheels[${index}]`),
-  );
-  const wheelCount = requireNonNegativeInteger(
-    object.wheelCount,
-    `${label}.wheelCount`,
-  );
-  if (wheelCount !== wheels.length) {
-    throw new Error(
-      `${label}.wheelCount ${wheelCount} does not match ${wheels.length} wheels`,
-    );
-  }
-  const boneNames = new Set<string>();
-  for (const wheel of wheels) {
-    if (boneNames.has(wheel.boneName)) {
-      throw new Error(`${label} repeats wheel bone ${wheel.boneName}`);
-    }
-    boneNames.add(wheel.boneName);
-  }
-  if (object.poseState !== "native-planar-reconstructed") {
-    throw new Error(`${label}.poseState is not native-planar-reconstructed`);
+  const offset = wheel.localTranslationOffsetGltfM.map((component, index) =>
+    finiteNumber(component, `${label}.localTranslationOffsetGltfM[${index}]`),
+  ) as [number, number, number];
+  if (typeof wheel.clamped !== "boolean") {
+    throw new Error(`${label}.clamped must be a boolean`);
   }
   return {
-    generatedClass: requireGeneratedClass(
-      object.generatedClass,
-      `${label}.generatedClass`,
-    ),
-    stableOccurrenceId: requireString(
-      object.stableOccurrenceId,
+    boneName: stringValue(wheel.boneName, `${label}.boneName`),
+    localTranslationOffsetGltfM: offset,
+    contactState: stringValue(wheel.contactState, `${label}.contactState`),
+    clamped: wheel.clamped,
+  };
+}
+
+function parseRecord(value: unknown, label: string) {
+  const record = objectValue(value, label);
+  if (record.poseState !== "native-planar-reconstructed") {
+    throw new Error(`${label}.poseState is unsupported`);
+  }
+  if (!Array.isArray(record.wheels)) {
+    throw new Error(`${label}.wheels must be an array`);
+  }
+  const wheels = record.wheels.map((wheel, index) =>
+    parseWheel(wheel, `${label}.wheels[${index}]`),
+  );
+  const wheelCount = countValue(record.wheelCount, `${label}.wheelCount`);
+  if (wheelCount !== wheels.length) {
+    throw new Error(`${label}.wheelCount does not match wheels`);
+  }
+  if (new Set(wheels.map(({ boneName }) => boneName)).size !== wheels.length) {
+    throw new Error(`${label} repeats a wheel bone`);
+  }
+  return {
+    generatedClass: stringValue(record.generatedClass, `${label}.generatedClass`),
+    stableOccurrenceId: stringValue(
+      record.stableOccurrenceId,
       `${label}.stableOccurrenceId`,
     ),
-    poseState: "native-planar-reconstructed",
+    poseState: "native-planar-reconstructed" as const,
     wheelCount,
-    maxAbsContactResidualCm: requireFinite(
-      object.maxAbsContactResidualCm,
+    maxAbsContactResidualCm: finiteNumber(
+      record.maxAbsContactResidualCm,
       `${label}.maxAbsContactResidualCm`,
     ),
     wheels,
@@ -208,143 +141,86 @@ function parseRecord(
 export function parseRuntimePlanarSuspensionPoseIndex(
   value: unknown,
 ): RuntimePlanarSuspensionPoseIndex {
-  const object = requireObject(value, "runtime planar suspension index");
-  if (object.schemaVersion !== RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA) {
-    throw new Error(
-      `Unsupported runtime planar suspension schema ${String(object.schemaVersion)}`,
-    );
+  const index = objectValue(value, "runtime planar suspension index");
+  if (index.schemaVersion !== RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA) {
+    throw new Error(`Unsupported suspension schema ${String(index.schemaVersion)}`);
   }
-  const sourceObject = requireObject(object.source, "source");
-  if (
-    sourceObject.method !== "odk-native-planar-sweep-reconstruction/v1"
-  ) {
-    throw new Error(`Unsupported suspension method ${String(sourceObject.method)}`);
-  }
-  const coverageObject = requireObject(object.coverage, "coverage");
-  if (!Array.isArray(coverageObject.notApplicable)) {
-    throw new Error("coverage.notApplicable must be an array");
-  }
-  if (!Array.isArray(coverageObject.unavailable)) {
-    throw new Error("coverage.unavailable must be an array");
-  }
-  if (!Array.isArray(object.records)) {
+  if (!Array.isArray(index.records)) {
     throw new Error("records must be an array");
   }
-  const records = object.records.map((record, index) =>
-    parseRecord(record, `records[${index}]`),
+  const records = index.records.map((record, recordIndex) =>
+    parseRecord(record, `records[${recordIndex}]`),
   );
-  const recordCount = requireNonNegativeInteger(
-    object.recordCount,
-    "recordCount",
-  );
+  const recordCount = countValue(index.recordCount, "recordCount");
   if (recordCount !== records.length) {
-    throw new Error(
-      `recordCount ${recordCount} does not match ${records.length} records`,
-    );
+    throw new Error("recordCount does not match records");
   }
-  const requestedGeneratedClassCount = requireNonNegativeInteger(
-    coverageObject.requestedGeneratedClassCount,
-    "coverage.requestedGeneratedClassCount",
+  const identities = records.map(
+    ({ generatedClass, stableOccurrenceId }) =>
+      `${generatedClass}\u0000${stableOccurrenceId}`,
   );
-  const resolvedGeneratedClassCount = requireNonNegativeInteger(
-    coverageObject.resolvedGeneratedClassCount,
-    "coverage.resolvedGeneratedClassCount",
-  );
-  const notApplicableGeneratedClassCount = requireNonNegativeInteger(
-    coverageObject.notApplicableGeneratedClassCount,
-    "coverage.notApplicableGeneratedClassCount",
-  );
-  const unavailableGeneratedClassCount = requireNonNegativeInteger(
-    coverageObject.unavailableGeneratedClassCount,
-    "coverage.unavailableGeneratedClassCount",
-  );
+  if (new Set(identities).size !== identities.length) {
+    throw new Error("Duplicate runtime planar suspension identity");
+  }
+
+  const coverageValue = objectValue(index.coverage, "coverage");
   if (
-    requestedGeneratedClassCount !==
-    resolvedGeneratedClassCount +
-      notApplicableGeneratedClassCount +
-      unavailableGeneratedClassCount
+    !Array.isArray(coverageValue.notApplicable) ||
+    !Array.isArray(coverageValue.unavailable)
   ) {
-    throw new Error("coverage counts do not close to requestedGeneratedClassCount");
+    throw new Error("coverage lists must be arrays");
   }
-  if (
-    coverageObject.notApplicable.length !== notApplicableGeneratedClassCount
-  ) {
-    throw new Error(
-      "coverage.notApplicable length does not match notApplicableGeneratedClassCount",
-    );
-  }
-  if (
-    coverageObject.unavailable.length !== unavailableGeneratedClassCount
-  ) {
-    throw new Error(
-      "coverage.unavailable length does not match unavailableGeneratedClassCount",
-    );
-  }
-  const identities = new Set<string>();
-  for (const record of records) {
-    const identity = `${record.generatedClass}\u0000${record.stableOccurrenceId}`;
-    if (identities.has(identity)) {
-      throw new Error(
-        `Duplicate runtime planar suspension identity ${record.generatedClass} / ${record.stableOccurrenceId}`,
-      );
-    }
-    identities.add(identity);
-  }
-  const parseCoverageEntry = (
-    entry: unknown,
-    label: string,
-  ): RuntimePlanarSuspensionCoverageEntry => {
-    const coverageEntry = requireObject(entry, label);
-    return {
-      generatedClass: requireGeneratedClass(
-        coverageEntry.generatedClass,
-        `${label}.generatedClass`,
-      ),
-      reason: requireReasonCode(coverageEntry.reason, `${label}.reason`),
-    };
+  const coverage = {
+    requestedGeneratedClassCount: countValue(
+      coverageValue.requestedGeneratedClassCount,
+      "coverage.requestedGeneratedClassCount",
+    ),
+    resolvedGeneratedClassCount: countValue(
+      coverageValue.resolvedGeneratedClassCount,
+      "coverage.resolvedGeneratedClassCount",
+    ),
+    notApplicableGeneratedClassCount: countValue(
+      coverageValue.notApplicableGeneratedClassCount,
+      "coverage.notApplicableGeneratedClassCount",
+    ),
+    unavailableGeneratedClassCount: countValue(
+      coverageValue.unavailableGeneratedClassCount,
+      "coverage.unavailableGeneratedClassCount",
+    ),
+    notApplicable: coverageValue.notApplicable.map((entry, entryIndex) =>
+      parseCoverageEntry(entry, `coverage.notApplicable[${entryIndex}]`),
+    ),
+    unavailable: coverageValue.unavailable.map((entry, entryIndex) =>
+      parseCoverageEntry(entry, `coverage.unavailable[${entryIndex}]`),
+    ),
   };
+  if (
+    coverage.notApplicable.length !==
+      coverage.notApplicableGeneratedClassCount ||
+    coverage.unavailable.length !== coverage.unavailableGeneratedClassCount ||
+    coverage.requestedGeneratedClassCount !==
+      coverage.resolvedGeneratedClassCount +
+        coverage.notApplicableGeneratedClassCount +
+        coverage.unavailableGeneratedClassCount
+  ) {
+    throw new Error("coverage counts are inconsistent");
+  }
+
   return {
     schemaVersion: RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA,
-    source: {
-      method: "odk-native-planar-sweep-reconstruction/v1",
-      sourceMap: requireString(sourceObject.sourceMap, "source.sourceMap"),
-      sourceBuildId: requireString(
-        sourceObject.sourceBuildId,
-        "source.sourceBuildId",
-      ),
-      odkDllSha256: requireSha256(
-        sourceObject.odkDllSha256,
-        "source.odkDllSha256",
-      ),
-      chassisPoseRecordsSha256: requireSha256(
-        sourceObject.chassisPoseRecordsSha256,
-        "source.chassisPoseRecordsSha256",
-      ),
-      visualIndexSha256: requireSha256(
-        sourceObject.visualIndexSha256,
-        "source.visualIndexSha256",
-      ),
-    },
-    coverage: {
-      requestedGeneratedClassCount,
-      resolvedGeneratedClassCount,
-      notApplicableGeneratedClassCount,
-      unavailableGeneratedClassCount,
-      notApplicable: coverageObject.notApplicable.map((entry, index) =>
-        parseCoverageEntry(entry, `coverage.notApplicable[${index}]`),
-      ),
-      unavailable: coverageObject.unavailable.map((entry, index) =>
-        parseCoverageEntry(entry, `coverage.unavailable[${index}]`),
-      ),
-    },
+    coverage,
     recordCount,
-    recordsSha256: requireSha256(object.recordsSha256, "recordsSha256"),
     records,
   };
 }
 
 export const runtimePlanarSuspensionPoseIndex =
-  parseRuntimePlanarSuspensionPoseIndex(runtimePlanarSuspensionPoseIndexJson);
+  parseRuntimePlanarSuspensionPoseIndex(
+    await loadWikiDataset(
+      "/data/vehicles/suspension-poses.json",
+      RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA,
+    ),
+  );
 
 export function runtimePlanarSuspensionPoseForOccurrence(
   index: RuntimePlanarSuspensionPoseIndex,
@@ -380,9 +256,7 @@ export function runtimePlanarSuspensionCoverageForGeneratedClass(
     runtimePlanarSuspensionPoseIndex.coverage.notApplicable.find(
       (entry) => entry.generatedClass === generatedClass,
     );
-  if (notApplicable) {
-    return { status: "not-applicable", ...notApplicable };
-  }
+  if (notApplicable) return { status: "not-applicable", ...notApplicable };
   const unavailable = runtimePlanarSuspensionPoseIndex.coverage.unavailable.find(
     (entry) => entry.generatedClass === generatedClass,
   );

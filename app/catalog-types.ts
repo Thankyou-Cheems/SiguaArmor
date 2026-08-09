@@ -169,7 +169,7 @@ export interface CatalogVariant {
     liveryZh: string | null;
     configurationZh: string | null;
   };
-  data: ReferenceData;
+  data: ReferenceData | null;
 }
 
 export interface CatalogRecord {
@@ -245,8 +245,6 @@ export interface CatalogSearchRecord {
 export interface PublicCatalogIndex {
   schemaVersion: "1.0.0";
   catalogId: string;
-  dataRevision: string;
-  vehicleCatalogRevision: string;
   groups: CatalogFactionSummary[];
   records: CatalogSearchRecord[];
 }
@@ -254,8 +252,6 @@ export interface PublicCatalogIndex {
 export interface PublicFactionCatalog {
   schemaVersion: "1.0.0";
   catalogId: string;
-  dataRevision: string;
-  vehicleCatalogRevision: string;
   group: CatalogFactionSummary;
   records: CatalogRecord[];
 }

@@ -17,19 +17,13 @@ export type {
 
 
 export interface RuntimeHitArtifactDescriptor {
-  accessStatus: "public" | "local-review";
+  accessStatus: "public";
   reason: string;
   formatVersion: "hit-scene-runtime/v1";
   vehicleId: string;
   recordUrl: string;
-  recordSha256: string;
-  recordBytes: number;
   geometryUrl: string;
-  geometrySha256: string;
-  geometryBytes: number;
   bvhUrl: string;
-  bvhSha256: string;
-  bvhBytes: number;
   triangles: number;
   components: number;
   surfaceProfiles: number;
@@ -38,7 +32,7 @@ export interface RuntimeHitArtifactDescriptor {
 
 export type RuntimeHitRecordDescriptor = Pick<
   RuntimeHitArtifactDescriptor,
-  "vehicleId" | "recordUrl" | "recordSha256" | "recordBytes"
+  "vehicleId" | "recordUrl"
 >;
 
 export type RuntimeHitEvidence<T> = Evidence<T>;
@@ -102,27 +96,12 @@ function assert(condition: unknown, message: string): asserts condition {
 }
 
 
-async function sha256Hex(buffer: ArrayBuffer) {
-  const digest = new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", buffer));
-  return [...digest].map((value) => value.toString(16).padStart(2, "0")).join("");
-}
-
-
-async function fetchVerified(url: string, bytes: number, digest: string, label: string) {
+async function fetchRuntimeAsset(url: string, label: string) {
   assert(/^\/[A-Za-z0-9_./-]+$/.test(url) && !url.includes(".."), `${label} URL is unsafe`);
-  assert(/^[0-9a-f]{64}$/.test(digest), `${label} digest is invalid`);
   const wikiUrl = runtimeWikiAssetUrl(url);
-  let response = await fetch(wikiUrl, { cache: "force-cache" });
-  if (!response.ok) {
-    // A stale cached 404 can survive after a missing immutable asset is restored.
-    // Revalidate the exact immutable URL once before failing closed.
-    response = await fetch(`${wikiUrl}?cacheBust=${digest}`, { cache: "reload" });
-  }
+  const response = await fetch(wikiUrl, { cache: "force-cache" });
   assert(response.ok, `${label} request returned HTTP ${response.status}`);
-  const payload = await response.arrayBuffer();
-  assert(payload.byteLength === bytes, `${label} byte length mismatch`);
-  assert((await sha256Hex(payload)) === digest, `${label} SHA-256 mismatch`);
-  return payload;
+  return response.arrayBuffer();
 }
 
 
@@ -189,10 +168,8 @@ export async function loadRuntimeHitRecord(
   descriptor: RuntimeHitRecordDescriptor,
 ): Promise<RuntimeHitRecord> {
   assert(/^vehicle-[0-9a-f]{64}$/.test(descriptor.vehicleId), "descriptor identity is not exact");
-  const recordBuffer = await fetchVerified(
+  const recordBuffer = await fetchRuntimeAsset(
     descriptor.recordUrl,
-    descriptor.recordBytes,
-    descriptor.recordSha256,
     "record",
   );
   return parseRuntimeHitRecord(recordBuffer, descriptor);
@@ -205,15 +182,11 @@ export async function loadRuntimeHitScene(
   assert(descriptor.formatVersion === "hit-scene-runtime/v1", "descriptor format mismatch");
   assert(/^vehicle-[0-9a-f]{64}$/.test(descriptor.vehicleId), "descriptor identity is not exact");
   const [recordBuffer, geometryBuffer, bvhBuffer] = await Promise.all([
-    fetchVerified(descriptor.recordUrl, descriptor.recordBytes, descriptor.recordSha256, "record"),
-    fetchVerified(descriptor.geometryUrl, descriptor.geometryBytes, descriptor.geometrySha256, "geometry"),
-    fetchVerified(descriptor.bvhUrl, descriptor.bvhBytes, descriptor.bvhSha256, "BVH"),
+    fetchRuntimeAsset(descriptor.recordUrl, "record"),
+    fetchRuntimeAsset(descriptor.geometryUrl, "geometry"),
+    fetchRuntimeAsset(descriptor.bvhUrl, "BVH"),
   ]);
   const record = parseRuntimeHitRecord(recordBuffer, descriptor);
-  assert(record.geometry.sha256 === descriptor.geometrySha256, "record geometry digest mismatch");
-  assert(record.bvh.sha256 === descriptor.bvhSha256, "record BVH digest mismatch");
-  assert(record.geometry.bytes === geometryBuffer.byteLength, "record geometry byte count mismatch");
-  assert(record.bvh.bytes === bvhBuffer.byteLength, "record BVH byte count mismatch");
 
   const sections = record.geometry.sections;
   const positions = typedSection(

@@ -42,12 +42,6 @@
 
 			@portalAssets path /portal-assets/*
 			header @portalAssets Cache-Control "public, max-age=31536000, immutable"
-			@generatedPortalAssets path /portal-assets/siguad-*
-			handle @generatedPortalAssets {
-				uri strip_prefix /portal-assets
-				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad/images/site
-				file_server
-			}
 			handle @portalAssets {
 				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
 				file_server
@@ -80,7 +74,7 @@
 				file_server
 			}
 
-			@selectorAssets path /portal-assets/tactical-squad-wordmark-62bff6fb051e.png /portal-assets/shenzhou-soldier-clean-ddd587081da0.webp /portal-assets/pla-soldier-clean-ccb90707110a.webp
+			@selectorAssets path /portal-assets/tactical-squad-wordmark-62bff6fb051e.png /portal-assets/siguad-armor-china-soldier-ddd587081da0.webp /portal-assets/siguad-armor-global-soldier-ccb90707110a.webp
 			header @selectorAssets Cache-Control "public, max-age=31536000, immutable"
 			handle @selectorAssets {
 				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
@@ -92,29 +86,24 @@
 			@squadBase path /squad
 			redir @squadBase /squad/?{orig_query} 308
 
-			@releasePointer path /release-manifest.json
-			header @releasePointer Cache-Control "public, max-age=60, stale-while-revalidate=300"
-
 			@chinaAssets path /china-assets/*
 			header @chinaAssets Cache-Control "public, max-age=31536000, immutable"
 			handle @chinaAssets {
-				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
 				file_server {
 					precompressed br gzip
 				}
 			}
 
-			@squadImmutable path /squad/assets/* /assets/* /squad/infantry-hit-runtime/* /infantry-hit-runtime/* /squad/fonts/*.woff2 /fonts/*.woff2 /squad/images/vehicle-impressions/* /images/vehicle-impressions/* /squad/images/china-vehicle-impressions/* /images/china-vehicle-impressions/*
+			@squadImmutable path /squad/assets/* /assets/* /squad/fonts/*.woff2 /fonts/*.woff2 /squad/images/vehicle-impressions/* /images/vehicle-impressions/* /squad/images/china-vehicle-impressions/* /images/china-vehicle-impressions/*
 			header @squadImmutable Cache-Control "public, max-age=31536000, immutable"
 			@squadRevalidate {
-				path /squad/catalog-data/* /squad/fonts/* /squad/icons/* /squad/images/* /catalog-data/* /fonts/* /icons/* /images/*
+				path /squad/fonts/* /squad/icons/* /squad/images/* /fonts/* /icons/* /images/*
 				not path /squad/fonts/*.woff2 /fonts/*.woff2 /squad/images/vehicle-impressions/* /images/vehicle-impressions/* /squad/images/china-vehicle-impressions/* /images/china-vehicle-impressions/*
 			}
 			header @squadRevalidate Cache-Control "public, max-age=3600, must-revalidate"
-			@squadPointer path /squad/release-manifest.json
-			header @squadPointer Cache-Control "public, max-age=60, must-revalidate"
 
-			@squadStatic path /squad/assets/* /squad/infantry-hit-runtime/* /squad/catalog-data/* /squad/fonts/* /squad/icons/* /squad/images/* /squad/release-manifest.json
+			@squadStatic path /squad/assets/* /squad/fonts/* /squad/icons/* /squad/images/*
 			handle @squadStatic {
 				uri strip_prefix /squad
 				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
@@ -123,7 +112,7 @@
 				}
 			}
 
-			@squadRootStatic path /assets/* /infantry-hit-runtime/* /catalog-data/* /fonts/* /icons/* /images/*
+			@squadRootStatic path /assets/* /fonts/* /icons/* /images/*
 			handle @squadRootStatic {
 				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
 				file_server {
@@ -214,11 +203,6 @@
 					header_up X-Forwarded-Prefix /sigua
 					header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
 				}
-			}
-
-			handle @releasePointer {
-				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
-				file_server
 			}
 
 			respond "Not Found\n" 404

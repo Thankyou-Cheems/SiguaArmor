@@ -117,7 +117,6 @@ export default function InternationalVehicleViewer({
     );
   }
 
-  const visual = preview.visual;
   const selectMode = (nextMode: ViewerAssetMode) => {
     onNavigationStateChange({ ...navigationState, view: nextMode });
   };
@@ -131,7 +130,6 @@ export default function InternationalVehicleViewer({
       data-variant-raw-name={rawName}
       data-runtime-vehicle-ref={runtimeVehicleRef ?? undefined}
       data-visual-artifact-ref={visualArtifactRef ?? undefined}
-      data-package-sha256={visual.packageSha256}
       data-hit-access={preview.hit?.status ?? preview.hitAvailability?.status ?? "absent"}
       data-official-preview-issue={previewIssue?.code}
       data-has-texture-variants={!previewIssue && textureVariants.length > 1 ? "true" : undefined}

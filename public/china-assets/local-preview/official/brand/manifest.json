@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "accessPolicy": {
+    "licenseStatus": "authorized",
+    "handlingClassification": "public",
+    "publishStatus": "public"
+  },
+  "assets": [
+    {
+      "id": "iron-rice-hall-wordmark",
+      "path": "/local-preview/official/brand/iron-rice-hall-wordmark.png",
+      "role": "homepage-brand-lockup",
+      "derivation": "Published derivative based on the preserved official slogan capture, with the 铁皮饭堂 wordmark set in 标小智无界黑 under SIL Open Font License 1.1.",
+      "width": 1784,
+      "height": 536,
+      "bytes": 264872,
+      "sha256": "4fee43d3f65930d56cd12203b65b0e80585ca45b17cb5646f642def45ef232ba"
+    },
+    {
+      "id": "vehicle-crew",
+      "path": "/local-preview/official/brand/vehicle-crew.png",
+      "role": "preserved-local-preview-source",
+      "sourceUrl": "https://game.gtimg.cn/images/squad/cp/a20260407zsxd/feature-img/bg4-211.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 189647,
+      "sha256": "c011879ee09a8b0426b062da82a2526e5ded2f6c37603de549d611c6f7ac37c7"
+    },
+    {
+      "id": "vehicle-crew-help",
+      "path": "/local-preview/official/brand/vehicle-crew-help.webp",
+      "role": "catalog-footer-help-trigger",
+      "derivation": "Transparent two-person display crop of vehicle-crew.png: 820x840 pixels at source offset +870+160, resized to 312x320 and WebP-compressed without repainting or content substitution.",
+      "sourceAssetId": "vehicle-crew",
+      "width": 312,
+      "height": 320,
+      "bytes": 22966,
+      "sha256": "5d77d72f52a85c19f3c11191774a3ca63edf4c41514985707eb6153150b1731f"
+    }
+  ]
+}

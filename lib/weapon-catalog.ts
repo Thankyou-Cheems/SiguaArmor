@@ -1,6 +1,6 @@
-import weaponCatalogJson from "../app/runtime-weapon-catalog.json";
 import type { EditorNativeModel } from "./editor-native-hit-model";
 import { createWeaponCatalogIdentityResolver } from "./weapon-catalog-identity.mjs";
+import { loadWikiWeaponCatalog } from "./wiki-source.ts";
 
 export type WeaponCatalogJsonValue =
   | boolean
@@ -303,14 +303,6 @@ export interface WeaponCatalogVehicleEquipmentBinding {
 
 interface WeaponCatalog {
   schemaVersion: "sigua-weapon-catalog/v2";
-  catalogRevision: string;
-  dataRevision: string;
-  sourceBuildId: string;
-  evidenceBoundary: {
-    staticEditorCdo: string;
-    pie: string;
-    dedicatedServer: string;
-  };
   counts: {
     wikiFamilies: number;
     wikiConfigurations: number;
@@ -378,18 +370,6 @@ interface WeaponCatalog {
   indexes: {
     configurationVariantIds: Record<string, string[]>;
   };
-  audit: {
-    stableIdsUnique: boolean;
-    referenceClosure: boolean;
-    exactVehicleOwnership: boolean;
-    factionConflictsExplicit: boolean;
-    editorCurveClosure: boolean;
-    noLegacySnapshots: boolean;
-    noCompatibilityPayloads: boolean;
-    vehicleEquipmentReferenceClosure: boolean;
-    vehicleEquipmentSelectorRelationClosure: boolean;
-    vehicleEquipmentSelectorResolutionUnambiguous: boolean;
-  };
 }
 
 function assert(
@@ -401,198 +381,17 @@ function assert(
   }
 }
 
-interface WeaponRuntimeProjection {
-  schemaVersion: "sigua-weapon-client-projection/v1";
-  projectionKind: "runtime-selector";
-  projectionRevision: string;
-  catalog: {
-    schemaVersion: "sigua-weapon-catalog/v2";
-    catalogRevision: string;
-    dataRevision: string;
-    sourceBuildId: string;
-    bytes: number;
-    sha256: string;
-  };
-  counts: {
-    wikiConfigurations: number;
-    selectorFamilies: number;
-    selectorVariants: number;
-    shippingVariants: number;
-    directDamageModels: number;
-    radialDamageModels: number;
-    radialAssets: number;
-    ballisticProfiles: number;
-    curves: number;
-    sourceRefs: number;
-    emplacedAliases: number;
-  };
-  evidence: {
-    emplacedCdo: {
-      schemaVersion: string;
-      snapshotRevision: string;
-      targetCount: number;
-      canonicalTargetCount: number;
-      projectedTargetCount: number;
-      aliasCount: number;
-    };
-  };
-  data: {
-    wikiConfigurations: WeaponCatalogWikiConfiguration[];
-    selectorFamilies: WeaponCatalogFamily[];
-    selectorVariants: WeaponCatalogVariant[];
-    directDamageModels: WeaponCatalogDirectDamageModel[];
-    radialDamageModels: WeaponCatalogRadialDamageModel[];
-    radialAssets: WeaponCatalogRadialAsset[];
-    ballisticProfiles: WeaponCatalogBallisticProfile[];
-    curves: Array<{
-      curveId: string;
-      inputUnit: string;
-      outputUnit: string;
-      keys: Array<{ time: number; value: number }>;
-    }>;
-    sourceRefs: WeaponCatalogSourceRef[];
-  };
-}
-
-const weaponProjection =
-  weaponCatalogJson as unknown as WeaponRuntimeProjection;
+const weaponCatalog =
+  (await loadWikiWeaponCatalog()) as unknown as WeaponCatalog;
 
 assert(
-  weaponProjection.schemaVersion ===
-    "sigua-weapon-client-projection/v1" &&
-    weaponProjection.projectionKind === "runtime-selector" &&
-    weaponProjection.catalog.schemaVersion ===
-      "sigua-weapon-catalog/v2" &&
-    /^[a-f0-9]{64}$/u.test(
-      weaponProjection.catalog.catalogRevision,
-    ) &&
-    /^[a-f0-9]{64}$/u.test(
-      weaponProjection.catalog.sha256,
-    ) &&
-    /^[a-f0-9]{64}$/u.test(
-      weaponProjection.projectionRevision,
-    ),
-  "runtime projection identity drifted",
+  weaponCatalog.schemaVersion === "sigua-weapon-catalog/v2" &&
+    weaponCatalog.counts.selectorVariants ===
+      weaponCatalog.selector.variants.length &&
+    weaponCatalog.counts.vehicleEquipmentBindings ===
+      weaponCatalog.relations.vehicleEquipmentBindings.length,
+  "Wiki catalog shape drifted",
 );
-assert(
-  weaponProjection.counts.wikiConfigurations ===
-      weaponProjection.data.wikiConfigurations.length &&
-    weaponProjection.counts.selectorFamilies ===
-      weaponProjection.data.selectorFamilies.length &&
-    weaponProjection.counts.selectorVariants ===
-      weaponProjection.data.selectorVariants.length &&
-    weaponProjection.counts.shippingVariants ===
-      weaponProjection.data.selectorVariants.filter(
-        ({ selectorVisibility }) =>
-          selectorVisibility === "shipping",
-      ).length &&
-    weaponProjection.counts.directDamageModels ===
-      weaponProjection.data.directDamageModels.length &&
-    weaponProjection.counts.radialDamageModels ===
-      weaponProjection.data.radialDamageModels.length &&
-    weaponProjection.counts.radialAssets ===
-      weaponProjection.data.radialAssets.length &&
-    weaponProjection.counts.ballisticProfiles ===
-      weaponProjection.data.ballisticProfiles.length &&
-    weaponProjection.counts.curves ===
-      weaponProjection.data.curves.length &&
-    weaponProjection.counts.sourceRefs ===
-      weaponProjection.data.sourceRefs.length &&
-    weaponProjection.counts.emplacedAliases ===
-      weaponProjection.evidence.emplacedCdo.aliasCount,
-  "runtime projection counts drifted",
-);
-
-const weaponCatalog = {
-  schemaVersion: weaponProjection.catalog.schemaVersion,
-  catalogRevision: weaponProjection.catalog.catalogRevision,
-  dataRevision: weaponProjection.catalog.dataRevision,
-  sourceBuildId: weaponProjection.catalog.sourceBuildId,
-  evidenceBoundary: {
-    staticEditorCdo:
-      "revision-bound runtime projection of canonical and emplaced CDO evidence",
-    pie: "not-run",
-    dedicatedServer: "native-unknown",
-  },
-  counts: {
-    wikiFamilies: 0,
-    wikiConfigurations:
-      weaponProjection.counts.wikiConfigurations,
-    wikiTemplates: 0,
-    selectorFamilies: weaponProjection.counts.selectorFamilies,
-    selectorVariants: weaponProjection.counts.selectorVariants,
-    shippingVariants: weaponProjection.counts.shippingVariants,
-    directDamageModels:
-      weaponProjection.counts.directDamageModels,
-    radialDamageModels:
-      weaponProjection.counts.radialDamageModels,
-    radialAssets: weaponProjection.counts.radialAssets,
-    sourceRefs: weaponProjection.counts.sourceRefs,
-    factionClaims: 0,
-    factionConflicts: 0,
-    exactCurves: weaponProjection.counts.curves,
-    curveBindings: 0,
-    runtimeBallisticProfiles:
-      weaponProjection.counts.ballisticProfiles,
-    runtimeWeapons: 0,
-    vehicleEquipmentBindings: 0,
-    referencedVehicleEquipmentBindings: 0,
-    exactVehicleEquipmentSelectorRelations: 0,
-    normalizedVehicleEquipmentSelectorRelations: 0,
-    nonSelectorVehicleEquipmentBindings: 0,
-    evidenceRequiredVehicleEquipmentBindings: 0,
-    ambiguousVehicleEquipmentSelectorRelations: 0,
-  },
-  wiki: {
-    summary: {
-      groups: 0,
-      configurations:
-        weaponProjection.counts.wikiConfigurations,
-      templates: 0,
-      exactCurves: weaponProjection.counts.curves,
-    },
-    families: [] as WeaponCatalogWikiFamily[],
-    configurations:
-      weaponProjection.data.wikiConfigurations,
-    templates: [] as WeaponCatalogWikiTemplate[],
-  },
-  selector: {
-    families: weaponProjection.data.selectorFamilies,
-    variants: weaponProjection.data.selectorVariants,
-  },
-  mechanics: {
-    directDamageModels:
-      weaponProjection.data.directDamageModels,
-    radialDamageModels:
-      weaponProjection.data.radialDamageModels,
-    radialAssets: weaponProjection.data.radialAssets,
-    ballisticProfiles:
-      weaponProjection.data.ballisticProfiles,
-    curves: weaponProjection.data.curves,
-    curveBindings: [],
-  },
-  sources: {
-    refs: weaponProjection.data.sourceRefs,
-    factionClaims: [],
-    factionConflicts: [],
-  },
-  relations: {
-    vehicleEquipmentBindings:
-      [] as WeaponCatalogVehicleEquipmentBinding[],
-  },
-  indexes: {
-    configurationVariantIds: {},
-  },
-} satisfies Omit<WeaponCatalog, "audit">;
-
-export const weaponCatalogSummary = {
-  schemaVersion: weaponCatalog.schemaVersion,
-  catalogRevision: weaponCatalog.catalogRevision,
-  dataRevision: weaponCatalog.dataRevision,
-  sourceBuildId: weaponCatalog.sourceBuildId,
-  evidenceBoundary: weaponCatalog.evidenceBoundary,
-  counts: weaponCatalog.counts,
-} as const;
 
 export const weaponCatalogWikiFamilies =
   weaponCatalog.wiki.families as readonly WeaponCatalogWikiFamily[];
