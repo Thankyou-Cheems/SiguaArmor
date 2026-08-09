@@ -10,6 +10,8 @@ import {
   ARMOR_ORIGIN,
   ICP_RECORD,
   LANDING_ORIGIN,
+  NAVIGATOR_PATH,
+  NAVIGATOR_URL,
   armorPath,
   armorUrl,
   landingArmorRedirectUrl,
@@ -22,6 +24,7 @@ import {
   renderPublicSiteConfig,
   renderPublicSiteTemplate,
 } from "../../tools/deploy/render-public-site-config.mjs";
+import { ARMOR_SELECTOR_ASSETS } from "../../tools/deploy/armor-selector-assets.mjs";
 import { patchPublicOriginCaddy } from "../../tools/deploy/patch-public-origin-caddy.mjs";
 import { SITE_PORTAL_BRAND } from "../../tools/deploy/site-portal-brand.mjs";
 
@@ -30,6 +33,8 @@ const ROOT = path.resolve(import.meta.dirname, "..", "..");
 test("public topology owns the landing, Armor routes, and exact ICP record", () => {
   assert.equal(LANDING_ORIGIN, "https://siguad.icu");
   assert.equal(ARMOR_ORIGIN, "https://armor.siguad.icu");
+  assert.equal(NAVIGATOR_PATH, "/navigator");
+  assert.equal(NAVIGATOR_URL, "https://siguad.icu/navigator");
   assert.equal(ICP_RECORD.number, "黑ICP备2025043874号-2");
   assert.equal(SITE_PORTAL_BRAND.displayName, "丝瓜地.爱惜呦");
   assert.equal(SITE_PORTAL_BRAND.englishName, "SiguaD.icu");
@@ -93,7 +98,7 @@ test("document policy caches only ordinary HTML and never varies by mobile UA", 
   );
 });
 
-test("landing redirects old Armor paths while remaining an independent short-cache document", () => {
+test("selector roots and navigator remain short-cache documents while legacy Armor paths redirect", () => {
   assert.deepEqual(
     classifyPublicDocumentRequest({
       host: "siguad.icu",
@@ -110,30 +115,78 @@ test("landing redirects old Armor paths while remaining an independent short-cac
     classifyPublicDocumentRequest({ host: "siguad.icu", pathname: "/" }),
     { kind: "landing-html", cacheControl: PUBLIC_DOCUMENT_CACHE.landing },
   );
+  assert.deepEqual(
+    classifyPublicDocumentRequest({ host: "armor.siguad.icu", pathname: "/" }),
+    { kind: "landing-html", cacheControl: PUBLIC_DOCUMENT_CACHE.landing },
+  );
+  for (const pathname of ["/navigator", "/navigator/", "/navigator/index.html"]) {
+    assert.deepEqual(
+      classifyPublicDocumentRequest({ host: "siguad.icu", pathname }),
+      { kind: "navigator-html", cacheControl: PUBLIC_DOCUMENT_CACHE.landing },
+    );
+  }
+  assert.deepEqual(
+    classifyPublicDocumentRequest({
+      host: "armor.siguad.icu",
+      pathname: "/squad/vehicles/sample",
+      headers: { Accept: "text/html" },
+    }),
+    { kind: "armor-html", cacheControl: PUBLIC_DOCUMENT_CACHE.armorHtml },
+  );
 });
 
 test("deployment templates render from topology without mobile routing or stale legal data", async () => {
-  const [landingTemplate, caddyTemplate, composeTemplate] = await Promise.all([
-    readFile(
-      path.join(ROOT, "deploy", "public-site", "landing.template.html"),
-      "utf8",
-    ),
-    readFile(
-      path.join(ROOT, "deploy", "public-site", "Caddyfile.template"),
-      "utf8",
-    ),
-    readFile(
-      path.join(ROOT, "deploy", "public-site", "docker-compose.template.yml"),
-      "utf8",
-    ),
-  ]);
+  const [selectorTemplate, landingTemplate, caddyTemplate, composeTemplate] =
+    await Promise.all([
+      readFile(
+        path.join(
+          ROOT,
+          "deploy",
+          "public-site",
+          "armor-selector.template.html",
+        ),
+        "utf8",
+      ),
+      readFile(
+        path.join(ROOT, "deploy", "public-site", "landing.template.html"),
+        "utf8",
+      ),
+      readFile(
+        path.join(ROOT, "deploy", "public-site", "Caddyfile.template"),
+        "utf8",
+      ),
+      readFile(
+        path.join(ROOT, "deploy", "public-site", "docker-compose.template.yml"),
+        "utf8",
+      ),
+    ]);
+  const selector = renderPublicSiteTemplate(selectorTemplate, "armor-selector");
   const landing = renderPublicSiteTemplate(landingTemplate, "landing");
   const caddy = renderPublicSiteTemplate(caddyTemplate, "Caddyfile");
   const compose = renderPublicSiteTemplate(composeTemplate, "docker-compose");
 
+  assert.match(
+    selector,
+    /<title>藤瓜 \/ 丝瓜：战术小队铁皮饭堂<\/title>/u,
+  );
+  assert.match(selector, /aria-label="选择载具资料站"/u);
+  assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/sigua\/"/u);
+  assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/squad\/"/u);
+  assert.match(selector, /tactical-squad-wordmark-62bff6fb051e\.png/u);
+  assert.match(selector, /shenzhou-soldier-clean-ddd587081da0\.webp/u);
+  assert.match(selector, /pla-soldier-clean-ccb90707110a\.webp/u);
+  assert.match(selector, /藤瓜 · 国服载具资料/u);
+  assert.match(selector, /丝瓜 · 国际服载具资料/u);
+  assert.match(selector, /@media \(max-width: 720px\)/u);
+  assert.match(selector, /href="https:\/\/siguad\.icu\/"/u);
+
   assert.match(landing, /href="https:\/\/armor\.siguad\.icu\/squad\/"/u);
   assert.match(landing, /href="https:\/\/armor\.siguad\.icu\/sigua\/"/u);
   assert.match(landing, /<title>丝瓜地\.爱惜呦 · SiguaD\.icu<\/title>/u);
+  assert.match(
+    landing,
+    /<link rel="canonical" href="https:\/\/siguad\.icu\/navigator" \/>/u,
+  );
   assert.match(landing, /data-landmark="armor-pot"/u);
   assert.match(landing, /data-landmark="mortar"/u);
   assert.match(landing, /data-landmark="siguamap"/u);
@@ -199,6 +252,15 @@ test("deployment templates render from topology without mobile routing or stale 
 
   assert.match(caddy, /host siguad\.icu/u);
   assert.match(caddy, /host armor\.siguad\.icu/u);
+  assert.match(caddy, /@selectorDocument path \/ \/index\.html/u);
+  assert.match(
+    caddy,
+    /@navigatorDocument path \/navigator \/navigator\/ \/navigator\/index\.html/u,
+  );
+  assert.match(caddy, /rewrite \* \/navigator\/index\.html/u);
+  assert.match(caddy, /handle @armorRoot \{/u);
+  assert.doesNotMatch(caddy, /redir @armorRoot/u);
+  assert.match(caddy, /@selectorAssets path \/portal-assets\/tactical-squad-wordmark/u);
   assert.match(caddy, /header !RSC/u);
   assert.match(caddy, /s-maxage=60/u);
   assert.match(caddy, /@generatedPortalAssets path \/portal-assets\/siguad-\*/u);
@@ -209,7 +271,10 @@ test("deployment templates render from topology without mobile routing or stale 
       .length,
     2,
   );
-  assert.doesNotMatch(`${landing}\n${caddy}\n${compose}`, /\{\{[A-Z0-9_]+\}\}/u);
+  assert.doesNotMatch(
+    `${selector}\n${landing}\n${caddy}\n${compose}`,
+    /\{\{[A-Z0-9_]+\}\}/u,
+  );
 });
 
 test("Site Portal brand assets are hash-pinned and copied beside rendered config", async () => {
@@ -219,6 +284,18 @@ test("Site Portal brand assets are hash-pinned and copied beside rendered config
   );
   try {
     await renderPublicSiteConfig(outputRoot);
+    const selector = await readFile(path.join(outputRoot, "index.html"), "utf8");
+    const navigator = await readFile(
+      path.join(outputRoot, "navigator", "index.html"),
+      "utf8",
+    );
+    assert.match(selector, /藤瓜 · 国服载具资料/u);
+    assert.match(selector, /丝瓜 · 国际服载具资料/u);
+    assert.match(navigator, /data-landmark="armor-pot"/u);
+    assert.match(
+      navigator,
+      /<link rel="canonical" href="https:\/\/siguad\.icu\/navigator" \/>/u,
+    );
     for (const asset of SITE_PORTAL_BRAND.releaseAssets) {
       const sourceBytes = await readFile(
         path.join(ROOT, "deploy", "public-site", "assets", asset.fileName),
@@ -246,6 +323,38 @@ test("Site Portal brand assets are hash-pinned and copied beside rendered config
         wordmarkFont.hasGlyphForCodePoint(character.codePointAt(0)),
         true,
         `temporary wordmark font lacks ${character}`,
+      );
+    }
+  } finally {
+    await rm(outputRoot, { recursive: true, force: true });
+  }
+});
+
+test("historical Armor selector assets are hash-pinned and rendered without source duplication", async () => {
+  await mkdir(path.join(ROOT, "outputs"), { recursive: true });
+  const outputRoot = await mkdtemp(
+    path.join(ROOT, "outputs", "armor-selector-render-"),
+  );
+  try {
+    await renderPublicSiteConfig(outputRoot);
+    for (const asset of ARMOR_SELECTOR_ASSETS) {
+      const sourceBytes = await readFile(
+        path.join(
+          ROOT,
+          "deploy",
+          "public-site",
+          "assets",
+          asset.sourceFileName,
+        ),
+      );
+      assert.equal(sourceBytes.byteLength, asset.bytes);
+      assert.equal(
+        createHash("sha256").update(sourceBytes).digest("hex"),
+        asset.sha256,
+      );
+      assert.deepEqual(
+        await readFile(path.join(outputRoot, "portal-assets", asset.fileName)),
+        sourceBytes,
       );
     }
   } finally {

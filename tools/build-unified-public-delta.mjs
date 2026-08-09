@@ -203,6 +203,10 @@ export async function readReleaseOverlayEntries(overlayManifestPath) {
   for (const item of manifestEntries) {
     const entryPath = normalizedEntryPath(item?.path);
     invariant(
+      item?.create === undefined || typeof item.create === "boolean",
+      `release overlay create flag must be boolean: ${entryPath}`,
+    );
+    invariant(
       entryPath !== "release-manifest.json" &&
         !entryPath.startsWith("squad/") &&
         !entryPath.startsWith("international-runtime/"),
@@ -223,6 +227,7 @@ export async function readReleaseOverlayEntries(overlayManifestPath) {
         sha256: await sha256File(sourcePath),
       },
       sourcePath,
+      create: item.create === true,
     });
     seen.add(entryPath);
   }
@@ -361,12 +366,19 @@ const main = async (options) => {
       targetSources.delete(entryPath);
     }
     for (const overlay of releaseOverlay.entries) {
-      invariant(
-        targetEntries.has(overlay.entry.path),
-        `release overlay target is absent from the live manifest: ${overlay.entry.path}`,
-      );
-      targetEntries.delete(overlay.entry.path);
-      targetSources.delete(overlay.entry.path);
+      if (overlay.create) {
+        invariant(
+          !targetEntries.has(overlay.entry.path),
+          `release overlay create target already exists in the live manifest: ${overlay.entry.path}`,
+        );
+      } else {
+        invariant(
+          targetEntries.has(overlay.entry.path),
+          `release overlay replacement target is absent from the live manifest: ${overlay.entry.path}`,
+        );
+        targetEntries.delete(overlay.entry.path);
+        targetSources.delete(overlay.entry.path);
+      }
       addEntry(
         targetEntries,
         targetSources,
