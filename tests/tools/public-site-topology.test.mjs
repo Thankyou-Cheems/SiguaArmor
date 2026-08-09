@@ -260,6 +260,16 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.doesNotMatch(caddy, /redir @armorRoot/u);
   assert.match(caddy, /@selectorAssets path \/portal-assets\/tactical-squad-wordmark/u);
   assert.match(caddy, /header !RSC/u);
+  assert.equal(
+    (caddy.match(/uri replace \/sigua \/china 1/gu) ?? []).length,
+    2,
+    "both China HTML and application requests must reach the /china route",
+  );
+  assert.equal(
+    (caddy.match(/rewrite \/sigua\/ \/china/gu) ?? []).length,
+    2,
+    "the China root must avoid leaking Vinext's internal /china redirect",
+  );
   assert.match(caddy, /s-maxage=60/u);
   assert.doesNotMatch(caddy, /generatedPortalAssets|squad\/images\/site/u);
   assert.match(caddy, /root \* \{\$SIGUA_PUBLIC_ROOT:\/srv\/public\}\/squad/u);

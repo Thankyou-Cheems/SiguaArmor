@@ -177,11 +177,14 @@
 				not query _rsc=*
 			}
 			handle @siguaHtml {
-				uri strip_prefix /sigua
-				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
-					header_up Host {host}
-					header_up X-Forwarded-Prefix /sigua
-					header_down Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
+				route {
+					rewrite /sigua/ /china
+					uri replace /sigua /china 1
+					reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
+						header_up Host {host}
+						header_up X-Forwarded-Prefix /sigua
+						header_down Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
+					}
 				}
 			}
 
@@ -197,11 +200,14 @@
 
 			@siguaApplication path /sigua/*
 			handle @siguaApplication {
-				uri strip_prefix /sigua
-				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
-					header_up Host {host}
-					header_up X-Forwarded-Prefix /sigua
-					header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+				route {
+					rewrite /sigua/ /china
+					uri replace /sigua /china 1
+					reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
+						header_up Host {host}
+						header_up X-Forwarded-Prefix /sigua
+						header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+					}
 				}
 			}
 
