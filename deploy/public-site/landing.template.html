@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0a0d10" />
+    <title>{{SITE_PORTAL_NAME}} · {{SITE_PORTAL_ENGLISH_NAME}}</title>
+    <meta
+      name="description"
+      content="丝瓜地.爱惜呦（SiguaD.icu）集合铁皮饭堂、迫击炮计算器、战队赛规划器与后续战术工具。"
+    />
+    <link rel="canonical" href="{{LANDING_ORIGIN}}/" />
+    <link
+      rel="preload"
+      as="image"
+      href="{{SITE_PORTAL_SCENE_URL}}"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="{{SITE_PORTAL_FONT_URL}}"
+      crossorigin
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="{{SITE_PORTAL_NAME}} · {{SITE_PORTAL_ENGLISH_NAME}}"
+    />
+    <meta
+      property="og:description"
+      content="将鼠标指向或轻触画面中的铁锅、迫击炮与战术地图，进入或了解对应的战术工具。"
+    />
+    <meta property="og:url" content="{{LANDING_ORIGIN}}/" />
+    <meta property="og:image" content="{{SITE_PORTAL_SCENE_ABSOLUTE_URL}}" />
+    <style>
+      @font-face {
+        font-family: "Sigua Unbounded Sans";
+        src: url("{{SITE_PORTAL_FONT_URL}}") format("woff2");
+        font-display: swap;
+        font-style: normal;
+        font-weight: 400;
+      }
+
+      :root {
+        color-scheme: dark;
+        font-family: "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+        background: #0a0d10;
+        color: #fff8e8;
+        --cream: #fff8e8;
+        --leaf: #b8d978;
+        --leaf-bright: #dcf5a4;
+        --sun: #ffc76b;
+        --coral: #ff9a7d;
+        --glass: rgba(8, 13, 15, 0.78);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        min-height: 100svh;
+        overflow: hidden;
+        background: #0a0d10;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      button {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .portal {
+        position: relative;
+        min-height: 100svh;
+        isolation: isolate;
+        overflow: hidden;
+        overflow: clip;
+      }
+
+      .portal__ambient {
+        position: absolute;
+        inset: -36px;
+        z-index: -4;
+        overflow: hidden;
+        background: #0a0d10;
+      }
+
+      .portal__ambient img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(24px) brightness(0.42) saturate(0.82);
+        transform: scale(1.08);
+      }
+
+      .portal__ambient::after {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background:
+          radial-gradient(circle at 50% 45%, transparent 20%, rgba(2, 7, 5, 0.54) 86%),
+          linear-gradient(180deg, rgba(3, 10, 7, 0.5), transparent 32%, rgba(2, 7, 5, 0.72));
+      }
+
+      .garden {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: min(100vw, 177.68svh);
+        aspect-ratio: 1672 / 941;
+        overflow: hidden;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+      }
+
+      .garden__image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0.88) brightness(0.76) contrast(1.04);
+        transition: filter 500ms ease, transform 800ms cubic-bezier(0.2, 0.72, 0.2, 1);
+      }
+
+      .garden::after {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        content: "";
+        background:
+          linear-gradient(180deg, rgba(3, 10, 7, 0.62) 0%, transparent 25%, transparent 68%, rgba(2, 6, 4, 0.66) 100%),
+          radial-gradient(ellipse at 50% 46%, transparent 34%, rgba(2, 7, 5, 0.32) 100%);
+      }
+
+      .portal:has(.landmark:is(:hover, :focus-visible)) .garden__image {
+        filter: saturate(0.98) brightness(0.82) contrast(1.02);
+        transform: scale(1.008);
+      }
+
+      .portal:has(.product-preview.is-visible) .garden__image {
+        filter: saturate(0.76) brightness(0.62) contrast(1.06);
+        transform: scale(1.004);
+      }
+
+      .portal__masthead {
+        position: absolute;
+        top: clamp(12px, 2.2vh, 26px);
+        left: 50%;
+        z-index: 20;
+        display: grid;
+        justify-items: center;
+        width: min(1080px, 96vw);
+        transform: translateX(-50%);
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .brand__wordmark {
+        display: grid;
+        justify-items: center;
+        margin: 0;
+        font-family: "Sigua Unbounded Sans", "Microsoft YaHei", sans-serif;
+        font-weight: 400;
+        white-space: nowrap;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.68));
+      }
+
+      .brand__cn,
+      .brand__en {
+        background: linear-gradient(180deg, #fffef2 4%, #ffe4a3 58%, #fff6dc 100%);
+        background-clip: text;
+        color: #fff4cf;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .brand__cn {
+        font-size: clamp(34px, 4.2vw, 62px);
+        line-height: 0.94;
+        letter-spacing: 0.055em;
+      }
+
+      .brand__en {
+        margin-top: clamp(10px, 1.2vh, 15px);
+        font-size: clamp(16px, 1.6vw, 24px);
+        line-height: 1;
+        letter-spacing: 0.18em;
+      }
+
+      .landmarks {
+        position: absolute;
+        inset: 0;
+        z-index: 6;
+        pointer-events: none;
+      }
+
+      .landmark {
+        --landmark-color: 180, 226, 220;
+        position: absolute;
+        top: var(--y);
+        left: var(--x);
+        width: clamp(44px, 4.6vw, 70px);
+        height: clamp(44px, 4.6vw, 70px);
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--cream);
+        cursor: pointer;
+        outline: 0;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
+      }
+
+      .landmark--future {
+        --landmark-color: 255, 199, 107;
+      }
+
+      .landmark__ring {
+        position: absolute;
+        inset: 7px;
+        border: 1px solid rgba(var(--landmark-color), 0.9);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(var(--landmark-color), 0.2), rgba(4, 14, 9, 0.16) 46%, rgba(4, 14, 9, 0.72) 70%);
+        box-shadow:
+          0 0 0 5px rgba(var(--landmark-color), 0.1),
+          0 0 22px rgba(var(--landmark-color), 0.62),
+          inset 0 0 13px rgba(var(--landmark-color), 0.38);
+        transition: transform 240ms ease, background 240ms ease, box-shadow 240ms ease;
+      }
+
+      .landmark__ring::before,
+      .landmark__ring::after {
+        position: absolute;
+        inset: -7px;
+        border: 1px solid rgba(var(--landmark-color), 0.5);
+        border-radius: inherit;
+        content: "";
+        animation: landmark-radar 2.5s ease-out infinite;
+      }
+
+      .landmark__ring::after {
+        animation-delay: 1.25s;
+      }
+
+      .landmark__dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        border: 2px solid rgba(5, 16, 11, 0.72);
+        border-radius: 50%;
+        background: rgb(var(--landmark-color));
+        box-shadow: 0 0 12px rgba(var(--landmark-color), 0.94);
+        transform: translate(-50%, -50%);
+      }
+
+      .landmark__label {
+        position: absolute;
+        top: calc(100% + 2px);
+        left: 50%;
+        min-width: max-content;
+        padding: 5px 8px;
+        border: 1px solid rgba(var(--landmark-color), 0.34);
+        border-radius: 999px;
+        background: rgba(4, 14, 9, 0.8);
+        color: rgba(255, 249, 233, 0.92);
+        box-shadow: 0 7px 22px rgba(0, 0, 0, 0.32);
+        backdrop-filter: blur(8px);
+        font-size: clamp(8px, 0.68vw, 11px);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: 0.08em;
+        transform: translateX(-50%);
+        transition: color 240ms ease, border-color 240ms ease, transform 240ms ease;
+      }
+
+      .landmark:is(:hover, :focus-visible) .landmark__ring {
+        background: radial-gradient(circle, rgba(var(--landmark-color), 0.36), rgba(4, 14, 9, 0.3) 52%, rgba(4, 14, 9, 0.84) 72%);
+        box-shadow:
+          0 0 0 7px rgba(var(--landmark-color), 0.16),
+          0 0 34px rgba(var(--landmark-color), 0.88),
+          inset 0 0 15px rgba(var(--landmark-color), 0.48);
+        transform: scale(1.14);
+      }
+
+      .landmark:is(:hover, :focus-visible) .landmark__label {
+        border-color: rgba(var(--landmark-color), 0.78);
+        color: #fff;
+        transform: translate(-50%, 3px);
+      }
+
+      .landmark--map {
+        --x: 48%;
+        --y: 61.5%;
+      }
+
+      .landmark--pot {
+        --x: 49%;
+        --y: 84.5%;
+      }
+
+      .landmark--mortar {
+        --x: 86.5%;
+        --y: 76%;
+      }
+
+      .landmark--more {
+        --x: 89.2%;
+        --y: 24.5%;
+      }
+
+      .portal__footer {
+        position: absolute;
+        right: 14px;
+        bottom: 10px;
+        left: 14px;
+        z-index: 22;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: rgba(235, 227, 205, 0.54);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        pointer-events: none;
+      }
+
+      .portal__footer a {
+        color: inherit;
+        pointer-events: auto;
+      }
+
+      .product-preview {
+        --preview-x: 50%;
+        --preview-y: 50%;
+        position: absolute;
+        top: var(--preview-y);
+        left: var(--preview-x);
+        z-index: 30;
+        width: min(360px, calc(100vw - 28px));
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, calc(-50% + 18px)) scale(0.965);
+        transform-origin: center;
+        transition:
+          opacity 260ms ease,
+          transform 420ms cubic-bezier(0.2, 0.78, 0.2, 1),
+          visibility 0s linear 420ms;
+      }
+
+      .product-preview.is-visible {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%) scale(1);
+        transition-delay: 0s;
+      }
+
+      .product-preview--armor {
+        --preview-y: 58%;
+        width: min(940px, calc(100vw - 28px));
+      }
+
+      .product-preview--map {
+        --preview-x: 48%;
+        --preview-y: 49%;
+      }
+
+      .product-preview--mortar {
+        --preview-x: 72%;
+        --preview-y: 66%;
+      }
+
+      .product-preview--more {
+        --preview-x: 72%;
+        --preview-y: 34%;
+      }
+
+      .product-preview__surface {
+        overflow: hidden;
+        border: 1px solid rgba(255, 215, 137, 0.34);
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 84% 8%, rgba(255, 205, 112, 0.15), transparent 40%),
+          rgba(8, 13, 15, 0.94);
+        color: var(--cream);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.64);
+        backdrop-filter: blur(22px) saturate(0.84);
+      }
+
+      .product-preview__surface {
+        padding: 24px 26px 25px;
+        text-align: left;
+      }
+
+      .product-preview__eyebrow {
+        display: block;
+        color: rgba(255, 223, 157, 0.72);
+        font: 750 9px / 1 ui-monospace, "Cascadia Mono", monospace;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .product-preview__title {
+        margin: 9px 0 0;
+        color: #fff7e3;
+        font-size: clamp(23px, 2.2vw, 32px);
+        font-weight: 900;
+        line-height: 1.05;
+        letter-spacing: 0.04em;
+      }
+
+      .product-preview__status {
+        margin: 16px 0 0;
+        color: #ffd57e;
+        font-size: 15px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+      }
+
+      .armor-preview {
+        position: relative;
+        min-height: min(560px, 68svh);
+        overflow: hidden;
+        border: 1px solid rgba(214, 194, 140, 0.42);
+        border-radius: 22px;
+        background: #070907;
+        color: #eee8d6;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.72);
+        isolation: isolate;
+      }
+
+      .armor-preview::after {
+        position: absolute;
+        top: 10%;
+        bottom: 8%;
+        left: 50%;
+        z-index: 7;
+        width: 1px;
+        content: "";
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(214, 194, 140, 0.64) 18%,
+          rgba(214, 194, 140, 0.2) 82%,
+          transparent
+        );
+        box-shadow: 0 0 24px rgba(214, 194, 140, 0.18);
+        pointer-events: none;
+      }
+
+      .armor-preview__heading {
+        position: absolute;
+        top: 22px;
+        left: 50%;
+        z-index: 8;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        width: max-content;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      .armor-preview__heading strong {
+        color: #f2ead4;
+        font-size: clamp(26px, 2.5vw, 38px);
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: 0.08em;
+        text-shadow: 0 4px 18px rgba(0, 0, 0, 0.86);
+      }
+
+      .armor-preview__heading span {
+        color: rgba(226, 215, 184, 0.7);
+        font: 650 9px / 1.3 ui-monospace, "Cascadia Mono", monospace;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .armor-choices {
+        display: grid;
+        min-height: min(560px, 68svh);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .armor-choice {
+        --accent: #b89e62;
+        position: relative;
+        display: grid;
+        min-width: 0;
+        overflow: hidden;
+        color: inherit;
+        text-decoration: none;
+        outline: 0;
+        isolation: isolate;
+      }
+
+      .armor-choice--china {
+        background:
+          radial-gradient(circle at 54% 44%, rgba(126, 42, 29, 0.25), transparent 34%),
+          linear-gradient(108deg, rgba(18, 23, 17, 0.82) 0%, rgba(23, 21, 15, 0.56) 56%, rgba(10, 12, 9, 0.88) 100%),
+          url("{{ARMOR_ORIGIN}}/squad/images/faction-bg/PLA.webp") center / cover no-repeat;
+      }
+
+      .armor-choice--global {
+        --accent: #b9ad7d;
+        background:
+          radial-gradient(circle at 46% 42%, rgba(62, 83, 51, 0.28), transparent 35%),
+          linear-gradient(252deg, rgba(17, 24, 16, 0.82) 0%, rgba(22, 23, 15, 0.56) 56%, rgba(9, 12, 9, 0.88) 100%),
+          url("{{ARMOR_ORIGIN}}/squad/images/faction-bg/PLAAGF.webp") center / cover no-repeat;
+      }
+
+      .armor-choice::before {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        content: "";
+        opacity: 0.42;
+        transition: opacity 480ms ease;
+        background:
+          linear-gradient(180deg, rgba(2, 3, 2, 0.54) 0%, transparent 24%, transparent 60%, rgba(2, 3, 2, 0.94) 100%),
+          repeating-linear-gradient(118deg, transparent 0 40px, rgba(255, 255, 255, 0.018) 41px 42px);
+      }
+
+      .armor-choice::after {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        content: "";
+        opacity: 0;
+        transition: opacity 420ms ease;
+        background:
+          linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 14%, transparent), transparent),
+          radial-gradient(circle at 50% 56%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 44%);
+      }
+
+      .armor-choice__figure {
+        position: absolute;
+        bottom: 2.5%;
+        left: 50%;
+        z-index: 2;
+        display: block;
+        width: auto;
+        max-width: 76%;
+        height: min(57vh, 470px);
+        object-fit: contain;
+        object-position: center bottom;
+        transform: translateX(-50%) scale(1);
+        transform-origin: center bottom;
+        filter: brightness(0.68) saturate(0.76) contrast(1.08) drop-shadow(0 24px 28px rgba(0, 0, 0, 0.68));
+        transition: filter 500ms ease, transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      .armor-choice--china .armor-choice__figure {
+        height: min(59vh, 490px);
+      }
+
+      .armor-choice__content {
+        position: relative;
+        z-index: 4;
+        align-self: end;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        padding: 0 clamp(18px, 3vw, 52px) clamp(28px, 5vh, 48px);
+        text-align: center;
+      }
+
+      .armor-choice__index {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: color-mix(in srgb, var(--accent) 82%, white);
+        font: 700 10px / 1 ui-monospace, "Cascadia Mono", monospace;
+        letter-spacing: 0.25em;
+      }
+
+      .armor-choice__index::before,
+      .armor-choice__index::after {
+        width: 26px;
+        height: 1px;
+        content: "";
+        background: currentColor;
+        opacity: 0.52;
+      }
+
+      .armor-choice__name {
+        color: #f2ead4;
+        font-size: clamp(20px, 2vw, 32px);
+        font-weight: 900;
+        line-height: 1.08;
+        letter-spacing: 0.06em;
+        text-shadow: 0 3px 16px #000;
+      }
+
+      .armor-choice__subtitle {
+        color: rgba(232, 225, 205, 0.72);
+        font: 650 clamp(8px, 0.7vw, 11px) / 1.4 ui-monospace, "Cascadia Mono", monospace;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .armor-choice__enter {
+        display: inline-flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 148px;
+        margin-top: 2px;
+        padding: 9px 14px;
+        border: 1px solid color-mix(in srgb, var(--accent) 54%, transparent);
+        background: rgba(4, 6, 4, 0.62);
+        color: #ede4ca;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        transition: border-color 300ms ease, background 300ms ease, transform 300ms ease;
+      }
+
+      .armor-choice__enter::after {
+        color: var(--accent);
+        content: "→";
+        font-size: 15px;
+        transition: transform 300ms ease;
+      }
+
+      .armor-choice:is(:hover, :focus-visible)::before {
+        opacity: 0.2;
+      }
+
+      .armor-choice:is(:hover, :focus-visible)::after {
+        opacity: 1;
+      }
+
+      .armor-choice:is(:hover, :focus-visible) .armor-choice__figure {
+        transform: translateX(-50%) scale(1.035);
+        filter: brightness(1) saturate(0.96) contrast(1.04) drop-shadow(0 30px 34px rgba(0, 0, 0, 0.72));
+      }
+
+      .armor-choice:is(:hover, :focus-visible) .armor-choice__enter {
+        border-color: color-mix(in srgb, var(--accent) 86%, white);
+        background: rgba(20, 22, 15, 0.82);
+        transform: translateY(-2px);
+      }
+
+      .armor-choice:is(:hover, :focus-visible) .armor-choice__enter::after {
+        transform: translateX(4px);
+      }
+
+      .noscript-entry {
+        position: fixed;
+        right: 16px;
+        bottom: 48px;
+        left: 16px;
+        z-index: 40;
+        padding: 12px;
+        border-radius: 14px;
+        background: #0b1e15;
+        text-align: center;
+      }
+
+      .noscript-entry a {
+        margin: 0 8px;
+        color: var(--leaf-bright);
+      }
+
+      @keyframes landmark-radar {
+        0% {
+          opacity: 0.72;
+          transform: scale(0.66);
+        }
+        76%,
+        100% {
+          opacity: 0;
+          transform: scale(1.55);
+        }
+      }
+
+      @media (max-width: 720px) {
+        .portal__masthead {
+          top: 9px;
+        }
+
+        .brand__cn {
+          font-size: clamp(27px, 8vw, 37px);
+          letter-spacing: 0.035em;
+        }
+
+        .brand__en {
+          margin-top: 8px;
+          font-size: clamp(13px, 3.7vw, 16px);
+          letter-spacing: 0.15em;
+        }
+
+        .garden {
+          box-shadow: 0 20px 55px rgba(0, 0, 0, 0.5);
+        }
+
+        .garden::after {
+          background:
+            linear-gradient(180deg, rgba(3, 10, 7, 0.34), transparent 28%, transparent 74%, rgba(2, 6, 4, 0.42)),
+            radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(2, 7, 5, 0.22));
+        }
+
+        .landmark {
+          width: 42px;
+          height: 42px;
+        }
+
+        .landmark__ring {
+          inset: 8px;
+        }
+
+        .landmark__label {
+          top: calc(100% - 1px);
+          padding: 4px 6px;
+          font-size: 7px;
+          letter-spacing: 0.04em;
+        }
+
+        .landmark--more {
+          --x: 86%;
+        }
+
+        .portal__footer {
+          right: 8px;
+          bottom: 5px;
+          left: 8px;
+          font-size: 7px;
+        }
+
+        .product-preview {
+          --preview-x: 50%;
+          --preview-y: 50%;
+          width: min(330px, calc(100vw - 20px));
+        }
+
+        .product-preview--armor {
+          width: calc(100vw - 20px);
+        }
+
+        .product-preview__surface {
+          padding: 20px;
+        }
+
+        .armor-preview,
+        .armor-choices {
+          min-height: min(560px, 68svh);
+        }
+
+        .armor-preview__heading {
+          top: 18px;
+        }
+
+        .armor-preview__heading strong {
+          font-size: 22px;
+        }
+
+        .armor-choice__figure {
+          bottom: 3%;
+          max-width: 78%;
+          height: min(51vh, 430px);
+        }
+
+        .armor-choice--china .armor-choice__figure {
+          height: min(54vh, 450px);
+        }
+
+        .armor-choice__content {
+          gap: 6px;
+          padding: 0 9px 22px;
+        }
+
+        .armor-choice__name {
+          font-size: 15px;
+          letter-spacing: 0.02em;
+        }
+
+        .armor-choice__subtitle {
+          font-size: 6px;
+          letter-spacing: 0.08em;
+        }
+
+        .armor-choice__enter {
+          min-width: 116px;
+          padding: 7px 9px;
+          font-size: 8px;
+        }
+      }
+
+      @media (max-height: 620px) {
+        .portal__masthead {
+          top: 6px;
+        }
+
+        .brand__cn {
+          font-size: clamp(25px, 6vh, 38px);
+        }
+
+        .brand__en {
+          margin-top: 6px;
+          font-size: 12px;
+        }
+
+        .portal__footer {
+          bottom: 3px;
+        }
+
+        .armor-preview,
+        .armor-choices {
+          min-height: min(450px, 76svh);
+        }
+
+        .armor-choice__figure {
+          height: min(58vh, 320px);
+        }
+
+        .armor-choice--china .armor-choice__figure {
+          height: min(61vh, 340px);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="portal" aria-labelledby="portal-brand-name">
+      <div class="portal__ambient" aria-hidden="true">
+        <img src="{{SITE_PORTAL_SCENE_URL}}" alt="" />
+      </div>
+
+      <section class="garden" aria-label="可探索的战术工具场景">
+        <img
+          class="garden__image"
+          src="{{SITE_PORTAL_SCENE_URL}}"
+          alt="17 个阵营的写实士兵在暖色战术营地中列队，围绕地图桌、装甲车、铁皮饭堂和迫击炮"
+          width="1672"
+          height="941"
+          fetchpriority="high"
+          decoding="async"
+        />
+
+        <div class="landmarks" role="group" aria-label="功能地标">
+          <button
+            class="landmark landmark--map landmark--future"
+            type="button"
+            data-preview-target="map"
+            data-landmark="siguamap"
+            aria-controls="product-map"
+            aria-expanded="false"
+            aria-label="查看战队赛规划器：火热开发中，敬请期待"
+          >
+            <span class="landmark__ring" aria-hidden="true"><span class="landmark__dot"></span></span>
+            <span class="landmark__label">丝瓜 Map</span>
+          </button>
+
+          <button
+            class="landmark landmark--pot"
+            type="button"
+            data-preview-target="armor"
+            data-landmark="armor-pot"
+            aria-controls="product-armor"
+            aria-expanded="false"
+            aria-label="打开铁皮饭堂藤瓜与丝瓜入口"
+          >
+            <span class="landmark__ring" aria-hidden="true"><span class="landmark__dot"></span></span>
+            <span class="landmark__label">铁皮饭堂</span>
+          </button>
+
+          <button
+            class="landmark landmark--mortar landmark--future"
+            type="button"
+            data-preview-target="mortar"
+            data-landmark="mortar"
+            aria-controls="product-mortar"
+            aria-expanded="false"
+            aria-label="查看迫击炮计算器：火热开发中，敬请期待"
+          >
+            <span class="landmark__ring" aria-hidden="true"><span class="landmark__dot"></span></span>
+            <span class="landmark__label">迫击炮计算器</span>
+          </button>
+
+          <button
+            class="landmark landmark--more landmark--future"
+            type="button"
+            data-preview-target="more"
+            data-landmark="more"
+            aria-controls="product-more"
+            aria-expanded="false"
+            aria-label="查看更多功能：火热开发中，敬请期待"
+          >
+            <span class="landmark__ring" aria-hidden="true"><span class="landmark__dot"></span></span>
+            <span class="landmark__label">更多功能</span>
+          </button>
+        </div>
+      </section>
+
+      <header class="portal__masthead">
+        <h1 class="brand__wordmark" id="portal-brand-name">
+          <span class="brand__cn">丝瓜地·爱惜呦</span>
+          <span class="brand__en" lang="en">SiguaD.icu</span>
+        </h1>
+      </header>
+
+      <section
+        class="product-preview product-preview--armor"
+        id="product-armor"
+        data-product-preview="armor"
+        role="dialog"
+        aria-modal="false"
+        aria-hidden="true"
+        aria-labelledby="product-armor-title"
+      >
+        <div class="armor-preview">
+          <div class="armor-preview__heading">
+            <strong id="product-armor-title">铁皮饭堂</strong>
+            <span>Select database · 选择数据版本</span>
+          </div>
+          <div class="armor-choices">
+            <a class="armor-choice armor-choice--china" href="{{ARMOR_CHINA_URL}}" aria-label="进入铁皮饭堂藤瓜国服站">
+              <img
+                class="armor-choice__figure"
+                src="{{SITE_PORTAL_ARMOR_CHINA_FIGURE_URL}}"
+                alt=""
+                width="399"
+                height="1043"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="armor-choice__content">
+                <span class="armor-choice__index">01 · CN</span>
+                <strong class="armor-choice__name">藤瓜 · 国服载具资料</strong>
+                <span class="armor-choice__subtitle">Shenzhou Defense Community</span>
+                <span class="armor-choice__enter">进入国服站</span>
+              </span>
+            </a>
+            <a class="armor-choice armor-choice--global" href="{{ARMOR_INTERNATIONAL_URL}}" aria-label="进入铁皮饭堂丝瓜国际站">
+              <img
+                class="armor-choice__figure"
+                src="{{SITE_PORTAL_ARMOR_GLOBAL_FIGURE_URL}}"
+                alt=""
+                width="368"
+                height="879"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="armor-choice__content">
+                <span class="armor-choice__index">02 · INTL</span>
+                <strong class="armor-choice__name">丝瓜 · 国际服载具资料</strong>
+                <span class="armor-choice__subtitle">People's Liberation Army</span>
+                <span class="armor-choice__enter">进入国际站</span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="product-preview product-preview--map"
+        id="product-map"
+        data-product-preview="map"
+        role="status"
+        aria-hidden="true"
+        aria-labelledby="product-map-title"
+      >
+        <div class="product-preview__surface">
+          <span class="product-preview__eyebrow">Sigua Map</span>
+          <h2 class="product-preview__title" id="product-map-title">战队赛规划器</h2>
+          <p class="product-preview__status">火热开发中，敬请期待</p>
+        </div>
+      </section>
+
+      <section
+        class="product-preview product-preview--mortar"
+        id="product-mortar"
+        data-product-preview="mortar"
+        role="status"
+        aria-hidden="true"
+        aria-labelledby="product-mortar-title"
+      >
+        <div class="product-preview__surface">
+          <span class="product-preview__eyebrow">Mortar Calculator</span>
+          <h2 class="product-preview__title" id="product-mortar-title">迫击炮计算器</h2>
+          <p class="product-preview__status">火热开发中，敬请期待</p>
+        </div>
+      </section>
+
+      <section
+        class="product-preview product-preview--more"
+        id="product-more"
+        data-product-preview="more"
+        role="status"
+        aria-hidden="true"
+        aria-labelledby="product-more-title"
+      >
+        <div class="product-preview__surface">
+          <span class="product-preview__eyebrow">More Tools</span>
+          <h2 class="product-preview__title" id="product-more-title">更多功能</h2>
+          <p class="product-preview__status">火热开发中，敬请期待</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="portal__footer">
+      <span>{{SITE_PORTAL_NAME}} · {{SITE_PORTAL_ENGLISH_NAME}}</span>
+      <a href="{{ICP_RECORD_URL}}" rel="noreferrer">{{ICP_RECORD_NUMBER}}</a>
+    </footer>
+
+    <noscript>
+      <div class="noscript-entry">
+        铁皮饭堂：<a href="{{ARMOR_CHINA_URL}}">藤瓜国服站</a><a href="{{ARMOR_INTERNATIONAL_URL}}">丝瓜国际站</a>
+      </div>
+    </noscript>
+
+    <script>
+      (() => {
+        const previews = new Map(
+          [...document.querySelectorAll("[data-product-preview]")].map((preview) => [
+            preview.dataset.productPreview,
+            preview,
+          ]),
+        );
+        const triggers = [...document.querySelectorAll("[data-preview-target]")];
+        let activePreview = null;
+        let activeTrigger = null;
+        let hideTimer = null;
+        let pinned = false;
+
+        const cancelHide = () => {
+          if (hideTimer === null) return;
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        };
+
+        const hidePreview = () => {
+          cancelHide();
+          activePreview?.classList.remove("is-visible");
+          activePreview?.setAttribute("aria-hidden", "true");
+          activeTrigger?.setAttribute("aria-expanded", "false");
+          activePreview = null;
+          activeTrigger = null;
+          pinned = false;
+        };
+
+        const showPreview = (trigger, shouldPin = false) => {
+          const preview = previews.get(trigger.dataset.previewTarget);
+          if (!preview) return;
+          cancelHide();
+          if (activePreview && activePreview !== preview) hidePreview();
+          activePreview = preview;
+          activeTrigger = trigger;
+          pinned = shouldPin;
+          preview.classList.add("is-visible");
+          preview.setAttribute("aria-hidden", "false");
+          trigger.setAttribute("aria-expanded", "true");
+        };
+
+        const scheduleHide = () => {
+          if (pinned) return;
+          cancelHide();
+          hideTimer = setTimeout(hidePreview, 240);
+        };
+
+        for (const trigger of triggers) {
+          trigger.addEventListener("pointerenter", (event) => {
+            if (event.pointerType === "mouse" && window.matchMedia("(min-width: 721px)").matches) {
+              showPreview(trigger);
+            }
+          });
+          trigger.addEventListener("pointerleave", scheduleHide);
+          trigger.addEventListener("focus", () => showPreview(trigger));
+          trigger.addEventListener("blur", scheduleHide);
+          trigger.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const samePinnedPreview =
+              pinned && activeTrigger === trigger && activePreview?.classList.contains("is-visible");
+            if (samePinnedPreview) hidePreview();
+            else showPreview(trigger, true);
+          });
+        }
+
+        for (const preview of previews.values()) {
+          preview.addEventListener("pointerenter", cancelHide);
+          preview.addEventListener("pointerleave", scheduleHide);
+          preview.addEventListener("focusin", cancelHide);
+          preview.addEventListener("focusout", scheduleHide);
+        }
+
+        document.addEventListener("pointerdown", (event) => {
+          if (!pinned) return;
+          if (activePreview?.contains(event.target) || activeTrigger?.contains(event.target)) return;
+          hidePreview();
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") hidePreview();
+        });
+      })();
+    </script>
+  </body>
+</html>

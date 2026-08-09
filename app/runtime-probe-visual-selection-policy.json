@@ -26,6 +26,21 @@
         "BP_LAV6_Desert_C_0",
         "BP_LAV6_Woodland_C_0"
       ]
+    },
+    {
+      "id": "ztd05-smoke-gun-under-chassis",
+      "label": "SUPPRESS ZTD05 SMOKE WEAPON DUPLICATE",
+      "reason": "ztd05-smoke-weapon-is-an-inactive-chassis-duplicate-of-the-turret-cannon",
+      "componentNames": [
+        "WeaponMesh3P"
+      ],
+      "sourceMeshPaths": [
+        "/Game/Vehicles/ZTD05/Mesh/SK_ZTD05_Gun.SK_ZTD05_Gun"
+      ],
+      "actorIncludes": [
+        "BP_ZTD05_Smoke_WoodLand_C_0",
+        "BP_ZTD05_Smoke_C_0"
+      ]
     }
   ],
   "rules": [

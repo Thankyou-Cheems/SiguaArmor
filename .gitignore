@@ -6,20 +6,30 @@ outputs/
 .release/
 *.tsbuildinfo
 .env*
+.local/
 
-# Local caches
+# Local Python/tool caches
 .pytest_cache/
 .ruff_cache/
 __pycache__/
 *.py[cod]
 
-# Generated and locally materialized files
-generated/runtime-probe/
+# Editor extraction, visual staging, and generated runtime evidence
+generated/runtime-probe/*
+!generated/runtime-probe/audit/
+generated/runtime-probe/audit/*
+!generated/runtime-probe/audit/155mm-m1a1-top-route-audit.json
+!generated/runtime-probe/audit/damage-route-families.json
+!generated/runtime-probe/audit/deployable-selector-authority-audit.json
+!generated/runtime-probe/audit/gau17-route-audit.json
 generated/*.log
+authoring-vault/staging/**/editor.log
+authoring-vault/staging/**/logs/
+
+# Large binary/runtime assets stay outside the source snapshot
 public/assets/
 public/images/
-public/local-preview/*
-!public/local-preview/official/
-!public/local-preview/official/**
+public/release-manifest.json
+public/local-preview/
 /adf-original-blue.png
 /planmc-original-blue.png
