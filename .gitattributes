@@ -1,3 +1,4 @@
+* text=auto eol=lf
 generated/internal/*.json text eol=lf
 # Files under public/ are browser-ready release bytes. Git must not rewrite them.
 public/** -text
