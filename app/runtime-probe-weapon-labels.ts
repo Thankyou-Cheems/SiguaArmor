@@ -446,6 +446,7 @@ function catalogVariantBallisticsModel(
         sourceDamageCurve?.keys.at(-1)?.value ??
         directModel.directImpactDamage,
       traceDistanceAfterPenetrationMeters:
+        directModel.weaponTraceDistanceAfterPenetrationM ??
         directModel.traceDistanceAfterPenetrationM,
     }],
     projectiles: [{
@@ -456,6 +457,10 @@ function catalogVariantBallisticsModel(
         directModel.penetrationMm ?? 0,
       impactDamage: directModel.directImpactDamage,
       isExplosive: radialSource !== null,
+      impactRadialOrder:
+        directModel.impactRadialOrder === "not-applicable"
+          ? null
+          : directModel.impactRadialOrder,
       traceDistanceAfterPenetrationMeters:
         directModel.traceDistanceAfterPenetrationM,
       ...explosiveFields,
@@ -741,6 +746,9 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
           const selectorVariant = weaponCatalogVariantForId(
             weapon.weaponVariantId,
           );
+          const directModel = selectorVariant
+            ? weaponCatalogDirectModelForVariant(selectorVariant)
+            : null;
           const ballisticProfile =
             weaponCatalogBallisticProfileForId(
               weapon.ballisticsId,
@@ -807,6 +815,9 @@ const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
                   ballisticProfile.model,
                   weapon.ballisticsWeaponIndex,
                   radialSource,
+                  directModel?.impactRadialOrder === "not-applicable"
+                    ? undefined
+                    : directModel?.impactRadialOrder,
                 )
               : ballisticProfile.model,
             ballisticsSource: {

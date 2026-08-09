@@ -12,11 +12,10 @@ export default defineConfig([
     },
   },
   globalIgnores([
-    ".release/**",
     ".next/**",
     "dist/**",
-    "outputs/**",
     "out/**",
+    "outputs/**",
     "build/**",
     "next-env.d.ts",
   ]),

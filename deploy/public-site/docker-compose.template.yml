@@ -1,0 +1,162 @@
+name: sigua-armor-public
+
+services:
+  sigua-public:
+    container_name: sigua-public
+    image: caddy:2@sha256:ec18ee54aab3315c22e25f3b2babda73ff8007d39b13b3bd1bfffa2f0444c7d9
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./release:/srv/public:ro
+      - ./data/content:/srv/content:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      - homelab-web
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /config
+      - /data
+    expose:
+      - "8080"
+    depends_on:
+      sigua-analytics:
+        condition: service_healthy
+      sigua-content-admin:
+        condition: service_healthy
+      sigua-international:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --header=\"X-Sigua-Origin-Auth: $${SIGUA_ORIGIN_AUTH_SECRET}\" -O /dev/null http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  sigua-international:
+    container_name: sigua-international
+    image: node:20.18.2-alpine3.21@sha256:2cd2a6f4cb37cf8a007d5f1e9aef090ade6b62974c7a274098c390599e8c72b4
+    restart: unless-stopped
+    stop_grace_period: 15s
+    environment:
+      NODE_ENV: production
+      SIGUA_INTERNATIONAL_LISTEN_HOST: 0.0.0.0
+      SIGUA_INTERNATIONAL_PORT: "8082"
+    command: ["node", "/app/server.mjs"]
+    volumes:
+      - ./release/international-runtime:/app:ro
+    working_dir: /app
+    networks:
+      - homelab-web
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "1000:1000"
+    expose:
+      - "8082"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8082/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  sigua-content-admin:
+    container_name: sigua-content-admin
+    image: node:20.18.2-alpine3.21@sha256:2cd2a6f4cb37cf8a007d5f1e9aef090ade6b62974c7a274098c390599e8c72b4
+    restart: unless-stopped
+    stop_grace_period: 15s
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      SIGUA_PUBLIC_ORIGIN: {{ARMOR_ORIGIN}}
+      SIGUA_CONTENT_ROOT: /srv/content
+      SIGUA_CONTENT_ADMIN_LISTEN_HOST: 0.0.0.0
+      SIGUA_CONTENT_ADMIN_PORT: "8083"
+      SIGUA_CONTENT_ADMIN_SESSION_TTL_SECONDS: "900"
+    command: ["node", "/app/server.mjs"]
+    volumes:
+      - ./release/content-admin:/app:ro
+      - ./data/content:/srv/content
+    working_dir: /app
+    networks:
+      - homelab-web
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "1000:1000"
+    expose:
+      - "8083"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8083/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  sigua-analytics:
+    container_name: sigua-analytics
+    build:
+      context: ./analytics
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    stop_grace_period: 15s
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      SIGUA_PUBLIC_ORIGIN: {{ARMOR_ORIGIN}}
+      SIGUA_ANALYTICS_DIR: /srv/analytics
+      SIGUA_ANALYTICS_RETENTION_DAYS: "30"
+      SIGUA_ANALYTICS_CITY_THRESHOLD: "3"
+      SIGUA_GEOIP_CITY_DATABASE: /srv/geoip/dbip-city-lite.mmdb
+      SIGUA_TRUST_EDGEONE_CLIENT_IP: "1"
+      SIGUA_ANALYTICS_LISTEN_HOST: 0.0.0.0
+      SIGUA_ANALYTICS_PORT: "8081"
+    volumes:
+      - ./data/analytics:/srv/analytics
+      - ./data/geoip/dbip-city-lite.mmdb:/srv/geoip/dbip-city-lite.mmdb:ro
+    networks:
+      - homelab-web
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "1000:1000"
+    expose:
+      - "8081"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8081/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+networks:
+  homelab-web:
+    external: true
+    name: homelab_web
