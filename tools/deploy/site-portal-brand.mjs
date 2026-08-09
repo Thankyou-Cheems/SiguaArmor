@@ -1,7 +1,7 @@
 const sceneAssetFile = "siguad-realistic-faction-camp-c8e090dbe35a.webp";
 const fontAssetFile = "siguad-unbounded-brand-2692bde5f2d52f28.woff2";
 const fontLicenseAssetFile =
-  "siguad-unbounded-brand-OFL-f6b8c350c9a49799.txt";
+  "siguad-unbounded-brand-OFL-5eece1beaae1764f.txt";
 const armorChinaFigureFile =
   "siguad-armor-china-soldier-ddd587081da0.webp";
 const armorGlobalFigureFile =
@@ -27,8 +27,8 @@ const fontAsset = portalAsset(
 const fontLicenseAsset = portalAsset(
   "wordmark font license",
   fontLicenseAssetFile,
-  "f6b8c350c9a497994de2f3ead0e76dbb08d3f66639e45857d6010f44eaedb2b0",
-  { bytes: 4665, license: "SIL Open Font License 1.1" },
+  "5eece1beaae1764fc0765f1b6bbd3aa00cb74dc181e85e25168b52679d24faea",
+  { bytes: 4571, license: "SIL Open Font License 1.1" },
 );
 const sceneAsset = portalAsset(
   "scene",
