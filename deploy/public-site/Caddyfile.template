@@ -188,19 +188,23 @@
 				}
 			}
 
-			@squadApplication path /squad/*
+			@squadApplication path /squad.rsc /squad/*
 			handle @squadApplication {
-				uri strip_prefix /squad
-				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
-					header_up Host {host}
-					header_up X-Forwarded-Prefix /squad
-					header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+				route {
+					rewrite /squad.rsc /.rsc
+					uri strip_prefix /squad
+					reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
+						header_up Host {host}
+						header_up X-Forwarded-Prefix /squad
+						header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+					}
 				}
 			}
 
-			@siguaApplication path /sigua/*
+			@siguaApplication path /sigua.rsc /sigua/*
 			handle @siguaApplication {
 				route {
+					rewrite /sigua.rsc /china.rsc
 					rewrite /sigua/ /china
 					uri replace /sigua /china 1
 					reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
