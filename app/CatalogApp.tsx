@@ -136,7 +136,7 @@ const CATEGORY_ICON_BY_TYPE: Record<string, string> = {
   ULTV: "jeep",
 };
 const DONATE_QR_SRC = new URL("../donateQR.jpg", import.meta.url).href;
-const FEEDBACK_EMAIL = "thankucheems@gmail.com";
+const FEEDBACK_FORM_URL = "https://docs.qq.com/form/page/DRnd4bWtKUGNnT3Vu";
 const EMPTY_FACTION_FOREGROUND_SRC =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 const FACTION_IMAGE_PRELOADS = new Map<string, Promise<void>>();
@@ -1930,24 +1930,6 @@ function SiteFooterCopy({
   updateDateLabel: string;
   supportersDocumentUrl: string;
 }) {
-  const [feedbackNotice, setFeedbackNotice] = useState("");
-
-  const handleFeedback = async () => {
-    try {
-      if (!navigator.clipboard?.writeText) throw new Error("Clipboard API unavailable");
-      await navigator.clipboard.writeText(FEEDBACK_EMAIL);
-      setFeedbackNotice("已复制邮箱，请通过邮件发送 BUG 或功能建议。");
-    } catch {
-      setFeedbackNotice(`复制失败，请手动发送至 ${FEEDBACK_EMAIL}。`);
-    }
-  };
-
-  useEffect(() => {
-    if (!feedbackNotice) return undefined;
-    const timeout = window.setTimeout(() => setFeedbackNotice(""), 4_000);
-    return () => window.clearTimeout(timeout);
-  }, [feedbackNotice]);
-
   return (
     <div className="site-footer__copy">
       <div className="site-footer__identity">
@@ -2101,13 +2083,14 @@ function SiteFooterCopy({
           赞助本项目
         </button>
         <div className="site-footer__secondary-actions">
-          <button
+          <a
             className="site-footer__sponsor-button site-footer__feedback-button"
-            type="button"
-            onClick={() => void handleFeedback()}
+            href={FEEDBACK_FORM_URL}
+            target="_blank"
+            rel="noreferrer"
           >
-            反馈BUG/功能建议
-          </button>
+            反馈问题 / 提建议
+          </a>
           <button
             ref={updatesButtonRef}
             className="site-footer__sponsor-button site-footer__updates-button"
@@ -2117,11 +2100,6 @@ function SiteFooterCopy({
             更新日志
           </button>
         </div>
-        {feedbackNotice ? (
-          <p className="site-footer__feedback-notice" role="status" aria-live="polite">
-            {feedbackNotice}
-          </p>
-        ) : null}
       </section>
 
       <SiteFooterSupporters documentUrl={supportersDocumentUrl} />

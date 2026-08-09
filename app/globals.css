@@ -9098,12 +9098,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   white-space: nowrap;
 }
 
-.site-footer__feedback-notice {
-  margin: 8px 0 0;
-  color: var(--brand);
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: center;
+.site-footer__feedback-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .site-footer__sponsor-modal {
