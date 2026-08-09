@@ -4,6 +4,7 @@
   "sourceRelease": "https://github.com/maoken-fonts/unbounded-sans/releases/tag/v1.100",
   "sourceFile": "tools/font-sources/LogoSCUnboundedSans.ttf",
   "sourceSha256": "b25b6b546701a7ce296a847660f859bb42d2cf3dad16f11f78e1f18f3d2b29f8",
+  "buildRecipe": "pyftsubset-full-source/v1",
   "license": "SIL Open Font License 1.1",
   "licensePath": "/fonts/LogoSCUnboundedSans-OFL.txt",
   "coverage": {

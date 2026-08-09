@@ -11,11 +11,6 @@ import {
   UPDATES_DOCUMENT_URL,
   UPDATES_REFRESH_MS,
 } from "../lib/updates-document.mjs";
-import {
-  isRuntimeDocumentUpdatedEvent,
-  RUNTIME_DOCUMENT_UPDATED_EVENT,
-  type RuntimeDocumentName,
-} from "../lib/runtime-document-events";
 import type { SiteEdition } from "./site-edition";
 
 export type UpdatesDocument = NonNullable<ReturnType<typeof parseUpdatesDocument>>;
@@ -34,7 +29,6 @@ const cachedUpdatesDocuments = new Map<string, UpdatesDocument>([
 const activeUpdatesRequests = new Map<string, Promise<UpdatesRequestResult>>();
 const lastUpdatesRequestStartedAt = new Map<string, number>();
 const lastUpdatesRequestFailed = new Map<string, boolean>();
-const updatesRequestGenerations = new Map<string, number>();
 
 interface UpdatesRequestResult {
   document: UpdatesDocument;
@@ -45,35 +39,27 @@ function bundledUpdatesDocument(documentUrl: string) {
   return documentUrl === "/updates.json" ? bundledChinaUpdatesSeed : bundledUpdatesSeed;
 }
 
-async function requestUpdatesDocument(
-  documentUrl: string,
-  force = false,
-): Promise<UpdatesRequestResult> {
+async function requestUpdatesDocument(documentUrl: string): Promise<UpdatesRequestResult> {
   const activeRequest = activeUpdatesRequests.get(documentUrl);
-  if (!force && activeRequest) return activeRequest;
+  if (activeRequest) return activeRequest;
   const now = Date.now();
   const cachedDocument =
     cachedUpdatesDocuments.get(documentUrl) ?? bundledUpdatesDocument(documentUrl);
   const lastStartedAt = lastUpdatesRequestStartedAt.get(documentUrl) ?? 0;
-  if (!force && now - lastStartedAt < UPDATES_REFRESH_MS) {
+  if (now - lastStartedAt < UPDATES_REFRESH_MS) {
     return {
       document: cachedDocument,
       failed: lastUpdatesRequestFailed.get(documentUrl) ?? false,
     };
   }
   lastUpdatesRequestStartedAt.set(documentUrl, now);
-  const generation = (updatesRequestGenerations.get(documentUrl) ?? 0) + (force ? 1 : 0);
-  if (force) updatesRequestGenerations.set(documentUrl, generation);
-  const requestUrl = force
-    ? `${documentUrl}${documentUrl.includes("?") ? "&" : "?"}admin_refresh=${now}`
-    : documentUrl;
 
   const request = (async (): Promise<UpdatesRequestResult> => {
     let document = cachedDocument;
     let failed = false;
     try {
-      const response = await fetch(requestUrl, {
-        cache: force ? "no-store" : "default",
+      const response = await fetch(documentUrl, {
+        cache: "default",
         credentials: "omit",
         headers: { Accept: "application/json" },
       });
@@ -81,15 +67,11 @@ async function requestUpdatesDocument(
       const parsed = parseUpdatesDocument(await response.json());
       if (!parsed) throw new Error("updates document failed validation");
       document = parsed;
-      if ((updatesRequestGenerations.get(documentUrl) ?? 0) === generation) {
-        cachedUpdatesDocuments.set(documentUrl, parsed);
-      }
+      cachedUpdatesDocuments.set(documentUrl, parsed);
     } catch {
       failed = true;
     }
-    if ((updatesRequestGenerations.get(documentUrl) ?? 0) === generation) {
-      lastUpdatesRequestFailed.set(documentUrl, failed);
-    }
+    lastUpdatesRequestFailed.set(documentUrl, failed);
     return {
       document,
       failed,
@@ -115,12 +97,10 @@ export function useSiteUpdates(documentUrl = UPDATES_DOCUMENT_URL) {
 
   useEffect(() => {
     let disposed = false;
-    let loadSequence = 0;
 
-    const load = async (force = false) => {
-      const sequence = ++loadSequence;
-      const result = await requestUpdatesDocument(documentUrl, force);
-      if (!disposed && sequence === loadSequence) {
+    const load = async () => {
+      const result = await requestUpdatesDocument(documentUrl);
+      if (!disposed) {
         setUpdatesDocument(result.document);
         setFailed(result.failed);
       }
@@ -133,25 +113,12 @@ export function useSiteUpdates(documentUrl = UPDATES_DOCUMENT_URL) {
     const handleVisibility = () => {
       if (document.visibilityState === "visible") void load();
     };
-    const runtimeDocumentName: RuntimeDocumentName =
-      documentUrl === "/updates.json" ? "updates-china" : "updates-international";
-    const handleRuntimeDocumentUpdated = (event: Event) => {
-      if (isRuntimeDocumentUpdatedEvent(event, runtimeDocumentName)) void load(true);
-    };
     document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener(
-      RUNTIME_DOCUMENT_UPDATED_EVENT,
-      handleRuntimeDocumentUpdated,
-    );
 
     return () => {
       disposed = true;
       window.clearInterval(refresh);
       document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener(
-        RUNTIME_DOCUMENT_UPDATED_EVENT,
-        handleRuntimeDocumentUpdated,
-      );
     };
   }, [documentUrl]);
 

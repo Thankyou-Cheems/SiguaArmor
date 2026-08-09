@@ -1487,7 +1487,9 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
                     <dd>{formatNumber(weaponDamage(weapon))}</dd>
                   </div>
                   <div>
-                    <dt>穿深衰减距离</dt>
+                    <dt title="弹体穿透首个有效命中层后可继续追踪的最大距离">
+                      后效距离
+                    </dt>
                     <dd>{formatNumber(weapon.traceDistanceAfterPenM, " m")}</dd>
                   </div>
                   <div>

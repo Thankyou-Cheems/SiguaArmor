@@ -1041,6 +1041,49 @@ function vehicleHullPoolIndex(model: EditorNativeModel) {
   return fallback >= 0 ? fallback : null;
 }
 
+/**
+ * Resolve the shared vehicle-Actor radial route without copying projectile
+ * identities into the target model.
+ *
+ * Dedicated M1A1/M830A1 and M1A1/155 mm probes plus the Technical BMP-1
+ * matrix agree on this topology: an exact attached armor hit can admit one
+ * indirect root-vehicle radial callback, while the child turret pool never
+ * receives that radial event. Pure weapon collision is deliberately excluded;
+ * this is not passRadialDamageToParent forwarding.
+ */
+function attachedDamageBearingArmorAdmitsRootVehicle(
+  model: EditorNativeModel,
+  componentIndex: number,
+  component: EditorNativeComponentRecord,
+  surface: EditorNativeSurfaceRecord | undefined,
+) {
+  if (
+    component.semanticKind !== "armor" ||
+    component.placementState !== "resolved" ||
+    !surface ||
+    surface.componentIndex !== componentIndex
+  ) {
+    return false;
+  }
+  const damageParentActor = readField(surface.damageParentActor);
+  if (!damageParentActor.known || damageParentActor.value !== true) {
+    return false;
+  }
+  const owners = model.owners ?? [];
+  const firstOwner = owners[component.ownerIndex];
+  if (!firstOwner || firstOwner.kind === "vehicle-root") return false;
+  const visited = new Set<number>();
+  let ownerIndex: number | null = component.ownerIndex;
+  while (ownerIndex !== null && !visited.has(ownerIndex)) {
+    visited.add(ownerIndex);
+    const owner: EditorNativeOwnerRecord | undefined = owners[ownerIndex];
+    if (!owner) return false;
+    if (owner.kind === "vehicle-root") return true;
+    ownerIndex = owner.parentOwnerIndex;
+  }
+  return false;
+}
+
 function directDamageCertainty(
   model: EditorNativeModel,
   unknowns: string[],
@@ -1227,7 +1270,9 @@ export function simulateEditorNativeShot({
     } else {
       const guaranteedPools = new Set<number>();
       const firstComponent = model.components[firstImpact.componentIndex];
+      const firstSurface = model.surfaceProfiles[firstImpact.surfaceProfileIndex];
       let rootActorDirectHit: boolean | null = null;
+      let rootActorAdmitted = false;
       // A full projectile hit does not re-submit radial damage to the struck
       // seat/component pool. The native helper aggregates one event for the
       // root vehicle actor; child-owned impacts make that root event indirect.
@@ -1242,20 +1287,24 @@ export function simulateEditorNativeShot({
           );
         } else {
           rootActorDirectHit = firstOwner.kind === "vehicle-root";
+          rootActorAdmitted = rootActorDirectHit ||
+            attachedDamageBearingArmorAdmitsRootVehicle(
+              model,
+              firstImpact.componentIndex,
+              firstComponent,
+              firstSurface,
+            );
         }
       }
       const hullPoolIndex = vehicleHullPoolIndex(model);
       if (hullPoolIndex === null) {
         addUnknown(unknowns, "vehicle hull radial damage pool is unresolved");
-      } else if (rootActorDirectHit === true) {
+      } else if (rootActorAdmitted) {
         guaranteedPools.add(hullPoolIndex);
       } else if (rootActorDirectHit === false) {
-        // A child-owned impact only seeds that child HitResult. Whether the
-        // root vehicle is admitted by the native overlap/visibility pass is a
-        // geometry result, not a consequence of the owner graph. Armored and
-        // unarmored Technical variants have identical radial multipliers but
-        // opposite observed outcomes at their weapon shields, so treating the
-        // root hull as unconditional here would manufacture damage.
+        // Detached weapon collision and other non-damage-bearing child
+        // geometry still need an exact overlap/visibility result. They are not
+        // promoted merely because their owner is attached to a vehicle.
         addUnknown(
           unknowns,
           `${model.healthPools[hullPoolIndex]?.poolId ?? "vehicle hull"} indirect radial overlap/visibility is unresolved`,

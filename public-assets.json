@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "sigua-armor-public-assets/v1",
+  "releaseTag": "public-assets-bootstrap-2026-08-09",
+  "sourceCommit": "7005b4232cb22b581a390936559a3b06e17a2c1f",
+  "distribution": {
+    "purpose": "developer-and-ci-bootstrap",
+    "productionHotlinking": false,
+    "updatePolicy": "Deploy changed content-addressed files incrementally to the project-owned origin and CDN; do not publish monthly full GitHub snapshots."
+  },
+  "archive": {
+    "name": "sigua-armor-public-assets-bootstrap-2026-08-09.tar.gz",
+    "url": "https://github.com/Thankyou-Cheems/SiguaArmor/releases/download/public-assets-bootstrap-2026-08-09/sigua-armor-public-assets-bootstrap-2026-08-09.tar.gz",
+    "bytes": 1598324605,
+    "sha256": "aad32dcdfca2f691450671b5ba013573fb52e81b28acb5df6946b36ccbac0eb0",
+    "resultManifest": {
+      "bytes": 1962063,
+      "sha256": "168a2c0248cc60615fa2f349c6e58265859eb0a67ceb20fd5b94f3cefac54876"
+    }
+  },
+  "incrementalArchives": [],
+  "preparedManifest": {
+    "schemaVersion": "sigua-public-release/v1",
+    "entryCount": 8458,
+    "totalBytes": 1838609760,
+    "bytes": 1962063,
+    "sha256": "168a2c0248cc60615fa2f349c6e58265859eb0a67ceb20fd5b94f3cefac54876"
+  },
+  "extractedPaths": [
+    "public/assets",
+    "public/images",
+    "public/release-manifest.json"
+  ]
+}

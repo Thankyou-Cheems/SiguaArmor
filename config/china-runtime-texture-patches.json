@@ -1,0 +1,429 @@
+{
+  "schemaVersion": "sigua-china-runtime-texture-patches/v1",
+  "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+  "profiles": [
+    {
+      "label": "PLA CSK body markings",
+      "fileName": "MI_CSK_Ext_Woodland_BaseColor.png",
+      "expectedSourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "regions": [
+        { "x": 386, "y": 405, "width": 53, "height": 52, "sampleRadius": 84, "feather": 5 },
+        { "x": 386, "y": 908, "width": 53, "height": 52, "sampleRadius": 84, "feather": 5 }
+      ]
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "fileName": "MI_CSK_Ext_Desert_BaseColor.png",
+      "expectedSourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "regions": [
+        { "x": 386, "y": 405, "width": 53, "height": 52, "sampleRadius": 84, "feather": 5 },
+        { "x": 386, "y": 908, "width": 53, "height": 52, "sampleRadius": 84, "feather": 5 }
+      ]
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "fileName": "MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "expectedSourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "regions": [
+        { "x": 284, "y": 313, "width": 55, "height": 55, "sampleRadius": 72, "feather": 5 },
+        { "x": 291, "y": 787, "width": 46, "height": 51, "sampleRadius": 72, "feather": 5 }
+      ]
+    },
+    {
+      "label": "PLA ZBL08 desert body markings",
+      "fileName": "MI_ZBL08_Ext_Desert_BaseColor.png",
+      "expectedSourceSha256": "a8c1d2764fc0823bcd54a7121db4a2efc9ee973fe5005191528d193847ec93c6",
+      "regions": [
+        { "x": 284, "y": 313, "width": 55, "height": 55, "sampleRadius": 72, "feather": 5 },
+        { "x": 291, "y": 787, "width": 46, "height": 51, "sampleRadius": 72, "feather": 5 }
+      ]
+    },
+    {
+      "label": "PLA ZBD04A body markings",
+      "fileName": "MI_ZBD04_Ext_Woodland_01_BaseColor.png",
+      "expectedSourceSha256": "9a7b0a7414ac47c3ba0d446e1370d2eea892a5bde34d7280dbb2bd1010c28214",
+      "regions": [
+        { "x": 360, "y": 460, "width": 58, "height": 61, "sampleRadius": 90, "feather": 5 },
+        { "x": 362, "y": 552, "width": 59, "height": 59, "sampleRadius": 90, "feather": 5 }
+      ]
+    },
+    {
+      "label": "PLA ZBD04A desert body markings",
+      "fileName": "MI_ZBD04_Ext_Desert_01_BaseColor.png",
+      "expectedSourceSha256": "92213d45fb12d557780382aa98f8cb9ac9386c33677a114096d9c8c6fc7e84b8",
+      "regions": [
+        { "x": 360, "y": 460, "width": 58, "height": 61, "sampleRadius": 90, "feather": 5 },
+        { "x": 362, "y": 552, "width": 59, "height": 59, "sampleRadius": 90, "feather": 5 }
+      ]
+    },
+    {
+      "label": "PLA ZTZ99 turret markings",
+      "fileName": "MI_ZTZ99_Turret_Woodland_BaseColor.png",
+      "expectedSourceSha256": "c9853a055863e6c80135e989ddefeccee66b9e2e6642ca355f30e299c0a863b3",
+      "regions": [
+        { "x": 838, "y": 505, "width": 72, "height": 70, "sampleRadius": 108, "feather": 6 },
+        { "x": 437, "y": 837, "width": 72, "height": 69, "sampleRadius": 108, "feather": 6 }
+      ]
+    },
+    {
+      "label": "PLA ZTZ99 desert turret markings",
+      "fileName": "MI_ZTZ99_Turret_Desert_BaseColor.png",
+      "expectedSourceSha256": "508754b92ce0722857ff1a5d0ae3f73f40cfc193958380de727419674c0a6b3e",
+      "regions": [
+        { "x": 838, "y": 505, "width": 72, "height": 70, "sampleRadius": 108, "feather": 6 },
+        { "x": 437, "y": 837, "width": 72, "height": 69, "sampleRadius": 108, "feather": 6 }
+      ]
+    },
+    {
+      "label": "GFI BMP-2 hull Iranian roundels",
+      "fileName": "MI_BMP2_Hull_GFI_BaseColor.png",
+      "expectedSourceSha256": "a3b825f2838157807343ea1cf1c7c19f3ceb877873a08f35a39024724e06c848",
+      "regions": [
+        { "x": 332, "y": 292, "width": 31, "height": 31, "sampleRadius": 64, "feather": 4, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 80 },
+        { "x": 332, "y": 612, "width": 31, "height": 31, "sampleRadius": 64, "feather": 4, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 80 }
+      ]
+    },
+    {
+      "label": "GFI BMP-2 turret Iranian markings",
+      "fileName": "MI_BMP2_Turret_GFI_BaseColor.png",
+      "expectedSourceSha256": "159b6184d7826aa2ec9e41f73d346ca086ade31f5f893d7d36163d774c91f028",
+      "regions": [
+        { "x": 135, "y": 787, "width": 66, "height": 65, "sampleRadius": 90, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 150 },
+        { "x": 816, "y": 787, "width": 68, "height": 65, "sampleRadius": 90, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 150 }
+      ]
+    },
+    {
+      "label": "GFI Safir Iranian markings",
+      "fileName": "MI_Safir_Exterior_BaseColor.png",
+      "expectedSourceSha256": "9d8fe4fcf3aacd10a9a71a28ade54dc8875f74560a4916b4ab608e2def1771c1",
+      "regions": [
+        { "x": 445, "y": 125, "width": 40, "height": 40, "sampleRadius": 72, "feather": 5, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 150 },
+        { "x": 60, "y": 465, "width": 90, "height": 90, "sampleRadius": 96, "feather": 7, "evidenceKind": "iran-white", "minimumEvidencePixels": 500 },
+        { "x": 938, "y": 402, "width": 28, "height": 28, "sampleRadius": 64, "feather": 4, "evidenceKind": "iran-white-muted", "minimumEvidencePixels": 30 }
+      ]
+    },
+    {
+      "label": "GFI T-72S hull Iranian roundel",
+      "fileName": "MI_T72AV_GFI_BaseColor.png",
+      "expectedSourceSha256": "33437c1535a6342cbc71e7880904be90d2b74f2550ae9cc85e2ca52f1171d634",
+      "regions": [
+        { "x": 448, "y": 270, "width": 36, "height": 36, "sampleRadius": 72, "feather": 5, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 150 }
+      ]
+    },
+    {
+      "label": "GFI T-72S turret Iranian marking",
+      "fileName": "MI_T72S_Turret_GFI_BaseColor.png",
+      "expectedSourceSha256": "166a00416069dc4ef396a8cae4d407347148f00f43cd3c07b59483b3062c0e8f",
+      "regions": [
+        { "x": 762, "y": 165, "width": 52, "height": 50, "sampleRadius": 84, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 200 }
+      ]
+    },
+    {
+      "label": "Mi-8 Soviet red star",
+      "fileName": "MI_MI8_BaseColor.png",
+      "expectedSourceSha256": "a16893fcacea24157e388b7e7bdb852c701627147730fd903104ecc8a071cd3e",
+      "regions": [
+        { "x": 236, "y": 122, "width": 64, "height": 62, "sampleRadius": 90, "feather": 6, "evidenceKind": "soviet-red-star", "minimumEvidencePixels": 80 }
+      ]
+    },
+    {
+      "label": "GFI MT-LB Iranian markings",
+      "fileName": "MI_MTLB_GFI_BaseColor.png",
+      "expectedSourceSha256": "9bf5cdac1d9a2c954945de072bcf6fae037b0dba5e1b061e6891e30cd9f65edf",
+      "regions": [
+        { "x": 18, "y": 222, "width": 48, "height": 48, "sampleRadius": 72, "feather": 5, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 300 },
+        { "x": 216, "y": 520, "width": 50, "height": 50, "sampleRadius": 72, "feather": 5, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 300 },
+        { "x": 888, "y": 150, "width": 56, "height": 62, "sampleRadius": 84, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 200 }
+      ]
+    },
+    {
+      "label": "GFI BTR-80 turret Iranian markings",
+      "fileName": "MI_BTR80_turret_GFI_BaseColor.png",
+      "expectedSourceSha256": "62ccb780a34386fea8e9edd0073e4d0db5734773cafcd8736d91187e6687b0ac",
+      "regions": [
+        { "x": 84, "y": 535, "width": 99, "height": 104, "cloneSourceX": 70, "cloneSourceY": 650, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 2000 },
+        { "x": 606, "y": 736, "width": 103, "height": 103, "cloneSourceX": 620, "cloneSourceY": 600, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 1300 }
+      ]
+    },
+    {
+      "label": "GFI MT-LB VMK turret Iranian markings",
+      "fileName": "MI_MTLB_VMK_Turret_Green_BaseColor.png",
+      "expectedSourceSha256": "b48dc243fde6837d8e3d830379aea02566a2873f9a542c5ec72210e686887070",
+      "regions": [
+        { "x": 188, "y": 110, "width": 55, "height": 76, "sampleRadius": 84, "feather": 5, "evidenceKind": "iran-rose-stencil", "minimumEvidencePixels": 250 },
+        { "x": 170, "y": 184, "width": 60, "height": 48, "sampleRadius": 84, "feather": 5, "evidenceKind": "iran-rose-stencil", "minimumEvidencePixels": 180 },
+        { "x": 896, "y": 594, "width": 52, "height": 84, "sampleRadius": 84, "feather": 5, "evidenceKind": "iran-rose-stencil", "minimumEvidencePixels": 230 },
+        { "x": 872, "y": 568, "width": 42, "height": 44, "sampleRadius": 84, "feather": 5, "evidenceKind": "iran-rose-stencil", "minimumEvidencePixels": 220 }
+      ]
+    },
+    {
+      "label": "PLA Z-9A fuselage insignia",
+      "fileName": "MI_Z9A_Hull_Woodland_BaseColor.png",
+      "expectedSourceSha256": "f63b8357519e6dc0bb9d0a91f2c4f4b49b9b7d1e6b79ed5604f65fe318343532",
+      "regions": [
+        { "x": 492, "y": 512, "width": 128, "height": 55, "sampleRadius": 108, "feather": 6, "minimumEvidencePixels": 350 },
+        { "x": 492, "y": 838, "width": 130, "height": 54, "sampleRadius": 108, "feather": 6, "minimumEvidencePixels": 350 }
+      ]
+    },
+    {
+      "label": "PLA ZTD-05 woodland chassis insignia 01",
+      "fileName": "MI_ZBD_2000_chasis_woodland_01_BaseColor.png",
+      "expectedSourceSha256": "3b2bca56c12296959fba85d9b1cc33709cd5b680d50c6598f3c8a9db280b9cec",
+      "regions": [
+        { "x": 158, "y": 334, "width": 72, "height": 70, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 },
+        { "x": 28, "y": 756, "width": 82, "height": 80, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA ZTD-05 woodland chassis insignia 03",
+      "fileName": "MI_ZBD_2000_chasis_woodland_03_BaseColor.png",
+      "expectedSourceSha256": "0df83b6faee0ad133e7e7139471a3fed42c1b7c5870ef76d3194b7de51fe0713",
+      "regions": [
+        { "x": 418, "y": 574, "width": 72, "height": 66, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA ZTD-05 turret insignia",
+      "fileName": "MI_ZTD05_turret_Woodland_BaseColor.png",
+      "expectedSourceSha256": "d923d3e2af475884c8ba2548885c5da1465d74a81ed875e2e25dfcfbdea6f84c",
+      "regions": [
+        { "x": 612, "y": 874, "width": 72, "height": 66, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA CTM-131 desert body insignia",
+      "fileName": "MI_FAW_MV3_Ext_Desert_01_BaseColor.png",
+      "expectedSourceSha256": "c13865faa95b429a48c536e8ed2e21013e3854ef837329603f4f3ef739155a55",
+      "regions": [
+        { "x": 736, "y": 624, "width": 52, "height": 50, "sampleRadius": 84, "feather": 5, "minimumEvidencePixels": 80 },
+        { "x": 740, "y": 722, "width": 52, "height": 57, "sampleRadius": 84, "feather": 5, "minimumEvidencePixels": 80 }
+      ]
+    },
+    {
+      "label": "PLA CTM-131 woodland body insignia",
+      "fileName": "MI_FAW_MV3_Ext_Woodland_01_BaseColor.png",
+      "expectedSourceSha256": "d3caf9438c6f370ffd0fbc9656a5e6799ca906a44ce1329e60c00b1c7a3b06e3",
+      "regions": [
+        { "x": 736, "y": 624, "width": 52, "height": 50, "sampleRadius": 84, "feather": 5, "minimumEvidencePixels": 80 },
+        { "x": 740, "y": 722, "width": 52, "height": 57, "sampleRadius": 84, "feather": 5, "minimumEvidencePixels": 80 }
+      ]
+    },
+    {
+      "label": "PLA ZSD-89 desert IFV hull insignia",
+      "fileName": "MI_ZSD89_Hull_Desert_BaseColor.png",
+      "expectedSourceSha256": "3fe99794cee762f71e8b31c338c472c04e7b4afc6e6b563c4ab9df06bf94d66a",
+      "regions": [
+        { "x": 514, "y": 868, "width": 74, "height": 76, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA ZSD-89 desert QJZ hull insignia",
+      "fileName": "MI_ZSD89_Hull_Desert_BaseColor.png",
+      "expectedSourceSha256": "421860eac293d6588f07e27b1c3a077ff9eee1e90f940029f1dfde3b4d1626c8",
+      "regions": [
+        { "x": 514, "y": 868, "width": 74, "height": 76, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA ZSD-89 desert QLZ hull insignia",
+      "fileName": "MI_ZSD89_Hull_Desert_BaseColor.png",
+      "expectedSourceSha256": "a9010685e1fc331dec53b48682ee418115472f8c1b30fc69c919776320ef1c70",
+      "regions": [
+        { "x": 514, "y": 868, "width": 74, "height": 76, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA ZSD-89 woodland QLZ hull insignia",
+      "fileName": "MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "expectedSourceSha256": "28299435f58725d32c1cd83ddd71ffc8955ceb65f9b4ae6d91a51d8b1e3c4f61",
+      "regions": [
+        { "x": 514, "y": 868, "width": 74, "height": 76, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA ZSD-89 woodland IFV hull insignia",
+      "fileName": "MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "expectedSourceSha256": "bcddc31d8bd3ac5be11f20eded65d786767d7e57f485a745284e1d1c8f831ca4",
+      "regions": [
+        { "x": 514, "y": 868, "width": 74, "height": 76, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA ZSD-89 woodland QJZ hull insignia",
+      "fileName": "MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "expectedSourceSha256": "caf0ae53032aeb499d4776b4e89faaa4fc575622c0ffd56c0b5a6d45995de10c",
+      "regions": [
+        { "x": 514, "y": 868, "width": 74, "height": 76, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA WZ-551 desert hull insignia",
+      "fileName": "MI_WZ551_Hull_Desert_BaseColor.png",
+      "expectedSourceSha256": "4ce5f9369272c34a883256bf66d995c5c21952653eda9babc6dbc346b89bd042",
+      "regions": [
+        { "x": 716, "y": 102, "width": 70, "height": 68, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA WZ-551 desert QLZ hull insignia",
+      "fileName": "MI_WZ551_Hull_Desert_BaseColor.png",
+      "expectedSourceSha256": "7fda8171d7f9b2626b63a8d778e809e65d51ec5b3ced25563328f52992148a10",
+      "regions": [
+        { "x": 716, "y": 102, "width": 70, "height": 68, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA WZ-551 woodland QLZ hull insignia",
+      "fileName": "MI_WZ551_Hull_Woodland_BaseColor.png",
+      "expectedSourceSha256": "0742012d117aad41d218a3d7567a7ab625f347e0fd157f78d9ec08904fc1e14b",
+      "regions": [
+        { "x": 716, "y": 102, "width": 70, "height": 68, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA WZ-551 woodland IFV hull insignia",
+      "fileName": "MI_WZ551_Hull_Woodland_BaseColor.png",
+      "expectedSourceSha256": "3f2dba45c4fe36a2ec71da9765bf321c6517be68482d0a8659319c6d10a30bef",
+      "regions": [
+        { "x": 716, "y": 102, "width": 70, "height": 68, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "PLA WZ-551 woodland QJZ hull insignia",
+      "fileName": "MI_WZ551_Hull_Woodland_BaseColor.png",
+      "expectedSourceSha256": "d30dc55083a8a5791fb30896bdccbeb9f11f6946e32d29b4b71c3d851a51a272",
+      "regions": [
+        { "x": 716, "y": 102, "width": 70, "height": 68, "sampleRadius": 96, "feather": 6, "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "GFI UH-1H fuselage Iranian emblem",
+      "fileName": "MI_UH1H_exterior_1_GFI_BaseColor.png",
+      "expectedSourceSha256": "b43784df3fdff447ae68e4705fc46b2bacbeb70f59d6a58e22d2ddab296403ba",
+      "regions": [
+        { "x": 412, "y": 416, "width": 108, "height": 132, "sampleRadius": 120, "feather": 8, "evidenceKind": "iran-white-muted", "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "GFI UH-1H tail flag and roundels",
+      "fileName": "MI_UH1H_exterior_2_GFI_BaseColor.png",
+      "expectedSourceSha256": "8f1d85bff8e40ca79adc51f7089fade45a72f65d9f441fa25eba2b4ecfb2f895",
+      "regions": [
+        { "x": 832, "y": 734, "width": 98, "height": 116, "sampleRadius": 120, "feather": 8, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 500 },
+        { "x": 516, "y": 804, "width": 122, "height": 112, "sampleRadius": 120, "feather": 8, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 100 },
+        { "x": 858, "y": 952, "width": 62, "height": 64, "sampleRadius": 84, "feather": 6, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "GFI Ural-4320 Iranian markings",
+      "fileName": "MI_Ural4320_Exterior_GFI_BaseColor.png",
+      "expectedSourceSha256": "68d64e3b586eb745d3fe12893429a56216731da925920e8cd80f30ff975dd1ee",
+      "regions": [
+        { "x": 154, "y": 368, "width": 48, "height": 52, "sampleRadius": 84, "feather": 5, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 80 },
+        { "x": 636, "y": 234, "width": 34, "height": 34, "sampleRadius": 72, "feather": 5, "evidenceKind": "iran-white", "minimumEvidencePixels": 20 }
+      ]
+    },
+    {
+      "label": "GFI M1151 Iranian roundel and emblems",
+      "fileName": "MI_M1151_GFI_Body_BaseColor.png",
+      "expectedSourceSha256": "5324ac856c4275eac5a6bc51aa9901fab0919e8f6d904f530e5acaeb51d2000a",
+      "regions": [
+        { "x": 256, "y": 444, "width": 24, "height": 24, "sampleRadius": 72, "feather": 4, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 8 },
+        { "x": 421, "y": 433, "width": 66, "height": 61, "sampleRadius": 96, "feather": 6, "evidenceKind": "iran-white-muted", "minimumEvidencePixels": 300 },
+        { "x": 548, "y": 461, "width": 36, "height": 49, "sampleRadius": 84, "feather": 5, "evidenceKind": "iran-white-muted", "minimumEvidencePixels": 90 },
+        { "x": 518, "y": 668, "width": 52, "height": 40, "sampleRadius": 84, "feather": 5, "evidenceKind": "iran-white-muted", "minimumEvidencePixels": 100 },
+        { "x": 482, "y": 806, "width": 70, "height": 50, "sampleRadius": 96, "feather": 6, "evidenceKind": "iran-white-muted", "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "GFI BMP-1 hull Iranian roundels",
+      "fileName": "MI_BMP1_GFI_BaseColor.png",
+      "expectedSourceSha256": "5283d478ea63244e086c8acc7f66911575e034ae53dc31a6e63644f3df96eacf",
+      "regions": [
+        { "x": 326, "y": 290, "width": 38, "height": 42, "sampleRadius": 72, "feather": 5, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 50 },
+        { "x": 326, "y": 606, "width": 38, "height": 42, "sampleRadius": 72, "feather": 5, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 50 }
+      ]
+    },
+    {
+      "label": "GFI BMP-1 turret Iranian emblems",
+      "fileName": "MI_BMP1_Turret_GFI_BaseColor.png",
+      "expectedSourceSha256": "0203c755104fbc71ed0bf16c5d67096d1678131c2719c9e88ccb5a2fd2c96a61",
+      "regions": [
+        { "x": 184, "y": 838, "width": 82, "height": 94, "sampleRadius": 108, "feather": 7, "evidenceKind": "iran-white", "minimumEvidencePixels": 250 },
+        { "x": 742, "y": 838, "width": 84, "height": 94, "sampleRadius": 108, "feather": 7, "evidenceKind": "iran-white", "minimumEvidencePixels": 250 }
+      ]
+    },
+    {
+      "label": "GFI T-62 hull Iranian emblem",
+      "fileName": "MI_T62_GFI_BaseColor.png",
+      "expectedSourceSha256": "81ef5c7de81e59faa5183f10cd3b9f15d514e5d6ebfc9aa469c78fd216013770",
+      "regions": [
+        { "x": 200, "y": 884, "width": 62, "height": 52, "sampleRadius": 84, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 80 }
+      ]
+    },
+    {
+      "label": "GFI T-62 turret Iranian roundels",
+      "fileName": "MI_T62_turret_GFI_BaseColor.png",
+      "expectedSourceSha256": "e35e1a2d98cb02b5a353d9194cd4f89d0bed321a68b2e8fe45a9f771e796435e",
+      "regions": [
+        { "x": 448, "y": 414, "width": 66, "height": 66, "sampleRadius": 96, "feather": 6, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 100 },
+        { "x": 398, "y": 898, "width": 66, "height": 68, "sampleRadius": 96, "feather": 6, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "GFI BRDM-2 Iranian markings",
+      "fileName": "MI_BRDM2_GFI_BaseColor.png",
+      "expectedSourceSha256": "1945d7e3f3a0830c9ced27788ee9bc705965ad68909c03bea144e7c318ae620c",
+      "regions": [
+        { "x": 952, "y": 60, "width": 70, "height": 70, "sampleRadius": 90, "feather": 6, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 100 },
+        { "x": 952, "y": 388, "width": 70, "height": 70, "sampleRadius": 90, "feather": 6, "evidenceKind": "iran-roundel", "minimumEvidencePixels": 100 },
+        { "x": 322, "y": 834, "width": 52, "height": 52, "sampleRadius": 84, "feather": 6, "evidenceKind": "iran-white", "minimumEvidencePixels": 20 }
+      ]
+    },
+    {
+      "label": "TLF S-70 Turkish flag and roundel",
+      "fileName": "MI_S70_BaseColor.png",
+      "expectedSourceSha256": "cc97a1b042f9b496badc325c4054d3a9fe1b8359c62e995ec5558eb9636c63db",
+      "regions": [
+        { "x": 74, "y": 788, "width": 50, "height": 48, "sampleRadius": 84, "feather": 6, "evidenceKind": "turkey-red-white", "minimumEvidencePixels": 80 },
+        { "x": 342, "y": 888, "width": 72, "height": 70, "sampleRadius": 96, "feather": 6, "evidenceKind": "turkey-red-white", "minimumEvidencePixels": 150 }
+      ]
+    },
+    {
+      "label": "USA MATV tan insignia",
+      "fileName": "MI_MATV_BaseColor.png",
+      "expectedSourceSha256": "90d36a05be485ed66da5dea346032596ffe0370978ad7652d996b31d4fbf12ad",
+      "regions": [
+        { "x": 748, "y": 124, "width": 70, "height": 64, "sampleRadius": 96, "feather": 6, "evidenceKind": "matv-weathered-star", "minimumEvidencePixels": 400 },
+        { "x": 140, "y": 563, "width": 62, "height": 60, "cloneSourceX": 74, "cloneSourceY": 563, "feather": 5, "evidenceKind": "matv-chevron-dark", "minimumEvidencePixels": 50 }
+      ]
+    },
+    {
+      "label": "USA MATV green insignia",
+      "fileName": "MI_MATV_GREEN_BaseColor.png",
+      "expectedSourceSha256": "1c2077ed9b8b165eb56389e4ed613871383848d7924e972e854c67c127e3507e",
+      "regions": [
+        { "x": 748, "y": 124, "width": 70, "height": 64, "sampleRadius": 96, "feather": 6, "evidenceKind": "matv-weathered-star", "minimumEvidencePixels": 400 },
+        { "x": 140, "y": 563, "width": 62, "height": 60, "cloneSourceX": 74, "cloneSourceY": 563, "feather": 5, "evidenceKind": "matv-chevron-tan", "minimumEvidencePixels": 30 }
+      ]
+    },
+    {
+      "label": "USA MATV USMC insignia",
+      "fileName": "MI_MATV_USMC_BaseColor.png",
+      "expectedSourceSha256": "0f1411b16755201d45d74d77b529d0497b844a682bf0ddc64a109da2cf4dd627",
+      "regions": [
+        { "x": 748, "y": 124, "width": 70, "height": 64, "sampleRadius": 96, "feather": 6, "evidenceKind": "matv-weathered-star", "minimumEvidencePixels": 400 },
+        { "x": 140, "y": 563, "width": 62, "height": 60, "cloneSourceX": 74, "cloneSourceY": 563, "feather": 5, "evidenceKind": "matv-chevron-double", "minimumEvidencePixels": 100 }
+      ]
+    },
+    {
+      "label": "USA MATV woodland insignia",
+      "fileName": "MI_MATV_Woodland_BaseColor.png",
+      "expectedSourceSha256": "3e25ab6f6c0842f2ffdc3c8de093daa8b2c7ad6019c4e61a33c2b2e99fe182c3",
+      "regions": [
+        { "x": 748, "y": 124, "width": 70, "height": 64, "sampleRadius": 96, "feather": 6, "evidenceKind": "matv-weathered-star", "minimumEvidencePixels": 400 },
+        { "x": 140, "y": 563, "width": 62, "height": 60, "cloneSourceX": 74, "cloneSourceY": 563, "feather": 5, "evidenceKind": "matv-chevron-light", "minimumEvidencePixels": 50 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "schemaVersion": "sigua-emplaced-weapon-catalog-projection/v1",
+  "evidencePath": "generated/internal/emplaced-weapon-cdo-evidence.json",
+  "aliases": [
+    {
+      "id": "runtime-emplaced-81-82mm-mortar",
+      "sourceVariant": {
+        "familyLabel": "81/82 mm 迫击炮弹",
+        "qualifier": "BP_Technical2Seater_Mortar_Black / BP_Technical2Seater_Mortar_Grey / BP_Technical2Seater_Mortar_Tan / BP_Technical2Seater_White_Mortar / 迫击炮"
+      },
+      "familyLabel": "81/82 mm 迫击炮弹",
+      "label": "81/82 mm 架设式迫击炮",
+      "qualifier": "2B14 / M252 / M1937 / PP-87 架设式迫击炮",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_2b14podnosmortar/BP_2b14podnosmortar",
+        "/Game/Vehicles/Emplaced_81mmMortar_CAF/BP_81mmMortar",
+        "/Game/Vehicles/Emplaced_M1937mortar/BP_M1937mortar",
+        "/Game/Vehicles/Emplaced_M252mortar/BP_M252mortar",
+        "/Game/Vehicles/Emplaced_PP87Mortar/BP_PP87Mortar"
+      ],
+      "searchAliases": [
+        "2B14",
+        "M252",
+        "M1937",
+        "PP-87",
+        "BP_GenericMortarWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-ags-17",
+      "sourceVariant": {
+        "familyLabel": "AGS-17",
+        "qualifier": "AGS-17 OpenTurret Weapon"
+      },
+      "familyLabel": "AGS-17",
+      "label": "AGS-17“烈火”架设式自动榴弹发射器",
+      "qualifier": "AGS-17 架设式武器",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_AGS-17/BP_AGS-17_Weapon"
+      ],
+      "searchAliases": [
+        "AGS-17",
+        "Plamya",
+        "烈火",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-bgm-71-tow",
+      "sourceVariant": {
+        "familyLabel": "BGM-71 TOW",
+        "qualifier": "BGM71TOW MATV"
+      },
+      "familyLabel": "BGM-71 TOW",
+      "label": "BGM-71 TOW“陶式”架设式反坦克导弹",
+      "qualifier": "BGM-71 TOW 架设式反坦克导弹",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_BGM71TOW/BP_EmplacedBGM71TOW"
+      ],
+      "searchAliases": [
+        "TOW",
+        "陶式",
+        "BP_EmplacedBGM71TOW",
+        "/Game/Gameplay/Deployables/Emplacements/BP_BGM71TOW_Tripod_USA"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-dshk",
+      "sourceVariant": {
+        "familyLabel": "DshK 重机枪",
+        "qualifier": "Cupola Dshk / Cupola Dshk MIL"
+      },
+      "familyLabel": "DshK 重机枪",
+      "label": "DShK 架设式重机枪",
+      "qualifier": "DShK 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_Dshk/BP_EmplacedDshk"
+      ],
+      "searchAliases": [
+        "DShK",
+        "DshK",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-hj-8",
+      "sourceVariant": {
+        "familyLabel": "HJ-8L“红箭-8L” 破甲弹 反坦克导弹",
+        "qualifier": "HJ8ATGM CSK131"
+      },
+      "familyLabel": "HJ-8L“红箭-8L” 破甲弹 反坦克导弹",
+      "label": "HJ-8“红箭-8”架设式反坦克导弹",
+      "qualifier": "HJ-8ATGM 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_HJ-8ATGM/BP_Emplaced_HJ-8ATGM"
+      ],
+      "searchAliases": [
+        "HJ-8",
+        "红箭-8",
+        "HJ8ATGM",
+        "BP_GenericDeployableGuidedMissileWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-kord",
+      "sourceVariant": {
+        "familyLabel": "Kord“科尔德” 重机枪",
+        "qualifier": "Kord BTR-D / Kord Kozak / Kord Tigr / NSV RHIB Weapon"
+      },
+      "familyLabel": "Kord“科尔德” 重机枪",
+      "label": "Kord“科尔德”架设式重机枪",
+      "qualifier": "Kord 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_Kord/BP_EmplacedKord"
+      ],
+      "searchAliases": [
+        "Kord",
+        "科尔德",
+        "NSV",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-kornet",
+      "sourceVariant": {
+        "familyLabel": "9M133 Kornet",
+        "qualifier": "Kornet Safir Weapon"
+      },
+      "familyLabel": "9M133 Kornet“短号”",
+      "label": "9M133 Kornet“短号”架设式反坦克导弹",
+      "qualifier": "9M133 Kornet“短号”三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_Kornet/BP_EmplacedKornet"
+      ],
+      "searchAliases": [
+        "Kornet",
+        "短号",
+        "9M133",
+        "BP_GenericDeployableGuidedMissileWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-m2-browning",
+      "sourceVariant": {
+        "familyLabel": "M2A1 Browning“勃朗宁” 重机枪"
+      },
+      "familyLabel": "M2A1 Browning“勃朗宁” 重机枪",
+      "label": "M2A1 Browning“勃朗宁”架设式重机枪",
+      "qualifier": "M2HB 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced50cal/BP_EmplacedM2_Weapon"
+      ],
+      "searchAliases": [
+        "M2",
+        "M2HB",
+        "Browning",
+        "勃朗宁",
+        "BP_EmplacedM2_Weapon",
+        "/Game/Gameplay/Deployables/Emplacements/BP_M2HB_Tripod_Ironsight",
+        "/Game/Gameplay/Deployables/Emplacements/BP_M2HB_Tripod_Shielded"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-mag-58",
+      "sourceVariant": {
+        "familyLabel": "M240B 机枪",
+        "qualifier": "ASLAV Mag58 Cmdr Weapon / M240 Loaders Weapon / M240 Loaders Weapon WPMC / M240 RHIB Weapon"
+      },
+      "familyLabel": "MAG 58",
+      "label": "MAG 58 架设式机枪",
+      "qualifier": "MAG 58 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_Mag58/BP_EmplacedMag58_Weapon"
+      ],
+      "searchAliases": [
+        "MAG 58",
+        "Mag58",
+        "M240",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-mk19",
+      "sourceVariant": {
+        "familyLabel": "Mk19",
+        "qualifier": "Mk19 OpenTurret Weapon"
+      },
+      "familyLabel": "Mk19",
+      "label": "Mk19 架设式自动榴弹发射器",
+      "qualifier": "Mk19 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_Mk19/BP_Mk19_Weapon"
+      ],
+      "searchAliases": [
+        "Mk19",
+        "MK19",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-qjz-89",
+      "sourceVariant": {
+        "familyLabel": "QJZ-89 重机枪",
+        "qualifier": "Cupola QJZ89 / Cupola QJZ89 Naval / QJZ-89 RHIB Weapon / ZSD QJZ89 Desert"
+      },
+      "familyLabel": "QJZ-89 重机枪",
+      "label": "QJZ-89 架设式重机枪",
+      "qualifier": "QJZ-89 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_QJZ-89/BP_EmplacedQJZ-89"
+      ],
+      "searchAliases": [
+        "QJZ-89",
+        "QJZ89",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-qlz-87",
+      "sourceVariant": {
+        "familyLabel": "QLZ-87",
+        "qualifier": "QLZ87 OpenTurret Weapon / QLZ87 Weapon Lynx8x8"
+      },
+      "familyLabel": "QLZ-87",
+      "label": "QLZ-87 架设式自动榴弹发射器",
+      "qualifier": "QLZ-87 三脚架",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_QLZ87/BP_QLZ87_Weapon"
+      ],
+      "searchAliases": [
+        "QLZ-87",
+        "QLZ87",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-spg-9",
+      "sourceVariant": {
+        "familyLabel": "SPG-9 PG-9V 破甲弹",
+        "qualifier": "SPG9"
+      },
+      "familyLabel": "SPG-9 PG-9V 破甲弹",
+      "label": "SPG-9 架设式反坦克炮",
+      "qualifier": "SPG-9 架设式武器",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_SPG9/BP_EmplacedSPG9"
+      ],
+      "searchAliases": [
+        "SPG-9",
+        "PG-9V",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-ub32",
+      "sourceVariant": {
+        "familyLabel": "S5 火箭弹",
+        "qualifier": "BRDM2 GFI UB32 / KPVT UB32 / UB32"
+      },
+      "familyLabel": "S5 火箭弹",
+      "label": "UB-32 架设式火箭发射器",
+      "qualifier": "UB-32 火箭巢",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_UB32_RocketArtillery/BP_EmplacedUB32"
+      ],
+      "searchAliases": [
+        "UB-32",
+        "S-5",
+        "BP_GenericDeployableWeapon"
+      ]
+    },
+    {
+      "id": "runtime-emplaced-zu-23-2",
+      "sourceVariant": {
+        "familyLabel": "ZU-23 OFZT 曳光破片弹",
+        "qualifier": "Emplaced ZU23-2 Antiaircannon Weapon / Emplaced ZU23-2 Antiaircannon Weapon INS"
+      },
+      "familyLabel": "ZU-23 OFZT 曳光破片弹",
+      "label": "ZU-23-2 架设式高射炮",
+      "qualifier": "ZU-23-2 架设式武器",
+      "targetPackages": [
+        "/Game/Vehicles/Emplaced_ZU23-2_Antiaircannon/BP_Emplaced_ZU23-2_Antiaircannon_Weapon_Deployable"
+      ],
+      "searchAliases": [
+        "ZU-23",
+        "ZU23-2",
+        "OFZT",
+        "BP_GenericDeployableWeapon"
+      ]
+    }
+  ]
+}

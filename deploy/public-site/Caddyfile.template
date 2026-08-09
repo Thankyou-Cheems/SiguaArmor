@@ -1,0 +1,208 @@
+{
+	admin off
+	auto_https off
+}
+
+:8080 {
+	route {
+		@unauthorized not header X-Sigua-Origin-Auth {$SIGUA_ORIGIN_AUTH_SECRET}
+		respond @unauthorized "Forbidden\n" 403
+
+		@health path /healthz
+		respond @health 200
+
+		header {
+			X-Frame-Options "DENY"
+			X-Content-Type-Options "nosniff"
+			Referrer-Policy "strict-origin-when-cross-origin"
+			-Server
+		}
+		encode zstd gzip
+
+		@landingHost host {{LANDING_HOST}}
+		route @landingHost {
+			@portalDocument path / /index.html
+			header @portalDocument Cache-Control "{{LANDING_HTML_CACHE_CONTROL}}"
+			handle @portalDocument {
+				rewrite * /index.html
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				file_server
+			}
+
+			@legacyArmorPath path /squad /squad/* /sigua /sigua/*
+			redir @legacyArmorPath {{ARMOR_ORIGIN}}{uri} 301
+
+			@portalAssets path /portal-assets/*
+			header @portalAssets Cache-Control "public, max-age=31536000, immutable"
+			@generatedPortalAssets path /portal-assets/siguad-*
+			handle @generatedPortalAssets {
+				uri strip_prefix /portal-assets
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad/images/site
+				file_server
+			}
+			handle @portalAssets {
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				file_server
+			}
+
+			respond "Not Found\n" 404
+		}
+
+		@armorHost host {{ARMOR_HOST}}
+		route @armorHost {
+			@analytics path /__analytics/dau
+			reverse_proxy @analytics {$SIGUA_ANALYTICS_UPSTREAM:sigua-analytics:8081} {
+				header_up Host {host}
+				header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+			}
+
+			@contentAdmin path /__admin/content /__admin/content/*
+			reverse_proxy @contentAdmin {$SIGUA_CONTENT_ADMIN_UPSTREAM:sigua-content-admin:8083} {
+				header_up Host {host}
+				header_up X-Sigua-Origin-Auth {$SIGUA_CONTENT_ADMIN_PROXY_SECRET}
+				header_up X-Sigua-Client-IP {http.request.header.EO-Connecting-IP}
+				header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+			}
+
+			@armorRoot path /
+			redir @armorRoot {{LANDING_ORIGIN}}/ 302
+			@siguaBase path /sigua
+			redir @siguaBase /sigua/?{orig_query} 308
+			@squadBase path /squad
+			redir @squadBase /squad/?{orig_query} 308
+
+			@releasePointer path /release-manifest.json
+			header @releasePointer Cache-Control "public, max-age=60, stale-while-revalidate=300"
+
+			@chinaAssets path /china-assets/*
+			header @chinaAssets Cache-Control "public, max-age=31536000, immutable"
+			handle @chinaAssets {
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				file_server {
+					precompressed br gzip
+				}
+			}
+
+			@squadImmutable path /squad/assets/* /assets/* /squad/infantry-hit-runtime/* /infantry-hit-runtime/* /squad/fonts/*.woff2 /fonts/*.woff2 /squad/images/vehicle-impressions/* /images/vehicle-impressions/* /squad/images/china-vehicle-impressions/* /images/china-vehicle-impressions/*
+			header @squadImmutable Cache-Control "public, max-age=31536000, immutable"
+			@squadRevalidate {
+				path /squad/catalog-data/* /squad/fonts/* /squad/icons/* /squad/images/* /catalog-data/* /fonts/* /icons/* /images/*
+				not path /squad/fonts/*.woff2 /fonts/*.woff2 /squad/images/vehicle-impressions/* /images/vehicle-impressions/* /squad/images/china-vehicle-impressions/* /images/china-vehicle-impressions/*
+			}
+			header @squadRevalidate Cache-Control "public, max-age=3600, must-revalidate"
+			@squadPointer path /squad/release-manifest.json
+			header @squadPointer Cache-Control "public, max-age=60, must-revalidate"
+
+			@squadStatic path /squad/assets/* /squad/infantry-hit-runtime/* /squad/catalog-data/* /squad/fonts/* /squad/icons/* /squad/images/* /squad/release-manifest.json
+			handle @squadStatic {
+				uri strip_prefix /squad
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
+				file_server {
+					precompressed br gzip
+				}
+			}
+
+			@squadRootStatic path /assets/* /infantry-hit-runtime/* /catalog-data/* /fonts/* /icons/* /images/*
+			handle @squadRootStatic {
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
+				file_server {
+					precompressed br gzip
+				}
+			}
+
+			@footerContentDocument path /supporters.json /updates.json
+			handle @footerContentDocument {
+				header Cache-Control "public, max-age=60, stale-while-revalidate=300"
+				root * {$SIGUA_CONTENT_ROOT:/srv/content}
+				file_server
+			}
+
+			@squadSharedSupportersDocument path /squad/supporters.json
+			handle @squadSharedSupportersDocument {
+				uri strip_prefix /squad
+				header Cache-Control "public, max-age=60, stale-while-revalidate=300"
+				root * {$SIGUA_CONTENT_ROOT:/srv/content}
+				file_server
+			}
+
+			@squadFooterContentDocument path /squad/updates.json
+			handle @squadFooterContentDocument {
+				uri strip_prefix /squad
+				header Cache-Control "public, max-age=60, stale-while-revalidate=300"
+				root * {$SIGUA_CONTENT_ROOT:/srv/content}/squad
+				file_server
+			}
+
+			@squadHtml {
+				path /squad/*
+				method GET HEAD
+				header Accept *text/html*
+				header !RSC
+				header !Next-Router-State-Tree
+				header !Next-Router-Prefetch
+				header !Next-Router-Segment-Prefetch
+				header !X-Vinext-Rsc-Render-Mode
+				not path *.rsc
+				not query _rsc=*
+			}
+			handle @squadHtml {
+				uri strip_prefix /squad
+				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
+					header_up Host {host}
+					header_up X-Forwarded-Prefix /squad
+					header_down Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
+				}
+			}
+
+			@siguaHtml {
+				path /sigua/*
+				method GET HEAD
+				header Accept *text/html*
+				header !RSC
+				header !Next-Router-State-Tree
+				header !Next-Router-Prefetch
+				header !Next-Router-Segment-Prefetch
+				header !X-Vinext-Rsc-Render-Mode
+				not path *.rsc
+				not query _rsc=*
+			}
+			handle @siguaHtml {
+				uri strip_prefix /sigua
+				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
+					header_up Host {host}
+					header_up X-Forwarded-Prefix /sigua
+					header_down Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
+				}
+			}
+
+			@squadApplication path /squad/*
+			handle @squadApplication {
+				uri strip_prefix /squad
+				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
+					header_up Host {host}
+					header_up X-Forwarded-Prefix /squad
+					header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+				}
+			}
+
+			@siguaApplication path /sigua/*
+			handle @siguaApplication {
+				uri strip_prefix /sigua
+				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
+					header_up Host {host}
+					header_up X-Forwarded-Prefix /sigua
+					header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+				}
+			}
+
+			handle @releasePointer {
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				file_server
+			}
+
+			respond "Not Found\n" 404
+		}
+
+		respond "Not Found\n" 404
+	}
+}
