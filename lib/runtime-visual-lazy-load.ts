@@ -1,6 +1,14 @@
 const RUNTIME_VISUAL_TEXTURE_EXTENSION =
   /\.(?:avif|jpe?g|ktx2?|png|webp)(?:[?#].*)?$/iu;
 
+export const SIGUA_WIKI_ORIGIN = "https://wiki.siguad.icu";
+
+export function runtimeWikiAssetUrl(url: string) {
+  return url.startsWith("/assets/runtime-probe/")
+    ? `${SIGUA_WIKI_ORIGIN}${url}`
+    : url;
+}
+
 // Analysis mode only needs source material flags and mesh geometry. Routing
 // image requests to one opaque pixel preserves alpha/material metadata for the
 // supplemental silhouette pass without downloading vehicle appearance maps.
@@ -15,7 +23,7 @@ export function isRuntimeVisualTextureUrl(url: string) {
 export function runtimeAnalysisVisualUrl(url: string) {
   return isRuntimeVisualTextureUrl(url)
     ? RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL
-    : url;
+    : runtimeWikiAssetUrl(url);
 }
 
 export type RuntimeViewerPresentation =
