@@ -1,1 +1,16 @@
-* text=auto eol=lf
+generated/internal/*.json text eol=lf
+# Files under public/ are browser-ready release bytes. Git must not rewrite them.
+public/** -text
+app/runtime-weapon-source-index.json text eol=lf
+app/runtime-weapon-catalog.json text eol=lf
+app/wiki-weapon-catalog.json text eol=lf
+app/runtime-vehicle-equipment-index.json text eol=lf
+app/runtime-probe-visual-delivery-index.json text eol=lf
+app/runtime-probe-visual-delivery/*.visual.json text eol=lf
+app/runtime-probe-visuals/*.visual.json text eol=lf
+app/runtime-probe-visual-index.json text eol=lf
+app/support-air-visual-index.json text eol=lf
+app/runtime-probe-visual-release-index.json text eol=lf
+app/support-air-visual-release-index.json text eol=lf
+app/china-runtime-probe-visual-release-index.json text eol=lf
+app/runtime-probe-visual-review-index.json text eol=lf

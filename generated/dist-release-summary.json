@@ -1,0 +1,41 @@
+{
+  "brotliTransferBytes": 1666286470,
+  "closure": {
+    "chinaTexturePatchApplications": 143,
+    "chinaTexturePatchProfiles": 48,
+    "chinaTexturePatchSources": 139,
+    "footerAttributionFiles": 1,
+    "footerAttributionOccurrences": 1,
+    "footerAttributionSource": "app/CatalogApp.tsx",
+    "hitBindings": 616,
+    "hitBvh": 472,
+    "hitGeometry": 472,
+    "hitRecords": 474,
+    "preparedAssets": 8458,
+    "preparedInputs": 0,
+    "visualBindings": 861,
+    "visualBlobs": 4065,
+    "visualExternalResources": 19209,
+    "visualModels": 1963,
+    "visualSourceAssets": 2637,
+    "viteImmutableAssets": 683,
+    "viteImmutableSource": "dist/client/.vite/manifest.json"
+  },
+  "entryCount": 9141,
+  "gzipTransferBytes": 1672952893,
+  "headers": {
+    "contentEncoding": [
+      "br",
+      "gzip"
+    ],
+    "html": "public, max-age=0, s-maxage=60, stale-while-revalidate=30",
+    "immutable": "public,max-age=31536000,immutable",
+    "mutable": "public,max-age=60,must-revalidate",
+    "vary": "Accept-Encoding"
+  },
+  "manifestBytes": 4036013,
+  "manifestSha256": "b9b6338460908da392ef8fb38e4708ad49fc961dce79b44ac68a141e4baa1047",
+  "releaseId": "international-foundation-2026-07-23",
+  "schemaVersion": "sigua-cdn-release/v1",
+  "totalBytes": 1869607248
+}

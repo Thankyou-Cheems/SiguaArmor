@@ -6,9 +6,7 @@
     "sourceBuildId": "squad-sdk-v10.5.0-0dd95d5a0760a9b8",
     "odkDllSha256": "0a21ad6d429cd9f4999c9041ce4a8b80de33b7819dd9ba66d50551567637eb2e",
     "chassisPoseRecordsSha256": "92a091799fe81b7e4cd07d9b62829e4c86a0b95fc387bc4ad7cc65abc1609ba5",
-    "visualIndexSha256": "33e722dcf4d40631f68d0938a3b503450b6165ab9970f7a0390b2f4605f4383e",
-    "evidenceLogicalPath": "generated/runtime-suspension-pose-evidence.json",
-    "evidenceSha256": "99c64d27fdd292910bd2b572f187132011bd6c36b717ceccdf2a7669bbb70daa"
+    "visualIndexSha256": "33e722dcf4d40631f68d0938a3b503450b6165ab9970f7a0390b2f4605f4383e"
   },
   "coverage": {
     "requestedGeneratedClassCount": 468,

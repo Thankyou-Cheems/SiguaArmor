@@ -1,0 +1,549 @@
+{
+  "schemaVersion": "t64-planar-native-suspension-test-vector/v1",
+  "generatedClass": "/Game/Vehicles/T64_BM2/BP_T64BM2_Cage.BP_T64BM2_Cage_C",
+  "method": {
+    "anchor": "inverseBindReferenceBone + AdditionalOffset",
+    "plane": "gltf world Y = 0",
+    "sweep": "sphere center along chassis-local down axis",
+    "formula": "offset=clamp((radius-anchorWorldHeight)/axisVertical,-drop,+raise)",
+    "offsetSign": "positive follows chassis-local down axis",
+    "contactResidual": "final sphere-center world height minus radius; zero is plane contact",
+    "unrealToGltf": "meters=[Unreal.X/100,Unreal.Z/100,Unreal.Y/100]",
+    "localAxisGltf": [
+      0,
+      -1,
+      0
+    ],
+    "worldAxisGltf": [
+      0.023050982,
+      -0.999734283,
+      -0.000121867
+    ]
+  },
+  "checks": {
+    "wheelCountIs16": true,
+    "allWheelParentsAreRoot": true,
+    "inverseBindReferenceMatchesCurrentReferencePose": true,
+    "endWheelTravelIsZero": true,
+    "endWheelOffsetIsZero": true,
+    "middleWheelTravelIsNonzero": true,
+    "middleWheelOffsetIsNonzero": true,
+    "middleWheelContactResidualAllFinite": true,
+    "middleWheelExactContactCount": 12,
+    "middleWheelClampedCount": 0
+  },
+  "wheels": [
+    {
+      "bone": "Wheel_L1",
+      "sourceBone": "wheel_L1",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        2.841359632,
+        0.783099487,
+        -1.358900431
+      ],
+      "referenceCurrentTranslationResidualM": 4.1571e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        55,
+        -5
+      ],
+      "anchorWorldHeightCm": 70.652526,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 42,
+      "raiseCm": 0,
+      "dropCm": 0,
+      "unclampedOffsetCm": 28.660142,
+      "offsetCm": 0,
+      "contactResidualCm": 28.652526084,
+      "clamped": true,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R1",
+      "sourceBone": "wheel_R1",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        2.841360075,
+        0.783099726,
+        1.358899471
+      ],
+      "referenceCurrentTranslationResidualM": 6.3987e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        -55,
+        -5
+      ],
+      "anchorWorldHeightCm": 70.633276,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 42,
+      "raiseCm": 0,
+      "dropCm": 0,
+      "unclampedOffsetCm": 28.640886,
+      "offsetCm": 0,
+      "contactResidualCm": 28.633275882,
+      "clamped": true,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_L2",
+      "sourceBone": "wheel_L2",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        2.200759189,
+        0.36629954,
+        -1.358900445
+      ],
+      "referenceCurrentTranslationResidualM": 6.7463e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        55,
+        20
+      ],
+      "anchorWorldHeightCm": 52.500316,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": 2.50098,
+      "offsetCm": 2.50098,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R2",
+      "sourceBone": "wheel_R2",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        2.200759632,
+        0.366299778,
+        1.358899576
+      ],
+      "referenceCurrentTranslationResidualM": 7.0912e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        -55,
+        20
+      ],
+      "anchorWorldHeightCm": 52.481065,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": 2.481725,
+      "offsetCm": 2.481725,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 2,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_L3",
+      "sourceBone": "wheel_L3",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        1.400759476,
+        0.361499667,
+        -1.358900315
+      ],
+      "referenceCurrentTranslationResidualM": 7.8561e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        55,
+        20
+      ],
+      "anchorWorldHeightCm": 50.176377,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": 0.176424,
+      "offsetCm": 0.176424,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R3",
+      "sourceBone": "wheel_R3",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        1.400759918,
+        0.361499876,
+        1.358899706
+      ],
+      "referenceCurrentTranslationResidualM": 7.24e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        -55,
+        20
+      ],
+      "anchorWorldHeightCm": 50.157124,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": 0.157165,
+      "offsetCm": 0.157165,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 4,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_L4",
+      "sourceBone": "wheel_L4",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        0.531659382,
+        0.361499757,
+        -1.358900173
+      ],
+      "referenceCurrentTranslationResidualM": 6.3176e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        55,
+        20
+      ],
+      "anchorWorldHeightCm": 48.173024,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -1.827462,
+      "offsetCm": -1.827462,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R4",
+      "sourceBone": "wheel_R4",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        0.531660123,
+        0.361499995,
+        1.358899848
+      ],
+      "referenceCurrentTranslationResidualM": 6.3014e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        -55,
+        20
+      ],
+      "anchorWorldHeightCm": 48.153774,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -1.846717,
+      "offsetCm": -1.846717,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 6,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_L5",
+      "sourceBone": "wheel_L5",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -0.249890549,
+        0.361499965,
+        -1.358900046
+      ],
+      "referenceCurrentTranslationResidualM": 7.5679e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        55,
+        20
+      ],
+      "anchorWorldHeightCm": 46.371494,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -3.62947,
+      "offsetCm": -3.62947,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R5",
+      "sourceBone": "wheel_R5",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -0.249890166,
+        0.361500204,
+        1.358899975
+      ],
+      "referenceCurrentTranslationResidualM": 6.9778e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        -55,
+        20
+      ],
+      "anchorWorldHeightCm": 46.352244,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -3.648726,
+      "offsetCm": -3.648726,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 8,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_L6",
+      "sourceBone": "wheel_L6",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -1.080690605,
+        0.361500084,
+        -1.358899911
+      ],
+      "referenceCurrentTranslationResidualM": 6.7043e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        55,
+        20
+      ],
+      "anchorWorldHeightCm": 44.456429,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -5.545044,
+      "offsetCm": -5.545044,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R6",
+      "sourceBone": "wheel_R6",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -1.080690163,
+        0.361500293,
+        1.35890011
+      ],
+      "referenceCurrentTranslationResidualM": 6.0605e-8,
+      "additionalOffsetUnrealCm": [
+        20,
+        -55,
+        20
+      ],
+      "anchorWorldHeightCm": 44.437176,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -5.564303,
+      "offsetCm": -5.564303,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 10,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_L7",
+      "sourceBone": "wheel_L7",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -1.901690228,
+        0.361500144,
+        -1.358899777
+      ],
+      "referenceCurrentTranslationResidualM": 2.18227e-7,
+      "additionalOffsetUnrealCm": [
+        20,
+        55,
+        20
+      ],
+      "anchorWorldHeightCm": 42.563949,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -7.438027,
+      "offsetCm": -7.438027,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R7",
+      "sourceBone": "wheel_R7",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -1.901689785,
+        0.361500382,
+        1.358900244
+      ],
+      "referenceCurrentTranslationResidualM": 2.19742e-7,
+      "additionalOffsetUnrealCm": [
+        20,
+        -55,
+        20
+      ],
+      "anchorWorldHeightCm": 42.544699,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 50,
+      "raiseCm": 23,
+      "dropCm": 10,
+      "unclampedOffsetCm": -7.457283,
+      "offsetCm": -7.457283,
+      "contactResidualCm": 0,
+      "clamped": false,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 12,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_L8",
+      "sourceBone": "wheel_L8",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -2.493783218,
+        0.712250605,
+        -1.354962555
+      ],
+      "referenceCurrentTranslationResidualM": 1.21468e-7,
+      "additionalOffsetUnrealCm": [
+        -15,
+        55,
+        0
+      ],
+      "anchorWorldHeightCm": 55.463324,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 42,
+      "raiseCm": 0,
+      "dropCm": 0,
+      "unclampedOffsetCm": 13.466903,
+      "offsetCm": 0,
+      "contactResidualCm": 13.463324359,
+      "clamped": true,
+      "serializedInheritance": {
+        "inherits": false,
+        "inheritIndex": 0,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    },
+    {
+      "bone": "Wheel_R8",
+      "sourceBone": "wheel_R8",
+      "parentBone": "root",
+      "referenceBoneGltfM": [
+        -2.493783015,
+        0.712250844,
+        1.354963573
+      ],
+      "referenceCurrentTranslationResidualM": 6.9103e-8,
+      "additionalOffsetUnrealCm": [
+        -15,
+        -55,
+        0
+      ],
+      "anchorWorldHeightCm": 55.444167,
+      "axisVertical": -0.999734283,
+      "wheelRadiusCm": 42,
+      "raiseCm": 0,
+      "dropCm": 0,
+      "unclampedOffsetCm": 13.447741,
+      "offsetCm": 0,
+      "contactResidualCm": 13.444167415,
+      "clamped": true,
+      "serializedInheritance": {
+        "inherits": true,
+        "inheritIndex": 14,
+        "overrideRaise": false,
+        "overrideDrop": false,
+        "overrideRadius": false
+      }
+    }
+  ]
+}

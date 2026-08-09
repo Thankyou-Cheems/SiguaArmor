@@ -49,6 +49,27 @@ export interface RadialDamageVisualizationOutcome {
   componentIndices: number[];
 }
 
+export const RADIAL_DAMAGE_VISUAL_TIMING_MS = Object.freeze({
+  layerDelay: 110,
+  expansion: 620,
+  fade: 260,
+});
+
+export interface RadialDamageLegendPlacement {
+  angleOffsetRad: number;
+}
+
+export function radialDamageLegendPlacement(
+  layerIndex: number,
+): RadialDamageLegendPlacement {
+  const safeLayerIndex = Number.isInteger(layerIndex) && layerIndex >= 0
+    ? layerIndex
+    : 0;
+  return {
+    angleOffsetRad: -(28 + safeLayerIndex * 22) / 100,
+  };
+}
+
 /**
  * Presentation contract shared by the WebGL surface/ring and result panel.
  *
@@ -58,9 +79,12 @@ export interface RadialDamageVisualizationOutcome {
  * overlap/visibility component fan-out when the hit model marks it unknown.
  */
 export interface RadialDamageVisualizationPlan {
-  geometry: "smooth-full-sphere-with-exact-ring";
+  geometry: "smooth-camera-far-hemisphere-with-exact-ring";
+  visualClip: "camera-far-hemisphere";
+  surfaceHemisphere: "camera-opposite";
+  legendPlacement: "camera-opposite-staggered-on-exact-ring";
   exactRadiusReference: "horizontal-outer-boundary-ring";
-  targetSelection: "per-component-native-overlap-visibility";
+  targetSelection: "root-actor-impact-topology";
   radiusPresentation: "exact";
   origin: RadialDamageVisualizationOrigin;
   layers: RadialDamageVisualizationLayer[];
@@ -138,9 +162,12 @@ export function buildRadialDamageVisualizationPlan(
       : "resolved-no-damage";
 
   return {
-    geometry: "smooth-full-sphere-with-exact-ring",
+    geometry: "smooth-camera-far-hemisphere-with-exact-ring",
+    visualClip: "camera-far-hemisphere",
+    surfaceHemisphere: "camera-opposite",
+    legendPlacement: "camera-opposite-staggered-on-exact-ring",
     exactRadiusReference: "horizontal-outer-boundary-ring",
-    targetSelection: "per-component-native-overlap-visibility",
+    targetSelection: "root-actor-impact-topology",
     radiusPresentation: "exact",
     origin: {
       componentIndex: firstImpact.componentIndex,

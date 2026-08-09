@@ -1,0 +1,1156 @@
+{
+  "activeProfileCount": 48,
+  "affectedRawSourceCount": 139,
+  "applications": [
+    {
+      "label": "GFI MT-LB VMK turret Iranian markings",
+      "patchedSha256": "08fefc5bf73ed93baa8e90903cfb0087e40913b95f5ce68a75d141f56af3a8cd",
+      "regionCount": 4,
+      "sourceFile": "assets/runtime-probe/visuals/09196a3122e2629c541329c98b4262b9fd634f77039c41668ef0ee45ddd1e513/asset-96154fe0f5886fc9b8f5fefc/MI_MTLB_VMK_Turret_Green_BaseColor.png",
+      "sourceSha256": "b48dc243fde6837d8e3d830379aea02566a2873f9a542c5ec72210e686887070",
+      "sourceUrl": "/assets/runtime-probe/visuals/09196a3122e2629c541329c98b4262b9fd634f77039c41668ef0ee45ddd1e513/asset-96154fe0f5886fc9b8f5fefc/source.gltf"
+    },
+    {
+      "label": "GFI M1151 Iranian roundel and emblems",
+      "patchedSha256": "64c2a216a3b563c3fbe4f109b67362772b2e01a7017b5616fd6ca58ebd098a8d",
+      "regionCount": 5,
+      "sourceFile": "assets/runtime-probe/visuals/125a58a7be759f6c1023286a72acfb8bad4d2c269b951fb775a3337890ce186e/asset-38a0c61a0fc2ab9d3da6baaf/MI_M1151_GFI_Body_BaseColor.png",
+      "sourceSha256": "5324ac856c4275eac5a6bc51aa9901fab0919e8f6d904f530e5acaeb51d2000a",
+      "sourceUrl": "/assets/runtime-probe/visuals/125a58a7be759f6c1023286a72acfb8bad4d2c269b951fb775a3337890ce186e/asset-38a0c61a0fc2ab9d3da6baaf/source.gltf"
+    },
+    {
+      "label": "GFI M1151 Iranian roundel and emblems",
+      "patchedSha256": "64c2a216a3b563c3fbe4f109b67362772b2e01a7017b5616fd6ca58ebd098a8d",
+      "regionCount": 5,
+      "sourceFile": "assets/runtime-probe/visuals/125a58a7be759f6c1023286a72acfb8bad4d2c269b951fb775a3337890ce186e/asset-3f0b1eea32b13f796da02096/MI_M1151_GFI_Body_BaseColor.png",
+      "sourceSha256": "5324ac856c4275eac5a6bc51aa9901fab0919e8f6d904f530e5acaeb51d2000a",
+      "sourceUrl": "/assets/runtime-probe/visuals/125a58a7be759f6c1023286a72acfb8bad4d2c269b951fb775a3337890ce186e/asset-3f0b1eea32b13f796da02096/source.gltf"
+    },
+    {
+      "label": "GFI Safir Iranian markings",
+      "patchedSha256": "d7590d87eeed7d8fa2077bd49488e6ea8deb136bfc7e486de85c1306f41cf25f",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/12a09b594ccfa7a4c7237a9481101bcb0638e788e5a106baac604d98d273cae2/asset-222e887ac1470e9d4744e880/MI_Safir_Exterior_BaseColor.png",
+      "sourceSha256": "9d8fe4fcf3aacd10a9a71a28ade54dc8875f74560a4916b4ab608e2def1771c1",
+      "sourceUrl": "/assets/runtime-probe/visuals/12a09b594ccfa7a4c7237a9481101bcb0638e788e5a106baac604d98d273cae2/asset-222e887ac1470e9d4744e880/source.gltf"
+    },
+    {
+      "label": "GFI M1151 Iranian roundel and emblems",
+      "patchedSha256": "64c2a216a3b563c3fbe4f109b67362772b2e01a7017b5616fd6ca58ebd098a8d",
+      "regionCount": 5,
+      "sourceFile": "assets/runtime-probe/visuals/13ceb354f31034217f47283524da5440fd465b4597a33277d51c3a524bdc0a7b/asset-43bbe5c6e442a3f95fe29460/MI_M1151_GFI_Body_BaseColor.png",
+      "sourceSha256": "5324ac856c4275eac5a6bc51aa9901fab0919e8f6d904f530e5acaeb51d2000a",
+      "sourceUrl": "/assets/runtime-probe/visuals/13ceb354f31034217f47283524da5440fd465b4597a33277d51c3a524bdc0a7b/asset-43bbe5c6e442a3f95fe29460/source.gltf"
+    },
+    {
+      "label": "GFI M1151 Iranian roundel and emblems",
+      "patchedSha256": "64c2a216a3b563c3fbe4f109b67362772b2e01a7017b5616fd6ca58ebd098a8d",
+      "regionCount": 5,
+      "sourceFile": "assets/runtime-probe/visuals/13ceb354f31034217f47283524da5440fd465b4597a33277d51c3a524bdc0a7b/asset-7483433700c188df0f0fde37/MI_M1151_GFI_Body_BaseColor.png",
+      "sourceSha256": "5324ac856c4275eac5a6bc51aa9901fab0919e8f6d904f530e5acaeb51d2000a",
+      "sourceUrl": "/assets/runtime-probe/visuals/13ceb354f31034217f47283524da5440fd465b4597a33277d51c3a524bdc0a7b/asset-7483433700c188df0f0fde37/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/192d2dd412c3dd4a0e76c44aa6a992238e4583ffba8361220ffe2629122b8aad/asset-2e75be3116acc96fe2985f67/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/192d2dd412c3dd4a0e76c44aa6a992238e4583ffba8361220ffe2629122b8aad/asset-2e75be3116acc96fe2985f67/source.gltf"
+    },
+    {
+      "label": "PLA CTM-131 woodland body insignia",
+      "patchedSha256": "5996ba4f49bb3388a7c154349d15451c8455b5052eae4fb9b2c27218aaf9ea6a",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/192d2dd412c3dd4a0e76c44aa6a992238e4583ffba8361220ffe2629122b8aad/asset-99f5a9c9df503d501a5875be/MI_FAW_MV3_Ext_Woodland_01_BaseColor.png",
+      "sourceSha256": "d3caf9438c6f370ffd0fbc9656a5e6799ca906a44ce1329e60c00b1c7a3b06e3",
+      "sourceUrl": "/assets/runtime-probe/visuals/192d2dd412c3dd4a0e76c44aa6a992238e4583ffba8361220ffe2629122b8aad/asset-99f5a9c9df503d501a5875be/source.gltf"
+    },
+    {
+      "label": "USA MATV USMC insignia",
+      "patchedSha256": "0838147b29ae636bda093848b516772c9bbd735c78f4cf978acb25bd75c11e7c",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/1aeb14cf1c178a69c85619bcbde6d91fce51a7f57f617c18645534e9f3384fcd/asset-562e21ae8a7b5e09cc49f9e6/MI_MATV_USMC_BaseColor.png",
+      "sourceSha256": "0f1411b16755201d45d74d77b529d0497b844a682bf0ddc64a109da2cf4dd627",
+      "sourceUrl": "/assets/runtime-probe/visuals/1aeb14cf1c178a69c85619bcbde6d91fce51a7f57f617c18645534e9f3384fcd/asset-562e21ae8a7b5e09cc49f9e6/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/1c0194ce21a82703bacf738a6ace801b911c4419267891a63634a7937bc70504/asset-0cf5e7490f04082cebe63e96/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/1c0194ce21a82703bacf738a6ace801b911c4419267891a63634a7937bc70504/asset-0cf5e7490f04082cebe63e96/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/1c0194ce21a82703bacf738a6ace801b911c4419267891a63634a7937bc70504/asset-8fa276ad5e0c731404dd7dc8/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/1c0194ce21a82703bacf738a6ace801b911c4419267891a63634a7937bc70504/asset-8fa276ad5e0c731404dd7dc8/source.gltf"
+    },
+    {
+      "label": "GFI Safir Iranian markings",
+      "patchedSha256": "d7590d87eeed7d8fa2077bd49488e6ea8deb136bfc7e486de85c1306f41cf25f",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/1c1e781a1f1b1d0b07f19babc75dabf19e659c29913f50cb89fd268b841db103/asset-f99f0e0af3ffd344ba93f1f5/MI_Safir_Exterior_BaseColor.png",
+      "sourceSha256": "9d8fe4fcf3aacd10a9a71a28ade54dc8875f74560a4916b4ab608e2def1771c1",
+      "sourceUrl": "/assets/runtime-probe/visuals/1c1e781a1f1b1d0b07f19babc75dabf19e659c29913f50cb89fd268b841db103/asset-f99f0e0af3ffd344ba93f1f5/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 desert QJZ hull insignia",
+      "patchedSha256": "df451a252b4734b745af24f74e2f90badb18fad5fd6526d844e08dc16d0251db",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/288b2a2dad3716f09c4261bfa0cd26e4490cb85edf35dea8dd0671cd622eb5d9/asset-c48c996adeafd9e076daea7f/MI_ZSD89_Hull_Desert_BaseColor.png",
+      "sourceSha256": "421860eac293d6588f07e27b1c3a077ff9eee1e90f940029f1dfde3b4d1626c8",
+      "sourceUrl": "/assets/runtime-probe/visuals/288b2a2dad3716f09c4261bfa0cd26e4490cb85edf35dea8dd0671cd622eb5d9/asset-c48c996adeafd9e076daea7f/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 desert QJZ hull insignia",
+      "patchedSha256": "df451a252b4734b745af24f74e2f90badb18fad5fd6526d844e08dc16d0251db",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/288b2a2dad3716f09c4261bfa0cd26e4490cb85edf35dea8dd0671cd622eb5d9/asset-f76b6542ae011a87112b1d23/MI_ZSD89_Hull_Desert_BaseColor.png",
+      "sourceSha256": "421860eac293d6588f07e27b1c3a077ff9eee1e90f940029f1dfde3b4d1626c8",
+      "sourceUrl": "/assets/runtime-probe/visuals/288b2a2dad3716f09c4261bfa0cd26e4490cb85edf35dea8dd0671cd622eb5d9/asset-f76b6542ae011a87112b1d23/source.gltf"
+    },
+    {
+      "label": "USA MATV woodland insignia",
+      "patchedSha256": "882cf7d0becd4f7d9f38272bcaf51287f11c7bf2d6461fec2b41bc0969a2a2e7",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/2932e96ed91539a7c2657e10ea1a18388493a09491355513c3abdfbc2b7026fb/asset-5a90b6bc03a8b9044d05b952/MI_MATV_Woodland_BaseColor.png",
+      "sourceSha256": "3e25ab6f6c0842f2ffdc3c8de093daa8b2c7ad6019c4e61a33c2b2e99fe182c3",
+      "sourceUrl": "/assets/runtime-probe/visuals/2932e96ed91539a7c2657e10ea1a18388493a09491355513c3abdfbc2b7026fb/asset-5a90b6bc03a8b9044d05b952/source.gltf"
+    },
+    {
+      "label": "GFI UH-1H tail flag and roundels",
+      "patchedSha256": "857c6f011b38109c0aa6ccec3e7f515673f66b7f34573fd6794e7fae9c13f493",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/297d351064fb4907867f3d000951edfc59ec12044b0b9111a7d12d5d6c1b05e1/asset-7779f28ede94e39606703503/MI_UH1H_exterior_2_GFI_BaseColor.png",
+      "sourceSha256": "8f1d85bff8e40ca79adc51f7089fade45a72f65d9f441fa25eba2b4ecfb2f895",
+      "sourceUrl": "/assets/runtime-probe/visuals/297d351064fb4907867f3d000951edfc59ec12044b0b9111a7d12d5d6c1b05e1/asset-7779f28ede94e39606703503/source.gltf"
+    },
+    {
+      "label": "GFI UH-1H fuselage Iranian emblem",
+      "patchedSha256": "66ea5305aee63519683f999b600f960f442a2bfc2284ec6fca83fdcbf7dc2a7e",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/297d351064fb4907867f3d000951edfc59ec12044b0b9111a7d12d5d6c1b05e1/asset-7779f28ede94e39606703503/MI_UH1H_exterior_1_GFI_BaseColor.png",
+      "sourceSha256": "b43784df3fdff447ae68e4705fc46b2bacbeb70f59d6a58e22d2ddab296403ba",
+      "sourceUrl": "/assets/runtime-probe/visuals/297d351064fb4907867f3d000951edfc59ec12044b0b9111a7d12d5d6c1b05e1/asset-7779f28ede94e39606703503/source.gltf"
+    },
+    {
+      "label": "USA MATV tan insignia",
+      "patchedSha256": "1104e37ceb07dd8e36818a44e7e24de1fa7adf0df03b04b7add08b0502c1235f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/29bba5a75f85c550de52efa6ef7bdb37bf05348a379bdb7ff651e1a8902a8f45/asset-4283cd8ea29e530e61ef329b/MI_MATV_BaseColor.png",
+      "sourceSha256": "90d36a05be485ed66da5dea346032596ffe0370978ad7652d996b31d4fbf12ad",
+      "sourceUrl": "/assets/runtime-probe/visuals/29bba5a75f85c550de52efa6ef7bdb37bf05348a379bdb7ff651e1a8902a8f45/asset-4283cd8ea29e530e61ef329b/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/2b5bdb9b680eab06b12f647247fa5dca4f5ac7405907dabcaac7bdb58404aa87/asset-0c97ca459fe01495a1f908c2/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/2b5bdb9b680eab06b12f647247fa5dca4f5ac7405907dabcaac7bdb58404aa87/asset-0c97ca459fe01495a1f908c2/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/2b5bdb9b680eab06b12f647247fa5dca4f5ac7405907dabcaac7bdb58404aa87/asset-efa1b92155d352e50242989b/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/2b5bdb9b680eab06b12f647247fa5dca4f5ac7405907dabcaac7bdb58404aa87/asset-efa1b92155d352e50242989b/source.gltf"
+    },
+    {
+      "label": "GFI MT-LB Iranian markings",
+      "patchedSha256": "176f25fcc7e0e298cbabf46a11e42accf2129f25129f0b4bf690699fa8a6eb24",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/2d9ed7f4ef1f2b0c44c229ec5549138fb8ae073f04abe5631690cfd38cc0911d/asset-1900fe9c4c8cb01ab8b600db/MI_MTLB_GFI_BaseColor.png",
+      "sourceSha256": "9bf5cdac1d9a2c954945de072bcf6fae037b0dba5e1b061e6891e30cd9f65edf",
+      "sourceUrl": "/assets/runtime-probe/visuals/2d9ed7f4ef1f2b0c44c229ec5549138fb8ae073f04abe5631690cfd38cc0911d/asset-1900fe9c4c8cb01ab8b600db/source.gltf"
+    },
+    {
+      "label": "GFI BTR-80 turret Iranian markings",
+      "patchedSha256": "512175793eb5efd56bab868d04a1f2d861996d5be4464848330499640d56963c",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/2d9ed7f4ef1f2b0c44c229ec5549138fb8ae073f04abe5631690cfd38cc0911d/asset-2f639a8022499d249b721962/MI_BTR80_turret_GFI_BaseColor.png",
+      "sourceSha256": "62ccb780a34386fea8e9edd0073e4d0db5734773cafcd8736d91187e6687b0ac",
+      "sourceUrl": "/assets/runtime-probe/visuals/2d9ed7f4ef1f2b0c44c229ec5549138fb8ae073f04abe5631690cfd38cc0911d/asset-2f639a8022499d249b721962/source.gltf"
+    },
+    {
+      "label": "GFI BTR-80 turret Iranian markings",
+      "patchedSha256": "512175793eb5efd56bab868d04a1f2d861996d5be4464848330499640d56963c",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/2d9ed7f4ef1f2b0c44c229ec5549138fb8ae073f04abe5631690cfd38cc0911d/asset-92f30f067b7bf44d97cfa463/MI_BTR80_turret_GFI_BaseColor.png",
+      "sourceSha256": "62ccb780a34386fea8e9edd0073e4d0db5734773cafcd8736d91187e6687b0ac",
+      "sourceUrl": "/assets/runtime-probe/visuals/2d9ed7f4ef1f2b0c44c229ec5549138fb8ae073f04abe5631690cfd38cc0911d/asset-92f30f067b7bf44d97cfa463/source.gltf"
+    },
+    {
+      "label": "USA MATV tan insignia",
+      "patchedSha256": "1104e37ceb07dd8e36818a44e7e24de1fa7adf0df03b04b7add08b0502c1235f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3987a649e84ccedab5f21138/MI_MATV_BaseColor.png",
+      "sourceSha256": "90d36a05be485ed66da5dea346032596ffe0370978ad7652d996b31d4fbf12ad",
+      "sourceUrl": "/assets/runtime-probe/visuals/2e20e234bb9d968b039237deaf71e7feeb8295e91991b99ce5798eb89e1e92c3/asset-3987a649e84ccedab5f21138/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 woodland IFV hull insignia",
+      "patchedSha256": "3da3d7f55a25c464d17a2fda1f47be3c460493e04dc15f7e303494f953221c06",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/2ebf1daa6a13dd4fab26473fc1b3f7709d5fd4dd30b9df36f96f739ea3dc0969/asset-03538bf21dd616979dd660da/MI_WZ551_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "3f2dba45c4fe36a2ec71da9765bf321c6517be68482d0a8659319c6d10a30bef",
+      "sourceUrl": "/assets/runtime-probe/visuals/2ebf1daa6a13dd4fab26473fc1b3f7709d5fd4dd30b9df36f96f739ea3dc0969/asset-03538bf21dd616979dd660da/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 woodland IFV hull insignia",
+      "patchedSha256": "3da3d7f55a25c464d17a2fda1f47be3c460493e04dc15f7e303494f953221c06",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/2ebf1daa6a13dd4fab26473fc1b3f7709d5fd4dd30b9df36f96f739ea3dc0969/asset-0648365d4024be2ea4185105/MI_WZ551_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "3f2dba45c4fe36a2ec71da9765bf321c6517be68482d0a8659319c6d10a30bef",
+      "sourceUrl": "/assets/runtime-probe/visuals/2ebf1daa6a13dd4fab26473fc1b3f7709d5fd4dd30b9df36f96f739ea3dc0969/asset-0648365d4024be2ea4185105/source.gltf"
+    },
+    {
+      "label": "Mi-8 Soviet red star",
+      "patchedSha256": "ea6983431d326f0368cd3f8ded61fbed6c468e43f2509b0c7d3588aa4085adc8",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/304d8c0fea25cb02e5487161cf2dcab72991b476fb44d5c297133794152a26b1/asset-f06e5ebab1e64636893309f1/MI_MI8_BaseColor.png",
+      "sourceSha256": "a16893fcacea24157e388b7e7bdb852c701627147730fd903104ecc8a071cd3e",
+      "sourceUrl": "/assets/runtime-probe/visuals/304d8c0fea25cb02e5487161cf2dcab72991b476fb44d5c297133794152a26b1/asset-f06e5ebab1e64636893309f1/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/3222eeff3b34d693ec032c9aa61bd58e7d60eacf1cdb19d604fdea66e7f1c17c/asset-53a9758bd9895dc70ff6244b/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/3222eeff3b34d693ec032c9aa61bd58e7d60eacf1cdb19d604fdea66e7f1c17c/asset-53a9758bd9895dc70ff6244b/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/3222eeff3b34d693ec032c9aa61bd58e7d60eacf1cdb19d604fdea66e7f1c17c/asset-7da99d87b4874a7c856f9ec0/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/3222eeff3b34d693ec032c9aa61bd58e7d60eacf1cdb19d604fdea66e7f1c17c/asset-7da99d87b4874a7c856f9ec0/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/325bb8865ffce6c8f9bedc34df14aa2fcf4574e126fe71e14d4106116959bfa9/asset-6dbdb59311fb62eff5c22a3f/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/325bb8865ffce6c8f9bedc34df14aa2fcf4574e126fe71e14d4106116959bfa9/asset-6dbdb59311fb62eff5c22a3f/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/325bb8865ffce6c8f9bedc34df14aa2fcf4574e126fe71e14d4106116959bfa9/asset-c8dcbd6f4337c90436b93b1f/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/325bb8865ffce6c8f9bedc34df14aa2fcf4574e126fe71e14d4106116959bfa9/asset-c8dcbd6f4337c90436b93b1f/source.gltf"
+    },
+    {
+      "label": "GFI T-72S hull Iranian roundel",
+      "patchedSha256": "33972a79d223be95bdc6ebeffb6a3a393e9da106136789e9f950b90b54a0600a",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-0a2db9c0fb641f974b20a59c/MI_T72AV_GFI_BaseColor.png",
+      "sourceSha256": "33437c1535a6342cbc71e7880904be90d2b74f2550ae9cc85e2ca52f1171d634",
+      "sourceUrl": "/assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-0a2db9c0fb641f974b20a59c/source.gltf"
+    },
+    {
+      "label": "GFI T-72S turret Iranian marking",
+      "patchedSha256": "86d726e460cbd66c4d14411deff61c247d0423e3c9c6693ea586ecfc17cd8630",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-940fb23445677bdef94397a3/MI_T72S_Turret_GFI_BaseColor.png",
+      "sourceSha256": "166a00416069dc4ef396a8cae4d407347148f00f43cd3c07b59483b3062c0e8f",
+      "sourceUrl": "/assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-940fb23445677bdef94397a3/source.gltf"
+    },
+    {
+      "label": "GFI T-72S hull Iranian roundel",
+      "patchedSha256": "33972a79d223be95bdc6ebeffb6a3a393e9da106136789e9f950b90b54a0600a",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-940fb23445677bdef94397a3/MI_T72AV_GFI_BaseColor.png",
+      "sourceSha256": "33437c1535a6342cbc71e7880904be90d2b74f2550ae9cc85e2ca52f1171d634",
+      "sourceUrl": "/assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-940fb23445677bdef94397a3/source.gltf"
+    },
+    {
+      "label": "GFI T-72S turret Iranian marking",
+      "patchedSha256": "86d726e460cbd66c4d14411deff61c247d0423e3c9c6693ea586ecfc17cd8630",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-98360251aa881a593bbc511e/MI_T72S_Turret_GFI_BaseColor.png",
+      "sourceSha256": "166a00416069dc4ef396a8cae4d407347148f00f43cd3c07b59483b3062c0e8f",
+      "sourceUrl": "/assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-98360251aa881a593bbc511e/source.gltf"
+    },
+    {
+      "label": "GFI T-72S turret Iranian marking",
+      "patchedSha256": "86d726e460cbd66c4d14411deff61c247d0423e3c9c6693ea586ecfc17cd8630",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-de2c6aaa09b841ec4aba71f8/MI_T72S_Turret_GFI_BaseColor.png",
+      "sourceSha256": "166a00416069dc4ef396a8cae4d407347148f00f43cd3c07b59483b3062c0e8f",
+      "sourceUrl": "/assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-de2c6aaa09b841ec4aba71f8/source.gltf"
+    },
+    {
+      "label": "GFI T-72S hull Iranian roundel",
+      "patchedSha256": "33972a79d223be95bdc6ebeffb6a3a393e9da106136789e9f950b90b54a0600a",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-de2c6aaa09b841ec4aba71f8/MI_T72AV_GFI_BaseColor.png",
+      "sourceSha256": "33437c1535a6342cbc71e7880904be90d2b74f2550ae9cc85e2ca52f1171d634",
+      "sourceUrl": "/assets/runtime-probe/visuals/34a96fba43ac3a00673930236cc8ecab122698ba7bf7e8525b4df12ca427b204/asset-de2c6aaa09b841ec4aba71f8/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/37820ada65735ac9e9ae32a8ca5b6adf51351c2a0dd7834034a9bc1975585fca/asset-078e1c475060750634d1177b/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/37820ada65735ac9e9ae32a8ca5b6adf51351c2a0dd7834034a9bc1975585fca/asset-078e1c475060750634d1177b/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/37820ada65735ac9e9ae32a8ca5b6adf51351c2a0dd7834034a9bc1975585fca/asset-7562eb6e8bf01ad7ad37db3d/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/37820ada65735ac9e9ae32a8ca5b6adf51351c2a0dd7834034a9bc1975585fca/asset-7562eb6e8bf01ad7ad37db3d/source.gltf"
+    },
+    {
+      "label": "GFI BMP-2 turret Iranian markings",
+      "patchedSha256": "7b957fd0cdb891027d9734bcc509dd8747ec713e9e511229e8998eba219be373",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-09c99bd8a85468c32beb3584/MI_BMP2_Turret_GFI_BaseColor.png",
+      "sourceSha256": "159b6184d7826aa2ec9e41f73d346ca086ade31f5f893d7d36163d774c91f028",
+      "sourceUrl": "/assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-09c99bd8a85468c32beb3584/source.gltf"
+    },
+    {
+      "label": "GFI BMP-2 turret Iranian markings",
+      "patchedSha256": "7b957fd0cdb891027d9734bcc509dd8747ec713e9e511229e8998eba219be373",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-47878d1b14c5c19794b90a67/MI_BMP2_Turret_GFI_BaseColor.png",
+      "sourceSha256": "159b6184d7826aa2ec9e41f73d346ca086ade31f5f893d7d36163d774c91f028",
+      "sourceUrl": "/assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-47878d1b14c5c19794b90a67/source.gltf"
+    },
+    {
+      "label": "GFI BMP-2 turret Iranian markings",
+      "patchedSha256": "7b957fd0cdb891027d9734bcc509dd8747ec713e9e511229e8998eba219be373",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-d5e924e7b6d2886372195bf4/MI_BMP2_Turret_GFI_BaseColor.png",
+      "sourceSha256": "159b6184d7826aa2ec9e41f73d346ca086ade31f5f893d7d36163d774c91f028",
+      "sourceUrl": "/assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-d5e924e7b6d2886372195bf4/source.gltf"
+    },
+    {
+      "label": "GFI BMP-2 hull Iranian roundels",
+      "patchedSha256": "30cb7b15e610121ea60ffc100547bf4b4dc5c11c1b1849952a715b224f073c22",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-ee42bcfeab38678b2ca4f87a/MI_BMP2_Hull_GFI_BaseColor.png",
+      "sourceSha256": "a3b825f2838157807343ea1cf1c7c19f3ceb877873a08f35a39024724e06c848",
+      "sourceUrl": "/assets/runtime-probe/visuals/420590e22f5b1e3e68b7f98372a9e3183c37236cb22a7c8219d5a2e59874efe2/asset-ee42bcfeab38678b2ca4f87a/source.gltf"
+    },
+    {
+      "label": "PLA CTM-131 desert body insignia",
+      "patchedSha256": "1f74c2a0b72d989cd25e213361848241560dfe4b5e03b478ae5482a3e4e79b4f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/4bb095f8da26c4f207ed55668915b029464b8d35f8013cfa1b3c3396629ce5b9/asset-6eb64ac7326fa50f19c66d5e/MI_FAW_MV3_Ext_Desert_01_BaseColor.png",
+      "sourceSha256": "c13865faa95b429a48c536e8ed2e21013e3854ef837329603f4f3ef739155a55",
+      "sourceUrl": "/assets/runtime-probe/visuals/4bb095f8da26c4f207ed55668915b029464b8d35f8013cfa1b3c3396629ce5b9/asset-6eb64ac7326fa50f19c66d5e/source.gltf"
+    },
+    {
+      "label": "PLA ZBD04A desert body markings",
+      "patchedSha256": "c92b3efdcdb69b4553896451a94ae9bf20ef1aaaec196e31fa1aef1997b8b6a8",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/4c887b867e1f0ba3054b0286f63cf1b95845864abb0c4e00587ca0b979deb8c9/asset-6d7145216c54d70d6237d176/MI_ZBD04_Ext_Desert_01_BaseColor.png",
+      "sourceSha256": "92213d45fb12d557780382aa98f8cb9ac9386c33677a114096d9c8c6fc7e84b8",
+      "sourceUrl": "/assets/runtime-probe/visuals/4c887b867e1f0ba3054b0286f63cf1b95845864abb0c4e00587ca0b979deb8c9/asset-6d7145216c54d70d6237d176/source.gltf"
+    },
+    {
+      "label": "USA MATV green insignia",
+      "patchedSha256": "f2270bdec97b267b37d6a34e5f8ee931479fa64bf81144ba91999c4b0a956eaa",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/4e20b82e453517faa0a3baeeb55a994bc766ea432efc7baf7750c60de359e18d/asset-3ffa5635d0634052fb200c93/MI_MATV_GREEN_BaseColor.png",
+      "sourceSha256": "1c2077ed9b8b165eb56389e4ed613871383848d7924e972e854c67c127e3507e",
+      "sourceUrl": "/assets/runtime-probe/visuals/4e20b82e453517faa0a3baeeb55a994bc766ea432efc7baf7750c60de359e18d/asset-3ffa5635d0634052fb200c93/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 woodland QJZ hull insignia",
+      "patchedSha256": "2c691b4ca92d199527661ffa7a2f86a8b1bc55e5e70da9d656780e8011b2bc88",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/4f45c5c87145d42ce5340f649409ec0dad81c925ed9fe86d1b3f384690daa6b4/asset-01d662535e86f6ff4986587b/MI_WZ551_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "d30dc55083a8a5791fb30896bdccbeb9f11f6946e32d29b4b71c3d851a51a272",
+      "sourceUrl": "/assets/runtime-probe/visuals/4f45c5c87145d42ce5340f649409ec0dad81c925ed9fe86d1b3f384690daa6b4/asset-01d662535e86f6ff4986587b/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 woodland QJZ hull insignia",
+      "patchedSha256": "2c691b4ca92d199527661ffa7a2f86a8b1bc55e5e70da9d656780e8011b2bc88",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/4f45c5c87145d42ce5340f649409ec0dad81c925ed9fe86d1b3f384690daa6b4/asset-e170162a522ca1f004e315eb/MI_WZ551_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "d30dc55083a8a5791fb30896bdccbeb9f11f6946e32d29b4b71c3d851a51a272",
+      "sourceUrl": "/assets/runtime-probe/visuals/4f45c5c87145d42ce5340f649409ec0dad81c925ed9fe86d1b3f384690daa6b4/asset-e170162a522ca1f004e315eb/source.gltf"
+    },
+    {
+      "label": "GFI BMP-1 turret Iranian emblems",
+      "patchedSha256": "27345ad5bd459c154bd1fbc7097ab70e8ee012bc8569c74cc55168a0073eef0d",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-772a3fe7b83c2915c4eca997/MI_BMP1_Turret_GFI_BaseColor.png",
+      "sourceSha256": "0203c755104fbc71ed0bf16c5d67096d1678131c2719c9e88ccb5a2fd2c96a61",
+      "sourceUrl": "/assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-772a3fe7b83c2915c4eca997/source.gltf"
+    },
+    {
+      "label": "GFI BMP-1 hull Iranian roundels",
+      "patchedSha256": "eee3aa903283122cce799624461631eb489eafa998fd1a898073d4102b400c7e",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-78608ca6573d66da74575273/MI_BMP1_GFI_BaseColor.png",
+      "sourceSha256": "5283d478ea63244e086c8acc7f66911575e034ae53dc31a6e63644f3df96eacf",
+      "sourceUrl": "/assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-78608ca6573d66da74575273/source.gltf"
+    },
+    {
+      "label": "GFI BMP-1 hull Iranian roundels",
+      "patchedSha256": "eee3aa903283122cce799624461631eb489eafa998fd1a898073d4102b400c7e",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-a6eb8a003c0c569445677e41/MI_BMP1_GFI_BaseColor.png",
+      "sourceSha256": "5283d478ea63244e086c8acc7f66911575e034ae53dc31a6e63644f3df96eacf",
+      "sourceUrl": "/assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-a6eb8a003c0c569445677e41/source.gltf"
+    },
+    {
+      "label": "GFI BMP-1 turret Iranian emblems",
+      "patchedSha256": "27345ad5bd459c154bd1fbc7097ab70e8ee012bc8569c74cc55168a0073eef0d",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-b28e9bad9f8e0ebfa88487d5/MI_BMP1_Turret_GFI_BaseColor.png",
+      "sourceSha256": "0203c755104fbc71ed0bf16c5d67096d1678131c2719c9e88ccb5a2fd2c96a61",
+      "sourceUrl": "/assets/runtime-probe/visuals/4f6e799971816492bb6923f11a60ab41a00b6ecc89d4688f3e1df8900793f86a/asset-b28e9bad9f8e0ebfa88487d5/source.gltf"
+    },
+    {
+      "label": "USA MATV tan insignia",
+      "patchedSha256": "1104e37ceb07dd8e36818a44e7e24de1fa7adf0df03b04b7add08b0502c1235f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/5575eecd7a71c18efc5c5354df062c4a485d112cf5e68bb626ffe330b7c2bada/asset-e8b37a9ce17c7622653e9d43/MI_MATV_BaseColor.png",
+      "sourceSha256": "90d36a05be485ed66da5dea346032596ffe0370978ad7652d996b31d4fbf12ad",
+      "sourceUrl": "/assets/runtime-probe/visuals/5575eecd7a71c18efc5c5354df062c4a485d112cf5e68bb626ffe330b7c2bada/asset-e8b37a9ce17c7622653e9d43/source.gltf"
+    },
+    {
+      "label": "GFI Safir Iranian markings",
+      "patchedSha256": "d7590d87eeed7d8fa2077bd49488e6ea8deb136bfc7e486de85c1306f41cf25f",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/5591c2b02c3f1d54aed0130a8681bd6d0a5030bccbe28b5c0b865b02a23e5861/asset-bfe3dca71cb1c4b7040ad66c/MI_Safir_Exterior_BaseColor.png",
+      "sourceSha256": "9d8fe4fcf3aacd10a9a71a28ade54dc8875f74560a4916b4ab608e2def1771c1",
+      "sourceUrl": "/assets/runtime-probe/visuals/5591c2b02c3f1d54aed0130a8681bd6d0a5030bccbe28b5c0b865b02a23e5861/asset-bfe3dca71cb1c4b7040ad66c/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/60ffc2b88b39ec71061facf003dfba27a163441cbfcaffda36fdc617c9656eb5/asset-2b056496704723aa11bd2713/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/60ffc2b88b39ec71061facf003dfba27a163441cbfcaffda36fdc617c9656eb5/asset-2b056496704723aa11bd2713/source.gltf"
+    },
+    {
+      "label": "PLA CTM-131 desert body insignia",
+      "patchedSha256": "1f74c2a0b72d989cd25e213361848241560dfe4b5e03b478ae5482a3e4e79b4f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/60ffc2b88b39ec71061facf003dfba27a163441cbfcaffda36fdc617c9656eb5/asset-42ea8a41d3c67bed4a4da521/MI_FAW_MV3_Ext_Desert_01_BaseColor.png",
+      "sourceSha256": "c13865faa95b429a48c536e8ed2e21013e3854ef837329603f4f3ef739155a55",
+      "sourceUrl": "/assets/runtime-probe/visuals/60ffc2b88b39ec71061facf003dfba27a163441cbfcaffda36fdc617c9656eb5/asset-42ea8a41d3c67bed4a4da521/source.gltf"
+    },
+    {
+      "label": "PLA ZTZ99 desert turret markings",
+      "patchedSha256": "3fc788d460f457d42eacbf074585d337955e8610e42cf1807d1e103ced0462be",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/6119b788f52f12db9ea05101b3f9856caaaa0b0d15bddb4297bf689862beb7ab/asset-0ff7bbe6ba22dbc9543df490/MI_ZTZ99_Turret_Desert_BaseColor.png",
+      "sourceSha256": "508754b92ce0722857ff1a5d0ae3f73f40cfc193958380de727419674c0a6b3e",
+      "sourceUrl": "/assets/runtime-probe/visuals/6119b788f52f12db9ea05101b3f9856caaaa0b0d15bddb4297bf689862beb7ab/asset-0ff7bbe6ba22dbc9543df490/source.gltf"
+    },
+    {
+      "label": "PLA ZTZ99 desert turret markings",
+      "patchedSha256": "3fc788d460f457d42eacbf074585d337955e8610e42cf1807d1e103ced0462be",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/6119b788f52f12db9ea05101b3f9856caaaa0b0d15bddb4297bf689862beb7ab/asset-9ba7fa171d4d539c704c1377/MI_ZTZ99_Turret_Desert_BaseColor.png",
+      "sourceSha256": "508754b92ce0722857ff1a5d0ae3f73f40cfc193958380de727419674c0a6b3e",
+      "sourceUrl": "/assets/runtime-probe/visuals/6119b788f52f12db9ea05101b3f9856caaaa0b0d15bddb4297bf689862beb7ab/asset-9ba7fa171d4d539c704c1377/source.gltf"
+    },
+    {
+      "label": "GFI BRDM-2 Iranian markings",
+      "patchedSha256": "813109a38d8256d6beb5ac6d8ff93243b686d82418a5fd3319d82ed6bdc5b22b",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-373e994c825d5c8ac20e2c57/MI_BRDM2_GFI_BaseColor.png",
+      "sourceSha256": "1945d7e3f3a0830c9ced27788ee9bc705965ad68909c03bea144e7c318ae620c",
+      "sourceUrl": "/assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-373e994c825d5c8ac20e2c57/source.gltf"
+    },
+    {
+      "label": "GFI BTR-80 turret Iranian markings",
+      "patchedSha256": "512175793eb5efd56bab868d04a1f2d861996d5be4464848330499640d56963c",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-420bf487d640e9f4e7c87c6d/MI_BTR80_turret_GFI_BaseColor.png",
+      "sourceSha256": "62ccb780a34386fea8e9edd0073e4d0db5734773cafcd8736d91187e6687b0ac",
+      "sourceUrl": "/assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-420bf487d640e9f4e7c87c6d/source.gltf"
+    },
+    {
+      "label": "GFI BRDM-2 Iranian markings",
+      "patchedSha256": "813109a38d8256d6beb5ac6d8ff93243b686d82418a5fd3319d82ed6bdc5b22b",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-43e4c8b9eb04ea3a74530a3e/MI_BRDM2_GFI_BaseColor.png",
+      "sourceSha256": "1945d7e3f3a0830c9ced27788ee9bc705965ad68909c03bea144e7c318ae620c",
+      "sourceUrl": "/assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-43e4c8b9eb04ea3a74530a3e/source.gltf"
+    },
+    {
+      "label": "GFI BRDM-2 Iranian markings",
+      "patchedSha256": "813109a38d8256d6beb5ac6d8ff93243b686d82418a5fd3319d82ed6bdc5b22b",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-6a2ce09116400bd88ce2bf0b/MI_BRDM2_GFI_BaseColor.png",
+      "sourceSha256": "1945d7e3f3a0830c9ced27788ee9bc705965ad68909c03bea144e7c318ae620c",
+      "sourceUrl": "/assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-6a2ce09116400bd88ce2bf0b/source.gltf"
+    },
+    {
+      "label": "GFI BTR-80 turret Iranian markings",
+      "patchedSha256": "512175793eb5efd56bab868d04a1f2d861996d5be4464848330499640d56963c",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-7b046ed568179218d2cfb7b7/MI_BTR80_turret_GFI_BaseColor.png",
+      "sourceSha256": "62ccb780a34386fea8e9edd0073e4d0db5734773cafcd8736d91187e6687b0ac",
+      "sourceUrl": "/assets/runtime-probe/visuals/63d1ed203da1b8e996201ed3fe87630d46f429f469d56241a25ff6758e0a29ee/asset-7b046ed568179218d2cfb7b7/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/6bea3385d0449b10bb75ce2320fc94b83f3d9b7691319a171a33e0ebd440733e/asset-4a6f262a35ef3d0e3b33ac30/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/6bea3385d0449b10bb75ce2320fc94b83f3d9b7691319a171a33e0ebd440733e/asset-4a6f262a35ef3d0e3b33ac30/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/6bea3385d0449b10bb75ce2320fc94b83f3d9b7691319a171a33e0ebd440733e/asset-d8c38aa69bfef0f8340cda45/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/6bea3385d0449b10bb75ce2320fc94b83f3d9b7691319a171a33e0ebd440733e/asset-d8c38aa69bfef0f8340cda45/source.gltf"
+    },
+    {
+      "label": "USA MATV tan insignia",
+      "patchedSha256": "1104e37ceb07dd8e36818a44e7e24de1fa7adf0df03b04b7add08b0502c1235f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/74b6d24df6ea0aa40e551fb9fa7c0ad24bccd1a5725e2f9df242d7d595ed2cee/asset-cfd2628bd7ec850217386f9d/MI_MATV_BaseColor.png",
+      "sourceSha256": "90d36a05be485ed66da5dea346032596ffe0370978ad7652d996b31d4fbf12ad",
+      "sourceUrl": "/assets/runtime-probe/visuals/74b6d24df6ea0aa40e551fb9fa7c0ad24bccd1a5725e2f9df242d7d595ed2cee/asset-cfd2628bd7ec850217386f9d/source.gltf"
+    },
+    {
+      "label": "USA MATV green insignia",
+      "patchedSha256": "f2270bdec97b267b37d6a34e5f8ee931479fa64bf81144ba91999c4b0a956eaa",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/74e4bfa58607b4cdd0e7be69e2cd972c380b625015453de71afa669b16c80712/asset-b2be0ec7b3a8b870ca137ba2/MI_MATV_GREEN_BaseColor.png",
+      "sourceSha256": "1c2077ed9b8b165eb56389e4ed613871383848d7924e972e854c67c127e3507e",
+      "sourceUrl": "/assets/runtime-probe/visuals/74e4bfa58607b4cdd0e7be69e2cd972c380b625015453de71afa669b16c80712/asset-b2be0ec7b3a8b870ca137ba2/source.gltf"
+    },
+    {
+      "label": "GFI Ural-4320 Iranian markings",
+      "patchedSha256": "a5093734fbae10d2e7ff6aa9abafe2fef74465a5bbe8d3fbad2877dc4e14b93c",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/784327311086e6037c1674c09d7096badf119bf363a1e004d178503ebb54c1d4/asset-03a1a717cbf4ad9cdd41cabe/MI_Ural4320_Exterior_GFI_BaseColor.png",
+      "sourceSha256": "68d64e3b586eb745d3fe12893429a56216731da925920e8cd80f30ff975dd1ee",
+      "sourceUrl": "/assets/runtime-probe/visuals/784327311086e6037c1674c09d7096badf119bf363a1e004d178503ebb54c1d4/asset-03a1a717cbf4ad9cdd41cabe/source.gltf"
+    },
+    {
+      "label": "PLA ZTZ99 turret markings",
+      "patchedSha256": "89c5232c0dced1d5d99d228b08af7d22d24851d1b5c64289f1099e59310e065a",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/7ff0fa421ae3e52c7e5b21aa742e8661662d63347870c83a64470889fc31f316/asset-28a1f620d0dc2458e97ed876/MI_ZTZ99_Turret_Woodland_BaseColor.png",
+      "sourceSha256": "c9853a055863e6c80135e989ddefeccee66b9e2e6642ca355f30e299c0a863b3",
+      "sourceUrl": "/assets/runtime-probe/visuals/7ff0fa421ae3e52c7e5b21aa742e8661662d63347870c83a64470889fc31f316/asset-28a1f620d0dc2458e97ed876/source.gltf"
+    },
+    {
+      "label": "PLA ZTZ99 turret markings",
+      "patchedSha256": "89c5232c0dced1d5d99d228b08af7d22d24851d1b5c64289f1099e59310e065a",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/7ff0fa421ae3e52c7e5b21aa742e8661662d63347870c83a64470889fc31f316/asset-7ba5051022cd68f630da3cb3/MI_ZTZ99_Turret_Woodland_BaseColor.png",
+      "sourceSha256": "c9853a055863e6c80135e989ddefeccee66b9e2e6642ca355f30e299c0a863b3",
+      "sourceUrl": "/assets/runtime-probe/visuals/7ff0fa421ae3e52c7e5b21aa742e8661662d63347870c83a64470889fc31f316/asset-7ba5051022cd68f630da3cb3/source.gltf"
+    },
+    {
+      "label": "PLA ZTZ99 turret markings",
+      "patchedSha256": "89c5232c0dced1d5d99d228b08af7d22d24851d1b5c64289f1099e59310e065a",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/7ff0fa421ae3e52c7e5b21aa742e8661662d63347870c83a64470889fc31f316/asset-c96aa53cdad7380d36046d0e/MI_ZTZ99_Turret_Woodland_BaseColor.png",
+      "sourceSha256": "c9853a055863e6c80135e989ddefeccee66b9e2e6642ca355f30e299c0a863b3",
+      "sourceUrl": "/assets/runtime-probe/visuals/7ff0fa421ae3e52c7e5b21aa742e8661662d63347870c83a64470889fc31f316/asset-c96aa53cdad7380d36046d0e/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 woodland QLZ hull insignia",
+      "patchedSha256": "cb3341e2167bb213a485da613fbb743827f5188177e9fba69046d0d3da74fd22",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/81deb857fea196657afbb6c5a0336c09191ff405ea685f0857da1a18f7087e69/asset-4ca5f9195485686049bc855b/MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "28299435f58725d32c1cd83ddd71ffc8955ceb65f9b4ae6d91a51d8b1e3c4f61",
+      "sourceUrl": "/assets/runtime-probe/visuals/81deb857fea196657afbb6c5a0336c09191ff405ea685f0857da1a18f7087e69/asset-4ca5f9195485686049bc855b/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 woodland QLZ hull insignia",
+      "patchedSha256": "cb3341e2167bb213a485da613fbb743827f5188177e9fba69046d0d3da74fd22",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/81deb857fea196657afbb6c5a0336c09191ff405ea685f0857da1a18f7087e69/asset-8d219eb6cebf194ef6bba4c9/MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "28299435f58725d32c1cd83ddd71ffc8955ceb65f9b4ae6d91a51d8b1e3c4f61",
+      "sourceUrl": "/assets/runtime-probe/visuals/81deb857fea196657afbb6c5a0336c09191ff405ea685f0857da1a18f7087e69/asset-8d219eb6cebf194ef6bba4c9/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 desert hull insignia",
+      "patchedSha256": "77d85e100bb41005e4964f3f4c0613bc6e03968499f928a4ba94aff41824d949",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/834fcaccffce3748f0b286398efa2b53cb9615f66ac27cd257b2b82bac3ee4ac/asset-5b26795fa1012b07f351f07a/MI_WZ551_Hull_Desert_BaseColor.png",
+      "sourceSha256": "4ce5f9369272c34a883256bf66d995c5c21952653eda9babc6dbc346b89bd042",
+      "sourceUrl": "/assets/runtime-probe/visuals/834fcaccffce3748f0b286398efa2b53cb9615f66ac27cd257b2b82bac3ee4ac/asset-5b26795fa1012b07f351f07a/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 desert hull insignia",
+      "patchedSha256": "77d85e100bb41005e4964f3f4c0613bc6e03968499f928a4ba94aff41824d949",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/834fcaccffce3748f0b286398efa2b53cb9615f66ac27cd257b2b82bac3ee4ac/asset-d4ea8c411af6c9b7babb46db/MI_WZ551_Hull_Desert_BaseColor.png",
+      "sourceSha256": "4ce5f9369272c34a883256bf66d995c5c21952653eda9babc6dbc346b89bd042",
+      "sourceUrl": "/assets/runtime-probe/visuals/834fcaccffce3748f0b286398efa2b53cb9615f66ac27cd257b2b82bac3ee4ac/asset-d4ea8c411af6c9b7babb46db/source.gltf"
+    },
+    {
+      "label": "PLA ZBD04A body markings",
+      "patchedSha256": "426356defecfb2ab0a7b6bdfbd34a8a577e36bca3e9fb2dbc19632158e3147b8",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/873336b36ad8b521753f5febc3fa8164cea67a530a704c46936bf1469c6ecbdd/asset-82da9d403fd0008e39b14082/MI_ZBD04_Ext_Woodland_01_BaseColor.png",
+      "sourceSha256": "9a7b0a7414ac47c3ba0d446e1370d2eea892a5bde34d7280dbb2bd1010c28214",
+      "sourceUrl": "/assets/runtime-probe/visuals/873336b36ad8b521753f5febc3fa8164cea67a530a704c46936bf1469c6ecbdd/asset-82da9d403fd0008e39b14082/source.gltf"
+    },
+    {
+      "label": "USA MATV green insignia",
+      "patchedSha256": "f2270bdec97b267b37d6a34e5f8ee931479fa64bf81144ba91999c4b0a956eaa",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/954d5300eafb0bf821a09b77294ae18ebd6b132e63c46af87e1815a9959e3326/asset-7e825b3273610db72f93fd84/MI_MATV_GREEN_BaseColor.png",
+      "sourceSha256": "1c2077ed9b8b165eb56389e4ed613871383848d7924e972e854c67c127e3507e",
+      "sourceUrl": "/assets/runtime-probe/visuals/954d5300eafb0bf821a09b77294ae18ebd6b132e63c46af87e1815a9959e3326/asset-7e825b3273610db72f93fd84/source.gltf"
+    },
+    {
+      "label": "GFI T-62 turret Iranian roundels",
+      "patchedSha256": "12e4f8107bff70cf2323831a3979eb06e4cec4f0b57837f0ffbbee2782edc482",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-0fb6cd3f8a1480e345d8c385/MI_T62_turret_GFI_BaseColor.png",
+      "sourceSha256": "e35e1a2d98cb02b5a353d9194cd4f89d0bed321a68b2e8fe45a9f771e796435e",
+      "sourceUrl": "/assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-0fb6cd3f8a1480e345d8c385/source.gltf"
+    },
+    {
+      "label": "GFI T-62 hull Iranian emblem",
+      "patchedSha256": "c6005f09966f6d48d86077e835854355b940f3db30b4843717ea22cdc95ee24c",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-213033a1ce6e9e83f56f1c79/MI_T62_GFI_BaseColor.png",
+      "sourceSha256": "81ef5c7de81e59faa5183f10cd3b9f15d514e5d6ebfc9aa469c78fd216013770",
+      "sourceUrl": "/assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-213033a1ce6e9e83f56f1c79/source.gltf"
+    },
+    {
+      "label": "GFI T-62 turret Iranian roundels",
+      "patchedSha256": "12e4f8107bff70cf2323831a3979eb06e4cec4f0b57837f0ffbbee2782edc482",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-2ba304317f9930f2e72c901a/MI_T62_turret_GFI_BaseColor.png",
+      "sourceSha256": "e35e1a2d98cb02b5a353d9194cd4f89d0bed321a68b2e8fe45a9f771e796435e",
+      "sourceUrl": "/assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-2ba304317f9930f2e72c901a/source.gltf"
+    },
+    {
+      "label": "GFI T-62 turret Iranian roundels",
+      "patchedSha256": "12e4f8107bff70cf2323831a3979eb06e4cec4f0b57837f0ffbbee2782edc482",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-86b9bf499602628859e9b6b8/MI_T62_turret_GFI_BaseColor.png",
+      "sourceSha256": "e35e1a2d98cb02b5a353d9194cd4f89d0bed321a68b2e8fe45a9f771e796435e",
+      "sourceUrl": "/assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-86b9bf499602628859e9b6b8/source.gltf"
+    },
+    {
+      "label": "GFI BRDM-2 Iranian markings",
+      "patchedSha256": "813109a38d8256d6beb5ac6d8ff93243b686d82418a5fd3319d82ed6bdc5b22b",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-96072918441b67f1f31b20b0/MI_BRDM2_GFI_BaseColor.png",
+      "sourceSha256": "1945d7e3f3a0830c9ced27788ee9bc705965ad68909c03bea144e7c318ae620c",
+      "sourceUrl": "/assets/runtime-probe/visuals/969f317328578528d3916f71c48e1db6b7ff2bf13665d99ce3c2dce053f61626/asset-96072918441b67f1f31b20b0/source.gltf"
+    },
+    {
+      "label": "PLA ZTD-05 turret insignia",
+      "patchedSha256": "f82cfc27f4f06f60d649deadcb355d70bbd3bcd23f1f44619e2b6f43f81b1497",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-83a0d0d11ef389c12cfbe137/MI_ZTD05_turret_Woodland_BaseColor.png",
+      "sourceSha256": "d923d3e2af475884c8ba2548885c5da1465d74a81ed875e2e25dfcfbdea6f84c",
+      "sourceUrl": "/assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-83a0d0d11ef389c12cfbe137/source.gltf"
+    },
+    {
+      "label": "PLA ZTD-05 woodland chassis insignia 01",
+      "patchedSha256": "0a1283c28f7ae6c4df20fd093aa84c527d76ff15b0095466d7006ca2035016cc",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-8dbc16542b4eb783f14cb23a/MI_ZBD_2000_chasis_woodland_01_BaseColor.png",
+      "sourceSha256": "3b2bca56c12296959fba85d9b1cc33709cd5b680d50c6598f3c8a9db280b9cec",
+      "sourceUrl": "/assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-8dbc16542b4eb783f14cb23a/source.gltf"
+    },
+    {
+      "label": "PLA ZTD-05 woodland chassis insignia 03",
+      "patchedSha256": "6ef238ad033593b4b6fd525285273870ac84f13f7ba403e1c6134c90790076c8",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-8dbc16542b4eb783f14cb23a/MI_ZBD_2000_chasis_woodland_03_BaseColor.png",
+      "sourceSha256": "0df83b6faee0ad133e7e7139471a3fed42c1b7c5870ef76d3194b7de51fe0713",
+      "sourceUrl": "/assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-8dbc16542b4eb783f14cb23a/source.gltf"
+    },
+    {
+      "label": "PLA ZTD-05 turret insignia",
+      "patchedSha256": "f82cfc27f4f06f60d649deadcb355d70bbd3bcd23f1f44619e2b6f43f81b1497",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-a320f9e01a051e98bf80a526/MI_ZTD05_turret_Woodland_BaseColor.png",
+      "sourceSha256": "d923d3e2af475884c8ba2548885c5da1465d74a81ed875e2e25dfcfbdea6f84c",
+      "sourceUrl": "/assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-a320f9e01a051e98bf80a526/source.gltf"
+    },
+    {
+      "label": "PLA ZTD-05 turret insignia",
+      "patchedSha256": "f82cfc27f4f06f60d649deadcb355d70bbd3bcd23f1f44619e2b6f43f81b1497",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-d0dc26e98f1b159190538e43/MI_ZTD05_turret_Woodland_BaseColor.png",
+      "sourceSha256": "d923d3e2af475884c8ba2548885c5da1465d74a81ed875e2e25dfcfbdea6f84c",
+      "sourceUrl": "/assets/runtime-probe/visuals/96d35458c401cbe77384fad692ed4e8c56266b695d8ce610b63847855ef4f89c/asset-d0dc26e98f1b159190538e43/source.gltf"
+    },
+    {
+      "label": "PLA CTM-131 desert body insignia",
+      "patchedSha256": "1f74c2a0b72d989cd25e213361848241560dfe4b5e03b478ae5482a3e4e79b4f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/9b1ff22553e888c4376a5fe3e3735e4608cfd8c17362ace0213b697820679a91/asset-40840ed86d77b0b6a99aabd2/MI_FAW_MV3_Ext_Desert_01_BaseColor.png",
+      "sourceSha256": "c13865faa95b429a48c536e8ed2e21013e3854ef837329603f4f3ef739155a55",
+      "sourceUrl": "/assets/runtime-probe/visuals/9b1ff22553e888c4376a5fe3e3735e4608cfd8c17362ace0213b697820679a91/asset-40840ed86d77b0b6a99aabd2/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/9b1ff22553e888c4376a5fe3e3735e4608cfd8c17362ace0213b697820679a91/asset-a731ef16353391e522ea3ec0/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/9b1ff22553e888c4376a5fe3e3735e4608cfd8c17362ace0213b697820679a91/asset-a731ef16353391e522ea3ec0/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 woodland QLZ hull insignia",
+      "patchedSha256": "b8df99389487696de8673166b7a03ad97535b53da1f75716b53e19d30543107a",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/9b720c01616f79f04f1c862ec774c37ffa2ea0f38398e773de5177d47fcd1964/asset-01d662535e86f6ff4986587b/MI_WZ551_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "0742012d117aad41d218a3d7567a7ab625f347e0fd157f78d9ec08904fc1e14b",
+      "sourceUrl": "/assets/runtime-probe/visuals/9b720c01616f79f04f1c862ec774c37ffa2ea0f38398e773de5177d47fcd1964/asset-01d662535e86f6ff4986587b/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 woodland QLZ hull insignia",
+      "patchedSha256": "b8df99389487696de8673166b7a03ad97535b53da1f75716b53e19d30543107a",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/9b720c01616f79f04f1c862ec774c37ffa2ea0f38398e773de5177d47fcd1964/asset-f47176dc088587825788de76/MI_WZ551_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "0742012d117aad41d218a3d7567a7ab625f347e0fd157f78d9ec08904fc1e14b",
+      "sourceUrl": "/assets/runtime-probe/visuals/9b720c01616f79f04f1c862ec774c37ffa2ea0f38398e773de5177d47fcd1964/asset-f47176dc088587825788de76/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 desert IFV hull insignia",
+      "patchedSha256": "7c10d8d4ed7244d6bcebc1c20f338e035935c23fd797c67afb736a9665cd3181",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/9ccfe796eed7b19df2034b643f1b079717193c9c739ec5c64253516aded119ec/asset-127cea480a634c4cd94e66dc/MI_ZSD89_Hull_Desert_BaseColor.png",
+      "sourceSha256": "3fe99794cee762f71e8b31c338c472c04e7b4afc6e6b563c4ab9df06bf94d66a",
+      "sourceUrl": "/assets/runtime-probe/visuals/9ccfe796eed7b19df2034b643f1b079717193c9c739ec5c64253516aded119ec/asset-127cea480a634c4cd94e66dc/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 desert IFV hull insignia",
+      "patchedSha256": "7c10d8d4ed7244d6bcebc1c20f338e035935c23fd797c67afb736a9665cd3181",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/9ccfe796eed7b19df2034b643f1b079717193c9c739ec5c64253516aded119ec/asset-9cd21e8ddb2aa1f159dd24b8/MI_ZSD89_Hull_Desert_BaseColor.png",
+      "sourceSha256": "3fe99794cee762f71e8b31c338c472c04e7b4afc6e6b563c4ab9df06bf94d66a",
+      "sourceUrl": "/assets/runtime-probe/visuals/9ccfe796eed7b19df2034b643f1b079717193c9c739ec5c64253516aded119ec/asset-9cd21e8ddb2aa1f159dd24b8/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 desert body markings",
+      "patchedSha256": "ad19c60e311293b1247c39518b74f2bf2a223d80201fcc77372c507abd0495d0",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/a0a14b3e6ade554be7fa378dd128ad2185e6087c0776b89600513c42263b6957/asset-7c673edc1d71004771e01173/MI_ZBL08_Ext_Desert_BaseColor.png",
+      "sourceSha256": "a8c1d2764fc0823bcd54a7121db4a2efc9ee973fe5005191528d193847ec93c6",
+      "sourceUrl": "/assets/runtime-probe/visuals/a0a14b3e6ade554be7fa378dd128ad2185e6087c0776b89600513c42263b6957/asset-7c673edc1d71004771e01173/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/a0a14b3e6ade554be7fa378dd128ad2185e6087c0776b89600513c42263b6957/asset-c8dcbd6f4337c90436b93b1f/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/a0a14b3e6ade554be7fa378dd128ad2185e6087c0776b89600513c42263b6957/asset-c8dcbd6f4337c90436b93b1f/source.gltf"
+    },
+    {
+      "label": "USA MATV green insignia",
+      "patchedSha256": "f2270bdec97b267b37d6a34e5f8ee931479fa64bf81144ba91999c4b0a956eaa",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/a47869c4b84277bcd91b6cb1e6d5b91f54818fd86a2c2614723b758ca77b7036/asset-753305ed8aafe3c0aef5446e/MI_MATV_GREEN_BaseColor.png",
+      "sourceSha256": "1c2077ed9b8b165eb56389e4ed613871383848d7924e972e854c67c127e3507e",
+      "sourceUrl": "/assets/runtime-probe/visuals/a47869c4b84277bcd91b6cb1e6d5b91f54818fd86a2c2614723b758ca77b7036/asset-753305ed8aafe3c0aef5446e/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 desert body markings",
+      "patchedSha256": "ad19c60e311293b1247c39518b74f2bf2a223d80201fcc77372c507abd0495d0",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-5a98c5aae7aa398135dbc2fe/MI_ZBL08_Ext_Desert_BaseColor.png",
+      "sourceSha256": "a8c1d2764fc0823bcd54a7121db4a2efc9ee973fe5005191528d193847ec93c6",
+      "sourceUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-5a98c5aae7aa398135dbc2fe/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-c8dcbd6f4337c90436b93b1f/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/a65064e0f7c5fcfec0764b46c225452da5c409da44fc22bd5915a81d909ecda3/asset-c8dcbd6f4337c90436b93b1f/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/ace6cd7a07974d1a5260b92fac81acb54e9c09d354099a39bfb1249d33f00716/asset-32cc4733767e013f008788c2/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/ace6cd7a07974d1a5260b92fac81acb54e9c09d354099a39bfb1249d33f00716/asset-32cc4733767e013f008788c2/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/ace6cd7a07974d1a5260b92fac81acb54e9c09d354099a39bfb1249d33f00716/asset-a178dcce610a37ec34b85db3/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/ace6cd7a07974d1a5260b92fac81acb54e9c09d354099a39bfb1249d33f00716/asset-a178dcce610a37ec34b85db3/source.gltf"
+    },
+    {
+      "label": "TLF S-70 Turkish flag and roundel",
+      "patchedSha256": "ea3b6a5f358d37d1ada236e7e13a2ee4acefbeb3538995604afcf1291216f48b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/af7b770ed74e074432ae30b87083d9dbe623a770d17297c263b9448a00d120ec/asset-29fb759d4a68eafa9c7db767/MI_S70_BaseColor.png",
+      "sourceSha256": "cc97a1b042f9b496badc325c4054d3a9fe1b8359c62e995ec5558eb9636c63db",
+      "sourceUrl": "/assets/runtime-probe/visuals/af7b770ed74e074432ae30b87083d9dbe623a770d17297c263b9448a00d120ec/asset-29fb759d4a68eafa9c7db767/source.gltf"
+    },
+    {
+      "label": "GFI BRDM-2 Iranian markings",
+      "patchedSha256": "813109a38d8256d6beb5ac6d8ff93243b686d82418a5fd3319d82ed6bdc5b22b",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/b0a511f05a71852dcc7c03bd348e0b35db7aa3e47c48e92bcc3b1fef1fac1a41/asset-05c6ef245b050e2b370c5d2d/MI_BRDM2_GFI_BaseColor.png",
+      "sourceSha256": "1945d7e3f3a0830c9ced27788ee9bc705965ad68909c03bea144e7c318ae620c",
+      "sourceUrl": "/assets/runtime-probe/visuals/b0a511f05a71852dcc7c03bd348e0b35db7aa3e47c48e92bcc3b1fef1fac1a41/asset-05c6ef245b050e2b370c5d2d/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 desert QLZ hull insignia",
+      "patchedSha256": "42094bae0f8f8a98cd149b8dee531624eff175b50d6b1bbe558d1239f306fadf",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/b5f3a44ce17f1ccc2a47e5ca5432195be732cf60d26d5a8e0f577848f15e76e2/asset-3640188cc0262d3c8f5efe7c/MI_ZSD89_Hull_Desert_BaseColor.png",
+      "sourceSha256": "a9010685e1fc331dec53b48682ee418115472f8c1b30fc69c919776320ef1c70",
+      "sourceUrl": "/assets/runtime-probe/visuals/b5f3a44ce17f1ccc2a47e5ca5432195be732cf60d26d5a8e0f577848f15e76e2/asset-3640188cc0262d3c8f5efe7c/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 desert QLZ hull insignia",
+      "patchedSha256": "42094bae0f8f8a98cd149b8dee531624eff175b50d6b1bbe558d1239f306fadf",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/b5f3a44ce17f1ccc2a47e5ca5432195be732cf60d26d5a8e0f577848f15e76e2/asset-c48c996adeafd9e076daea7f/MI_ZSD89_Hull_Desert_BaseColor.png",
+      "sourceSha256": "a9010685e1fc331dec53b48682ee418115472f8c1b30fc69c919776320ef1c70",
+      "sourceUrl": "/assets/runtime-probe/visuals/b5f3a44ce17f1ccc2a47e5ca5432195be732cf60d26d5a8e0f577848f15e76e2/asset-c48c996adeafd9e076daea7f/source.gltf"
+    },
+    {
+      "label": "USA MATV tan insignia",
+      "patchedSha256": "1104e37ceb07dd8e36818a44e7e24de1fa7adf0df03b04b7add08b0502c1235f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/bbe7dab80c2d8f48e88d0b9b09a3df0cf039c0572c0fc3da70c7ea2ab63d4290/asset-1c04728af7522c54d1214a22/MI_MATV_BaseColor.png",
+      "sourceSha256": "90d36a05be485ed66da5dea346032596ffe0370978ad7652d996b31d4fbf12ad",
+      "sourceUrl": "/assets/runtime-probe/visuals/bbe7dab80c2d8f48e88d0b9b09a3df0cf039c0572c0fc3da70c7ea2ab63d4290/asset-1c04728af7522c54d1214a22/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 woodland IFV hull insignia",
+      "patchedSha256": "00c5815bbe192f82c4d0257269981ce0c32aaaf4f1623b2d91ad1827cde0a383",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/c09f2ff80c6d58eacde0c708d249e0a4e555f56f415a1eed2fedf0660a9d12da/asset-a7c48d9390e3a14212d4a00e/MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "bcddc31d8bd3ac5be11f20eded65d786767d7e57f485a745284e1d1c8f831ca4",
+      "sourceUrl": "/assets/runtime-probe/visuals/c09f2ff80c6d58eacde0c708d249e0a4e555f56f415a1eed2fedf0660a9d12da/asset-a7c48d9390e3a14212d4a00e/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 woodland IFV hull insignia",
+      "patchedSha256": "00c5815bbe192f82c4d0257269981ce0c32aaaf4f1623b2d91ad1827cde0a383",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/c09f2ff80c6d58eacde0c708d249e0a4e555f56f415a1eed2fedf0660a9d12da/asset-c2fe4f41ad6007a3d859d259/MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "bcddc31d8bd3ac5be11f20eded65d786767d7e57f485a745284e1d1c8f831ca4",
+      "sourceUrl": "/assets/runtime-probe/visuals/c09f2ff80c6d58eacde0c708d249e0a4e555f56f415a1eed2fedf0660a9d12da/asset-c2fe4f41ad6007a3d859d259/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 desert QLZ hull insignia",
+      "patchedSha256": "b7a30145d7e8294d030752849969dca4139cac3fa87ac985131d4ba3cbe972c2",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/c24e47e5ce2eb1941046880f149c1a4157356199367d62780378b46e3957258d/asset-87815e43518e7b12d74965c3/MI_WZ551_Hull_Desert_BaseColor.png",
+      "sourceSha256": "7fda8171d7f9b2626b63a8d778e809e65d51ec5b3ced25563328f52992148a10",
+      "sourceUrl": "/assets/runtime-probe/visuals/c24e47e5ce2eb1941046880f149c1a4157356199367d62780378b46e3957258d/asset-87815e43518e7b12d74965c3/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 desert QLZ hull insignia",
+      "patchedSha256": "b7a30145d7e8294d030752849969dca4139cac3fa87ac985131d4ba3cbe972c2",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/c24e47e5ce2eb1941046880f149c1a4157356199367d62780378b46e3957258d/asset-d4ea8c411af6c9b7babb46db/MI_WZ551_Hull_Desert_BaseColor.png",
+      "sourceSha256": "7fda8171d7f9b2626b63a8d778e809e65d51ec5b3ced25563328f52992148a10",
+      "sourceUrl": "/assets/runtime-probe/visuals/c24e47e5ce2eb1941046880f149c1a4157356199367d62780378b46e3957258d/asset-d4ea8c411af6c9b7babb46db/source.gltf"
+    },
+    {
+      "label": "GFI Safir Iranian markings",
+      "patchedSha256": "d7590d87eeed7d8fa2077bd49488e6ea8deb136bfc7e486de85c1306f41cf25f",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/c3fc4f99d59846b85834e1dd7e629df2cd7e70228ceaffb3a99c46edff5cfb9e/asset-f99f0e0af3ffd344ba93f1f5/MI_Safir_Exterior_BaseColor.png",
+      "sourceSha256": "9d8fe4fcf3aacd10a9a71a28ade54dc8875f74560a4916b4ab608e2def1771c1",
+      "sourceUrl": "/assets/runtime-probe/visuals/c3fc4f99d59846b85834e1dd7e629df2cd7e70228ceaffb3a99c46edff5cfb9e/asset-f99f0e0af3ffd344ba93f1f5/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/c67a4d02156e5a205c25bc452ec5a8e02dc033966b8094dd1f95af5a84f1e218/asset-4692d60aefd5a46dfcd2ec7d/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/c67a4d02156e5a205c25bc452ec5a8e02dc033966b8094dd1f95af5a84f1e218/asset-4692d60aefd5a46dfcd2ec7d/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/c67a4d02156e5a205c25bc452ec5a8e02dc033966b8094dd1f95af5a84f1e218/asset-865bacfd16eb415f54f76af7/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/c67a4d02156e5a205c25bc452ec5a8e02dc033966b8094dd1f95af5a84f1e218/asset-865bacfd16eb415f54f76af7/source.gltf"
+    },
+    {
+      "label": "GFI Ural-4320 Iranian markings",
+      "patchedSha256": "a5093734fbae10d2e7ff6aa9abafe2fef74465a5bbe8d3fbad2877dc4e14b93c",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/cbdf22b68781d3751ac9856cc2ca72d5051fdb25cc72b51ce7693ac4295f93ec/asset-e51d66321b9898548f52c724/MI_Ural4320_Exterior_GFI_BaseColor.png",
+      "sourceSha256": "68d64e3b586eb745d3fe12893429a56216731da925920e8cd80f30ff975dd1ee",
+      "sourceUrl": "/assets/runtime-probe/visuals/cbdf22b68781d3751ac9856cc2ca72d5051fdb25cc72b51ce7693ac4295f93ec/asset-e51d66321b9898548f52c724/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/cf8e5671902d6554c700c472210d7748fa2fe2a0557151bc012845549112d280/asset-457af4c32c656dfdb15dd6bf/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/cf8e5671902d6554c700c472210d7748fa2fe2a0557151bc012845549112d280/asset-457af4c32c656dfdb15dd6bf/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/cf8e5671902d6554c700c472210d7748fa2fe2a0557151bc012845549112d280/asset-dc819f9de80baddef4cd78f6/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/cf8e5671902d6554c700c472210d7748fa2fe2a0557151bc012845549112d280/asset-dc819f9de80baddef4cd78f6/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d5889d1bef9b911059b7e8c2f436944353a182e05780d17bcd14518cffb1c094/asset-3c56eba21bad681ad45901be/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/d5889d1bef9b911059b7e8c2f436944353a182e05780d17bcd14518cffb1c094/asset-3c56eba21bad681ad45901be/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d5889d1bef9b911059b7e8c2f436944353a182e05780d17bcd14518cffb1c094/asset-5d98e2d82a720718c9a52ea1/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/d5889d1bef9b911059b7e8c2f436944353a182e05780d17bcd14518cffb1c094/asset-5d98e2d82a720718c9a52ea1/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d60c3582abc172f33c97525daf048612e01a30fedc25430a831cce339c9db27e/asset-512a9eb24f8e98ec0d7a119e/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/d60c3582abc172f33c97525daf048612e01a30fedc25430a831cce339c9db27e/asset-512a9eb24f8e98ec0d7a119e/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d60c3582abc172f33c97525daf048612e01a30fedc25430a831cce339c9db27e/asset-c8dcbd6f4337c90436b93b1f/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/d60c3582abc172f33c97525daf048612e01a30fedc25430a831cce339c9db27e/asset-c8dcbd6f4337c90436b93b1f/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d75ccbf3f608232077d962e5d5e78b91be1fbac5cc3a6e64d7b7955e38a87431/asset-69fb303fc4f1314fed87eaae/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/d75ccbf3f608232077d962e5d5e78b91be1fbac5cc3a6e64d7b7955e38a87431/asset-69fb303fc4f1314fed87eaae/source.gltf"
+    },
+    {
+      "label": "PLA ZBL08 body markings",
+      "patchedSha256": "6417f85a1e43944c4bbe0de2ea11d16e9abc869d741119a2b6fab214e0b0875b",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d75ccbf3f608232077d962e5d5e78b91be1fbac5cc3a6e64d7b7955e38a87431/asset-c8dcbd6f4337c90436b93b1f/MI_ZBL08_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "e45148ef3fff3ca3f6e713be0d0bc7e22ffe4bba4c2c99bcaf1c3eb6c91d05d0",
+      "sourceUrl": "/assets/runtime-probe/visuals/d75ccbf3f608232077d962e5d5e78b91be1fbac5cc3a6e64d7b7955e38a87431/asset-c8dcbd6f4337c90436b93b1f/source.gltf"
+    },
+    {
+      "label": "PLA Z-9A fuselage insignia",
+      "patchedSha256": "b9c58443ead83d1209465a2334a530a70bc3aeb36159240fcfd3c74d8a28c9b7",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-48090b517dc0e3ad433e4bcf/MI_Z9A_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "f63b8357519e6dc0bb9d0a91f2c4f4b49b9b7d1e6b79ed5604f65fe318343532",
+      "sourceUrl": "/assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-48090b517dc0e3ad433e4bcf/source.gltf"
+    },
+    {
+      "label": "PLA Z-9A fuselage insignia",
+      "patchedSha256": "b9c58443ead83d1209465a2334a530a70bc3aeb36159240fcfd3c74d8a28c9b7",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-d6a9ae90b8ae29f915492a7b/MI_Z9A_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "f63b8357519e6dc0bb9d0a91f2c4f4b49b9b7d1e6b79ed5604f65fe318343532",
+      "sourceUrl": "/assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-d6a9ae90b8ae29f915492a7b/source.gltf"
+    },
+    {
+      "label": "PLA Z-9A fuselage insignia",
+      "patchedSha256": "b9c58443ead83d1209465a2334a530a70bc3aeb36159240fcfd3c74d8a28c9b7",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-e8c49373fe920a416e32115f/MI_Z9A_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "f63b8357519e6dc0bb9d0a91f2c4f4b49b9b7d1e6b79ed5604f65fe318343532",
+      "sourceUrl": "/assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-e8c49373fe920a416e32115f/source.gltf"
+    },
+    {
+      "label": "PLA Z-9A fuselage insignia",
+      "patchedSha256": "b9c58443ead83d1209465a2334a530a70bc3aeb36159240fcfd3c74d8a28c9b7",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-eb8fe56b8bdc5adae1eb020d/MI_Z9A_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "f63b8357519e6dc0bb9d0a91f2c4f4b49b9b7d1e6b79ed5604f65fe318343532",
+      "sourceUrl": "/assets/runtime-probe/visuals/d7a4933b97bd047f933dd612f86b1a60c45f95c3a72e21a08d45cb155b5c3595/asset-eb8fe56b8bdc5adae1eb020d/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 woodland QJZ hull insignia",
+      "patchedSha256": "74e68a72e178d7c47bd2b05471f1c4bcb230bd1059295d160374a810691b7214",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/dbe6b1d56bbd856ef99f60c8db2cdf6187175f0b8696537873c9916e36616302/asset-7bfe5e3edc746ef3c55ebd7d/MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "caf0ae53032aeb499d4776b4e89faaa4fc575622c0ffd56c0b5a6d45995de10c",
+      "sourceUrl": "/assets/runtime-probe/visuals/dbe6b1d56bbd856ef99f60c8db2cdf6187175f0b8696537873c9916e36616302/asset-7bfe5e3edc746ef3c55ebd7d/source.gltf"
+    },
+    {
+      "label": "PLA ZSD-89 woodland QJZ hull insignia",
+      "patchedSha256": "74e68a72e178d7c47bd2b05471f1c4bcb230bd1059295d160374a810691b7214",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/dbe6b1d56bbd856ef99f60c8db2cdf6187175f0b8696537873c9916e36616302/asset-8d219eb6cebf194ef6bba4c9/MI_ZSD89_Hull_Woodland_BaseColor.png",
+      "sourceSha256": "caf0ae53032aeb499d4776b4e89faaa4fc575622c0ffd56c0b5a6d45995de10c",
+      "sourceUrl": "/assets/runtime-probe/visuals/dbe6b1d56bbd856ef99f60c8db2cdf6187175f0b8696537873c9916e36616302/asset-8d219eb6cebf194ef6bba4c9/source.gltf"
+    },
+    {
+      "label": "USA MATV green insignia",
+      "patchedSha256": "f2270bdec97b267b37d6a34e5f8ee931479fa64bf81144ba91999c4b0a956eaa",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/dc9fada8b63556f87ef219dcf354fe7980e53dcc982a62bf25a47b4779b3ae85/asset-e2fa03a6d4f199e75bf83668/MI_MATV_GREEN_BaseColor.png",
+      "sourceSha256": "1c2077ed9b8b165eb56389e4ed613871383848d7924e972e854c67c127e3507e",
+      "sourceUrl": "/assets/runtime-probe/visuals/dc9fada8b63556f87ef219dcf354fe7980e53dcc982a62bf25a47b4779b3ae85/asset-e2fa03a6d4f199e75bf83668/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 desert hull insignia",
+      "patchedSha256": "77d85e100bb41005e4964f3f4c0613bc6e03968499f928a4ba94aff41824d949",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/def6dade2f1c2fc36b7d30d8061230cc8766754f6d11559e076ee329746fde23/asset-cc2d2796f0b7602f8fd17a73/MI_WZ551_Hull_Desert_BaseColor.png",
+      "sourceSha256": "4ce5f9369272c34a883256bf66d995c5c21952653eda9babc6dbc346b89bd042",
+      "sourceUrl": "/assets/runtime-probe/visuals/def6dade2f1c2fc36b7d30d8061230cc8766754f6d11559e076ee329746fde23/asset-cc2d2796f0b7602f8fd17a73/source.gltf"
+    },
+    {
+      "label": "PLA WZ-551 desert hull insignia",
+      "patchedSha256": "77d85e100bb41005e4964f3f4c0613bc6e03968499f928a4ba94aff41824d949",
+      "regionCount": 1,
+      "sourceFile": "assets/runtime-probe/visuals/def6dade2f1c2fc36b7d30d8061230cc8766754f6d11559e076ee329746fde23/asset-fef8bded43826f5281fdc32b/MI_WZ551_Hull_Desert_BaseColor.png",
+      "sourceSha256": "4ce5f9369272c34a883256bf66d995c5c21952653eda9babc6dbc346b89bd042",
+      "sourceUrl": "/assets/runtime-probe/visuals/def6dade2f1c2fc36b7d30d8061230cc8766754f6d11559e076ee329746fde23/asset-fef8bded43826f5281fdc32b/source.gltf"
+    },
+    {
+      "label": "PLA CTM-131 woodland body insignia",
+      "patchedSha256": "5996ba4f49bb3388a7c154349d15451c8455b5052eae4fb9b2c27218aaf9ea6a",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/e212bef25a56c9ac2ba94bf7b2d478940d994b94ce855b5cc170e8079b20c762/asset-2311e7ad7c3a727ed49af354/MI_FAW_MV3_Ext_Woodland_01_BaseColor.png",
+      "sourceSha256": "d3caf9438c6f370ffd0fbc9656a5e6799ca906a44ce1329e60c00b1c7a3b06e3",
+      "sourceUrl": "/assets/runtime-probe/visuals/e212bef25a56c9ac2ba94bf7b2d478940d994b94ce855b5cc170e8079b20c762/asset-2311e7ad7c3a727ed49af354/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-56f1ef6ac79cd9228a7f5d00/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-56f1ef6ac79cd9228a7f5d00/source.gltf"
+    },
+    {
+      "label": "PLA CSK desert body markings",
+      "patchedSha256": "6bbfa92af99ee759da30ac04fa4cab6740481d58339816ebc1bb429f8167ca31",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-e87ea2c9fd044dca62217642/MI_CSK_Ext_Desert_BaseColor.png",
+      "sourceSha256": "e5285c95152b77636bd5953bb2a941c5dcdbfca5e5eb3f27105e1483da11c83e",
+      "sourceUrl": "/assets/runtime-probe/visuals/e51cb446558cc1aa756934976aced335bda00b87d00a67a7f9288472e3d8f9f7/asset-e87ea2c9fd044dca62217642/source.gltf"
+    },
+    {
+      "label": "PLA CTM-131 woodland body insignia",
+      "patchedSha256": "5996ba4f49bb3388a7c154349d15451c8455b5052eae4fb9b2c27218aaf9ea6a",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/eb222ff1ad5d71a96ed7416e4a54ef0e8c400683ace1d4d0a945209339c4b095/asset-22708b5abb17d61bc1ec9732/MI_FAW_MV3_Ext_Woodland_01_BaseColor.png",
+      "sourceSha256": "d3caf9438c6f370ffd0fbc9656a5e6799ca906a44ce1329e60c00b1c7a3b06e3",
+      "sourceUrl": "/assets/runtime-probe/visuals/eb222ff1ad5d71a96ed7416e4a54ef0e8c400683ace1d4d0a945209339c4b095/asset-22708b5abb17d61bc1ec9732/source.gltf"
+    },
+    {
+      "label": "PLA CSK body markings",
+      "patchedSha256": "7bdb893de896b19c3b27f92a2921f40c01c48013c888bb94176ea2b49de745ef",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/eb222ff1ad5d71a96ed7416e4a54ef0e8c400683ace1d4d0a945209339c4b095/asset-a5ee1bad851b565c50ad3d2f/MI_CSK_Ext_Woodland_BaseColor.png",
+      "sourceSha256": "59e7ce1337c4def38a4d5df96f251af9a7f768aec71aa04a363a4071346f8a7d",
+      "sourceUrl": "/assets/runtime-probe/visuals/eb222ff1ad5d71a96ed7416e4a54ef0e8c400683ace1d4d0a945209339c4b095/asset-a5ee1bad851b565c50ad3d2f/source.gltf"
+    },
+    {
+      "label": "GFI Safir Iranian markings",
+      "patchedSha256": "d7590d87eeed7d8fa2077bd49488e6ea8deb136bfc7e486de85c1306f41cf25f",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-b0af072a7c00ed6616c68ef4/MI_Safir_Exterior_BaseColor.png",
+      "sourceSha256": "9d8fe4fcf3aacd10a9a71a28ade54dc8875f74560a4916b4ab608e2def1771c1",
+      "sourceUrl": "/assets/runtime-probe/visuals/f140b0aa3b499b672cbf316f4e7aedff72b3828153dc8b9146c4f813cb0cd02c/asset-b0af072a7c00ed6616c68ef4/source.gltf"
+    },
+    {
+      "label": "USA MATV green insignia",
+      "patchedSha256": "f2270bdec97b267b37d6a34e5f8ee931479fa64bf81144ba91999c4b0a956eaa",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/f22291c8fd39dff851228431694b1095ebe57dd23ba8c217762e780fd9adbcb3/asset-530b4955be3ce566f2891f63/MI_MATV_GREEN_BaseColor.png",
+      "sourceSha256": "1c2077ed9b8b165eb56389e4ed613871383848d7924e972e854c67c127e3507e",
+      "sourceUrl": "/assets/runtime-probe/visuals/f22291c8fd39dff851228431694b1095ebe57dd23ba8c217762e780fd9adbcb3/asset-530b4955be3ce566f2891f63/source.gltf"
+    },
+    {
+      "label": "GFI MT-LB Iranian markings",
+      "patchedSha256": "176f25fcc7e0e298cbabf46a11e42accf2129f25129f0b4bf690699fa8a6eb24",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/f23ea2e098aacb3c6bfe0cd324716c3cec2240025d2d7b8605817a5aa0e3cbbc/asset-327795e8573e91089cedf3d8/MI_MTLB_GFI_BaseColor.png",
+      "sourceSha256": "9bf5cdac1d9a2c954945de072bcf6fae037b0dba5e1b061e6891e30cd9f65edf",
+      "sourceUrl": "/assets/runtime-probe/visuals/f23ea2e098aacb3c6bfe0cd324716c3cec2240025d2d7b8605817a5aa0e3cbbc/asset-327795e8573e91089cedf3d8/source.gltf"
+    },
+    {
+      "label": "GFI MT-LB VMK turret Iranian markings",
+      "patchedSha256": "08fefc5bf73ed93baa8e90903cfb0087e40913b95f5ce68a75d141f56af3a8cd",
+      "regionCount": 4,
+      "sourceFile": "assets/runtime-probe/visuals/f23ea2e098aacb3c6bfe0cd324716c3cec2240025d2d7b8605817a5aa0e3cbbc/asset-b44af96b6ececdf74730d2de/MI_MTLB_VMK_Turret_Green_BaseColor.png",
+      "sourceSha256": "b48dc243fde6837d8e3d830379aea02566a2873f9a542c5ec72210e686887070",
+      "sourceUrl": "/assets/runtime-probe/visuals/f23ea2e098aacb3c6bfe0cd324716c3cec2240025d2d7b8605817a5aa0e3cbbc/asset-b44af96b6ececdf74730d2de/source.gltf"
+    },
+    {
+      "label": "USA MATV tan insignia",
+      "patchedSha256": "1104e37ceb07dd8e36818a44e7e24de1fa7adf0df03b04b7add08b0502c1235f",
+      "regionCount": 2,
+      "sourceFile": "assets/runtime-probe/visuals/fa6be1705fe56559bc29f54d92f2877cac0ab70b66e7d1e6fafb12bf6d3e0281/asset-cd6a11ede2b7e6dd1986e61b/MI_MATV_BaseColor.png",
+      "sourceSha256": "90d36a05be485ed66da5dea346032596ffe0370978ad7652d996b31d4fbf12ad",
+      "sourceUrl": "/assets/runtime-probe/visuals/fa6be1705fe56559bc29f54d92f2877cac0ab70b66e7d1e6fafb12bf6d3e0281/asset-cd6a11ede2b7e6dd1986e61b/source.gltf"
+    },
+    {
+      "label": "GFI MT-LB Iranian markings",
+      "patchedSha256": "176f25fcc7e0e298cbabf46a11e42accf2129f25129f0b4bf690699fa8a6eb24",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/fbd5f1f13653feaeba95a3d0ba609b9afeb29d25a2a62d3bb71f3caecd4ffcfd/asset-0a9b154e805e22794143e736/MI_MTLB_GFI_BaseColor.png",
+      "sourceSha256": "9bf5cdac1d9a2c954945de072bcf6fae037b0dba5e1b061e6891e30cd9f65edf",
+      "sourceUrl": "/assets/runtime-probe/visuals/fbd5f1f13653feaeba95a3d0ba609b9afeb29d25a2a62d3bb71f3caecd4ffcfd/asset-0a9b154e805e22794143e736/source.gltf"
+    },
+    {
+      "label": "GFI MT-LB Iranian markings",
+      "patchedSha256": "176f25fcc7e0e298cbabf46a11e42accf2129f25129f0b4bf690699fa8a6eb24",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/fbd5f1f13653feaeba95a3d0ba609b9afeb29d25a2a62d3bb71f3caecd4ffcfd/asset-7e26a12a166d0f9edfd865a2/MI_MTLB_GFI_BaseColor.png",
+      "sourceSha256": "9bf5cdac1d9a2c954945de072bcf6fae037b0dba5e1b061e6891e30cd9f65edf",
+      "sourceUrl": "/assets/runtime-probe/visuals/fbd5f1f13653feaeba95a3d0ba609b9afeb29d25a2a62d3bb71f3caecd4ffcfd/asset-7e26a12a166d0f9edfd865a2/source.gltf"
+    },
+    {
+      "label": "GFI MT-LB Iranian markings",
+      "patchedSha256": "176f25fcc7e0e298cbabf46a11e42accf2129f25129f0b4bf690699fa8a6eb24",
+      "regionCount": 3,
+      "sourceFile": "assets/runtime-probe/visuals/fbd5f1f13653feaeba95a3d0ba609b9afeb29d25a2a62d3bb71f3caecd4ffcfd/asset-c12496752e7409949bf4b2e5/MI_MTLB_GFI_BaseColor.png",
+      "sourceSha256": "9bf5cdac1d9a2c954945de072bcf6fae037b0dba5e1b061e6891e30cd9f65edf",
+      "sourceUrl": "/assets/runtime-probe/visuals/fbd5f1f13653feaeba95a3d0ba609b9afeb29d25a2a62d3bb71f3caecd4ffcfd/asset-c12496752e7409949bf4b2e5/source.gltf"
+    }
+  ],
+  "chinaDescriptorCount": 213,
+  "inactiveProfileCount": 0,
+  "inactiveProfiles": [],
+  "schemaVersion": "sigua-china-runtime-texture-patch-audit/v1",
+  "selectedRawSourceCount": 1111,
+  "sourceBuildId": "squad-editor-v10.5.0.621766.2374-ue5.7.4"
+}

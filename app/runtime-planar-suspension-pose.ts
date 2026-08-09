@@ -29,8 +29,6 @@ interface RuntimePlanarSuspensionPoseIndexSource {
   odkDllSha256: string;
   chassisPoseRecordsSha256: string;
   visualIndexSha256: string;
-  evidenceLogicalPath: string;
-  evidenceSha256: string;
 }
 
 export interface RuntimePlanarSuspensionCoverageEntry {
@@ -325,14 +323,6 @@ export function parseRuntimePlanarSuspensionPoseIndex(
       visualIndexSha256: requireSha256(
         sourceObject.visualIndexSha256,
         "source.visualIndexSha256",
-      ),
-      evidenceLogicalPath: requireString(
-        sourceObject.evidenceLogicalPath,
-        "source.evidenceLogicalPath",
-      ),
-      evidenceSha256: requireSha256(
-        sourceObject.evidenceSha256,
-        "source.evidenceSha256",
       ),
     },
     coverage: {

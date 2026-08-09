@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sigua-armor.local/schemas/catalog-index.schema.json",
+  "title": "Sigua Armor compact public catalog index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "catalogId", "groups", "records"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "catalogId": { "type": "string", "minLength": 1 },
+    "groups": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/group" }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "items": { "$ref": "#/$defs/record" }
+    }
+  },
+  "$defs": {
+    "nullableString": { "type": ["string", "null"] },
+    "cardId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*(?:--[a-z0-9-]+)?$"
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "order", "recordCount"],
+      "properties": {
+        "id": {
+          "enum": ["ekeqie", "agesi", "shenzhou", "arctic-union", "kaweier"]
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "order": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "recordCount": { "const": 5 }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRawName", "alias", "displayName", "cardId", "routeSlug"],
+      "properties": {
+        "sourceRawName": { "type": "string", "minLength": 1 },
+        "alias": { "type": "string", "minLength": 1 },
+        "displayName": { "type": "string" },
+        "cardId": { "$ref": "#/$defs/cardId" },
+        "routeSlug": { "$ref": "#/$defs/cardId" }
+      }
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "promoEntryId",
+        "promotionOrder",
+        "official",
+        "selectedRawName",
+        "selectedDisplayName",
+        "defaultCardId",
+        "routeSlug",
+        "variants"
+      ],
+      "properties": {
+        "promoEntryId": { "$ref": "#/$defs/cardId" },
+        "promotionOrder": { "type": "integer", "minimum": 1, "maximum": 25 },
+        "official": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["groupId", "groupNameZh", "nameZh", "typeZh"],
+          "properties": {
+            "groupId": {
+              "enum": ["ekeqie", "agesi", "shenzhou", "arctic-union", "kaweier"]
+            },
+            "groupNameZh": { "type": "string", "minLength": 1 },
+            "nameZh": { "type": "string", "minLength": 1 },
+            "typeZh": { "type": "string", "minLength": 1 }
+          }
+        },
+        "selectedRawName": { "$ref": "#/$defs/nullableString" },
+        "selectedDisplayName": { "$ref": "#/$defs/nullableString" },
+        "defaultCardId": { "$ref": "#/$defs/cardId" },
+        "routeSlug": { "$ref": "#/$defs/cardId" },
+        "variants": {
+          "type": "array",
+          "maxItems": 8,
+          "items": { "$ref": "#/$defs/variant" }
+        }
+      }
+    }
+  }
+}
