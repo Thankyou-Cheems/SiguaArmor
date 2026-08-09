@@ -6,20 +6,12 @@ import { RuntimeVehicleViewer } from "./RuntimeVehicleViewer";
 import type { RuntimeVehiclePreview } from "./runtime-probe-preview-data";
 import {
   runtimePreviewForVariant,
-  runtimeReviewPreviewForVariant,
 } from "./runtime-probe-preview-data";
 
 type ViewerRouteState =
   | { kind: "loading" }
   | { kind: "ready"; preview: RuntimeVehiclePreview }
   | { kind: "error"; message: string };
-
-function localReviewAllowed() {
-  return (
-    window.location.hostname === "127.0.0.1" ||
-    window.location.hostname === "localhost"
-  );
-}
 
 export function RuntimeViewerOnlyPage() {
   const [state, setState] = useState<ViewerRouteState>({ kind: "loading" });
@@ -29,13 +21,11 @@ export function RuntimeViewerOnlyPage() {
     const params = new URLSearchParams(window.location.search);
     const cardId = params.get("cardId");
     const rawName = params.get("rawName");
-    const packageSha256 = params.get("packageSha256");
-    const review = params.get("review") === "1" && localReviewAllowed();
 
-    if (!cardId || !rawName || !packageSha256) {
+    if (!cardId || !rawName) {
       setState({
         kind: "error",
-        message: "viewer-only requires exact cardId, rawName, and packageSha256",
+        message: "viewer-only requires exact cardId and rawName",
       });
       return () => {
         cancelled = true;
@@ -43,21 +33,12 @@ export function RuntimeViewerOnlyPage() {
     }
 
     void (async () => {
-      const preview = review
-        ? await runtimeReviewPreviewForVariant(cardId, rawName)
-        : await runtimePreviewForVariant(cardId, rawName);
+      const preview = await runtimePreviewForVariant(cardId, rawName);
       if (cancelled) return;
       if (!preview?.visual) {
         setState({
           kind: "error",
           message: `No exact runtime visual descriptor for ${cardId} / ${rawName}`,
-        });
-        return;
-      }
-      if (preview.visual.packageSha256 !== packageSha256) {
-        setState({
-          kind: "error",
-          message: `Package hash mismatch: expected ${packageSha256}, got ${preview.visual.packageSha256}`,
         });
         return;
       }

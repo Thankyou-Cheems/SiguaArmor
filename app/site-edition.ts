@@ -8,7 +8,6 @@ export type SiteEdition = "international" | "china";
 
 interface SiteEditionProfile {
   basePath: string;
-  catalogDataRoot: string;
   switchHref: string;
   switchLabel: string;
   noticeTitle?: string;
@@ -19,7 +18,6 @@ interface SiteEditionProfile {
 const SITE_EDITION_PROFILES: Record<SiteEdition, SiteEditionProfile> = {
   international: {
     basePath: ARMOR_EDITIONS.international.basePath,
-    catalogDataRoot: "/catalog-data/factions",
     switchHref: armorPath("china"),
     switchLabel: "前往国服站",
     noticeLines: [
@@ -29,7 +27,6 @@ const SITE_EDITION_PROFILES: Record<SiteEdition, SiteEditionProfile> = {
   },
   china: {
     basePath: ARMOR_EDITIONS.china.basePath,
-    catalogDataRoot: "/catalog-data/china/factions",
     switchHref: armorPath("international"),
     switchLabel: "前往国际站",
     noticeTitle: "国服载具资料库",
@@ -130,8 +127,4 @@ export function siteEditionProfile(edition: SiteEdition) {
 
 export function siteEditionBasePath(edition: SiteEdition) {
   return siteEditionProfile(edition).basePath;
-}
-
-export function siteEditionCatalogDataRoot(edition: SiteEdition) {
-  return siteEditionProfile(edition).catalogDataRoot;
 }

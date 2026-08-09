@@ -47,6 +47,7 @@ import {
 import { visibleDamageResistanceOverrides } from "../lib/encyclopedia-damage-resistances";
 import { formatZoomLevel } from "../lib/reference-display.mjs";
 import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-icons";
+import { loadWikiVehicleCatalog } from "../lib/wiki-source";
 import { vehicleConfigurationNameZh } from "../lib/vehicle-configuration-name";
 import {
   vehicleDisplayNameZh,
@@ -64,7 +65,7 @@ import type {
   ReferenceData,
   ReferenceWeapon,
 } from "./catalog-types";
-import { parseFactionCatalog } from "./parse-faction-catalog";
+import { buildFactionCatalogFromWiki } from "./wiki-vehicle-catalog";
 import {
   normalizeVehicleSearch,
   rankVehicleSearch,
@@ -72,7 +73,6 @@ import {
   searchCatalogIndexRecords,
 } from "./vehicle-search";
 import type { CatalogIndexSearchResult } from "./vehicle-search";
-import { wikiVehicleForVariant } from "./wiki-vehicles";
 import { resolveVehicleCategoryIconAsset } from "./vehicle-category-icons";
 import {
   runtimeCardImpressionForCard,
@@ -99,7 +99,6 @@ import {
   CHINA_FACTION_IMAGE_ORDER,
   CHINA_FACTION_VISUAL_ASSETS,
   siteEditionBasePath,
-  siteEditionCatalogDataRoot,
   siteEditionProfile,
   type SiteEdition,
 } from "./site-edition";
@@ -909,29 +908,16 @@ function requestFactionCatalog(
   expectedIndex: PublicCatalogIndex,
   siteEdition: SiteEdition,
 ) {
-  const requestKey =
-    `${siteEdition}\u0000${expectedIndex.catalogId}\u0000` +
-    `${expectedIndex.dataRevision}\u0000` +
-    `${expectedIndex.vehicleCatalogRevision}\u0000${groupId}`;
+  const requestKey = `${siteEdition}\u0000${expectedIndex.catalogId}\u0000${groupId}`;
   const existing = factionCatalogRequests.get(requestKey);
   if (existing) return existing;
-  const request = fetch(
-    `${siteEditionCatalogDataRoot(siteEdition)}/${encodeURIComponent(groupId)}.json?v=${encodeURIComponent(expectedIndex.dataRevision)}`,
-    {
-      cache:
-        process.env.NODE_ENV === "development" ? "no-store" : "force-cache",
-      credentials: "omit",
-    },
-  )
-    .then((response) => {
-      if (!response.ok) throw new Error(`阵营资料加载失败（HTTP ${response.status}）`);
-      return response.json() as Promise<unknown>;
-    })
+  const request = loadWikiVehicleCatalog()
     .then((value) =>
-      parseFactionCatalog(
+      buildFactionCatalogFromWiki(
         value,
         expectedIndex,
         groupId,
+        siteEdition,
       ),
     )
     .catch((error) => {
@@ -975,12 +961,8 @@ function VehicleCard({
   const { alias, cardId, data, record, variant } = card;
   const expandedLiveryCardId = selected ? card.cardId : hoveredLiveryCardId;
   const general = data?.general ?? null;
-  const wikiIconId = variant
-    ? wikiVehicleForVariant(record.promoEntryId, variant.sourceRawName)?.icon ?? null
-    : null;
   const categoryIconId = resolveVehicleCategoryIconAsset(
-    wikiIconId ??
-      CATEGORY_ICON_BY_CARD_ID[cardId] ??
+    CATEGORY_ICON_BY_CARD_ID[cardId] ??
       CATEGORY_ICON_BY_PROMO_ENTRY[record.promoEntryId] ??
       CATEGORY_ICON_BY_TYPE[record.official.typeZh] ??
       "jeep",
@@ -1007,7 +989,7 @@ function VehicleCard({
         ? "zvb4a-woodland"
         : undefined;
     return (
-      // Content-addressed offline WebP; Next Image would add a runtime optimizer to the static path.
+      // Product-owned WebP; Next Image would add a runtime optimizer to the static path.
       // eslint-disable-next-line @next/next/no-img-element
       <img
         className="vehicle-card__impression"
@@ -3343,6 +3325,11 @@ export function CatalogApp({
     return searchCatalogIndexRecords(catalogIndex.records, globalQuery);
   }, [catalogIndex.records, globalQuery]);
 
+  useEffect(() => {
+    setCatalogsByGroup({});
+    setCatalogErrorsByGroup({});
+  }, [catalogIndex, siteEdition]);
+
   const commitNavigation = useCallback(
     (
       next: {
@@ -3361,14 +3348,6 @@ export function CatalogApp({
     },
     [catalogIndex, editionBasePath],
   );
-
-  useEffect(() => {
-    setCatalogsByGroup({});
-    setCatalogErrorsByGroup({});
-  }, [
-    catalogIndex.dataRevision,
-    catalogIndex.vehicleCatalogRevision,
-  ]);
 
   useEffect(() => {
     if (groupId === ALL_GROUPS || catalogsByGroup[groupId]) return undefined;
@@ -3392,8 +3371,6 @@ export function CatalogApp({
     };
   }, [
     catalogIndex,
-    catalogIndex.dataRevision,
-    catalogIndex.vehicleCatalogRevision,
     catalogRetryToken,
     catalogsByGroup,
     groupId,

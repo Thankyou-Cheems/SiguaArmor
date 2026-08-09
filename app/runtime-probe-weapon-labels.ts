@@ -1,11 +1,4 @@
-import {
-  weaponDisplayNameZh,
-  weaponNameZh,
-} from "../lib/weapon-display-name.ts";
-import type {
-  RuntimeWeaponLabel,
-  RuntimeWeaponLabelMatchBasis,
-} from "../lib/runtime-weapon-label-options.ts";
+import { weaponNameZh } from "../lib/weapon-display-name.ts";
 import {
   editorNativeDamageWeaponIndices,
   type EditorNativeCurveKey,
@@ -14,53 +7,29 @@ import {
 import {
   runtimeExplosiveCanonicalName,
   runtimeExplosiveLayerOrderIsClosed,
-  withRuntimeExplosiveSourceBallistics,
   type RuntimeExplosiveCategory,
   type RuntimeExplosiveSource,
 } from "../lib/runtime-explosive-catalog.ts";
 import {
-  weaponCatalogBallisticProfileForId,
   weaponCatalogCurves,
   weaponCatalogDirectModelForVariant,
   weaponCatalogRadialAssetForVariant,
   weaponCatalogRadialModelForAsset,
   weaponCatalogShippingVariants,
   weaponCatalogSourceRefsForVariant,
-  weaponCatalogSummary,
-  weaponCatalogVariantForId,
+  weaponCatalogVariantsForExactVehicle,
   weaponCatalogWikiConfigurationForKey,
   type WeaponCatalogVariant,
 } from "../lib/weapon-catalog.ts";
-import { runtimeHitRecordReferenceForVariant } from "./runtime-probe-preview-data";
 import {
   buildRuntimeAttackSourceShareSlug,
   normalizeRuntimeAttackSourceShareSlug,
 } from "../lib/runtime-attack-source-share.mjs";
-import runtimeWeaponSourceIndexJson from "./runtime-weapon-source-index.json";
-
-export type {
-  RuntimeWeaponLabel,
-  RuntimeWeaponLabelMatchBasis,
-} from "../lib/runtime-weapon-label-options.ts";
-
-interface RuntimeWeaponLabelRecord {
-  weaponIndex: number;
-  weaponId: string;
-  runtimeAssetPath: string;
-  gunName: string;
-  displayName: string;
-  projectileName: string | null;
-  matchBasis: RuntimeWeaponLabelMatchBasis;
-}
-
-interface RuntimeWeaponLabelBinding {
-  bindingKey: string;
-  cardId: string;
-  rawName: string;
-  recordSha256: string;
-  weapons: RuntimeWeaponLabelRecord[];
-  unmatchedWeaponIndices: number[];
-}
+import type {
+  CatalogSearchRecord,
+  PublicCatalogIndex,
+} from "./catalog-types.ts";
+import catalogIndexJson from "../generated/catalog-index.json";
 
 interface RuntimeAttackSourceRecord {
   cardId: string;
@@ -72,62 +41,31 @@ interface RuntimeAttackSourceRecord {
   type: string;
   types: string[];
   canonicalRawName: string;
-  catalogSelectedRawName: string;
-  canonicalSelectionBasis:
-    | "max-distinct-direct-encyclopedia-weapons-then-card-id-within-faction-display-name"
-    | "wiki-infantry-configuration-order"
-    | "editor-weapon-catalog-category-order";
   variantRawNames: string[];
-  vehicleId: string;
-  recordUrl: string;
-  recordSha256: string;
-  recordBytes: number;
-  directWeaponCount: number;
-  runtimeBackedWeaponCount: number;
   catalogCompletedWeaponCount: number;
-  baseCurveFallbackWeaponCount: number;
   weapons: RuntimeAttackSourceWeaponRecord[];
 }
 
 interface RuntimeAttackBallisticsSource {
   kind:
-    | "exact-runtime-record"
     | "encyclopedia-weapon-closure"
-    | "editor-explosive-catalog"
-    | "editor-production-explosive";
-  catalogFingerprintSha256: string;
-  runtimeRecordSha256?: string;
-  runtimeWeaponIndex?: number;
-  projectileEvidence: {
-    recordSha256: string;
-    projectileIndex: number;
-    assetPath: string;
-  } | null;
-  curveEvidence: {
-    role: "armor-penetration" | "impact-damage";
-    recordSha256: string;
-    curveIndex: number;
-    assetPath: string;
-  }[];
-  baseCurveFallbacks: {
-    role: "armor-penetration" | "impact-damage";
-    assetName: string;
-  }[];
+    | "editor-explosive-catalog";
 }
 
-interface RuntimeAttackSourceWeaponRecord
-  extends Omit<RuntimeWeaponLabelRecord, "runtimeAssetPath"> {
+interface RuntimeAttackSourceWeaponRecord {
+  weaponIndex: number;
+  weaponId: string;
   runtimeAssetPath: string | null;
+  gunName: string;
+  displayName: string;
+  projectileName: string | null;
+  matchBasis: string;
   ballisticsId: string;
   ballisticsWeaponIndex: 0;
   ballisticsModel: EditorNativeModel;
   ballisticsSource: RuntimeAttackBallisticsSource;
   sourceCardId: string;
   sourceRawName: string;
-  sourceVehicleId: string;
-  sourceRecordUrl: string;
-  sourceRecordSha256: string;
-  sourceRecordBytes: number;
 }
 
 export const INFANTRY_WEAPON_CATEGORIES = [
@@ -200,76 +138,14 @@ interface WikiInfantryExactCurve {
   keys: EditorNativeCurveKey[];
 }
 
-interface RuntimeWeaponSourceWeaponRecord
-  extends Omit<
-    RuntimeAttackSourceWeaponRecord,
-    "ballisticsModel" | "ballisticsSource"
-  > {
-  weaponVariantId: string;
-  evidence: {
-    kind: RuntimeAttackBallisticsSource["kind"];
-    catalogFingerprintSha256: string;
-    runtimeRecordSha256: string | null;
-    runtimeWeaponIndex: number | null;
-  };
-}
-
-interface RuntimeWeaponSourceRecord
-  extends Omit<RuntimeAttackSourceRecord, "weapons"> {
-  weapons: RuntimeWeaponSourceWeaponRecord[];
-}
-
-interface RuntimeWeaponSourceIndex {
-  schemaVersion: "sigua-runtime-weapon-source-index/v1";
-  catalog: {
-    schemaVersion: "sigua-weapon-catalog/v2";
-    catalogRevision: string;
-    bytes: number;
-    sha256: string;
-  };
-  counts: {
-    bindings: number;
-    attackSources: number;
-    attackWeapons: number;
-    resolvedCatalogVariants: number;
-  };
-  attackSources: RuntimeWeaponSourceRecord[];
-  bindings: RuntimeWeaponLabelBinding[];
-}
-
 function uniqueSorted(values: string[]) {
   return [...new Set(values.filter(Boolean))].sort((left, right) =>
     left.localeCompare(right, "en"),
   );
 }
 
-const runtimeWeaponSourceIndex =
-  runtimeWeaponSourceIndexJson as unknown as RuntimeWeaponSourceIndex;
-if (
-  runtimeWeaponSourceIndex.schemaVersion !==
-    "sigua-runtime-weapon-source-index/v1" ||
-  runtimeWeaponSourceIndex.catalog.schemaVersion !==
-    weaponCatalogSummary.schemaVersion ||
-  runtimeWeaponSourceIndex.catalog.catalogRevision !==
-    weaponCatalogSummary.catalogRevision ||
-  runtimeWeaponSourceIndex.counts.bindings !==
-    runtimeWeaponSourceIndex.bindings.length ||
-  runtimeWeaponSourceIndex.counts.attackSources !==
-    runtimeWeaponSourceIndex.attackSources.length ||
-  runtimeWeaponSourceIndex.counts.attackWeapons !==
-    runtimeWeaponSourceIndex.attackSources.reduce(
-      (total, source) => total + source.weapons.length,
-      0,
-    ) ||
-  runtimeWeaponSourceIndex.counts.resolvedCatalogVariants !==
-    runtimeWeaponSourceIndex.counts.attackWeapons
-) {
-  throw new Error("Invalid runtime weapon source index");
-}
-
 const runtimeExplosiveCatalog = {
-  sources: weaponCatalogSummary.counts.radialAssets > 0
-    ? weaponCatalogShippingVariants
+  sources: weaponCatalogShippingVariants
         .filter(
           ({ radialAssetId }) => radialAssetId !== null,
         )
@@ -361,8 +237,7 @@ const runtimeExplosiveCatalog = {
           (source, index, sources) =>
             sources.findIndex(({ id }) => id === source.id) ===
             index,
-        )
-    : [],
+        ),
 };
 function catalogVariantBallisticsModel(
   variant: WeaponCatalogVariant,
@@ -531,6 +406,8 @@ function runtimeExplosiveBallisticsModel(
 function runtimeCatalogAttackSourceWeapon(
   selectorVariant: WeaponCatalogVariant,
   sourceCardId: string,
+  sourceKind: RuntimeAttackSourceWeapon["sourceKind"] =
+    "explosive-catalog",
 ): RuntimeAttackSourceWeapon {
   const directModel =
     weaponCatalogDirectModelForVariant(selectorVariant);
@@ -572,29 +449,12 @@ function runtimeCatalogAttackSourceWeapon(
       kind: directFireRoute
         ? "encyclopedia-weapon-closure"
         : "editor-explosive-catalog",
-      catalogFingerprintSha256:
-        weaponCatalogSummary.catalogRevision,
-      projectileEvidence: radialSource
-        ? {
-            recordSha256: weaponCatalogSummary.catalogRevision,
-            projectileIndex: 0,
-            assetPath: radialSource.assetPath,
-          }
-        : null,
-      curveEvidence: [],
-      baseCurveFallbacks: [],
     },
     sourceCardId,
     sourceRawName: selectorVariant.familyLabel,
-    sourceVehicleId:
-      `weapon-catalog-${weaponCatalogSummary.catalogRevision}`,
-    sourceRecordUrl:
-      "catalog:generated/internal/weapon-catalog.json",
-    sourceRecordSha256: weaponCatalogSummary.catalogRevision,
-    sourceRecordBytes: 0,
     displayNameZh: weaponNameZh(selectorVariant.displayLabel),
     displayNameEnglish: selectorVariant.label,
-    sourceKind: "explosive-catalog",
+    sourceKind,
     selectorVariant,
     directFireRoute,
     explosiveCategory: radialSource?.category,
@@ -664,213 +524,116 @@ function isInfantryDeliveredRadialCatalogVariant(
   );
 }
 
-function bindingKey(cardId: string, rawName: string) {
-  return `${cardId}\u0000${rawName}`;
-}
-
-const bindingByIdentity = new Map<string, RuntimeWeaponLabelBinding>();
-for (const binding of runtimeWeaponSourceIndex.bindings) {
-  const identity = bindingKey(binding.cardId, binding.rawName);
-  if (binding.bindingKey !== identity || bindingByIdentity.has(identity)) {
-    throw new Error(`Invalid runtime weapon label identity: ${binding.cardId} / ${binding.rawName}`);
-  }
-  bindingByIdentity.set(identity, binding);
-}
-
 const attackSourceById = new Map<string, RuntimeAttackSource>();
-const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
-  runtimeWeaponSourceIndex.attackSources.map((source) => {
-    const duplicateCardId = source.cardIds.some((cardId) => attackSourceById.has(cardId));
-    const shareSlug = buildRuntimeAttackSourceShareSlug(source);
-    const canonicalReleaseRecord = runtimeHitRecordReferenceForVariant(
-      source.cardId,
-      source.canonicalRawName,
-    );
-    if (
-      duplicateCardId ||
-      normalizeRuntimeAttackSourceShareSlug(shareSlug) !== shareSlug ||
-      attackSourceById.has(shareSlug) ||
-      !canonicalReleaseRecord ||
-      canonicalReleaseRecord.vehicleId !== source.vehicleId ||
-      source.cardIds.length === 0 ||
-      new Set(source.cardIds).size !== source.cardIds.length ||
-      !source.cardIds.includes(source.cardId) ||
-      source.cardIds.some((cardId) => !cardId.startsWith(`${source.groupId}--`)) ||
-      !source.variantRawNames.includes(source.canonicalRawName) ||
-      source.weapons.length === 0 ||
-      source.directWeaponCount !== source.weapons.length ||
-      source.runtimeBackedWeaponCount + source.catalogCompletedWeaponCount !==
-        source.directWeaponCount ||
-      source.baseCurveFallbackWeaponCount > source.catalogCompletedWeaponCount ||
-      source.recordBytes <= 0 ||
-      !/^vehicle-[0-9a-f]{64}$/.test(source.vehicleId) ||
-      !/^[0-9a-f]{64}$/.test(source.recordSha256) ||
-      source.recordUrl !==
-        `/assets/runtime-probe/hit-runtime/records/${source.recordSha256}.json`
+const productCatalogIndex =
+  catalogIndexJson as unknown as PublicCatalogIndex;
+if (
+  productCatalogIndex.schemaVersion !== "1.0.0" ||
+  !Array.isArray(productCatalogIndex.records)
+) {
+  throw new Error("Invalid Armor card catalog");
+}
+
+const groupOrderById = new Map(
+  productCatalogIndex.groups.map(({ id, order }) => [id, order]),
+);
+
+function vehicleWeaponVariants(record: CatalogSearchRecord) {
+  const byId = new Map<string, WeaponCatalogVariant>();
+  for (const variant of record.variants) {
+    for (
+      const weapon of weaponCatalogVariantsForExactVehicle(
+        variant.cardId,
+        variant.sourceRawName,
+      )
     ) {
-      throw new Error(`Invalid runtime attack source: ${source.cardId}`);
+      if (
+        weapon.selectorVisibility === "shipping" &&
+        (weapon.directDamageModelId !== null ||
+          weapon.radialAssetId !== null)
+      ) {
+        byId.set(weapon.id, weapon);
+      }
     }
-    const ballisticsIds = new Set<string>();
-    const catalogRadialVariants =
-      weaponCatalogShippingVariants.filter(
-        (variant) =>
-          isVehicleDeliveredRadialCatalogVariant(variant) &&
-          variant.exactCardIds.some((cardId) =>
-            source.cardIds.includes(cardId),
-          ) &&
-          !source.weapons.some(
-            (weapon) => weapon.weaponVariantId === variant.id,
-          ),
-      );
-    const normalized: RuntimeAttackSource = {
-      ...source,
-      shareSlug,
-      sourceKind: "vehicle",
-      sourceCategory: "vehicle",
-      types: uniqueSorted([
-        ...source.types,
-        ...catalogRadialVariants.map((variant) => variant.type),
-      ]),
-      directWeaponCount:
-        source.directWeaponCount + catalogRadialVariants.length,
-      catalogCompletedWeaponCount:
-        source.catalogCompletedWeaponCount +
-        catalogRadialVariants.length,
-      vehicleId: canonicalReleaseRecord.vehicleId,
-      recordUrl: canonicalReleaseRecord.recordUrl,
-      recordSha256: canonicalReleaseRecord.recordSha256,
-      recordBytes: canonicalReleaseRecord.recordBytes,
-      weapons: [
-        ...source.weapons.map((weapon): RuntimeAttackSourceWeapon => {
-          const sourceIdentity = weapon.ballisticsId;
-          const selectorVariant = weaponCatalogVariantForId(
-            weapon.weaponVariantId,
-          );
-          const directModel = selectorVariant
-            ? weaponCatalogDirectModelForVariant(selectorVariant)
-            : null;
-          const ballisticProfile =
-            weaponCatalogBallisticProfileForId(
-              weapon.ballisticsId,
-            );
-          const radialSource = selectorVariant?.radialAssetId
-            ? runtimeExplosiveCatalog.sources.find(
-                ({ id }) => id === selectorVariant.radialAssetId,
-              ) ?? null
-            : null;
-          const releaseRecord = runtimeHitRecordReferenceForVariant(
-            weapon.sourceCardId,
-            weapon.sourceRawName,
-          );
-          if (
-            ballisticsIds.has(sourceIdentity) ||
-            !releaseRecord ||
-            releaseRecord.vehicleId !== weapon.sourceVehicleId ||
-            !source.cardIds.includes(weapon.sourceCardId) ||
-            !source.variantRawNames.includes(weapon.sourceRawName) ||
-            weapon.sourceRecordBytes <= 0 ||
-            !/^vehicle-[0-9a-f]{64}$/.test(weapon.sourceVehicleId) ||
-            !/^[0-9a-f]{64}$/.test(weapon.sourceRecordSha256) ||
-            weapon.sourceRecordUrl !==
-              `/assets/runtime-probe/hit-runtime/records/${weapon.sourceRecordSha256}.json` ||
-            !/^[0-9a-f]{64}$/.test(weapon.ballisticsId) ||
-            weapon.ballisticsWeaponIndex !== 0 ||
-            !selectorVariant ||
-            (selectorVariant.radialAssetId !== null &&
-              radialSource === null) ||
-            !selectorVariant.ballisticProfileIds.includes(
-              weapon.ballisticsId,
-            ) ||
-            !ballisticProfile ||
-            ballisticProfile.model.weapons?.length !== 1 ||
-            ballisticProfile.model.projectiles?.length !== 1 ||
-            !Array.isArray(ballisticProfile.model.curves) ||
-            !/^[0-9a-f]{64}$/.test(
-              weapon.evidence.catalogFingerprintSha256,
-            ) ||
-            (
-              weapon.evidence.kind === "exact-runtime-record" &&
-              (
-                weapon.weaponIndex < 0 ||
-                !weapon.runtimeAssetPath ||
-                weapon.evidence.runtimeRecordSha256 !==
-                  weapon.sourceRecordSha256 ||
-                weapon.evidence.runtimeWeaponIndex !==
-                  weapon.weaponIndex
-              )
-            ) ||
-            (
-              weapon.evidence.kind ===
-                "encyclopedia-weapon-closure" &&
-              (weapon.weaponIndex !== -1 || weapon.runtimeAssetPath !== null)
-            )
-          ) {
-            throw new Error(`Invalid runtime attack weapon: ${source.cardId}/${weapon.weaponIndex}`);
-          }
-          ballisticsIds.add(sourceIdentity);
-          return {
-            ...weapon,
-            ballisticsModel: radialSource
-              ? withRuntimeExplosiveSourceBallistics(
-                  ballisticProfile.model,
-                  weapon.ballisticsWeaponIndex,
-                  radialSource,
-                  directModel?.impactRadialOrder === "not-applicable"
-                    ? undefined
-                    : directModel?.impactRadialOrder,
-                )
-              : ballisticProfile.model,
-            ballisticsSource: {
-              kind: weapon.evidence.kind,
-              catalogFingerprintSha256:
-                weapon.evidence.catalogFingerprintSha256,
-              runtimeRecordSha256:
-                weapon.evidence.runtimeRecordSha256 ?? undefined,
-              runtimeWeaponIndex:
-                weapon.evidence.runtimeWeaponIndex ?? undefined,
-              projectileEvidence: radialSource
-                ? {
-                    recordSha256:
-                      weaponCatalogSummary.catalogRevision,
-                    projectileIndex: 0,
-                    assetPath: radialSource.assetPath,
-                  }
-                : null,
-              curveEvidence: [],
-              baseCurveFallbacks: [],
-            },
-            sourceKind: "vehicle",
-            selectorVariant,
-            directFireRoute: true,
-            explosiveCategory: radialSource?.category,
-            explosiveCategoryLabel:
-              radialSource?.categoryLabel,
-            explosiveLayerOrderEvidence:
-              radialSource?.layerOrderEvidence,
-            explosiveLayerOrderClosed: radialSource
-              ? runtimeExplosiveLayerOrderIsClosed(radialSource)
-              : undefined,
-            explosiveLayerCount: radialSource?.layers.length,
-            sourceVehicleId: releaseRecord.vehicleId,
-            sourceRecordUrl: releaseRecord.recordUrl,
-            sourceRecordSha256: releaseRecord.recordSha256,
-            sourceRecordBytes: releaseRecord.recordBytes,
-            displayNameZh: weaponDisplayNameZh(weapon),
-            displayNameEnglish: weapon.displayName || weapon.gunName,
-          };
-        }),
-        ...catalogRadialVariants.map((variant) =>
-          runtimeCatalogAttackSourceWeapon(
-            variant,
-            source.cardId,
-          ),
-        ),
-      ],
-    };
-    for (const cardId of source.cardIds) attackSourceById.set(cardId, normalized);
-    attackSourceById.set(shareSlug, normalized);
-    return normalized;
+  }
+  const cardIds = new Set(record.variants.map(({ cardId }) => cardId));
+  for (const weapon of weaponCatalogShippingVariants) {
+    if (
+      isVehicleDeliveredRadialCatalogVariant(weapon) &&
+      weapon.exactCardIds.some((cardId) => cardIds.has(cardId))
+    ) {
+      byId.set(weapon.id, weapon);
+    }
+  }
+  return [...byId.values()];
+}
+
+function vehicleAttackSource(
+  record: CatalogSearchRecord,
+): RuntimeAttackSource | null {
+  const variants = vehicleWeaponVariants(record);
+  const firstVariant = record.variants[0];
+  const canonicalRawName =
+    record.selectedRawName ?? firstVariant?.sourceRawName;
+  if (!firstVariant || !canonicalRawName || variants.length === 0) {
+    return null;
+  }
+  const cardIds = uniqueSorted(
+    record.variants.map(({ cardId }) => cardId),
+  );
+  const cardId = cardIds.includes(record.defaultCardId)
+    ? record.defaultCardId
+    : firstVariant.cardId;
+  const shareSlug = buildRuntimeAttackSourceShareSlug({
+    groupId: record.official.groupId,
+    canonicalRawName,
   });
+  if (
+    normalizeRuntimeAttackSourceShareSlug(shareSlug) !== shareSlug ||
+    cardIds.some((candidate) => attackSourceById.has(candidate)) ||
+    attackSourceById.has(shareSlug)
+  ) {
+    throw new Error(`Duplicate Armor attack source: ${record.promoEntryId}`);
+  }
+  const weapons = variants.map((variant) =>
+    runtimeCatalogAttackSourceWeapon(variant, cardId, "vehicle"),
+  );
+  const source: RuntimeAttackSource = {
+    cardId,
+    cardIds,
+    shareSlug,
+    sourceKind: "vehicle",
+    sourceCategory: "vehicle",
+    displayName:
+      record.selectedDisplayName ?? record.official.nameZh,
+    groupId: record.official.groupId,
+    groupName: record.official.groupNameZh,
+    groupOrder:
+      groupOrderById.get(record.official.groupId) ??
+      Number.MAX_SAFE_INTEGER,
+    type: record.official.typeZh,
+    types: uniqueSorted([
+      record.official.typeZh,
+      ...variants.map(({ type }) => type),
+    ]),
+    canonicalRawName,
+    variantRawNames: uniqueSorted(
+      record.variants.map(({ sourceRawName }) => sourceRawName),
+    ),
+    catalogCompletedWeaponCount: weapons.length,
+    weapons,
+  };
+  for (const candidate of cardIds) {
+    attackSourceById.set(candidate, source);
+  }
+  attackSourceById.set(shareSlug, source);
+  return source;
+}
+
+const runtimeVehicleAttackSources: readonly RuntimeAttackSource[] =
+  productCatalogIndex.records
+    .map(vehicleAttackSource)
+    .filter((source): source is RuntimeAttackSource => source !== null);
 
 function isCommanderSupportCatalogVariant(
   variant: WeaponCatalogVariant,
@@ -991,20 +754,9 @@ const wikiInfantryDirectAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
       ),
       ballisticsSource: {
         kind: "encyclopedia-weapon-closure",
-        catalogFingerprintSha256:
-          weaponCatalogSummary.catalogRevision,
-        projectileEvidence: null,
-        curveEvidence: [],
-        baseCurveFallbacks: [],
       },
       sourceCardId: WIKI_INFANTRY_ATTACK_SOURCE_CARD_ID,
       sourceRawName: selectorVariant.familyLabel,
-      sourceVehicleId:
-        `weapon-catalog-${weaponCatalogSummary.catalogRevision}`,
-      sourceRecordUrl:
-        "catalog:generated/internal/weapon-catalog.json",
-      sourceRecordSha256: weaponCatalogSummary.catalogRevision,
-      sourceRecordBytes: 0,
       displayNameZh: weaponNameZh(selectorVariant.displayLabel),
       displayNameEnglish: configuration.displayName,
       sourceKind: "wiki-infantry",
@@ -1068,22 +820,12 @@ const wikiInfantryAttackSource: RuntimeAttackSource = {
   type: "Infantry Weapon",
   types: ["Infantry Weapon", "Small Arms", "步兵武器"],
   canonicalRawName: "Infantry Weapons",
-  catalogSelectedRawName: "Infantry Weapons",
-  canonicalSelectionBasis: "wiki-infantry-configuration-order",
   variantRawNames: uniqueSorted(
     wikiInfantryCatalogVariants.map(
       ({ familyLabel }) => familyLabel,
     ),
   ),
-  vehicleId:
-    `weapon-catalog-${weaponCatalogSummary.catalogRevision}`,
-  recordUrl: "catalog:generated/internal/weapon-catalog.json",
-  recordSha256: weaponCatalogSummary.catalogRevision,
-  recordBytes: 0,
-  directWeaponCount: wikiInfantryAttackSourceWeapons.length,
-  runtimeBackedWeaponCount: 0,
   catalogCompletedWeaponCount: wikiInfantryAttackSourceWeapons.length,
-  baseCurveFallbackWeaponCount: 0,
   weapons: wikiInfantryAttackSourceWeapons,
 };
 if (
@@ -1146,20 +888,10 @@ function registerCatalogCategoryAttackSource({
       ...variants.map((variant) => variant.type),
     ]),
     canonicalRawName: displayName,
-    catalogSelectedRawName: displayName,
-    canonicalSelectionBasis: "editor-weapon-catalog-category-order",
     variantRawNames: uniqueSorted(
       variants.map((variant) => variant.displayLabel),
     ),
-    vehicleId:
-      `weapon-catalog-${weaponCatalogSummary.catalogRevision}`,
-    recordUrl: "catalog:generated/internal/weapon-catalog.json",
-    recordSha256: weaponCatalogSummary.catalogRevision,
-    recordBytes: 0,
-    directWeaponCount: weapons.length,
-    runtimeBackedWeaponCount: 0,
     catalogCompletedWeaponCount: weapons.length,
-    baseCurveFallbackWeaponCount: 0,
     weapons,
   };
   attackSourceById.set(cardId, source);
@@ -1209,38 +941,4 @@ export function runtimeAttackWeaponSupportsHitAnalysis(
 
 export function runtimeAttackSourceForId(id: string) {
   return attackSourceById.get(id) ?? null;
-}
-
-export function runtimeWeaponLabelFor({
-  cardId,
-  rawName,
-  recordSha256,
-  weaponIndex,
-  weaponId,
-  runtimeAssetPath,
-}: {
-  cardId: string;
-  rawName: string;
-  recordSha256: string;
-  weaponIndex: number;
-  weaponId: string;
-  runtimeAssetPath: string;
-}): RuntimeWeaponLabel | null {
-  const binding = bindingByIdentity.get(bindingKey(cardId, rawName));
-  if (!binding || binding.recordSha256 !== recordSha256) return null;
-  const weapon = binding.weapons.find((candidate) => candidate.weaponIndex === weaponIndex);
-  if (
-    !weapon ||
-    weapon.weaponId !== weaponId ||
-    weapon.runtimeAssetPath !== runtimeAssetPath
-  ) {
-    return null;
-  }
-  return {
-    displayNameZh: weaponDisplayNameZh(weapon),
-    displayNameEnglish: weapon.displayName || weapon.gunName,
-    gunName: weapon.gunName,
-    projectileName: weapon.projectileName,
-    matchBasis: weapon.matchBasis,
-  };
 }

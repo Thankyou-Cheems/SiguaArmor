@@ -11,7 +11,6 @@ import {
   buildRuntimeAttackSourceShareSlug,
   normalizeRuntimeAttackSourceShareSlug,
 } from "../../lib/runtime-attack-source-share.mjs";
-import { assertInventorySnapshot } from "../../tools/validation-profile.mjs";
 import { encodeViewerCameraState } from "../../lib/viewer-camera-share.mjs";
 import { encodeViewerTurretState } from "../../lib/viewer-turret-share.mjs";
 import {
@@ -247,15 +246,22 @@ test("attacker links use stable vehicle slugs and retain legacy numeric links", 
   );
 });
 
-test("local attack-source spec yields unique stable slugs for every vehicle", async () => {
-  const labelIndex = JSON.parse(
+test("product card mappings yield unique stable attack-source slugs", async () => {
+  const catalogIndex = JSON.parse(
     await readFile(
-      path.join(ROOT, "app", "runtime-weapon-source-index.json"),
+      path.join(ROOT, "generated", "catalog-index.json"),
       "utf8",
     ),
   );
-  const slugs = labelIndex.attackSources.map(buildRuntimeAttackSourceShareSlug);
-  assertInventorySnapshot(assert, slugs.length, 174, "vehicle attack share slugs");
+  const sources = catalogIndex.records
+    .filter(({ selectedRawName }) => selectedRawName)
+    .map((record) => ({
+      groupId: record.official.groupId,
+      canonicalRawName: record.selectedRawName,
+      cardIds: record.variants.map(({ cardId }) => cardId),
+    }));
+  const slugs = sources.map(buildRuntimeAttackSourceShareSlug);
+  assert.ok(slugs.length > 0);
   assert.equal(new Set(slugs).size, slugs.length);
   assert.ok(
     slugs.every(
@@ -263,8 +269,11 @@ test("local attack-source spec yields unique stable slugs for every vehicle", as
         normalizeRuntimeAttackSourceShareSlug(shareSlug) === shareSlug,
     ),
   );
-  const lav6Source = labelIndex.attackSources.find(
-    ({ cardIds }) => cardIds.includes("caf--lav-6--ifv"),
+  const lav6Source = sources.find(
+    ({ cardIds }) =>
+      cardIds.some((cardId) =>
+        cardId.startsWith("caf--lav-6--ifv--"),
+      ),
   );
   assert.ok(lav6Source);
   assert.equal(buildRuntimeAttackSourceShareSlug(lav6Source), "caf-lav6");
@@ -404,9 +413,6 @@ test("site editions keep independent titles while sharing the optional DAU displ
     updatesDocument,
     beacon,
     header,
-    weapons,
-    factions,
-    releaseFinalizer,
   ] = await Promise.all([
     readFile(path.join(ROOT, "app", "layout.tsx"), "utf8"),
     readFile(path.join(ROOT, "app", "china", "page.tsx"), "utf8"),
@@ -415,9 +421,6 @@ test("site editions keep independent titles while sharing the optional DAU displ
     readFile(path.join(ROOT, "lib", "updates-document.mjs"), "utf8"),
     readFile(path.join(ROOT, "app", "DailyActiveBeacon.tsx"), "utf8"),
     readFile(path.join(ROOT, "app", "InternationalHeader.tsx"), "utf8"),
-    readFile(path.join(ROOT, "app", "wiki", "WeaponsWiki.tsx"), "utf8"),
-    readFile(path.join(ROOT, "app", "wiki", "FactionsWiki.tsx"), "utf8"),
-    readFile(path.join(ROOT, "tools", "finalize-public-release.mjs"), "utf8"),
   ]);
 
   assert.match(layout, /<DailyActiveProvider>\{children\}<\/DailyActiveProvider>/u);
@@ -445,14 +448,6 @@ test("site editions keep independent titles while sharing the optional DAU displ
   );
   assert.match(catalogApp, /href="https:\/\/react\.dev\/"/u);
   assert.match(catalogApp, /href="https:\/\/threejs\.org\/"/u);
-  assert.match(releaseFinalizer, /squad-armor\\\.com/u);
-  assert.match(releaseFinalizer, /https:\/\/sigua\.qq\.com\//u);
-  assert.match(
-    releaseFinalizer,
-    /https:\/\/www\.tencent\.com\/legal\/html\/zh-cn\/property\.html/u,
-  );
-  assert.match(releaseFinalizer, /children:"Squad Armor"/u);
-  assert.match(releaseFinalizer, /Squad Armor footer attribution contains an unexpected link/u);
   assert.match(catalogApp, /本站引用的国服官网图片、文字、标识等素材/u);
   assert.match(catalogApp, /权利归腾讯及相应权利人所有/u);
   assert.match(catalogApp, /href="https:\/\/sigua\.qq\.com\/"/u);
@@ -477,7 +472,6 @@ test("site editions keep independent titles while sharing the optional DAU displ
   assert.match(catalogApp, /<DailyActiveDisplay variant="dock" \/>/u);
   assert.match(catalogApp, /<DailyActiveDisplay variant="dock-mobile" \/>/u);
   assert.match(header, /<DailyActiveDisplay variant="nav" \/>/u);
-  assert.match(header, /internationalPath\("\/wiki\/vehicles"\)/u);
-  assert.match(weapons, /internationalPath\(/u);
-  assert.match(factions, /internationalPath\(/u);
+  assert.match(header, /href=\{SIGUA_WIKI_ORIGIN\}/u);
+  assert.doesNotMatch(header, /\/wiki\//u);
 });

@@ -1,4 +1,4 @@
-import { copyFile, cp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,7 +11,6 @@ import {
   originHostname,
 } from "../../lib/public-site-topology.mjs";
 import { PUBLIC_DOCUMENT_CACHE } from "./public-document-policy.mjs";
-import { ARMOR_SELECTOR_ASSETS } from "./armor-selector-assets.mjs";
 import { SITE_PORTAL_BRAND } from "./site-portal-brand.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -72,8 +71,8 @@ export async function renderPublicSiteConfig(outputRoot) {
     throw new Error(`public-site output must stay inside outputs/: ${resolvedOutput}`);
   }
   const templates = [
-    ["armor-selector.template.html", "index.html"],
-    ["landing.template.html", "navigator/index.html"],
+    ["armor-selector.template.html", "release/index.html"],
+    ["landing.template.html", "release/navigator/index.html"],
     ["Caddyfile.template", "Caddyfile"],
     ["docker-compose.template.yml", "docker-compose.yml"],
   ];
@@ -90,16 +89,8 @@ export async function renderPublicSiteConfig(outputRoot) {
   }
   await cp(
     path.join(TEMPLATE_ROOT, "assets"),
-    path.join(resolvedOutput, "portal-assets"),
+    path.join(resolvedOutput, "release", "portal-assets"),
     { recursive: true, force: true },
-  );
-  await Promise.all(
-    ARMOR_SELECTOR_ASSETS.map(({ fileName, sourceFileName }) =>
-      copyFile(
-        path.join(TEMPLATE_ROOT, "assets", sourceFileName),
-        path.join(resolvedOutput, "portal-assets", fileName),
-      ),
-    ),
   );
   return resolvedOutput;
 }

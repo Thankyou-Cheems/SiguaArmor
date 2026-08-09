@@ -1,8 +1,6 @@
 {
   "schemaVersion": "1.0.0",
   "catalogId": "sigua-armor-international-reference-2026-07-16",
-  "dataRevision": "vehicle-v3.1-4c01df280389195eaf05-projection-399295012186-support-air-8d9a1b9f59ff-cards-63600a42ac23",
-  "vehicleCatalogRevision": "4c01df280389195eaf0559c98f8a24f3e0062b78513558d09beb659d0d32acaa",
   "groups": [
     {
       "id": "adf",

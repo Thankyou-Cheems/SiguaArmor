@@ -38,24 +38,6 @@ test("only exact render payload and matrix duplicates are suppressed", () => {
   );
 });
 
-test("the active fleet has no exact duplicate render payload after browser dedupe", async () => {
-  const visualIndex = JSON.parse(
-    await readFile(path.join(ROOT, "app", "runtime-probe-visual-index.json"), "utf8"),
-  );
-  let suppressedCount = 0;
-  for (const descriptor of visualIndex.descriptors) {
-    const result = dedupeIdenticalVisualPlacements(descriptor.placements);
-    suppressedCount += result.suppressed.length;
-    const keys = result.placements.map((item) => `${item.assetUrl}\u0000${item.matrix.join(",")}`);
-    assert.equal(
-      new Set(keys).size,
-      keys.length,
-      `${descriptor.cardId}/${descriptor.rawName}: exact render duplicates remain`,
-    );
-  }
-  assert.ok(suppressedCount > 0, "fleet fixture must exercise duplicate suppression");
-});
-
 test("invalid matrices and duplicate occurrence identities fail closed", () => {
   assert.throws(
     () => dedupeIdenticalVisualPlacements([

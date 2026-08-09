@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
@@ -24,7 +23,6 @@ import {
   renderPublicSiteConfig,
   renderPublicSiteTemplate,
 } from "../../tools/deploy/render-public-site-config.mjs";
-import { ARMOR_SELECTOR_ASSETS } from "../../tools/deploy/armor-selector-assets.mjs";
 import { patchPublicOriginCaddy } from "../../tools/deploy/patch-public-origin-caddy.mjs";
 import { SITE_PORTAL_BRAND } from "../../tools/deploy/site-portal-brand.mjs";
 
@@ -173,8 +171,8 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/sigua\/"/u);
   assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/squad\/"/u);
   assert.match(selector, /tactical-squad-wordmark-62bff6fb051e\.png/u);
-  assert.match(selector, /shenzhou-soldier-clean-ddd587081da0\.webp/u);
-  assert.match(selector, /pla-soldier-clean-ccb90707110a\.webp/u);
+  assert.match(selector, /siguad-armor-china-soldier-ddd587081da0\.webp/u);
+  assert.match(selector, /siguad-armor-global-soldier-ccb90707110a\.webp/u);
   assert.match(selector, /藤瓜 · 国服载具资料/u);
   assert.match(selector, /丝瓜 · 国际服载具资料/u);
   assert.match(selector, /@media \(max-width: 720px\)/u);
@@ -263,8 +261,12 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(caddy, /@selectorAssets path \/portal-assets\/tactical-squad-wordmark/u);
   assert.match(caddy, /header !RSC/u);
   assert.match(caddy, /s-maxage=60/u);
-  assert.match(caddy, /@generatedPortalAssets path \/portal-assets\/siguad-\*/u);
-  assert.match(caddy, /squad\/images\/site/u);
+  assert.doesNotMatch(caddy, /generatedPortalAssets|squad\/images\/site/u);
+  assert.match(caddy, /root \* \{\$SIGUA_PUBLIC_ROOT:\/srv\/public\}\/squad/u);
+  assert.match(compose, /image: node:22-alpine/u);
+  assert.match(compose, /command: \["node", "\/app\/server\.js"\]/u);
+  assert.match(compose, /context: \.\/services\/analytics/u);
+  assert.match(compose, /\.\/services\/content-admin:\/app:ro/u);
   assert.doesNotMatch(caddy, /mobile\.html|User-Agent|Sec-CH-UA-Mobile/u);
   assert.equal(
     (compose.match(/SIGUA_PUBLIC_ORIGIN: https:\/\/armor\.siguad\.icu/gu) ?? [])
@@ -277,16 +279,19 @@ test("deployment templates render from topology without mobile routing or stale 
   );
 });
 
-test("Site Portal brand assets are hash-pinned and copied beside rendered config", async () => {
+test("Site Portal brand assets are copied beside rendered config", async () => {
   await mkdir(path.join(ROOT, "outputs"), { recursive: true });
   const outputRoot = await mkdtemp(
     path.join(ROOT, "outputs", "site-portal-render-"),
   );
   try {
     await renderPublicSiteConfig(outputRoot);
-    const selector = await readFile(path.join(outputRoot, "index.html"), "utf8");
+    const selector = await readFile(
+      path.join(outputRoot, "release", "index.html"),
+      "utf8",
+    );
     const navigator = await readFile(
-      path.join(outputRoot, "navigator", "index.html"),
+      path.join(outputRoot, "release", "navigator", "index.html"),
       "utf8",
     );
     assert.match(selector, /藤瓜 · 国服载具资料/u);
@@ -300,12 +305,10 @@ test("Site Portal brand assets are hash-pinned and copied beside rendered config
       const sourceBytes = await readFile(
         path.join(ROOT, "deploy", "public-site", "assets", asset.fileName),
       );
-      assert.equal(
-        createHash("sha256").update(sourceBytes).digest("hex"),
-        asset.sha256,
-      );
       assert.deepEqual(
-        await readFile(path.join(outputRoot, "portal-assets", asset.fileName)),
+        await readFile(
+          path.join(outputRoot, "release", "portal-assets", asset.fileName),
+        ),
         sourceBytes,
       );
     }
@@ -323,38 +326,6 @@ test("Site Portal brand assets are hash-pinned and copied beside rendered config
         wordmarkFont.hasGlyphForCodePoint(character.codePointAt(0)),
         true,
         `temporary wordmark font lacks ${character}`,
-      );
-    }
-  } finally {
-    await rm(outputRoot, { recursive: true, force: true });
-  }
-});
-
-test("historical Armor selector assets are hash-pinned and rendered without source duplication", async () => {
-  await mkdir(path.join(ROOT, "outputs"), { recursive: true });
-  const outputRoot = await mkdtemp(
-    path.join(ROOT, "outputs", "armor-selector-render-"),
-  );
-  try {
-    await renderPublicSiteConfig(outputRoot);
-    for (const asset of ARMOR_SELECTOR_ASSETS) {
-      const sourceBytes = await readFile(
-        path.join(
-          ROOT,
-          "deploy",
-          "public-site",
-          "assets",
-          asset.sourceFileName,
-        ),
-      );
-      assert.equal(sourceBytes.byteLength, asset.bytes);
-      assert.equal(
-        createHash("sha256").update(sourceBytes).digest("hex"),
-        asset.sha256,
-      );
-      assert.deepEqual(
-        await readFile(path.join(outputRoot, "portal-assets", asset.fileName)),
-        sourceBytes,
       );
     }
   } finally {
@@ -393,12 +364,8 @@ test("outer Caddy patch adds only the Armor host and is idempotent", () => {
   );
 });
 
-test("candidate preflight resolves the Armor host instead of injecting Host", async () => {
-  const [activation, caddy, probe] = await Promise.all([
-    readFile(
-      path.join(ROOT, "tools", "deploy", "activate-unified-public-template.sh"),
-      "utf8",
-    ),
+test("deployment preflight resolves the Armor host instead of injecting Host", async () => {
+  const [caddy, probe] = await Promise.all([
     readFile(
       path.join(ROOT, "deploy", "public-site", "Caddyfile.template"),
       "utf8",
@@ -409,10 +376,6 @@ test("candidate preflight resolves the Armor host instead of injecting Host", as
     ),
   ]);
 
-  assert.match(
-    activation,
-    /--add-host __SIGUA_ARMOR_HOST__:127\.0\.0\.1/u,
-  );
   assert.match(probe, /http:\/\/\$\{public_host\}:8080\/healthz/u);
   assert.match(
     probe,

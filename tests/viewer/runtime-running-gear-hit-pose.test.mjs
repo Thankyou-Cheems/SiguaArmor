@@ -1,17 +1,9 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
 import { Matrix4 } from "three";
 
 import { resolveRuntimeRunningGearHitComponentPoses } from "../../lib/runtime-running-gear-hit-pose.ts";
-
-const ROOT = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-);
+import { runtimePlanarSuspensionPoseIndex } from "../../app/runtime-planar-suspension-pose.ts";
 
 const ASLAV_GENERATED_CLASS =
   "/Game/Vehicles/ASLAV/BP_ASLAV.BP_ASLAV_C";
@@ -26,14 +18,8 @@ const ASLAV_WHEEL_COMPONENTS = [
   "SQVehicleWheel_L2",
 ];
 
-test("ASLAV maps all eight exact wheel hit components to native-planar bones", async () => {
-  const index = JSON.parse(
-    await readFile(
-      path.join(ROOT, "app", "runtime-suspension-pose-index.json"),
-      "utf8",
-    ),
-  );
-  const record = index.records.find(
+test("ASLAV maps all eight exact wheel hit components to native-planar bones", () => {
+  const record = runtimePlanarSuspensionPoseIndex.records.find(
     ({ generatedClass }) => generatedClass === ASLAV_GENERATED_CLASS,
   );
   assert.ok(record);

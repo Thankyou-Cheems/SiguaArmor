@@ -10,22 +10,8 @@ export interface RuntimeCardImpression {
   type: string;
   factionId: string;
   path: string;
-  sha256: string;
-  bytes: number;
   width: number;
   height: number;
-  alphaCoverage: number;
-  sourcePackageSha256: string;
-  sourceIdentitySha256: string;
-  sourceDescriptorSha256: string | null;
-  sourceAssetCount: number;
-  sourceOccurrenceCount: number;
-  selection: {
-    mode: string;
-    label: string;
-    selectedOccurrences: number;
-    filteredOccurrences: number;
-  } | null;
 }
 
 interface RuntimeCardImpressionManifest {
@@ -38,14 +24,11 @@ interface RuntimeCardImpressionManifest {
     factionId: string;
     defaultVariantRawName: string;
     impressionPath: string;
-    impressionSha256: string;
   }>;
   variants: RuntimeCardImpression[];
   summary: {
     cards: number;
     variants: number;
-    bytes: number;
-    maxBytes: number;
   };
 }
 

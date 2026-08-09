@@ -324,7 +324,9 @@ function vehicleVariantSearchTokens(
   variant: CatalogVariant,
 ): VehicleSearchTokenGroups {
   const aliases = VEHICLE_SEARCH_ALIASES[record.promoEntryId] ?? EMPTY_ALIASES;
-  const weapons = variant.data.weaponBindingIds.map((bindingId) => {
+  const displayName =
+    variant.data?.general.displayName ?? record.official.nameZh;
+  const weapons = (variant.data?.weaponBindingIds ?? []).map((bindingId) => {
     const binding =
       runtimeVehicleEquipmentBindingForId(bindingId);
     if (!binding) {
@@ -338,10 +340,10 @@ function vehicleVariantSearchTokens(
     primary: [
       variant.alias,
       vehicleConfigurationNameZh(variant.alias),
-      variant.data.general.displayName,
-      vehicleDisplayNameZh(variant.data.general.displayName),
+      displayName,
+      vehicleDisplayNameZh(displayName),
       variant.sourceRawName,
-      variant.data.general.rawName,
+      variant.data?.general.rawName ?? variant.sourceRawName,
     ].map(normalizeVehicleSearch),
     aliases: [
       ...(aliases.variantLabels?.[variant.sourceRawName] ?? []),

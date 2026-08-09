@@ -108,7 +108,7 @@ import {
   runtimeWikiAssetUrl,
   runtimeViewerPresentation,
 } from "../lib/runtime-visual-lazy-load";
-import infantryPostureRuntime from "./infantry-posture-runtime.json";
+import { loadWikiDataset } from "../lib/wiki-source";
 import { WeaponPenetrationIcon } from "./WeaponPenetrationIcon";
 import type {
   RuntimeVehiclePreview,
@@ -183,8 +183,7 @@ const MAX_VISIBLE_LAYERS = 8;
 const SHOT_GESTURE_THRESHOLD_PX = 5;
 const DEFAULT_TARGET_DISTANCE_M = 0;
 const REFERENCE_SOLDIER_MODEL_PATH =
-  "/infantry-hit-runtime/models/4b6caa60516b49563a968cbcf53875126157d15665cc54b9d8921d832d09ae14.glb";
-const REFERENCE_SOLDIER_PRODUCTION_BASE_PATH = "/squad";
+  "/assets/infantry-hit/models/4b6caa60516b49563a968cbcf53875126157d15665cc54b9d8921d832d09ae14.glb";
 const RUNTIME_GROUND_REFERENCE_MIN_CLEARANCE_M = 2.25;
 const RUNTIME_GROUND_REFERENCE_MAX_CLEARANCE_M = 4;
 const RUNTIME_GROUND_SCALE_RENDER_ORDER = 7;
@@ -197,24 +196,35 @@ type ReferenceSoldierBoneTransform = {
   rotation: [number, number, number, number];
   scale: [number, number, number];
 };
-const REFERENCE_SOLDIER_STANDING_RIFLE_POSE = (
-  infantryPostureRuntime.postures as unknown as Record<
-    string,
-    {
-      boneCount: number;
-      bones: Record<string, ReferenceSoldierBoneTransform>;
-    }
-  >
-)["standing-rifle"];
+type InfantryPosture = {
+  boneCount: number;
+  bones: Record<string, ReferenceSoldierBoneTransform>;
+};
+type InfantryPostureDataset = {
+  schemaVersion: "sigua-infantry-posture-runtime/v1";
+  count: number;
+  postures: Record<string, InfantryPosture>;
+};
+const infantryPostureRuntime = (await loadWikiDataset(
+  "/data/infantry/postures.json",
+  "sigua-infantry-posture-runtime/v1",
+)) as InfantryPostureDataset;
+if (
+  infantryPostureRuntime.count !==
+    Object.keys(infantryPostureRuntime.postures).length ||
+  Object.values(infantryPostureRuntime.postures).some(
+    (posture) => posture.boneCount !== Object.keys(posture.bones).length,
+  )
+) {
+  throw new Error("SiguaWiki infantry posture data is invalid");
+}
+const REFERENCE_SOLDIER_STANDING_RIFLE_POSE =
+  infantryPostureRuntime.postures["standing-rifle"];
+if (!REFERENCE_SOLDIER_STANDING_RIFLE_POSE) {
+  throw new Error("SiguaWiki is missing the standing-rifle infantry posture");
+}
 function referenceSoldierModelUrl() {
-  if (typeof window === "undefined") return REFERENCE_SOLDIER_MODEL_PATH;
-  const localPreview =
-    window.location.hostname === "127.0.0.1" ||
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "::1";
-  return localPreview
-    ? REFERENCE_SOLDIER_MODEL_PATH
-    : `${REFERENCE_SOLDIER_PRODUCTION_BASE_PATH}${REFERENCE_SOLDIER_MODEL_PATH}`;
+  return runtimeWikiAssetUrl(REFERENCE_SOLDIER_MODEL_PATH);
 }
 
 function runtimeGroundReferenceClearanceM(
@@ -4572,8 +4582,6 @@ export function RuntimeVehicleViewer({
       }
       if (host) {
         host.dataset.attackSourceState = "ready";
-        host.dataset.attackSourceRecordSha256 = preferredWeapon.sourceRecordSha256;
-        host.dataset.attackSourceVehicleId = preferredWeapon.sourceVehicleId;
         host.dataset.attackSourceBallisticsId = preferredWeapon.ballisticsId;
       }
     } catch (error: unknown) {
@@ -4935,8 +4943,6 @@ export function RuntimeVehicleViewer({
   useEffect(() => {
     const host = hostRef.current;
     if (!host || !selectedAttackWeapon) return;
-    host.dataset.attackSourceRecordSha256 = selectedAttackWeapon.sourceRecordSha256;
-    host.dataset.attackSourceVehicleId = selectedAttackWeapon.sourceVehicleId;
     host.dataset.attackSourceWeaponIndex = String(
       selectedAttackWeapon.ballisticsWeaponIndex,
     );
@@ -5367,7 +5373,6 @@ export function RuntimeVehicleViewer({
         : "unavailable";
       if (chassisPose) {
         host.dataset.chassisPoseGeneratedClass = chassisPose.generatedClass;
-        host.dataset.chassisPoseCaptureSha256 = chassisPose.captureSha256;
         host.dataset.chassisPosePitchDegrees = String(chassisPose.pitchDeg);
         host.dataset.chassisPoseRollDegrees = String(chassisPose.rollDeg);
         host.dataset.chassisPoseActorOriginHeightCm = String(
@@ -7085,7 +7090,6 @@ export function RuntimeVehicleViewer({
               triangles: parsed.record.header.counts.triangles,
               components: parsed.record.header.counts.components,
             });
-            host.dataset.hitRecordSha256 = hit.recordSha256;
             host.dataset.hitVehicleId = hit.vehicleId;
             host.dataset.staticHitRuntime = String(
               parsed.record.header.formatVersion === "hit-scene-record/v1",
@@ -7408,7 +7412,6 @@ export function RuntimeVehicleViewer({
       className="viewer-stage runtime-vehicle-viewer"
       data-viewer-state={viewerState.kind}
       data-viewer-presentation={viewerPresentation}
-      data-viewer-package-sha256={visual.packageSha256}
       data-viewer-variant-raw-name={preview.variantRawName}
       data-hit-state={hitState.kind}
       data-hit-access={hit?.status ?? "absent"}

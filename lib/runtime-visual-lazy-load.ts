@@ -1,12 +1,15 @@
+import {
+  SIGUA_WIKI_ORIGIN,
+  wikiAssetUrl,
+} from "./wiki-source.ts";
+
 const RUNTIME_VISUAL_TEXTURE_EXTENSION =
   /\.(?:avif|jpe?g|ktx2?|png|webp)(?:[?#].*)?$/iu;
 
-export const SIGUA_WIKI_ORIGIN = "https://wiki.siguad.icu";
+export { SIGUA_WIKI_ORIGIN };
 
 export function runtimeWikiAssetUrl(url: string) {
-  return url.startsWith("/assets/runtime-probe/")
-    ? `${SIGUA_WIKI_ORIGIN}${url}`
-    : url;
+  return wikiAssetUrl(url);
 }
 
 // Analysis mode only needs source material flags and mesh geometry. Routing

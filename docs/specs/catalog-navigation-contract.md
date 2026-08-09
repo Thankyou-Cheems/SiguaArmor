@@ -6,9 +6,8 @@ Prefix: `NAV-`
 
 ## Scope
 
-This specification governs public catalog deep links, browser-history restoration, Viewer analysis
-query state, and the static-origin fallback required to serve those links. Initial-payload and catalog
-partition budgets remain governed by `DEPLOY-46` and `PUBDATA-04C`.
+This specification governs public catalog deep links, browser-history restoration, and Viewer analysis
+query state.
 
 ## Non-goals
 
@@ -41,15 +40,3 @@ partition budgets remain governed by `DEPLOY-46` and `PUBDATA-04C`.
   URL-safe token containing each quantized entry point, octahedrally encoded direction, and shot
   distance plus the active-path index. Five paths MUST require no more than 82 token characters;
   malformed, unknown-version, or out-of-bounds tokens MUST be ignored without blocking Viewer load.
-
-## Contract Coverage
-
-- [behavioral] `tests/contracts/catalog-navigation-contract.test.mjs` enforces `NAV-01..NAV-04` and
-  `NAV-06..NAV-07`
-  by executing the production URL parser/builder against canonical, legacy, malformed, and
-  back/forward-equivalent states, plus five-path compact-codec round trips and malformed tokens.
-- [static] `tests/contracts/catalog-navigation-contract.test.mjs` enforces `NAV-03` and `NAV-05`
-  through the `pushState`/`replaceState`/`popstate` integration and Caddy deep-link fallback.
-- [manual] Local and EdgeOne browser smoke tests cover refresh, copy/paste, back/forward, faction
-  switching, exact vehicle reopening, Viewer mode/weapon restoration, camera-angle restoration, and
-  retained hit-path restoration after the target geometry becomes ready.

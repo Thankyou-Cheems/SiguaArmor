@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import test from "node:test";
 
@@ -42,14 +41,6 @@ function checkpointFromT64Vector() {
   };
   return {
     schemaVersion: "runtime-planar-suspension-pose-index/v1",
-    source: {
-      method: "odk-native-planar-sweep-reconstruction/v1",
-      sourceMap: "ODKVehicleMovementTracked.cpp",
-      sourceBuildId: "test-vector",
-      odkDllSha256: "2".repeat(64),
-      chassisPoseRecordsSha256: "3".repeat(64),
-      visualIndexSha256: "4".repeat(64),
-    },
     coverage: {
       requestedGeneratedClassCount: 1,
       resolvedGeneratedClassCount: 1,
@@ -59,10 +50,6 @@ function checkpointFromT64Vector() {
       unavailable: [],
     },
     recordCount: 1,
-    recordsSha256: crypto
-      .createHash("sha256")
-      .update(JSON.stringify([record]))
-      .digest("hex"),
     records: [record],
   };
 }
@@ -95,7 +82,7 @@ test("T-64 native planar checkpoint resolves by exact class and occurrence", () 
   );
 });
 
-test("committed T-64 index exposes 12 exact nonzero native wheel offsets", () => {
+test("SiguaWiki index exposes 12 exact nonzero native T-64 wheel offsets", () => {
   assert.ok(runtimePlanarSuspensionPoseIndex.recordCount > 1);
   const record = runtimePlanarSuspensionPoseForVisualOccurrence(
     "/Game/Vehicles/T64_BM2/BP_T64BM2_Cage.BP_T64BM2_Cage_C",
@@ -175,6 +162,6 @@ test("planar index rejects duplicate exact identities and malformed offsets", ()
   malformed.records[0].wheels[0].localTranslationOffsetGltfM = [0, 0];
   assert.throws(
     () => parseRuntimePlanarSuspensionPoseIndex(malformed),
-    /must contain exactly three numbers/,
+    /must contain three numbers/,
   );
 });
