@@ -21,10 +21,18 @@
 
 		@landingHost host {{LANDING_HOST}}
 		route @landingHost {
-			@portalDocument path / /index.html
-			header @portalDocument Cache-Control "{{LANDING_HTML_CACHE_CONTROL}}"
-			handle @portalDocument {
+			@selectorDocument path / /index.html
+			header @selectorDocument Cache-Control "{{LANDING_HTML_CACHE_CONTROL}}"
+			handle @selectorDocument {
 				rewrite * /index.html
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				file_server
+			}
+
+			@navigatorDocument path /navigator /navigator/ /navigator/index.html
+			header @navigatorDocument Cache-Control "{{LANDING_HTML_CACHE_CONTROL}}"
+			handle @navigatorDocument {
+				rewrite * /navigator/index.html
 				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
 				file_server
 			}
@@ -65,7 +73,20 @@
 			}
 
 			@armorRoot path /
-			redir @armorRoot {{LANDING_ORIGIN}}/ 302
+			header @armorRoot Cache-Control "{{LANDING_HTML_CACHE_CONTROL}}"
+			handle @armorRoot {
+				rewrite * /index.html
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				file_server
+			}
+
+			@selectorAssets path /portal-assets/tactical-squad-wordmark-62bff6fb051e.png /portal-assets/shenzhou-soldier-clean-ddd587081da0.webp /portal-assets/pla-soldier-clean-ccb90707110a.webp
+			header @selectorAssets Cache-Control "public, max-age=31536000, immutable"
+			handle @selectorAssets {
+				root * {$SIGUA_PUBLIC_ROOT:/srv/public}
+				file_server
+			}
+
 			@siguaBase path /sigua
 			redir @siguaBase /sigua/?{orig_query} 308
 			@squadBase path /squad
