@@ -467,10 +467,10 @@ const main = async (options) => {
   );
   const totalBytes = entries.reduce((total, entry) => total + entry.bytes, 0);
   const targetManifest = structuredClone(currentManifest);
-  targetManifest.sources.monorepo.commit = PUBLIC_COMMIT;
-  targetManifest.sources.china.commit = PUBLIC_COMMIT;
-  targetManifest.sources.china.runtimeCommit = PUBLIC_COMMIT;
-  targetManifest.sources.international.commit = PUBLIC_COMMIT;
+  targetManifest.sources.monorepo.commit = SOURCE_COMMIT;
+  targetManifest.sources.china.commit = SOURCE_COMMIT;
+  targetManifest.sources.china.runtimeCommit = SOURCE_COMMIT;
+  targetManifest.sources.international.commit = SOURCE_COMMIT;
   targetManifest.sources.international.sourceManifestSha256 = clientRecord.sha256;
   targetManifest.sources.international.entryCount = clientManifest.entryCount + 1;
   targetManifest.entryCount = entries.length;

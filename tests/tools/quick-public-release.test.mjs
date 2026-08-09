@@ -113,6 +113,18 @@ test("delta packaging requires one exact source commit and a named live base", (
   );
 });
 
+test("delta target provenance uses the requested source commit", async () => {
+  const source = await readFile(
+    path.join(ROOT, "tools", "build-unified-public-delta.mjs"),
+    "utf8",
+  );
+  assert.doesNotMatch(source, /PUBLIC_COMMIT/u);
+  assert.equal(
+    source.match(/targetManifest\.sources\.[^\n]+ = SOURCE_COMMIT;/gu)?.length,
+    4,
+  );
+});
+
 test("delta packaging accepts a bounded non-generated release overlay", async (context) => {
   const temporaryRoot = await mkdtemp(path.join(tmpdir(), "sigua-overlay-"));
   context.after(async () => {
