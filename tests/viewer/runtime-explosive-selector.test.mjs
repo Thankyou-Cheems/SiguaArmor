@@ -7,10 +7,12 @@ import {
   runtimeExplosiveLayerOrderIsClosed,
 } from "../../lib/runtime-explosive-catalog.ts";
 
-const [adapterSource, viewerSource] = await Promise.all([
+const [adapterSource, viewerSource, catalogIndexText] = await Promise.all([
   readFile(new URL("../../app/runtime-probe-weapon-labels.ts", import.meta.url), "utf8"),
   readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../../generated/catalog-index.json", import.meta.url), "utf8"),
 ]);
+const catalogIndex = JSON.parse(catalogIndexText);
 
 test("explosive identities and evidence state stay explicit", () => {
   assert.equal(
@@ -36,5 +38,25 @@ test("the Runtime Viewer builds explosive choices from the Wiki weapon catalog",
   assert.doesNotMatch(
     adapterSource,
     /generated\/internal|runtime-production-explosive-weapons|infantry-explosive-catalog\.json/u,
+  );
+});
+
+test("vehicle attack sources join Wiki weapons through the product vehicle id", () => {
+  const ztz99 = catalogIndex.records.find(
+    ({ promoEntryId }) => promoEntryId === "pla--ztz99a--mbt",
+  );
+  assert.ok(ztz99, "ZTZ99A product mapping is missing");
+  assert.notEqual(
+    ztz99.promoEntryId,
+    ztz99.variants[0].cardId,
+    "the regression fixture must distinguish product and presentation ids",
+  );
+  assert.match(
+    adapterSource,
+    /weaponCatalogVariantsForExactVehicle\(\s*record\.promoEntryId,\s*variant\.sourceRawName,\s*\)/u,
+  );
+  assert.match(
+    adapterSource,
+    /weapon\.exactCardIds\.includes\(record\.promoEntryId\)/u,
   );
 });
