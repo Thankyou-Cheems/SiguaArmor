@@ -8,7 +8,8 @@ Read `CONTEXT.md` before changing ownership, data, assets, build, release, or de
 - SiguaWiki owns final reusable Squad data. Product-owned projections may remain here only while the Wiki migration is incomplete; do not treat them as a new authority.
 - SiguaResearch owns investigations, extraction tools, raw/uncompressed game assets, source locks, and evidence. Route new extraction work there instead of adding Editor, SDK, runtime-probe, or authoring-vault material here.
 - Deployment credentials, API tokens, review credentials, backups, and live operational state stay in the appropriate secret manager or ignored local custody. They do not belong in this public repository or in SiguaResearch.
-- The initial browser-ready binary tree is restored from the one-time GitHub Release bootstrap named by `public-assets.json`. Never commit the multi-gigabyte tree to Git, hotlink the GitHub asset in production, or publish routine monthly full snapshots there. Deploy changed content-addressed bytes incrementally to the project-owned origin/CDN.
+- Vehicle model, texture/geometry blob, and hit-runtime requests resolve directly to `https://wiki.siguad.icu/assets/runtime-probe/`. Keep their existing `/assets/runtime-probe/...` descriptor paths and apply the Wiki origin only at the fetch boundary.
+- The initial browser-ready binary tree restored from the one-time GitHub Release bootstrap named by `public-assets.json` is a transitional build input. Never commit the multi-gigabyte tree to Git, hotlink the GitHub asset in production, or publish routine monthly full snapshots there. Publish changed shared runtime bytes as new content-hashed files in SiguaWiki.
 
 ## Work safely
 

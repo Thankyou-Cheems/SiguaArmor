@@ -105,6 +105,7 @@ import {
 } from "../lib/runtime-hit-scene";
 import {
   runtimeAnalysisVisualUrl,
+  runtimeWikiAssetUrl,
   runtimeViewerPresentation,
 } from "../lib/runtime-visual-lazy-load";
 import infantryPostureRuntime from "./infantry-posture-runtime.json";
@@ -6914,7 +6915,9 @@ export function RuntimeVehicleViewer({
       if (modeRef.current === "exterior") {
         setViewerState({ kind: "loading", loaded: 0, total: urls.length });
       }
-      const exteriorLoader = new GLTFLoader();
+      const exteriorLoadingManager = new THREE.LoadingManager();
+      exteriorLoadingManager.setURLModifier(runtimeWikiAssetUrl);
+      const exteriorLoader = new GLTFLoader(exteriorLoadingManager);
       exteriorLoader.setMeshoptDecoder(MeshoptDecoder);
       const exteriorPlacementsByUrl = new Map(
         urls.map((url) => [

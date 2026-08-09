@@ -16,7 +16,8 @@ release.
   product around the pinned public asset release.
 - `release:delta` transports a verified target closure and activates it atomically.
 - Reuse unchanged content-addressed 3D, texture, font, hit-runtime, and compressed blobs.
-- Serve production assets from the project-owned origin/CDN. The GitHub Release in
+- Serve shared vehicle runtime assets from the SiguaWiki origin/CDN and product-specific
+  assets from the Armor origin/CDN. The GitHub Release in
   `public-assets.json` is a low-frequency developer/CI bootstrap and must not be
   hotlinked by the website or replaced with monthly full snapshots.
 - A new worktree or missing local cache copy is not asset invalidation. Recover a
@@ -42,12 +43,12 @@ rebuilt from the pinned public asset release:
 - the dependency lock or product build toolchain changed; or
 - the sealed public closure fails verification.
 
-New 3D, texture, hit-runtime, card-impression, or faction-art bytes must first complete
-their Research-to-public approval route. Publish only the changed browser-ready files as
-an incremental archive on the project-owned origin/CDN, append that verified layer to
-`public-assets.json`, and update its final prepared-manifest lock. The original GitHub
-bootstrap remains frozen. Do not regenerate assets from raw Research inputs here or
-publish another full GitHub snapshot.
+New shared 3D, texture, or hit-runtime bytes must first complete their Research-to-Wiki
+approval route. Publish only new content-hashed browser-ready files to SiguaWiki; do not
+append shared runtime bytes to `public-assets.json`. Product-specific card-impression or
+faction-art bytes continue through the Armor origin/CDN. The original GitHub bootstrap
+remains frozen. Do not regenerate assets from raw Research inputs here or publish another
+full GitHub snapshot.
 
 Do not choose `build:full` merely because public data changed, an index was regenerated,
 a branch was merged, or the release checkout is new.

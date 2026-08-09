@@ -9,14 +9,14 @@ SiguaArmor is the public source repository for the vehicle and weapon reference 
 
 ## Repository boundary
 
-- Product UI, product behavior, build tooling, deployment tooling, and browser-ready release assets belong here.
-- Final reusable Squad data is moving to SiguaWiki and is consumed over its stable HTTPS paths.
+- Product UI, product behavior, build tooling, deployment tooling, and product-specific presentation assets belong here.
+- Final reusable Squad data and shared browser-ready runtime assets belong to SiguaWiki and are consumed over its stable HTTPS paths.
 - Research methods, Editor/SDK extraction, raw or uncompressed game assets, source locks, and evidence remain in the private SiguaResearch repository.
 
-The initial large browser-ready asset tree is attached once as a GitHub Release bootstrap
-rather than stored in Git history. It is only for developer/CI restoration; the website
-serves assets from the project-owned origin and CDN, never from GitHub. Routine asset
-updates use content-addressed deployment deltas and do not publish another full archive.
+The initial large browser-ready asset tree remains attached once as a GitHub Release
+bootstrap for the transitional build. It is only for developer/CI restoration; vehicle
+models and hit-runtime files are served from `https://wiki.siguad.icu/assets/runtime-probe/`,
+never from GitHub. Routine shared-asset updates add only new hash-named files to SiguaWiki.
 After cloning, run:
 
 ```powershell

@@ -7,8 +7,10 @@ import { inflateSync } from "node:zlib";
 
 import {
   RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
+  SIGUA_WIKI_ORIGIN,
   isRuntimeVisualTextureUrl,
   runtimeAnalysisVisualUrl,
+  runtimeWikiAssetUrl,
   runtimeViewerPresentation,
 } from "../../lib/runtime-visual-lazy-load.ts";
 import {
@@ -38,10 +40,27 @@ test("analysis visual URL routing blocks real appearance texture requests", () =
   for (const url of [
     "/assets/runtime-probe/models/vehicle.gltf",
     "/assets/runtime-probe/blob/vehicle.bin",
-    RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
   ]) {
     assert.equal(isRuntimeVisualTextureUrl(url), false, url);
-    assert.equal(runtimeAnalysisVisualUrl(url), url);
+    assert.equal(runtimeAnalysisVisualUrl(url), `${SIGUA_WIKI_ORIGIN}${url}`);
+  }
+  assert.equal(
+    runtimeAnalysisVisualUrl(RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL),
+    RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
+  );
+});
+
+test("runtime vehicle assets resolve directly to the SiguaWiki HTTPS origin", () => {
+  assert.equal(
+    runtimeWikiAssetUrl("/assets/runtime-probe/models/vehicle.gltf"),
+    "https://wiki.siguad.icu/assets/runtime-probe/models/vehicle.gltf",
+  );
+  for (const url of [
+    "https://wiki.siguad.icu/assets/runtime-probe/blob/vehicle.bin",
+    "/infantry-hit-runtime/reference-soldier.glb",
+    RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
+  ]) {
+    assert.equal(runtimeWikiAssetUrl(url), url);
   }
 });
 
@@ -172,7 +191,11 @@ test("viewer makes hit runtime interactive before supplemental geometry and gate
     source,
     /if \(nextMode === "exterior"\) \{\s+if \(analysisVisualReady && fittedSource !== null\) \{\s+loadExteriorAssets\(\);/u,
   );
-  assert.match(source, /const exteriorLoader = new GLTFLoader\(\);/u);
+  assert.match(
+    source,
+    /exteriorLoadingManager\.setURLModifier\(runtimeWikiAssetUrl\);/u,
+  );
+  assert.match(source, /const exteriorLoader = new GLTFLoader\(exteriorLoadingManager\);/u);
   assert.match(source, /const attachExteriorSource = \(url: string, source: THREE\.Object3D\) =>/u);
   assert.match(source, /attachExteriorSource\(url, gltf\.scene\);/u);
   assert.match(source, /visualGroup\.add\(occurrence\);/u);
@@ -201,6 +224,10 @@ test("viewer makes hit runtime interactive before supplemental geometry and gate
   assert.doesNotMatch(source, /const exteriorSources = new Map/u);
   assert.doesNotMatch(source, /Promise\.all\(\[visualPromise,\s*hitPromise\]\)/u);
   assert.match(source, /visualTexturePolicy = "exterior-tab-only"/u);
+
+  const hitSource = await readFile(path.join(ROOT, "lib", "runtime-hit-scene.ts"), "utf8");
+  assert.match(hitSource, /const wikiUrl = runtimeWikiAssetUrl\(url\);/u);
+  assert.match(hitSource, /fetch\(wikiUrl, \{ cache: "force-cache" \}\)/u);
 });
 
 test("protection-map work stays client-side and adapts each frame to a time budget", async () => {

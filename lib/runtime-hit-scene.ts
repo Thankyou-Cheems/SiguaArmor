@@ -7,6 +7,7 @@ import type {
   HitSceneSurfaceProfile,
   ParsedHitSceneRecord,
 } from "./hit-scene-record";
+import { runtimeWikiAssetUrl } from "./runtime-visual-lazy-load";
 
 export type {
   Evidence,
@@ -110,11 +111,12 @@ async function sha256Hex(buffer: ArrayBuffer) {
 async function fetchVerified(url: string, bytes: number, digest: string, label: string) {
   assert(/^\/[A-Za-z0-9_./-]+$/.test(url) && !url.includes(".."), `${label} URL is unsafe`);
   assert(/^[0-9a-f]{64}$/.test(digest), `${label} digest is invalid`);
-  let response = await fetch(url, { cache: "force-cache" });
+  const wikiUrl = runtimeWikiAssetUrl(url);
+  let response = await fetch(wikiUrl, { cache: "force-cache" });
   if (!response.ok) {
-    // A stale cached 404 can survive after a missing CAS blob is restored.
+    // A stale cached 404 can survive after a missing immutable asset is restored.
     // Revalidate the exact immutable URL once before failing closed.
-    response = await fetch(`${url}?cacheBust=${digest}`, { cache: "reload" });
+    response = await fetch(`${wikiUrl}?cacheBust=${digest}`, { cache: "reload" });
   }
   assert(response.ok, `${label} request returned HTTP ${response.status}`);
   const payload = await response.arrayBuffer();
