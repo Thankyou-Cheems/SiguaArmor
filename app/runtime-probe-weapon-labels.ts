@@ -543,7 +543,7 @@ function vehicleWeaponVariants(record: CatalogSearchRecord) {
   for (const variant of record.variants) {
     for (
       const weapon of weaponCatalogVariantsForExactVehicle(
-        variant.cardId,
+        record.promoEntryId,
         variant.sourceRawName,
       )
     ) {
@@ -556,11 +556,10 @@ function vehicleWeaponVariants(record: CatalogSearchRecord) {
       }
     }
   }
-  const cardIds = new Set(record.variants.map(({ cardId }) => cardId));
   for (const weapon of weaponCatalogShippingVariants) {
     if (
       isVehicleDeliveredRadialCatalogVariant(weapon) &&
-      weapon.exactCardIds.some((cardId) => cardIds.has(cardId))
+      weapon.exactCardIds.includes(record.promoEntryId)
     ) {
       byId.set(weapon.id, weapon);
     }
