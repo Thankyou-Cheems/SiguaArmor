@@ -111,6 +111,24 @@ function etagFor(bytes) {
   return `"${digestHex(bytes)}"`;
 }
 
+function normalizeQuotedEtag(value) {
+  if (typeof value !== "string") return undefined;
+  const candidate = value.trim();
+  if (!candidate) return undefined;
+  const raw = candidate.startsWith("W/") ? candidate.slice(2).trim() : candidate;
+  const plainMatch = /^[a-fA-F0-9]{64}$/u.exec(raw);
+  if (plainMatch) return `"${plainMatch[0].toLowerCase()}"`;
+  const quotedMatch = /^"([a-fA-F0-9]{64})"$/u.exec(raw);
+  if (quotedMatch) return `"${quotedMatch[1].toLowerCase()}"`;
+  return undefined;
+}
+
+function parseIfMatchHeader(value) {
+  if (typeof value === "string") return normalizeQuotedEtag(value);
+  if (Array.isArray(value)) return value.length > 0 ? normalizeQuotedEtag(value[0]) : undefined;
+  return undefined;
+}
+
 function equalBytes(left, right) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
@@ -442,8 +460,8 @@ export function createContentAdminApp(config, options = {}) {
     }
     requireSameOrigin(request, config);
     requireCsrf(request, session);
-    const expectedEtag = request.headers["if-match"];
-    if (typeof expectedEtag !== "string" || !/^"[a-f0-9]{64}"$/u.test(expectedEtag)) {
+    const expectedEtag = parseIfMatchHeader(request.headers["if-match"]);
+    if (!expectedEtag) {
       throw new RequestError(428, "If-Match is required");
     }
     const body = await readJsonBody(request);
