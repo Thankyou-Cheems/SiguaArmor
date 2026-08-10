@@ -1,7 +1,6 @@
 import { weaponNameZh } from "../lib/weapon-display-name.ts";
 import {
   editorNativeDamageWeaponIndices,
-  type EditorNativeCurveKey,
   type EditorNativeModel,
 } from "../lib/editor-native-hit-model.ts";
 import {
@@ -11,6 +10,7 @@ import {
   type RuntimeExplosiveSource,
 } from "../lib/runtime-explosive-catalog.ts";
 import {
+  weaponCatalogBallisticProfileForVariant,
   weaponCatalogCurves,
   weaponCatalogDirectModelForVariant,
   weaponCatalogRadialAssetForVariant,
@@ -131,13 +131,6 @@ export interface RuntimeAttackSource extends Omit<RuntimeAttackSourceRecord, "we
   weapons: RuntimeAttackSourceWeapon[];
 }
 
-interface WikiInfantryExactCurve {
-  curveId: string;
-  inputUnit: string;
-  outputUnit: string;
-  keys: EditorNativeCurveKey[];
-}
-
 function uniqueSorted(values: string[]) {
   return [...new Set(values.filter(Boolean))].sort((left, right) =>
     left.localeCompare(right, "en"),
@@ -255,6 +248,10 @@ function catalogVariantBallisticsModel(
         weaponCatalogWikiConfigurationForKey(weaponKey),
       )
       .find(Boolean) ?? null;
+  const ballisticProfile = weaponCatalogBallisticProfileForVariant(variant);
+  const profileWeapon = ballisticProfile?.model.weapons.length === 1
+    ? ballisticProfile.model.weapons[0]
+    : null;
   const exactCurves = (configuration?.exactCurveIds ?? [])
     .map((curveId) => weaponCatalogCurves[curveId])
     .filter(Boolean);
@@ -265,13 +262,19 @@ function catalogVariantBallisticsModel(
   const sourceDamageCurve =
     exactCurves.find(({ outputUnit }) => outputUnit === "damage") ??
     null;
-  const curves: WikiInfantryExactCurve[] = [];
-  const penetrationCurveIndex = sourcePenetrationCurve
-    ? curves.push(sourcePenetrationCurve) - 1
-    : null;
-  const damageCurveIndex = sourceDamageCurve
-    ? curves.push(sourceDamageCurve) - 1
-    : null;
+  const curves: Array<EditorNativeModel["curves"][number]> = profileWeapon
+    ? [...ballisticProfile!.model.curves]
+    : [];
+  const penetrationCurveIndex = profileWeapon
+    ? profileWeapon.armorPenetrationCurveIndex
+    : sourcePenetrationCurve
+      ? curves.push(sourcePenetrationCurve) - 1
+      : null;
+  const damageCurveIndex = profileWeapon
+    ? profileWeapon.damageFalloffCurveIndex
+    : sourceDamageCurve
+      ? curves.push(sourceDamageCurve) - 1
+      : null;
   const firstRadialLayer = radialSource?.layers[0] ?? null;
   const explosiveFields = radialSource && firstRadialLayer
     ? {

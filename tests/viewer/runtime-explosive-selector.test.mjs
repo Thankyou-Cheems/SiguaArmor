@@ -60,3 +60,16 @@ test("vehicle attack sources join Wiki weapons through the product vehicle id", 
     /weapon\.exactCardIds\.includes\(record\.promoEntryId\)/u,
   );
 });
+
+test("vehicle weapon distance keeps the exact Wiki ballistic profile", () => {
+  assert.match(adapterSource, /weaponCatalogBallisticProfileForVariant/u);
+  assert.match(
+    adapterSource,
+    /profileWeapon\.armorPenetrationCurveIndex/u,
+  );
+  assert.match(
+    adapterSource,
+    /profileWeapon\.damageFalloffCurveIndex/u,
+  );
+  assert.match(adapterSource, /\.\.\.ballisticProfile!\.model\.curves/u);
+});
