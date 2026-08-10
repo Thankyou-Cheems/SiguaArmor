@@ -196,7 +196,7 @@ function SupportersEditor({
       {document.entries.map((entry, index) => {
         const nameSegments = editableNameSegments(entry);
         return (
-          <article className="site-content-admin__entry-card" key={`${entry.id}-${index}`}>
+          <article className="site-content-admin__entry-card" key={index}>
           <header>
             <strong>名单项 {String(index + 1).padStart(2, "0")}</strong>
             <div className="site-content-admin__entry-actions">
@@ -332,7 +332,7 @@ function SupportersEditor({
                 {nameSegments.map((segment, segmentIndex) => (
                   <div
                     className="site-content-admin__name-segment"
-                    key={`${segmentIndex}-${segment.text}`}
+                    key={segmentIndex}
                   >
                     <label>
                       <span>第 {segmentIndex + 1} 段文字</span>
@@ -488,7 +488,7 @@ function UpdatesEditor({
   return (
     <div className="site-content-admin__entries">
       {document.entries.map((entry, index) => (
-        <article className="site-content-admin__entry-card" key={`${entry.id}-${index}`}>
+        <article className="site-content-admin__entry-card" key={index}>
           <header>
             <strong>更新项 {String(index + 1).padStart(2, "0")}</strong>
             <div className="site-content-admin__entry-actions">
@@ -637,10 +637,13 @@ export function SiteContentAdminModal({
         const result = await requestAdminJson<{
           documentName: AdminDocumentName;
           document: SupportersDocument | UpdatesDocument;
+          etag: string;
         }>(`/documents/${documentName}`);
-        const etag = result.response.headers.get("etag");
-        if (!etag) throw new Error("管理接口未返回文档版本标识");
-        return [documentName, { document: result.value.document, etag }] as const;
+        if (!result.value.etag) throw new Error("管理接口未返回文档版本标识");
+        return [
+          documentName,
+          { document: result.value.document, etag: result.value.etag },
+        ] as const;
       }),
     );
     setDocuments(Object.fromEntries(loaded) as unknown as LoadedDocuments);
@@ -797,6 +800,7 @@ export function SiteContentAdminModal({
         documentName: AdminDocumentName;
         document: SupportersDocument | UpdatesDocument;
         publishedAt: string;
+        etag: string;
       }>(`/documents/${activeDocument}`, {
         method: "PUT",
         headers: {
@@ -804,17 +808,16 @@ export function SiteContentAdminModal({
           "If-Match": current.etag,
           "X-CSRF-Token": csrfToken,
         },
-        body: JSON.stringify({ document: valid }),
+        body: JSON.stringify({ expectedEtag: current.etag, document: valid }),
       });
-      const etag = result.response.headers.get("etag");
-      if (!etag) throw new Error("保存成功，但服务端未返回新版本标识");
+      if (!result.value.etag) throw new Error("保存成功，但服务端未返回新版本标识");
       setDocuments((previous) =>
         previous
           ? {
               ...previous,
               [activeDocument]: {
                 document: result.value.document,
-                etag,
+                etag: result.value.etag,
               },
             }
           : previous,
@@ -856,6 +859,7 @@ export function SiteContentAdminModal({
   return (
     <div
       className="site-content-admin-modal"
+      data-content-admin-version="2026-08-10-etag-v2"
       role="dialog"
       aria-modal="true"
       aria-labelledby="site-content-admin-title"

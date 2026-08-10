@@ -111,22 +111,10 @@ function etagFor(bytes) {
   return `"${digestHex(bytes)}"`;
 }
 
-function normalizeQuotedEtag(value) {
-  if (typeof value !== "string") return undefined;
-  const candidate = value.trim();
-  if (!candidate) return undefined;
-  const raw = candidate.startsWith("W/") ? candidate.slice(2).trim() : candidate;
-  const plainMatch = /^[a-fA-F0-9]{64}$/u.exec(raw);
-  if (plainMatch) return `"${plainMatch[0].toLowerCase()}"`;
-  const quotedMatch = /^"([a-fA-F0-9]{64})"$/u.exec(raw);
-  if (quotedMatch) return `"${quotedMatch[1].toLowerCase()}"`;
-  return undefined;
-}
-
-function parseIfMatchHeader(value) {
-  if (typeof value === "string") return normalizeQuotedEtag(value);
-  if (Array.isArray(value)) return value.length > 0 ? normalizeQuotedEtag(value[0]) : undefined;
-  return undefined;
+function exactEtag(value) {
+  return typeof value === "string" && /^"[a-f0-9]{64}"$/u.test(value)
+    ? value
+    : undefined;
 }
 
 function equalBytes(left, right) {
@@ -450,7 +438,7 @@ export function createContentAdminApp(config, options = {}) {
       sendJson(
         response,
         200,
-        { documentName, document: current.document },
+        { documentName, document: current.document, etag: current.etag },
         { ETag: current.etag },
       );
       return;
@@ -460,11 +448,13 @@ export function createContentAdminApp(config, options = {}) {
     }
     requireSameOrigin(request, config);
     requireCsrf(request, session);
-    const expectedEtag = parseIfMatchHeader(request.headers["if-match"]);
-    if (!expectedEtag) {
+    const body = await readJsonBody(request);
+    const ifMatch = request.headers["if-match"];
+    if (typeof ifMatch !== "string" || !ifMatch.trim()) {
       throw new RequestError(428, "If-Match is required");
     }
-    const body = await readJsonBody(request);
+    const expectedEtag = exactEtag(body?.expectedEtag) ?? exactEtag(ifMatch);
+    if (!expectedEtag) throw new RequestError(400, "If-Match is invalid");
     let prepared;
     try {
       prepared = prepareContentDocument(documentName, body?.document, currentTime);
@@ -490,6 +480,7 @@ export function createContentAdminApp(config, options = {}) {
         documentName,
         document: prepared.document,
         publishedAt: prepared.document.updatedAt,
+        etag: saved.etag,
       },
       { ETag: saved.etag },
     );

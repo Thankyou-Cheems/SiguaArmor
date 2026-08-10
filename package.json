@@ -16,7 +16,7 @@
     "test:catalog-card-groups": "node tools/validate-catalog-card-groups.mjs",
     "test:data": "node --experimental-strip-types --test tests/data/*.test.mjs",
     "test:viewer": "node --experimental-strip-types --test tests/viewer/*.test.mjs",
-    "test:ops": "node --test tests/tools/public-site-topology.test.mjs tests/tools/international-routing-and-analytics.test.mjs tests/tools/publish-runtime-document.test.mjs",
+    "test:ops": "node --test tests/tools/public-site-topology.test.mjs tests/tools/international-routing-and-analytics.test.mjs tests/tools/publish-runtime-document.test.mjs tests/tools/content-admin.test.mjs tests/tools/content-admin-ui-contract.test.mjs",
     "test": "npm run test:data && npm run test:viewer && npm run test:ops",
     "assets:faction-backgrounds": "node tools/optimize-faction-backgrounds.mjs",
     "assets:prune-faction-background-sources": "node tools/optimize-faction-backgrounds.mjs --prune-dist dist/client/images/faction-bg",
