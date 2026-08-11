@@ -61,6 +61,13 @@ test("vehicle attack sources join Wiki weapons through the product vehicle id", 
   );
 });
 
+test("product vehicle ids remain attack-source aliases for card selection and direct routes", () => {
+  assert.ok(
+    adapterSource.includes("attackSourceById.set(record.promoEntryId, source);"),
+    "the product id emitted by card navigation must resolve to its exact vehicle attack source",
+  );
+});
+
 test("vehicle weapon distance keeps the exact Wiki ballistic profile", () => {
   assert.match(adapterSource, /weaponCatalogBallisticProfileForVariant/u);
   assert.match(

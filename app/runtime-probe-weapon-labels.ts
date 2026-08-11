@@ -598,6 +598,7 @@ function vehicleAttackSource(
   });
   if (
     normalizeRuntimeAttackSourceShareSlug(shareSlug) !== shareSlug ||
+    attackSourceById.has(record.promoEntryId) ||
     cardIds.some((candidate) => attackSourceById.has(candidate)) ||
     attackSourceById.has(shareSlug)
   ) {
@@ -634,6 +635,7 @@ function vehicleAttackSource(
   for (const candidate of cardIds) {
     attackSourceById.set(candidate, source);
   }
+  attackSourceById.set(record.promoEntryId, source);
   attackSourceById.set(shareSlug, source);
   return source;
 }
