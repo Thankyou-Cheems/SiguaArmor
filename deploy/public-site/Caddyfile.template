@@ -5,6 +5,19 @@
 
 :8080 {
 	route {
+		@wikiContentAdminRequest {
+			host {{WIKI_HOST}}
+			path /__admin/content /__admin/content/*
+		}
+		route @wikiContentAdminRequest {
+			reverse_proxy {$SIGUA_CONTENT_ADMIN_UPSTREAM:sigua-content-admin:8083} {
+				header_up Host {host}
+				header_up X-Sigua-Origin-Auth {$SIGUA_CONTENT_ADMIN_PROXY_SECRET}
+				header_up X-Sigua-Client-IP {http.request.header.EO-Connecting-IP}
+				header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+			}
+		}
+
 		@unauthorized not header X-Sigua-Origin-Auth {$SIGUA_ORIGIN_AUTH_SECRET}
 		respond @unauthorized "Forbidden\n" 403
 
@@ -220,13 +233,6 @@
 
 		@wikiHost host {{WIKI_HOST}}
 		route @wikiHost {
-			@wikiContentAdmin path /__admin/content /__admin/content/*
-			reverse_proxy @wikiContentAdmin {$SIGUA_CONTENT_ADMIN_UPSTREAM:sigua-content-admin:8083} {
-				header_up Host {host}
-				header_up X-Sigua-Origin-Auth {$SIGUA_CONTENT_ADMIN_PROXY_SECRET}
-				header_up X-Sigua-Client-IP {http.request.header.EO-Connecting-IP}
-				header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
-			}
 			respond "Not Found\n" 404
 		}
 
