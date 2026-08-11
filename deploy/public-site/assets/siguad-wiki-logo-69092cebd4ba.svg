@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="810" height="930" viewBox="240 150 810 930" role="img" aria-labelledby="title desc">
   <title id="title">丝瓜地百科 SiguaD Wiki 矢量标志</title>
-  <desc id="desc">直接从原图分色追踪的透明背景矢量；浅色界面使用黑黄配色，深色界面自动使用白黄配色。</desc>
+  <desc id="desc">直接从原图分色追踪的透明背景矢量；用于深色网页的白黄配色版本。</desc>
   <defs>
     <style>
-      .logo-foreground { fill: #191919; }
-      @media (prefers-color-scheme: dark) {
-        .logo-foreground { fill: #FFFFFF; }
-      }
+      .logo-foreground { fill: #FFFFFF; }
     </style>
     <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FFC40B"/>

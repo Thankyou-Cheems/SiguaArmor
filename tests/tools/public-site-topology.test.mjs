@@ -177,7 +177,7 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/sigua\/"/u);
   assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/squad\/"/u);
   assert.match(selector, /tactical-squad-wordmark-62bff6fb051e\.png/u);
-  assert.match(selector, /siguad-wiki-logo-fd85a326c3df\.svg/u);
+  assert.match(selector, /siguad-wiki-logo-69092cebd4ba\.svg/u);
   assert.match(selector, /class="portal__siguad-logo"/u);
   assert.match(selector, /alt="丝瓜地百科 SiguaD Wiki"/u);
   assert.match(selector, /siguad-armor-china-soldier-ddd587081da0\.webp/u);
@@ -383,8 +383,8 @@ test("Site Portal brand assets are copied beside rendered config", async () => {
     );
     assert.match(brandLogo, /stop-color="#FFC40B"/u);
     assert.match(brandLogo, /stop-color="#E1C89B"/u);
-    assert.match(brandLogo, /@media \(prefers-color-scheme: dark\)/u);
     assert.match(brandLogo, /\.logo-foreground \{ fill: #FFFFFF; \}/u);
+    assert.doesNotMatch(brandLogo, /prefers-color-scheme/u);
     assert.doesNotMatch(brandLogo, /<(?:image|text)\b/iu);
     const wordmarkFont = fontkit.openSync(
       path.join(
