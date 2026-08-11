@@ -59,11 +59,9 @@ export function resolveVehicleCategoryIconAsset(iconId: string) {
 export function resolveCatalogVehicleCategoryIconAsset({
   cardId,
   promoEntryId,
-  vehicleType,
 }: {
   cardId: string;
   promoEntryId: string;
-  vehicleType: string;
 }) {
   const iconId =
     CATEGORY_ICON_BY_CARD_ID[cardId] ?? CATEGORY_ICON_BY_PROMO_ENTRY[promoEntryId];

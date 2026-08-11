@@ -948,7 +948,6 @@ function VehicleCard({
   const categoryIconId = resolveCatalogVehicleCategoryIconAsset({
     cardId,
     promoEntryId: record.promoEntryId,
-    vehicleType: record.official.typeZh,
   });
   const cardName = vehiclePresentationName(record, variant);
   const cardConfiguration = vehicleConfiguration(record, variant, alias);
