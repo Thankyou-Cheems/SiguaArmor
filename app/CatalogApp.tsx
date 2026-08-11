@@ -36,7 +36,6 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { flushSync } from "react-dom";
-import categoryIconConfig from "../config/vehicle-category-icons.json";
 import {
   ICP_RECORD,
   PUBLIC_SECURITY_RECORD,
@@ -88,7 +87,10 @@ import {
   searchCatalogIndexRecords,
 } from "./vehicle-search";
 import type { CatalogIndexSearchResult } from "./vehicle-search";
-import { resolveVehicleCategoryIconAsset } from "./vehicle-category-icons";
+import {
+  resolveCatalogVehicleCategoryIconAsset,
+  resolveVehicleCategoryIconAsset,
+} from "./vehicle-category-icons";
 import {
   FACTION_IMAGE_ORDER,
   FACTION_VISUAL_ASSETS,
@@ -120,30 +122,6 @@ const WikiTurretStationIndicator = lazy(() =>
 );
 
 const ALL_GROUPS = ALL_CATALOG_GROUPS;
-const CATEGORY_ICON_BY_PROMO_ENTRY = categoryIconConfig.promoEntryIcons as Record<string, string>;
-const CATEGORY_ICON_BY_CARD_ID =
-  (categoryIconConfig.variantIconsByCardId as Record<string, string> | undefined) ?? {};
-const CATEGORY_ICON_BY_TYPE: Record<string, string> = {
-  AH: "transporthelo",
-  APC: "apc",
-  CAS: "map_jet_tornado",
-  DRONE: "map_handhelddrone",
-  IFV: "ifv",
-  LOGI: "jeep_logistics",
-  LTV: "jeep",
-  MBT: "tank",
-  MGS: "jeep_antitank",
-  MRAP: "jeep_turret",
-  MSV: "jeep_logistics",
-  RSV: "jeep_logistics",
-  SPA: "trackedapc",
-  SPAA: "trackedifv",
-  TD: "jeep_antitank",
-  TRAN: "jeep_logistics",
-  UAV: "map_uav",
-  UH: "transporthelo",
-  ULTV: "jeep",
-};
 const DONATE_QR_SRC = new URL("../donateQR.jpg", import.meta.url).href;
 const FEEDBACK_FORM_URL = "https://docs.qq.com/form/page/DRnd4bWtKUGNnT3Vu";
 const EMPTY_FACTION_FOREGROUND_SRC =
@@ -967,12 +945,11 @@ function VehicleCard({
   const { alias, cardId, data, record, variant } = card;
   const expandedLiveryCardId = selected ? card.cardId : hoveredLiveryCardId;
   const general = data?.general ?? null;
-  const categoryIconId = resolveVehicleCategoryIconAsset(
-    CATEGORY_ICON_BY_CARD_ID[cardId] ??
-      CATEGORY_ICON_BY_PROMO_ENTRY[record.promoEntryId] ??
-      CATEGORY_ICON_BY_TYPE[record.official.typeZh] ??
-      "jeep",
-  );
+  const categoryIconId = resolveCatalogVehicleCategoryIconAsset({
+    cardId,
+    promoEntryId: record.promoEntryId,
+    vehicleType: record.official.typeZh,
+  });
   const cardName = vehiclePresentationName(record, variant);
   const cardConfiguration = vehicleConfiguration(record, variant, alias);
   const cardVariantName = cardConfiguration?.replace(/\s*·\s*/g, " ") ?? null;
