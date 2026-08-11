@@ -2,6 +2,8 @@ export const SIGUA_WIKI_ORIGIN =
   process.env.NEXT_PUBLIC_SIGUA_WIKI_ORIGIN?.replace(/\/+$/u, "") ||
   "https://wiki.siguad.icu";
 
+const WIKI_PRESENTATION_QUERY = "?presentation=v1";
+
 const requests = new Map<
   string,
   { expiresAt: number; request: Promise<unknown> }
@@ -75,7 +77,7 @@ export async function loadWikiWeaponCatalog() {
 
 export async function loadWikiVehicleCatalog() {
   const value = await loadWikiDataset(
-    "/data/vehicles/catalog.json",
+    `/data/vehicles/catalog.json${WIKI_PRESENTATION_QUERY}`,
     "sigua-vehicle-catalog/v3.1",
   );
   const catalog = value as {
@@ -102,7 +104,10 @@ export async function loadWikiVehicleCatalog() {
 }
 
 export async function loadWikiVehicleCommunityAliases() {
-  const value = await fetchJson("/data/vehicles/community-aliases.json", 60_000);
+  const value = await fetchJson(
+    `/data/vehicles/community-aliases.json${WIKI_PRESENTATION_QUERY}`,
+    60_000,
+  );
   const document = value as {
     schemaVersion?: string;
     updatedAt?: string;
@@ -132,7 +137,7 @@ export async function loadWikiVehicleCommunityAliases() {
 
 export async function loadWikiFactionCatalog() {
   const value = await loadWikiDataset(
-    "/data/factions/catalog.json",
+    `/data/factions/catalog.json${WIKI_PRESENTATION_QUERY}`,
     "sigua-faction-catalog/v1",
   );
   const catalog = value as {
