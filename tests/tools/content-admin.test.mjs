@@ -67,6 +67,22 @@ async function withContentAdminServer(callback) {
     const { port } = server.address();
     const baseUrl = `http://127.0.0.1:${port}`;
     await writeFile(
+      path.join(contentRoot, "notices.json"),
+      `${JSON.stringify(
+        {
+          version: 1,
+          updatedAt: "2026-08-10T00:00:00.000Z",
+          editions: {
+            china: { title: "国服载具资料库", lines: ["国服提示"] },
+            international: { lines: ["International notice"] },
+          },
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+    await writeFile(
       path.join(contentRoot, "supporters.json"),
       `${JSON.stringify(
         {
@@ -247,5 +263,49 @@ test("content-admin preserves ETag lifecycle and Unicode supporters through cons
     assert.equal(reloaded.response.status, 200);
     assert.equal(reloaded.value.etag, thirdEtag);
     assert.equal(reloaded.value.document.entries[0].name, "@飞行ACV✈️第二次");
+  });
+});
+
+test("content-admin publishes both editions of the blue notice with ETag protection", async () => {
+  await withContentAdminServer(async ({ baseUrl, adminPlain, adminKeyDigest, authHeaders }) => {
+    const loginResponse = await fetch(`${baseUrl}/__admin/content/session`, {
+      method: "POST",
+      headers: headersForApi(adminKeyDigest, null, { "Content-Type": "application/json" }),
+      body: JSON.stringify({ key: adminPlain }),
+    });
+    assert.equal(loginResponse.status, 200);
+    const session = await parseJson(loginResponse);
+    const cookie = loginResponse.headers.get("set-cookie")?.split(";", 1)[0] ?? "";
+
+    const current = await fetch(`${baseUrl}/__admin/content/documents/notices`, {
+      headers: authHeaders({ proxyAuthToken: adminKeyDigest, cookie }),
+    }).then((response) => parseJson(response).then((value) => ({ response, value })));
+    assert.equal(current.response.status, 200);
+    const etag = current.response.headers.get("etag");
+    assert.ok(etag);
+
+    const saved = await fetch(`${baseUrl}/__admin/content/documents/notices`, {
+      method: "PUT",
+      headers: authHeaders({
+        proxyAuthToken: adminKeyDigest,
+        cookie,
+        csrfToken: session.csrfToken,
+        headers: { "Content-Type": "application/json", "If-Match": etag },
+      }),
+      body: JSON.stringify({
+        expectedEtag: etag,
+        document: {
+          ...current.value.document,
+          editions: {
+            china: { title: "维护提示🔧", lines: ["国服内容已更新。"] },
+            international: { title: "Notice", lines: ["Global data refreshed."] },
+          },
+        },
+      }),
+    }).then((response) => parseJson(response).then((value) => ({ response, value })));
+    assert.equal(saved.response.status, 200);
+    assert.equal(saved.value.document.editions.china.title, "维护提示🔧");
+    assert.deepEqual(saved.value.document.editions.international.lines, ["Global data refreshed."]);
+    assert.notEqual(saved.response.headers.get("etag"), etag);
   });
 });

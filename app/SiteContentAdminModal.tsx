@@ -25,6 +25,9 @@ import {
   parseUpdatesDocument,
 } from "../lib/updates-document.mjs";
 import {
+  parseDataAccuracyNoticesDocument,
+} from "../lib/data-accuracy-notices-document.mjs";
+import {
   dispatchRuntimeDocumentUpdated,
   type RuntimeDocumentName,
 } from "../lib/runtime-document-events";
@@ -34,6 +37,9 @@ type SupportersDocument = NonNullable<ReturnType<typeof parseSupportersDocument>
 type SupporterEntry = SupportersDocument["entries"][number];
 type UpdatesDocument = NonNullable<ReturnType<typeof parseUpdatesDocument>>;
 type UpdateEntry = UpdatesDocument["entries"][number];
+type DataAccuracyNoticesDocument = NonNullable<
+  ReturnType<typeof parseDataAccuracyNoticesDocument>
+>;
 type AdminDocumentName = RuntimeDocumentName;
 
 interface LoadedDocument<T> {
@@ -42,6 +48,7 @@ interface LoadedDocument<T> {
 }
 
 interface LoadedDocuments {
+  notices: LoadedDocument<DataAccuracyNoticesDocument>;
   supporters: LoadedDocument<SupportersDocument>;
   "updates-china": LoadedDocument<UpdatesDocument>;
   "updates-international": LoadedDocument<UpdatesDocument>;
@@ -58,6 +65,7 @@ const DEFAULT_SUPPORTER_TEXT_COLOR = "#ffffff";
 const DEFAULT_SUPPORTER_ACCENT_COLOR = "#e1c89b";
 const HEX_COLOR_PATTERN = /^#[0-9a-f]{6}$/;
 const DOCUMENT_LABELS: Record<AdminDocumentName, string> = {
+  notices: "蓝色提示",
   supporters: "赞助名单",
   "updates-china": "国服更新日志",
   "updates-international": "国际版更新日志",
@@ -161,6 +169,88 @@ function normalizeUpdatesDocument(document: UpdatesDocument) {
       items: entry.items.map((item) => item.trim()).filter(Boolean),
     })),
   };
+}
+
+function normalizeDataAccuracyNoticesDocument(
+  document: DataAccuracyNoticesDocument,
+) {
+  return {
+    ...document,
+    editions: Object.fromEntries(
+      Object.entries(document.editions).map(([edition, notice]) => {
+        const title = notice.title?.trim();
+        return [
+          edition,
+          {
+            ...(title ? { title } : {}),
+            lines: notice.lines.map((line) => line.trim()).filter(Boolean),
+          },
+        ];
+      }),
+    ) as DataAccuracyNoticesDocument["editions"],
+  };
+}
+
+function DataAccuracyNoticesEditor({
+  document,
+  onChange,
+}: {
+  document: DataAccuracyNoticesDocument;
+  onChange: (document: DataAccuracyNoticesDocument) => void;
+}) {
+  const editions = [
+    ["china", "国服站"],
+    ["international", "国际站"],
+  ] as const;
+  return (
+    <div className="site-content-admin__entries">
+      {editions.map(([edition, label]) => {
+        const notice = document.editions[edition];
+        const updateNotice = (next: typeof notice) =>
+          onChange({
+            ...document,
+            editions: { ...document.editions, [edition]: next },
+          });
+        return (
+          <article className="site-content-admin__entry-card" key={edition}>
+            <header>
+              <strong>{label}弹出提示</strong>
+            </header>
+            <div className="site-content-admin__field-grid">
+              <label className="site-content-admin__field-wide">
+                <span>标题（可留空）</span>
+                <input
+                  value={notice.title ?? ""}
+                  maxLength={80}
+                  onChange={(event) =>
+                    updateNotice({
+                      ...notice,
+                      title: event.target.value || undefined,
+                    })
+                  }
+                />
+              </label>
+              <label className="site-content-admin__field-wide">
+                <span>提示内容（每行一段，1–4 段）</span>
+                <textarea
+                  value={notice.lines.join("\n")}
+                  rows={Math.max(3, notice.lines.length + 1)}
+                  maxLength={960}
+                  placeholder="每行一段；每段最多 240 个字符"
+                  onChange={(event) =>
+                    updateNotice({
+                      ...notice,
+                      lines: event.target.value.split("\n"),
+                    })
+                  }
+                />
+              </label>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
 }
 
 function SupportersEditor({
@@ -628,6 +718,7 @@ export function SiteContentAdminModal({
 
   const loadDocuments = useCallback(async () => {
     const names: AdminDocumentName[] = [
+      "notices",
       "supporters",
       "updates-china",
       "updates-international",
@@ -636,7 +727,7 @@ export function SiteContentAdminModal({
       names.map(async (documentName) => {
         const result = await requestAdminJson<{
           documentName: AdminDocumentName;
-          document: SupportersDocument | UpdatesDocument;
+          document: DataAccuracyNoticesDocument | SupportersDocument | UpdatesDocument;
           etag: string;
         }>(`/documents/${documentName}`);
         if (!result.value.etag) throw new Error("管理接口未返回文档版本标识");
@@ -782,23 +873,31 @@ export function SiteContentAdminModal({
     try {
       const current = documents[activeDocument];
       const normalized =
-        activeDocument === "supporters"
+        activeDocument === "notices"
+          ? normalizeDataAccuracyNoticesDocument(
+              current.document as DataAccuracyNoticesDocument,
+            )
+          : activeDocument === "supporters"
           ? normalizeSupportersDocument(current.document as SupportersDocument)
           : normalizeUpdatesDocument(current.document as UpdatesDocument);
       const valid =
-        activeDocument === "supporters"
+        activeDocument === "notices"
+          ? parseDataAccuracyNoticesDocument(normalized)
+          : activeDocument === "supporters"
           ? parseSupportersDocument(normalized)
           : parseUpdatesDocument(normalized);
       if (!valid) {
         throw new Error(
-          activeDocument === "supporters"
+          activeDocument === "notices"
+            ? "提示标题或正文不符合限制；每个版本需要 1–4 段非空正文。"
+            : activeDocument === "supporters"
             ? "名单字段不完整、ID 重复或链接不是安全的 HTTPS 地址。"
             : "更新日志字段不完整、日期顺序错误，或单项内容超过限制。",
         );
       }
       const result = await requestAdminJson<{
         documentName: AdminDocumentName;
-        document: SupportersDocument | UpdatesDocument;
+        document: DataAccuracyNoticesDocument | SupportersDocument | UpdatesDocument;
         publishedAt: string;
         etag: string;
       }>(`/documents/${activeDocument}`, {
@@ -974,6 +1073,20 @@ export function SiteContentAdminModal({
                         ? {
                             ...previous,
                             supporters: { ...previous.supporters, document },
+                          }
+                        : previous,
+                    )
+                  }
+                />
+              ) : activeDocument === "notices" ? (
+                <DataAccuracyNoticesEditor
+                  document={documents.notices.document}
+                  onChange={(document) =>
+                    setDocuments((previous) =>
+                      previous
+                        ? {
+                            ...previous,
+                            notices: { ...previous.notices, document },
                           }
                         : previous,
                     )

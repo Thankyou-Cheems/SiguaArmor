@@ -11,6 +11,7 @@ import {
   LANDING_ORIGIN,
   NAVIGATOR_PATH,
   NAVIGATOR_URL,
+  PUBLIC_SECURITY_RECORD,
   armorPath,
   armorUrl,
   landingArmorRedirectUrl,
@@ -28,12 +29,17 @@ import { SITE_PORTAL_BRAND } from "../../tools/deploy/site-portal-brand.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "..", "..");
 
-test("public topology owns the landing, Armor routes, and exact ICP record", () => {
+test("public topology owns the landing, Armor routes, and exact filing records", () => {
   assert.equal(LANDING_ORIGIN, "https://siguad.icu");
   assert.equal(ARMOR_ORIGIN, "https://armor.siguad.icu");
   assert.equal(NAVIGATOR_PATH, "/navigator");
   assert.equal(NAVIGATOR_URL, "https://siguad.icu/navigator");
   assert.equal(ICP_RECORD.number, "黑ICP备2025043874号-2");
+  assert.equal(PUBLIC_SECURITY_RECORD.number, "黑公网安备 23050202000040号");
+  assert.equal(
+    PUBLIC_SECURITY_RECORD.url,
+    "https://beian.mps.gov.cn/#/query/webSearch?code=23050202000040",
+  );
   assert.equal(SITE_PORTAL_BRAND.displayName, "丝瓜地.爱惜呦");
   assert.equal(SITE_PORTAL_BRAND.englishName, "SiguaD.icu");
   assert.equal(armorPath("international"), "/squad/");
@@ -177,6 +183,8 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(selector, /丝瓜 · 国际服载具资料/u);
   assert.match(selector, /@media \(max-width: 720px\)/u);
   assert.match(selector, /href="https:\/\/siguad\.icu\/"/u);
+  assert.match(selector, /黑公网安备 23050202000040号/u);
+  assert.match(selector, /public-security-record-icon\.svg/u);
 
   assert.match(landing, /href="https:\/\/armor\.siguad\.icu\/squad\/"/u);
   assert.match(landing, /href="https:\/\/armor\.siguad\.icu\/sigua\/"/u);
@@ -243,6 +251,11 @@ test("deployment templates render from topology without mobile routing or stale 
     );
   }
   assert.match(landing, /黑ICP备2025043874号-2/u);
+  assert.match(landing, /黑公网安备 23050202000040号/u);
+  assert.match(
+    landing,
+    /https:\/\/beian\.mps\.gov\.cn\/#\/query\/webSearch\?code=23050202000040/u,
+  );
   assert.doesNotMatch(
     landing,
     /黑ICP备2025043874号-1|href="\/(?:squad|sigua)\//u,
@@ -275,6 +288,7 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(caddy, /@siguaApplication path \/sigua\.rsc \/sigua\/\*/u);
   assert.match(caddy, /rewrite \/sigua\.rsc \/china\.rsc/u);
   assert.match(caddy, /s-maxage=60/u);
+  assert.match(caddy, /path \/notices\.json \/supporters\.json \/updates\.json/u);
   assert.doesNotMatch(caddy, /generatedPortalAssets|squad\/images\/site/u);
   assert.match(caddy, /root \* \{\$SIGUA_PUBLIC_ROOT:\/srv\/public\}\/squad/u);
   assert.match(compose, /image: node:22-alpine/u);
@@ -311,6 +325,18 @@ test("Site Portal brand assets are copied beside rendered config", async () => {
     assert.match(selector, /藤瓜 · 国服载具资料/u);
     assert.match(selector, /丝瓜 · 国际服载具资料/u);
     assert.match(navigator, /data-landmark="armor-pot"/u);
+    assert.equal(
+      (await readFile(
+        path.join(
+          outputRoot,
+          "release",
+          "portal-assets",
+          "public-security-record-icon.svg",
+        ),
+        "utf8",
+      )).includes("data:image/png;base64"),
+      true,
+    );
     assert.match(
       navigator,
       /<link rel="canonical" href="https:\/\/siguad\.icu\/navigator" \/>/u,

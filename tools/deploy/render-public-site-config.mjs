@@ -7,6 +7,7 @@ import {
   ICP_RECORD,
   LANDING_ORIGIN,
   NAVIGATOR_URL,
+  PUBLIC_SECURITY_RECORD,
   armorUrl,
   originHostname,
 } from "../../lib/public-site-topology.mjs";
@@ -27,6 +28,9 @@ const VALUES = Object.freeze({
   ARMOR_CHINA_URL: armorUrl("china"),
   ICP_RECORD_NUMBER: ICP_RECORD.number,
   ICP_RECORD_URL: ICP_RECORD.url,
+  PUBLIC_SECURITY_RECORD_NUMBER: PUBLIC_SECURITY_RECORD.number,
+  PUBLIC_SECURITY_RECORD_URL: PUBLIC_SECURITY_RECORD.url,
+  PUBLIC_SECURITY_RECORD_ICON_URL: PUBLIC_SECURITY_RECORD.portalIconUrl,
   LANDING_HTML_CACHE_CONTROL: PUBLIC_DOCUMENT_CACHE.landing,
   ARMOR_HTML_CACHE_CONTROL: PUBLIC_DOCUMENT_CACHE.armorHtml,
   PRIVATE_CACHE_CONTROL: PUBLIC_DOCUMENT_CACHE.private,
@@ -91,6 +95,16 @@ export async function renderPublicSiteConfig(outputRoot) {
     path.join(TEMPLATE_ROOT, "assets"),
     path.join(resolvedOutput, "release", "portal-assets"),
     { recursive: true, force: true },
+  );
+  await cp(
+    path.join(ROOT, "public", "images", "public-security-record-icon.svg"),
+    path.join(
+      resolvedOutput,
+      "release",
+      "portal-assets",
+      "public-security-record-icon.svg",
+    ),
+    { force: true },
   );
   return resolvedOutput;
 }

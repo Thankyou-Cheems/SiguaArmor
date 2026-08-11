@@ -8642,6 +8642,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .site-footer__filing {
   grid-column: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px 12px;
   color: var(--text-dim);
   font-size: 15px;
   text-decoration: none;
@@ -8649,7 +8653,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .site-footer__filing > a {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding-bottom: 2px;
   border-bottom: 1px solid var(--brand);
   background: linear-gradient(96deg, var(--brand) 0%, #f0d9ad 52%, #fffdf0 100%);
@@ -8660,6 +8665,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   text-decoration: none;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.site-footer__public-security-filing {
+  gap: 5px;
+}
+
+.site-footer__public-security-filing img {
+  width: 14px;
+  height: 16px;
+  flex: none;
 }
 
 .site-footer__filing:hover,
@@ -8843,20 +8858,20 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .site-footer__supporters-list {
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px 18px;
   margin: 12px 0 0;
-  padding: 0 0 0 18px;
-  border-left: 1px solid rgba(225, 200, 155, 0.24);
+  padding: 0;
   list-style: none;
 }
 
 .site-footer__supporters-list li {
   display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 5px 8px;
+  max-width: min(100%, 220px);
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
   min-height: 22px;
   padding: 2px 0;
   border: 0;
@@ -8897,9 +8912,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .site-footer__supporter-note {
+  display: block;
+  max-width: 24em;
   color: var(--text-dim);
-  font-size: 9px;
-  line-height: 1.45;
+  font-size: 8px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .site-footer__supporters-status {

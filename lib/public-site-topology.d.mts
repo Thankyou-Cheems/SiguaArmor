@@ -8,6 +8,12 @@ export const ICP_RECORD: Readonly<{
   number: "黑ICP备2025043874号-2";
   url: "https://beian.miit.gov.cn/";
 }>;
+export const PUBLIC_SECURITY_RECORD: Readonly<{
+  number: "黑公网安备 23050202000040号";
+  url: "https://beian.mps.gov.cn/#/query/webSearch?code=23050202000040";
+  appIconUrl: "/images/public-security-record-icon.svg";
+  portalIconUrl: "/portal-assets/public-security-record-icon.svg";
+}>;
 export const ARMOR_EDITIONS: Readonly<
   Record<ArmorEdition, Readonly<{ id: ArmorEdition; basePath: string }>>
 >;

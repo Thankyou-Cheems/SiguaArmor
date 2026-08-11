@@ -2,6 +2,9 @@ const DOCUMENT_KEYS = new Set(["version", "updatedAt", "siteUpdatedOn", "entries
 const SUPPORTER_KEYS = new Set(["id", "name", "nameSegments", "kind", "url", "note"]);
 const SUPPORTER_NAME_SEGMENT_KEYS = new Set(["text", "color"]);
 const UPDATE_KEYS = new Set(["id", "date", "title", "items"]);
+const NOTICES_DOCUMENT_KEYS = new Set(["version", "updatedAt", "editions"]);
+const NOTICE_EDITIONS_KEYS = new Set(["china", "international"]);
+const NOTICE_KEYS = new Set(["title", "lines"]);
 const ID_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/;
 const COLOR_PATTERN = /^#[0-9a-f]{6}$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -14,6 +17,10 @@ const SITE_DATE_FORMATTER = new Intl.DateTimeFormat("en-CA", {
 });
 
 export const CONTENT_DOCUMENTS = Object.freeze({
+  notices: Object.freeze({
+    relativePath: "notices.json",
+    maxBytes: 32 * 1024,
+  }),
   supporters: Object.freeze({
     relativePath: "supporters.json",
     maxBytes: 32 * 1024,
@@ -156,6 +163,34 @@ function parseUpdatesDocument(value) {
   };
 }
 
+function parseNotice(value) {
+  if (!isRecord(value) || !hasOnlyKeys(value, NOTICE_KEYS)) return null;
+  if (value.title !== undefined && !isTrimmedText(value.title, 1, 80)) return null;
+  if (!Array.isArray(value.lines) || value.lines.length < 1 || value.lines.length > 4) {
+    return null;
+  }
+  if (!value.lines.every((line) => isTrimmedText(line, 1, 240))) return null;
+  const notice = { lines: [...value.lines] };
+  if (value.title !== undefined) notice.title = value.title;
+  return notice;
+}
+
+function parseNoticesDocument(value) {
+  if (!isRecord(value) || !hasOnlyKeys(value, NOTICES_DOCUMENT_KEYS)) return null;
+  if (value.version !== 1 || !isCanonicalTimestamp(value.updatedAt)) return null;
+  if (!isRecord(value.editions) || !hasOnlyKeys(value.editions, NOTICE_EDITIONS_KEYS)) {
+    return null;
+  }
+  const china = parseNotice(value.editions.china);
+  const international = parseNotice(value.editions.international);
+  if (!china || !international) return null;
+  return {
+    version: 1,
+    updatedAt: value.updatedAt,
+    editions: { china, international },
+  };
+}
+
 function siteDateInShanghai(date) {
   const parts = Object.fromEntries(
     SITE_DATE_FORMATTER.formatToParts(date).map(({ type, value }) => [type, value]),
@@ -164,6 +199,7 @@ function siteDateInShanghai(date) {
 }
 
 export function parseContentDocument(documentName, value) {
+  if (documentName === "notices") return parseNoticesDocument(value);
   if (documentName === "supporters") return parseSupportersDocument(value);
   if (documentName === "updates-china" || documentName === "updates-international") {
     return parseUpdatesDocument(value);
@@ -174,7 +210,7 @@ export function parseContentDocument(documentName, value) {
 export function prepareContentDocument(documentName, value, now = new Date()) {
   if (!isRecord(value)) throw new Error("document must be an object");
   const candidate =
-    documentName === "supporters"
+    documentName === "supporters" || documentName === "notices"
       ? { ...value, updatedAt: now.toISOString() }
       : {
           ...value,

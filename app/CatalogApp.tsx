@@ -37,7 +37,18 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import categoryIconConfig from "../config/vehicle-category-icons.json";
-import { ICP_RECORD } from "../lib/public-site-topology.mjs";
+import {
+  ICP_RECORD,
+  PUBLIC_SECURITY_RECORD,
+} from "../lib/public-site-topology.mjs";
+import {
+  DATA_ACCURACY_NOTICES_DOCUMENT_URL,
+  parseDataAccuracyNoticesDocument,
+} from "../lib/data-accuracy-notices-document.mjs";
+import {
+  RUNTIME_DOCUMENT_UPDATED_EVENT,
+  isRuntimeDocumentUpdatedEvent,
+} from "../lib/runtime-document-events";
 import {
   ALL_CATALOG_GROUPS,
   DEFAULT_VIEWER_NAVIGATION_STATE,
@@ -1921,7 +1932,22 @@ function SiteFooterCopy({
           <span>{siteEdition === "china" ? "藤瓜：铁皮饭堂" : "丝瓜：铁皮饭堂"}</span>
           <span>{updateDateLabel}</span>
         </strong>
-        <span className="site-footer__filing" aria-label="工业和信息化部备案信息">
+        <span className="site-footer__filing" aria-label="网站备案信息">
+          <a
+            className="site-footer__public-security-filing"
+            href={PUBLIC_SECURITY_RECORD.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- official 14x16 public-security filing icon is served unchanged */}
+            <img
+              src={PUBLIC_SECURITY_RECORD.appIconUrl}
+              alt=""
+              width={14}
+              height={16}
+            />
+            <span>{PUBLIC_SECURITY_RECORD.number}</span>
+          </a>
           <a href={ICP_RECORD.url} target="_blank" rel="noreferrer">
             {ICP_RECORD.number}
           </a>
@@ -2047,9 +2073,9 @@ function SiteFooterCopy({
           </li>
           <li>
             <a href="https://cloud.tencent.com/document/product/1552/118985" target="_blank" rel="noreferrer">
-              腾讯云 EdgeOne 免费版套餐
+              腾讯云 EdgeOne
             </a>
-            <span>提供了免费 CDN。</span>
+            <span>提供了 CDN。</span>
           </li>
           <li>
             <a href="https://store.epicgames.com/p/squad?lang=en-US" target="_blank" rel="noreferrer">
@@ -3152,6 +3178,9 @@ export function CatalogApp({
   const [choicePanelActive, setChoicePanelActive] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [contentAdminOpen, setContentAdminOpen] = useState(false);
+  const [dataAccuracyNotices, setDataAccuracyNotices] = useState<NonNullable<
+    ReturnType<typeof parseDataAccuracyNoticesDocument>
+  > | null>(null);
   const [dataAccuracyNoticeOpen, setDataAccuracyNoticeOpen] = useState(true);
   const [dataAccuracyNoticeSecondsLeft, setDataAccuracyNoticeSecondsLeft] = useState(10);
   const [catalogsByGroup, setCatalogsByGroup] = useState<Record<string, PublicFactionCatalog>>({});
@@ -3174,6 +3203,51 @@ export function CatalogApp({
     setContentAdminOpen(false);
     window.requestAnimationFrame(() => helpButtonRef.current?.focus());
   }, []);
+
+  useEffect(() => {
+    let disposed = false;
+    let requestGeneration = 0;
+    const load = async (force = false) => {
+      const generation = ++requestGeneration;
+      const url = force
+        ? `${DATA_ACCURACY_NOTICES_DOCUMENT_URL}?admin_refresh=${Date.now()}`
+        : DATA_ACCURACY_NOTICES_DOCUMENT_URL;
+      try {
+        const response = await fetch(url, {
+          cache: force ? "reload" : "default",
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) return;
+        const parsed = parseDataAccuracyNoticesDocument(await response.json());
+        if (!disposed && generation === requestGeneration && parsed) {
+          setDataAccuracyNotices(parsed);
+          if (force) {
+            setDataAccuracyNoticeSecondsLeft(10);
+            setDataAccuracyNoticeOpen(true);
+          }
+        }
+      } catch {
+        // Keep the bundled copy when the small hot-update document is temporarily unavailable.
+      }
+    };
+    const handleRuntimeDocumentUpdated = (event: Event) => {
+      if (isRuntimeDocumentUpdatedEvent(event, "notices")) void load(true);
+    };
+    void load();
+    window.addEventListener(RUNTIME_DOCUMENT_UPDATED_EVENT, handleRuntimeDocumentUpdated);
+    return () => {
+      disposed = true;
+      requestGeneration += 1;
+      window.removeEventListener(RUNTIME_DOCUMENT_UPDATED_EVENT, handleRuntimeDocumentUpdated);
+    };
+  }, []);
+
+  const dataAccuracyNotice = dataAccuracyNotices?.editions[siteEdition];
+  const dataAccuracyNoticeTitle = dataAccuracyNotices
+    ? dataAccuracyNotice?.title
+    : editionProfile.noticeTitle;
+  const dataAccuracyNoticeLines =
+    dataAccuracyNotice?.lines ?? editionProfile.noticeLines;
 
   useEffect(() => {
     if (!dataAccuracyNoticeOpen) return undefined;
@@ -3716,8 +3790,8 @@ export function CatalogApp({
         <aside className="data-accuracy-notice" role="note" aria-label="数据准确性提示">
           <CircleAlert size={16} aria-hidden="true" />
           <div>
-            {editionProfile.noticeTitle ? <strong>{editionProfile.noticeTitle}</strong> : null}
-            {editionProfile.noticeLines.map((line) => (
+            {dataAccuracyNoticeTitle ? <strong>{dataAccuracyNoticeTitle}</strong> : null}
+            {dataAccuracyNoticeLines.map((line) => (
               <p key={line}>{line}</p>
             ))}
             {editionProfile.showNoticeCountdown ? (
