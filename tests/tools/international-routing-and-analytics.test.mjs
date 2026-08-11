@@ -404,6 +404,27 @@ test("catalog links use one compact camera token and retain legacy angle compati
   assert.equal(legacy.pitch, -4);
 });
 
+test("international homepage help stays fixed until a vehicle docks it", async () => {
+  const [catalogApp, globals] = await Promise.all([
+    readFile(path.join(ROOT, "app", "CatalogApp.tsx"), "utf8"),
+    readFile(path.join(ROOT, "app", "globals.css"), "utf8"),
+  ]);
+
+  assert.match(catalogApp, /docked=\{selectedCard !== null\}/u);
+  assert.match(
+    globals,
+    /\.site-footer__help \{[\s\S]*?position: fixed;/u,
+  );
+  assert.match(
+    globals,
+    /\.site-footer__help\[data-docked="true"\] \{[\s\S]*?position: absolute;/u,
+  );
+  assert.doesNotMatch(
+    globals,
+    /\.site-shell\[data-site-edition="international"\]:has\(> \.faction-selector\) \.site-footer__help \{[\s\S]*?position: absolute;/u,
+  );
+});
+
 test("site editions keep independent titles while sharing the optional DAU display", async () => {
   const [
     layout,
@@ -427,8 +448,8 @@ test("site editions keep independent titles while sharing the optional DAU displ
   assert.match(layout, /丝瓜：铁皮大饭堂/u);
   assert.doesNotMatch(layout, /藤瓜：铁皮大饭堂/u);
   assert.match(chinaPage, /absolute:\s*"藤瓜：铁皮大饭堂"/u);
-  assert.match(catalogApp, /丝瓜：铁皮饭堂/u);
-  assert.match(catalogApp, /藤瓜：铁皮饭堂/u);
+  assert.match(catalogApp, /丝瓜地：铁皮饭堂/u);
+  assert.doesNotMatch(catalogApp, /藤瓜：铁皮饭堂/u);
   assert.match(catalogApp, /Offworld Industries/u);
   assert.doesNotMatch(catalogApp, /《Squad》/u);
   assert.match(catalogApp, /非 Offworld Industries 或 Squad 官方站点/u);
@@ -448,17 +469,18 @@ test("site editions keep independent titles while sharing the optional DAU displ
   );
   assert.match(catalogApp, /href="https:\/\/react\.dev\/"/u);
   assert.match(catalogApp, /href="https:\/\/threejs\.org\/"/u);
-  assert.match(catalogApp, /本站引用的国服官网图片、文字、标识等素材/u);
-  assert.match(catalogApp, /权利归腾讯及相应权利人所有/u);
+  assert.match(catalogApp, /引用的国服官网图片、文字及标识等素材权利归腾讯及相应权利人所有/u);
+  assert.match(catalogApp, /具体信息以国服官网、官方公告及游戏内实装为准/u);
+  assert.match(catalogApp, /引用的游戏资产、图片、文字及标识等素材权利归 Offworld Industries 及相应权利人所有/u);
+  assert.match(catalogApp, /具体信息以游戏官网、官方公告及游戏内实装为准/u);
   assert.match(catalogApp, /href="https:\/\/sigua\.qq\.com\/"/u);
   assert.match(
     catalogApp,
     /href="https:\/\/www\.tencent\.com\/legal\/html\/zh-cn\/property\.html"/u,
   );
-  assert.match(
-    catalogApp,
-    /siteEdition === "china" \? "藤瓜：铁皮饭堂" : "丝瓜：铁皮饭堂"/u,
-  );
+  assert.match(catalogApp, /siguad-wiki-logo-69092cecbd4b\.svg/u);
+  assert.match(catalogApp, /site-footer__font-line/u);
+  assert.match(catalogApp, /site-footer__sponsor-button--primary/u);
   assert.match(supportersDocument, /SUPPORTERS_DOCUMENT_URL = "\/supporters\.json"/u);
   assert.match(updatesDocument, /UPDATES_DOCUMENT_URL = "\/squad\/updates\.json"/u);
   assert.match(beacon, /fetch\("\/__analytics\/dau"/u);
