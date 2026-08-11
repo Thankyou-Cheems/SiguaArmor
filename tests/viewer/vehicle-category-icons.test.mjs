@@ -25,7 +25,6 @@ test("every current vehicle card matches the reviewed category icon audit", asyn
 
   for (const catalog of currentCatalogs) {
     for (const record of catalog.records) {
-      const vehicleType = record.promoEntryId.split("--").at(-1)?.toUpperCase() ?? "UNKNOWN";
       for (const variant of record.variants) {
         const expected =
           auditedExpectations.variantCardAssets[variant.cardId] ??
@@ -33,7 +32,6 @@ test("every current vehicle card matches the reviewed category icon audit", asyn
         const actual = resolveCatalogVehicleCategoryIconAsset({
           cardId: variant.cardId,
           promoEntryId: record.promoEntryId,
-          vehicleType,
         });
         if (actual !== expected) {
           mismatches.push(`${variant.cardId}: expected ${expected}, received ${actual}`);
@@ -53,7 +51,6 @@ test("unmapped catalog cards fail closed without crashing the catalog", () => {
     resolveCatalogVehicleCategoryIconAsset({
       cardId: "future--unknown--vehicle",
       promoEntryId: "future--unknown",
-      vehicleType: "UNKNOWN",
     }),
     null,
   );
@@ -64,7 +61,6 @@ test("large logistics vehicle cards use the truck logistics icon", () => {
     resolveCatalogVehicleCategoryIconAsset({
       cardId: "pla--ctm131-logistics--logi--ctm131-logistic",
       promoEntryId: "pla--ctm131-logistics--logi",
-      vehicleType: "LOGI",
     }),
     "truck_logistics",
   );
@@ -75,7 +71,6 @@ test("light logistics vehicle cards keep the jeep logistics icon", () => {
     resolveCatalogVehicleCategoryIconAsset({
       cardId: "pla--lynx8x8-logistics--logi--lynxatv-logistic",
       promoEntryId: "pla--lynx8x8-logistics--logi",
-      vehicleType: "LOGI",
     }),
     "jeep_logistics",
   );
@@ -86,7 +81,6 @@ test("logistics boat cards use the boat icon", () => {
     resolveCatalogVehicleCategoryIconAsset({
       cardId: "pla--rhib-logistics--logi--rhib-logistics",
       promoEntryId: "pla--rhib-logistics--logi",
-      vehicleType: "LOGI",
     }),
     "boat",
   );
@@ -97,7 +91,6 @@ test("tracked logistics vehicle cards use the tracked logistics icon", () => {
     resolveCatalogVehicleCategoryIconAsset({
       cardId: "afu--mtlb-logistics--logi--mtlb-logi-afu",
       promoEntryId: "afu--mtlb-logistics--logi",
-      vehicleType: "LOGI",
     }),
     "trackedapc_logistics",
   );
@@ -108,7 +101,6 @@ test("light logistics overrides apply outside the PLA catalog", () => {
     resolveCatalogVehicleCategoryIconAsset({
       cardId: "gfi--safir-logistics--logi--safir",
       promoEntryId: "gfi--safir-logistics--logi",
-      vehicleType: "LOGI",
     }),
     "jeep_logistics",
   );
@@ -119,7 +111,6 @@ test("logistics boat overrides apply across faction catalogs", () => {
     resolveCatalogVehicleCategoryIconAsset({
       cardId: "adf--rhib-logistics--logi--rhib-logistics",
       promoEntryId: "adf--rhib-logistics--logi",
-      vehicleType: "LOGI",
     }),
     "boat",
   );
