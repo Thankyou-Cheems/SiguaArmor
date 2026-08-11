@@ -264,7 +264,14 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(caddy, /host siguad\.icu/u);
   assert.match(caddy, /host armor\.siguad\.icu/u);
   assert.match(caddy, /host wiki\.siguad\.icu/u);
-  assert.match(caddy, /@wikiContentAdmin path \/__admin\/content \/__admin\/content\/\*/u);
+  assert.match(
+    caddy,
+    /@wikiContentAdminRequest \{[\s\S]*?host wiki\.siguad\.icu[\s\S]*?path \/__admin\/content \/__admin\/content\/\*/u,
+  );
+  assert.ok(
+    caddy.indexOf("@wikiContentAdminRequest {") < caddy.indexOf("@unauthorized not header"),
+    "Wiki management must reach the key-protected admin service before the Armor-only origin gate",
+  );
   assert.match(caddy, /@selectorDocument path \/ \/index\.html/u);
   assert.match(
     caddy,
