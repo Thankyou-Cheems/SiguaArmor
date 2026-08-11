@@ -67,10 +67,6 @@ export function resolveCatalogVehicleCategoryIconAsset({
 }) {
   const iconId =
     CATEGORY_ICON_BY_CARD_ID[cardId] ?? CATEGORY_ICON_BY_PROMO_ENTRY[promoEntryId];
-  if (!iconId) {
-    throw new Error(
-      `Unknown catalog vehicle category icon: ${cardId} (${promoEntryId}, ${vehicleType})`,
-    );
-  }
+  if (!iconId) return null;
   return resolveVehicleCategoryIconAsset(iconId);
 }

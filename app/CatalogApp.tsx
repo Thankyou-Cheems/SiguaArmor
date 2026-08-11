@@ -994,11 +994,21 @@ function VehicleCard({
     <span className="vehicle-card__identity">
       <span
         className="vehicle-card__type"
-        data-icon={categoryIconId}
-        aria-label={record.official.typeZh + (general?.amphibious ? "，支持两栖" : "")}
+        data-icon={categoryIconId ?? "unmapped"}
+        aria-label={
+          record.official.typeZh +
+          (categoryIconId ? "" : "，图标待补充") +
+          (general?.amphibious ? "，支持两栖" : "")
+        }
         title={record.official.typeZh + (general?.amphibious ? " · 支持两栖" : "")}
       >
-        <VehicleCategoryIcon iconId={categoryIconId} />
+        {categoryIconId ? (
+          <VehicleCategoryIcon iconId={categoryIconId} />
+        ) : (
+          <span className="vehicle-card__category-icon-missing" aria-hidden="true">
+            ?
+          </span>
+        )}
         {general?.amphibious ? (
           <Waves className="vehicle-card__amphibious" size={13} aria-hidden="true" />
         ) : null}
