@@ -120,7 +120,7 @@
 				}
 			}
 
-			@footerContentDocument path /supporters.json /updates.json
+			@footerContentDocument path /notices.json /supporters.json /updates.json
 			handle @footerContentDocument {
 				header Cache-Control "public, max-age=60, stale-while-revalidate=300"
 				root * {$SIGUA_CONTENT_ROOT:/srv/content}

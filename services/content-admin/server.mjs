@@ -505,7 +505,7 @@ export function createContentAdminApp(config, options = {}) {
       return;
     }
     const match = url.pathname.match(
-      /^\/__admin\/content\/documents\/(supporters|updates-china|updates-international)$/u,
+      /^\/__admin\/content\/documents\/(notices|supporters|updates-china|updates-international)$/u,
     );
     if (match) {
       await handleDocument(request, response, match[1]);
