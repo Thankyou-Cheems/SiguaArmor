@@ -1,3 +1,5 @@
+import categoryIconConfig from "../config/vehicle-category-icons.json" with { type: "json" };
+
 const SOURCE_ICON_TO_ASSET: Record<string, string> = {
   map_antiair: "antiair",
   map_apc: "apc",
@@ -42,10 +44,33 @@ const SOURCE_ICON_TO_ASSET: Record<string, string> = {
 };
 const DIRECT_ASSET_NAMES = new Set(Object.values(SOURCE_ICON_TO_ASSET));
 
+const CATEGORY_ICON_BY_PROMO_ENTRY = categoryIconConfig.promoEntryIcons as Record<string, string>;
+const CATEGORY_ICON_BY_CARD_ID =
+  (categoryIconConfig.variantIconsByCardId as Record<string, string> | undefined) ?? {};
+
 export function resolveVehicleCategoryIconAsset(iconId: string) {
   const assetName = SOURCE_ICON_TO_ASSET[iconId] ?? iconId;
   if (!DIRECT_ASSET_NAMES.has(assetName)) {
     throw new Error(`Unknown vehicle category icon: ${iconId}`);
   }
   return assetName;
+}
+
+export function resolveCatalogVehicleCategoryIconAsset({
+  cardId,
+  promoEntryId,
+  vehicleType,
+}: {
+  cardId: string;
+  promoEntryId: string;
+  vehicleType: string;
+}) {
+  const iconId =
+    CATEGORY_ICON_BY_CARD_ID[cardId] ?? CATEGORY_ICON_BY_PROMO_ENTRY[promoEntryId];
+  if (!iconId) {
+    throw new Error(
+      `Unknown catalog vehicle category icon: ${cardId} (${promoEntryId}, ${vehicleType})`,
+    );
+  }
+  return resolveVehicleCategoryIconAsset(iconId);
 }
