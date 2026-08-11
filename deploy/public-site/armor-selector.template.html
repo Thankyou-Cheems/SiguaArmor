@@ -91,6 +91,21 @@
         pointer-events: none;
       }
 
+      .portal__brand-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(14px, 2vw, 24px);
+      }
+
+      .portal__siguad-logo {
+        display: block;
+        flex: none;
+        width: clamp(54px, 5.2vw, 72px);
+        height: auto;
+        filter: drop-shadow(0 5px 18px rgba(0, 0, 0, 0.72));
+      }
+
       .portal__wordmark {
         width: min(420px, 54vw);
         height: auto;
@@ -333,8 +348,16 @@
           width: 86vw;
         }
 
+        .portal__brand-row {
+          gap: 10px;
+        }
+
+        .portal__siguad-logo {
+          width: 48px;
+        }
+
         .portal__wordmark {
-          width: min(320px, 68vw);
+          width: min(270px, 62vw);
         }
 
         .portal__eyebrow {
@@ -396,13 +419,22 @@
   <body>
     <main class="portal" aria-label="选择载具资料站">
       <header class="portal__masthead">
-        <img
-          class="portal__wordmark"
-          src="/portal-assets/tactical-squad-wordmark-62bff6fb051e.png"
-          alt="战术小队铁皮饭堂"
-          width="650"
-          height="150"
-        />
+        <div class="portal__brand-row">
+          <img
+            class="portal__siguad-logo"
+            src="{{SITE_PORTAL_LOGO_URL}}"
+            alt="丝瓜地百科 SiguaD Wiki"
+            width="810"
+            height="930"
+          />
+          <img
+            class="portal__wordmark"
+            src="/portal-assets/tactical-squad-wordmark-62bff6fb051e.png"
+            alt="战术小队铁皮饭堂"
+            width="650"
+            height="150"
+          />
+        </div>
         <div class="portal__eyebrow">Select database · 选择数据版本</div>
       </header>
 
