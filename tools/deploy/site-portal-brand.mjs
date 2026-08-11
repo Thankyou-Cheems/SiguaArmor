@@ -6,7 +6,7 @@ const armorChinaFigureFile =
   "siguad-armor-china-soldier-ddd587081da0.webp";
 const armorGlobalFigureFile =
   "siguad-armor-global-soldier-ccb90707110a.webp";
-const brandLogoAssetFile = "siguad-wiki-logo-69092cebd4ba.svg";
+const brandLogoAssetFile = "siguad-wiki-logo-69092cecbd4b.svg";
 
 function portalAsset(id, fileName, metadata = {}) {
   return Object.freeze({

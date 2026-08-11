@@ -177,7 +177,7 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/sigua\/"/u);
   assert.match(selector, /href="https:\/\/armor\.siguad\.icu\/squad\/"/u);
   assert.match(selector, /tactical-squad-wordmark-62bff6fb051e\.png/u);
-  assert.match(selector, /siguad-wiki-logo-69092cebd4ba\.svg/u);
+  assert.match(selector, /siguad-wiki-logo-69092cecbd4b\.svg/u);
   assert.match(selector, /class="portal__siguad-logo"/u);
   assert.match(selector, /alt="丝瓜地百科 SiguaD Wiki"/u);
   assert.match(selector, /siguad-armor-china-soldier-ddd587081da0\.webp/u);
