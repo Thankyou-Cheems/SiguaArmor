@@ -263,6 +263,8 @@ test("deployment templates render from topology without mobile routing or stale 
 
   assert.match(caddy, /host siguad\.icu/u);
   assert.match(caddy, /host armor\.siguad\.icu/u);
+  assert.match(caddy, /host wiki\.siguad\.icu/u);
+  assert.match(caddy, /@wikiContentAdmin path \/__admin\/content \/__admin\/content\/\*/u);
   assert.match(caddy, /@selectorDocument path \/ \/index\.html/u);
   assert.match(
     caddy,
@@ -295,6 +297,13 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(compose, /command: \["node", "\/app\/server\.js"\]/u);
   assert.match(compose, /context: \.\/services\/analytics/u);
   assert.match(compose, /\.\/services\/content-admin:\/app:ro/u);
+  assert.match(compose, /SIGUA_WIKI_ORIGIN: https:\/\/wiki\.siguad\.icu/u);
+  assert.match(compose, /SIGUA_WIKI_ROOT: \/srv\/wiki/u);
+  assert.ok(
+    compose.includes(
+      "${SIGUA_WIKI_VEHICLE_DATA_ROOT:-/opt/Website/sigua-wiki/data/vehicles}:/srv/wiki/data/vehicles",
+    ),
+  );
   assert.doesNotMatch(caddy, /mobile\.html|User-Agent|Sec-CH-UA-Mobile/u);
   assert.equal(
     (compose.match(/SIGUA_PUBLIC_ORIGIN: https:\/\/armor\.siguad\.icu/gu) ?? [])

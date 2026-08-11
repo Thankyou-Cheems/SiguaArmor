@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { searchCatalogIndexRecords } from "../../app/vehicle-search.ts";
@@ -14,6 +13,7 @@ const syntheticRecord = {
     groupNameZh: "测试阵营",
     nameZh: "测试载具",
     typeZh: "测试类型",
+    typeNameZh: "测试类型",
   },
   selectedRawName: "BP_Test",
   selectedDisplayName: "测试载具 · 烈火榴弹",
@@ -46,16 +46,12 @@ test("catalog search tolerates one typo in a partial pinyin query", () => {
   assert.equal(result?.rank, 6);
 });
 
-test("generated international catalog stores compact pinyin keys for source Chinese labels", async () => {
-  const index = JSON.parse(
-    await readFile(new URL("../../generated/catalog-index.json", import.meta.url), "utf8"),
-  );
-  const exact = searchCatalogIndexRecords(index.records, "zhuangjiaxing", 2);
-  const fuzzy = searchCatalogIndexRecords(index.records, "zhuangjixng", 2);
-  assert.ok(exact.some((result) =>
-    result.variants.some((variant) => variant.searchTerms?.includes("装甲型"))
-  ));
-  assert.ok(fuzzy.some((result) =>
-    result.variants.some((variant) => variant.searchTerms?.includes("装甲型"))
-  ));
+test("catalog search consumes maintained community aliases from Wiki records", () => {
+  const record = structuredClone(syntheticRecord);
+  record.searchAliases.push("ZCC");
+  record.variants[0].searchAliases.push("TOWCHE", "ZCC TOW");
+  for (const query of ["ZCC", "towche", "zcctow"]) {
+    const [result] = searchCatalogIndexRecords([record], query);
+    assert.equal(result?.record.promoEntryId, record.promoEntryId);
+  }
 });

@@ -1,4 +1,5 @@
 import type {
+  CatalogTopologyIndex,
   PublicCatalogIndex,
   PublicFactionCatalog,
   ReferenceComponent,
@@ -50,11 +51,77 @@ interface WikiVehicleCatalog {
       >
     >;
   };
+  runtime: {
+    visualArtifacts: WikiVisualArtifact[];
+  };
+  presentation: {
+    editions: Record<"international" | "china", {
+      records: WikiPresentationRecord[];
+    }>;
+  };
   extensions?: {
     supportAir?: {
       bindings?: WikiSupportAirBinding[];
     };
   };
+}
+
+interface WikiThumbnail {
+  path: string;
+  width: number;
+  height: number;
+}
+
+interface WikiVisualArtifact {
+  id: string;
+  edition: "international" | "china";
+  cardId: string;
+  rawName: string;
+  thumbnail: WikiThumbnail;
+}
+
+interface WikiPresentationVariant {
+  rawName: string;
+  nameZh: string;
+  vehicleNameZh: string | null;
+  configurationZh: string | null;
+  liveryZh: string | null;
+  searchTerms: string[];
+  searchAliases: string[];
+}
+
+interface WikiPresentationRecord {
+  cardId: string;
+  nameZh: string;
+  type: string;
+  typeNameZh: string;
+  configurationZh: string | null;
+  searchTerms: string[];
+  searchAliases: string[];
+  variants: WikiPresentationVariant[];
+}
+
+interface WikiFactionCatalog {
+  schemaVersion: "sigua-faction-catalog/v1";
+  factions: Array<{
+    code: string;
+    labels: { zhHans: string };
+  }>;
+  catalogGroups: {
+    china: Array<{ id: string; nameZh: string }>;
+  };
+}
+
+interface WikiVehicleCommunityAliases {
+  schemaVersion: "sigua-vehicle-community-aliases/v1";
+  groups: Array<{
+    terms: string[];
+    targets: Array<{
+      edition: "international" | "china";
+      cardId: string;
+      rawNames?: string[];
+    }>;
+  }>;
 }
 
 interface WikiSupportAirBinding {
@@ -71,6 +138,129 @@ function indexById<T extends { id: string }>(records: readonly T[]) {
 function required<T>(value: T | undefined, label: string): T {
   if (value === undefined) throw new Error(`SiguaWiki 缺少 ${label}`);
   return value;
+}
+
+function communityAliasMaps(
+  value: unknown,
+  edition: "international" | "china",
+) {
+  const document = value as WikiVehicleCommunityAliases | undefined;
+  const records = new Map<string, Set<string>>();
+  const variants = new Map<string, Set<string>>();
+  if (!document) return { records, variants };
+  if (document.schemaVersion !== "sigua-vehicle-community-aliases/v1") {
+    throw new Error("SiguaWiki 载具俗称格式不受支持");
+  }
+  for (const group of document.groups) {
+    for (const target of group.targets) {
+      if (target.edition !== edition) continue;
+      if (!target.rawNames) {
+        const terms = records.get(target.cardId) ?? new Set<string>();
+        group.terms.forEach((term) => terms.add(term));
+        records.set(target.cardId, terms);
+        continue;
+      }
+      for (const rawName of target.rawNames) {
+        const key = `${target.cardId}\u0000${rawName}`;
+        const terms = variants.get(key) ?? new Set<string>();
+        group.terms.forEach((term) => terms.add(term));
+        variants.set(key, terms);
+      }
+    }
+  }
+  return { records, variants };
+}
+
+export function buildCatalogIndexFromWiki(
+  vehicleValue: unknown,
+  factionValue: unknown,
+  topology: CatalogTopologyIndex,
+  edition: "international" | "china",
+  communityAliasesValue?: unknown,
+): PublicCatalogIndex {
+  const catalog = vehicleValue as WikiVehicleCatalog;
+  const factions = factionValue as WikiFactionCatalog;
+  if (
+    catalog.schemaVersion !== "sigua-vehicle-catalog/v3.1" ||
+    factions.schemaVersion !== "sigua-faction-catalog/v1"
+  ) {
+    throw new Error("SiguaWiki 呈现数据格式不受支持");
+  }
+  const factionNames = new Map(
+    factions.factions.map((faction) => [faction.code.toLocaleLowerCase("en-US"), faction.labels.zhHans]),
+  );
+  const chinaGroupNames = new Map(
+    factions.catalogGroups.china.map((group) => [group.id, group.nameZh]),
+  );
+  const groups = topology.groups.map((group) => ({
+    ...group,
+    name: edition === "international"
+      ? required(factionNames.get(group.id), `阵营译名 ${group.id}`)
+      : required(chinaGroupNames.get(group.id), `国服阵营译名 ${group.id}`),
+  }));
+  const groupNames = new Map(groups.map((group) => [group.id, group.name]));
+  const presentation = new Map(
+    catalog.presentation.editions[edition].records.map((record) => [record.cardId, record]),
+  );
+  const communityAliases = communityAliasMaps(communityAliasesValue, edition);
+  const records = topology.records.map((record) => {
+    const display = required(presentation.get(record.promoEntryId), `载具呈现 ${record.promoEntryId}`);
+    const variants = new Map(display.variants.map((variant) => [variant.rawName, variant]));
+    return {
+      promoEntryId: record.promoEntryId,
+      promotionOrder: record.promotionOrder,
+      searchTerms: display.searchTerms,
+      searchAliases: [
+        ...display.searchAliases,
+        ...(communityAliases.records.get(record.promoEntryId) ?? []),
+      ],
+      official: {
+        groupId: record.official.groupId,
+        groupNameZh: required(groupNames.get(record.official.groupId), `阵营 ${record.official.groupId}`),
+        nameZh: display.nameZh,
+        typeZh: display.type,
+        typeNameZh: display.typeNameZh,
+        presentation: {
+          vehicleNameZh: display.nameZh,
+          configurationZh: display.configurationZh,
+        },
+      },
+      selectedRawName: record.selectedRawName,
+      selectedDisplayName: display.nameZh,
+      defaultCardId: record.defaultCardId,
+      routeSlug: record.routeSlug,
+      variants: record.variants.map((variant) => {
+        const variantDisplay = required(
+          variants.get(variant.sourceRawName),
+          `载具构型呈现 ${record.promoEntryId} ${variant.sourceRawName}`,
+        );
+        return {
+          ...variant,
+          alias: variantDisplay.configurationZh ?? "",
+          displayName: variantDisplay.nameZh,
+          searchTerms: variantDisplay.searchTerms,
+          searchAliases: [
+            ...variantDisplay.searchAliases,
+            ...(communityAliases.variants.get(`${record.promoEntryId}\u0000${variant.sourceRawName}`) ?? []),
+          ],
+          presentation: {
+            vehicleNameZh: variantDisplay.vehicleNameZh,
+            configurationZh: variantDisplay.configurationZh,
+            liveryZh: variantDisplay.liveryZh,
+          },
+        };
+      }),
+    };
+  });
+  if (records.length !== presentation.size) {
+    throw new Error(`${edition} 的 Wiki 呈现记录数量不匹配`);
+  }
+  return {
+    schemaVersion: "1.0.0",
+    catalogId: topology.catalogId,
+    groups,
+    records,
+  };
 }
 
 export function buildFactionCatalogFromWiki(
@@ -93,6 +283,7 @@ export function buildFactionCatalogFromWiki(
   const seatProfiles = indexById(catalog.profiles.seats);
   const damageProfiles = indexById(catalog.profiles.damageResistances);
   const componentProfiles = indexById(catalog.profiles.components);
+  const visualArtifacts = indexById(catalog.runtime.visualArtifacts);
   const supportAirBindings = new Map(
     (catalog.extensions?.supportAir?.bindings ?? []).map((binding) => [
       binding.bindingKey,
@@ -157,6 +348,9 @@ export function buildFactionCatalogFromWiki(
           );
           const visualArtifactRef =
             supportAirBinding.visualArtifactRefs?.[edition] ?? null;
+          const thumbnail = visualArtifactRef
+            ? required(visualArtifacts.get(visualArtifactRef), `卡片缩略图 ${visualArtifactRef}`).thumbnail
+            : null;
           if (
             supportAirBinding.cardId !== record.promoEntryId ||
             supportAirBinding.rawName !== variant.sourceRawName ||
@@ -176,6 +370,7 @@ export function buildFactionCatalogFromWiki(
             searchTerms: variant.searchTerms,
             searchAliases: variant.searchAliases,
             presentation: variant.presentation,
+            thumbnail,
             data: null,
           };
         }
@@ -184,6 +379,9 @@ export function buildFactionCatalogFromWiki(
           `目录绑定 ${variant.catalogBindingRef}`,
         );
         const visualArtifactRef = binding.visualArtifactRefs?.[edition] ?? null;
+        const thumbnail = visualArtifactRef
+          ? required(visualArtifacts.get(visualArtifactRef), `卡片缩略图 ${visualArtifactRef}`).thumbnail
+          : null;
         if (
           binding.cardId !== record.promoEntryId ||
           binding.rawName !== variant.sourceRawName ||
@@ -203,6 +401,7 @@ export function buildFactionCatalogFromWiki(
           searchTerms: variant.searchTerms,
           searchAliases: variant.searchAliases,
           presentation: variant.presentation,
+          thumbnail,
           data: referenceData(binding),
         };
       }),

@@ -17,6 +17,7 @@ import { SITE_PORTAL_BRAND } from "./site-portal-brand.mjs";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TEMPLATE_ROOT = path.join(ROOT, "deploy", "public-site");
 const TOKEN_PATTERN = /\{\{([A-Z0-9_]+)\}\}/gu;
+const WIKI_ORIGIN = "https://wiki.siguad.icu";
 
 const VALUES = Object.freeze({
   LANDING_ORIGIN,
@@ -24,6 +25,8 @@ const VALUES = Object.freeze({
   LANDING_HOST: originHostname(LANDING_ORIGIN),
   ARMOR_ORIGIN,
   ARMOR_HOST: originHostname(ARMOR_ORIGIN),
+  WIKI_ORIGIN,
+  WIKI_HOST: originHostname(WIKI_ORIGIN),
   ARMOR_INTERNATIONAL_URL: armorUrl("international"),
   ARMOR_CHINA_URL: armorUrl("china"),
   ICP_RECORD_NUMBER: ICP_RECORD.number,

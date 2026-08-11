@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import catalogIndexJson from "../../generated/china-catalog-index.json";
 import { armorUrl } from "../../lib/public-site-topology.mjs";
 import { CatalogApp } from "../CatalogApp";
-import type { PublicCatalogIndex } from "../catalog-types";
+import type { CatalogTopologyIndex } from "../catalog-types";
 
 export const metadata: Metadata = {
   title: {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function ChinaHome() {
   return (
     <CatalogApp
-      catalogIndex={catalogIndexJson as unknown as PublicCatalogIndex}
+      catalogIndex={catalogIndexJson as unknown as CatalogTopologyIndex}
       siteEdition="china"
     />
   );

@@ -11,6 +11,7 @@ import {
 } from "../../services/content-admin/server.mjs";
 
 const PUBLIC_ORIGIN = "https://armor.siguad.icu";
+const WIKI_ORIGIN = "https://wiki.siguad.icu";
 
 function parseJson(response) {
   return response.headers.get("content-type")?.includes("application/json")
@@ -18,17 +19,17 @@ function parseJson(response) {
     : Promise.reject(new Error(`non-json response: ${response.status}`));
 }
 
-function headersForApi(proxyAuthToken, cookie, extra = {}) {
+function headersForApi(proxyAuthToken, cookie, extra = {}, origin = PUBLIC_ORIGIN) {
   return {
     "X-Sigua-Origin-Auth": proxyAuthToken,
-    Origin: PUBLIC_ORIGIN,
+    Origin: origin,
     "sec-fetch-site": "same-origin",
     ...extra,
     ...(cookie ? { Cookie: cookie } : {}),
   };
 }
 
-function authHeaders({ proxyAuthToken, cookie, csrfToken, headers = {} }) {
+function authHeaders({ proxyAuthToken, cookie, csrfToken, headers = {}, origin }) {
   return headersForApi(
     proxyAuthToken,
     cookie,
@@ -36,6 +37,7 @@ function authHeaders({ proxyAuthToken, cookie, csrfToken, headers = {} }) {
       ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
       ...headers,
     },
+    origin,
   );
 }
 
@@ -45,12 +47,15 @@ async function withContentAdminServer(callback) {
   const adminKeyDigest = createHash("sha256").update(adminPlain).digest();
   const sessionSecret = randomBytes(32);
   const contentRoot = await mkdtemp(path.join(tmpdir(), "sigua-armor-admin-"));
+  const wikiRoot = path.join(contentRoot, "wiki");
   const config = {
     publicOrigin: PUBLIC_ORIGIN,
+    publicOrigins: [PUBLIC_ORIGIN, WIKI_ORIGIN],
     proxyAuthSecret: Buffer.from(originAuthToken, "base64url"),
     adminKeyDigest,
     sessionSecret,
     contentRoot,
+    wikiRoot,
     listenHost: "127.0.0.1",
     port: 0,
     sessionTtlSeconds: 900,
@@ -103,6 +108,7 @@ async function withContentAdminServer(callback) {
       "utf8",
     );
     await mkdir(path.join(contentRoot, "squad"), { recursive: true });
+    await mkdir(path.join(wikiRoot, "data", "vehicles"), { recursive: true });
     await writeFile(
       path.join(contentRoot, "updates.json"),
       `${JSON.stringify({ version: 1, updatedAt: "2026-08-10T00:00:00.000Z", siteUpdatedOn: "2026-08-10", entries: [{ id: "u", date: "2026-08-10", title: "x", items: ["y"] }] }, null, 2)}\n`,
@@ -111,6 +117,20 @@ async function withContentAdminServer(callback) {
     await writeFile(
       path.join(contentRoot, "squad", "updates.json"),
       `${JSON.stringify({ version: 1, updatedAt: "2026-08-10T00:00:00.000Z", siteUpdatedOn: "2026-08-10", entries: [{ id: "u", date: "2026-08-10", title: "x", items: ["y"] }] }, null, 2)}\n`,
+      "utf8",
+    );
+    await writeFile(
+      path.join(wikiRoot, "data", "vehicles", "community-aliases.json"),
+      `${JSON.stringify({
+        schemaVersion: "sigua-vehicle-community-aliases/v1",
+        updatedAt: "2026-08-10T00:00:00.000Z",
+        groups: [{
+          id: "recon-vehicle",
+          label: "侦察车",
+          terms: ["侦察车", "ZCC"],
+          targets: [{ edition: "china", cardId: "pla--csk131-qjz89--mrap" }],
+        }],
+      }, null, 2)}\n`,
       "utf8",
     );
     try {
@@ -306,6 +326,64 @@ test("content-admin publishes both editions of the blue notice with ETag protect
     assert.equal(saved.response.status, 200);
     assert.equal(saved.value.document.editions.china.title, "维护提示🔧");
     assert.deepEqual(saved.value.document.editions.international.lines, ["Global data refreshed."]);
+    assert.notEqual(saved.response.headers.get("etag"), etag);
+  });
+});
+
+test("the Armor management key edits Wiki shared vehicle aliases from the Wiki origin", async () => {
+  await withContentAdminServer(async ({ baseUrl, adminPlain, adminKeyDigest, authHeaders }) => {
+    const loginResponse = await fetch(`${baseUrl}/__admin/content/session`, {
+      method: "POST",
+      headers: headersForApi(
+        adminKeyDigest,
+        null,
+        { "Content-Type": "application/json" },
+        WIKI_ORIGIN,
+      ),
+      body: JSON.stringify({ key: adminPlain }),
+    });
+    assert.equal(loginResponse.status, 200);
+    const session = await parseJson(loginResponse);
+    const cookie = loginResponse.headers.get("set-cookie")?.split(";", 1)[0] ?? "";
+    const current = await fetch(`${baseUrl}/__admin/content/documents/wiki-vehicle-aliases`, {
+      headers: authHeaders({
+        proxyAuthToken: adminKeyDigest,
+        cookie,
+        origin: WIKI_ORIGIN,
+      }),
+    }).then((response) => parseJson(response).then((value) => ({ response, value })));
+    assert.equal(current.response.status, 200);
+    const etag = current.response.headers.get("etag");
+    assert.ok(etag);
+
+    const saved = await fetch(`${baseUrl}/__admin/content/documents/wiki-vehicle-aliases`, {
+      method: "PUT",
+      headers: authHeaders({
+        proxyAuthToken: adminKeyDigest,
+        cookie,
+        csrfToken: session.csrfToken,
+        origin: WIKI_ORIGIN,
+        headers: { "Content-Type": "application/json", "If-Match": etag },
+      }),
+      body: JSON.stringify({
+        expectedEtag: etag,
+        document: {
+          ...current.value.document,
+          groups: [{
+            id: "recon-vehicle",
+            label: "侦察车",
+            terms: ["侦察车", "ZCC", "高机动"],
+            targets: [
+              { edition: "china", cardId: "pla--csk131-qjz89--mrap" },
+              { edition: "china", cardId: "usa--m-atv-m2--mrap" },
+            ],
+          }],
+        },
+      }),
+    }).then((response) => parseJson(response).then((value) => ({ response, value })));
+    assert.equal(saved.response.status, 200);
+    assert.deepEqual(saved.value.document.groups[0].terms, ["侦察车", "ZCC", "高机动"]);
+    assert.equal(saved.value.document.groups[0].targets.length, 2);
     assert.notEqual(saved.response.headers.get("etag"), etag);
   });
 });

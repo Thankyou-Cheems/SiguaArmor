@@ -24,7 +24,7 @@ import {
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const API_ROOT = "/__admin/content";
 const SESSION_COOKIE = "__Secure-sigua-content-admin";
-const MAX_REQUEST_BYTES = 70 * 1024;
+const MAX_REQUEST_BYTES = 160 * 1024;
 const MAX_COOKIE_BYTES = 4096;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_ATTEMPTS = 5;
@@ -81,12 +81,35 @@ export function loadContentAdminConfig(environment = process.env) {
   ) {
     throw new ConfigError("SIGUA_PUBLIC_ORIGIN must be an HTTPS origin without a path");
   }
+  const wikiOrigin = environment.SIGUA_WIKI_ORIGIN
+    ? new URL(environment.SIGUA_WIKI_ORIGIN)
+    : null;
+  if (
+    wikiOrigin &&
+    (
+      wikiOrigin.protocol !== "https:" ||
+      wikiOrigin.pathname !== "/" ||
+      wikiOrigin.username ||
+      wikiOrigin.password ||
+      wikiOrigin.search ||
+      wikiOrigin.hash
+    )
+  ) {
+    throw new ConfigError("SIGUA_WIKI_ORIGIN must be an HTTPS origin without a path");
+  }
   return Object.freeze({
     publicOrigin: publicOrigin.origin,
+    publicOrigins: Object.freeze([
+      publicOrigin.origin,
+      ...(wikiOrigin ? [wikiOrigin.origin] : []),
+    ]),
     proxyAuthSecret: base64UrlBytes(environment, "SIGUA_CONTENT_ADMIN_PROXY_SECRET"),
     adminKeyDigest: base64UrlBytes(environment, "SIGUA_CONTENT_ADMIN_KEY_SHA256"),
     sessionSecret: base64UrlBytes(environment, "SIGUA_CONTENT_ADMIN_SESSION_SECRET"),
     contentRoot: path.resolve(required(environment, "SIGUA_CONTENT_ROOT")),
+    wikiRoot: environment.SIGUA_WIKI_ROOT
+      ? path.resolve(environment.SIGUA_WIKI_ROOT)
+      : null,
     listenHost: environment.SIGUA_CONTENT_ADMIN_LISTEN_HOST || "0.0.0.0",
     port: integer(environment, "SIGUA_CONTENT_ADMIN_PORT", 8083, 1, 65535),
     sessionTtlSeconds: integer(
@@ -158,7 +181,8 @@ function sendText(response, statusCode, body, extraHeaders = {}) {
 function requireSameOrigin(request, config) {
   const origin = request.headers.origin;
   const fetchSite = request.headers["sec-fetch-site"];
-  if (origin !== config.publicOrigin || (fetchSite && fetchSite !== "same-origin")) {
+  const allowedOrigins = config.publicOrigins ?? [config.publicOrigin];
+  if (!allowedOrigins.includes(origin) || (fetchSite && fetchSite !== "same-origin")) {
     throw new RequestError(403, "Forbidden");
   }
 }
@@ -289,18 +313,22 @@ function clientIdentity(request) {
   return digestHex(value);
 }
 
-function documentConfig(documentName, contentRoot) {
-  const config = CONTENT_DOCUMENTS[documentName];
-  if (!config) throw new RequestError(404, "Not Found");
-  const targetPath = path.resolve(contentRoot, ...config.relativePath.split("/"));
-  if (!targetPath.startsWith(`${contentRoot}${path.sep}`)) {
+function documentConfig(documentName, serverConfig) {
+  const document = CONTENT_DOCUMENTS[documentName];
+  if (!document) throw new RequestError(404, "Not Found");
+  const storageRoot = document.storage === "wiki"
+    ? serverConfig.wikiRoot
+    : serverConfig.contentRoot;
+  if (!storageRoot) throw new Error(`${documentName} storage root is not configured`);
+  const targetPath = path.resolve(storageRoot, ...document.relativePath.split("/"));
+  if (!targetPath.startsWith(`${storageRoot}${path.sep}`)) {
     throw new Error("content document path escaped content root");
   }
-  return { ...config, targetPath };
+  return { ...document, targetPath };
 }
 
-async function readCurrentDocument(documentName, contentRoot) {
-  const { targetPath } = documentConfig(documentName, contentRoot);
+async function readCurrentDocument(documentName, config) {
+  const { targetPath } = documentConfig(documentName, config);
   const bytes = await readFile(targetPath);
   let source;
   try {
@@ -434,7 +462,7 @@ export function createContentAdminApp(config, options = {}) {
     const currentTime = now();
     const session = requireSession(request, config, currentTime);
     if (request.method === "GET") {
-      const current = await readCurrentDocument(documentName, config.contentRoot);
+      const current = await readCurrentDocument(documentName, config);
       sendJson(
         response,
         200,
@@ -465,7 +493,7 @@ export function createContentAdminApp(config, options = {}) {
       );
     }
     const saved = await withWriteLock(async () => {
-      const current = await readCurrentDocument(documentName, config.contentRoot);
+      const current = await readCurrentDocument(documentName, config);
       if (current.etag !== expectedEtag) {
         throw new RequestError(412, "Document changed; reload before saving");
       }
@@ -505,7 +533,7 @@ export function createContentAdminApp(config, options = {}) {
       return;
     }
     const match = url.pathname.match(
-      /^\/__admin\/content\/documents\/(notices|supporters|updates-china|updates-international)$/u,
+      /^\/__admin\/content\/documents\/(notices|supporters|updates-china|updates-international|wiki-vehicle-aliases)$/u,
     );
     if (match) {
       await handleDocument(request, response, match[1]);

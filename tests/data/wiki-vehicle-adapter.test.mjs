@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildFactionCatalogFromWiki } from "../../app/wiki-vehicle-catalog.ts";
+import {
+  buildCatalogIndexFromWiki,
+  buildFactionCatalogFromWiki,
+} from "../../app/wiki-vehicle-catalog.ts";
 
 test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
   const index = {
@@ -108,6 +111,19 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         },
       }],
     },
+    runtime: {
+      visualArtifacts: [{
+        id: "visual-test",
+        edition: "international",
+        cardId: "test--vehicle--ifv",
+        rawName: "BP_Test",
+        thumbnail: {
+          path: "/assets/vehicles/cards/international/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.webp",
+          width: 640,
+          height: 360,
+        },
+      }],
+    },
   };
 
   const result = buildFactionCatalogFromWiki(
@@ -121,6 +137,7 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
   assert.equal(variant.data.general.vehicleHealth, 1000);
   assert.deepEqual(variant.data.weaponBindingIds, ["weapon-test"]);
   assert.equal(variant.data.components[0].damageResistances[0].modifier, 0.5);
+  assert.equal(variant.thumbnail.width, 640);
 });
 
 test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
@@ -162,6 +179,19 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
       damageResistances: [],
       components: [],
     },
+    runtime: {
+      visualArtifacts: [{
+        id: "visual-mq9",
+        edition: "international",
+        cardId: "test--mq9--uav",
+        rawName: "BP_CommandActor_UAV_MQ9",
+        thumbnail: {
+          path: "/assets/vehicles/cards/international/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.webp",
+          width: 640,
+          height: 360,
+        },
+      }],
+    },
     extensions: {
       supportAir: {
         bindings: [{
@@ -185,4 +215,111 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
     result.records[0].variants[0].visualArtifactRef,
     "visual-mq9",
   );
+});
+
+test("Armor builds localized searchable cards from Wiki presentation data", () => {
+  const topology = {
+    schemaVersion: "1.0.0",
+    catalogId: "fixture",
+    groups: [{ id: "usa", order: 0, recordCount: 1 }],
+    records: [{
+      promoEntryId: "usa--m-atv-tow--td",
+      promotionOrder: 1,
+      official: { groupId: "usa" },
+      selectedRawName: "BP_MATV_TOW",
+      defaultCardId: "usa--m-atv-tow--td--matv-tow",
+      routeSlug: "usa--m-atv-tow--td",
+      variants: [{
+        sourceRawName: "BP_MATV_TOW",
+        catalogBindingRef: "binding-matv",
+        vehicleRef: "vehicle-matv",
+        runtimeVehicleRef: "runtime-matv",
+        visualArtifactRef: "visual-matv",
+        cardId: "usa--m-atv-tow--td--matv-tow",
+        routeSlug: "usa--m-atv-tow--td--matv-tow",
+      }],
+    }],
+  };
+  const vehicles = {
+    schemaVersion: "sigua-vehicle-catalog/v3.1",
+    presentation: {
+      editions: {
+        international: {
+          records: [{
+            cardId: "usa--m-atv-tow--td",
+            nameZh: "M-ATV“马特夫”",
+            type: "TD",
+            typeNameZh: "坦克歼击车",
+            configurationZh: null,
+            searchTerms: [],
+            searchAliases: ["防雷车"],
+            variants: [{
+              rawName: "BP_MATV_TOW",
+              nameZh: "M-ATV“马特夫” BGM-71 TOW“陶式”反坦克导弹",
+              vehicleNameZh: null,
+              configurationZh: "BGM-71 TOW“陶式”反坦克导弹",
+              liveryZh: null,
+              searchTerms: [],
+              searchAliases: [],
+            }],
+          }],
+        },
+        china: { records: [] },
+      },
+    },
+  };
+  const factions = {
+    schemaVersion: "sigua-faction-catalog/v1",
+    factions: [{ code: "USA", labels: { zhHans: "美国陆军" } }],
+    catalogGroups: { china: [{ id: "agesi", nameZh: "阿格西联邦" }] },
+  };
+  const aliases = {
+    schemaVersion: "sigua-vehicle-community-aliases/v1",
+    updatedAt: "2026-08-11T00:00:00.000Z",
+    groups: [{
+      id: "tow-recon",
+      label: "反坦克侦察车",
+      terms: ["TOWCHE", "ZCC TOW"],
+      targets: [{
+        edition: "international",
+        cardId: "usa--m-atv-tow--td",
+        rawNames: ["BP_MATV_TOW"],
+      }],
+    }],
+  };
+  const index = buildCatalogIndexFromWiki(
+    vehicles,
+    factions,
+    topology,
+    "international",
+    aliases,
+  );
+  assert.equal(index.groups[0].name, "美国陆军");
+  assert.equal(index.records[0].official.nameZh, "M-ATV“马特夫”");
+  assert.deepEqual(index.records[0].variants[0].searchAliases, ["TOWCHE", "ZCC TOW"]);
+});
+
+test("Armor reads China catalog group names from Wiki instead of product topology", () => {
+  const topology = {
+    schemaVersion: "1.0.0",
+    catalogId: "china-fixture",
+    groups: [{ id: "agesi", order: 0, recordCount: 0 }],
+    records: [],
+  };
+  const vehicles = {
+    schemaVersion: "sigua-vehicle-catalog/v3.1",
+    presentation: {
+      editions: {
+        international: { records: [] },
+        china: { records: [] },
+      },
+    },
+  };
+  const factions = {
+    schemaVersion: "sigua-faction-catalog/v1",
+    factions: [],
+    catalogGroups: { china: [{ id: "agesi", nameZh: "阿格西联邦" }] },
+  };
+  const index = buildCatalogIndexFromWiki(vehicles, factions, topology, "china");
+  assert.equal(index.groups[0].name, "阿格西联邦");
 });

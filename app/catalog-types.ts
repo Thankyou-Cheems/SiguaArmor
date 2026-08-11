@@ -169,6 +169,11 @@ export interface CatalogVariant {
     liveryZh: string | null;
     configurationZh: string | null;
   };
+  thumbnail: {
+    path: string;
+    width: number;
+    height: number;
+  } | null;
   data: ReferenceData | null;
 }
 
@@ -182,6 +187,7 @@ export interface CatalogRecord {
     groupNameZh: string;
     nameZh: string;
     typeZh: string;
+    typeNameZh: string;
     presentation?: {
       vehicleNameZh: string;
       configurationZh: string | null;
@@ -230,6 +236,7 @@ export interface CatalogSearchRecord {
     groupNameZh: string;
     nameZh: string;
     typeZh: string;
+    typeNameZh: string;
     presentation?: {
       vehicleNameZh: string;
       configurationZh: string | null;
@@ -247,6 +254,39 @@ export interface PublicCatalogIndex {
   catalogId: string;
   groups: CatalogFactionSummary[];
   records: CatalogSearchRecord[];
+}
+
+export interface CatalogTopologyVariant {
+  sourceRawName: string;
+  catalogBindingRef: string | null;
+  vehicleRef: string | null;
+  runtimeVehicleRef: string | null;
+  visualArtifactRef: string | null;
+  cardId: string;
+  routeSlug: string;
+}
+
+export interface CatalogTopologyRecord {
+  promoEntryId: string;
+  promotionOrder: number;
+  official: { groupId: string };
+  selectedRawName: string | null;
+  defaultCardId: string;
+  routeSlug: string;
+  variants: CatalogTopologyVariant[];
+}
+
+export interface CatalogTopologyGroup {
+  id: string;
+  order: number;
+  recordCount: number;
+}
+
+export interface CatalogTopologyIndex {
+  schemaVersion: "1.0.0";
+  catalogId: string;
+  groups: CatalogTopologyGroup[];
+  records: CatalogTopologyRecord[];
 }
 
 export interface PublicFactionCatalog {

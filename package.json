@@ -13,7 +13,7 @@
     "start": "vinext start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test:catalog-card-groups": "node tools/validate-catalog-card-groups.mjs",
+    "test:catalog-card-groups": "node --experimental-strip-types tools/validate-catalog-card-groups.mjs",
     "test:data": "node --experimental-strip-types --test tests/data/*.test.mjs",
     "test:viewer": "node --experimental-strip-types --test tests/viewer/*.test.mjs",
     "test:ops": "node --test tests/tools/public-site-topology.test.mjs tests/tools/international-routing-and-analytics.test.mjs tests/tools/publish-runtime-document.test.mjs tests/tools/content-admin.test.mjs tests/tools/content-admin-ui-contract.test.mjs",

@@ -218,6 +218,18 @@
 			respond "Not Found\n" 404
 		}
 
+		@wikiHost host {{WIKI_HOST}}
+		route @wikiHost {
+			@wikiContentAdmin path /__admin/content /__admin/content/*
+			reverse_proxy @wikiContentAdmin {$SIGUA_CONTENT_ADMIN_UPSTREAM:sigua-content-admin:8083} {
+				header_up Host {host}
+				header_up X-Sigua-Origin-Auth {$SIGUA_CONTENT_ADMIN_PROXY_SECRET}
+				header_up X-Sigua-Client-IP {http.request.header.EO-Connecting-IP}
+				header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+			}
+			respond "Not Found\n" 404
+		}
+
 		respond "Not Found\n" 404
 	}
 }

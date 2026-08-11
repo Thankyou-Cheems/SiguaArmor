@@ -10,8 +10,8 @@ npm run build
 npm run deploy:package
 ```
 
-`outputs/deployment/` contains the static client, standalone Node server, selector and navigator pages, Caddy/Compose configuration, and the two small operational services. It never contains `.env`, analytics data, content data, GeoIP data, or Wiki assets.
+`outputs/deployment/` contains the static client, standalone Node server, selector and navigator pages, Caddy/Compose configuration, and the two small operational services. It never contains `.env`, analytics data, content data, GeoIP data, or bulk Wiki assets. The content-admin container receives a narrow writable mount for the Wiki vehicle-data directory so the small community-alias document can be updated with the existing Armor management key.
 
-Upload this directory to a new server-side candidate. Keep the existing `data/` and `.env`, validate `docker compose config`, then switch the `release/` directory and configuration together. Start or rebuild the affected services, verify container health, `/`, `/navigator`, `/sigua/`, `/squad/`, a vehicle page, one Wiki catalog request, one model request, and the browser console. Retain the immediately previous release directory as the single rollback.
+Upload this directory to a new server-side candidate. Keep the existing `data/` and `.env`, validate `docker compose config`, then switch the `release/` directory and configuration together. `SIGUA_WIKI_VEHICLE_DATA_ROOT` may override the default `/opt/Website/sigua-wiki/data/vehicles` host path. The outer Wiki Caddy route proxies only `/__admin/content*` to `sigua-public:8080`; every public Wiki data path remains a normal static file. Start or rebuild the affected services, verify container health, `/`, `/navigator`, `/sigua/`, `/squad/`, a vehicle page, one Wiki catalog request, one model request, and the browser console. Retain the immediately previous release directory as the single rollback.
 
 Routine releases upload only changed candidate files directly to the server. They do not pull a multi-gigabyte asset archive through GitHub and do not create manifests, receipts, consumer pins, or browser hash checks.
