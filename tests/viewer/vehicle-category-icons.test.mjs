@@ -9,46 +9,53 @@ const currentCatalogs = await Promise.all(
     async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), "utf8")),
   ),
 );
+const auditedExpectations = JSON.parse(
+  await readFile(
+    new URL("../fixtures/vehicle-category-icon-expectations.json", import.meta.url),
+    "utf8",
+  ),
+);
 
-test("every current vehicle card resolves to a published category icon", async () => {
+test("every current vehicle card matches the reviewed category icon audit", async () => {
   const publishedAssets = new Set(
     await readdir(new URL("../../public/images/game-ui/vehicle-categories", import.meta.url)),
   );
-  const unresolved = [];
+  const mismatches = [];
   const missingAssets = [];
 
   for (const catalog of currentCatalogs) {
     for (const record of catalog.records) {
       const vehicleType = record.promoEntryId.split("--").at(-1)?.toUpperCase() ?? "UNKNOWN";
       for (const variant of record.variants) {
-        try {
-          const asset = resolveCatalogVehicleCategoryIconAsset({
-            cardId: variant.cardId,
-            promoEntryId: record.promoEntryId,
-            vehicleType,
-          });
-          if (!publishedAssets.has(`${asset}.webp`)) {
-            missingAssets.push(`${variant.cardId}: ${asset}.webp`);
-          }
-        } catch (error) {
-          unresolved.push(`${variant.cardId}: ${error.message}`);
+        const expected =
+          auditedExpectations.variantCardAssets[variant.cardId] ??
+          auditedExpectations.promoEntryAssets[record.promoEntryId];
+        const actual = resolveCatalogVehicleCategoryIconAsset({
+          cardId: variant.cardId,
+          promoEntryId: record.promoEntryId,
+          vehicleType,
+        });
+        if (actual !== expected) {
+          mismatches.push(`${variant.cardId}: expected ${expected}, received ${actual}`);
+        }
+        if (actual && !publishedAssets.has(`${actual}.webp`)) {
+          missingAssets.push(`${variant.cardId}: ${actual}.webp`);
         }
       }
     }
   }
 
-  assert.deepEqual({ unresolved, missingAssets }, { unresolved: [], missingAssets: [] });
+  assert.deepEqual({ mismatches, missingAssets }, { mismatches: [], missingAssets: [] });
 });
 
-test("unmapped catalog cards fail closed instead of receiving an unrelated icon", () => {
-  assert.throws(
-    () =>
-      resolveCatalogVehicleCategoryIconAsset({
-        cardId: "future--unknown--vehicle",
-        promoEntryId: "future--unknown",
-        vehicleType: "UNKNOWN",
-      }),
-    /Unknown catalog vehicle category icon/u,
+test("unmapped catalog cards fail closed without crashing the catalog", () => {
+  assert.equal(
+    resolveCatalogVehicleCategoryIconAsset({
+      cardId: "future--unknown--vehicle",
+      promoEntryId: "future--unknown",
+      vehicleType: "UNKNOWN",
+    }),
+    null,
   );
 });
 

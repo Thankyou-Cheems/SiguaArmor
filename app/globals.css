@@ -2394,6 +2394,18 @@ code {
   transition: opacity 160ms ease, filter 160ms ease, transform 160ms ease;
 }
 
+.vehicle-card__category-icon-missing {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: rgba(255, 244, 213, 0.72);
+  font: 700 18px/1 "Cascadia Mono", monospace;
+  transform: translateX(-6px);
+}
+
 .vehicle-card__type[data-icon="trackedifv"] > img,
 .vehicle-card__type[data-icon="trackedapc"] > img {
   --vehicle-card-icon-scale: 1.06;
