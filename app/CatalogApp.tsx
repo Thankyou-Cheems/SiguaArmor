@@ -1923,9 +1923,17 @@ function SiteFooterCopy({
   return (
     <div className="site-footer__copy">
       <div className="site-footer__identity">
+        {/* eslint-disable-next-line @next/next/no-img-element -- local transparent vector brand asset is served unchanged */}
+        <img
+          className="site-footer__brand-logo"
+          src="/images/site/siguad-wiki-logo-69092cecbd4b.svg"
+          alt="丝瓜地 SiguaD"
+          width={42}
+          height={49}
+        />
         <strong>
-          <span>{siteEdition === "china" ? "藤瓜：铁皮饭堂" : "丝瓜：铁皮饭堂"}</span>
-          <span>{updateDateLabel}</span>
+          <span>丝瓜地：铁皮饭堂</span>
+          <small>{updateDateLabel}</small>
         </strong>
         <span className="site-footer__filing" aria-label="网站备案信息">
           <a
@@ -1951,51 +1959,41 @@ function SiteFooterCopy({
 
       <section className="site-footer__legal" aria-label="版权与开源许可">
         <div className="site-footer__legal-content">
-          <section>
-            <h3>官方资源与权利归属</h3>
-            <p>
-              本站由 <a href="https://space.bilibili.com/636117" target="_blank" rel="noreferrer">@猹Cheems</a> 个人整理维护，
-              {siteEdition === "china" ? "非腾讯或《战术小队》官方站点。" : "非 Offworld Industries 或 Squad 官方站点。"}
-            </p>
-            {siteEdition === "china" ? (
-              <>
-                <p>
-                  本站引用的国服官网图片、文字、标识等素材，其相关权利归腾讯及相应权利人所有。
-                  <br />
-                  本站内容仅供资料查询与玩家交流。
-                  <br />
-                  具体信息请以游戏官网、官方公告及游戏内实际内容为准。
-                </p>
-                <div className="site-footer__legal-links">
-                  <a href="https://sigua.qq.com/" target="_blank" rel="noreferrer">
-                    藤瓜国服官网 <ExternalLink size={12} aria-hidden="true" />
-                  </a>
-                  <a href="https://www.tencent.com/legal/html/zh-cn/property.html" target="_blank" rel="noreferrer">
-                    腾讯知识产权说明 <ExternalLink size={12} aria-hidden="true" />
-                  </a>
-                </div>
-              </>
-            ) : (
+          <h3>官方资源与权利归属</h3>
+          {siteEdition === "china" ? (
+            <>
               <p>
-                本站引用的 Squad 游戏内资产、图片、文字、标识等素材，其相关权利归 Offworld Industries 及相应权利人所有。
+                本站由 <a href="https://space.bilibili.com/636117" target="_blank" rel="noreferrer">@猹Cheems</a> 个人整理维护，非腾讯或《战术小队》官方站点。
                 <br />
-                本站内容仅供资料查询与玩家交流。
-                <br />
-                具体信息请以游戏官网、官方公告及游戏内实际内容为准。
+                引用的国服官网图片、文字及标识等素材权利归腾讯及相应权利人所有。
               </p>
-            )}
-          </section>
-
-          <section>
+              <p>内容仅供资料查询与玩家交流，具体信息以国服官网、官方公告及游戏内实装为准。</p>
+              <div className="site-footer__legal-links">
+                <a href="https://sigua.qq.com/" target="_blank" rel="noreferrer">
+                  藤瓜国服官网 <ExternalLink size={12} aria-hidden="true" />
+                </a>
+                <a href="https://www.tencent.com/legal/html/zh-cn/property.html" target="_blank" rel="noreferrer">
+                  腾讯知识产权说明 <ExternalLink size={12} aria-hidden="true" />
+                </a>
+              </div>
+            </>
+          ) : (
+            <>
+              <p>
+                本站由 <a href="https://space.bilibili.com/636117" target="_blank" rel="noreferrer">@猹Cheems</a> 个人整理维护，非 Offworld Industries 或 Squad 官方站点。
+                <br />
+                引用的游戏资产、图片、文字及标识等素材权利归 Offworld Industries 及相应权利人所有。
+              </p>
+              <p>内容仅供资料查询与玩家交流，具体信息以游戏官网、官方公告及游戏内实装为准。</p>
+            </>
+          )}
+          <div className="site-footer__font-line">
             <h3>字体</h3>
             <p>
-              中文界面使用 标小智无界黑 / LogoSC Unbounded Sans
-              的完整本地 WOFF2 字库，遵循 SIL Open Font License 1.1；<a href="/fonts/LogoSCUnboundedSans-OFL.txt" target="_blank" rel="noreferrer">查看许可全文</a>。
+              标小智无界黑 / LogoSC Unbounded Sans · 本地 WOFF2 · SIL OFL 1.1 ·
+              <a href="/fonts/LogoSCUnboundedSans-OFL.txt" target="_blank" rel="noreferrer">许可全文</a>；微软雅黑、Noto Sans SC、Cascadia Mono 等由设备提供。
             </p>
-            <p className="site-footer__system-font-note">
-              微软雅黑、Noto Sans SC、Cascadia Mono 等由设备提供。
-            </p>
-          </section>
+          </div>
         </div>
       </section>
 
@@ -2081,7 +2079,7 @@ function SiteFooterCopy({
         </ul>
         <button
           ref={sponsorButtonRef}
-          className="site-footer__sponsor-button"
+          className="site-footer__sponsor-button site-footer__sponsor-button--primary"
           type="button"
           onClick={onSponsorOpen}
         >
