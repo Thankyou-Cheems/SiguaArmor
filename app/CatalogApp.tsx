@@ -3189,12 +3189,7 @@ export function CatalogApp({
     );
   }
   if (!catalogIndex) {
-    return (
-      <main className="catalog-data-state" aria-busy="true">
-        <Database aria-hidden="true" />
-        <h1>正在读取统一载具资料</h1>
-      </main>
-    );
+    return null;
   }
   return <CatalogAppReady catalogIndex={catalogIndex} siteEdition={siteEdition} />;
 }

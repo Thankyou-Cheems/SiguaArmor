@@ -139,6 +139,19 @@ test("selector roots and navigator remain short-cache documents while legacy Arm
   );
 });
 
+test("catalog bootstrap stays visually empty until the full homepage is ready", async () => {
+  const catalogApp = await readFile(
+    path.join(ROOT, "app", "CatalogApp.tsx"),
+    "utf8",
+  );
+
+  assert.doesNotMatch(catalogApp, /正在读取统一载具资料/u);
+  assert.match(
+    catalogApp,
+    /if \(!catalogIndex\) \{\s*return null;\s*\}/u,
+  );
+});
+
 test("deployment templates render from topology without mobile routing or stale legal data", async () => {
   const [selectorTemplate, landingTemplate, caddyTemplate, composeTemplate] =
     await Promise.all([
