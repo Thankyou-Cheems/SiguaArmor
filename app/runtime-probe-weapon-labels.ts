@@ -27,9 +27,11 @@ import {
 } from "../lib/runtime-attack-source-share.mjs";
 import type {
   CatalogSearchRecord,
-  PublicCatalogIndex,
+  CatalogTopologyIndex,
 } from "./catalog-types.ts";
 import catalogIndexJson from "../generated/catalog-index.json";
+import { loadWikiFactionCatalog, loadWikiVehicleCatalog } from "../lib/wiki-source.ts";
+import { buildCatalogIndexFromWiki } from "./wiki-vehicle-catalog.ts";
 
 interface RuntimeAttackSourceRecord {
   cardId: string;
@@ -528,8 +530,12 @@ function isInfantryDeliveredRadialCatalogVariant(
 }
 
 const attackSourceById = new Map<string, RuntimeAttackSource>();
-const productCatalogIndex =
-  catalogIndexJson as unknown as PublicCatalogIndex;
+const productCatalogIndex = buildCatalogIndexFromWiki(
+  await loadWikiVehicleCatalog(),
+  await loadWikiFactionCatalog(),
+  catalogIndexJson as unknown as CatalogTopologyIndex,
+  "international",
+);
 if (
   productCatalogIndex.schemaVersion !== "1.0.0" ||
   !Array.isArray(productCatalogIndex.records)

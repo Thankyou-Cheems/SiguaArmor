@@ -58,25 +58,29 @@ import {
 import { visibleDamageResistanceOverrides } from "../lib/encyclopedia-damage-resistances";
 import { formatZoomLevel } from "../lib/reference-display.mjs";
 import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-icons";
-import { loadWikiVehicleCatalog } from "../lib/wiki-source";
-import { vehicleConfigurationNameZh } from "../lib/vehicle-configuration-name";
 import {
-  vehicleDisplayNameZh,
-  vehicleTypeNameZh,
-} from "../lib/vehicle-display-name";
+  loadWikiFactionCatalog,
+  loadWikiVehicleCommunityAliases,
+  loadWikiVehicleCatalog,
+  wikiAssetUrl,
+} from "../lib/wiki-source";
 import { weaponDisplayNameZh } from "../lib/weapon-display-name";
 import { runtimeVehicleEquipmentBindingForId } from "./runtime-vehicle-equipment";
 import type {
   CatalogRecord,
   CatalogSearchRecord,
   CatalogSearchVariant,
+  CatalogTopologyIndex,
   CatalogVariant,
   PublicCatalogIndex,
   PublicFactionCatalog,
   ReferenceData,
   ReferenceWeapon,
 } from "./catalog-types";
-import { buildFactionCatalogFromWiki } from "./wiki-vehicle-catalog";
+import {
+  buildCatalogIndexFromWiki,
+  buildFactionCatalogFromWiki,
+} from "./wiki-vehicle-catalog";
 import {
   normalizeVehicleSearch,
   rankVehicleSearch,
@@ -85,11 +89,6 @@ import {
 } from "./vehicle-search";
 import type { CatalogIndexSearchResult } from "./vehicle-search";
 import { resolveVehicleCategoryIconAsset } from "./vehicle-category-icons";
-import {
-  runtimeCardImpressionForCard,
-  runtimeCardImpressionForVariant,
-} from "./runtime-probe-card-impressions";
-import { factionDisplayName } from "./faction-display-name";
 import {
   FACTION_IMAGE_ORDER,
   FACTION_VISUAL_ASSETS,
@@ -264,9 +263,9 @@ function vehiclePresentationName(
   record: Pick<CatalogRecord, "official">,
   variant: Pick<CatalogVariant, "presentation"> | null = null,
 ) {
-  return vehicleDisplayNameZh(variant?.presentation?.vehicleNameZh
+  return variant?.presentation?.vehicleNameZh
     ?? record.official.presentation?.vehicleNameZh
-    ?? record.official.nameZh);
+    ?? record.official.nameZh;
 }
 
 function vehicleConfiguration(
@@ -281,8 +280,7 @@ function vehicleConfiguration(
     record.official.presentation?.configurationZh,
     variantConfiguration,
   ]
-    .filter((value): value is string => Boolean(value))
-    .map(vehicleConfigurationNameZh);
+    .filter((value): value is string => Boolean(value));
   return [...new Set(configurations)].join(" · ") || null;
 }
 
@@ -362,11 +360,9 @@ function vehicleTypeLayoutStyle(cardCount: number): VehicleTypeLayoutStyle {
   };
 }
 
-function catalogCardImpression(card: CatalogCardEntry, siteEdition: SiteEdition) {
-  const rawName = card.data?.general.rawName ?? card.record.mapping.selectedRawName;
-  return rawName
-    ? runtimeCardImpressionForVariant(card.record.promoEntryId, rawName, siteEdition)
-    : runtimeCardImpressionForCard(card.record.promoEntryId, siteEdition);
+function catalogCardImpression(card: CatalogCardEntry) {
+  const thumbnail = card.variant?.thumbnail ?? null;
+  return thumbnail ? { ...thumbnail, path: wikiAssetUrl(thumbnail.path) } : null;
 }
 
 function catalogCardPreviewIssue(card: CatalogCardEntry) {
@@ -462,7 +458,7 @@ function vehicleDisplayName(
 
 function searchVariantLabel(record: CatalogSearchRecord, variant: CatalogSearchVariant) {
   const vehicleName = variant.presentation?.vehicleNameZh?.trim()
-    ? vehicleDisplayNameZh(variant.presentation.vehicleNameZh)
+    ? variant.presentation.vehicleNameZh
     : null;
   const variantConfiguration = variant.presentation
     ? variant.presentation.configurationZh
@@ -471,8 +467,7 @@ function searchVariantLabel(record: CatalogSearchRecord, variant: CatalogSearchV
     record.official.presentation?.configurationZh,
     variantConfiguration,
   ]
-    .filter((value): value is string => Boolean(value))
-    .map(vehicleConfigurationNameZh);
+    .filter((value): value is string => Boolean(value));
   const configuration = [...new Set(configurations)].join(" · ");
   const livery = variant.presentation?.liveryZh ?? null;
   return [vehicleName, configuration, livery].filter(Boolean).join(" · ") || "标准型";
@@ -991,7 +986,7 @@ function VehicleCard({
       : <span className="unknown-value" aria-label="暂未获取">—</span>;
 
   const renderImpression = (entry: CatalogCardEntry) => {
-    const impression = catalogCardImpression(entry, siteEdition);
+    const impression = catalogCardImpression(entry);
     if (!impression) return null;
     const rawName =
       entry.data?.general.rawName ?? entry.record.mapping.selectedRawName;
@@ -2537,15 +2532,15 @@ function GlobalVehicleSearch({
                   <section
                     className="global-vehicle-search__result-group"
                     key={record.promoEntryId}
-                    aria-label={`${vehicleDisplayNameZh(record.official.nameZh)}搜索结果`}
+                    aria-label={`${record.official.nameZh}搜索结果`}
                   >
                     <header className="global-vehicle-search__result-heading">
                       <span className="global-vehicle-search__result-main">
-                        <strong>{vehicleDisplayNameZh(record.official.nameZh)}</strong>
-                        <small>{factionDisplayName(record.official.groupId)}</small>
+                        <strong>{record.official.nameZh}</strong>
+                        <small>{record.official.groupNameZh}</small>
                       </span>
                       <span className="global-vehicle-search__result-count">
-                        {vehicleTypeNameZh(record.official.typeZh) ?? record.official.typeZh}
+                        {record.official.typeNameZh}
                         {variants.length > 0 ? ` · ${searchVariantSummary(variants)}` : ""}
                       </span>
                     </header>
@@ -2553,11 +2548,11 @@ function GlobalVehicleSearch({
                       <div
                         className="global-vehicle-search__result-variants"
                         role="group"
-                        aria-label={`${vehicleDisplayNameZh(record.official.nameZh)}具体配置`}
+                        aria-label={`${record.official.nameZh}具体配置`}
                       >
                         {variants.map((variant, variantIndex) => {
                           const displayName = variant.displayName || variant.alias;
-                          const localizedDisplayName = vehicleDisplayNameZh(displayName);
+                          const localizedDisplayName = displayName;
                           const label = searchVariantLabel(record, variant);
                           return (
                             <button
@@ -2600,8 +2595,8 @@ function GlobalVehicleSearch({
                         onClick={() => onSelect(record)}
                       >
                         <span className="global-vehicle-search__result-main">
-                          <strong>{vehicleDisplayNameZh(record.official.nameZh)}</strong>
-                          <small>{factionDisplayName(record.official.groupId)}</small>
+                          <strong>{record.official.nameZh}</strong>
+                          <small>{record.official.groupNameZh}</small>
                         </span>
                         <ChevronRight size={16} aria-hidden="true" />
                       </button>
@@ -3094,7 +3089,7 @@ function FactionCharacterWheel({
             const group = groups[wrapWheelIndex(wheelBaseIndex + offset, groups.length)];
             const asset = factionVisualAsset(group, siteEdition);
             const position = characterWheelPosition(offset);
-            const displayName = factionDisplayName(group.id);
+            const displayName = group.name;
             return (
               <button
                 key={group.id}
@@ -3151,6 +3146,62 @@ function FactionCharacterWheel({
 }
 
 export function CatalogApp({
+  catalogIndex: topology,
+  siteEdition,
+}: {
+  catalogIndex: CatalogTopologyIndex;
+  siteEdition: SiteEdition;
+}) {
+  const [catalogIndex, setCatalogIndex] = useState<PublicCatalogIndex | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      loadWikiVehicleCatalog(),
+      loadWikiFactionCatalog(),
+      loadWikiVehicleCommunityAliases(),
+    ])
+      .then(([vehicles, factions, aliases]) => {
+        if (cancelled) return;
+        setCatalogIndex(buildCatalogIndexFromWiki(
+          vehicles,
+          factions,
+          topology,
+          siteEdition,
+          aliases,
+        ));
+      })
+      .catch((reason: unknown) => {
+        if (cancelled) return;
+        setLoadError(reason instanceof Error ? reason.message : String(reason));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [siteEdition, topology]);
+
+  if (loadError) {
+    return (
+      <main className="catalog-data-state" role="alert">
+        <CircleAlert aria-hidden="true" />
+        <h1>载具资料暂时无法读取</h1>
+        <p>{loadError}</p>
+      </main>
+    );
+  }
+  if (!catalogIndex) {
+    return (
+      <main className="catalog-data-state" aria-busy="true">
+        <Database aria-hidden="true" />
+        <h1>正在读取统一载具资料</h1>
+      </main>
+    );
+  }
+  return <CatalogAppReady catalogIndex={catalogIndex} siteEdition={siteEdition} />;
+}
+
+function CatalogAppReady({
   catalogIndex,
   siteEdition,
 }: {
@@ -3326,7 +3377,7 @@ export function CatalogApp({
 
   const hasGroupSelection = groupId !== ALL_GROUPS;
   const activeGroup = groups.find((group) => group.id === groupId) ?? null;
-  const activeGroupName = activeGroup ? factionDisplayName(activeGroup.id) : `${visualGroups.length} 阵营`;
+  const activeGroupName = activeGroup ? activeGroup.name : `${visualGroups.length} 阵营`;
   const activeGroupTitleLines = FACTION_DOCK_TITLE_LINES[activeGroupName] ?? [activeGroupName];
 
   useEffect(() => {
@@ -4190,7 +4241,7 @@ export function CatalogApp({
                   className="faction-selector__choice"
                   data-visual-index={visualIndex}
                   data-active={previewFactionId === group.id}
-                  aria-label={`选择${factionDisplayName(group.id)}，查看 ${recordCount} 个载具家族`}
+                  aria-label={`选择${group.name}，查看 ${recordCount} 个载具家族`}
                   aria-pressed={groupId === group.id}
                   tabIndex={hasGroupSelection ? -1 : 0}
                   onPointerEnter={() => setActiveCharacterId(group.id)}
@@ -4230,7 +4281,7 @@ export function CatalogApp({
                     />
                     <span>
                       <small>{group.id.toUpperCase()}</small>
-                      <strong>{factionDisplayName(group.id)}</strong>
+                      <strong>{group.name}</strong>
                     </span>
                     <em>
                       <b>{recordCount}</b>
@@ -4285,7 +4336,7 @@ export function CatalogApp({
                   className="faction-dock__flag"
                   data-active={groupId === group.id}
                   data-faction={group.id}
-                  aria-label={`切换到${factionDisplayName(group.id)}`}
+                  aria-label={`切换到${group.name}`}
                   aria-pressed={groupId === group.id}
                   tabIndex={hasGroupSelection ? 0 : -1}
                   onClick={() => selectFaction(group.id)}
@@ -4417,11 +4468,11 @@ export function CatalogApp({
                       );
                     };
                     return (
-                      <section className="faction-section" key={group.id} aria-label={`${factionDisplayName(group.id)}载具`}>
+                      <section className="faction-section" key={group.id} aria-label={`${group.name}载具`}>
                         <div className="vehicle-type-groups">
                           {[...typeGroups].map(([typeName, typeCards], typeIndex) => {
                             const headingId = `vehicle-type-${group.id}-${typeIndex}`;
-                            const typeNameZh = vehicleTypeNameZh(typeName);
+                            const typeNameZh = typeCards[0]?.record.official.typeNameZh ?? null;
                             return (
                               <section
                                 className="vehicle-type-group"

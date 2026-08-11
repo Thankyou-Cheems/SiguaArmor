@@ -83,7 +83,9 @@ services:
     environment:
       NODE_ENV: production
       SIGUA_PUBLIC_ORIGIN: {{ARMOR_ORIGIN}}
+      SIGUA_WIKI_ORIGIN: {{WIKI_ORIGIN}}
       SIGUA_CONTENT_ROOT: /srv/content
+      SIGUA_WIKI_ROOT: /srv/wiki
       SIGUA_CONTENT_ADMIN_LISTEN_HOST: 0.0.0.0
       SIGUA_CONTENT_ADMIN_PORT: "8083"
       SIGUA_CONTENT_ADMIN_SESSION_TTL_SECONDS: "900"
@@ -91,6 +93,7 @@ services:
     volumes:
       - ./services/content-admin:/app:ro
       - ./data/content:/srv/content
+      - ${SIGUA_WIKI_VEHICLE_DATA_ROOT:-/opt/Website/sigua-wiki/data/vehicles}:/srv/wiki/data/vehicles
     working_dir: /app
     networks:
       - homelab-web

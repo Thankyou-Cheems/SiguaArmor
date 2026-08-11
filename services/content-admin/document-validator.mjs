@@ -1,3 +1,8 @@
+import {
+  parseWikiVehicleAliasesDocument,
+  prepareWikiVehicleAliasesDocument,
+} from "./wiki-vehicle-aliases-document.mjs";
+
 const DOCUMENT_KEYS = new Set(["version", "updatedAt", "siteUpdatedOn", "entries"]);
 const SUPPORTER_KEYS = new Set(["id", "name", "nameSegments", "kind", "url", "note"]);
 const SUPPORTER_NAME_SEGMENT_KEYS = new Set(["text", "color"]);
@@ -32,6 +37,11 @@ export const CONTENT_DOCUMENTS = Object.freeze({
   "updates-international": Object.freeze({
     relativePath: "squad/updates.json",
     maxBytes: 64 * 1024,
+  }),
+  "wiki-vehicle-aliases": Object.freeze({
+    storage: "wiki",
+    relativePath: "data/vehicles/community-aliases.json",
+    maxBytes: 128 * 1024,
   }),
 });
 
@@ -199,6 +209,9 @@ function siteDateInShanghai(date) {
 }
 
 export function parseContentDocument(documentName, value) {
+  if (documentName === "wiki-vehicle-aliases") {
+    return parseWikiVehicleAliasesDocument(value);
+  }
   if (documentName === "notices") return parseNoticesDocument(value);
   if (documentName === "supporters") return parseSupportersDocument(value);
   if (documentName === "updates-china" || documentName === "updates-international") {
@@ -208,6 +221,13 @@ export function parseContentDocument(documentName, value) {
 }
 
 export function prepareContentDocument(documentName, value, now = new Date()) {
+  if (documentName === "wiki-vehicle-aliases") {
+    const prepared = prepareWikiVehicleAliasesDocument(value, now);
+    if (prepared.bytes > CONTENT_DOCUMENTS[documentName].maxBytes) {
+      throw new Error(`document is ${prepared.bytes} bytes; maximum is ${CONTENT_DOCUMENTS[documentName].maxBytes}`);
+    }
+    return prepared;
+  }
   if (!isRecord(value)) throw new Error("document must be an object");
   const candidate =
     documentName === "supporters" || documentName === "notices"

@@ -1,11 +1,11 @@
 import catalogIndexJson from "../../../../generated/china-catalog-index.json";
 import { CatalogApp } from "../../../CatalogApp";
-import type { PublicCatalogIndex } from "../../../catalog-types";
+import type { CatalogTopologyIndex } from "../../../catalog-types";
 
 export default function ChinaVehicleDetailPage() {
   return (
     <CatalogApp
-      catalogIndex={catalogIndexJson as unknown as PublicCatalogIndex}
+      catalogIndex={catalogIndexJson as unknown as CatalogTopologyIndex}
       siteEdition="china"
     />
   );
