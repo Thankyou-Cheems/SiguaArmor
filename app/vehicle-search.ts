@@ -4,8 +4,6 @@ import type {
   CatalogSearchVariant,
   CatalogVariant,
 } from "./catalog-types";
-import { weaponDisplayNameZh } from "../lib/weapon-display-name.ts";
-import { runtimeVehicleEquipmentBindingForId } from "./runtime-vehicle-equipment.ts";
 
 interface VehicleSearchTokenGroups {
   primary: string[];
@@ -99,16 +97,6 @@ function vehicleVariantSearchTokens(
 ): VehicleSearchTokenGroups {
   const displayName =
     variant.data?.general.displayName ?? record.official.nameZh;
-  const weapons = (variant.data?.weaponBindingIds ?? []).map((bindingId) => {
-    const binding =
-      runtimeVehicleEquipmentBindingForId(bindingId);
-    if (!binding) {
-      throw new Error(
-        `Vehicle search points to missing weapon binding ${bindingId}`,
-      );
-    }
-    return binding.equipment;
-  });
   return {
     primary: [
       variant.alias,
@@ -119,17 +107,7 @@ function vehicleVariantSearchTokens(
       variant.data?.general.rawName ?? variant.sourceRawName,
     ].map(normalizeVehicleSearch),
     aliases: (variant.searchAliases ?? []).map(normalizeVehicleSearch),
-    context: [
-      ...(variant.searchTerms ?? []),
-      ...weapons
-        .flatMap((weapon) => [
-          weapon.displayName,
-          weaponDisplayNameZh(weapon),
-          weapon.gunName,
-          weapon.projectileName ?? "",
-        ]),
-    ]
-      .map(normalizeVehicleSearch),
+    context: (variant.searchTerms ?? []).map(normalizeVehicleSearch),
   };
 }
 
