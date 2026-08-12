@@ -60,10 +60,10 @@ import {
   loadWikiFactionCatalog,
   loadWikiVehicleCommunityAliases,
   loadWikiVehicleCatalog,
+  loadWikiVehiclePresentation,
   wikiAssetUrl,
 } from "../lib/wiki-source";
 import { weaponDisplayNameZh } from "../lib/weapon-display-name";
-import { runtimeVehicleEquipmentBindingForId } from "./runtime-vehicle-equipment";
 import type {
   CatalogRecord,
   CatalogSearchRecord,
@@ -1240,6 +1240,27 @@ function VehicleCard({
 }
 
 function ReferenceDataView({ data }: { data: ReferenceData | null }) {
+  type EquipmentResolver = typeof import("./runtime-vehicle-equipment")["runtimeVehicleEquipmentBindingForId"];
+  const [equipmentResolver, setEquipmentResolver] = useState<EquipmentResolver | null>(null);
+  const [equipmentLoadError, setEquipmentLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!data || data.weaponBindingIds.length === 0 || equipmentResolver) return undefined;
+    let cancelled = false;
+    void import("./runtime-vehicle-equipment")
+      .then(({ runtimeVehicleEquipmentBindingForId }) => {
+        if (cancelled) return;
+        setEquipmentResolver(() => runtimeVehicleEquipmentBindingForId);
+      })
+      .catch((reason: unknown) => {
+        if (cancelled) return;
+        setEquipmentLoadError(reason instanceof Error ? reason.message : String(reason));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [data, equipmentResolver]);
+
   if (!data) {
     return (
       <div className="reference-empty">
@@ -1259,9 +1280,31 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
     components,
     damageResistances,
   } = data;
+  if (weaponBindingIds.length > 0 && equipmentLoadError) {
+    return (
+      <div className="reference-empty" role="alert">
+        <CircleAlert size={20} aria-hidden="true" />
+        <div>
+          <strong>武器资料载入失败</strong>
+          <p>{equipmentLoadError}</p>
+        </div>
+      </div>
+    );
+  }
+  if (weaponBindingIds.length > 0 && !equipmentResolver) {
+    return (
+      <div className="reference-empty" role="status">
+        <Clock3 size={20} aria-hidden="true" />
+        <div>
+          <strong>正在载入载具百科</strong>
+          <p>武器和部件资料将在展开时按需读取。</p>
+        </div>
+      </div>
+    );
+  }
   const weapons = weaponBindingIds.map((bindingId) => {
     const binding =
-      runtimeVehicleEquipmentBindingForId(bindingId);
+      equipmentResolver?.(bindingId);
     if (!binding) {
       throw new Error(
         `Vehicle reference data points to missing weapon binding ${bindingId}`,
@@ -2422,7 +2465,7 @@ function DetailPanel({
               <X size={18} aria-hidden="true" />
             </button>
           </header>
-          <ReferenceDataView data={data} />
+          {encyclopediaOpen ? <ReferenceDataView data={data} /> : null}
         </section>
       </section>
     </aside>
@@ -3149,7 +3192,7 @@ export function CatalogApp({
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      loadWikiVehicleCatalog(),
+      loadWikiVehiclePresentation(),
       loadWikiFactionCatalog(),
       loadWikiVehicleCommunityAliases(),
     ])

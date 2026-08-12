@@ -66,6 +66,11 @@ interface WikiVehicleCatalog {
   };
 }
 
+interface WikiVehiclePresentationCatalog {
+  schemaVersion: "sigua-vehicle-presentation/v1";
+  presentation: WikiVehicleCatalog["presentation"];
+}
+
 interface WikiThumbnail {
   path: string;
   width: number;
@@ -178,10 +183,15 @@ export function buildCatalogIndexFromWiki(
   edition: "international" | "china",
   communityAliasesValue?: unknown,
 ): PublicCatalogIndex {
-  const catalog = vehicleValue as WikiVehicleCatalog;
+  const catalog = vehicleValue as
+    | WikiVehicleCatalog
+    | WikiVehiclePresentationCatalog;
   const factions = factionValue as WikiFactionCatalog;
   if (
-    catalog.schemaVersion !== "sigua-vehicle-catalog/v3.1" ||
+    (
+      catalog.schemaVersion !== "sigua-vehicle-catalog/v3.1" &&
+      catalog.schemaVersion !== "sigua-vehicle-presentation/v1"
+    ) ||
     factions.schemaVersion !== "sigua-faction-catalog/v1"
   ) {
     throw new Error("SiguaWiki 呈现数据格式不受支持");

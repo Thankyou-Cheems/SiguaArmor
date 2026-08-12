@@ -103,6 +103,30 @@ export async function loadWikiVehicleCatalog() {
   return value;
 }
 
+export async function loadWikiVehiclePresentation() {
+  const value = await loadWikiDataset(
+    "/data/vehicles/presentation.json",
+    "sigua-vehicle-presentation/v1",
+  );
+  const document = value as {
+    schemaVersion?: string;
+    presentation?: {
+      editions?: {
+        international?: { records?: unknown[] };
+        china?: { records?: unknown[] };
+      };
+    };
+  };
+  if (
+    document.schemaVersion !== "sigua-vehicle-presentation/v1" ||
+    !Array.isArray(document.presentation?.editions?.international?.records) ||
+    !Array.isArray(document.presentation?.editions?.china?.records)
+  ) {
+    throw new Error("SiguaWiki vehicle presentation has an unsupported shape");
+  }
+  return value;
+}
+
 export async function loadWikiVehicleCommunityAliases() {
   const value = await fetchJson(
     `/data/vehicles/community-aliases.json${WIKI_PRESENTATION_QUERY}`,

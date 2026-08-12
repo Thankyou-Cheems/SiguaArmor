@@ -12,6 +12,7 @@ import {
   loadWikiRuntimeVisual,
   loadWikiVehicleCatalog,
   loadWikiVehicleCommunityAliases,
+  loadWikiVehiclePresentation,
 } from "../../lib/wiki-source.ts";
 
 test("shared runtime files resolve directly to SiguaWiki", () => {
@@ -69,7 +70,7 @@ test("analysis mode keeps the alpha-bearing texture for projected vehicle marks"
   );
 });
 
-test("presentation datasets use one stable v3 cache key after the vehicle visual refresh", async () => {
+test("catalog startup uses the small presentation path while runtime data keeps its cache key", async () => {
   const originalFetch = globalThis.fetch;
   const requestedUrls = [];
   globalThis.fetch = async (url) => {
@@ -87,7 +88,17 @@ test("presentation datasets use one stable v3 cache key after the vehicle visual
             factions: [],
             catalogGroups: { china: [] },
           }
-        : {
+        : pathname.includes("presentation.json")
+          ? {
+              schemaVersion: "sigua-vehicle-presentation/v1",
+              presentation: {
+                editions: {
+                  international: { records: [] },
+                  china: { records: [] },
+                },
+              },
+            }
+          : {
             schemaVersion: "sigua-vehicle-catalog/v3.1",
             identities: { catalogBindings: [] },
             runtime: { visualArtifacts: [] },
@@ -106,6 +117,7 @@ test("presentation datasets use one stable v3 cache key after the vehicle visual
 
   try {
     await Promise.all([
+      loadWikiVehiclePresentation(),
       loadWikiVehicleCatalog(),
       loadWikiFactionCatalog(),
       loadWikiVehicleCommunityAliases(),
@@ -115,6 +127,7 @@ test("presentation datasets use one stable v3 cache key after the vehicle visual
   }
 
   assert.deepEqual(requestedUrls, [
+    "https://wiki.siguad.icu/data/vehicles/presentation.json",
     "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v3",
     "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v3",
     "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v3",
