@@ -97,12 +97,12 @@ test("analysis silhouettes use a visual-shell depth pass and are not angle-culle
   assert.match(source, /analysisVisualDepthOccluderMeshCount/);
 });
 
-test("projected SiguaD marks keep their source material in analysis mode", async () => {
+test("projected SiguaD marks use a faint alpha-preserving analysis material", async () => {
   const source = await readFile(path.join(ROOT, "app", "RuntimeVehicleViewer.tsx"), "utf8");
   assert.match(source, /function isSiguaDProjectedMark\(material: THREE\.Material\)/);
   assert.match(
     source,
-    /if \(sourceMaterials\.some\(isSiguaDProjectedMark\)\) \{[\s\S]*?object\.renderOrder = ANALYSIS_VISUAL_STABLE_SURFACE_RENDER_ORDER \+ 1;[\s\S]*?return;/,
+    /if \(sourceMaterials\.some\(isSiguaDProjectedMark\)\) \{[\s\S]*?object\.renderOrder = ANALYSIS_VISUAL_STABLE_SURFACE_RENDER_ORDER \+ 1;[\s\S]*?createAnalysisProjectedMarkMaterial\(material\)[\s\S]*?return;/,
   );
   assert.match(
     source,
