@@ -23,6 +23,7 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
     }),
     {
       tier: "compatibility",
+      reason: "integrated-or-mobile-gpu",
       pixelRatio: 1,
       assetLoadConcurrency: 2,
       textureAnisotropy: 1,
@@ -38,6 +39,7 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
     }),
     {
       tier: "compatibility",
+      reason: "integrated-or-mobile-gpu",
       pixelRatio: 1,
       assetLoadConcurrency: 2,
       textureAnisotropy: 1,
@@ -53,6 +55,7 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
     }),
     {
       tier: "balanced",
+      reason: "default",
       pixelRatio: 1.25,
       assetLoadConcurrency: 4,
       textureAnisotropy: 4,
@@ -68,6 +71,7 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
     }),
     {
       tier: "balanced",
+      reason: "default",
       pixelRatio: 1,
       assetLoadConcurrency: 4,
       textureAnisotropy: 4,
@@ -86,11 +90,60 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
     ),
     {
       tier: "compatibility",
+      reason: "forced",
       pixelRatio: 1,
       assetLoadConcurrency: 2,
       textureAnisotropy: 1,
       textureMipmaps: false,
     },
+  );
+
+  for (const rendererName of [
+    "ANGLE (AMD, AMD Radeon(TM) 780M Graphics Direct3D11)",
+    "ANGLE (AMD, AMD Radeon 890M Graphics Direct3D11)",
+    "ANGLE (Intel, Intel(R) Arc(TM) Graphics Direct3D11)",
+  ]) {
+    const profile = runtimeRenderQualityProfile({
+      devicePixelRatio: 2,
+      rendererName,
+      deviceMemoryGb: 32,
+      hardwareConcurrency: 24,
+    });
+    assert.equal(profile.tier, "compatibility", rendererName);
+    assert.equal(profile.reason, "integrated-or-mobile-gpu", rendererName);
+  }
+
+  for (const rendererName of [
+    "ANGLE (AMD, AMD Radeon RX 7800 XT Direct3D11)",
+    "ANGLE (Intel, Intel(R) Arc(TM) A770 Graphics Direct3D11)",
+  ]) {
+    const profile = runtimeRenderQualityProfile({
+      devicePixelRatio: 2,
+      rendererName,
+      deviceMemoryGb: 32,
+      hardwareConcurrency: 24,
+    });
+    assert.equal(profile.tier, "balanced", rendererName);
+    assert.equal(profile.reason, "default", rendererName);
+  }
+
+  assert.equal(
+    runtimeRenderQualityProfile({
+      devicePixelRatio: 2,
+      rendererName: null,
+      deviceMemoryGb: 4,
+      hardwareConcurrency: 16,
+    }).reason,
+    "low-memory",
+  );
+  assert.equal(
+    runtimeRenderQualityProfile({
+      devicePixelRatio: 2,
+      rendererName: null,
+      deviceMemoryGb: 16,
+      hardwareConcurrency: 4,
+    }).reason,
+    "low-core-count",
   );
 });
 
@@ -100,6 +153,7 @@ test("viewer bounds parallel model decoding and lowers texture pressure on iGPUs
   assert.match(viewerSource, /texture\.generateMipmaps = renderQuality\.textureMipmaps/u);
   assert.match(viewerSource, /texture\.anisotropy = Math\.min\(\s*renderQuality\.textureAnisotropy/su);
   assert.match(viewerSource, /viewerRoot\.dataset\.renderQuality = renderQuality\.tier/u);
+  assert.match(viewerSource, /host\.dataset\.renderQualityReason = renderQuality\.reason/u);
   assert.match(
     globalStyles,
     /runtime-vehicle-viewer\[data-render-quality="compatibility"\][\s\S]*?backdrop-filter: none !important/u,

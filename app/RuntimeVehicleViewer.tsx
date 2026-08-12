@@ -5085,6 +5085,7 @@ export function RuntimeVehicleViewer({
     const viewerRoot = host.closest<HTMLElement>(".runtime-vehicle-viewer");
     if (viewerRoot) viewerRoot.dataset.renderQuality = renderQuality.tier;
     host.dataset.renderPixelRatio = String(renderQuality.pixelRatio);
+    host.dataset.renderQualityReason = renderQuality.reason;
     host.dataset.assetLoadConcurrency = String(
       renderQuality.assetLoadConcurrency,
     );
