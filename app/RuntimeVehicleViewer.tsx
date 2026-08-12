@@ -174,6 +174,7 @@ import {
   decodeViewerTurretState,
   encodeViewerTurretState,
 } from "../lib/viewer-turret-share.mjs";
+import { runtimeRenderQualityProfile } from "../lib/runtime-render-quality";
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
@@ -227,6 +228,37 @@ if (!REFERENCE_SOLDIER_STANDING_RIFLE_POSE) {
 }
 function referenceSoldierModelUrl() {
   return runtimeWikiAssetUrl(REFERENCE_SOLDIER_MODEL_PATH);
+}
+
+function createReferenceSoldierProxy() {
+  const group = new THREE.Group();
+  group.name = "reference-soldier-proxy";
+  group.userData.referenceSoldierProxy = true;
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xb8a06d,
+    roughness: 0.88,
+    metalness: 0,
+  });
+  const add = (
+    geometry: THREE.BufferGeometry,
+    position: [number, number, number],
+    rotationZ = 0,
+  ) => {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(...position);
+    mesh.rotation.z = rotationZ;
+    group.add(mesh);
+  };
+
+  add(new THREE.SphereGeometry(0.11, 8, 6), [0, 1.58, 0]);
+  add(new THREE.BoxGeometry(0.4, 0.56, 0.24), [0, 1.19, 0]);
+  add(new THREE.BoxGeometry(0.32, 0.2, 0.22), [0, 0.82, 0]);
+  add(new THREE.CylinderGeometry(0.065, 0.075, 0.72, 8), [-0.1, 0.4, 0]);
+  add(new THREE.CylinderGeometry(0.065, 0.075, 0.72, 8), [0.1, 0.4, 0]);
+  add(new THREE.CylinderGeometry(0.055, 0.065, 0.58, 8), [-0.24, 1.16, 0], -0.18);
+  add(new THREE.CylinderGeometry(0.055, 0.065, 0.58, 8), [0.24, 1.16, 0], 0.18);
+  add(new THREE.BoxGeometry(0.9, 0.055, 0.06), [0.12, 1.08, -0.18], -0.12);
+  return group;
 }
 
 function runtimeGroundReferenceClearanceM(
@@ -4948,11 +4980,10 @@ export function RuntimeVehicleViewer({
     let gridHelper: THREE.GridHelper | null = null;
     let groundScale: THREE.Group | null = null;
     let referenceSoldier: THREE.Group | null = null;
-    let referenceSoldierSettled = false;
-    let pendingReferenceFit: {
-      targetGroup: THREE.Object3D;
-      source: "hit" | "analysis" | "exterior";
-    } | null = null;
+    let referenceSoldierLoadScheduled = false;
+    let referenceSoldierLoadTimer = 0;
+    let referenceSoldierIdleCallback = 0;
+    let startReferenceSoldierAsset: (() => void) | null = null;
     let fittedSource: "hit" | "analysis" | "exterior" | null = null;
     let pointerStart: { x: number; y: number } | null = null;
     let hoverFrame = 0;
@@ -4977,7 +5008,22 @@ export function RuntimeVehicleViewer({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.18;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    const runtimeContext = renderer.getContext();
+    const rendererInfo = runtimeContext.getExtension("WEBGL_debug_renderer_info");
+    const rendererName = rendererInfo
+      ? String(runtimeContext.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL))
+      : null;
+    const navigatorWithMemory = navigator as Navigator & { deviceMemory?: number };
+    const renderQuality = runtimeRenderQualityProfile({
+      devicePixelRatio: window.devicePixelRatio || 1,
+      rendererName,
+      deviceMemoryGb: navigatorWithMemory.deviceMemory ?? null,
+      hardwareConcurrency: navigator.hardwareConcurrency || null,
+    });
+    renderer.setPixelRatio(renderQuality.pixelRatio);
+    host.dataset.renderQuality = renderQuality.tier;
+    host.dataset.renderPixelRatio = String(renderQuality.pixelRatio);
+    if (rendererName) host.dataset.gpuRenderer = rendererName;
     renderer.domElement.setAttribute("aria-label", `${preview.variantRawName} runtime asset 3D preview`);
     renderer.domElement.setAttribute("role", "img");
     host.appendChild(renderer.domElement);
@@ -4994,6 +5040,9 @@ export function RuntimeVehicleViewer({
 
     const modelGroup = new THREE.Group();
     modelGroup.name = preview.visualVehicleId ?? "runtime-visual";
+    referenceSoldier = createReferenceSoldierProxy();
+    modelGroup.add(referenceSoldier);
+    host.dataset.referenceSoldierState = "proxy";
     const skeletalPoseBindings = new Set<RuntimeSkeletalPoseBinding>();
     const updateSkeletalPoseDataset = (enabled: boolean) => {
       const selectedBoneNames = new Set<string>();
@@ -5285,7 +5334,6 @@ export function RuntimeVehicleViewer({
     shotVisuals.forEach((shotVisual) => scene.add(shotVisual.group));
 
     const render = () => {
-      scene.updateMatrixWorld(true);
       shotVisuals.forEach((shotVisual) => {
         shotVisual.explosionLayers.forEach((visual) => {
           updateShotExplosionDamageTypeIconPosition(visual, camera);
@@ -6127,16 +6175,6 @@ export function RuntimeVehicleViewer({
         preserveCamera = false,
       }: { force?: boolean; preserveCamera?: boolean } = {},
     ) => {
-      if (!referenceSoldierSettled) {
-        if (
-          pendingReferenceFit === null
-          || source === "hit"
-          || pendingReferenceFit.source !== "hit"
-        ) {
-          pendingReferenceFit = { targetGroup, source };
-        }
-        return;
-      }
       if (fittedSource !== null && !force) return;
       modelGroup.position.set(0, 0, 0);
       modelGroup.updateMatrixWorld(true);
@@ -6379,6 +6417,7 @@ export function RuntimeVehicleViewer({
       }
       host.dataset.viewerInitialFitState = "ready";
       setInitialCameraFitReady(true);
+      startReferenceSoldierAsset?.();
       if (modeRef.current === "exterior" && analysisVisualReady) {
         startExteriorAssets?.();
       }
@@ -6388,8 +6427,11 @@ export function RuntimeVehicleViewer({
     referenceSoldierLoader.setMeshoptDecoder(MeshoptDecoder);
     const referenceSoldierUrl = referenceSoldierModelUrl();
     host.dataset.referenceSoldierModelUrl = referenceSoldierUrl;
-    void referenceSoldierLoader
-      .loadAsync(referenceSoldierUrl)
+    const loadReferenceSoldierAsset = () => {
+      referenceSoldierIdleCallback = 0;
+      referenceSoldierLoadTimer = 0;
+      host.dataset.referenceSoldierState = "loading";
+      void referenceSoldierLoader.loadAsync(referenceSoldierUrl)
       .then(({ scene: soldierScene }) => {
         if (cancelled) {
           disposeScene(soldierScene);
@@ -6398,9 +6440,28 @@ export function RuntimeVehicleViewer({
         const glassRebind = rebindReferenceSoldierGlassToHead(soldierScene);
         applyReferenceSoldierStandingRiflePose(soldierScene);
         soldierScene.name = "standing-rifle-reference-soldier";
+        soldierScene.position.set(0, 0, 0);
+        soldierScene.updateMatrixWorld(true);
+        const soldierBounds = new THREE.Box3().setFromObject(soldierScene);
+        const soldierCenter = soldierBounds.getCenter(new THREE.Vector3());
+        const proxy = referenceSoldier;
+        if (proxy) {
+          modelGroup.updateMatrixWorld(true);
+          const inverseModelMatrix = modelGroup.matrixWorld.clone().invert();
+          const proxyBounds = new THREE.Box3()
+            .setFromObject(proxy)
+            .applyMatrix4(inverseModelMatrix);
+          const proxyCenter = proxyBounds.getCenter(new THREE.Vector3());
+          soldierScene.position.set(
+            proxyCenter.x - soldierCenter.x,
+            proxyBounds.min.y - soldierBounds.min.y,
+            proxyCenter.z - soldierCenter.z,
+          );
+          modelGroup.remove(proxy);
+          disposeScene(proxy);
+        }
         referenceSoldier = soldierScene;
         modelGroup.add(soldierScene);
-        referenceSoldierSettled = true;
         host.dataset.referenceSoldierState = "ready";
         host.dataset.referenceSoldierPose = "standing-rifle";
         host.dataset.referenceSoldierGlassMeshes = String(
@@ -6409,21 +6470,28 @@ export function RuntimeVehicleViewer({
         host.dataset.referenceSoldierGlassVertices = String(
           glassRebind.reboundVertexCount,
         );
-        const pending = pendingReferenceFit;
-        pendingReferenceFit = null;
-        if (pending) fitViewToGroup(pending.targetGroup, pending.source);
         render();
       })
       .catch((error: unknown) => {
         if (cancelled) return;
-        referenceSoldierSettled = true;
-        host.dataset.referenceSoldierState = "error";
+        host.dataset.referenceSoldierState = "proxy-error";
         host.dataset.referenceSoldierError =
           error instanceof Error ? error.message : String(error);
-        const pending = pendingReferenceFit;
-        pendingReferenceFit = null;
-        if (pending) fitViewToGroup(pending.targetGroup, pending.source);
       });
+    };
+    startReferenceSoldierAsset = () => {
+      if (referenceSoldierLoadScheduled) return;
+      referenceSoldierLoadScheduled = true;
+      host.dataset.referenceSoldierState = "scheduled";
+      if (typeof window.requestIdleCallback === "function") {
+        referenceSoldierIdleCallback = window.requestIdleCallback(
+          loadReferenceSoldierAsset,
+          { timeout: 1_500 },
+        );
+        return;
+      }
+      referenceSoldierLoadTimer = window.setTimeout(loadReferenceSoldierAsset, 0);
+    };
 
     const lowerReferencePlaneToGroup = (
       targetGroup: THREE.Object3D,
@@ -7166,6 +7234,10 @@ export function RuntimeVehicleViewer({
 
     return () => {
       cancelled = true;
+      if (referenceSoldierIdleCallback !== 0) {
+        window.cancelIdleCallback(referenceSoldierIdleCallback);
+      }
+      window.clearTimeout(referenceSoldierLoadTimer);
       cancelProtectionMap(true);
       cancelAnimationFrame(hoverFrame);
       if (shotAnimationFrameRef.current !== 0) {
