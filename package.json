@@ -26,7 +26,6 @@
     "assets:faction-flags": "node tools/fetch-faction-flag-assets.mjs",
     "assets:faction-flags:raster": "node tools/build-faction-flag-raster-assets.mjs",
     "assets:ins-flag": "node tools/build-ins-ak47-vector.mjs",
-    "assets:site-font": "node tools/build-site-font-subset.mjs",
     "catalog:bootstrap": "node tools/build-catalog-bootstrap.mjs",
     "supporters:publish": "node tools/publish-runtime-document.mjs supporters",
     "updates:publish": "node tools/publish-runtime-document.mjs updates"
