@@ -8,6 +8,7 @@ import {
 } from "../../lib/runtime-visual-lazy-load.ts";
 import {
   loadWikiFactionCatalog,
+  loadWikiRuntimeVisual,
   loadWikiVehicleCatalog,
   loadWikiVehicleCommunityAliases,
 } from "../../lib/wiki-source.ts";
@@ -39,7 +40,7 @@ test("analysis mode skips shared appearance textures", () => {
   );
 });
 
-test("presentation datasets use one stable v1 cache key during the Wiki cutover", async () => {
+test("presentation datasets use one stable v2 cache key after the vehicle visual refresh", async () => {
   const originalFetch = globalThis.fetch;
   const requestedUrls = [];
   globalThis.fetch = async (url) => {
@@ -85,8 +86,33 @@ test("presentation datasets use one stable v1 cache key during the Wiki cutover"
   }
 
   assert.deepEqual(requestedUrls, [
-    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v1",
-    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v1",
-    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v1",
+    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v2",
+    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v2",
+    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v2",
   ]);
+});
+
+test("runtime visual descriptors use the presentation cache key", async () => {
+  const originalFetch = globalThis.fetch;
+  const visualId = `visual-artifact-${"a".repeat(64)}`;
+  let requestedUrl = "";
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return Response.json({
+      schemaVersion: "sigua-runtime-visual/v1",
+      id: visualId,
+      runtimeVehicleRef: `vehicle-${"b".repeat(64)}`,
+      generatedClass: "/Game/Vehicles/Test.Test_C",
+      placements: [],
+    });
+  };
+  try {
+    await loadWikiRuntimeVisual(visualId);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.equal(
+    requestedUrl,
+    `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v2`,
+  );
 });
