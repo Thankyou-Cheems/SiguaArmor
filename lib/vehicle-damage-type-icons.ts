@@ -58,8 +58,8 @@ const DAMAGE_TYPE_ICON_LABELS: Record<VehicleDamageTypeIconKind, string> = {
   "small-arms": "轻武器伤害",
   generic: "基础伤害类型（未分类）",
   fragmentation: "破片伤害",
-  heat: "破甲弹（HEAT）",
-  hat: "重型反坦克武器（HAT）",
+  heat: "破甲",
+  hat: "重破甲",
   explosives: "爆炸伤害",
   thermite: "热辐射",
 };
@@ -72,8 +72,8 @@ const DAMAGE_TYPE_ICON_SHORT_LABELS: Record<
   "small-arms": "轻武器",
   generic: "未分类",
   fragmentation: "破片",
-  heat: "HEAT",
-  hat: "HAT",
+  heat: "破甲",
+  hat: "重破甲",
   explosives: "爆炸",
   thermite: "热辐射",
 };
@@ -86,8 +86,8 @@ const DAMAGE_TYPE_ICON_EFFECT_LABELS: Record<
   "small-arms": "轻武器点伤害",
   generic: "原生类别尚未细分",
   fragmentation: "破片径向伤害",
-  heat: "HEAT 径向伤害",
-  hat: "HAT 径向伤害",
+  heat: "破甲径向伤害",
+  hat: "重破甲径向伤害",
   explosives: "通用爆炸径向伤害",
   thermite: "热辐射径向伤害",
 };

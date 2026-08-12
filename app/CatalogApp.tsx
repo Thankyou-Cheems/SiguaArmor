@@ -7,7 +7,6 @@ import {
   CloudFog,
   Database,
   ExternalLink,
-  Gauge,
   HeartPulse,
   HelpCircle,
   KeyRound,
@@ -956,9 +955,13 @@ function VehicleCard({
   const previewIssue = catalogCardPreviewIssue(card);
   const crewSeatCount = general?.crewSeatCount ?? null;
   const totalSeatCount = general?.totalSeatCount ?? null;
-  const seatCount =
+  const passengerSeatCount =
     crewSeatCount !== null && totalSeatCount !== null
-      ? `${crewSeatCount}/${totalSeatCount}`
+      ? Math.max(0, totalSeatCount - crewSeatCount)
+      : null;
+  const seatCount =
+    crewSeatCount !== null && passengerSeatCount !== null
+      ? `${crewSeatCount}/${passengerSeatCount}`
       : <span className="unknown-value" aria-label="暂未获取">—</span>;
 
   const renderImpression = (entry: CatalogCardEntry) => {
@@ -1040,7 +1043,11 @@ function VehicleCard({
         <Ticket size={16} aria-hidden="true" />
         <strong>{formatNumber(general?.ticketValue ?? null)}</strong>
       </span>
-      <span className="vehicle-card__stat" aria-label="载具组人数/总人数">
+      <span
+        className="vehicle-card__stat"
+        aria-label="组员/乘员"
+        title="组员 / 乘员"
+      >
         <Users size={16} aria-hidden="true" />
         <strong>{seatCount}</strong>
       </span>
@@ -1312,12 +1319,12 @@ function ReferenceDataView({ data }: { data: ReferenceData | null }) {
 
       <div className="stat-grid" aria-label="载具核心参数">
         <div className="stat-cell">
-          <Gauge size={17} aria-hidden="true" />
+          <HeartPulse size={17} aria-hidden="true" />
           <span>载具耐久</span>
           <strong>{formatNumber(general.vehicleHealth, " HP")}</strong>
         </div>
         <div className="stat-cell">
-          <Target size={17} aria-hidden="true" />
+          <Ticket size={17} aria-hidden="true" />
           <span>票值</span>
           <strong>{formatNumber(general.ticketValue)}</strong>
         </div>
@@ -3444,10 +3451,11 @@ function CatalogAppReady({
       },
       mode: "pushState" | "replaceState",
     ) => {
+      const nextUrl = buildCatalogUrl(next, catalogIndex, { basePath: editionBasePath });
       window.history[mode](
         null,
         "",
-        buildCatalogUrl(next, catalogIndex, { basePath: editionBasePath }),
+        nextUrl,
       );
     },
     [catalogIndex, editionBasePath],

@@ -100,6 +100,8 @@ const FRAGMENT_SHADER = `
     bool isSpacedArmorMarker = vPatternCode > 2.5 && vPatternCode < 3.5;
     bool isEngineMaterial = vPatternCode > 5.5 && vPatternCode < 6.5;
     bool isAmmoRackMaterial = vPatternCode > 6.5 && vPatternCode < 7.5;
+    bool isSubtleDamageableMaterial = vPatternCode > 7.5 && vPatternCode < 8.5;
+    bool isDamageableGunCollisionMaterial = vPatternCode > 8.5 && vPatternCode < 9.5;
     if ((isNoPenetrationMarker || isSpacedArmorMarker) && specialArmorVisible < 0.5) discard;
     if (exteriorSpacedArmorOnly > 0.5 && !isSpacedArmorMarker) discard;
 
@@ -159,6 +161,36 @@ const FRAGMENT_SHADER = `
       shaded = mix(shaded, ammoEdgeColor, ammoEdge * 0.92);
       shaded += ammoEdgeColor * ammoEdge * 0.16;
       alpha = max(alpha, ammoEdge * 0.88);
+    } else if (isDamageableGunCollisionMaterial) {
+      // Damageable weapon/collision meshes keep a readable white core while a
+      // faint lime outer edge also identifies them as a component health pool.
+      vec3 edgeWidth = max(fwidth(vOutlineBarycentric), vec3(0.00001));
+      vec3 coreBand =
+        (vec3(1.0) - smoothstep(edgeWidth * 0.25, edgeWidth * 1.35, vOutlineBarycentric)) *
+        vSpacedArmorEdgeMask;
+      vec3 haloBand =
+        (vec3(1.0) - smoothstep(edgeWidth * 0.8, edgeWidth * 3.6, vOutlineBarycentric)) *
+        vSpacedArmorEdgeMask;
+      float outlineCore = max(coreBand.x, max(coreBand.y, coreBand.z)) * outlineStrength;
+      float componentHalo = max(haloBand.x, max(haloBand.y, haloBand.z)) * outlineStrength;
+      vec3 collisionColor = vec3(0.97, 0.985, 1.0);
+      vec3 damageColor = vec3(0.78, 1.0, 0.29);
+      shaded = mix(shaded, damageColor, componentHalo * 0.2);
+      shaded = mix(shaded, collisionColor, outlineCore * 0.62);
+      shaded += collisionColor * outlineCore * 0.07;
+      alpha = max(alpha, max(outlineCore * 0.54, componentHalo * 0.2));
+    } else if (isSubtleDamageableMaterial) {
+      // Parent-forwarding pools such as turret rings remain damageable but are
+      // subordinate to independent engine/ammo/component-only silhouettes.
+      vec3 edgeWidth = max(fwidth(vOutlineBarycentric), vec3(0.00001));
+      vec3 edgeBand =
+        (vec3(1.0) - smoothstep(edgeWidth * 0.35, edgeWidth * 2.2, vOutlineBarycentric)) *
+        vSpacedArmorEdgeMask;
+      float componentEdge = max(edgeBand.x, max(edgeBand.y, edgeBand.z)) * outlineStrength;
+      vec3 damageColor = vec3(0.78, 1.0, 0.29);
+      shaded = mix(shaded, damageColor, componentEdge * 0.38);
+      shaded += damageColor * componentEdge * 0.05;
+      alpha = max(alpha, componentEdge * 0.34);
     } else if (vPatternCode > 4.5) {
       // Weapon and generic collision geometry keeps its base face color. When
       // the source profile declares armor thickness, that base is the same
