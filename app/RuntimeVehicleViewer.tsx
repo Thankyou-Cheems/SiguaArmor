@@ -106,6 +106,7 @@ import {
 } from "../lib/runtime-hit-scene";
 import {
   runtimeAnalysisVisualUrl,
+  runtimeAnalysisVisualTexturePolicy,
   runtimeWikiAssetUrl,
   runtimeViewerPresentation,
 } from "../lib/runtime-visual-lazy-load";
@@ -6759,6 +6760,14 @@ export function RuntimeVehicleViewer({
     renderer.domElement.addEventListener("pointerup", onPointerUp);
 
     const urls = [...new Set(renderPlacements.map(({ assetUrl }) => assetUrl))];
+    const sourceAlphaAssetUrls = new Set(
+      renderPlacements
+        .filter(
+          (placement) =>
+            runtimeAnalysisVisualTexturePolicy(placement) === "source-alpha",
+        )
+        .map(({ assetUrl }) => assetUrl),
+    );
     const sourceGeometryScores = new Map<string, number>();
     const analysisSurfaceEvidence: AnalysisVisualSurfaceEvidence[] = [];
     const analysisMeshesByOccurrence = new Map<string, THREE.Mesh[]>();
@@ -6778,11 +6787,20 @@ export function RuntimeVehicleViewer({
     analysisLoadingManager.setURLModifier(runtimeAnalysisVisualUrl);
     const analysisLoader = new GLTFLoader(analysisLoadingManager);
     analysisLoader.setMeshoptDecoder(MeshoptDecoder);
+    const sourceAlphaLoadingManager = new THREE.LoadingManager();
+    sourceAlphaLoadingManager.setURLModifier((url) =>
+      runtimeAnalysisVisualUrl(url, "source-alpha")
+    );
+    const sourceAlphaLoader = new GLTFLoader(sourceAlphaLoadingManager);
+    sourceAlphaLoader.setMeshoptDecoder(MeshoptDecoder);
     const loadAnalysisVisualAssets = async () => {
       host.dataset.analysisVisualAssetState = "loading";
       const sources = new Map<string, THREE.Object3D>();
       await Promise.all(urls.map(async (url) => {
-        const gltf = await analysisLoader.loadAsync(url);
+        const loader = sourceAlphaAssetUrls.has(url)
+          ? sourceAlphaLoader
+          : analysisLoader;
+        const gltf = await loader.loadAsync(url);
         sources.set(url, gltf.scene);
         sourceGeometryScores.set(url, analysisVisualGeometryScore(gltf.scene));
         analysisLoaded += 1;

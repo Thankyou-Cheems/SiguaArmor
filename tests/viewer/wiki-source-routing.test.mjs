@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
   runtimeAnalysisVisualUrl,
+  runtimeAnalysisVisualTexturePolicy,
   runtimeWikiAssetUrl,
 } from "../../lib/runtime-visual-lazy-load.ts";
 import {
@@ -36,6 +37,34 @@ test("analysis mode skips shared appearance textures", () => {
     runtimeAnalysisVisualUrl(
       "/assets/runtime-probe/blob/" + "b".repeat(64) + ".webp",
     ),
+    RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
+  );
+});
+
+test("analysis mode keeps the alpha-bearing texture for projected vehicle marks", () => {
+  const texture = "/assets/runtime-probe/blob/" + "c".repeat(64) + ".webp";
+  const projectedMark = {
+    name: "SiguaD Watermark",
+    sourceMeshPath: "/SiguaWiki/Derived/VehicleWatermark",
+    stableOccurrenceId: "watermark-vehicle-test",
+  };
+  const hull = {
+    name: "Vehicle Mesh",
+    sourceMeshPath: "/Game/Vehicles/Test/Test_Hull.Test_Hull",
+    stableOccurrenceId: "occurrence-hull-test",
+  };
+
+  const projectedMarkPolicy = runtimeAnalysisVisualTexturePolicy(projectedMark);
+  assert.equal(projectedMarkPolicy, "source-alpha");
+  assert.equal(
+    runtimeAnalysisVisualUrl(texture, projectedMarkPolicy),
+    `https://wiki.siguad.icu${texture}`,
+  );
+
+  const hullPolicy = runtimeAnalysisVisualTexturePolicy(hull);
+  assert.equal(hullPolicy, "placeholder");
+  assert.equal(
+    runtimeAnalysisVisualUrl(texture, hullPolicy),
     RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
   );
 });

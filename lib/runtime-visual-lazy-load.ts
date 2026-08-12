@@ -18,13 +18,41 @@ export function runtimeWikiAssetUrl(url: string) {
 export const RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=";
 
+export type RuntimeAnalysisVisualTexturePolicy =
+  | "placeholder"
+  | "source-alpha";
+
+type RuntimeAnalysisVisualPlacementIdentity = {
+  name?: string | null;
+  sourceMeshPath?: string | null;
+  stableOccurrenceId?: string | null;
+};
+
+export function runtimeAnalysisVisualTexturePolicy(
+  placement: RuntimeAnalysisVisualPlacementIdentity,
+): RuntimeAnalysisVisualTexturePolicy {
+  if (placement.sourceMeshPath === "/SiguaWiki/Derived/VehicleWatermark") {
+    return "source-alpha";
+  }
+  if (
+    placement.name === "SiguaD Watermark" &&
+    placement.stableOccurrenceId?.startsWith("watermark-")
+  ) {
+    return "source-alpha";
+  }
+  return "placeholder";
+}
+
 export function isRuntimeVisualTextureUrl(url: string) {
   if (/^data:/iu.test(url)) return false;
   return RUNTIME_VISUAL_TEXTURE_EXTENSION.test(url);
 }
 
-export function runtimeAnalysisVisualUrl(url: string) {
-  return isRuntimeVisualTextureUrl(url)
+export function runtimeAnalysisVisualUrl(
+  url: string,
+  texturePolicy: RuntimeAnalysisVisualTexturePolicy = "placeholder",
+) {
+  return isRuntimeVisualTextureUrl(url) && texturePolicy === "placeholder"
     ? RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL
     : runtimeWikiAssetUrl(url);
 }

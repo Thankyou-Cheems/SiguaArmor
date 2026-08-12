@@ -14,7 +14,7 @@ test("analysis projected marks preserve texture alpha without becoming an opaque
   const source = new THREE.MeshBasicMaterial({
     map,
     transparent: true,
-    opacity: 0.3,
+    opacity: 0.65,
     alphaTest: 0,
     depthTest: true,
     depthWrite: true,
@@ -22,7 +22,7 @@ test("analysis projected marks preserve texture alpha without becoming an opaque
   source.name = "SiguaD vehicle projected mark";
   source.userData = {
     siguadRole: "projected-mark",
-    opacity: 0.3,
+    opacity: 0.65,
   };
 
   const analysis = createAnalysisProjectedMarkMaterial(source);
@@ -37,7 +37,7 @@ test("analysis projected marks preserve texture alpha without becoming an opaque
   assert.equal(analysis.polygonOffset, true);
   assert.equal(analysis.userData.siguadRole, "projected-mark");
 
-  assert.equal(source.opacity, 0.3, "the source/exterior material stays at 30 percent");
+  assert.equal(source.opacity, 0.65, "the source/exterior material stays at 65 percent");
   assert.equal(source.alphaTest, 0);
   assert.equal(source.depthWrite, true);
   assert.equal(source.polygonOffset, false);
