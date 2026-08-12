@@ -272,31 +272,32 @@ function patternCode(
   if (spacedArmorSurfaceInfo(component, profile).isSpacedArmor) {
     return SPACED_ARMOR_PATTERN_CODE;
   }
+  const isDamageableComponent = damageableComponentSurfaceInfo(
+    pack,
+    component,
+    profile,
+  );
   if (
     component.semanticKind === "gun-collision" &&
     !noPenetrationSurfaceInfo(component, profile).isNoPenetration
-  ) return 5;
+  ) return isDamageableComponent ? 9 : 5;
   // Interior semantics use distinct procedural materials in the shared
   // interior draw call: engine = diamond mechanical mesh, ammo = rack grid.
   if (component.semanticKind === "engine") return 6;
   if (component.semanticKind === "ammo-rack") return 7;
   if (componentOnlyDamageSurfaceInfo(pack, component, profile)) return 4;
+  if (isDamageableComponent) return 8;
   if (style.pattern === "diagonal-hatch") return 1;
   if (style.pattern === "cross-hatch") return 2;
   return 0;
 }
 
-export function componentOnlyDamageSurfaceInfo(
+export function damageableComponentSurfaceInfo(
   pack: Pick<ParsedHitSceneRuntime, "header">,
   component: HitSceneComponent,
   profile: HitSceneSurfaceProfile,
 ) {
-  // Spaced armor is an armor surface cue, even when it absorbs damage without
-  // forwarding it. Keep it on the existing cyan dashed outline instead.
   if (spacedArmorSurfaceInfo(component, profile).isSpacedArmor) return false;
-  // Gun-collision meshes (barrels, launchers, and similar hit geometry) use a
-  // dedicated high-white outline in patternCode above. They must never inherit
-  // the cyan attached-armor cue or its visibility toggle.
   if (noPenetrationSurfaceInfo(component, profile).isNoPenetration) return false;
   const directDamagePoolIndex = evidenceNonNegativeNumber(
     component.directDamagePoolIndex,
@@ -304,16 +305,36 @@ export function componentOnlyDamageSurfaceInfo(
   );
   if (directDamagePoolIndex === null) return false;
   const pool = pack.header.healthPools[directDamagePoolIndex];
-  if (!pool || pool.kind === "hull") return false;
-  if (pool.kind === "seat") {
-    const passDamage = evidenceBoolean(
+  return Boolean(pool && pool.kind !== "hull");
+}
+
+export function componentOnlyDamageSurfaceInfo(
+  pack: Pick<ParsedHitSceneRuntime, "header">,
+  component: HitSceneComponent,
+  profile: HitSceneSurfaceProfile,
+) {
+  if (!damageableComponentSurfaceInfo(pack, component, profile)) return false;
+  const directDamagePoolIndex = evidenceNonNegativeNumber(
+    component.directDamagePoolIndex,
+    `${component.componentId}.directDamagePoolIndex`,
+  );
+  if (directDamagePoolIndex === null) return false;
+  const pool = pack.header.healthPools[directDamagePoolIndex];
+  if (!pool) return false;
+  const passDamage = pool.passDamageToParent
+    ? evidenceBoolean(
       pool.passDamageToParent,
       `${pool.poolId}.passDamageToParent`,
-    );
-    const passPointDamage = evidenceBoolean(
+    )
+    : null;
+  const passPointDamage = pool.passPointDamageToParent
+    ? evidenceBoolean(
       pool.passPointDamageToParent,
       `${pool.poolId}.passPointDamageToParent`,
-    );
+    )
+    : null;
+  if (passDamage === true && passPointDamage === true) return false;
+  if (pool.kind === "seat") {
     return passDamage === false || passPointDamage === false;
   }
   return ["engine", "ammo-rack", "track", "wheel", "other"].includes(pool.kind);

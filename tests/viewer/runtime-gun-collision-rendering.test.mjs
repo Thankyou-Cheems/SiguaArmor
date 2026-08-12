@@ -68,6 +68,36 @@ function damageableComponentPack() {
   return pack;
 }
 
+function parentForwardingTurretPack() {
+  const pack = damageableComponentPack();
+  pack.header.components[0] = {
+    ...pack.header.components[0],
+    componentId: "component:turret-ring",
+    componentPath: "/Game/RuntimeProbe/Map:PersistentLevel.BP_Vehicle_C_0.TurretRing",
+    semanticKind: "armor",
+  };
+  pack.header.healthPools[0] = {
+    poolId: "health:turret-ring",
+    kind: "other",
+    passDamageToParent: observed(true),
+    passPointDamageToParent: observed(true),
+  };
+  return pack;
+}
+
+function damageableGunCollisionPack() {
+  const pack = gunCollisionPack();
+  pack.header.components[0] = {
+    ...pack.header.components[0],
+    directDamagePoolIndex: observed(0),
+  };
+  pack.header.healthPools = [{
+    poolId: "health:weapon-collision",
+    kind: "other",
+  }];
+  return pack;
+}
+
 function semanticInteriorPack(semanticKind) {
   const pack = damageableComponentPack();
   pack.header.components[0] = {
@@ -127,6 +157,14 @@ test("damageable components retain a separate solid marker code", () => {
   assert.ok(![...batches.interior.patternCodes].includes(5));
 });
 
+test("parent-forwarding and white collision components receive subtle damageable outlines", () => {
+  const turret = buildHitSceneRenderBatches(parentForwardingTurretPack());
+  const collision = buildHitSceneRenderBatches(damageableGunCollisionPack());
+
+  assert.deepEqual([...turret.armorOverlay.patternCodes], [8, 8, 8]);
+  assert.deepEqual([...collision.armorOverlay.patternCodes], [9, 9, 9]);
+});
+
 test("engine and ammo rack receive distinct procedural interior materials", () => {
   const engine = buildHitSceneRenderBatches(semanticInteriorPack("engine"));
   const ammoRack = buildHitSceneRenderBatches(semanticInteriorPack("ammo-rack"));
@@ -167,6 +205,10 @@ test("gun-collision is independent from the combined add-on and no-penetration t
   assert.doesNotMatch(rendererSource, /damageDot/u);
   assert.match(rendererSource, /vec3 collisionColor = vec3\(0\.97, 0\.985, 1\.0\)/u);
   assert.match(rendererSource, /vec3 damageColor = vec3\(0\.78, 1\.0, 0\.29\)/u);
+  assert.match(rendererSource, /bool isSubtleDamageableMaterial = vPatternCode > 7\.5/u);
+  assert.match(rendererSource, /bool isDamageableGunCollisionMaterial = vPatternCode > 8\.5/u);
+  assert.match(rendererSource, /alpha = max\(alpha, componentEdge \* 0\.34\);/u);
+  assert.match(rendererSource, /outlineCore \* 0\.54, componentHalo \* 0\.2/u);
   assert.match(rendererSource, /semanticPatternCueScale/u);
 });
 
@@ -213,7 +255,7 @@ test("viewer labels gun collision separately from attached armor", () => {
   assert.equal(gunCollisionLegendBlocks.length, 2);
   assert.ok(gunCollisionLegendBlocks.every((block) => !block.includes("repeating-linear-gradient")));
   const gunCollisionPathBlock = cssSource.match(
-    /\.viewer-layer-list li\[data-path-marker="gun-collision"\]\s*\{[^}]*\}/u,
+    /\.viewer-causal-spine__layer\[data-path-marker="gun-collision"\]\s*\{[^}]*\}/u,
   )?.[0];
   assert.ok(gunCollisionPathBlock);
   assert.match(gunCollisionPathBlock, /--hit-marker-gun-collision-fill/u);
@@ -235,7 +277,7 @@ test("engine returns to the damage-card orange and interior semantics use distin
   assert.match(cssSource, /--hit-marker-ammo-rack-material:/u);
   assert.match(
     cssSource,
-    /\.viewer-damage-list li\[data-damage-pool="engine"\]\s*\{[^}]*--path-accent:\s*#ff9c52;/u,
+    /\.viewer-shot-outcome-summary__targets > li\[data-damage-pool="engine"\]\s*\{[^}]*--outcome-accent:\s*#ff9c52;/u,
   );
   assert.match(rendererSource, /bool isEngineMaterial = vPatternCode > 5\.5/u);
   assert.match(rendererSource, /bool isAmmoRackMaterial = vPatternCode > 6\.5/u);
@@ -245,11 +287,11 @@ test("engine returns to the damage-card orange and interior semantics use distin
   assert.match(rendererSource, /surfacePatternUv\(vLocalPosition, vLocalNormal\) \* 10\.0/u);
   assert.match(
     cssSource,
-    /--viewer-path-marker-size:\s*26px;/u,
+    /\.viewer-causal-spine__marker,[\s\S]*?\.viewer-causal-spine__settlement > i\s*\{[\s\S]*?width:\s*20px;/u,
   );
   assert.match(
     cssSource,
-    /\.viewer-layer-list li::before[\s\S]*?width:\s*var\(--viewer-path-marker-size\);[\s\S]*?border-width:\s*3px;/u,
+    /\.viewer-causal-spine__marker,[\s\S]*?border:\s*2px var\(--spine-marker-border-style\) var\(--spine-accent\);/u,
   );
   assert.match(viewerSource, /context\.arc\(48, 48, 40, 0, Math\.PI \* 2\)/u);
   assert.match(viewerSource, /context\.shadowBlur = 20/u);

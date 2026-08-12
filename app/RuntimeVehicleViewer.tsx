@@ -1,7 +1,7 @@
 "use client";
 
-import { CircleAlert, HeartPulse, Layers3, MoveRight, Shield, Swords } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { CircleAlert } from "lucide-react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -43,7 +43,6 @@ import {
 import {
   editorNativeEffectiveDamageAmount,
   isEditorNativeComponentOnlyDamageEvent,
-  isEditorNativeComponentForwardedDamageEvent,
   isEditorNativeVehicleDamageEvent,
   maxEditorNativeWeaponDistanceM,
   resolveEditorNativeBallistics,
@@ -61,6 +60,7 @@ import {
 } from "../lib/radial-damage-visualization";
 import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
 import { editorDamageCardEffect } from "../lib/editor-damage-card-effects";
+import { summarizeEditorDamageSettlements } from "../lib/editor-damage-settlement";
 import {
   RUNTIME_GROUND_SCALE_LABEL_INTERVAL_M,
   RUNTIME_GROUND_SCALE_TICK_INTERVAL_M,
@@ -72,8 +72,6 @@ import {
 } from "../lib/weapon-penetration-kind";
 import { weaponNameZh } from "../lib/weapon-display-name";
 import {
-  VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS,
-  explosiveDamageTypeIconKinds,
   vehicleDamageTypeIconColor,
   vehicleDamageTypeIconColorNumber,
   vehicleDamageTypeIconKindForPath,
@@ -111,7 +109,6 @@ import {
   runtimeViewerPresentation,
 } from "../lib/runtime-visual-lazy-load";
 import { loadWikiDataset } from "../lib/wiki-source";
-import { WeaponPenetrationIcon } from "./WeaponPenetrationIcon";
 import type {
   RuntimeVehiclePreview,
   RuntimeVisualPlacement,
@@ -135,7 +132,6 @@ import {
 } from "./TurretLimitsDisplay";
 import {
   paintVehicleDamageTypeIconCanvas,
-  VehicleDamageTypeIcon,
 } from "./VehicleDamageTypeIcon";
 import {
   type RuntimeAttackSource,
@@ -613,60 +609,6 @@ function viewerPointerOutlineLabel(outline: RuntimePointerOutline) {
   } as Record<RuntimePointerOutline, string>)[outline];
 }
 
-function RemainingPenetrationIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" focusable="false" aria-hidden="true">
-      <path d="M2.25 10.75a6.1 6.1 0 0 1 11.5 0" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" />
-      <path d="M3.2 7.2 1.95 6.55M5.15 4.9l-.75-1.1M8 4.05V2.7m2.85 2.2.75-1.1m1.2 3.4 1.25-.65" stroke="currentColor" strokeLinecap="round" opacity="0.55" />
-      <path d="m8 9.75 3.05-3.1" stroke="currentColor" strokeWidth="1.45" strokeLinecap="round" />
-      <circle cx="8" cy="9.75" r="1.35" fill="currentColor" fillOpacity="0.24" stroke="currentColor" />
-      <path d="M3.15 12.85h9.7" stroke="currentColor" strokeLinecap="round" opacity="0.38" />
-    </svg>
-  );
-}
-
-function DamageAbsorptionIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" focusable="false" aria-hidden="true">
-      <path
-        d="M8 1.8 13.1 4v3.65c0 3.1-1.9 5.35-5.1 6.55-3.2-1.2-5.1-3.45-5.1-6.55V4L8 1.8Z"
-        fill="currentColor"
-        fillOpacity="0.1"
-        stroke="currentColor"
-        strokeLinejoin="round"
-      />
-      <path d="M4.65 6.25c1.05.25 1.75.8 2.1 1.75-.35.95-1.05 1.5-2.1 1.75M11.35 6.25C10.3 6.5 9.6 7.05 9.25 8c.35.95 1.05 1.5 2.1 1.75" stroke="currentColor" strokeLinecap="round" opacity="0.62" />
-      <circle cx="8" cy="8" r="1.55" fill="currentColor" fillOpacity="0.25" stroke="currentColor" />
-      <circle cx="8" cy="8" r="0.48" fill="currentColor" />
-    </svg>
-  );
-}
-
-function PathMetricLegend({
-  includeAbsorption = false,
-  penetrationKind,
-}: {
-  includeAbsorption?: boolean;
-  penetrationKind: WeaponPenetrationKind;
-}) {
-  return (
-    <div className="viewer-path-metric-legend" aria-label="穿透路径指标图例">
-      <span
-        data-metric="penetration"
-        data-penetration-kind={penetrationKind}
-      >
-        <WeaponPenetrationIcon kind={penetrationKind} size={15} />
-        {penetrationKind === "shaped-charge" ? "破甲" : "穿深"}
-      </span>
-      <span data-metric="thickness"><Layers3 size={14} aria-hidden="true" />厚度</span>
-      <span data-metric="remaining"><RemainingPenetrationIcon />剩余穿深</span>
-      {includeAbsorption ? (
-        <span data-metric="absorption"><DamageAbsorptionIcon />伤害吸收</span>
-      ) : null}
-    </div>
-  );
-}
-
 function normalizeWeaponQuery(value: string) {
   return value
     .normalize("NFKC")
@@ -782,40 +724,32 @@ function RuntimeWeaponEffectLegend({
   const radialEffects = effects.filter(
     ({ role }) => role === "radial-damage",
   );
-  const renderEffect = (effect: SearchableSelectEffect) => (
-    <span
-      className="infantry-weapon-effect-chip"
-      data-damage-type-kind={effect.damageTypeKind}
-      data-effect-role={effect.role}
-      data-event-index={effect.eventIndex}
-      data-zero={effect.value <= 0}
-      title={effect.title}
-      aria-label={effect.title}
-      key={effect.id}
-    >
-      {effect.role === "penetration" ? (
-        effect.penetrationKind === "shaped-charge" ? (
-          <WeaponPenetrationIcon
-            className="infantry-weapon-penetration-icon"
-            kind="shaped-charge"
-            size={29}
-          />
-        ) : (
-          <VehicleDamageTypeIcon
-            className="infantry-weapon-penetration-icon"
-            kind="kinetic"
-            size={26}
-          />
-        )
-      ) : effect.role === "radial-damage" ? (
-        <VehicleDamageTypeIcon
-          kind={effect.damageTypeKind}
-          size={18}
-        />
-      ) : null}
-      <b>{metricText(effect.value)}</b>
-    </span>
-  );
+  const renderEffect = (effect: SearchableSelectEffect) => {
+    const effectLabel = effect.role === "penetration"
+      ? effect.penetrationKind === "shaped-charge" ? "射流" : "动能"
+      : effect.role === "radial-damage"
+        ? vehicleDamageTypeIconShortLabel(effect.damageTypeKind)
+        : null;
+    return (
+      <span
+        className="infantry-weapon-effect-chip"
+        data-damage-type-kind={effect.damageTypeKind}
+        data-effect-role={effect.role}
+        data-event-index={effect.eventIndex}
+        data-zero={effect.value <= 0}
+        title={effect.title}
+        aria-label={effect.title}
+        key={effect.id}
+      >
+        {effectLabel ? (
+          <span className="infantry-weapon-effect-chip__label">
+            {effectLabel}
+          </span>
+        ) : null}
+        <b>{metricText(effect.value)}</b>
+      </span>
+    );
+  };
   return (
     <span
       className="infantry-weapon-effect-legend"
@@ -841,55 +775,6 @@ function RuntimeWeaponEffectLegend({
         {radialEffects.map(renderEffect)}
       </span>
     </span>
-  );
-}
-
-const RUNTIME_WEAPON_DAMAGE_LEGEND_KINDS = [
-  "kinetic",
-  "small-arms",
-  "fragmentation",
-  "heat",
-  "hat",
-  "explosives",
-  "thermite",
-  "generic",
-] as const satisfies readonly VehicleDamageTypeIconKind[];
-
-function RuntimeWeaponSelectorLegend() {
-  return (
-    <div
-      className="infantry-weapon-select__legend"
-      aria-label="武器与弹种伤害指标图例"
-    >
-      <span>武器 / 弹种</span>
-      <span className="infantry-weapon-effect-header">
-        <span>穿深（mm）</span>
-        <span>直击伤害</span>
-        <span>范围伤害</span>
-      </span>
-      <span className="infantry-weapon-select__damage-key">
-        <span className="infantry-weapon-select__damage-key-group">
-          <b>穿深</b>
-          <span title="动能穿深">
-            <VehicleDamageTypeIcon kind="kinetic" size={17} />
-            动能
-          </span>
-          <span title="破甲射流穿深">
-            <WeaponPenetrationIcon kind="shaped-charge" size={19} />
-            射流
-          </span>
-        </span>
-        <span className="infantry-weapon-select__damage-key-group">
-          <b>伤害类型</b>
-          {RUNTIME_WEAPON_DAMAGE_LEGEND_KINDS.map((kind) => (
-            <span title={vehicleDamageTypeIconLabel(kind)} key={kind}>
-              <VehicleDamageTypeIcon kind={kind} size={17} />
-              {vehicleDamageTypeIconShortLabel(kind)}
-            </span>
-          ))}
-        </span>
-      </span>
-    </div>
   );
 }
 
@@ -1278,8 +1163,18 @@ function RuntimeWeaponSelector({
                   </button>
                 ) : null}
               </div>
+              <div
+                className="infantry-weapon-select__columns"
+                aria-label="武器列表列标题"
+              >
+                <span>武器 / 弹种</span>
+                <span className="infantry-weapon-select__metric-headings">
+                  <span>穿深</span>
+                  <span>伤害</span>
+                  <span>爆炸</span>
+                </span>
+              </div>
               <div className="infantry-weapon-select__option-scroll">
-                <RuntimeWeaponSelectorLegend />
                 <div
                   className="viewer-search-select__options"
                   role="listbox"
@@ -2170,228 +2065,152 @@ function effectiveDamageEventsByKind(
   );
 }
 
-function shouldShowPenetrationDamageLane(
-  result: EditorNativeShotResult,
-  directFireRoute: boolean,
-) {
-  if (effectiveDamageEventsByKind(result, "point").length > 0) return true;
-  const hasDirectBallisticRoute =
-    directFireRoute && (
-      (result.ballistics.penetrationAtRangeMm ?? 0) > 0
-      || (result.ballistics.impactDamageAtRange ?? 0) > 0
-    );
-  return hasDirectBallisticRoute && result.stoppedAtLayer !== null;
-}
-
-function shouldShowExplosionDamageLane(result: EditorNativeShotResult) {
-  return result.radial.layers.length > 0;
-}
-
-function forwardedDamageMatchesParent(
-  parent: EditorNativeDamageEvent,
-  forwarded: EditorNativeDamageEvent,
-) {
-  const expectedParentRoute = forwarded.damageKind === "radial"
-    ? "radial-direct"
-    : "direct";
-  return parent.route === expectedParentRoute &&
-    parent.poolKind === "seat" &&
-    parent.damageKind === forwarded.damageKind &&
-    parent.sourceComponentIndex === forwarded.sourceComponentIndex &&
-    (forwarded.damageKind !== "radial" || (
-      parent.radialLayerId === forwarded.radialLayerId &&
-      parent.radialLayerIndex === forwarded.radialLayerIndex
-    ));
-}
-
-function forwardedDamageGroups(
+function groupDamageEventsByVisibleLayer(
+  layers: readonly EditorNativeShotResult["layers"][number][],
   events: readonly EditorNativeDamageEvent[],
 ) {
-  const forwardedByParentIndex = new Map<number, EditorNativeDamageEvent[]>();
-  const nestedIndexes = new Set<number>();
-  events.forEach((event, index) => {
-    if (!isEditorNativeComponentForwardedDamageEvent(event)) return;
-    for (let parentIndex = index - 1; parentIndex >= 0; parentIndex -= 1) {
-      if (!forwardedDamageMatchesParent(events[parentIndex], event)) continue;
-      const forwarded = forwardedByParentIndex.get(parentIndex) ?? [];
-      forwarded.push(event);
-      forwardedByParentIndex.set(parentIndex, forwarded);
-      nestedIndexes.add(index);
-      break;
-    }
+  const lastLayerIndexByComponent = new Map<number, number>();
+  layers.forEach((layer, index) => {
+    lastLayerIndexByComponent.set(layer.componentIndex, index);
   });
-  return { forwardedByParentIndex, nestedIndexes };
+  const byLayerIndex = new Map<number, EditorNativeDamageEvent[]>();
+  const unassigned: EditorNativeDamageEvent[] = [];
+  events.forEach((event) => {
+    const layerIndex = lastLayerIndexByComponent.get(event.sourceComponentIndex);
+    if (layerIndex === undefined) {
+      unassigned.push(event);
+      return;
+    }
+    const layerEvents = byLayerIndex.get(layerIndex) ?? [];
+    layerEvents.push(event);
+    byLayerIndex.set(layerIndex, layerEvents);
+  });
+  return { byLayerIndex, unassigned };
 }
 
-function DamageEventListItems({
+interface DamageOutcomeSummary {
+  key: string;
+  poolKind: string;
+  label: string;
+  effectiveDamage: number;
+  poolDamage: number;
+  maxHealth: number | null;
+  effect: ReturnType<typeof editorDamageCardEffect>;
+  damageKinds: Set<EditorNativeDamageEvent["damageKind"]>;
+}
+
+function summarizeDamageOutcomes(
+  events: readonly EditorNativeDamageEvent[],
+): DamageOutcomeSummary[] {
+  const summaries = new Map<string, DamageOutcomeSummary & { poolDamage: number }>();
+  events.forEach((event) => {
+    const key = `${event.poolIndex}:${event.poolId}`;
+    const existing = summaries.get(key);
+    if (existing) {
+      existing.effectiveDamage += editorNativeEffectiveDamageAmount(event);
+      existing.poolDamage += event.poolDamage;
+      existing.damageKinds.add(event.damageKind);
+      existing.effect = editorDamageCardEffect(
+        existing.poolKind,
+        existing.poolDamage,
+        existing.maxHealth,
+      );
+      return;
+    }
+    summaries.set(key, {
+      key,
+      poolKind: event.poolKind,
+      label: editorPoolLabel(event.poolKind),
+      effectiveDamage: editorNativeEffectiveDamageAmount(event),
+      poolDamage: event.poolDamage,
+      maxHealth: event.maxHealth,
+      effect: editorDamageCardEffect(event.poolKind, event.poolDamage, event.maxHealth),
+      damageKinds: new Set([event.damageKind]),
+    });
+  });
+  return [...summaries.values()]
+    .sort((left, right) => right.effectiveDamage - left.effectiveDamage);
+}
+
+function DamageSettlementListItems({
   events,
   animationKey,
   penetrationKind,
-  attached = false,
-  attachForwarded = false,
 }: {
   events: readonly EditorNativeDamageEvent[];
   animationKey: string;
   penetrationKind?: WeaponPenetrationKind;
-  attached?: boolean;
-  attachForwarded?: boolean;
 }) {
-  const { forwardedByParentIndex, nestedIndexes } = attachForwarded
-    ? forwardedDamageGroups(events)
-    : { forwardedByParentIndex: new Map<number, EditorNativeDamageEvent[]>(), nestedIndexes: new Set<number>() };
-  return events.map((damage, index) => {
-    if (nestedIndexes.has(index)) return null;
-    const effectiveDamage = editorNativeEffectiveDamageAmount(damage);
-    const effect = editorDamageCardEffect(
-      damage.poolKind,
-      damage.poolDamage,
-      damage.maxHealth,
-    );
-    const forwardedEvents = forwardedByParentIndex.get(index) ?? [];
-    const damageTypeIconKind =
-      damage.damageKind === "radial"
-        ? explosiveDamageTypeIconKinds(
-            true,
-            damage.damageTypePath ?? null,
-          )[0] ?? "generic"
-        : null;
-    const rowKey = `${animationKey}:${damage.poolIndex}:${damage.route}:${index}:${effect?.id ?? "damage"}`;
-    const card = (
-      <li
-        key={rowKey}
-        className={attached ? "viewer-attached-damage-list__item" : undefined}
-        data-penetrated="true"
-        data-no-damage="false"
-        data-damage-pool={damage.poolKind}
-        data-damage-kind={damage.damageKind}
-        data-damage-type-kind={damageTypeIconKind ?? undefined}
-        data-damage-effect={effect?.id}
-        data-damage-route={damage.route}
-        data-damage-attachment={attached
-          ? "component-forwarded"
-          : isEditorNativeComponentForwardedDamageEvent(damage)
-            ? "unmatched-forwarded"
-            : forwardedEvents.length > 0
-              ? "original-with-forwarding"
-              : "standalone"}
-        data-damage-source-component-index={damage.sourceComponentIndex}
-        data-damage-forwarded-count={forwardedEvents.length || undefined}
-        style={
-          damageTypeIconKind
-            ? {
-                "--explosion-type-color":
-                  vehicleDamageTypeIconColor(damageTypeIconKind),
-              } as CSSProperties
-            : undefined
-        }
-      >
-        <span className="viewer-damage-target">
-          {damage.damageKind === "radial" ? (
-            <span
-              className="viewer-damage-target__damage-type-icon"
-              title={vehicleDamageTypeIconLabel(damageTypeIconKind ?? "generic")}
-              aria-label={vehicleDamageTypeIconLabel(damageTypeIconKind ?? "generic")}
-            >
-              <VehicleDamageTypeIcon
-                kind={damageTypeIconKind ?? "generic"}
-                size={24}
-              />
-            </span>
-          ) : (
-            <span
-              className="viewer-damage-target__penetration-icon"
-              title={penetrationKind === "shaped-charge" ? "破甲弹" : "动能穿甲弹"}
-              aria-label={penetrationKind === "shaped-charge" ? "破甲弹" : "动能穿甲弹"}
-            >
-              <WeaponPenetrationIcon
-                kind={penetrationKind ?? "kinetic"}
-                size={24}
-              />
-            </span>
-          )}
-          {editorPoolLabel(damage.poolKind)}
-          {effect ? (
-            <em className="viewer-damage-outcome">{effect.label}</em>
-          ) : null}
-        </span>
-        <span
-          className="viewer-damage-equation"
-          aria-label={
-            damage.damageKind === "radial"
-              ? `爆炸伤害 ${metricText(damage.incomingDamage)} 乘伤害类型系数 ${damageModifierText(damage.damageTypeModifier)}，乘${damage.route === "radial-indirect" ? "间接" : "直接"}爆炸系数 ${damageModifierText(damage.routeMultiplier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`
-              : `直击伤害 ${metricText(damage.incomingDamage)} 乘伤害类型系数 ${damageModifierText(damage.damageTypeModifier)}，池伤害 ${metricText(damage.poolDamage)}，实际生效 ${metricText(effectiveDamage)}`
-          }
+  return summarizeEditorDamageSettlements(events).map((settlement) => {
+    const settlementColorKind = settlement.damageKind === "radial"
+      ? settlement.damageTypeKind ?? "generic"
+      : penetrationKind === "shaped-charge" ? "heat" : "kinetic";
+    const typeLabel = settlement.damageKind === "radial"
+      ? vehicleDamageTypeIconShortLabel(settlement.damageTypeKind ?? "generic")
+      : penetrationKind === "shaped-charge" ? "破甲" : "动能";
+    const routeMultiplier = settlement.damageKind === "radial"
+      ? ` × ${damageModifierText(settlement.routeMultiplier)}`
+      : "";
+    const hasForwardedDamage = settlement.targets.some((target) => target.forwarded);
+    if (hasForwardedDamage) {
+      return (
+        <div
+          key={`${animationKey}:${settlement.key}:forwarded`}
+          className="viewer-causal-spine__settlement viewer-causal-spine__settlement--forwarded"
+          data-damage-kind={settlement.damageKind}
+          data-damage-type-kind={settlementColorKind}
+          data-damage-forwarded="true"
+          style={{
+            "--spine-accent": vehicleDamageTypeIconColor(settlementColorKind),
+          } as CSSProperties}
         >
-          <span data-term="damage" title="伤害">
-            <Swords size={12} aria-hidden="true" />
-            {metricText(damage.incomingDamage)}
-          </span>
-          <i aria-hidden="true">×</i>
-          <span data-term="mitigation" title="伤害类型乘数">
-            <Shield size={12} aria-hidden="true" />
-            {damageModifierText(damage.damageTypeModifier)}
-          </span>
-          {damage.damageKind === "radial" ? (
-            <>
-              <i aria-hidden="true">×</i>
-              <span
-                data-term="radial-route"
-                title={damage.route === "radial-indirect" ? "间接爆炸乘数" : "直接爆炸乘数"}
-              >
-                {damageModifierText(damage.routeMultiplier)}
-              </span>
-            </>
-          ) : null}
-          <i aria-hidden="true">=</i>
-          <strong>{metricText(effectiveDamage)}</strong>
-          {damage.maxHealth === null ? null : (
-            <span
-              className="viewer-damage-health"
-              title="总血量"
-              aria-hidden="true"
-            >
-              <HeartPulse size={12} />
-              {metricText(damage.maxHealth)}
+          <i aria-hidden="true">→</i>
+          <section className="viewer-causal-spine__forwarding-calculation">
+            <strong>{settlement.damageKind === "radial" ? `${typeLabel}爆炸结算` : `${typeLabel}直击结算`}</strong>
+            <span>
+              {metricText(settlement.incomingDamage)} × {damageModifierText(settlement.damageTypeModifier)}
+              {routeMultiplier}
             </span>
-          )}
-        </span>
-        {effect ? (
-          <span className="viewer-damage-effect" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-        ) : null}
-      </li>
-    );
-    if (forwardedEvents.length === 0) return card;
-    return [
-      card,
-      <li
-        key={`${rowKey}:forwarded-row`}
-        className="viewer-damage-forwarded-row"
-        data-damage-attachment="component-forwarded"
-        data-damage-parent-component-index={damage.sourceComponentIndex}
-        data-damage-forwarded-count={forwardedEvents.length}
-      >
-        <div className="viewer-damage-forwarded">
-          <span className="viewer-damage-forwarded__arrow" aria-hidden="true">↳</span>
-          <div className="viewer-damage-forwarded__content">
-            <ul
-              className="viewer-damage-list viewer-attached-damage-list"
-              aria-label="挂接到原始组件伤害卡片下方的传导伤害"
-            >
-              <DamageEventListItems
-                events={forwardedEvents}
-                animationKey={`${animationKey}:forwarded:${index}`}
-                penetrationKind={penetrationKind}
-                attached
-              />
-            </ul>
-          </div>
+            <b>{metricText(settlement.effectiveDamage)}</b>
+          </section>
+          <section
+            className="viewer-causal-spine__forwarding-targets"
+            aria-label={settlement.targets.map((target) =>
+              `${editorPoolLabel(target.poolKind)}受到 ${metricText(target.effectiveDamage)} 伤害`
+            ).join("，随后")}
+          >
+            {settlement.targets.map((target, index) => (
+              <span key={`${target.poolId}:${target.forwarded ? "forwarded" : "direct"}`}>
+                {index > 0 ? <em aria-hidden="true">↓</em> : null}
+                <strong>{editorPoolLabel(target.poolKind)}</strong>
+                <b>−{metricText(target.effectiveDamage)}</b>
+              </span>
+            ))}
+          </section>
         </div>
-      </li>,
-    ];
+      );
+    }
+    return (
+      <div
+        key={`${animationKey}:${settlement.key}`}
+        className="viewer-causal-spine__settlement"
+        data-damage-kind={settlement.damageKind}
+        data-damage-type-kind={settlementColorKind}
+        data-damage-forwarded={hasForwardedDamage ? "true" : undefined}
+        style={{
+          "--spine-accent": vehicleDamageTypeIconColor(settlementColorKind),
+        } as CSSProperties}
+      >
+        <i aria-hidden="true">→</i>
+        <strong>{settlement.damageKind === "radial" ? `${typeLabel}爆炸结算` : `${typeLabel}直击结算`}</strong>
+        <span
+          aria-label={`${settlement.damageKind === "radial" ? "爆炸" : "直击"}伤害 ${metricText(settlement.incomingDamage)}，伤害类型系数 ${damageModifierText(settlement.damageTypeModifier)}${settlement.damageKind === "radial" ? `，爆炸系数 ${damageModifierText(settlement.routeMultiplier)}` : ""}，合计生效 ${metricText(settlement.effectiveDamage)}`}
+        >
+          {metricText(settlement.incomingDamage)} × {damageModifierText(settlement.damageTypeModifier)}
+          {routeMultiplier} <em aria-hidden="true">→</em> <b>{metricText(settlement.effectiveDamage)}</b>
+        </span>
+      </div>
+    );
   });
 }
 
@@ -7435,23 +7254,45 @@ export function RuntimeVehicleViewer({
   const explosionDamageEvents = shotResult
     ? effectiveDamageEventsByKind(shotResult, "radial")
     : [];
-  const showPenetrationDamageLane = shotResult
-    ? shouldShowPenetrationDamageLane(
-        shotResult,
-        selectedAttackWeapon?.directFireRoute ?? false,
-      )
-    : false;
-  const showExplosionDamageLane = shotResult
-    ? shouldShowExplosionDamageLane(shotResult)
-    : false;
-  const stoppedPenetrationLayer =
-    shotResult?.stoppedAtLayer === null || shotResult?.stoppedAtLayer === undefined
-      ? null
-      : shotResult.layers[shotResult.stoppedAtLayer] ?? null;
-  const stoppedPenetrationComponent = stoppedPenetrationLayer && hitHeader
-    ? hitHeader.components[stoppedPenetrationLayer.componentIndex] ?? null
-    : null;
+  const effectiveDamageEvents = [
+    ...penetrationDamageEvents,
+    ...explosionDamageEvents,
+  ];
+  const visibleShotLayers = shotResult?.layers.slice(0, MAX_VISIBLE_LAYERS) ?? [];
+  const damageEventsByLayer = groupDamageEventsByVisibleLayer(
+    visibleShotLayers,
+    effectiveDamageEvents,
+  );
+  const damageOutcomeSummaries = summarizeDamageOutcomes(effectiveDamageEvents);
+  const hullDamageOutcome = damageOutcomeSummaries.find(
+    (outcome) => outcome.poolKind === "hull",
+  ) ?? null;
+  const componentDamageOutcomes = damageOutcomeSummaries.filter(
+    (outcome) => outcome.poolKind !== "hull",
+  );
+  const hullRemainingHealth = hullDamageOutcome?.maxHealth === null
+    || hullDamageOutcome?.maxHealth === undefined
+    ? null
+    : Math.max(0, hullDamageOutcome.maxHealth - hullDamageOutcome.poolDamage);
+  const hullHealthPercent = hullRemainingHealth === null
+    || hullDamageOutcome?.maxHealth === null
+    || hullDamageOutcome?.maxHealth === undefined
+    || hullDamageOutcome.maxHealth <= 0
+    ? 0
+    : Math.max(0, Math.min(100, (hullRemainingHealth / hullDamageOutcome.maxHealth) * 100));
+  const totalEffectiveDamage = effectiveDamageEvents
+    .filter((event) => event.poolKind === "hull")
+    .reduce(
+      (total, event) => total + editorNativeEffectiveDamageAmount(event),
+      0,
+    );
   const damageAnimationKey = `${activeShotId}:${damageAnimationRevision}`;
+  const activeShotWeaponName = selectedAttackWeapon
+    ? weaponNameZh(
+        selectedAttackWeapon.selectorVariant?.label
+        ?? selectedAttackWeapon.displayNameZh,
+      )
+    : null;
 
   return (
     <div
@@ -7576,47 +7417,6 @@ export function RuntimeVehicleViewer({
           </div>
           <p>{exteriorUnavailableMessage}</p>
         </aside>
-      ) : null}
-
-      {(mode === "exterior" || mode === "armor") && activeTurretStation ? (
-        <TurretPreviewControls
-          stations={runtimeTurretStations}
-          orientationIndicators={turretOrientationIndicators}
-          activeStationId={activeTurretStation.id}
-          yawDegrees={clampedTurretYaw}
-          pitchDegrees={clampedTurretPitch}
-          onStationChange={(stationId) => {
-            setActiveTurretStationId(stationId);
-            commitTurretNavigation(stationId);
-          }}
-          onYawChange={(yawDegrees) => {
-            updateTurretStationPose(
-              activeTurretStation,
-              yawDegrees,
-              activeTurretPose.pitchDegrees,
-            );
-          }}
-          onPitchChange={(pitchDegrees) => {
-            updateTurretStationPose(
-              activeTurretStation,
-              activeTurretPose.yawDegrees,
-              pitchDegrees,
-            );
-          }}
-          onReset={() => {
-            const nextPoseStates = updateTurretStationPose(
-              activeTurretStation,
-              0,
-              0,
-            );
-            commitTurretNavigation(
-              activeTurretStation.id,
-              nextPoseStates,
-            );
-          }}
-          onInteractionEnd={() =>
-            commitTurretNavigation(activeTurretStation.id)}
-        />
       ) : null}
 
       {realtimePointer ? (
@@ -7972,7 +7772,17 @@ export function RuntimeVehicleViewer({
                 role="group"
                 aria-label="渲染模式"
                 data-mode-count={exteriorUnavailableMessage ? 2 : 3}
+                style={{
+                  "--viewer-mode-count": exteriorUnavailableMessage ? 2 : 3,
+                  "--viewer-mode-index": Math.max(
+                    0,
+                    VIEWER_MODES
+                      .filter(([value]) => !exteriorUnavailableMessage || value !== "exterior")
+                      .findIndex(([value]) => value === mode),
+                  ),
+                } as CSSProperties}
               >
+                <span className="viewer-mode-tabs__thumb" aria-hidden="true" />
                 {VIEWER_MODES
                   .filter(([value]) => !exteriorUnavailableMessage || value !== "exterior")
                   .map(([value, label]) => (
@@ -7989,6 +7799,46 @@ export function RuntimeVehicleViewer({
                 ))}
               </div>
             </div>
+            {(mode === "exterior" || mode === "armor") && activeTurretStation ? (
+              <TurretPreviewControls
+                stations={runtimeTurretStations}
+                orientationIndicators={turretOrientationIndicators}
+                activeStationId={activeTurretStation.id}
+                yawDegrees={clampedTurretYaw}
+                pitchDegrees={clampedTurretPitch}
+                onStationChange={(stationId) => {
+                  setActiveTurretStationId(stationId);
+                  commitTurretNavigation(stationId);
+                }}
+                onYawChange={(yawDegrees) => {
+                  updateTurretStationPose(
+                    activeTurretStation,
+                    yawDegrees,
+                    activeTurretPose.pitchDegrees,
+                  );
+                }}
+                onPitchChange={(pitchDegrees) => {
+                  updateTurretStationPose(
+                    activeTurretStation,
+                    activeTurretPose.yawDegrees,
+                    pitchDegrees,
+                  );
+                }}
+                onReset={() => {
+                  const nextPoseStates = updateTurretStationPose(
+                    activeTurretStation,
+                    0,
+                    0,
+                  );
+                  commitTurretNavigation(
+                    activeTurretStation.id,
+                    nextPoseStates,
+                  );
+                }}
+                onInteractionEnd={() =>
+                  commitTurretNavigation(activeTurretStation.id)}
+              />
+            ) : null}
             <div className="viewer-physical-pose-row">
               <button
                 className="viewer-protection-switch viewer-physical-pose-switch"
@@ -8098,17 +7948,6 @@ export function RuntimeVehicleViewer({
                 </button>
               </div>
             ) : null}
-            <div className="viewer-clear-traces-row">
-              <button
-                className="viewer-clear-traces"
-                type="button"
-                disabled={savedShots.length === 0}
-                aria-label={`清除已保留的 ${savedShots.length} 条命中射线`}
-                onClick={clearShotVisual}
-              >
-                清除射线 <span>{savedShots.length} / {MAX_SHOT_TRACES}</span>
-              </button>
-            </div>
             <div className="viewer-interaction-hint viewer-interaction-hint--protection" aria-label="3D 操作提示">
               <span>左键旋转</span><span>右键拖动</span><span>滚轮缩放</span>
             </div>
@@ -8150,7 +7989,7 @@ export function RuntimeVehicleViewer({
 
       {shotResult ? (
         <div className="viewer-shot-result" aria-live="polite">
-          <div className="viewer-shot-history" aria-label="已保存的穿透路径">
+          <div className="viewer-shot-history" aria-label="已保存的射线">
             <span>路径记录</span>
             <div role="group" aria-label="切换当前显示的命中射线">
               {savedShots.map((savedShot, index) => (
@@ -8167,38 +8006,135 @@ export function RuntimeVehicleViewer({
                 </button>
               ))}
             </div>
-            <em>{savedShots.length} / {MAX_SHOT_TRACES}</em>
+            <button
+              className="viewer-shot-history__clear"
+              type="button"
+              aria-label={`清除已保留的 ${savedShots.length} 条命中射线`}
+              onClick={clearShotVisual}
+            >
+              清除射线 <span>{savedShots.length} / {MAX_SHOT_TRACES}</span>
+            </button>
           </div>
           <div className="viewer-shot-heading">
-            <strong>{shotResult.stoppedAtLayer === null ? "穿透路径" : "路径停止"}</strong>
+            {activeShotWeaponName ? (
+              <strong className="viewer-shot-weapon-name" title={selectedAttackWeapon?.displayNameEnglish}>
+                {activeShotWeaponName}
+              </strong>
+            ) : null}
             <div className="viewer-shot-metrics" aria-label="弹道摘要">
               <span
                 data-penetration-kind={ballisticsPenetrationKind}
                 title={ballisticsPenetrationLabel}
                 aria-label={`${ballisticsPenetrationLabel} ${metricText(ballistics?.penetrationAtRangeMm ?? null)} 毫米`}
               >
-                <WeaponPenetrationIcon kind={ballisticsPenetrationKind} />
+                <b>{ballisticsPenetrationKind === "shaped-charge" ? "破甲" : "穿深"}</b>
                 {metricText(ballistics?.penetrationAtRangeMm ?? null)} mm
               </span>
               <span title="基础伤害" aria-label={`基础伤害 ${metricText(ballistics?.impactDamageAtRange ?? null)}`}>
-                <Swords size={12} aria-hidden="true" />{metricText(ballistics?.impactDamageAtRange ?? null)}
+                <b>伤害</b>{metricText(ballistics?.impactDamageAtRange ?? null)}
               </span>
               <span
                 data-metric="post-penetration-distance"
                 title="从首个有效命中点起算的最大后效距离"
                 aria-label={`最大后效距离 ${metricText(ballistics?.traceDistanceAfterPenetrationM ?? null)} 米`}
               >
-                <MoveRight size={13} aria-hidden="true" />
+                <b>后效</b>
                 {metricText(ballistics?.traceDistanceAfterPenetrationM ?? null)} m
               </span>
             </div>
           </div>
-          <PathMetricLegend
-            includeAbsorption
-            penetrationKind={ballisticsPenetrationKind}
-          />
-          <ol className="viewer-layer-list">
-            {shotResult.layers.slice(0, 8).map((layer, index) => {
+          {effectiveDamageEvents.length > 0 ? (
+            <section
+              className="viewer-shot-outcome-summary"
+              data-has-components={componentDamageOutcomes.length > 0 ? "true" : "false"}
+              aria-label="本次命中结果"
+            >
+              <div className="viewer-shot-outcome-summary__total">
+                <span className="viewer-shot-outcome-summary__total-value">
+                  <strong>{metricText(totalEffectiveDamage)}</strong>
+                  <sub>有效伤害</sub>
+                </span>
+                {hullDamageOutcome?.maxHealth === null
+                  || hullDamageOutcome?.maxHealth === undefined
+                  || hullRemainingHealth === null ? null : (
+                  <span
+                    className="viewer-shot-outcome-summary__hull-health"
+                    title="车体剩余血量 / 总血量"
+                    aria-label={`车体剩余血量 ${metricText(hullRemainingHealth)}，总血量 ${metricText(hullDamageOutcome.maxHealth)}`}
+                  >
+                    <i aria-hidden="true">
+                      <b style={{ width: `${hullHealthPercent}%` }} />
+                    </i>
+                    <strong>
+                      {metricText(hullRemainingHealth)} / {metricText(hullDamageOutcome.maxHealth)}
+                    </strong>
+                  </span>
+                )}
+              </div>
+              <ul className="viewer-shot-outcome-summary__targets">
+                {componentDamageOutcomes.slice(0, 4).map((outcome) => {
+                  const remainingHealth = outcome.maxHealth === null
+                    ? null
+                    : Math.max(0, outcome.maxHealth - outcome.poolDamage);
+                  const remainingRatio = remainingHealth === null
+                    || outcome.maxHealth === null
+                    || outcome.maxHealth <= 0
+                    ? 0
+                    : Math.max(0, Math.min(1, remainingHealth / outcome.maxHealth));
+                  return (
+                    <li
+                      key={`${damageAnimationKey}:outcome:${outcome.key}:${outcome.effect?.id ?? "damage"}`}
+                      data-damage-pool={outcome.poolKind}
+                      data-damage-kind={outcome.damageKinds.size > 1
+                        ? "mixed"
+                        : [...outcome.damageKinds][0]}
+                      data-damage-effect={outcome.effect?.id}
+                    >
+                      <span className="viewer-shot-outcome-summary__target-heading">
+                        <strong>{outcome.label}</strong>
+                        {outcome.damageKinds.size > 1 ? (
+                          <small>复合</small>
+                        ) : outcome.damageKinds.has("radial") ? (
+                          <small>爆炸</small>
+                        ) : null}
+                        {outcome.effect ? <em>{outcome.effect.label}</em> : null}
+                        <b title="本次实际生效伤害">−{metricText(outcome.effectiveDamage)}</b>
+                      </span>
+                      {remainingHealth === null || outcome.maxHealth === null ? null : (
+                        <span
+                          className="viewer-shot-outcome-summary__health-rail"
+                          title="组件剩余血量 / 总血量"
+                          aria-label={`组件剩余血量 ${metricText(remainingHealth)}，总血量 ${metricText(outcome.maxHealth)}`}
+                        >
+                          <i style={{ width: `${remainingRatio * 100}%` }} aria-hidden="true" />
+                          <b>{metricText(remainingHealth)} / {metricText(outcome.maxHealth)}</b>
+                        </span>
+                      )}
+                      {outcome.effect ? (
+                        <span className="viewer-damage-effect" aria-hidden="true">
+                          <i />
+                          <i />
+                          <i />
+                        </span>
+                      ) : null}
+                    </li>
+                  );
+                })}
+                {componentDamageOutcomes.length > 4 ? (
+                  <li className="viewer-shot-outcome-summary__more">
+                    另有 {componentDamageOutcomes.length - 4} 个组件
+                  </li>
+                ) : null}
+              </ul>
+            </section>
+          ) : null}
+          <div className="viewer-causal-spine__columns" aria-label="路径数值列">
+            <span>厚度 · mm</span>
+            <span>剩余 · mm</span>
+            <span>吸收</span>
+          </div>
+          <ol className="viewer-causal-spine">
+            {visibleShotLayers.map((layer, index) => {
               const component = hitHeader?.components[layer.componentIndex];
               const profile = hitHeader?.surfaceProfiles[layer.surfaceProfileIndex];
               const markerKind = editorPathMarkerKind(
@@ -8210,225 +8146,98 @@ export function RuntimeVehicleViewer({
               const isSpacedArmor = markerKind === "spaced-armor";
               const isNoPenetration = markerKind === "no-penetration";
               const physicalMaterial = observedValue(profile?.physicalMaterialPath);
+              const layerDamageEvents = damageEventsByLayer.byLayerIndex.get(index) ?? [];
               return (
                 <li
                   key={`${layer.triangleIndex}:${index}`}
-                  data-penetrated={layer.penetrated === true}
-                  data-spaced-armor={isSpacedArmor}
-                  data-no-penetration={isNoPenetration}
-                  data-path-marker={markerKind}
-                  data-component-index={layer.componentIndex}
-                  data-zero-thickness-behavior={layer.armorThicknessMm === 0
-                    ? isNoPenetration
-                      ? "explicitly-blocked"
-                      : layer.penetrated === true
-                        ? "penetrated"
-                        : layer.stopReason === "post-penetration trace distance is exhausted"
-                          ? "trace-exhausted"
-                          : "stopped"
-                    : undefined}
+                  className="viewer-causal-spine__step"
+                  data-has-next={index < visibleShotLayers.length - 1}
                 >
-                  <i className="viewer-layer-list__outline" aria-hidden="true" />
-                  <span title={physicalMaterial ? assetLabel(physicalMaterial) : undefined}>
-                    {isSpacedArmor ? "附加装甲" : isNoPenetration ? <>无敌区<br />阻穿体</> : semanticLabel(layer.semanticKind)}
-                  </span>
-                  <span className="viewer-layer-metrics">
+                  <div
+                    className="viewer-causal-spine__layer"
+                    data-penetrated={layer.penetrated === true}
+                    data-spaced-armor={isSpacedArmor}
+                    data-no-penetration={isNoPenetration}
+                    data-path-marker={markerKind}
+                    data-component-index={layer.componentIndex}
+                    data-zero-thickness-behavior={layer.armorThicknessMm === 0
+                      ? isNoPenetration
+                        ? "explicitly-blocked"
+                        : layer.penetrated === true
+                          ? "penetrated"
+                          : layer.stopReason === "post-penetration trace distance is exhausted"
+                            ? "trace-exhausted"
+                            : "stopped"
+                      : undefined}
+                  >
+                    <i className="viewer-causal-spine__outline" aria-hidden="true" />
+                    <b className="viewer-causal-spine__marker" aria-hidden="true">{index + 1}</b>
                     <span
-                      data-metric="thickness"
-                      title={layer.armorThicknessMm === 0
-                        ? isNoPenetration
-                          ? "该表面明确禁用穿透；0 mm 不会覆盖 NoPen 规则"
-                          : layer.penetrated === true
-                            ? "原生严格比较为可用穿深 > 0 mm，因此该层已穿透"
-                            : layer.stopReason ?? "0 mm 表面的穿透状态无法确认"
-                        : "装甲厚度"}
-                      aria-label={`装甲厚度 ${metricText(layer.armorThicknessMm)} 毫米`}
+                      className="viewer-causal-spine__label"
+                      title={physicalMaterial ? assetLabel(physicalMaterial) : undefined}
                     >
-                      <b className="viewer-layer-metric-label"><Layers3 size={14} aria-hidden="true" /></b>
-                      <span className="viewer-layer-metric-value">{layer.armorThicknessMm === null ? "不可穿透" : `${layer.armorThicknessMm.toFixed(1)} mm`}</span>
+                      {isSpacedArmor ? "附加装甲" : isNoPenetration ? <>无敌区<br />阻穿体</> : semanticLabel(layer.semanticKind)}
                     </span>
-                    <span
-                      data-metric="remaining"
-                      title={`剩余穿深；距首层 ${layer.distanceFromFirstHitM.toFixed(2)} m，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
-                      aria-label={`剩余穿深 ${layer.availablePenetrationMm.toFixed(1)} 毫米，距首层 ${layer.distanceFromFirstHitM.toFixed(2)} 米，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
-                    >
-                      <b className="viewer-layer-metric-label"><RemainingPenetrationIcon /></b>
-                      <span className="viewer-layer-metric-value">{layer.availablePenetrationMm.toFixed(1)} mm</span>
-                    </span>
-                    {layer.damageAbsorbedAfterHit !== null && layer.damageAbsorbedAfterHit > 0 ? (
-                      <span data-metric="absorption" title="吸收伤害" aria-label={`吸收伤害 ${layer.damageAbsorbedAfterHit.toFixed(0)}`}>
-                        <b className="viewer-layer-metric-label"><DamageAbsorptionIcon /></b>
-                        <span className="viewer-layer-metric-value">{layer.damageAbsorbedAfterHit.toFixed(0)}</span>
+                    <span className="viewer-causal-spine__metrics">
+                      <span
+                        data-metric="thickness"
+                        title={layer.armorThicknessMm === 0
+                          ? isNoPenetration
+                            ? "该表面明确禁用穿透；0 mm 不会覆盖 NoPen 规则"
+                            : layer.penetrated === true
+                              ? "原生严格比较为可用穿深 > 0 mm，因此该层已穿透"
+                              : layer.stopReason ?? "0 mm 表面的穿透状态无法确认"
+                          : "装甲厚度"}
+                        aria-label={`装甲厚度 ${metricText(layer.armorThicknessMm)} 毫米`}
+                      >
+                        {layer.armorThicknessMm === null ? "不可穿透" : layer.armorThicknessMm.toFixed(1)}
                       </span>
-                    ) : null}
-                  </span>
+                      <span
+                        data-metric="remaining"
+                        title={`剩余穿深；距首层 ${layer.distanceFromFirstHitM.toFixed(2)} m，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
+                        aria-label={`剩余穿深 ${layer.availablePenetrationMm.toFixed(1)} 毫米，距首层 ${layer.distanceFromFirstHitM.toFixed(2)} 米，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
+                      >
+                        {layer.availablePenetrationMm.toFixed(1)}
+                      </span>
+                      <span
+                        data-metric="absorption"
+                        title="吸收伤害"
+                        aria-label={layer.damageAbsorbedAfterHit !== null && layer.damageAbsorbedAfterHit > 0
+                          ? `吸收伤害 ${layer.damageAbsorbedAfterHit.toFixed(0)}`
+                          : "未吸收伤害"}
+                      >
+                        {layer.damageAbsorbedAfterHit !== null && layer.damageAbsorbedAfterHit > 0
+                          ? layer.damageAbsorbedAfterHit.toFixed(0)
+                          : "—"}
+                      </span>
+                    </span>
+                  </div>
+                  {layerDamageEvents.length > 0 ? (
+                      <DamageSettlementListItems
+                        events={layerDamageEvents}
+                        animationKey={`${damageAnimationKey}:layer:${index}`}
+                        penetrationKind={ballisticsPenetrationKind}
+                      />
+                  ) : null}
+                  {index < visibleShotLayers.length - 1 ? (
+                    <span className="viewer-causal-spine__connector" aria-hidden="true">
+                      <i />
+                    </span>
+                  ) : null}
                 </li>
               );
             })}
+            {damageEventsByLayer.unassigned.length > 0 ? (
+              <li className="viewer-causal-spine__step viewer-causal-spine__step--unassigned">
+                <DamageSettlementListItems
+                  events={damageEventsByLayer.unassigned}
+                  animationKey={`${damageAnimationKey}:unassigned`}
+                  penetrationKind={ballisticsPenetrationKind}
+                />
+              </li>
+            ) : null}
           </ol>
           {shotResult.layers.length > 8 ? <span className="viewer-more-layers">另有 {shotResult.layers.length - 8} 层</span> : null}
-          {showPenetrationDamageLane || showExplosionDamageLane ? (
-            <div
-              className="viewer-damage-section"
-              data-penetration-damage-lane={
-                showPenetrationDamageLane ? "visible" : "hidden"
-              }
-              data-explosion-damage-lane={
-                showExplosionDamageLane ? "visible" : "hidden"
-              }
-            >
-              <div className="viewer-damage-lanes">
-                {showPenetrationDamageLane ? (
-                  <section
-                    className="viewer-damage-lane viewer-damage-lane--penetration"
-                    data-damage-lane="penetration"
-                  >
-                    <header className="viewer-damage-lane__header">
-                      <span>
-                        <strong>穿透伤害</strong>
-                      </span>
-                      <span
-                        className="viewer-damage-lane__legend viewer-damage-lane__legend--penetration"
-                        data-term="penetration-types"
-                        aria-label="穿透方式图例"
-                      >
-                        <span
-                          className="viewer-damage-lane__legend-item"
-                          data-penetration-kind="kinetic"
-                          title="动能穿甲弹"
-                        >
-                          <WeaponPenetrationIcon kind="kinetic" size={14} />
-                          <small>动能穿甲</small>
-                        </span>
-                        <span
-                          className="viewer-damage-lane__legend-item"
-                          data-penetration-kind="shaped-charge"
-                          title="破甲弹"
-                        >
-                          <WeaponPenetrationIcon
-                            kind="shaped-charge"
-                            size={14}
-                          />
-                          <small>破甲弹</small>
-                        </span>
-                      </span>
-                    </header>
-                    <div className="viewer-damage-lane__body">
-                      <ol className="viewer-layer-list viewer-damage-list">
-                        {penetrationDamageEvents.length > 0 ? (
-                          <DamageEventListItems
-                            events={penetrationDamageEvents}
-                            animationKey={`${damageAnimationKey}:penetration`}
-                            penetrationKind={ballisticsPenetrationKind}
-                            attachForwarded
-                          />
-                        ) : (
-                          <li
-                            data-no-damage="true"
-                            data-no-pen="true"
-                            data-damage-kind="point"
-                          >
-                            <span className="viewer-damage-target">
-                              <span
-                                className="viewer-damage-target__penetration-icon"
-                                title={
-                                  ballisticsPenetrationKind === "shaped-charge"
-                                    ? "破甲弹"
-                                    : "动能穿甲弹"
-                                }
-                                aria-label={
-                                  ballisticsPenetrationKind === "shaped-charge"
-                                    ? "破甲弹"
-                                    : "动能穿甲弹"
-                                }
-                              >
-                                <WeaponPenetrationIcon
-                                  kind={ballisticsPenetrationKind}
-                                  size={24}
-                                />
-                              </span>
-                              {stoppedPenetrationComponent
-                                ? playerHitComponentLabel(
-                                    stoppedPenetrationComponent,
-                                  )
-                                : "命中表面"}
-                              <em className="viewer-damage-outcome">
-                                未击穿
-                              </em>
-                            </span>
-                            <span
-                              className="viewer-damage-equation"
-                              aria-label={
-                                stoppedPenetrationLayer?.stopReason
-                                  ? `未击穿，${stoppedPenetrationLayer.stopReason}`
-                                  : "未击穿，实际直击伤害为零"
-                              }
-                            >
-                              <span data-term="damage" title="实际直击伤害">
-                                <Swords size={12} aria-hidden="true" />0
-                              </span>
-                              <i aria-hidden="true">=</i>
-                              <strong>0</strong>
-                            </span>
-                          </li>
-                        )}
-                      </ol>
-                    </div>
-                  </section>
-                ) : null}
-
-                {showExplosionDamageLane ? (
-                  <section
-                    className="viewer-damage-lane viewer-damage-lane--explosion"
-                    data-damage-lane="explosion"
-                  >
-                    <header className="viewer-damage-lane__header">
-                      <span>
-                        <strong>爆炸伤害</strong>
-                      </span>
-                      <span
-                        className="viewer-damage-lane__legend"
-                        data-term="explosion-types"
-                        aria-label="爆炸伤害图例"
-                      >
-                        {VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS.map((kind) => (
-                          <span
-                            className="viewer-damage-lane__legend-item"
-                            data-damage-type-kind={kind}
-                            key={kind}
-                            title={vehicleDamageTypeIconLabel(kind)}
-                            style={{
-                              "--explosion-type-color":
-                                vehicleDamageTypeIconColor(kind),
-                            } as CSSProperties}
-                          >
-                            <VehicleDamageTypeIcon
-                              kind={kind}
-                              size={14}
-                            />
-                            <small>
-                              {vehicleDamageTypeIconShortLabel(kind)}
-                            </small>
-                          </span>
-                        ))}
-                      </span>
-                    </header>
-                    {explosionDamageEvents.length > 0 ? (
-                      <div className="viewer-damage-lane__body">
-                        <ol className="viewer-layer-list viewer-damage-list">
-                          <DamageEventListItems
-                            events={explosionDamageEvents}
-                            animationKey={`${damageAnimationKey}:explosion`}
-                            attachForwarded
-                          />
-                        </ol>
-                      </div>
-                    ) : null}
-                  </section>
-                ) : null}
-              </div>
-            </div>
-          ) : null}
         </div>
       ) : null}
     </div>

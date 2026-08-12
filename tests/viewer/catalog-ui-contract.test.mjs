@@ -1,0 +1,268 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+const [catalogSource, viewerSource, styles, damageTypeSource] = await Promise.all([
+  readFile(new URL("../../app/CatalogApp.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../../app/globals.css", import.meta.url), "utf8"),
+  readFile(new URL("../../lib/vehicle-damage-type-icons.ts", import.meta.url), "utf8"),
+]);
+
+test("vehicle cards show crew and passenger counts and reuse encyclopedia stat icons", () => {
+  assert.match(
+    catalogSource,
+    /passengerSeatCount\s*=\s*[\s\S]*?Math\.max\(0, totalSeatCount - crewSeatCount\)/u,
+  );
+  assert.match(catalogSource, /aria-label="组员\/乘员"/u);
+  assert.match(
+    catalogSource,
+    /<HeartPulse size=\{17\}[\s\S]*?<span>载具耐久<\/span>[\s\S]*?<Ticket size=\{17\}[\s\S]*?<span>票值<\/span>/u,
+  );
+});
+
+test("weapon selector has no legend row and keeps per-option text labels", () => {
+  const effectLegend = viewerSource.slice(
+    viewerSource.indexOf("function RuntimeWeaponEffectLegend"),
+    viewerSource.indexOf("function RuntimeWeaponSourceSelector"),
+  );
+  assert.match(effectLegend, /effectLabel/u);
+  assert.doesNotMatch(effectLegend, /<(?:VehicleDamageTypeIcon|WeaponPenetrationIcon)\b/u);
+  assert.doesNotMatch(viewerSource, /RuntimeWeaponSelectorLegend|infantry-weapon-select__legend/u);
+  assert.doesNotMatch(styles, /\.infantry-weapon-select__legend/u);
+  const effectLabelStyles = styles.slice(
+    styles.indexOf(".infantry-weapon-effect-chip__label"),
+    styles.indexOf(".infantry-weapon-effect-chip > b"),
+  );
+  assert.doesNotMatch(effectLabelStyles, /text-shadow|filter/u);
+  assert.match(effectLabelStyles, /justify-self:\s*start;/u);
+  assert.match(
+    styles,
+    /\.infantry-weapon-select__metrics\s*\{[\s\S]*?align-self:\s*stretch;/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-effect-legend\s*\{[\s\S]*?height:\s*100%;/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-effect-legend__column\s*\{[\s\S]*?align-self:\s*stretch;/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-select \.viewer-search-select__group > button\s*\{[\s\S]*?padding-block:\s*0;/u,
+  );
+  assert.match(
+    styles,
+    /button:nth-of-type\(even\):not\(:hover\):not\(:focus-visible\):not\(\[data-selected="true"\]\)\s*\{\s*background:\s*rgba\(225, 200, 155, 0\.022\);/u,
+  );
+});
+
+test("weapon selector menu and collapsed trigger share labeled columns", () => {
+  assert.match(
+    viewerSource,
+    /className="viewer-search-select__search"[\s\S]*?className="infantry-weapon-select__columns"[\s\S]*?<span>武器 \/ 弹种<\/span>[\s\S]*?<span>穿深<\/span>[\s\S]*?<span>伤害<\/span>[\s\S]*?<span>爆炸<\/span>/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-select\s*\{[\s\S]*?--weapon-selector-grid:/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-select\[data-source-filtered="true"\][\s\S]*?\.viewer-search-select__trigger\s*\{[\s\S]*?grid-template-columns:\s*var\(--weapon-selector-grid\);/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-select \.viewer-search-select__group > button\s*\{[\s\S]*?grid-template-columns:\s*var\(--weapon-selector-grid\);/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-select__columns\s*\{[\s\S]*?grid-template-columns:\s*var\(--weapon-selector-grid\);/u,
+  );
+  assert.match(
+    styles,
+    /\.infantry-weapon-select \.viewer-search-select__menu\s*\{[\s\S]*?width:\s*100%;[\s\S]*?max-width:\s*none;/u,
+  );
+});
+
+test("penetration and damage cards use inline text without standalone legend rows", () => {
+  assert.doesNotMatch(viewerSource, /PathMetricLegend|viewer-path-metric-legend/u);
+  assert.doesNotMatch(viewerSource, /viewer-damage-lane__legend/u);
+  assert.doesNotMatch(styles, /\.viewer-path-metric-legend|\.viewer-damage-lane__legend/u);
+  assert.match(
+    viewerSource,
+    /className="viewer-causal-spine__columns"[\s\S]*?<span>厚度 · mm<\/span>[\s\S]*?<span>剩余 · mm<\/span>[\s\S]*?<span>吸收<\/span>/u,
+  );
+  assert.doesNotMatch(viewerSource, /viewer-layer-metric-label/u);
+  const pathTimeline = viewerSource.slice(
+    viewerSource.indexOf('<ol className="viewer-causal-spine">'),
+    viewerSource.indexOf("{damageEventsByLayer.unassigned.length > 0"),
+  );
+  assert.doesNotMatch(pathTimeline, /toFixed\(1\)\} mm/u);
+  assert.doesNotMatch(viewerSource, /穿透路径|\bHP\b|viewer-damage-target__type-label/u);
+  assert.match(damageTypeSource, /heat:\s*"破甲"/u);
+  assert.match(damageTypeSource, /hat:\s*"重破甲"/u);
+  assert.doesNotMatch(damageTypeSource, /HEAT|HAT/u);
+});
+
+test("shot summary uses text labels instead of pictograms", () => {
+  const shotSummary = viewerSource.slice(
+    viewerSource.indexOf('<div className="viewer-shot-heading">'),
+    viewerSource.indexOf('<ol className="viewer-causal-spine">'),
+  );
+  assert.match(shotSummary, /<b>\{ballisticsPenetrationKind[\s\S]*?"破甲"\s*:\s*"穿深"\}<\/b>/u);
+  assert.match(shotSummary, /<b>伤害<\/b>/u);
+  assert.match(shotSummary, /<b>后效<\/b>/u);
+  assert.match(shotSummary, /className="viewer-shot-weapon-name"[\s\S]*?activeShotWeaponName/u);
+  assert.doesNotMatch(shotSummary, /<(?:WeaponPenetrationIcon|Swords|MoveRight)\b/u);
+  assert.match(styles, /\.viewer-shot-outcome-summary__hull-health > i > b\s*\{[\s\S]*?rgba\(255, 92, 82, 0\.92\)/u);
+});
+
+test("effective damage uses the selected B health-rail summary above the causal spine", () => {
+  assert.match(
+    viewerSource,
+    /const effectiveDamageEvents = \[[\s\S]*?\.\.\.penetrationDamageEvents,[\s\S]*?\.\.\.explosionDamageEvents/u,
+  );
+  assert.match(
+    viewerSource,
+    /groupDamageEventsByVisibleLayer\([\s\S]*?visibleShotLayers,[\s\S]*?effectiveDamageEvents/u,
+  );
+  assert.match(
+    viewerSource,
+    /effectiveDamageEvents\.length > 0[\s\S]*?viewer-shot-outcome-summary/u,
+  );
+  assert.match(
+    viewerSource,
+    /layerDamageEvents\.length > 0[\s\S]*?<DamageSettlementListItems/u,
+  );
+  assert.match(
+    viewerSource,
+    /outcome\.effect \? <em>\{outcome\.effect\.label\}<\/em> : null/u,
+  );
+  assert.doesNotMatch(
+    viewerSource,
+    /viewer-damage-lane--penetration|viewer-damage-lane--explosion|viewer-damage-target/u,
+  );
+  assert.match(viewerSource, /className="viewer-causal-spine__step"[\s\S]*?className="viewer-causal-spine__layer"/u);
+  assert.match(viewerSource, /className="viewer-causal-spine__settlement"/u);
+  assert.doesNotMatch(viewerSource, /viewer-layer-list|viewer-causal-settlements/u);
+  assert.match(styles, /\.viewer-causal-spine\s*\{[\s\S]*?padding:\s*0 0 0 25px;/u);
+  assert.match(styles, /\.viewer-causal-spine__settlement\s*\{[\s\S]*?margin-left:\s*28px;/u);
+  assert.match(styles, /\.viewer-causal-spine__settlement\[data-damage-kind="radial"\]/u);
+  assert.match(viewerSource, /className="viewer-causal-spine__settlement viewer-causal-spine__settlement--forwarded"/u);
+  assert.match(viewerSource, /className="viewer-causal-spine__forwarding-calculation"/u);
+  assert.match(viewerSource, /className="viewer-causal-spine__forwarding-targets"/u);
+  assert.match(viewerSource, /<em aria-hidden="true">↓<\/em>/u);
+  assert.match(styles, /\.viewer-causal-spine__settlement--forwarded\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\);/u);
+  assert.doesNotMatch(viewerSource, /伤害计算|伤害去向|DamageTransferPrototype|damageTransferVariant/u);
+  assert.doesNotMatch(styles, /damage-transfer-prototype/u);
+  assert.match(viewerSource, /index < visibleShotLayers\.length - 1[\s\S]*?viewer-causal-spine__connector/u);
+  assert.match(styles, /\.viewer-causal-spine__connector\s*\{[\s\S]*?top:\s*27px;[\s\S]*?bottom:\s*-10px;/u);
+  assert.match(styles, /\.viewer-causal-spine__connector > i::after\s*\{[\s\S]*?border-top:\s*7px solid #83d59c;/u);
+  assert.match(viewerSource, /"--spine-accent": vehicleDamageTypeIconColor\(settlementColorKind\)/u);
+  assert.match(viewerSource, /penetrationKind === "shaped-charge" \? "heat" : "kinetic"/u);
+  assert.match(viewerSource, /<strong>\{metricText\(totalEffectiveDamage\)\}<\/strong>[\s\S]*?<sub>有效伤害<\/sub>/u);
+  assert.match(
+    viewerSource,
+    /const totalEffectiveDamage = effectiveDamageEvents[\s\S]*?\.filter\(\(event\) => event\.poolKind === "hull"\)[\s\S]*?\.reduce/u,
+  );
+  assert.match(
+    viewerSource,
+    /const hullDamageOutcome = damageOutcomeSummaries\.find\([\s\S]*?outcome\.poolKind === "hull"/u,
+  );
+  assert.match(
+    viewerSource,
+    /const componentDamageOutcomes = damageOutcomeSummaries\.filter\([\s\S]*?outcome\.poolKind !== "hull"/u,
+  );
+  assert.match(viewerSource, /className="viewer-shot-outcome-summary__hull-health"/u);
+  assert.match(viewerSource, /<b style=\{\{ width: `\$\{hullHealthPercent\}%` \}\} \/>/u);
+  const damageOutcomeRows = viewerSource.slice(
+    viewerSource.indexOf("componentDamageOutcomes.slice(0, 4).map"),
+    viewerSource.indexOf("componentDamageOutcomes.length > 4"),
+  );
+  assert.doesNotMatch(damageOutcomeRows, />穿透</u);
+  assert.doesNotMatch(damageOutcomeRows, /outcome\.poolKind === "hull"/u);
+  assert.match(styles, /\.viewer-shot-outcome-summary__total-value > strong\s*\{[\s\S]*?font-size:\s*30px;/u);
+  assert.match(styles, /\.viewer-shot-outcome-summary__target-heading > b\s*\{[\s\S]*?font-size:\s*12px;/u);
+  assert.match(styles, /\.viewer-shot-outcome-summary__health-rail > b\s*\{[\s\S]*?font-size:\s*8px;/u);
+  assert.doesNotMatch(viewerSource, /DamageOutcomeCardPrototype|damageCardVariant/u);
+  assert.doesNotMatch(styles, /damage-card-prototype/u);
+});
+
+test("clear traces lives at the far right of the saved path row", () => {
+  const toolbar = viewerSource.slice(
+    viewerSource.indexOf('<div className="viewer-toolbar"'),
+    viewerSource.indexOf("{viewerState.kind !== \"loading\""),
+  );
+  const shotHistory = viewerSource.slice(
+    viewerSource.indexOf('<div className="viewer-shot-history"'),
+    viewerSource.indexOf('<div className="viewer-shot-heading"'),
+  );
+  assert.doesNotMatch(toolbar, /viewer-clear-traces/u);
+  assert.match(shotHistory, /viewer-shot-history__clear/u);
+  assert.match(
+    styles,
+    /\.viewer-shot-history__clear\s*\{[\s\S]*?margin-left:\s*auto;/u,
+  );
+});
+
+test("China dock scrolls with the page, search aligns right, and detail keeps wider gutters", () => {
+  assert.match(
+    styles,
+    /\.catalog-main\[data-detail-open="true"\]\s*\{[\s\S]*?width:\s*calc\(100% - 48px\);[\s\S]*?margin-inline:\s*auto;/u,
+  );
+  assert.match(
+    styles,
+    /\.site-shell\[data-site-edition="china"\][\s\S]*?\.faction-selector\[data-selected="true"\][\s\S]*?\.faction-dock\s*\{\s*position:\s*absolute;/u,
+  );
+  assert.match(
+    styles,
+    /\.site-shell\[data-site-edition="china"\] \.faction-dock__actions\s*\{[\s\S]*?justify-self:\s*end;/u,
+  );
+  assert.match(
+    styles,
+    /\.site-shell\[data-site-edition="international"\]\[data-detail-open="true"\][\s\S]*?\.faction-dock\s*\{\s*padding-inline:\s*8px;/u,
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.site-shell\[data-detail-open="true"\][\s\S]*?\.faction-dock\s*\{\s*padding-inline:\s*8px;/u,
+  );
+});
+
+test("left viewer controls share one rail and use slider-shaped state controls", () => {
+  const toolbar = viewerSource.slice(
+    viewerSource.indexOf('<div className="viewer-toolbar"'),
+    viewerSource.indexOf('{viewerState.kind !== "loading"'),
+  );
+  assert.match(
+    toolbar,
+    /className="viewer-mode-tabs"[\s\S]*?"--viewer-mode-count"[\s\S]*?"--viewer-mode-index"[\s\S]*?className="viewer-mode-tabs__thumb"/u,
+  );
+  assert.equal((toolbar.match(/<TurretPreviewControls\b/gu) ?? []).length, 1);
+  assert.ok(
+    toolbar.indexOf('<TurretPreviewControls') > toolbar.indexOf('className="viewer-mode-tabs"'),
+    "turret posture control should live in the left viewer control stack",
+  );
+  assert.match(
+    styles,
+    /\.viewer-protection-controls\s*\{[\s\S]*?--viewer-control-width:\s*266px;[\s\S]*?width:\s*var\(--viewer-control-width\);[\s\S]*?justify-items:\s*stretch;/u,
+  );
+  assert.match(styles, /\.viewer-protection-primary\s*\{[\s\S]*?width:\s*100%;/u);
+  assert.match(styles, /\.viewer-protection-precision\s*\{[\s\S]*?width:\s*100%;/u);
+  assert.match(
+    styles,
+    /\.viewer-mode-tabs__thumb\s*\{[\s\S]*?transform:\s*translateX\(calc\(var\(--viewer-mode-index\) \* 100%\)\);/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-protection-switch__track\s*\{[\s\S]*?border-radius:\s*0;/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-protection-switch__track > span\s*\{[\s\S]*?border-radius:\s*0;/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-toolbar \.viewer-protection-controls > \.turret-preview-controls\s*\{[\s\S]*?position:\s*relative;[\s\S]*?width:\s*100%;/u,
+  );
+});

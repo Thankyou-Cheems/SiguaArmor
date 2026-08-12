@@ -35,10 +35,11 @@ test("damage cards distinguish degraded and destroyed component states", () => {
   assert.equal(editorDamageCardEffect("hull", 2000, 1000), null);
 });
 
-test("damage cards remount for replay and retain a reduced-motion impact", async () => {
-  const [source, styles] = await Promise.all([
+test("component effects stay centralized while causal settlements remount for replay", async () => {
+  const [source, styles, settlementSource] = await Promise.all([
     readFile(path.join(root, "app", "RuntimeVehicleViewer.tsx"), "utf8"),
     readFile(path.join(root, "app", "globals.css"), "utf8"),
+    readFile(path.join(root, "lib", "editor-damage-settlement.ts"), "utf8"),
   ]);
 
   assert.match(
@@ -51,18 +52,39 @@ test("damage cards remount for replay and retain a reduced-motion impact", async
   );
   assert.match(
     source,
-    /animationKey=\{`\$\{damageAnimationKey\}:penetration`\}/u,
+    /animationKey=\{`\$\{damageAnimationKey\}:layer:\$\{index\}`\}/u,
+  );
+  assert.match(
+    settlementSource,
+    /function summarizeEditorDamageSettlements\([\s\S]*?effectiveDamage:\s*target\.effectiveDamage/u,
+  );
+  assert.match(
+    source,
+    /outcome\.effect \? <em>\{outcome\.effect\.label\}<\/em> : null/u,
+  );
+  assert.match(source, /data-damage-effect=\{outcome\.effect\?\.id\}/u);
+  assert.match(
+    source,
+    /const remainingHealth = outcome\.maxHealth === null[\s\S]*?Math\.max\(0, outcome\.maxHealth - outcome\.poolDamage\)[\s\S]*?组件剩余血量/u,
+  );
+  assert.match(source, /车体剩余血量[\s\S]*?hullRemainingHealth[\s\S]*?总血量/u);
+  assert.match(
+    source,
+    /className="viewer-damage-effect"[\s\S]*?<i \/>[\s\S]*?<i \/>[\s\S]*?<i \/>/u,
   );
   assert.match(
     styles,
-    /\.viewer-damage-list li\[data-damage-effect="stabilization-lost"\][\s\S]*?animation:\s*viewer-stabilizer-drift/u,
+    /\.viewer-causal-spine__settlement\[data-damage-kind="radial"\]\s*\{[^}]*--spine-accent:\s*var\(--explosion-type-color, #f4a261\);/u,
   );
   assert.match(
     styles,
-    /\.viewer-damage-list li\[data-damage-effect="turret-locked"\][^}]*animation:\s*viewer-turret-lock-impact/u,
+    /\.viewer-shot-outcome-summary__targets > li\[data-damage-effect\][\s\S]*?animation:\s*viewer-damage-card-impact/u,
   );
-  assert.match(
-    styles,
-    /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.viewer-damage-list li\[data-damage-effect\]\s*\{[^}]*animation:\s*viewer-damage-card-reduced-impact/u,
-  );
+  assert.match(styles, /@keyframes viewer-damage-sweep/u);
+  assert.match(styles, /@keyframes viewer-track-shear/u);
+  assert.match(styles, /@keyframes viewer-wheel-wobble/u);
+  assert.match(styles, /@keyframes viewer-engine-breathe/u);
+  assert.match(styles, /@keyframes viewer-stabilizer-drift/u);
+  assert.match(styles, /@keyframes viewer-turret-lock-frame/u);
+  assert.doesNotMatch(source, /viewer-damage-target|viewer-damage-outcome/u);
 });
