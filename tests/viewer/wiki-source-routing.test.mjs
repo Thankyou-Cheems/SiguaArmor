@@ -14,6 +14,7 @@ import {
   loadWikiVehicleCatalog,
   loadWikiVehicleCommunityAliases,
   loadWikiVehicleFactionMechanics,
+  loadWikiVehicleFactionPresentation,
   loadWikiVehiclePresentation,
   loadWikiVehicleRuntimeSource,
 } from "../../lib/wiki-source.ts";
@@ -95,7 +96,7 @@ test("analysis mode keeps the alpha-bearing texture for projected vehicle marks"
   );
 });
 
-test("catalog startup uses the small presentation path while runtime data keeps its cache key", async () => {
+test("catalog data uses direct presentation slices while runtime data keeps its cache key", async () => {
   const originalFetch = globalThis.fetch;
   const requestedUrls = [];
   globalThis.fetch = async (url) => {
@@ -119,6 +120,17 @@ test("catalog startup uses the small presentation path while runtime data keeps 
               components: [],
             },
             runtime: { visualArtifacts: [] },
+          }
+      : pathname.startsWith("/data/vehicles/faction-presentation/")
+        ? {
+            schemaVersion: "sigua-vehicle-faction-presentation/v1",
+            factionId: "adf",
+            presentation: {
+              editions: {
+                international: { records: [] },
+                china: { records: [] },
+              },
+            },
           }
       : pathname.startsWith("/data/factions/")
         ? {
@@ -158,6 +170,7 @@ test("catalog startup uses the small presentation path while runtime data keeps 
       loadWikiVehiclePresentation(),
       loadWikiVehicleCatalog(),
       loadWikiVehicleFactionMechanics("adf"),
+      loadWikiVehicleFactionPresentation("adf"),
       loadWikiFactionCatalog(),
       loadWikiVehicleCommunityAliases(),
     ]);
@@ -169,6 +182,7 @@ test("catalog startup uses the small presentation path while runtime data keeps 
     "https://wiki.siguad.icu/data/vehicles/presentation.json",
     "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v3",
     "https://wiki.siguad.icu/data/vehicles/factions/adf.json",
+    "https://wiki.siguad.icu/data/vehicles/faction-presentation/adf.json",
     "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v3",
     "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v3",
   ]);

@@ -6552,6 +6552,10 @@ export function RuntimeVehicleViewer({
       });
     };
     startReferenceSoldierAsset = () => {
+      if (renderQuality.tier === "compatibility") {
+        host.dataset.referenceSoldierState = "proxy-compatibility";
+        return;
+      }
       if (referenceSoldierLoadScheduled) return;
       referenceSoldierLoadScheduled = true;
       host.dataset.referenceSoldierState = "scheduled";

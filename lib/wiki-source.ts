@@ -175,6 +175,34 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
   return value;
 }
 
+export async function loadWikiVehicleFactionPresentation(factionId: string) {
+  if (!/^[a-z0-9-]+$/u.test(factionId)) {
+    throw new Error(`Invalid vehicle presentation faction id: ${factionId}`);
+  }
+  const pathname = `/data/vehicles/faction-presentation/${factionId}.json`;
+  const value = await loadWikiDataset(
+    pathname,
+    "sigua-vehicle-faction-presentation/v1",
+  );
+  const document = value as {
+    factionId?: string;
+    presentation?: {
+      editions?: {
+        international?: { records?: unknown[] };
+        china?: { records?: unknown[] };
+      };
+    };
+  };
+  if (
+    document.factionId !== factionId ||
+    !Array.isArray(document.presentation?.editions?.international?.records) ||
+    !Array.isArray(document.presentation?.editions?.china?.records)
+  ) {
+    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+  }
+  return value;
+}
+
 export async function loadWikiVehicleCatalog() {
   const value = await loadWikiDataset(
     `/data/vehicles/catalog.json${WIKI_PRESENTATION_QUERY}`,

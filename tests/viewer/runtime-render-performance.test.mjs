@@ -129,6 +129,10 @@ test("viewer camera fit uses an immediate scale proxy and defers the detailed so
   assert.doesNotMatch(viewerSource, /await loadWikiDataset\(/u);
   assert.doesNotMatch(viewerSource, /infantryPostureRuntime/u);
   assert.doesNotMatch(viewerSource, /if \(!referenceSoldierSettled\)/u);
+  assert.match(
+    viewerSource,
+    /if \(renderQuality\.tier === "compatibility"\) \{\s*host\.dataset\.referenceSoldierState = "proxy-compatibility";\s*return;/u,
+  );
 });
 
 test("orbit redraws rely on Three.js dirty matrices instead of forcing the whole scene", () => {

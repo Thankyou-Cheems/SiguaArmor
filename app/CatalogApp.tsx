@@ -76,7 +76,11 @@ import {
   mergeWikiVehicleFactionMechanics,
   wikiVehicleFactionIdsForGroup,
 } from "./wiki-vehicle-catalog";
-import { loadPublicCatalog } from "./catalog-bootstrap";
+import {
+  loadInitialPublicCatalog,
+  loadPublicCatalog,
+  loadPublicCatalogGroup,
+} from "./catalog-bootstrap";
 import {
   normalizeVehicleSearch,
   rankVehicleSearch,
@@ -196,6 +200,31 @@ interface CatalogCardGroup {
 
 interface VisibleCatalogCardGroup extends CatalogCardGroup {
   displayCard: CatalogCardEntry;
+}
+
+function catalogRecordFromSearchRecord(record: CatalogSearchRecord): CatalogRecord {
+  return {
+    promoEntryId: record.promoEntryId,
+    promotionOrder: record.promotionOrder,
+    searchTerms: record.searchTerms,
+    searchAliases: record.searchAliases,
+    official: record.official,
+    mapping: { selectedRawName: record.selectedRawName },
+    data: null,
+    variants: record.variants.map((variant) => ({
+      sourceRawName: variant.sourceRawName,
+      catalogBindingRef: variant.catalogBindingRef,
+      vehicleRef: variant.vehicleRef,
+      runtimeVehicleRef: variant.runtimeVehicleRef,
+      visualArtifactRef: variant.visualArtifactRef,
+      alias: variant.alias,
+      searchTerms: variant.searchTerms,
+      searchAliases: variant.searchAliases,
+      presentation: variant.presentation,
+      thumbnail: null,
+      data: null,
+    })),
+  };
 }
 
 function viewerNavigationForVehicle(cardId: string): ViewerNavigationState {
@@ -2387,7 +2416,9 @@ function DetailPanel({
 }) {
   if (!card) return null;
   const { data, record } = card;
-  const hasViewer = data !== null;
+  const hasViewer = data !== null || Boolean(
+    card.variant?.runtimeVehicleRef || card.variant?.visualArtifactRef,
+  );
   const displayName = vehicleDisplayName(record, card.variant, card.alias);
   const viewerTextureVariants = textureVariants.flatMap((entry, index) => {
     const rawName = entry.data?.general.rawName
@@ -3206,7 +3237,7 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
 
   useEffect(() => {
     let cancelled = false;
-    loadPublicCatalog(siteEdition)
+    loadInitialPublicCatalog(siteEdition, window.location.href)
       .then((nextCatalogIndex) => {
         if (cancelled) return;
         setLoadedCatalog({ siteEdition, index: nextCatalogIndex });
@@ -3224,6 +3255,65 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
     };
   }, [siteEdition]);
 
+  const requestCatalogGroup = useCallback(async (groupId: string) => {
+    const current = loadedCatalog?.siteEdition === siteEdition
+      ? loadedCatalog.index
+      : null;
+    if (current?.records.some((record) => record.official.groupId === groupId)) {
+      return current;
+    }
+    try {
+      const next = await loadPublicCatalogGroup(siteEdition, groupId);
+      setLoadedCatalog({ siteEdition, index: next });
+      setLoadFailure(null);
+      return next;
+    } catch (reason: unknown) {
+      setLoadFailure({
+        siteEdition,
+        message: reason instanceof Error ? reason.message : String(reason),
+      });
+      throw reason;
+    }
+  }, [loadedCatalog, siteEdition]);
+
+  const requestFullCatalog = useCallback(async () => {
+    const current = loadedCatalog?.siteEdition === siteEdition
+      ? loadedCatalog.index
+      : null;
+    const expectedCount = current?.groups.reduce(
+      (total, group) => total + group.recordCount,
+      0,
+    );
+    if (current && current.records.length === expectedCount) return current;
+    try {
+      const next = await loadPublicCatalog(siteEdition);
+      setLoadedCatalog({ siteEdition, index: next });
+      setLoadFailure(null);
+      return next;
+    } catch (reason: unknown) {
+      setLoadFailure({
+        siteEdition,
+        message: reason instanceof Error ? reason.message : String(reason),
+      });
+      throw reason;
+    }
+  }, [loadedCatalog, siteEdition]);
+
+  const requestCatalogLocation = useCallback(async (href: string) => {
+    try {
+      const next = await loadInitialPublicCatalog(siteEdition, href);
+      setLoadedCatalog({ siteEdition, index: next });
+      setLoadFailure(null);
+      return next;
+    } catch (reason: unknown) {
+      setLoadFailure({
+        siteEdition,
+        message: reason instanceof Error ? reason.message : String(reason),
+      });
+      throw reason;
+    }
+  }, [siteEdition]);
+
   if (loadError) {
     return (
       <main className="catalog-data-state" role="alert">
@@ -3236,15 +3326,29 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
   if (!catalogIndex) {
     return null;
   }
-  return <CatalogAppReady catalogIndex={catalogIndex} siteEdition={siteEdition} />;
+  return (
+    <CatalogAppReady
+      catalogIndex={catalogIndex}
+      siteEdition={siteEdition}
+      onRequestGroup={requestCatalogGroup}
+      onRequestFullCatalog={requestFullCatalog}
+      onRequestLocation={requestCatalogLocation}
+    />
+  );
 }
 
 function CatalogAppReady({
   catalogIndex,
   siteEdition,
+  onRequestGroup,
+  onRequestFullCatalog,
+  onRequestLocation,
 }: {
   catalogIndex: PublicCatalogIndex;
   siteEdition: SiteEdition;
+  onRequestGroup: (groupId: string) => Promise<PublicCatalogIndex>;
+  onRequestFullCatalog: () => Promise<PublicCatalogIndex>;
+  onRequestLocation: (href: string) => Promise<PublicCatalogIndex>;
 }) {
   const editionProfile = siteEditionProfile(siteEdition);
   const editionBasePath =
@@ -3376,9 +3480,23 @@ function CatalogAppReady({
     [catalogIndex.groups],
   );
   const activeCatalog = groupId === ALL_GROUPS ? null : catalogsByGroup[groupId] ?? null;
+  const visibleCatalog = useMemo<PublicFactionCatalog | null>(() => {
+    if (activeCatalog) return activeCatalog;
+    if (groupId === ALL_GROUPS) return null;
+    const group = catalogIndex.groups.find((candidate) => candidate.id === groupId);
+    if (!group) return null;
+    return {
+      schemaVersion: "1.0.0",
+      catalogId: catalogIndex.catalogId,
+      group,
+      records: catalogIndex.records
+        .filter((record) => record.official.groupId === groupId)
+        .map(catalogRecordFromSearchRecord),
+    };
+  }, [activeCatalog, catalogIndex, groupId]);
   const cardGroups = useMemo(
-    () => (activeCatalog?.records ?? []).flatMap(catalogCardGroups),
-    [activeCatalog],
+    () => (visibleCatalog?.records ?? []).flatMap(catalogCardGroups),
+    [visibleCatalog],
   );
   const cardEntries = useMemo(
     () => cardGroups.flatMap((group) => group.entries),
@@ -3396,11 +3514,8 @@ function CatalogAppReady({
     [groups, siteEdition],
   );
   useEffect(() => {
-    if (siteEdition !== "international") return;
-    const preloadGroups =
-      groupId === ALL_GROUPS
-        ? visualGroups
-        : visualGroups.filter((group) => group.id === groupId);
+    if (siteEdition !== "international" || groupId === ALL_GROUPS) return;
+    const preloadGroups = visualGroups.filter((group) => group.id === groupId);
     for (const group of preloadGroups) {
       const background = factionVisualAsset(group, siteEdition).catalogBackground;
       void preloadFactionImage(background).catch(() => undefined);
@@ -3507,6 +3622,12 @@ function CatalogAppReady({
   const globalSearchResults = useMemo(() => {
     return searchCatalogIndexRecords(catalogIndex.records, globalQuery);
   }, [catalogIndex.records, globalQuery]);
+
+  const changeGlobalQuery = useCallback((nextQuery: string) => {
+    setGlobalQuery(nextQuery);
+    if (!nextQuery.trim()) return;
+    void onRequestFullCatalog().catch(() => undefined);
+  }, [onRequestFullCatalog]);
 
   useEffect(() => {
     setCatalogsByGroup({});
@@ -3622,21 +3743,23 @@ function CatalogAppReady({
 
   useEffect(() => {
     const applyLocation = () => {
-      const next = parseCatalogLocation(window.location.href, catalogIndex, {
-        basePath: editionBasePath,
-      });
-      setGroupId(next.groupId);
-      setQuery(next.query);
-      setSelectedId(next.selectedId);
-      setViewerNavigation(next.viewer as ViewerNavigationState);
-      setEncyclopediaOpen(false);
-      setHelpOpen(false);
+      void onRequestLocation(window.location.href).then((nextCatalogIndex) => {
+        const next = parseCatalogLocation(window.location.href, nextCatalogIndex, {
+          basePath: editionBasePath,
+        });
+        setGroupId(next.groupId);
+        setQuery(next.query);
+        setSelectedId(next.selectedId);
+        setViewerNavigation(next.viewer as ViewerNavigationState);
+        setEncyclopediaOpen(false);
+        setHelpOpen(false);
+      }).catch(() => undefined);
     };
     window.addEventListener("popstate", applyLocation);
     return () => {
       window.removeEventListener("popstate", applyLocation);
     };
-  }, [catalogIndex, editionBasePath]);
+  }, [editionBasePath, onRequestLocation]);
 
   const visibleCardGroups = useMemo<VisibleCatalogCardGroup[]>(() => {
     const normalizedQuery = normalizeVehicleSearch(query);
@@ -3829,7 +3952,14 @@ function CatalogAppReady({
     window.requestAnimationFrame(() => previous?.focus());
   };
 
-  const selectFaction = (nextGroupId: string) => {
+  const selectFaction = async (nextGroupId: string) => {
+    if (!catalogIndex.records.some((record) => record.official.groupId === nextGroupId)) {
+      try {
+        await onRequestGroup(nextGroupId);
+      } catch {
+        return;
+      }
+    }
     setActiveCharacterId(null);
     setActiveFactionDustId(null);
     const update = () => {
@@ -4042,7 +4172,7 @@ function CatalogAppReady({
                 variant="hero"
                 query={globalQuery}
                 results={globalSearchResults}
-                onQueryChange={setGlobalQuery}
+                onQueryChange={changeGlobalQuery}
                 onSelect={selectGlobalSearchResult}
               />
             </header>
@@ -4154,7 +4284,7 @@ function CatalogAppReady({
                   variant="dock"
                   query={globalQuery}
                   results={globalSearchResults}
-                  onQueryChange={setGlobalQuery}
+                  onQueryChange={changeGlobalQuery}
                   onSelect={selectGlobalSearchResult}
                 />
               </div>
@@ -4162,23 +4292,25 @@ function CatalogAppReady({
           </>
         ) : (
           <>
-        <div className="faction-selector__stage">
-          <FactionBackground
-            src={
-              previewFaction
-                ? factionVisualAsset(previewFaction, siteEdition).catalogBackground
-                : "/images/site/faction-impression.jpg"
-            }
-          />
-          <div className="faction-selector__shade" aria-hidden="true" />
-          <FactionCharacterWheel
-            groups={visualGroups}
-            activeGroupId={previewFactionId}
-            siteEdition={siteEdition}
-            onPreviewChange={setActiveCharacterId}
-            onSelect={selectFaction}
-          />
-        </div>
+        {!hasGroupSelection ? (
+          <div className="faction-selector__stage">
+            <FactionBackground
+              src={
+                previewFaction
+                  ? factionVisualAsset(previewFaction, siteEdition).catalogBackground
+                  : "/images/site/faction-impression.jpg"
+              }
+            />
+            <div className="faction-selector__shade" aria-hidden="true" />
+            <FactionCharacterWheel
+              groups={visualGroups}
+              activeGroupId={previewFactionId}
+              siteEdition={siteEdition}
+              onPreviewChange={setActiveCharacterId}
+              onSelect={selectFaction}
+            />
+          </div>
+        ) : null}
 
         <header className="faction-selector__brand">
           <div className="faction-selector__brand-copy">
@@ -4254,7 +4386,7 @@ function CatalogAppReady({
             variant="hero"
             query={globalQuery}
             results={globalSearchResults}
-            onQueryChange={setGlobalQuery}
+            onQueryChange={changeGlobalQuery}
             onSelect={selectGlobalSearchResult}
           />
         </header>
@@ -4422,7 +4554,7 @@ function CatalogAppReady({
               variant="dock"
               query={globalQuery}
               results={globalSearchResults}
-              onQueryChange={setGlobalQuery}
+              onQueryChange={changeGlobalQuery}
               onSelect={selectGlobalSearchResult}
             />
           </div>
@@ -4454,7 +4586,7 @@ function CatalogAppReady({
 
             <div className="catalog-workspace" data-detail-open={selectedCard !== null}>
               <div className="catalog-results">
-                {!activeCatalog && !activeCatalogError ? (
+                {!activeCatalog && !activeCatalogError && visibleCardGroups.length === 0 ? (
                   <div className="no-results" role="status" aria-live="polite">
                     <Clock3 size={28} aria-hidden="true" />
                     <h3>正在加载当前阵营资料</h3>

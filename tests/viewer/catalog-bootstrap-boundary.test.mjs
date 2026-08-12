@@ -22,6 +22,10 @@ const runtimeSuspensionSource = readFileSync(
   new URL("../../app/runtime-planar-suspension-pose.ts", import.meta.url),
   "utf8",
 );
+const catalogBootstrapSource = readFileSync(
+  new URL("../../app/catalog-bootstrap.ts", import.meta.url),
+  "utf8",
+);
 
 test("catalog bootstrap does not statically load the full weapon catalog", () => {
   assert.doesNotMatch(
@@ -98,4 +102,19 @@ test("active catalog groups resolve faction mechanics without the full vehicle c
   assert.match(catalogAppSource, /loadWikiVehicleFactionMechanics/u);
   assert.match(catalogAppSource, /wikiVehicleFactionIdsForGroup/u);
   assert.doesNotMatch(catalogAppSource, /loadWikiVehicleCatalog/u);
+});
+
+test("deep links use one faction presentation slice and reserve the full presentation for global search", () => {
+  const initialLoader = catalogBootstrapSource.slice(
+    catalogBootstrapSource.indexOf("export async function loadInitialPublicCatalog"),
+    catalogBootstrapSource.indexOf("export async function loadPublicCatalog("),
+  );
+  const fullLoader = catalogBootstrapSource.slice(
+    catalogBootstrapSource.indexOf("export async function loadPublicCatalog("),
+  );
+
+  assert.match(initialLoader, /loadCatalogBootstrapRoutes/u);
+  assert.match(initialLoader, /loadPublicCatalogGroup/u);
+  assert.doesNotMatch(initialLoader, /loadWikiVehiclePresentation/u);
+  assert.match(fullLoader, /loadWikiVehiclePresentation/u);
 });

@@ -29,15 +29,6 @@ export default function RootLayout({
       lang="zh-CN"
       style={VEHICLE_MODEL_CATEGORY_CSS_VARIABLES as CSSProperties}
     >
-      <head>
-        <link
-          rel="preload"
-          href="/fonts/sigua-unbounded-site-4542d8a1ac6ce837.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
       <body>
         <DailyActiveProvider>{children}</DailyActiveProvider>
       </body>
