@@ -59,6 +59,10 @@ import {
   RADIAL_DAMAGE_VISUAL_TIMING_MS,
 } from "../lib/radial-damage-visualization";
 import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
+import {
+  isRuntimeForcedRicochetLayer,
+  runtimeShotPathLayerPresentation,
+} from "../lib/runtime-shot-path-presentation";
 import { editorDamageCardEffect } from "../lib/editor-damage-card-effects";
 import { summarizeEditorDamageSettlements } from "../lib/editor-damage-settlement";
 import {
@@ -2164,7 +2168,6 @@ function DamageSettlementListItems({
             "--spine-accent": vehicleDamageTypeIconColor(settlementColorKind),
           } as CSSProperties}
         >
-          <i aria-hidden="true">→</i>
           <section className="viewer-causal-spine__forwarding-calculation">
             <strong>{settlement.damageKind === "radial" ? `${typeLabel}爆炸结算` : `${typeLabel}直击结算`}</strong>
             <span>
@@ -2201,7 +2204,6 @@ function DamageSettlementListItems({
           "--spine-accent": vehicleDamageTypeIconColor(settlementColorKind),
         } as CSSProperties}
       >
-        <i aria-hidden="true">→</i>
         <strong>{settlement.damageKind === "radial" ? `${typeLabel}爆炸结算` : `${typeLabel}直击结算`}</strong>
         <span
           aria-label={`${settlement.damageKind === "radial" ? "爆炸" : "直击"}伤害 ${metricText(settlement.incomingDamage)}，伤害类型系数 ${damageModifierText(settlement.damageTypeModifier)}${settlement.damageKind === "radial" ? `，爆炸系数 ${damageModifierText(settlement.routeMultiplier)}` : ""}，合计生效 ${metricText(settlement.effectiveDamage)}`}
@@ -6498,6 +6500,9 @@ export function RuntimeVehicleViewer({
           includeRadial: true,
         });
         const firstLayer = result.layers[0];
+        const stoppedLayer = result.stoppedAtLayer === null
+          ? null
+          : result.layers[result.stoppedAtLayer] ?? null;
         const vehicleDamage = result.damage.filter(isEditorNativeVehicleDamageEvent);
         const componentOnlyDamage = result.damage.filter(isEditorNativeComponentOnlyDamageEvent);
         const fill = vehicleDamage.some((damage) => damage.poolKind === "ammo-rack")
@@ -6512,7 +6517,7 @@ export function RuntimeVehicleViewer({
             : componentOnlyDamage.length > 0
               ? "component-damage-no-vehicle"
               : result.stoppedAtLayer !== null
-                ? (firstLayer?.incidenceFactor ?? 1) < 0.28
+                ? stoppedLayer && isRuntimeForcedRicochetLayer(stoppedLayer)
                   ? "blocked-effective"
                   : "blocked-absolute"
                 : result.layers.length > 0
@@ -7990,21 +7995,40 @@ export function RuntimeVehicleViewer({
       {shotResult ? (
         <div className="viewer-shot-result" aria-live="polite">
           <div className="viewer-shot-history" aria-label="已保存的射线">
-            <span>路径记录</span>
-            <div role="group" aria-label="切换当前显示的命中射线">
-              {savedShots.map((savedShot, index) => (
-                <button
-                  key={savedShot.shotId}
-                  type="button"
-                  data-active={savedShot.shotId === activeShotId}
-                  aria-pressed={savedShot.shotId === activeShotId}
-                  aria-label={`查看第 ${index + 1} 根命中射线，结算距离 ${savedShot.distanceM} 米`}
-                  title={`射线 ${index + 1} · ${savedShot.distanceM} m`}
-                  onClick={() => selectSavedShot(savedShot.shotId)}
-                >
-                  <i aria-hidden="true" />{index + 1}
-                </button>
-              ))}
+            <div
+              className="viewer-mode-tabs viewer-shot-history__tabs"
+              role="group"
+              aria-label="三条命中记录"
+              style={{
+                "--viewer-mode-count": MAX_SHOT_TRACES,
+                "--viewer-mode-index": Math.max(
+                  0,
+                  savedShots.findIndex((savedShot) => savedShot.shotId === activeShotId),
+                ),
+              } as CSSProperties}
+            >
+              <span className="viewer-mode-tabs__thumb" aria-hidden="true" />
+              {Array.from({ length: MAX_SHOT_TRACES }, (_, index) => {
+                const savedShot = savedShots[index];
+                const active = savedShot?.shotId === activeShotId;
+                return (
+                  <button
+                    key={`shot-slot-${index + 1}`}
+                    type="button"
+                    data-active={active}
+                    data-filled={savedShot ? "true" : "false"}
+                    aria-pressed={active}
+                    aria-label={savedShot
+                      ? `查看命中记录 ${index + 1}，结算距离 ${savedShot.distanceM} 米`
+                      : `命中记录 ${index + 1} 尚未创建`}
+                    title={savedShot ? `命中记录 ${index + 1} · ${savedShot.distanceM} m` : undefined}
+                    disabled={!savedShot}
+                    onClick={() => savedShot && selectSavedShot(savedShot.shotId)}
+                  >
+                    <span>记录</span><b>{index + 1}</b>
+                  </button>
+                );
+              })}
             </div>
             <button
               className="viewer-shot-history__clear"
@@ -8012,7 +8036,7 @@ export function RuntimeVehicleViewer({
               aria-label={`清除已保留的 ${savedShots.length} 条命中射线`}
               onClick={clearShotVisual}
             >
-              清除射线 <span>{savedShots.length} / {MAX_SHOT_TRACES}</span>
+              清空{savedShots.length}
             </button>
           </div>
           <div className="viewer-shot-heading">
@@ -8131,7 +8155,7 @@ export function RuntimeVehicleViewer({
           <div className="viewer-causal-spine__columns" aria-label="路径数值列">
             <span>厚度 · mm</span>
             <span>剩余 · mm</span>
-            <span>吸收</span>
+            <span>结果</span>
           </div>
           <ol className="viewer-causal-spine">
             {visibleShotLayers.map((layer, index) => {
@@ -8147,6 +8171,7 @@ export function RuntimeVehicleViewer({
               const isNoPenetration = markerKind === "no-penetration";
               const physicalMaterial = observedValue(profile?.physicalMaterialPath);
               const layerDamageEvents = damageEventsByLayer.byLayerIndex.get(index) ?? [];
+              const pathPresentation = runtimeShotPathLayerPresentation(layer);
               return (
                 <li
                   key={`${layer.triangleIndex}:${index}`}
@@ -8194,21 +8219,30 @@ export function RuntimeVehicleViewer({
                       </span>
                       <span
                         data-metric="remaining"
-                        title={`剩余穿深；距首层 ${layer.distanceFromFirstHitM.toFixed(2)} m，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
-                        aria-label={`剩余穿深 ${layer.availablePenetrationMm.toFixed(1)} 毫米，距首层 ${layer.distanceFromFirstHitM.toFixed(2)} 米，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
+                        title={pathPresentation.remainingPenetrationMm === null
+                          ? "射线已在该层终止，没有后续剩余穿深"
+                          : `剩余穿深；距首层 ${layer.distanceFromFirstHitM.toFixed(2)} m，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
+                        aria-label={pathPresentation.remainingPenetrationMm === null
+                          ? "没有后续剩余穿深"
+                          : `剩余穿深 ${pathPresentation.remainingPenetrationMm.toFixed(1)} 毫米，距首层 ${layer.distanceFromFirstHitM.toFixed(2)} 米，后效距离系数 ${(layer.postPenetrationTraceFactor * 100).toFixed(1)}%`}
                       >
-                        {layer.availablePenetrationMm.toFixed(1)}
+                        {pathPresentation.remainingPenetrationMm === null
+                          ? "—"
+                          : pathPresentation.remainingPenetrationMm.toFixed(1)}
                       </span>
                       <span
-                        data-metric="absorption"
-                        title="吸收伤害"
-                        aria-label={layer.damageAbsorbedAfterHit !== null && layer.damageAbsorbedAfterHit > 0
-                          ? `吸收伤害 ${layer.damageAbsorbedAfterHit.toFixed(0)}`
-                          : "未吸收伤害"}
+                        data-metric="result"
+                        data-terminal={pathPresentation.terminalLabel ? "true" : "false"}
+                        title={pathPresentation.terminalLabel ?? "本层伤害吸收"}
+                        aria-label={pathPresentation.terminalLabel
+                          ?? (pathPresentation.absorbedDamage !== null && pathPresentation.absorbedDamage > 0
+                            ? `吸收伤害 ${pathPresentation.absorbedDamage.toFixed(0)}`
+                            : "未吸收伤害")}
                       >
-                        {layer.damageAbsorbedAfterHit !== null && layer.damageAbsorbedAfterHit > 0
-                          ? layer.damageAbsorbedAfterHit.toFixed(0)
-                          : "—"}
+                        {pathPresentation.terminalLabel
+                          ?? (pathPresentation.absorbedDamage !== null && pathPresentation.absorbedDamage > 0
+                            ? `吸收 ${pathPresentation.absorbedDamage.toFixed(0)}`
+                            : "—")}
                       </span>
                     </span>
                   </div>
