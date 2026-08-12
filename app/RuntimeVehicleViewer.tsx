@@ -6417,7 +6417,6 @@ export function RuntimeVehicleViewer({
       }
       host.dataset.viewerInitialFitState = "ready";
       setInitialCameraFitReady(true);
-      startReferenceSoldierAsset?.();
       if (modeRef.current === "exterior" && analysisVisualReady) {
         startExteriorAssets?.();
       }
@@ -7219,6 +7218,7 @@ export function RuntimeVehicleViewer({
         if (modeRef.current !== "exterior") {
           setViewerState({ kind: "ready", loaded: urls.length, total: urls.length });
         }
+        startReferenceSoldierAsset?.();
       })
       .catch((error: unknown) => {
         if (cancelled) return;
