@@ -22,6 +22,7 @@ import {
   type AnalysisVisualSurfaceEvidence,
 } from "../lib/analysis-visual-surface-policy";
 import { dedupeIdenticalVisualPlacements } from "../lib/runtime-visual-occurrence-dedupe";
+import { createAnalysisProjectedMarkMaterial } from "../lib/runtime-projected-mark-material";
 import { resolveRuntimeRunningGearHitComponentPoses } from "../lib/runtime-running-gear-hit-pose";
 import {
   createRuntimeSkeletalPoseController,
@@ -6870,12 +6871,13 @@ export function RuntimeVehicleViewer({
             object.userData.siguadProjectedMark = true;
             object.userData.analysisVisualStableSurface = true;
             object.renderOrder = ANALYSIS_VISUAL_STABLE_SURFACE_RENDER_ORDER + 1;
-            sourceMaterials.forEach((material) => {
-              material.depthWrite = false;
-              material.polygonOffset = true;
-              material.polygonOffsetFactor = -2;
-              material.polygonOffsetUnits = -2;
-            });
+            object.material = Array.isArray(object.material)
+              ? sourceMaterials.map((material) =>
+                  isSiguaDProjectedMark(material)
+                    ? createAnalysisProjectedMarkMaterial(material)
+                    : createAnalysisVisualMaterial(true)
+                )
+              : createAnalysisProjectedMarkMaterial(sourceMaterials[0]);
             occurrenceMeshes.push(object);
             return;
           }
