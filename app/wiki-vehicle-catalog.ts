@@ -33,8 +33,10 @@ interface WikiCatalogBinding {
   weaponBindingIds: string[];
 }
 
-interface WikiVehicleCatalog {
-  schemaVersion: "sigua-vehicle-catalog/v3.1";
+interface WikiVehicleMechanics {
+  schemaVersion:
+    | "sigua-vehicle-catalog/v3.1"
+    | "sigua-vehicle-faction-mechanics/v1";
   identities: {
     vehicles: WikiVehicleIdentity[];
     catalogBindings: WikiCatalogBinding[];
@@ -54,16 +56,25 @@ interface WikiVehicleCatalog {
   runtime: {
     visualArtifacts: WikiVisualArtifact[];
   };
-  presentation: {
-    editions: Record<"international" | "china", {
-      records: WikiPresentationRecord[];
-    }>;
-  };
   extensions?: {
     supportAir?: {
       bindings?: WikiSupportAirBinding[];
     };
   };
+}
+
+interface WikiVehicleCatalog extends WikiVehicleMechanics {
+  schemaVersion: "sigua-vehicle-catalog/v3.1";
+  presentation: {
+    editions: Record<"international" | "china", {
+      records: WikiPresentationRecord[];
+    }>;
+  };
+}
+
+interface WikiVehicleFactionMechanics extends WikiVehicleMechanics {
+  schemaVersion: "sigua-vehicle-faction-mechanics/v1";
+  factionId: string;
 }
 
 interface WikiVehiclePresentationCatalog {
@@ -143,6 +154,142 @@ function indexById<T extends { id: string }>(records: readonly T[]) {
 function required<T>(value: T | undefined, label: string): T {
   if (value === undefined) throw new Error(`SiguaWiki 缺少 ${label}`);
   return value;
+}
+
+function validateVehicleMechanics(value: unknown): WikiVehicleMechanics {
+  const document = value as WikiVehicleMechanics;
+  if (
+    (
+      document?.schemaVersion !== "sigua-vehicle-catalog/v3.1" &&
+      document?.schemaVersion !== "sigua-vehicle-faction-mechanics/v1"
+    ) ||
+    !Array.isArray(document.identities?.vehicles) ||
+    !Array.isArray(document.identities?.catalogBindings) ||
+    !Array.isArray(document.profiles?.general) ||
+    !Array.isArray(document.profiles?.seats) ||
+    !Array.isArray(document.profiles?.damageResistances) ||
+    !Array.isArray(document.profiles?.components) ||
+    !Array.isArray(document.runtime?.visualArtifacts)
+  ) {
+    throw new Error("SiguaWiki 载具机械数据格式不受支持");
+  }
+  return document;
+}
+
+function mergeVehicleMechanicsRecords<T>(
+  documents: readonly WikiVehicleMechanics[],
+  select: (document: WikiVehicleMechanics) => readonly T[],
+  keyOf: (record: T) => string,
+  label: string,
+) {
+  const records = new Map<string, { record: T; encoded: string }>();
+  for (const document of documents) {
+    for (const record of select(document)) {
+      const key = keyOf(record);
+      const encoded = JSON.stringify(record);
+      const existing = records.get(key);
+      if (existing && existing.encoded !== encoded) {
+        throw new Error(`SiguaWiki ${label} ${key} 在阵营切片间不一致`);
+      }
+      if (!existing) records.set(key, { record, encoded });
+    }
+  }
+  return [...records.values()].map(({ record }) => record);
+}
+
+export function mergeWikiVehicleFactionMechanics(
+  values: readonly unknown[],
+): WikiVehicleFactionMechanics {
+  if (values.length === 0) {
+    throw new Error("当前目录没有可加载的 SiguaWiki 阵营机械数据");
+  }
+  const documents = values.map(validateVehicleMechanics);
+  const factionIds = documents.map((document) =>
+    document.schemaVersion === "sigua-vehicle-faction-mechanics/v1"
+      ? (document as WikiVehicleFactionMechanics).factionId
+      : "catalog"
+  );
+  return {
+    schemaVersion: "sigua-vehicle-faction-mechanics/v1",
+    factionId: factionIds.join("+"),
+    identities: {
+      vehicles: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.identities.vehicles,
+        (record) => record.id,
+        "载具身份",
+      ),
+      catalogBindings: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.identities.catalogBindings,
+        (record) => record.id,
+        "目录绑定",
+      ),
+    },
+    profiles: {
+      general: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.profiles.general,
+        (record) => record.id,
+        "通用资料",
+      ),
+      seats: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.profiles.seats,
+        (record) => record.id,
+        "乘员席",
+      ),
+      damageResistances: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.profiles.damageResistances,
+        (record) => record.id,
+        "伤害抗性",
+      ),
+      components: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.profiles.components,
+        (record) => record.id,
+        "组件资料",
+      ),
+    },
+    runtime: {
+      visualArtifacts: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.runtime.visualArtifacts,
+        (record) => record.id,
+        "视觉资源",
+      ),
+    },
+    extensions: {
+      supportAir: {
+        bindings: mergeVehicleMechanicsRecords(
+          documents,
+          (document) => document.extensions?.supportAir?.bindings ?? [],
+          (record) => record.bindingKey,
+          "共享空中单位",
+        ),
+      },
+    },
+  };
+}
+
+export function wikiVehicleFactionIdsForGroup(
+  expectedIndex: PublicCatalogIndex,
+  groupId: string,
+) {
+  const factionIds = new Set<string>();
+  for (const record of expectedIndex.records) {
+    if (record.official.groupId !== groupId) continue;
+    const factionId = record.promoEntryId.split("--", 1)[0];
+    if (!factionId || !/^[a-z0-9-]+$/u.test(factionId)) {
+      throw new Error(`载具 ${record.promoEntryId} 无法解析 Wiki 阵营`);
+    }
+    factionIds.add(factionId);
+  }
+  if (factionIds.size === 0) {
+    throw new Error(`当前目录不存在阵营 ${groupId} 的载具`);
+  }
+  return [...factionIds].sort();
 }
 
 function communityAliasMaps(
@@ -279,10 +426,7 @@ export function buildFactionCatalogFromWiki(
   groupId: string,
   edition: "international" | "china",
 ): PublicFactionCatalog {
-  const catalog = value as WikiVehicleCatalog;
-  if (catalog.schemaVersion !== "sigua-vehicle-catalog/v3.1") {
-    throw new Error("SiguaWiki 载具数据格式不受支持");
-  }
+  const catalog = validateVehicleMechanics(value);
 
   const group = expectedIndex.groups.find(({ id }) => id === groupId);
   if (!group) throw new Error(`当前目录不存在阵营 ${groupId}`);

@@ -23,6 +23,7 @@ import {
 } from "../lib/analysis-visual-surface-policy";
 import { dedupeIdenticalVisualPlacements } from "../lib/runtime-visual-occurrence-dedupe";
 import { createAnalysisProjectedMarkMaterial } from "../lib/runtime-projected-mark-material";
+import { dedupeRuntimeSceneTextures } from "../lib/runtime-texture-dedupe";
 import { resolveRuntimeRunningGearHitComponentPoses } from "../lib/runtime-running-gear-hit-pose";
 import {
   createRuntimeSkeletalPoseController,
@@ -109,10 +110,14 @@ import {
 import {
   runtimeAnalysisVisualUrl,
   runtimeAnalysisVisualTexturePolicy,
+  runtimeExteriorVisualAssetUrl,
   runtimeWikiAssetUrl,
   runtimeViewerPresentation,
 } from "../lib/runtime-visual-lazy-load";
-import { loadWikiDataset } from "../lib/wiki-source";
+import {
+  loadWikiVehicleWeaponRuntimeIndex,
+  loadWikiVehicleWeaponRuntimeSource,
+} from "../lib/wiki-source";
 import type {
   RuntimeVehiclePreview,
   RuntimeVisualPlacement,
@@ -141,8 +146,15 @@ import {
   type RuntimeAttackSource,
 } from "./runtime-probe-weapon-labels";
 import {
-  runtimeVehicleEquipmentBindingForId,
-} from "./runtime-vehicle-equipment";
+  createRuntimeAttackSourceLibrary,
+  createRuntimeStationEquipmentResolver,
+  resolveRuntimeAttackSourceIndexEntry,
+  type RuntimeAttackSourceLibrary,
+  type RuntimeAttackSourcePresentation,
+  type RuntimeStationEquipmentResolver,
+  type WikiWeaponRuntimeIndexDocument,
+  type WikiWeaponRuntimeSourceDocument,
+} from "./runtime-wiki-attack-source";
 import {
   RUNTIME_PROTECTION_MAP_BLOCK_SIZE,
   RUNTIME_PROTECTION_MAP_MAX_PRECISION,
@@ -184,52 +196,36 @@ THREE.Mesh.prototype.raycast = acceleratedRaycast;
 const STANDARD_SHOT_DAMAGE_MULTIPLIER = 1 as const;
 const MAX_VISIBLE_LAYERS = 8;
 const SHOT_GESTURE_THRESHOLD_PX = 5;
+const FORCED_RUNTIME_RENDER_QUALITY_TIER =
+  process.env.NEXT_PUBLIC_SIGUA_RENDER_QUALITY === "compatibility" ||
+  process.env.NEXT_PUBLIC_SIGUA_RENDER_QUALITY === "balanced"
+    ? process.env.NEXT_PUBLIC_SIGUA_RENDER_QUALITY
+    : null;
 const DEFAULT_TARGET_DISTANCE_M = 0;
-const REFERENCE_SOLDIER_MODEL_PATH =
-  "/assets/infantry-hit/models/4b6caa60516b49563a968cbcf53875126157d15665cc54b9d8921d832d09ae14.glb";
 const RUNTIME_GROUND_REFERENCE_MIN_CLEARANCE_M = 2.25;
 const RUNTIME_GROUND_REFERENCE_MAX_CLEARANCE_M = 4;
 const RUNTIME_GROUND_SCALE_RENDER_ORDER = 7;
-const REFERENCE_SOLDIER_GLASS_MATERIAL_NAME = "MI_USArmyGlass";
-const REFERENCE_SOLDIER_GLASS_HEAD_BONE_NAME = "Bip01_Head";
-type RuntimeAttackSourceLibrary = typeof import("./runtime-probe-weapon-labels");
 
-type ReferenceSoldierBoneTransform = {
-  translation: [number, number, number];
-  rotation: [number, number, number, number];
-  scale: [number, number, number];
-};
-type InfantryPosture = {
-  boneCount: number;
-  bones: Record<string, ReferenceSoldierBoneTransform>;
-};
-type InfantryPostureDataset = {
-  schemaVersion: "sigua-infantry-posture-runtime/v1";
-  count: number;
-  postures: Record<string, InfantryPosture>;
-};
-const infantryPostureRuntime = (await loadWikiDataset(
-  "/data/infantry/postures.json",
-  "sigua-infantry-posture-runtime/v1",
-)) as InfantryPostureDataset;
-if (
-  infantryPostureRuntime.count !==
-    Object.keys(infantryPostureRuntime.postures).length ||
-  Object.values(infantryPostureRuntime.postures).some(
-    (posture) => posture.boneCount !== Object.keys(posture.bones).length,
-  )
+async function mapWithConcurrency<T>(
+  values: readonly T[],
+  concurrency: number,
+  task: (value: T) => Promise<void>,
 ) {
-  throw new Error("SiguaWiki infantry posture data is invalid");
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < values.length) {
+      const index = cursor;
+      cursor += 1;
+      await task(values[index]);
+    }
+  };
+  await Promise.all(
+    Array.from(
+      { length: Math.min(values.length, Math.max(1, concurrency)) },
+      worker,
+    ),
+  );
 }
-const REFERENCE_SOLDIER_STANDING_RIFLE_POSE =
-  infantryPostureRuntime.postures["standing-rifle"];
-if (!REFERENCE_SOLDIER_STANDING_RIFLE_POSE) {
-  throw new Error("SiguaWiki is missing the standing-rifle infantry posture");
-}
-function referenceSoldierModelUrl() {
-  return runtimeWikiAssetUrl(REFERENCE_SOLDIER_MODEL_PATH);
-}
-
 function createReferenceSoldierProxy() {
   const group = new THREE.Group();
   group.name = "reference-soldier-proxy";
@@ -361,89 +357,6 @@ const RELATIVE_ARMOR_THICKNESS_LEGEND_GRADIENT = `linear-gradient(90deg, ${RELAT
     return `rgb(${red}, ${green}, ${blue}) ${stop.normalizedPosition * 100}%`;
   },
 ).join(", ")})`;
-
-function applyReferenceSoldierStandingRiflePose(root: THREE.Object3D) {
-  let appliedBoneCount = 0;
-  for (const [boneName, transform] of Object.entries(
-    REFERENCE_SOLDIER_STANDING_RIFLE_POSE.bones,
-  )) {
-    const bone = root.getObjectByName(boneName);
-    if (!(bone instanceof THREE.Bone)) continue;
-    bone.position.fromArray(transform.translation);
-    bone.quaternion.fromArray(transform.rotation);
-    bone.scale.fromArray(transform.scale);
-    appliedBoneCount += 1;
-  }
-  if (appliedBoneCount !== REFERENCE_SOLDIER_STANDING_RIFLE_POSE.boneCount) {
-    throw new Error(
-      `Reference soldier pose matched ${appliedBoneCount}/${REFERENCE_SOLDIER_STANDING_RIFLE_POSE.boneCount} bones`,
-    );
-  }
-  root.updateMatrixWorld(true);
-  root.traverse((object) => {
-    if (!(object instanceof THREE.SkinnedMesh)) return;
-    object.frustumCulled = false;
-    object.skeleton.update();
-  });
-}
-
-function rebindReferenceSoldierGlassToHead(root: THREE.Object3D) {
-  let reboundMeshCount = 0;
-  let reboundVertexCount = 0;
-  root.traverse((object) => {
-    if (!(object instanceof THREE.SkinnedMesh)) return;
-    const materials = Array.isArray(object.material)
-      ? object.material
-      : [object.material];
-    if (
-      !materials.some(
-        ({ name }) => name === REFERENCE_SOLDIER_GLASS_MATERIAL_NAME,
-      )
-    ) {
-      return;
-    }
-    if (
-      materials.some(
-        ({ name }) => name !== REFERENCE_SOLDIER_GLASS_MATERIAL_NAME,
-      )
-    ) {
-      throw new Error(
-        "Reference soldier glass primitive is merged with another material",
-      );
-    }
-    const headJointIndex = object.skeleton.bones.findIndex(
-      ({ name }) => name === REFERENCE_SOLDIER_GLASS_HEAD_BONE_NAME,
-    );
-    if (headJointIndex < 0) {
-      throw new Error("Reference soldier glass is missing its head bone");
-    }
-    const vertexCount = object.geometry.getAttribute("position")?.count ?? 0;
-    if (vertexCount <= 0) {
-      throw new Error("Reference soldier glass contains no vertices");
-    }
-    const jointIndices = new Uint16Array(vertexCount * 4);
-    const jointWeights = new Float32Array(vertexCount * 4);
-    for (let vertex = 0; vertex < vertexCount; vertex += 1) {
-      jointIndices[vertex * 4] = headJointIndex;
-      jointWeights[vertex * 4] = 1;
-    }
-    object.geometry.setAttribute(
-      "skinIndex",
-      new THREE.Uint16BufferAttribute(jointIndices, 4),
-    );
-    object.geometry.setAttribute(
-      "skinWeight",
-      new THREE.Float32BufferAttribute(jointWeights, 4),
-    );
-    object.skeleton.update();
-    reboundMeshCount += 1;
-    reboundVertexCount += vertexCount;
-  });
-  if (reboundMeshCount === 0 || reboundVertexCount === 0) {
-    throw new Error("Reference soldier glass primitive was not found");
-  }
-  return { reboundMeshCount, reboundVertexCount };
-}
 
 function formatArmorThicknessLegendValue(thicknessMm: number) {
   const rounded = Math.round(thicknessMm * 10) / 10;
@@ -595,8 +508,7 @@ interface RuntimeWeaponOption {
   source: RuntimeWeaponSourceIdentity;
   provenanceLabels: string[];
   group: string;
-  effects: SearchableSelectEffect[];
-  effectsLabel: string;
+  effectsAtDistance: (distanceM: number) => SearchableSelectEffect[];
   searchText: string;
 }
 
@@ -818,10 +730,14 @@ function RuntimeWeaponSourceSelector({
   value,
   options,
   onChange,
+  onRequestGlobalLibrary,
+  globalLibraryState,
 }: {
   value: string;
   options: readonly RuntimeWeaponSourceOption[];
   onChange: (value: string) => void;
+  onRequestGlobalLibrary: () => void;
+  globalLibraryState: "idle" | "loading" | "ready" | "error";
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -932,6 +848,20 @@ function RuntimeWeaponSourceSelector({
               </button>
             ) : null}
           </div>
+          {globalLibraryState !== "ready" ? (
+            <button
+              className="viewer-search-select__global-load"
+              type="button"
+              disabled={globalLibraryState === "loading"}
+              onClick={onRequestGlobalLibrary}
+            >
+              {globalLibraryState === "loading"
+                ? "正在载入全部伤害来源…"
+                : globalLibraryState === "error"
+                  ? "重试载入全部伤害来源"
+                  : "载入全部伤害来源"}
+            </button>
+          ) : null}
           <div
             className="viewer-search-select__options"
             role="listbox"
@@ -977,11 +907,17 @@ function RuntimeWeaponSourceSelector({
 function RuntimeWeaponSelector({
   value,
   options,
+  targetDistanceM,
   onChange,
+  onRequestGlobalLibrary,
+  globalLibraryState,
 }: {
   value: string;
   options: readonly RuntimeWeaponOption[];
+  targetDistanceM: number;
   onChange: (value: string) => void;
+  onRequestGlobalLibrary: () => void;
+  globalLibraryState: "idle" | "loading" | "ready" | "error";
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -1104,14 +1040,20 @@ function RuntimeWeaponSelector({
     setOpen(false);
   };
 
-  const metrics = (option: RuntimeWeaponOption) => (
-    <span
-      className="infantry-weapon-select__metrics"
-      aria-label={option.effectsLabel}
-    >
-      <RuntimeWeaponEffectLegend effects={option.effects} />
-    </span>
-  );
+  const metrics = (option: RuntimeWeaponOption) => {
+    const effects = option.effectsAtDistance(targetDistanceM);
+    const effectsLabel = effects.length > 0
+      ? effects.map(({ title }) => title).join("；")
+      : "无已解析伤害或穿透数据";
+    return (
+      <span
+        className="infantry-weapon-select__metrics"
+        aria-label={effectsLabel}
+      >
+        <RuntimeWeaponEffectLegend effects={effects} />
+      </span>
+    );
+  };
 
   return (
     <>
@@ -1126,6 +1068,8 @@ function RuntimeWeaponSelector({
           value={selectedSourceId}
           options={sourceOptions}
           onChange={chooseSource}
+          onRequestGlobalLibrary={onRequestGlobalLibrary}
+          globalLibraryState={globalLibraryState}
         />
       </div>
       <div className="viewer-weapon-control">
@@ -1199,6 +1143,20 @@ function RuntimeWeaponSelector({
                   </button>
                 ) : null}
               </div>
+              {globalLibraryState !== "ready" ? (
+                <button
+                  className="viewer-search-select__global-load"
+                  type="button"
+                  disabled={globalLibraryState === "loading"}
+                  onClick={onRequestGlobalLibrary}
+                >
+                  {globalLibraryState === "loading"
+                    ? "正在载入全站武器…"
+                    : globalLibraryState === "error"
+                      ? "重试搜索全站武器"
+                      : "搜索全站武器 / 弹种"}
+                </button>
+              ) : null}
               <div
                 className="infantry-weapon-select__columns"
                 aria-label="武器列表列标题"
@@ -3113,10 +3071,13 @@ function turretStationRoleLabel(role: ReferenceSeat["role"]) {
   } satisfies Record<ReferenceSeat["role"], string>)[role];
 }
 
-function referenceVehicleWeapons(referenceData: ReferenceData) {
+function referenceVehicleWeapons(
+  referenceData: ReferenceData,
+  equipmentResolver: RuntimeStationEquipmentResolver | null,
+) {
+  if (!equipmentResolver) return [];
   return referenceData.weaponBindingIds.map((bindingId) => {
-    const binding =
-      runtimeVehicleEquipmentBindingForId(bindingId);
+    const binding = equipmentResolver(bindingId);
     if (!binding) {
       throw new Error(
         `Vehicle reference data points to missing weapon binding ${bindingId}`,
@@ -3129,9 +3090,10 @@ function referenceVehicleWeapons(referenceData: ReferenceData) {
 function turretStationEquipmentLabel(
   referenceData: ReferenceData,
   seat: ReferenceSeat,
+  equipmentResolver: RuntimeStationEquipmentResolver | null,
 ) {
   const labels = [...new Set(
-    referenceVehicleWeapons(referenceData)
+    referenceVehicleWeapons(referenceData, equipmentResolver)
       .filter((weapon) => weapon.turretName === seat.turretName)
       .map((weapon) => weapon.displayName)
       .filter(Boolean),
@@ -3146,6 +3108,7 @@ export function RuntimeVehicleViewer({
   showChrome = true,
   mode: requestedMode = "exterior",
   displayName = preview.variantRawName,
+  attackSourcePresentation,
   referenceData,
   onModeChange,
   onClose,
@@ -3157,6 +3120,7 @@ export function RuntimeVehicleViewer({
   showChrome?: boolean;
   mode?: ViewerAssetMode;
   displayName?: string;
+  attackSourcePresentation?: RuntimeAttackSourcePresentation;
   referenceData?: ReferenceData | null;
   onModeChange?: (mode: ViewerAssetMode) => void;
   onClose?: () => void;
@@ -3220,6 +3184,8 @@ export function RuntimeVehicleViewer({
   const protectionPrecisionRef = useRef<RuntimeProtectionMapPrecision>(
     RUNTIME_PROTECTION_MAP_MIN_PRECISION,
   );
+  const [equipmentResolver, setEquipmentResolver] =
+    useState<RuntimeStationEquipmentResolver | null>(null);
   const scheduleProtectionMapRef = useRef<
     ((options?: ProtectionMapScheduleOptions) => void) | null
   >(null);
@@ -3244,12 +3210,16 @@ export function RuntimeVehicleViewer({
     : null;
   const vehicleMeshPlanarSuspensionPose = vehicleMeshRuntimePosePlacement
     ? runtimePlanarSuspensionPoseForVisualOccurrence(
+        preview.suspension.records,
         preview.generatedClass,
         vehicleMeshRuntimePosePlacement.stableOccurrenceId,
       )
     : null;
   const vehiclePlanarSuspensionCoverage =
-    runtimePlanarSuspensionCoverageForGeneratedClass(preview.generatedClass);
+    runtimePlanarSuspensionCoverageForGeneratedClass(
+      preview.suspension.coverage,
+      preview.generatedClass,
+    );
   const vehicleMeshPlanarNonzeroWheelCount =
     vehicleMeshPlanarSuspensionPose?.wheels.filter(
       ({ localTranslationOffsetGltfM: [x, y, z] }) =>
@@ -3286,7 +3256,10 @@ export function RuntimeVehicleViewer({
                 seat.stationKind === "weapon-station"
               ? "machine-gun"
               : "weapon-station";
-      const stationWeaponNames = referenceVehicleWeapons(referenceData)
+      const stationWeaponNames = referenceVehicleWeapons(
+        referenceData,
+        equipmentResolver,
+      )
         .filter((weapon) => weapon.turretName === seat.turretName)
         .map((weapon) => weapon.gunName);
       const assembly = resolveRuntimeTurretAssembly({
@@ -3321,7 +3294,11 @@ export function RuntimeVehicleViewer({
       return {
         id: `${seat.index}:${seat.turretName}`,
         label: `${turretStationRoleLabel(seat.role)} · F${seat.index}`,
-        equipmentLabel: turretStationEquipmentLabel(referenceData, seat),
+        equipmentLabel: turretStationEquipmentLabel(
+          referenceData,
+          seat,
+          equipmentResolver,
+        ),
         turret: seat.turret!,
         indicatorKind,
         yawAvailable: Boolean(assembly?.yawPlacementIds.length),
@@ -3342,7 +3319,7 @@ export function RuntimeVehicleViewer({
         pitchAvailable: Boolean(assembly?.pitchPlacementIds.length),
       };
     });
-  }, [preview.generatedClass, referenceData, visual]);
+  }, [equipmentResolver, preview.generatedClass, referenceData, visual]);
   const defaultTurretStation = runtimeTurretStations.find(
     (station) =>
       station.seat.role === "gunner" &&
@@ -3463,6 +3440,10 @@ export function RuntimeVehicleViewer({
   const [hitHeader, setHitHeader] = useState<ParsedRuntimeHitScene["header"] | null>(null);
   const [attackLibrary, setAttackLibrary] =
     useState<RuntimeAttackSourceLibrary | null>(null);
+  const globalAttackLibraryRequestRef = useRef<Promise<RuntimeAttackSourceLibrary> | null>(null);
+  const [globalAttackLibraryState, setGlobalAttackLibraryState] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >("idle");
   const [attackLibraryError, setAttackLibraryError] = useState<string | null>(null);
   const [attackSourceCardId, setAttackSourceCardId] = useState("");
   const [attackState, setAttackState] = useState<AttackState>({ kind: "loading" });
@@ -3503,13 +3484,88 @@ export function RuntimeVehicleViewer({
     completed: 0,
     total: 0,
   });
-  useEffect(() => {
-    let active = true;
-    import("./runtime-probe-weapon-labels")
+  const requestGlobalAttackLibrary = useCallback(() => {
+    setGlobalAttackLibraryState("loading");
+    const request = globalAttackLibraryRequestRef.current ??
+      import("./runtime-probe-weapon-labels")
+        .then((library) => library as RuntimeAttackSourceLibrary);
+    globalAttackLibraryRequestRef.current = request;
+    void request
       .then((library) => {
-        if (!active) return;
         setAttackLibrary(library);
         setAttackLibraryError(null);
+        setGlobalAttackLibraryState("ready");
+      })
+      .catch((error: unknown) => {
+        globalAttackLibraryRequestRef.current = null;
+        setAttackLibraryError(
+          error instanceof Error ? error.message : String(error),
+        );
+        setGlobalAttackLibraryState("error");
+      });
+  }, []);
+
+  const loadIndexedAttackLibrary = useCallback(async (attackerId: string) => {
+    const index = await loadWikiVehicleWeaponRuntimeIndex() as WikiWeaponRuntimeIndexDocument;
+    const resolved = resolveRuntimeAttackSourceIndexEntry(index, attackerId);
+    if (!resolved) return null;
+    const document = await loadWikiVehicleWeaponRuntimeSource(
+      resolved.entry.cardId,
+    ) as WikiWeaponRuntimeSourceDocument;
+    return createRuntimeAttackSourceLibrary(
+      document,
+      resolved.presentation,
+    );
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    setAttackLibrary(null);
+    setAttackLibraryError(null);
+    setEquipmentResolver(null);
+    setGlobalAttackLibraryState("idle");
+    void loadWikiVehicleWeaponRuntimeSource(preview.cardId)
+      .then((value) => {
+        if (!active) return;
+        const document = value as WikiWeaponRuntimeSourceDocument;
+        const fallbackGroupId = document.source.factionIds[0] ?? "wiki";
+        const presentation = attackSourcePresentation ?? {
+          cardId: preview.cardId,
+          displayName,
+          groupId: fallbackGroupId,
+          groupName: fallbackGroupId,
+          groupOrder: Number.MAX_SAFE_INTEGER,
+          type: document.source.types[0] ?? "载具",
+          canonicalRawName: preview.variantRawName,
+        };
+        const library = createRuntimeAttackSourceLibrary(
+          document,
+          presentation,
+        );
+        setAttackLibrary(library);
+        setEquipmentResolver(() =>
+          createRuntimeStationEquipmentResolver(document),
+        );
+        setAttackLibraryError(null);
+        const requestedAttacker = navigationStateRef.current?.attacker ?? "";
+        if (
+          requestedAttacker &&
+          !library.runtimeAttackSourceForId(requestedAttacker)
+        ) {
+          void loadIndexedAttackLibrary(requestedAttacker)
+            .then((indexedLibrary) => {
+              if (!active) return;
+              if (!indexedLibrary) {
+                requestGlobalAttackLibrary();
+                return;
+              }
+              setAttackLibrary(indexedLibrary);
+              setAttackLibraryError(null);
+            })
+            .catch(() => {
+              if (active) requestGlobalAttackLibrary();
+            });
+        }
       })
       .catch((error: unknown) => {
         if (!active) return;
@@ -3520,7 +3576,14 @@ export function RuntimeVehicleViewer({
     return () => {
       active = false;
     };
-  }, []);
+  }, [
+    attackSourcePresentation,
+    displayName,
+    loadIndexedAttackLibrary,
+    preview.cardId,
+    preview.variantRawName,
+    requestGlobalAttackLibrary,
+  ]);
   const attackSource = attackLibrary?.runtimeAttackSourceForId(attackSourceCardId) ?? null;
   const weaponOptions = useMemo(
     () => attackSource?.weapons.map((_, optionIndex) => optionIndex) ?? [],
@@ -3573,11 +3636,6 @@ export function RuntimeVehicleViewer({
           source.weapons.flatMap((weapon, optionIndex) => {
             const selectorVariant = weapon.selectorVariant;
             if (selectorVariant?.selectorVisibility === "debug") return [];
-            const ballistics = resolveEditorNativeBallistics(
-              weapon.ballisticsModel,
-              weapon.ballisticsWeaponIndex,
-              targetDistanceM,
-            );
             const sourceIdentity = runtimeWeaponSourceIdentity(source);
             const provenanceLabels = [
               ...new Set(
@@ -3607,10 +3665,6 @@ export function RuntimeVehicleViewer({
             const triggerLabel = sourceSummary
               ? `${weaponLabel} · ${sourceSummary}`
               : weaponLabel;
-            const effects = selectorWeaponEffects(
-              weapon.directFireRoute,
-              ballistics,
-            );
             return [
               {
                 value: weaponSelectionValue(source.cardId, optionIndex),
@@ -3623,11 +3677,14 @@ export function RuntimeVehicleViewer({
                 source: sourceIdentity,
                 provenanceLabels,
                 group: familyLabel,
-                effects,
-                effectsLabel:
-                  effects.length > 0
-                    ? effects.map(({ title }) => title).join("；")
-                    : "无已解析伤害或穿透数据",
+                effectsAtDistance: (distanceM: number) => selectorWeaponEffects(
+                  weapon.directFireRoute,
+                  resolveEditorNativeBallistics(
+                    weapon.ballisticsModel,
+                    weapon.ballisticsWeaponIndex,
+                    distanceM,
+                  ),
+                ),
                 searchText: [
                   weapon.displayNameEnglish,
                   weapon.gunName,
@@ -3662,7 +3719,7 @@ export function RuntimeVehicleViewer({
             }) ||
             left.value.localeCompare(right.value),
         ),
-    [attackLibrary, targetDistanceM],
+    [attackLibrary],
   );
   const quickDistanceTicks = useMemo(() => distanceTicks(maxDistanceM), [maxDistanceM]);
   const sharedShotToken = useMemo(() => {
@@ -4971,6 +5028,8 @@ export function RuntimeVehicleViewer({
     let analysisLoaded = 0;
     let analysisVisualReady = false;
     let analysisVisualErrorMessage: string | null = null;
+    let analysisVisualPromise: Promise<void> | null = null;
+    let startAnalysisVisualAssets: (() => void) | null = null;
     let hitLoadSucceeded = false;
     let hitSettled = !hit;
     let exteriorLoaded = 0;
@@ -4993,6 +5052,7 @@ export function RuntimeVehicleViewer({
     let protectionToken = 0;
     let protectionCache: ProtectionMapComputationCache | null = null;
     const exteriorOccurrences = new Map<string, RuntimeExteriorOccurrence>();
+    const exteriorSources = new Map<string, THREE.Object3D>();
     const analysisOccurrences = new Map<
       string,
       RuntimeExteriorOccurrence[]
@@ -5019,10 +5079,16 @@ export function RuntimeVehicleViewer({
       rendererName,
       deviceMemoryGb: navigatorWithMemory.deviceMemory ?? null,
       hardwareConcurrency: navigator.hardwareConcurrency || null,
-    });
+    }, FORCED_RUNTIME_RENDER_QUALITY_TIER);
     renderer.setPixelRatio(renderQuality.pixelRatio);
     host.dataset.renderQuality = renderQuality.tier;
+    const viewerRoot = host.closest<HTMLElement>(".runtime-vehicle-viewer");
+    if (viewerRoot) viewerRoot.dataset.renderQuality = renderQuality.tier;
     host.dataset.renderPixelRatio = String(renderQuality.pixelRatio);
+    host.dataset.assetLoadConcurrency = String(
+      renderQuality.assetLoadConcurrency,
+    );
+    host.dataset.textureMipmaps = String(renderQuality.textureMipmaps);
     if (rendererName) host.dataset.gpuRenderer = rendererName;
     renderer.domElement.setAttribute("aria-label", `${preview.variantRawName} runtime asset 3D preview`);
     renderer.domElement.setAttribute("role", "img");
@@ -5178,6 +5244,7 @@ export function RuntimeVehicleViewer({
       }
       const nativePlanarRecord =
         runtimePlanarSuspensionPoseForVisualOccurrence(
+          preview.suspension.records,
           preview.generatedClass,
           placement.stableOccurrenceId,
         );
@@ -5340,6 +5407,14 @@ export function RuntimeVehicleViewer({
         });
       });
       renderer.render(scene, camera);
+    };
+    let renderFrame = 0;
+    const requestRender = () => {
+      if (renderFrame !== 0) return;
+      renderFrame = requestAnimationFrame(() => {
+        renderFrame = 0;
+        render();
+      });
     };
     renderRef.current = render;
     const applyTurretPose = () => {
@@ -6128,18 +6203,23 @@ export function RuntimeVehicleViewer({
     };
 
     const onControlsChange = () => {
-      render();
-      setRealtimePointer(null);
-      protectionCache = null;
-      if (protectionEnabledRef.current) scheduleProtectionMap({ invalidate: true });
+      requestRender();
     };
     const onControlsStart = () => {
       cameraFitUserLocked = true;
       initialFitStabilizationPending = false;
       window.clearTimeout(initialFitStabilizationTimer);
       initialFitStabilizationTimer = 0;
+      setRealtimePointer(null);
+      protectionCache = null;
+      if (protectionEnabledRef.current) cancelProtectionMap(true, false);
     };
-    const onControlsEnd = () => publishCameraNavigation();
+    const onControlsEnd = () => {
+      publishCameraNavigation();
+      if (protectionEnabledRef.current) {
+        scheduleProtectionMap({ invalidate: true });
+      }
+    };
     controls.addEventListener("start", onControlsStart);
     controls.addEventListener("change", onControlsChange);
     controls.addEventListener("end", onControlsEnd);
@@ -6417,30 +6497,23 @@ export function RuntimeVehicleViewer({
       }
       host.dataset.viewerInitialFitState = "ready";
       setInitialCameraFitReady(true);
-      if (modeRef.current === "exterior" && analysisVisualReady) {
+      if (modeRef.current === "exterior") {
         startExteriorAssets?.();
       }
     };
 
-    const referenceSoldierLoader = new GLTFLoader();
-    referenceSoldierLoader.setMeshoptDecoder(MeshoptDecoder);
-    const referenceSoldierUrl = referenceSoldierModelUrl();
-    host.dataset.referenceSoldierModelUrl = referenceSoldierUrl;
     const loadReferenceSoldierAsset = () => {
       referenceSoldierIdleCallback = 0;
       referenceSoldierLoadTimer = 0;
       host.dataset.referenceSoldierState = "loading";
-      void referenceSoldierLoader.loadAsync(referenceSoldierUrl)
-      .then(({ scene: soldierScene }) => {
+      void import("./runtime-reference-soldier")
+      .then(({ loadRuntimeReferenceSoldier }) => loadRuntimeReferenceSoldier())
+      .then(({ scene: soldierScene, modelUrl, glassRebind }) => {
         if (cancelled) {
           disposeScene(soldierScene);
           return;
         }
-        const glassRebind = rebindReferenceSoldierGlassToHead(soldierScene);
-        applyReferenceSoldierStandingRiflePose(soldierScene);
-        soldierScene.name = "standing-rifle-reference-soldier";
-        soldierScene.position.set(0, 0, 0);
-        soldierScene.updateMatrixWorld(true);
+        host.dataset.referenceSoldierModelUrl = modelUrl;
         const soldierBounds = new THREE.Box3().setFromObject(soldierScene);
         const soldierCenter = soldierBounds.getCenter(new THREE.Vector3());
         const proxy = referenceSoldier;
@@ -6687,13 +6760,22 @@ export function RuntimeVehicleViewer({
     const loadAnalysisVisualAssets = async () => {
       host.dataset.analysisVisualAssetState = "loading";
       const sources = new Map<string, THREE.Object3D>();
-      await Promise.all(urls.map(async (url) => {
+      await mapWithConcurrency(
+        urls,
+        renderQuality.assetLoadConcurrency,
+        async (url) => {
+        const exteriorSource = exteriorSources.get(url);
         const loader = sourceAlphaAssetUrls.has(url)
           ? sourceAlphaLoader
           : analysisLoader;
-        const gltf = await loader.loadAsync(url);
-        sources.set(url, gltf.scene);
-        sourceGeometryScores.set(url, analysisVisualGeometryScore(gltf.scene));
+        const source = exteriorSource ?? (await loader.loadAsync(url)).scene;
+        sources.set(url, source);
+        sourceGeometryScores.set(url, analysisVisualGeometryScore(source));
+        if (exteriorSource) {
+          host.dataset.analysisReusedExteriorSourceCount = String(
+            Number(host.dataset.analysisReusedExteriorSourceCount ?? "0") + 1,
+          );
+        }
         analysisLoaded += 1;
         if (!cancelled && modeRef.current !== "exterior") {
           setViewerState({
@@ -6702,7 +6784,8 @@ export function RuntimeVehicleViewer({
             total: urls.length,
           });
         }
-      }));
+        },
+      );
       renderPlacements.forEach((placement) => {
         const source = sources.get(placement.assetUrl);
         if (!source) throw new Error(`Missing loaded source for ${placement.assetUrl}`);
@@ -6867,6 +6950,24 @@ export function RuntimeVehicleViewer({
           renderPlacements.filter((placement) => placement.assetUrl === url),
         ]),
       );
+      const exteriorAssetUrlBySourceUrl = new Map(
+        urls.map((url) => {
+          const selectedUrls = new Set(
+            (exteriorPlacementsByUrl.get(url) ?? []).map((placement) =>
+              runtimeExteriorVisualAssetUrl(placement, renderQuality.tier),
+            ),
+          );
+          if (selectedUrls.size !== 1) {
+            throw new Error(`Exterior quality variants disagree for ${url}`);
+          }
+          return [url, [...selectedUrls][0]];
+        }),
+      );
+      host.dataset.exteriorCompatibilityAssetCount = String(
+        urls.filter((url) => exteriorAssetUrlBySourceUrl.get(url) !== url).length,
+      );
+      const exteriorTextureCache = new Map<string, THREE.Texture>();
+      let reusedExteriorTextures = 0;
       const attachExteriorSource = (url: string, source: THREE.Object3D) => {
         for (const placement of exteriorPlacementsByUrl.get(url) ?? []) {
           const occurrence = new THREE.Group();
@@ -6893,9 +6994,13 @@ export function RuntimeVehicleViewer({
                 .filter((texture): texture is THREE.Texture => Boolean(texture))
                 .forEach((texture) => {
                   texture.anisotropy = Math.min(
-                    8,
+                    renderQuality.textureAnisotropy,
                     renderer.capabilities.getMaxAnisotropy(),
                   );
+                  texture.generateMipmaps = renderQuality.textureMipmaps;
+                  texture.minFilter = renderQuality.textureMipmaps
+                    ? THREE.LinearMipmapLinearFilter
+                    : THREE.LinearFilter;
                   texture.needsUpdate = true;
                 });
             });
@@ -6906,12 +7011,27 @@ export function RuntimeVehicleViewer({
         applyTurretPose();
         syncAnalysisVisualPresentation();
       };
-      exteriorPromise = Promise.all(urls.map(async (url) => {
-        const gltf = await exteriorLoader.loadAsync(url);
+      exteriorPromise = mapWithConcurrency(
+        urls,
+        renderQuality.assetLoadConcurrency,
+        async (url) => {
+        const exteriorAssetUrl = exteriorAssetUrlBySourceUrl.get(url);
+        if (!exteriorAssetUrl) throw new Error(`Missing exterior source for ${url}`);
+        const gltf = await exteriorLoader.loadAsync(exteriorAssetUrl);
         if (cancelled) {
           disposeScene(gltf.scene);
           return;
         }
+        const textureReuse = dedupeRuntimeSceneTextures(
+          gltf.scene,
+          exteriorTextureCache,
+        );
+        reusedExteriorTextures += textureReuse.reused;
+        host.dataset.exteriorUniqueTextureCount = String(textureReuse.unique);
+        host.dataset.exteriorReusedTextureCount = String(
+          reusedExteriorTextures,
+        );
+        exteriorSources.set(url, gltf.scene);
         attachExteriorSource(url, gltf.scene);
         exteriorLoaded += 1;
         host.dataset.exteriorLoadedAssetCount = String(exteriorLoaded);
@@ -6925,7 +7045,8 @@ export function RuntimeVehicleViewer({
             total: urls.length,
           });
         }
-      }))
+        },
+      )
         .then(() => {
           if (cancelled) return;
           exteriorReady = true;
@@ -7068,16 +7189,10 @@ export function RuntimeVehicleViewer({
     activateAssetModeRef.current = (nextMode) => {
       syncAnalysisVisualPresentation();
       if (nextMode === "exterior") {
-        if (analysisVisualReady && fittedSource !== null) {
-          loadExteriorAssets();
-        } else {
-          host.dataset.exteriorAssetState = analysisVisualReady
-            ? "waiting-for-fit"
-            : "waiting-for-placeholder";
-          setViewerState({ kind: "loading", loaded: 0, total: urls.length });
-        }
+        loadExteriorAssets();
         return;
       }
+      startAnalysisVisualAssets?.();
       if (hitLoadSucceeded && hitGroupRef.current) {
         if (fittedSource === null) fitViewToGroup(hitGroupRef.current, "hit");
         setViewerState({
@@ -7108,16 +7223,15 @@ export function RuntimeVehicleViewer({
         total: urls.length,
       });
     };
-    activateAssetModeRef.current(modeRef.current);
 
-    const analysisVisualPromise = hitPromise.then(async (parsed) => {
-      await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
-      if (cancelled) return parsed;
-      await loadAnalysisVisualAssets();
-      return parsed;
-    });
-
-    analysisVisualPromise
+    startAnalysisVisualAssets = () => {
+      if (analysisVisualPromise || analysisVisualReady) return;
+      analysisVisualPromise = hitPromise.then(async (parsed) => {
+        await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+        if (cancelled) return parsed;
+        await loadAnalysisVisualAssets();
+        return parsed;
+      })
       .then((parsed) => {
         if (cancelled) return;
         const stableReasons = analysisVisualStableSurfaceReasons(
@@ -7231,6 +7345,8 @@ export function RuntimeVehicleViewer({
         if (hitLoadSucceeded) return;
         setViewerState({ kind: "error", message: analysisVisualErrorMessage });
       });
+    };
+    activateAssetModeRef.current(modeRef.current);
 
     return () => {
       cancelled = true;
@@ -7240,6 +7356,7 @@ export function RuntimeVehicleViewer({
       window.clearTimeout(referenceSoldierLoadTimer);
       cancelProtectionMap(true);
       cancelAnimationFrame(hoverFrame);
+      cancelAnimationFrame(renderFrame);
       if (shotAnimationFrameRef.current !== 0) {
         cancelAnimationFrame(shotAnimationFrameRef.current);
         shotAnimationFrameRef.current = 0;
@@ -7275,6 +7392,9 @@ export function RuntimeVehicleViewer({
       renderer.domElement.removeEventListener("pointermove", onPointerMove);
       renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
+      if (viewerRoot?.dataset.renderQuality === renderQuality.tier) {
+        delete viewerRoot.dataset.renderQuality;
+      }
       controls.removeEventListener("start", onControlsStart);
       controls.removeEventListener("change", onControlsChange);
       controls.removeEventListener("end", onControlsEnd);
@@ -7288,6 +7408,7 @@ export function RuntimeVehicleViewer({
     hit,
     preview.cardId,
     preview.generatedClass,
+    preview.suspension.records,
     preview.variantRawName,
     preview.visualVehicleId,
     saveRayShot,
@@ -7585,6 +7706,9 @@ export function RuntimeVehicleViewer({
                 : ""
             }
             options={runtimeWeaponOptions}
+            targetDistanceM={targetDistanceM}
+            onRequestGlobalLibrary={requestGlobalAttackLibrary}
+            globalLibraryState={globalAttackLibraryState}
             onChange={(nextValue) => {
               const selection = parseWeaponSelectionValue(nextValue);
               if (!selection) return;
@@ -7654,11 +7778,20 @@ export function RuntimeVehicleViewer({
               simulateCurrentShot(nextWeapon.ballisticsWeaponIndex, nextDistance);
             }}
           />
+        ) : attackLibraryError ? (
+          <button
+            className="viewer-global-weapon-fallback"
+            type="button"
+            disabled={globalAttackLibraryState === "loading"}
+            onClick={requestGlobalAttackLibrary}
+          >
+            {globalAttackLibraryState === "loading"
+              ? "正在载入武器选择器…"
+              : "当前载具没有独立武器分片 · 载入全站武器选择器"}
+          </button>
         ) : (
-          <div className="viewer-attack-library-status" data-state={attackLibraryError ? "error" : "loading"}>
-            {attackLibraryError
-              ? `武器选择器加载失败：${attackLibraryError}`
-              : "正在加载完整武器选择器…"}
+          <div className="viewer-attack-library-status" data-state="loading">
+            正在加载当前载具武器…
           </div>
         )}
         <div className="viewer-distance-control" data-disabled={maxDistanceM === 0}>

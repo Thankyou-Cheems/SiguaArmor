@@ -75,6 +75,106 @@ export async function loadWikiWeaponCatalog() {
   return value;
 }
 
+export async function loadWikiVehicleWeaponRuntimeSource(cardId: string) {
+  if (!/^[a-z0-9-]+$/u.test(cardId)) {
+    throw new Error(`Invalid vehicle weapon runtime card id: ${cardId}`);
+  }
+  const pathname = `/data/weapons/runtime/vehicles/${cardId}.json`;
+  const value = await loadWikiDataset(
+    pathname,
+    "sigua-weapon-runtime-source/v1",
+  );
+  const document = value as {
+    source?: { kind?: string; cardId?: string; rawNames?: unknown[] };
+    stationEquipment?: unknown[];
+    weapons?: unknown[];
+  };
+  if (
+    document.source?.kind !== "vehicle" ||
+    document.source.cardId !== cardId ||
+    !Array.isArray(document.source.rawNames) ||
+    !Array.isArray(document.stationEquipment) ||
+    !Array.isArray(document.weapons) ||
+    document.weapons.length === 0
+  ) {
+    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+  }
+  return value;
+}
+
+export async function loadWikiVehicleWeaponRuntimeIndex() {
+  const pathname = "/data/weapons/runtime/vehicles/index.json";
+  const value = await loadWikiDataset(
+    pathname,
+    "sigua-weapon-runtime-index/v1",
+  );
+  const document = value as {
+    vehicleSources?: unknown[];
+  };
+  if (!Array.isArray(document.vehicleSources)) {
+    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+  }
+  return value;
+}
+
+export async function loadWikiVehicleRuntimeSource(cardId: string) {
+  if (!/^[a-z0-9-]+$/u.test(cardId)) {
+    throw new Error(`Invalid vehicle runtime card id: ${cardId}`);
+  }
+  const pathname = `/data/vehicles/runtime/${cardId}.json`;
+  const value = await loadWikiDataset(
+    pathname,
+    "sigua-vehicle-runtime-source/v1",
+  );
+  const document = value as {
+    source?: { cardId?: string };
+    variants?: unknown[];
+  };
+  if (
+    document.source?.cardId !== cardId ||
+    !Array.isArray(document.variants) ||
+    document.variants.length === 0
+  ) {
+    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+  }
+  return value;
+}
+
+export async function loadWikiVehicleFactionMechanics(factionId: string) {
+  if (!/^[a-z0-9-]+$/u.test(factionId)) {
+    throw new Error(`Invalid vehicle mechanics faction id: ${factionId}`);
+  }
+  const pathname = `/data/vehicles/factions/${factionId}.json`;
+  const value = await loadWikiDataset(
+    pathname,
+    "sigua-vehicle-faction-mechanics/v1",
+  );
+  const document = value as {
+    factionId?: string;
+    identities?: { vehicles?: unknown[]; catalogBindings?: unknown[] };
+    profiles?: {
+      general?: unknown[];
+      seats?: unknown[];
+      damageResistances?: unknown[];
+      components?: unknown[];
+    };
+    runtime?: { visualArtifacts?: unknown[] };
+  };
+  if (
+    document.factionId !== factionId ||
+    !Array.isArray(document.identities?.vehicles) ||
+    !Array.isArray(document.identities?.catalogBindings) ||
+    !Array.isArray(document.profiles?.general) ||
+    !Array.isArray(document.profiles?.seats) ||
+    !Array.isArray(document.profiles?.damageResistances) ||
+    !Array.isArray(document.profiles?.components) ||
+    !Array.isArray(document.runtime?.visualArtifacts)
+  ) {
+    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+  }
+  return value;
+}
+
 export async function loadWikiVehicleCatalog() {
   const value = await loadWikiDataset(
     `/data/vehicles/catalog.json${WIKI_PRESENTATION_QUERY}`,
@@ -203,7 +303,11 @@ export async function loadWikiRuntimeVisual(visualArtifactRef: string) {
     id?: string;
     runtimeVehicleRef?: string;
     generatedClass?: string;
-    placements?: Array<{ assetUrl?: string; matrix?: unknown[] }>;
+    placements?: Array<{
+      assetUrl?: string;
+      compatibilityAssetUrl?: string;
+      matrix?: unknown[];
+    }>;
   };
   if (
     descriptor.schemaVersion !== "sigua-runtime-visual/v1" ||
@@ -216,6 +320,10 @@ export async function loadWikiRuntimeVisual(visualArtifactRef: string) {
         !/^\/assets\/runtime-probe\/models\/[a-f0-9]{64}\.gltf$/u.test(
           placement.assetUrl ?? "",
         ) ||
+        (placement.compatibilityAssetUrl !== undefined &&
+          !/^\/assets\/runtime-probe\/models\/[a-f0-9]{64}\.gltf$/u.test(
+            placement.compatibilityAssetUrl,
+          )) ||
         !Array.isArray(placement.matrix) ||
         placement.matrix.length !== 16,
     )

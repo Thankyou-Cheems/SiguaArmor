@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   runtimePreviewForCatalogBinding,
   type RuntimeVehiclePreview,
@@ -10,6 +10,7 @@ import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
 import type { ReferenceData } from "./catalog-types";
 import type { SiteEdition } from "./site-edition";
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
+import type { RuntimeAttackSourcePresentation } from "./runtime-wiki-attack-source";
 
 interface TextureVariantOption {
   id: string;
@@ -30,6 +31,7 @@ interface InternationalVehicleViewerProps {
   runtimeVehicleRef: string | null;
   visualArtifactRef: string | null;
   displayName: string;
+  attackSourcePresentation: RuntimeAttackSourcePresentation;
   referenceData: ReferenceData | null;
   textureVariants?: TextureVariantOption[];
   onTextureVariantChange?: (variantId: string) => void;
@@ -49,6 +51,7 @@ export default function InternationalVehicleViewer({
   runtimeVehicleRef,
   visualArtifactRef,
   displayName,
+  attackSourcePresentation,
   referenceData,
   textureVariants = [],
   onTextureVariantChange,
@@ -62,6 +65,35 @@ export default function InternationalVehicleViewer({
   const [preview, setPreview] = useState<RuntimeVehiclePreview | null>(null);
   const [previewLoadError, setPreviewLoadError] = useState<string | null>(null);
   const [textureStreaming, setTextureStreaming] = useState<TextureStreamingState | null>(null);
+  const {
+    cardId: attackSourceCardId,
+    canonicalRawName: attackSourceCanonicalRawName,
+    displayName: attackSourceDisplayName,
+    groupId: attackSourceGroupId,
+    groupName: attackSourceGroupName,
+    groupOrder: attackSourceGroupOrder,
+    type: attackSourceType,
+  } = attackSourcePresentation;
+  const stableAttackSourcePresentation = useMemo(
+    () => ({
+      cardId: attackSourceCardId,
+      canonicalRawName: attackSourceCanonicalRawName,
+      displayName: attackSourceDisplayName,
+      groupId: attackSourceGroupId,
+      groupName: attackSourceGroupName,
+      groupOrder: attackSourceGroupOrder,
+      type: attackSourceType,
+    }),
+    [
+      attackSourceCanonicalRawName,
+      attackSourceCardId,
+      attackSourceDisplayName,
+      attackSourceGroupId,
+      attackSourceGroupName,
+      attackSourceGroupOrder,
+      attackSourceType,
+    ],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -155,6 +187,7 @@ export default function InternationalVehicleViewer({
           showChrome={false}
           mode={mode}
           displayName={displayName}
+          attackSourcePresentation={stableAttackSourcePresentation}
           referenceData={referenceData}
           onModeChange={selectMode}
           onClose={onClose}
