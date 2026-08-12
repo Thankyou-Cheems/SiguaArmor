@@ -78,7 +78,10 @@ interface WikiVehicleFactionMechanics extends WikiVehicleMechanics {
 }
 
 interface WikiVehiclePresentationCatalog {
-  schemaVersion: "sigua-vehicle-presentation/v1";
+  schemaVersion:
+    | "sigua-vehicle-presentation/v1"
+    | "sigua-vehicle-faction-presentation/v1";
+  factionId?: string;
   presentation: WikiVehicleCatalog["presentation"];
 }
 
@@ -337,7 +340,8 @@ export function buildCatalogIndexFromWiki(
   if (
     (
       catalog.schemaVersion !== "sigua-vehicle-catalog/v3.1" &&
-      catalog.schemaVersion !== "sigua-vehicle-presentation/v1"
+      catalog.schemaVersion !== "sigua-vehicle-presentation/v1" &&
+      catalog.schemaVersion !== "sigua-vehicle-faction-presentation/v1"
     ) ||
     factions.schemaVersion !== "sigua-faction-catalog/v1"
   ) {
@@ -417,6 +421,69 @@ export function buildCatalogIndexFromWiki(
     catalogId: topology.catalogId,
     groups,
     records,
+  };
+}
+
+export function buildCatalogSummaryFromWiki(
+  factionValue: unknown,
+  topology: CatalogTopologyIndex,
+  edition: "international" | "china",
+): PublicCatalogIndex {
+  const factions = factionValue as WikiFactionCatalog;
+  if (factions.schemaVersion !== "sigua-faction-catalog/v1") {
+    throw new Error("SiguaWiki 阵营数据格式不受支持");
+  }
+  const factionNames = new Map(
+    factions.factions.map((faction) => [
+      faction.code.toLocaleLowerCase("en-US"),
+      faction.labels.zhHans,
+    ]),
+  );
+  const chinaGroupNames = new Map(
+    factions.catalogGroups.china.map((group) => [group.id, group.nameZh]),
+  );
+  return {
+    schemaVersion: "1.0.0",
+    catalogId: topology.catalogId,
+    groups: topology.groups.map((group) => ({
+      ...group,
+      name: edition === "international"
+        ? required(factionNames.get(group.id), `阵营译名 ${group.id}`)
+        : required(chinaGroupNames.get(group.id), `国服阵营译名 ${group.id}`),
+    })),
+    records: [],
+  };
+}
+
+export function mergeWikiVehicleFactionPresentation(values: readonly unknown[]) {
+  const documents = values as WikiVehiclePresentationCatalog[];
+  if (
+    documents.length === 0 ||
+    documents.some(
+      (document) =>
+        document.schemaVersion !== "sigua-vehicle-faction-presentation/v1" ||
+        !Array.isArray(document.presentation?.editions?.international?.records) ||
+        !Array.isArray(document.presentation?.editions?.china?.records),
+    )
+  ) {
+    throw new Error("SiguaWiki 阵营呈现数据格式不受支持");
+  }
+  return {
+    schemaVersion: "sigua-vehicle-presentation/v1" as const,
+    presentation: {
+      editions: {
+        international: {
+          records: documents.flatMap(
+            (document) => document.presentation.editions.international.records,
+          ),
+        },
+        china: {
+          records: documents.flatMap(
+            (document) => document.presentation.editions.china.records,
+          ),
+        },
+      },
+    },
   };
 }
 

@@ -25,6 +25,7 @@
     "assets:faction-mattes": "node tools/refine-faction-art-mattes.mjs",
     "assets:faction-flags": "node tools/fetch-faction-flag-assets.mjs",
     "assets:ins-flag": "node tools/build-ins-ak47-vector.mjs",
+    "catalog:bootstrap": "node tools/build-catalog-bootstrap.mjs",
     "supporters:publish": "node tools/publish-runtime-document.mjs supporters",
     "updates:publish": "node tools/publish-runtime-document.mjs updates"
   },
