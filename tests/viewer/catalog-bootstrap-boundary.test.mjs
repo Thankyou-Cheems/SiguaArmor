@@ -10,6 +10,18 @@ const vehicleSearchSource = readFileSync(
   new URL("../../app/vehicle-search.ts", import.meta.url),
   "utf8",
 );
+const runtimeViewerSource = readFileSync(
+  new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url),
+  "utf8",
+);
+const runtimePreviewSource = readFileSync(
+  new URL("../../app/runtime-probe-preview-data.ts", import.meta.url),
+  "utf8",
+);
+const runtimeSuspensionSource = readFileSync(
+  new URL("../../app/runtime-planar-suspension-pose.ts", import.meta.url),
+  "utf8",
+);
 
 test("catalog bootstrap does not statically load the full weapon catalog", () => {
   assert.doesNotMatch(
@@ -31,4 +43,59 @@ test("vehicle reference data mounts only after the encyclopedia is opened", () =
     catalogAppSource,
     /encyclopediaOpen\s*\?\s*<ReferenceDataView\s+data=\{data\}\s*\/>\s*:\s*null/u,
   );
+});
+
+test("3D startup does not statically wait for the full weapon catalog", () => {
+  assert.doesNotMatch(
+    runtimeViewerSource,
+    /import\s*\{[^}]*runtimeVehicleEquipmentBindingForId[^}]*\}\s*from\s*["']\.\/runtime-vehicle-equipment["']/su,
+  );
+  assert.doesNotMatch(
+    runtimeViewerSource,
+    /import\(["']\.\/runtime-vehicle-equipment["']\)/u,
+  );
+  assert.match(
+    runtimeViewerSource,
+    /loadWikiVehicleWeaponRuntimeSource\(preview\.cardId\)/u,
+  );
+  assert.match(
+    runtimeViewerSource,
+    /onRequestGlobalLibrary=\{requestGlobalAttackLibrary\}/u,
+  );
+  assert.match(
+    runtimeViewerSource,
+    /className="viewer-search-select__global-load"[\s\S]*?onClick=\{onRequestGlobalLibrary\}/u,
+  );
+  assert.doesNotMatch(
+    runtimeViewerSource,
+    /viewer-search-select__trigger[\s\S]{0,500}onClick=\{[^}]*onRequestGlobalLibrary/u,
+  );
+  const defaultSourceLoad = runtimeViewerSource.slice(
+    runtimeViewerSource.indexOf("loadWikiVehicleWeaponRuntimeSource(preview.cardId)"),
+    runtimeViewerSource.indexOf("const attackSource ="),
+  );
+  assert.doesNotMatch(
+    defaultSourceLoad,
+    /import\(["']\.\/runtime-probe-weapon-labels["']\)/u,
+  );
+});
+
+test("3D preview resolves one vehicle runtime source instead of the full vehicle catalog", () => {
+  assert.match(runtimePreviewSource, /loadWikiVehicleRuntimeSource/u);
+  assert.doesNotMatch(runtimePreviewSource, /loadWikiVehicleCatalog/u);
+  assert.doesNotMatch(runtimePreviewSource, /await loadWikiVehicleCatalog/u);
+  assert.doesNotMatch(runtimePreviewSource, /runtime-chassis-pose/u);
+  assert.doesNotMatch(runtimePreviewSource, /chassis-poses\.json/u);
+  assert.match(runtimePreviewSource, /chassisPose: runtimeVariant\.chassisPose/u);
+  assert.doesNotMatch(runtimePreviewSource, /suspension-poses\.json/u);
+  assert.match(runtimePreviewSource, /suspension: runtimeVariant\.suspension/u);
+  assert.doesNotMatch(runtimeSuspensionSource, /loadWikiDataset/u);
+  assert.doesNotMatch(runtimeSuspensionSource, /suspension-poses\.json/u);
+  assert.match(runtimeViewerSource, /preview\.suspension\.records/u);
+});
+
+test("active catalog groups resolve faction mechanics without the full vehicle catalog", () => {
+  assert.match(catalogAppSource, /loadWikiVehicleFactionMechanics/u);
+  assert.match(catalogAppSource, /wikiVehicleFactionIdsForGroup/u);
+  assert.doesNotMatch(catalogAppSource, /loadWikiVehicleCatalog/u);
 });

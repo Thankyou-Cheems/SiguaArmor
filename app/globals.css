@@ -5824,6 +5824,45 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   font-size: 7px;
 }
 
+.viewer-search-select__global-load {
+  width: calc(100% - 16px);
+  min-height: 34px;
+  margin: 0 8px 8px;
+  border: 1px solid rgba(225, 200, 155, 0.24);
+  background: rgba(225, 200, 155, 0.06);
+  color: var(--brand);
+  cursor: pointer;
+  font-size: 9px;
+  text-align: center;
+}
+
+.viewer-search-select__global-load:hover,
+.viewer-search-select__global-load:focus-visible {
+  outline: 0;
+  border-color: var(--brand-strong);
+  background: rgba(225, 200, 155, 0.12);
+}
+
+.viewer-search-select__global-load:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.viewer-global-weapon-fallback {
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid rgba(225, 200, 155, 0.28);
+  background: rgba(225, 200, 155, 0.06);
+  color: var(--brand);
+  cursor: pointer;
+  font-size: 9px;
+}
+
+.viewer-global-weapon-fallback:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
 .viewer-search-select__options {
   min-height: 0;
   max-height: min(220px, calc(100dvh - 300px));
@@ -11200,6 +11239,15 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     inset 0 0 180px rgba(0, 0, 0, 0.42);
   -webkit-backdrop-filter: blur(24px) saturate(0.42) brightness(0.62);
   backdrop-filter: blur(24px) saturate(0.42) brightness(0.62);
+}
+
+/* Backdrop blur forces the browser compositor to re-sample the live WebGL
+   surface on every orbit frame. Keep the opaque panel fills, but remove that
+   extra full-frame work on integrated and otherwise constrained GPUs. */
+.detail-panel--viewer .international-vehicle-viewer .runtime-vehicle-viewer[data-render-quality="compatibility"],
+.runtime-vehicle-viewer[data-render-quality="compatibility"] * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
 
 .international-vehicle-viewer .runtime-vehicle-viewer__host canvas {

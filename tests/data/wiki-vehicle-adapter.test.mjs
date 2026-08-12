@@ -4,6 +4,8 @@ import test from "node:test";
 import {
   buildCatalogIndexFromWiki,
   buildFactionCatalogFromWiki,
+  mergeWikiVehicleFactionMechanics,
+  wikiVehicleFactionIdsForGroup,
 } from "../../app/wiki-vehicle-catalog.ts";
 
 test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
@@ -138,6 +140,36 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
   assert.deepEqual(variant.data.weaponBindingIds, ["weapon-test"]);
   assert.equal(variant.data.components[0].damageResistances[0].modifier, 0.5);
   assert.equal(variant.thumbnail.width, 640);
+
+  const mechanics = {
+    ...wiki,
+    schemaVersion: "sigua-vehicle-faction-mechanics/v1",
+    factionId: "test",
+  };
+  assert.deepEqual(
+    buildFactionCatalogFromWiki(
+      mergeWikiVehicleFactionMechanics([mechanics]),
+      index,
+      "test",
+      "international",
+    ),
+    result,
+  );
+});
+
+test("Armor derives every Wiki faction needed by a combined catalog group", () => {
+  const index = {
+    records: [
+      { promoEntryId: "pla--ztz99a--mbt", official: { groupId: "pla" } },
+      { promoEntryId: "plaagf--ztl11--mgs", official: { groupId: "pla" } },
+      { promoEntryId: "planmc--zbd05--ifv", official: { groupId: "pla" } },
+      { promoEntryId: "usa--m1a2--mbt", official: { groupId: "usa" } },
+    ],
+  };
+  assert.deepEqual(
+    wikiVehicleFactionIdsForGroup(index, "pla"),
+    ["pla", "plaagf", "planmc"],
+  );
 });
 
 test("Armor keeps product cards for Wiki-owned support-air visuals", () => {

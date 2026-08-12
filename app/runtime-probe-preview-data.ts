@@ -1,24 +1,44 @@
 import visualSelectionPolicyJson from "./runtime-probe-visual-selection-policy.json";
 import type { SiteEdition } from "./site-edition";
 import {
-  runtimeChassisPoseForGeneratedClass,
-  type RuntimeChassisPose,
-} from "./runtime-chassis-pose";
-import {
   loadWikiRuntimeVisual,
-  loadWikiVehicleCatalog,
+  loadWikiVehicleRuntimeSource,
 } from "../lib/wiki-source";
+import type {
+  RuntimePlanarSuspensionCoverageResult,
+  RuntimePlanarSuspensionPoseRecord,
+} from "./runtime-planar-suspension-pose";
 
 export type RuntimePreviewStatus =
   | "visual-ready"
   | "runtime-only"
   | "blocked";
 
+type RuntimeChassisPoseMatrix = [
+  number, number, number, number,
+  number, number, number, number,
+  number, number, number, number,
+  number, number, number, number,
+];
+
+interface RuntimeChassisPose {
+  targetKey: string;
+  generatedClass: string;
+  rawName: string;
+  promoEntryIds: string[];
+  pitchDeg: number;
+  rollDeg: number;
+  heightAbovePlaneCm: number;
+  gltfMatrix: RuntimeChassisPoseMatrix;
+  wheelCompressionState: "native-unknown";
+}
+
 export interface RuntimeVisualPlacement {
   stableOccurrenceId: string;
   name: string;
   actor: string;
   assetUrl: string;
+  compatibilityAssetUrl?: string;
   matrix: number[];
   sourceMeshPath: string;
   componentClassPath: string;
@@ -49,6 +69,10 @@ export interface RuntimeVehiclePreview {
   visualVehicleId: string | null;
   note: string;
   chassisPose: RuntimeChassisPose | null;
+  suspension: {
+    records: RuntimePlanarSuspensionPoseRecord[];
+    coverage: RuntimePlanarSuspensionCoverageResult | null;
+  };
   runtime: {
     actors: number | null;
     components: number | null;
@@ -101,46 +125,33 @@ interface WikiRuntimeVisual {
   placements: RuntimeVisualPlacement[];
 }
 
-interface WikiVisualArtifact {
-  id: string;
-  edition: SiteEdition;
-  bindingKey: string;
-  cardId: string;
+interface WikiVehicleRuntimeVariant {
   rawName: string;
   runtimeVehicleRef: string;
   generatedClass: string;
-  placementCount: number;
-}
-
-interface WikiCatalogBinding {
-  bindingKey: string;
-  cardId: string;
-  rawName: string;
-  runtimeVehicleRef: string | null;
-  visualArtifactRefs: Partial<Record<SiteEdition, string>>;
-}
-
-interface WikiRuntimeVehicle {
-  id: string;
-  generatedClass: string;
-  hitArtifactRef: string | null;
-}
-
-interface WikiHitArtifact {
-  id: string;
-  formatVersion: "hit-scene-runtime/v1";
-  record: { url: string };
-  geometry: { url: string };
-  bvh: { url: string };
-}
-
-interface WikiVehicleCatalog {
-  identities: { catalogBindings: WikiCatalogBinding[] };
-  runtime: {
-    vehicles: WikiRuntimeVehicle[];
-    visualArtifacts: WikiVisualArtifact[];
-    hitArtifacts: WikiHitArtifact[];
+  chassisPose: RuntimeChassisPose | null;
+  suspension: {
+    records: RuntimePlanarSuspensionPoseRecord[];
+    coverage: RuntimePlanarSuspensionCoverageResult | null;
   };
+  visualArtifacts: Partial<Record<SiteEdition, {
+    id: string;
+    generatedClass: string;
+    placementCount: number;
+  }>>;
+  hit: null | {
+    id: string;
+    formatVersion: "hit-scene-runtime/v1";
+    recordUrl: string;
+    geometryUrl: string;
+    bvhUrl: string;
+  };
+}
+
+interface WikiVehicleRuntimeSource {
+  schemaVersion: "sigua-vehicle-runtime-source/v1";
+  source: { cardId: string };
+  variants: WikiVehicleRuntimeVariant[];
 }
 
 interface RuntimeVisualSelectionRule {
@@ -179,28 +190,7 @@ const visualComponentSuppressionRules =
 const synchronizedWeaponPolicy =
   visualSelectionPolicyJson.synchronizedWeaponPolicy as RuntimeVisualSynchronizedWeaponPolicy;
 
-const wikiVehicleCatalog =
-  (await loadWikiVehicleCatalog()) as unknown as WikiVehicleCatalog;
-const bindingByIdentity = new Map(
-  wikiVehicleCatalog.identities.catalogBindings.map((binding) => [
-    binding.bindingKey,
-    binding,
-  ]),
-);
-const visualArtifactById = new Map(
-  wikiVehicleCatalog.runtime.visualArtifacts.map((artifact) => [artifact.id, artifact]),
-);
-const runtimeVehicleById = new Map(
-  wikiVehicleCatalog.runtime.vehicles.map((vehicle) => [vehicle.id, vehicle]),
-);
-const hitArtifactById = new Map(
-  wikiVehicleCatalog.runtime.hitArtifacts.map((artifact) => [artifact.id, artifact]),
-);
 const previewCache = new Map<string, Promise<RuntimeVehiclePreview>>();
-
-function identity(cardId: string, rawName: string) {
-  return `${cardId}\u0000${rawName}`;
-}
 
 function applySynchronizedWeaponPolicy(
   cardId: string,
@@ -335,19 +325,16 @@ function applyVisualSelection(
   };
 }
 
-function hitForRuntimeVehicle(runtimeVehicleRef: string) {
-  const runtimeVehicle = runtimeVehicleById.get(runtimeVehicleRef);
-  const artifact = runtimeVehicle?.hitArtifactRef
-    ? hitArtifactById.get(runtimeVehicle.hitArtifactRef)
-    : null;
-  if (!runtimeVehicle || !artifact) return null;
+function hitForRuntimeVariant(variant: WikiVehicleRuntimeVariant) {
+  const artifact = variant.hit;
+  if (!artifact) return null;
   return {
     status: "public" as const,
     formatVersion: artifact.formatVersion,
-    vehicleId: runtimeVehicle.id,
-    recordUrl: artifact.record.url,
-    geometryUrl: artifact.geometry.url,
-    bvhUrl: artifact.bvh.url,
+    vehicleId: variant.runtimeVehicleRef,
+    recordUrl: artifact.recordUrl,
+    geometryUrl: artifact.geometryUrl,
+    bvhUrl: artifact.bvhUrl,
     triangles: 0,
     components: 0,
     surfaceProfiles: 0,
@@ -360,6 +347,7 @@ function toRuntimePreview(
   cardId: string,
   rawName: string,
   artifactRef: string,
+  runtimeVariant: WikiVehicleRuntimeVariant,
   descriptor: WikiRuntimeVisual,
 ): RuntimeVehiclePreview {
   if (
@@ -377,7 +365,7 @@ function toRuntimePreview(
   const skeletalPlacements = placements.filter((placement) =>
     placement.componentClassPath.includes("SkeletalMeshComponent"),
   );
-  const hit = hitForRuntimeVehicle(descriptor.runtimeVehicleRef);
+  const hit = hitForRuntimeVariant(runtimeVariant);
   return {
     cardId,
     status: "visual-ready",
@@ -386,7 +374,8 @@ function toRuntimePreview(
     generatedClass: descriptor.generatedClass,
     visualVehicleId: descriptor.runtimeVehicleRef,
     note: `该变体直接读取 SiguaWiki 的已发布视觉记录。${descriptor.reason}`,
-    chassisPose: runtimeChassisPoseForGeneratedClass(descriptor.generatedClass),
+    chassisPose: runtimeVariant.chassisPose,
+    suspension: runtimeVariant.suspension,
     runtime: {
       actors: null,
       components: null,
@@ -432,18 +421,24 @@ export async function runtimePreviewForCatalogBinding(
   if (!expectedVisualArtifactRef || !expectedRuntimeVehicleId) {
     throw new Error(`Vehicle catalog has no Wiki visual for ${cardId} / ${rawName}`);
   }
-  const artifact = visualArtifactById.get(expectedVisualArtifactRef);
-  if (
-    !artifact ||
-    artifact.edition !== siteEdition ||
-    artifact.bindingKey !== identity(cardId, rawName) ||
-    artifact.runtimeVehicleRef !== expectedRuntimeVehicleId
-  ) {
-    throw new Error(`Vehicle catalog visual mapping is invalid for ${cardId} / ${rawName}`);
-  }
   const cached = previewCache.get(expectedVisualArtifactRef);
   if (cached) return cached;
-  const request = loadWikiRuntimeVisual(expectedVisualArtifactRef).then((value) => {
+  const request = Promise.all([
+    loadWikiVehicleRuntimeSource(cardId),
+    loadWikiRuntimeVisual(expectedVisualArtifactRef),
+  ]).then(([runtimeValue, value]) => {
+    const runtimeSource = runtimeValue as WikiVehicleRuntimeSource;
+    const runtimeVariant = runtimeSource.variants.find(
+      (variant) => variant.rawName === rawName,
+    );
+    const artifact = runtimeVariant?.visualArtifacts[siteEdition] ?? null;
+    if (
+      !runtimeVariant ||
+      runtimeVariant.runtimeVehicleRef !== expectedRuntimeVehicleId ||
+      artifact?.id !== expectedVisualArtifactRef
+    ) {
+      throw new Error(`Vehicle runtime mapping is invalid for ${cardId} / ${rawName}`);
+    }
     const descriptor = value as WikiRuntimeVisual;
     if (
       descriptor.edition !== siteEdition ||
@@ -453,7 +448,13 @@ export async function runtimePreviewForCatalogBinding(
     ) {
       throw new Error(`SiguaWiki visual mapping differs for ${cardId} / ${rawName}`);
     }
-    return toRuntimePreview(cardId, rawName, expectedVisualArtifactRef, descriptor);
+    return toRuntimePreview(
+      cardId,
+      rawName,
+      expectedVisualArtifactRef,
+      runtimeVariant,
+      descriptor,
+    );
   });
   previewCache.set(expectedVisualArtifactRef, request);
   return request;
@@ -464,14 +465,19 @@ export async function runtimePreviewForVariant(
   rawName: string,
   siteEdition: SiteEdition = "international",
 ) {
-  const binding = bindingByIdentity.get(identity(cardId, rawName));
-  if (!binding) return null;
-  const visualArtifactRef = binding.visualArtifactRefs?.[siteEdition] ?? null;
-  if (!visualArtifactRef || !binding.runtimeVehicleRef) return null;
+  const runtimeSource = await loadWikiVehicleRuntimeSource(
+    cardId,
+  ) as WikiVehicleRuntimeSource;
+  const runtimeVariant = runtimeSource.variants.find(
+    (variant) => variant.rawName === rawName,
+  );
+  if (!runtimeVariant) return null;
+  const visualArtifactRef = runtimeVariant.visualArtifacts[siteEdition]?.id ?? null;
+  if (!visualArtifactRef) return null;
   return runtimePreviewForCatalogBinding(
     cardId,
     rawName,
-    binding.runtimeVehicleRef,
+    runtimeVariant.runtimeVehicleRef,
     visualArtifactRef,
     siteEdition,
   );

@@ -12,6 +12,19 @@ export function runtimeWikiAssetUrl(url: string) {
   return wikiAssetUrl(url);
 }
 
+export function runtimeExteriorVisualAssetUrl(
+  placement: {
+    assetUrl: string;
+    compatibilityAssetUrl?: string | null;
+  },
+  renderQualityTier: "balanced" | "compatibility",
+) {
+  return renderQualityTier === "compatibility" &&
+    placement.compatibilityAssetUrl
+    ? placement.compatibilityAssetUrl
+    : placement.assetUrl;
+}
+
 // Analysis mode only needs source material flags and mesh geometry. Routing
 // image requests to one opaque pixel preserves alpha/material metadata for the
 // supplemental silhouette pass without downloading vehicle appearance maps.

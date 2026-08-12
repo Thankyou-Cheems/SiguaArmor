@@ -59,7 +59,7 @@ import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-ico
 import {
   loadWikiFactionCatalog,
   loadWikiVehicleCommunityAliases,
-  loadWikiVehicleCatalog,
+  loadWikiVehicleFactionMechanics,
   loadWikiVehiclePresentation,
   wikiAssetUrl,
 } from "../lib/wiki-source";
@@ -78,6 +78,8 @@ import type {
 import {
   buildCatalogIndexFromWiki,
   buildFactionCatalogFromWiki,
+  mergeWikiVehicleFactionMechanics,
+  wikiVehicleFactionIdsForGroup,
 } from "./wiki-vehicle-catalog";
 import {
   normalizeVehicleSearch,
@@ -894,10 +896,13 @@ function requestFactionCatalog(
   const requestKey = `${siteEdition}\u0000${expectedIndex.catalogId}\u0000${groupId}`;
   const existing = factionCatalogRequests.get(requestKey);
   if (existing) return existing;
-  const request = loadWikiVehicleCatalog()
-    .then((value) =>
+  const factionIds = wikiVehicleFactionIdsForGroup(expectedIndex, groupId);
+  const request = Promise.all(
+    factionIds.map((factionId) => loadWikiVehicleFactionMechanics(factionId)),
+  )
+    .then((values) =>
       buildFactionCatalogFromWiki(
-        value,
+        mergeWikiVehicleFactionMechanics(values),
         expectedIndex,
         groupId,
         siteEdition,
@@ -2433,6 +2438,16 @@ function DetailPanel({
               runtimeVehicleRef={card.variant?.runtimeVehicleRef ?? null}
               visualArtifactRef={card.variant?.visualArtifactRef ?? null}
               displayName={displayName}
+              attackSourcePresentation={{
+                cardId: record.promoEntryId,
+                displayName,
+                groupId: record.official.groupId,
+                groupName: record.official.groupNameZh,
+                groupOrder: record.promotionOrder,
+                type: record.official.typeZh,
+                canonicalRawName:
+                  data?.general.rawName ?? record.mapping.selectedRawName ?? "",
+              }}
               referenceData={data}
               textureVariants={viewerTextureVariants}
               onTextureVariantChange={(variantId) => {

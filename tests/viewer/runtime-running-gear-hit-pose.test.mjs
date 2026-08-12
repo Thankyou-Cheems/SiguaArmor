@@ -3,7 +3,6 @@ import test from "node:test";
 import { Matrix4 } from "three";
 
 import { resolveRuntimeRunningGearHitComponentPoses } from "../../lib/runtime-running-gear-hit-pose.ts";
-import { runtimePlanarSuspensionPoseIndex } from "../../app/runtime-planar-suspension-pose.ts";
 
 const ASLAV_GENERATED_CLASS =
   "/Game/Vehicles/ASLAV/BP_ASLAV.BP_ASLAV_C";
@@ -19,11 +18,15 @@ const ASLAV_WHEEL_COMPONENTS = [
 ];
 
 test("ASLAV maps all eight exact wheel hit components to native-planar bones", () => {
-  const record = runtimePlanarSuspensionPoseIndex.records.find(
-    ({ generatedClass }) => generatedClass === ASLAV_GENERATED_CLASS,
-  );
-  assert.ok(record);
-  assert.equal(record.wheelCount, 8);
+  const record = {
+    generatedClass: ASLAV_GENERATED_CLASS,
+    stableOccurrenceId: "occurrence-aslav-test",
+    wheelCount: 8,
+    wheels: ASLAV_WHEEL_COMPONENTS.map((boneName, index) => ({
+      boneName,
+      localTranslationOffsetGltfM: [0, index / 100, 0],
+    })),
+  };
 
   const components = ASLAV_WHEEL_COMPONENTS.map((name) => ({
     componentPath:

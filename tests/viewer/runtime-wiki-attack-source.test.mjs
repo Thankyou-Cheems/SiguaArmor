@@ -1,0 +1,167 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  createRuntimeAttackSourceLibrary,
+  createRuntimeStationEquipmentResolver,
+  resolveRuntimeAttackSourceIndexEntry,
+} from "../../app/runtime-wiki-attack-source.ts";
+
+const selectorVariant = {
+  id: "weapon-variant-test",
+  familyId: "weapon-family-test",
+  familyLabel: "120mm Cannon",
+  label: "KEW-A2 APFSDS",
+  qualifier: "KEW-A2",
+  displayLabel: "KEW-A2 120 mm APFSDS",
+  kind: "wiki-family",
+  platformKind: "tank",
+  type: "APFSDS",
+  selectorVisibility: "shipping",
+  directDamageModelId: "direct-test",
+  radialAssetId: null,
+  penetrationKind: "kinetic",
+  damageType: "kinetic",
+  sourceIdentity: { kind: "test", configurationKeys: [], sourceRefIds: [] },
+  sourceRefIds: [],
+  ballisticsSourceRefs: [],
+  factionClaimIds: [],
+  factionResolution: { kind: "test", factionIds: ["adf"], byScope: {} },
+  sourceCounts: { wikiConfigurations: 1, vehicleWeaponSources: 1, deliverySources: 0 },
+  sourceLabels: ["M1A1"],
+  familyCardIds: ["adf--m1a1--mbt"],
+  searchText: "kew-a2 m1a1",
+  editorVerification: null,
+  configurationKeys: [],
+  ballisticsIds: ["ballistics-test"],
+  ballisticProfileIds: [],
+  exactCardIds: ["adf--m1a1--mbt"],
+  factionIds: ["adf"],
+  factionByScope: {},
+};
+
+const ballisticsModel = {
+  healthPools: [],
+  components: [],
+  surfaceProfiles: [],
+  weapons: [{
+    weaponId: "weapon-variant-test",
+    role: "wiki-runtime-direct-hit",
+    projectileIndex: 0,
+    armorPenetrationDepthMm: 800,
+    armorPenetrationCurveIndex: { value: null, state: "absent" },
+    damageFalloffCurveIndex: { value: null, state: "absent" },
+    maxDamage: 8000,
+    minDamage: 8000,
+    traceDistanceAfterPenetrationMeters: 50,
+  }],
+  projectiles: [{
+    projectileId: "weapon-variant-test:projectile",
+    role: "wiki-runtime-projectile",
+    damageTypePath: "kinetic",
+    armorPenetrationDepthMm: 800,
+    impactDamage: 8000,
+    isExplosive: false,
+    traceDistanceAfterPenetrationMeters: 50,
+  }],
+  curves: [],
+};
+
+const document = {
+  schemaVersion: "sigua-weapon-runtime-source/v1",
+  source: {
+    kind: "vehicle",
+    cardId: "adf--m1a1--mbt",
+    rawNames: ["BP_AUS_M1A1"],
+    factionIds: ["adf"],
+    displayNames: ["M1A1"],
+    types: ["MBT"],
+  },
+  stationEquipment: [{
+    id: "equipment-test",
+    rawName: "BP_AUS_M1A1",
+    gunName: "M256",
+    displayName: "炮塔/武器站",
+    turretName: "Turret",
+  }],
+  weapons: [{
+    weaponId: "weapon-variant-test",
+    runtimeAssetPath: null,
+    gunName: "120mm Cannon",
+    displayName: "KEW-A2 APFSDS",
+    projectileName: null,
+    matchBasis: "exact-wiki-runtime-projection",
+    ballisticsId: "ballistics-test",
+    ballisticsWeaponIndex: 0,
+    ballisticsModel,
+    directFireRoute: true,
+    explosiveCategory: null,
+    explosiveCategoryLabel: null,
+    explosiveLayerOrderEvidence: null,
+    explosiveLayerCount: null,
+    selectorVariant,
+  }],
+};
+
+test("one Wiki vehicle source is a complete default hit-analysis library", () => {
+  const library = createRuntimeAttackSourceLibrary(document, {
+    cardId: "adf--m1a1--mbt",
+    displayName: "M1A1 主战坦克",
+    groupId: "adf",
+    groupName: "澳大利亚国防军",
+    groupOrder: 0,
+    type: "MBT",
+    canonicalRawName: "BP_AUS_M1A1",
+  });
+  assert.equal(library.runtimeAttackSources.length, 1);
+  const source = library.runtimeAttackSourceForId("adf-ausm1a1");
+  assert.equal(source?.weapons.length, 1);
+  assert.equal(source?.weapons[0].weaponId, "weapon-variant-test");
+  assert.equal(
+    library.runtimeAttackWeaponSupportsHitAnalysis(source.weapons[0]),
+    true,
+  );
+});
+
+test("the same source resolves turret labels without the full catalog", () => {
+  const resolveEquipment = createRuntimeStationEquipmentResolver(document);
+  assert.deepEqual(resolveEquipment("equipment-test"), {
+    equipment: {
+      gunName: "M256",
+      displayName: "炮塔/武器站",
+      turretName: "Turret",
+    },
+  });
+  assert.equal(resolveEquipment("missing"), null);
+});
+
+test("a shared vehicle attacker resolves through the small source index", () => {
+  const index = {
+    schemaVersion: "sigua-weapon-runtime-index/v1",
+    vehicleSources: [{
+      cardId: "adf--m1a1--mbt",
+      rawNames: ["BP_AUS_M1A1"],
+      factionIds: ["adf"],
+      displayNames: ["M1A1"],
+      types: ["MBT"],
+      weaponCount: 4,
+      pathname: "/data/weapons/runtime/vehicles/adf--m1a1--mbt.json",
+    }],
+  };
+  assert.deepEqual(
+    resolveRuntimeAttackSourceIndexEntry(index, "adf-ausm1a1"),
+    {
+      entry: index.vehicleSources[0],
+      presentation: {
+        cardId: "adf--m1a1--mbt",
+        displayName: "M1A1",
+        groupId: "adf",
+        groupName: "adf",
+        groupOrder: Number.MAX_SAFE_INTEGER,
+        type: "MBT",
+        canonicalRawName: "BP_AUS_M1A1",
+      },
+    },
+  );
+  assert.equal(resolveRuntimeAttackSourceIndexEntry(index, "inf-weapons"), null);
+});

@@ -1,5 +1,3 @@
-import { loadWikiDataset } from "../lib/wiki-source.ts";
-
 export const RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA =
   "runtime-planar-suspension-pose-index/v1" as const;
 
@@ -214,14 +212,6 @@ export function parseRuntimePlanarSuspensionPoseIndex(
   };
 }
 
-export const runtimePlanarSuspensionPoseIndex =
-  parseRuntimePlanarSuspensionPoseIndex(
-    await loadWikiDataset(
-      "/data/vehicles/suspension-poses.json",
-      RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA,
-    ),
-  );
-
 export function runtimePlanarSuspensionPoseForOccurrence(
   index: RuntimePlanarSuspensionPoseIndex,
   generatedClass: string | null,
@@ -238,29 +228,26 @@ export function runtimePlanarSuspensionPoseForOccurrence(
 }
 
 export function runtimePlanarSuspensionPoseForVisualOccurrence(
+  records: readonly RuntimePlanarSuspensionPoseRecord[],
   generatedClass: string | null,
   stableOccurrenceId: string,
 ) {
-  return runtimePlanarSuspensionPoseForOccurrence(
-    runtimePlanarSuspensionPoseIndex,
-    generatedClass,
-    stableOccurrenceId,
+  if (!generatedClass) return null;
+  return (
+    records.find(
+      (record) =>
+        record.generatedClass === generatedClass &&
+        record.stableOccurrenceId === stableOccurrenceId,
+    ) ?? null
   );
 }
 
 export function runtimePlanarSuspensionCoverageForGeneratedClass(
+  coverage: RuntimePlanarSuspensionCoverageResult | null,
   generatedClass: string | null,
 ): RuntimePlanarSuspensionCoverageResult | null {
-  if (!generatedClass) return null;
-  const notApplicable =
-    runtimePlanarSuspensionPoseIndex.coverage.notApplicable.find(
-      (entry) => entry.generatedClass === generatedClass,
-    );
-  if (notApplicable) return { status: "not-applicable", ...notApplicable };
-  const unavailable = runtimePlanarSuspensionPoseIndex.coverage.unavailable.find(
-    (entry) => entry.generatedClass === generatedClass,
-  );
-  return unavailable ? { status: "unavailable", ...unavailable } : null;
+  if (!coverage || !generatedClass) return null;
+  return coverage.generatedClass === generatedClass ? coverage : null;
 }
 
 export function runtimePlanarSuspensionOffsetsByBoneName(

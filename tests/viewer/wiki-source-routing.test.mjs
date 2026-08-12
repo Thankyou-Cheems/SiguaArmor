@@ -5,6 +5,7 @@ import {
   RUNTIME_ANALYSIS_PLACEHOLDER_TEXTURE_URL,
   runtimeAnalysisVisualUrl,
   runtimeAnalysisVisualTexturePolicy,
+  runtimeExteriorVisualAssetUrl,
   runtimeWikiAssetUrl,
 } from "../../lib/runtime-visual-lazy-load.ts";
 import {
@@ -12,7 +13,9 @@ import {
   loadWikiRuntimeVisual,
   loadWikiVehicleCatalog,
   loadWikiVehicleCommunityAliases,
+  loadWikiVehicleFactionMechanics,
   loadWikiVehiclePresentation,
+  loadWikiVehicleRuntimeSource,
 } from "../../lib/wiki-source.ts";
 
 test("shared runtime files resolve directly to SiguaWiki", () => {
@@ -31,6 +34,28 @@ test("shared runtime files resolve directly to SiguaWiki", () => {
     /Invalid SiguaWiki asset path/,
   );
   assert.equal(runtimeWikiAssetUrl("/images/product.webp"), "/images/product.webp");
+});
+
+test("constrained exterior rendering selects the optional compatibility model", () => {
+  const placement = {
+    assetUrl: `/assets/runtime-probe/models/${"a".repeat(64)}.gltf`,
+    compatibilityAssetUrl: `/assets/runtime-probe/models/${"b".repeat(64)}.gltf`,
+  };
+  assert.equal(
+    runtimeExteriorVisualAssetUrl(placement, "balanced"),
+    placement.assetUrl,
+  );
+  assert.equal(
+    runtimeExteriorVisualAssetUrl(placement, "compatibility"),
+    placement.compatibilityAssetUrl,
+  );
+  assert.equal(
+    runtimeExteriorVisualAssetUrl(
+      { assetUrl: placement.assetUrl },
+      "compatibility",
+    ),
+    placement.assetUrl,
+  );
 });
 
 test("analysis mode skips shared appearance textures", () => {
@@ -82,7 +107,20 @@ test("catalog startup uses the small presentation path while runtime data keeps 
           updatedAt: "2026-08-11T00:00:00Z",
           groups: [],
         }
-      : pathname.includes("factions")
+      : pathname.startsWith("/data/vehicles/factions/")
+        ? {
+            schemaVersion: "sigua-vehicle-faction-mechanics/v1",
+            factionId: "adf",
+            identities: { vehicles: [], catalogBindings: [] },
+            profiles: {
+              general: [],
+              seats: [],
+              damageResistances: [],
+              components: [],
+            },
+            runtime: { visualArtifacts: [] },
+          }
+      : pathname.startsWith("/data/factions/")
         ? {
             schemaVersion: "sigua-faction-catalog/v1",
             factions: [],
@@ -119,6 +157,7 @@ test("catalog startup uses the small presentation path while runtime data keeps 
     await Promise.all([
       loadWikiVehiclePresentation(),
       loadWikiVehicleCatalog(),
+      loadWikiVehicleFactionMechanics("adf"),
       loadWikiFactionCatalog(),
       loadWikiVehicleCommunityAliases(),
     ]);
@@ -129,6 +168,7 @@ test("catalog startup uses the small presentation path while runtime data keeps 
   assert.deepEqual(requestedUrls, [
     "https://wiki.siguad.icu/data/vehicles/presentation.json",
     "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v3",
+    "https://wiki.siguad.icu/data/vehicles/factions/adf.json",
     "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v3",
     "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v3",
   ]);
@@ -156,5 +196,28 @@ test("runtime visual descriptors use the presentation cache key", async () => {
   assert.equal(
     requestedUrl,
     `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v3`,
+  );
+});
+
+test("3D preview reads an exact per-card vehicle runtime source", async () => {
+  const originalFetch = globalThis.fetch;
+  const cardId = "test--runtime--mbt";
+  let requestedUrl = "";
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return Response.json({
+      schemaVersion: "sigua-vehicle-runtime-source/v1",
+      source: { cardId },
+      variants: [{ rawName: "BP_Test" }],
+    });
+  };
+  try {
+    await loadWikiVehicleRuntimeSource(cardId);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.equal(
+    requestedUrl,
+    `https://wiki.siguad.icu/data/vehicles/runtime/${cardId}.json`,
   );
 });

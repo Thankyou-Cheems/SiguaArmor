@@ -8,8 +8,27 @@ const viewerSource = await readFile(
   new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url),
   "utf8",
 );
+const globalStyles = await readFile(
+  new URL("../../app/globals.css", import.meta.url),
+  "utf8",
+);
 
 test("runtime render quality lowers fill-rate cost on integrated and constrained devices", () => {
+  assert.deepEqual(
+    runtimeRenderQualityProfile({
+      devicePixelRatio: 1.5,
+      rendererName: "ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11)",
+      deviceMemoryGb: 8,
+      hardwareConcurrency: 16,
+    }),
+    {
+      tier: "compatibility",
+      pixelRatio: 1,
+      assetLoadConcurrency: 2,
+      textureAnisotropy: 1,
+      textureMipmaps: false,
+    },
+  );
   assert.deepEqual(
     runtimeRenderQualityProfile({
       devicePixelRatio: 2,
@@ -17,7 +36,13 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
       deviceMemoryGb: 16,
       hardwareConcurrency: 12,
     }),
-    { tier: "compatibility", pixelRatio: 1 },
+    {
+      tier: "compatibility",
+      pixelRatio: 1,
+      assetLoadConcurrency: 2,
+      textureAnisotropy: 1,
+      textureMipmaps: false,
+    },
   );
   assert.deepEqual(
     runtimeRenderQualityProfile({
@@ -26,7 +51,13 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
       deviceMemoryGb: 32,
       hardwareConcurrency: 24,
     }),
-    { tier: "balanced", pixelRatio: 1.25 },
+    {
+      tier: "balanced",
+      pixelRatio: 1.25,
+      assetLoadConcurrency: 4,
+      textureAnisotropy: 4,
+      textureMipmaps: true,
+    },
   );
   assert.deepEqual(
     runtimeRenderQualityProfile({
@@ -35,14 +66,68 @@ test("runtime render quality lowers fill-rate cost on integrated and constrained
       deviceMemoryGb: null,
       hardwareConcurrency: null,
     }),
-    { tier: "balanced", pixelRatio: 1 },
+    {
+      tier: "balanced",
+      pixelRatio: 1,
+      assetLoadConcurrency: 4,
+      textureAnisotropy: 4,
+      textureMipmaps: true,
+    },
   );
+  assert.deepEqual(
+    runtimeRenderQualityProfile(
+      {
+        devicePixelRatio: 2,
+        rendererName: "ANGLE (NVIDIA, NVIDIA GeForce RTX 4080 SUPER)",
+        deviceMemoryGb: 32,
+        hardwareConcurrency: 24,
+      },
+      "compatibility",
+    ),
+    {
+      tier: "compatibility",
+      pixelRatio: 1,
+      assetLoadConcurrency: 2,
+      textureAnisotropy: 1,
+      textureMipmaps: false,
+    },
+  );
+});
+
+test("viewer bounds parallel model decoding and lowers texture pressure on iGPUs", () => {
+  assert.match(viewerSource, /mapWithConcurrency\(/u);
+  assert.match(viewerSource, /renderQuality\.assetLoadConcurrency/u);
+  assert.match(viewerSource, /texture\.generateMipmaps = renderQuality\.textureMipmaps/u);
+  assert.match(viewerSource, /texture\.anisotropy = Math\.min\(\s*renderQuality\.textureAnisotropy/su);
+  assert.match(viewerSource, /viewerRoot\.dataset\.renderQuality = renderQuality\.tier/u);
+  assert.match(
+    globalStyles,
+    /runtime-vehicle-viewer\[data-render-quality="compatibility"\][\s\S]*?backdrop-filter: none !important/u,
+  );
+});
+
+test("default exterior mode skips the duplicate analysis GLTF pass", () => {
+  const modeActivation = viewerSource.slice(
+    viewerSource.indexOf("activateAssetModeRef.current = (nextMode) =>"),
+    viewerSource.indexOf("activateAssetModeRef.current(modeRef.current)"),
+  );
+  assert.match(
+    modeActivation,
+    /if \(nextMode === "exterior"\) \{\s*loadExteriorAssets\(\);\s*return;/su,
+  );
+  assert.match(modeActivation, /startAnalysisVisualAssets\?\.\(\)/u);
+  assert.doesNotMatch(modeActivation, /waiting-for-placeholder/u);
+  assert.match(viewerSource, /const exteriorSources = new Map<string, THREE\.Object3D>\(\)/u);
+  assert.match(viewerSource, /const exteriorSource = exteriorSources\.get\(url\)/u);
 });
 
 test("viewer camera fit uses an immediate scale proxy and defers the detailed soldier", () => {
   assert.match(viewerSource, /function createReferenceSoldierProxy\(/u);
   assert.match(viewerSource, /host\.dataset\.referenceSoldierState = "proxy"/u);
   assert.match(viewerSource, /startReferenceSoldierAsset\?\.\(\)/u);
+  assert.match(viewerSource, /import\("\.\/runtime-reference-soldier"\)/u);
+  assert.doesNotMatch(viewerSource, /await loadWikiDataset\(/u);
+  assert.doesNotMatch(viewerSource, /infantryPostureRuntime/u);
   assert.doesNotMatch(viewerSource, /if \(!referenceSoldierSettled\)/u);
 });
 
@@ -53,4 +138,32 @@ test("orbit redraws rely on Three.js dirty matrices instead of forcing the whole
   );
   assert.match(renderLoop, /renderer\.render\(scene, camera\)/u);
   assert.doesNotMatch(renderLoop, /scene\.updateMatrixWorld\(true\)/u);
+});
+
+test("orbit redraws coalesce noisy control events to one render per animation frame", () => {
+  const renderLoop = viewerSource.slice(
+    viewerSource.indexOf("const render = () =>"),
+    viewerSource.indexOf("let rendererWidth = 0"),
+  );
+  assert.match(renderLoop, /const requestRender = \(\) =>/u);
+  assert.match(renderLoop, /requestAnimationFrame\(\(\) =>/u);
+  assert.match(renderLoop, /const onControlsChange = \(\) => \{\s*requestRender\(\);/su);
+  assert.doesNotMatch(renderLoop, /const onControlsChange = \(\) => \{\s*render\(\);/su);
+  const controlsChange = renderLoop.slice(
+    renderLoop.indexOf("const onControlsChange = () =>"),
+    renderLoop.indexOf("const onControlsStart = () =>"),
+  );
+  assert.doesNotMatch(controlsChange, /scheduleProtectionMap/u);
+  assert.match(renderLoop, /const onControlsStart = \(\) =>[\s\S]*cancelProtectionMap\(true, false\)/u);
+  assert.match(renderLoop, /const onControlsEnd = \(\) =>[\s\S]*scheduleProtectionMap\(\{ invalidate: true \}\)/u);
+});
+
+test("distance dragging resolves only rendered weapon metrics", () => {
+  const optionProjection = viewerSource.slice(
+    viewerSource.indexOf("const runtimeWeaponOptions = useMemo"),
+    viewerSource.indexOf("const quickDistanceTicks"),
+  );
+  assert.match(optionProjection, /effectsAtDistance/u);
+  assert.match(optionProjection, /\[attackLibrary\]/u);
+  assert.doesNotMatch(optionProjection, /\[attackLibrary, targetDistanceM\]/u);
 });
