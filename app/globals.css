@@ -1,9 +1,19 @@
 @font-face {
   font-family: "标小智无界黑 / LogoSC Unbounded Sans";
-  src: url("/fonts/sigua-unbounded-site-4542d8a1ac6ce837.woff2") format("woff2");
+  src: url("/fonts/sigua-unbounded-display-a5205b32a9f7f3d4.woff2") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
+  unicode-range:
+    U+0020-024F,
+    U+0300-052F,
+    U+1E00-1EFF,
+    U+2000-206F,
+    U+20A0-20CF,
+    U+2100-214F,
+    U+2190-22FF,
+    U+2460-27BF,
+    U+FFFD;
 }
 
 :root {
