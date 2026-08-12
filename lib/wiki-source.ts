@@ -2,7 +2,7 @@ export const SIGUA_WIKI_ORIGIN =
   process.env.NEXT_PUBLIC_SIGUA_WIKI_ORIGIN?.replace(/\/+$/u, "") ||
   "https://wiki.siguad.icu";
 
-const WIKI_PRESENTATION_QUERY = "?presentation=v1";
+const WIKI_PRESENTATION_QUERY = "?presentation=v2";
 
 const requests = new Map<
   string,
@@ -172,7 +172,7 @@ export async function loadWikiRuntimeVisual(visualArtifactRef: string) {
     throw new Error("Vehicle visual artifact reference is invalid");
   }
   const value = await fetchJson(
-    `/assets/runtime-probe/visuals/${visualArtifactRef}.json`,
+    `/assets/runtime-probe/visuals/${visualArtifactRef}.json${WIKI_PRESENTATION_QUERY}`,
   );
   const descriptor = value as {
     schemaVersion?: string;
