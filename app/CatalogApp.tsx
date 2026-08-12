@@ -57,10 +57,7 @@ import { visibleDamageResistanceOverrides } from "../lib/encyclopedia-damage-res
 import { formatZoomLevel } from "../lib/reference-display.mjs";
 import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-icons";
 import {
-  loadWikiFactionCatalog,
-  loadWikiVehicleCommunityAliases,
   loadWikiVehicleFactionMechanics,
-  loadWikiVehiclePresentation,
   wikiAssetUrl,
 } from "../lib/wiki-source";
 import { weaponDisplayNameZh } from "../lib/weapon-display-name";
@@ -68,7 +65,6 @@ import type {
   CatalogRecord,
   CatalogSearchRecord,
   CatalogSearchVariant,
-  CatalogTopologyIndex,
   CatalogVariant,
   PublicCatalogIndex,
   PublicFactionCatalog,
@@ -76,11 +72,11 @@ import type {
   ReferenceWeapon,
 } from "./catalog-types";
 import {
-  buildCatalogIndexFromWiki,
   buildFactionCatalogFromWiki,
   mergeWikiVehicleFactionMechanics,
   wikiVehicleFactionIdsForGroup,
 } from "./wiki-vehicle-catalog";
+import { loadPublicCatalog } from "./catalog-bootstrap";
 import {
   normalizeVehicleSearch,
   rankVehicleSearch,
@@ -3194,41 +3190,39 @@ function FactionCharacterWheel({
   );
 }
 
-export function CatalogApp({
-  catalogIndex: topology,
-  siteEdition,
-}: {
-  catalogIndex: CatalogTopologyIndex;
-  siteEdition: SiteEdition;
-}) {
-  const [catalogIndex, setCatalogIndex] = useState<PublicCatalogIndex | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
+  const [loadedCatalog, setLoadedCatalog] = useState<{
+    siteEdition: SiteEdition;
+    index: PublicCatalogIndex;
+  } | null>(null);
+  const [loadFailure, setLoadFailure] = useState<{
+    siteEdition: SiteEdition;
+    message: string;
+  } | null>(null);
+  const catalogIndex =
+    loadedCatalog?.siteEdition === siteEdition ? loadedCatalog.index : null;
+  const loadError =
+    loadFailure?.siteEdition === siteEdition ? loadFailure.message : null;
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([
-      loadWikiVehiclePresentation(),
-      loadWikiFactionCatalog(),
-      loadWikiVehicleCommunityAliases(),
-    ])
-      .then(([vehicles, factions, aliases]) => {
+    loadPublicCatalog(siteEdition)
+      .then((nextCatalogIndex) => {
         if (cancelled) return;
-        setCatalogIndex(buildCatalogIndexFromWiki(
-          vehicles,
-          factions,
-          topology,
-          siteEdition,
-          aliases,
-        ));
+        setLoadedCatalog({ siteEdition, index: nextCatalogIndex });
+        setLoadFailure(null);
       })
       .catch((reason: unknown) => {
         if (cancelled) return;
-        setLoadError(reason instanceof Error ? reason.message : String(reason));
+        setLoadFailure({
+          siteEdition,
+          message: reason instanceof Error ? reason.message : String(reason),
+        });
       });
     return () => {
       cancelled = true;
     };
-  }, [siteEdition, topology]);
+  }, [siteEdition]);
 
   if (loadError) {
     return (
@@ -3259,10 +3253,26 @@ function CatalogAppReady({
         ? "/china"
         : ""
       : siteEditionBasePath(siteEdition);
-  const [query, setQuery] = useState("");
+  const initialLocation = useMemo(
+    () =>
+      typeof window === "undefined"
+        ? {
+            groupId: ALL_GROUPS,
+            query: "",
+            selectedId: null,
+            viewer: { ...DEFAULT_VIEWER_NAVIGATION_STATE },
+          }
+        : parseCatalogLocation(window.location.href, catalogIndex, {
+            basePath: editionBasePath,
+          }),
+    [catalogIndex, editionBasePath],
+  );
+  const [query, setQuery] = useState(initialLocation.query);
   const [globalQuery, setGlobalQuery] = useState("");
-  const [groupId, setGroupId] = useState(ALL_GROUPS);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [groupId, setGroupId] = useState(initialLocation.groupId);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    initialLocation.selectedId,
+  );
   const [encyclopediaOpen, setEncyclopediaOpen] = useState(false);
   const [morphFactionId, setMorphFactionId] = useState<string | null>(null);
   const [activeCharacterId, setActiveCharacterId] = useState<string | null>(null);
@@ -3282,7 +3292,7 @@ function CatalogAppReady({
   const [catalogErrorsByGroup, setCatalogErrorsByGroup] = useState<Record<string, string>>({});
   const [catalogRetryToken, setCatalogRetryToken] = useState(0);
   const [viewerNavigation, setViewerNavigation] = useState<ViewerNavigationState>(
-    () => ({ ...DEFAULT_VIEWER_NAVIGATION_STATE }) as ViewerNavigationState,
+    () => initialLocation.viewer as ViewerNavigationState,
   );
   const selectorRef = useRef<HTMLElement | null>(null);
   const selectorTitleRef = useRef<HTMLHeadingElement | null>(null);
@@ -3387,11 +3397,15 @@ function CatalogAppReady({
   );
   useEffect(() => {
     if (siteEdition !== "international") return;
-    for (const group of visualGroups) {
+    const preloadGroups =
+      groupId === ALL_GROUPS
+        ? visualGroups
+        : visualGroups.filter((group) => group.id === groupId);
+    for (const group of preloadGroups) {
       const background = factionVisualAsset(group, siteEdition).catalogBackground;
       void preloadFactionImage(background).catch(() => undefined);
     }
-  }, [siteEdition, visualGroups]);
+  }, [groupId, siteEdition, visualGroups]);
   useEffect(() => {
     if (siteEdition !== "china") return undefined;
     const requestedFactionId = activeFactionDustId ?? morphFactionId;
@@ -3618,10 +3632,8 @@ function CatalogAppReady({
       setEncyclopediaOpen(false);
       setHelpOpen(false);
     };
-    const frame = window.requestAnimationFrame(applyLocation);
     window.addEventListener("popstate", applyLocation);
     return () => {
-      window.cancelAnimationFrame(frame);
       window.removeEventListener("popstate", applyLocation);
     };
   }, [catalogIndex, editionBasePath]);

@@ -152,6 +152,60 @@ test("catalog bootstrap stays visually empty until the full homepage is ready", 
   );
 });
 
+test("catalog routes do not serialize the full product topology into every document", async () => {
+  const routePaths = [
+    "app/page.tsx",
+    "app/vehicles/[cardId]/page.tsx",
+    "app/factions/[groupId]/page.tsx",
+    "app/china/page.tsx",
+    "app/china/vehicles/[cardId]/page.tsx",
+    "app/china/factions/[groupId]/page.tsx",
+  ];
+  const routeSources = await Promise.all(
+    routePaths.map((relativePath) =>
+      readFile(path.join(ROOT, ...relativePath.split("/")), "utf8"),
+    ),
+  );
+  for (const [index, source] of routeSources.entries()) {
+    assert.doesNotMatch(
+      source,
+      /generated\/(?:china-)?catalog-index\.json|catalogIndex=/u,
+      `${routePaths[index]} must pass only the site edition to CatalogApp`,
+    );
+  }
+
+  const bootstrap = await readFile(
+    path.join(ROOT, "app", "catalog-bootstrap.ts"),
+    "utf8",
+  );
+  assert.match(bootstrap, /import\("\.\.\/generated\/catalog-index\.json"\)/u);
+  assert.match(
+    bootstrap,
+    /import\("\.\.\/generated\/china-catalog-index\.json"\)/u,
+  );
+});
+
+test("direct catalog routes apply their location before rendering faction artwork", async () => {
+  const catalogApp = await readFile(
+    path.join(ROOT, "app", "CatalogApp.tsx"),
+    "utf8",
+  );
+
+  assert.match(
+    catalogApp,
+    /const initialLocation = useMemo\([\s\S]*?parseCatalogLocation\(window\.location\.href/u,
+  );
+  assert.match(catalogApp, /useState\(initialLocation\.groupId\)/u);
+  assert.doesNotMatch(
+    catalogApp,
+    /requestAnimationFrame\(applyLocation\)/u,
+  );
+  assert.match(
+    catalogApp,
+    /groupId === ALL_GROUPS[\s\S]*?visualGroups\.filter\(\(group\) => group\.id === groupId\)/u,
+  );
+});
+
 test("deployment templates render from topology without mobile routing or stale legal data", async () => {
   const [selectorTemplate, landingTemplate, caddyTemplate, composeTemplate] =
     await Promise.all([

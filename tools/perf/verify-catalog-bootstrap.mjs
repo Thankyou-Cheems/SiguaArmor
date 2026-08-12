@@ -14,6 +14,16 @@ const catalogEntryKey = "app/CatalogApp.tsx";
 const catalogEntry = manifest[catalogEntryKey];
 
 assert(catalogEntry, `Missing ${catalogEntryKey} in ${manifestPath}`);
+const requiredDynamicCatalogEntries = [
+  "generated/catalog-index.json",
+  "generated/china-catalog-index.json",
+];
+for (const entryKey of requiredDynamicCatalogEntries) {
+  assert(
+    manifest[entryKey]?.isDynamicEntry,
+    `${entryKey} must remain a separately cacheable dynamic entry`,
+  );
+}
 
 const staticKeys = new Set();
 function visitStaticImports(key) {
@@ -38,7 +48,9 @@ const staticEntries = await Promise.all(
   }),
 );
 const forbidden = staticEntries.filter(({ key, name }) =>
-  key.includes("weapon-catalog") || name === "weapon-catalog",
+  key.includes("weapon-catalog") ||
+  name === "weapon-catalog" ||
+  requiredDynamicCatalogEntries.includes(key),
 );
 const totalBytes = staticEntries.reduce((total, entry) => total + entry.size, 0);
 
@@ -54,5 +66,5 @@ console.log(JSON.stringify({
 assert.equal(
   forbidden.length,
   0,
-  "CatalogApp statically reaches the full weapon catalog; keep weapon mechanics behind the viewer or encyclopedia interaction",
+  "CatalogApp statically reaches a full catalog; keep product topology and weapon mechanics behind their intent-specific loaders",
 );
