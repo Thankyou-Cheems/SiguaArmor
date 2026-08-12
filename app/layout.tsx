@@ -4,6 +4,7 @@ import { ARMOR_ORIGIN } from "../lib/public-site-topology.mjs";
 import { VEHICLE_MODEL_CATEGORY_CSS_VARIABLES } from "../lib/vehicle-model-category-palette";
 import "./globals.css";
 import { DailyActiveProvider } from "./DailyActiveBeacon";
+import { SiteDisplayFontLoader } from "./SiteDisplayFontLoader";
 
 export const metadata: Metadata = {
   metadataBase: new URL(ARMOR_ORIGIN),
@@ -30,6 +31,7 @@ export default function RootLayout({
       style={VEHICLE_MODEL_CATEGORY_CSS_VARIABLES as CSSProperties}
     >
       <body>
+        <SiteDisplayFontLoader />
         <DailyActiveProvider>{children}</DailyActiveProvider>
       </body>
     </html>

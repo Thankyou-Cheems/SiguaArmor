@@ -1,21 +1,3 @@
-@font-face {
-  font-family: "标小智无界黑 / LogoSC Unbounded Sans";
-  src: url("/fonts/sigua-unbounded-display-a5205b32a9f7f3d4.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  unicode-range:
-    U+0020-024F,
-    U+0300-052F,
-    U+1E00-1EFF,
-    U+2000-206F,
-    U+20A0-20CF,
-    U+2100-214F,
-    U+2190-22FF,
-    U+2460-27BF,
-    U+FFFD;
-}
-
 :root {
   --bg-0: #0d0d0d;
   --bg-1: #111212;
@@ -148,7 +130,7 @@
     var(--no-penetration-dash-horizontal) top left / 100% 1px no-repeat,
     var(--no-penetration-dash-horizontal) bottom left / 100% 1px no-repeat,
     var(--no-penetration-dash-vertical) top right / 1px 100% no-repeat;
-  --font-faction-display: "标小智无界黑 / LogoSC Unbounded Sans", "Microsoft YaHei UI", sans-serif;
+  --font-faction-display: "Unbounded Sans", "标小智无界黑 / LogoSC Unbounded Sans", "Microsoft YaHei UI", sans-serif;
   --font-mono-ui: "Cascadia Mono", Consolas, "Noto Sans SC", "Microsoft YaHei UI", "Microsoft YaHei", monospace;
   --max-width: 1560px;
   color-scheme: dark;

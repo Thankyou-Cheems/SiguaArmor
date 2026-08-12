@@ -2056,7 +2056,7 @@ function SiteFooterCopy({
           <div className="site-footer__font-line">
             <h3>字体</h3>
             <p>
-              标小智无界黑 / LogoSC Unbounded Sans · 本地 WOFF2 · SIL OFL 1.1 ·
+              无界黑 / Unbounded Sans · <a href="https://fonts.zeoseven.com/items/18/" target="_blank" rel="noreferrer">ZeoSeven FontsAPI</a> · SIL OFL 1.1 ·
               <a href="/fonts/LogoSCUnboundedSans-OFL.txt" target="_blank" rel="noreferrer">许可全文</a>；微软雅黑、Noto Sans SC、Cascadia Mono 等由设备提供。
             </p>
           </div>
