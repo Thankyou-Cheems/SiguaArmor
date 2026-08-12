@@ -1,12 +1,5 @@
-import catalogIndexJson from "../../../generated/catalog-index.json";
 import { CatalogApp } from "../../CatalogApp";
-import type { CatalogTopologyIndex } from "../../catalog-types";
 
 export default function FactionCatalogPage() {
-  return (
-    <CatalogApp
-      catalogIndex={catalogIndexJson as unknown as CatalogTopologyIndex}
-      siteEdition="international"
-    />
-  );
+  return <CatalogApp siteEdition="international" />;
 }
