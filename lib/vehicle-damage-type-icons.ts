@@ -20,13 +20,13 @@ export const VEHICLE_EXPLOSION_DAMAGE_TYPE_ICON_KINDS = Object.freeze([
 
 export const VEHICLE_DAMAGE_TYPE_ICON_COLORS = Object.freeze({
   kinetic: "#e1c89b",
-  "small-arms": "#a9c987",
-  generic: "#aeb6b2",
-  fragmentation: "#efb865",
-  heat: "#61d4e5",
-  hat: "#4fa4ed",
-  explosives: "#ef735a",
-  thermite: "#f29d4b",
+  "small-arms": "#cbb991",
+  generic: "#aeb2ad",
+  fragmentation: "#baa780",
+  heat: "#78b9be",
+  hat: "#91ccd0",
+  explosives: "#d97967",
+  thermite: "#c96f60",
 } as const satisfies Record<VehicleDamageTypeIconKind, `#${string}`>);
 
 const VEHICLE_EXPLOSIVE_ROUTE_DAMAGE_TYPE_ICON_KINDS = Object.freeze([

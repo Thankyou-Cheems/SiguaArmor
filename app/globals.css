@@ -16,6 +16,19 @@
   --border-strong: #4b4f4a;
   --brand: #e1c89b;
   --brand-strong: #ceb88e;
+  /*
+   * Calculation cards use a restrained gold/flow/damage palette. The model
+   * legend gets a separate categorical palette because those colors must stay
+   * distinguishable when projected onto dense, overlapping 3D geometry.
+   */
+  --analysis-gold: #e1c89b;
+  --analysis-gold-muted: #baa780;
+  --analysis-flow: #78b9be;
+  --analysis-flow-strong: #91ccd0;
+  --analysis-damage: #d97967;
+  --analysis-damage-strong: #ea8b77;
+  --analysis-neutral: #aeb2ad;
+  --analysis-white: #edf0ec;
   --text: #f3f2e8;
   --text-muted: #b4b5ae;
   --text-dim: #7d817c;
@@ -28,33 +41,33 @@
   --status-official: #82b88d;
   --status-official-bg: rgba(99, 151, 109, 0.11);
   --status-confirmed: #82b88d;
-  --pointer-outline-damage: #82d89a;
-  --pointer-outline-absolute: #ff5f6d;
-  --pointer-outline-effective: #e1ad4f;
-  --pointer-outline-penetrated: #62b6cf;
-  --component-only-damage-accent: #c7ff4a;
-  --component-only-damage-glow: rgba(199, 255, 74, 0.72);
-  --gun-collision-accent: #f7fbff;
-  --gun-collision-glow: rgba(225, 240, 255, 0.78);
-  --armor-legend-engine: #ff9c52;
-  --armor-legend-ammo-rack: #ff5f6d;
-  --spaced-armor-accent: #74f1ff;
-  --spaced-armor-glow: rgba(66, 226, 255, 0.92);
-  --spaced-armor-glow-inset: rgba(66, 226, 255, 0.26);
-  --no-penetration-accent: #ff5fb7;
-  --no-penetration-accent-soft: #ffb2dc;
-  --no-penetration-glow: rgba(255, 73, 175, 0.9);
-  --no-penetration-glow-inset: rgba(255, 159, 213, 0.34);
+  --pointer-outline-damage: var(--status-confirmed);
+  --pointer-outline-absolute: var(--analysis-damage-strong);
+  --pointer-outline-effective: var(--analysis-gold);
+  --pointer-outline-penetrated: var(--analysis-flow);
+  --component-only-damage-accent: var(--model-component);
+  --component-only-damage-glow: rgba(184, 217, 107, 0.56);
+  --gun-collision-accent: var(--model-collision);
+  --gun-collision-glow: rgba(243, 245, 242, 0.4);
+  --armor-legend-engine: var(--model-engine);
+  --armor-legend-ammo-rack: var(--model-ammo-rack);
+  --spaced-armor-accent: var(--model-spaced-armor);
+  --spaced-armor-glow: rgba(85, 217, 230, 0.62);
+  --spaced-armor-glow-inset: rgba(85, 217, 230, 0.16);
+  --no-penetration-accent: var(--model-no-penetration);
+  --no-penetration-accent-soft: #eba1d2;
+  --no-penetration-glow: rgba(216, 116, 183, 0.58);
+  --no-penetration-glow-inset: rgba(216, 116, 183, 0.15);
   /*
    * Canonical armor legend materials. The legend swatches, path-card circles,
    * and WebGL/canvas hit circles all consume these same tokens.
    */
-  --hit-marker-spaced-armor-fill: #10343a;
+  --hit-marker-spaced-armor-fill: #102f32;
   --hit-marker-spaced-armor-fill-share: 0%;
   --hit-marker-spaced-armor-stroke: var(--spaced-armor-accent);
   --hit-marker-spaced-armor-glow: var(--spaced-armor-glow);
   --hit-marker-spaced-armor-border-style: dashed;
-  --hit-marker-no-penetration-fill: #3d1532;
+  --hit-marker-no-penetration-fill: #32172a;
   --hit-marker-no-penetration-fill-share: 0%;
   --hit-marker-no-penetration-stroke: var(--no-penetration-accent-soft);
   --hit-marker-no-penetration-glow: var(--no-penetration-glow);
@@ -64,41 +77,41 @@
   --hit-marker-component-only-damage-stroke: var(--component-only-damage-accent);
   --hit-marker-component-only-damage-glow: var(--component-only-damage-glow);
   --hit-marker-component-only-damage-border-style: solid;
-  --hit-marker-gun-collision-fill: #363a44;
+  --hit-marker-gun-collision-fill: #303330;
   --hit-marker-gun-collision-fill-share: 32%;
   --hit-marker-gun-collision-stroke: var(--gun-collision-accent);
   --hit-marker-gun-collision-glow: var(--gun-collision-glow);
   --hit-marker-gun-collision-border-style: solid;
-  --hit-marker-engine-fill: #4a260d;
+  --hit-marker-engine-fill: #3d2515;
   --hit-marker-engine-fill-share: 100%;
   --hit-marker-engine-stroke: var(--armor-legend-engine);
-  --hit-marker-engine-glow: rgba(255, 156, 82, 0.88);
+  --hit-marker-engine-glow: rgba(243, 161, 91, 0.5);
   --hit-marker-engine-border-style: solid;
   --hit-marker-engine-material:
-    repeating-linear-gradient(45deg, rgba(255, 156, 82, 0.82) 0 1px, transparent 1px 5px),
-    repeating-linear-gradient(-45deg, rgba(255, 156, 82, 0.5) 0 1px, transparent 1px 5px);
-  --hit-marker-ammo-rack-fill: #3d1821;
+    repeating-linear-gradient(45deg, rgba(243, 161, 91, 0.76) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(-45deg, rgba(243, 161, 91, 0.44) 0 1px, transparent 1px 5px);
+  --hit-marker-ammo-rack-fill: #3a1b22;
   --hit-marker-ammo-rack-fill-share: 100%;
   --hit-marker-ammo-rack-stroke: var(--armor-legend-ammo-rack);
-  --hit-marker-ammo-rack-glow: rgba(255, 192, 196, 0.78);
+  --hit-marker-ammo-rack-glow: rgba(233, 95, 109, 0.52);
   --hit-marker-ammo-rack-border-style: solid;
   --hit-marker-ammo-rack-material:
-    linear-gradient(rgba(255, 95, 109, 0.76) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 95, 109, 0.76) 1px, transparent 1px);
-  --hit-marker-other-fill: #24435a;
+    linear-gradient(rgba(233, 95, 109, 0.7) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(233, 95, 109, 0.7) 1px, transparent 1px);
+  --hit-marker-other-fill: #292d2b;
   --hit-marker-other-fill-share: 100%;
-  --hit-marker-other-stroke: var(--status-reference);
-  --hit-marker-other-glow: var(--status-reference);
+  --hit-marker-other-stroke: var(--analysis-neutral);
+  --hit-marker-other-glow: rgba(174, 178, 173, 0.28);
   --hit-marker-other-border-style: solid;
-  --hit-marker-penetrated-fill: #193523;
+  --hit-marker-penetrated-fill: #172b2c;
   --hit-marker-penetrated-fill-share: 100%;
-  --hit-marker-penetrated-stroke: var(--status-confirmed);
-  --hit-marker-penetrated-glow: var(--status-confirmed);
+  --hit-marker-penetrated-stroke: var(--analysis-flow);
+  --hit-marker-penetrated-glow: rgba(120, 185, 190, 0.34);
   --hit-marker-penetrated-border-style: solid;
-  --hit-marker-blocked-fill: #3a2a12;
+  --hit-marker-blocked-fill: #2c281f;
   --hit-marker-blocked-fill-share: 100%;
-  --hit-marker-blocked-stroke: var(--status-pending);
-  --hit-marker-blocked-glow: var(--status-pending);
+  --hit-marker-blocked-stroke: var(--analysis-gold-muted);
+  --hit-marker-blocked-glow: rgba(186, 167, 128, 0.3);
   --hit-marker-blocked-border-style: solid;
   --no-penetration-dash-horizontal:
     repeating-linear-gradient(
@@ -2753,12 +2766,37 @@ code {
 
 .catalog-workspace[data-detail-open="true"] .vehicle-card__alias {
   width: 100%;
+  height: auto;
   margin-left: 0;
+  overflow: visible;
+  line-height: 15px;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .catalog-workspace[data-detail-open="true"] .vehicle-card__name {
+  overflow: visible;
   font-size: clamp(14px, 1.25vw, 18px);
   line-height: 20px;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.catalog-workspace[data-detail-open="true"] .vehicle-card__name-row {
+  height: auto;
+  min-height: 20px;
+  align-items: flex-start;
+  overflow: visible;
+}
+
+.catalog-workspace[data-detail-open="true"] .vehicle-card__label {
+  height: auto;
+  min-height: 0;
+  grid-template-rows: auto auto;
+  align-content: start;
+  row-gap: 3px;
 }
 
 .status-chip {
@@ -3692,7 +3730,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   flex: 0 0 auto;
   overflow: visible;
   color: var(--brand);
-  filter: drop-shadow(0 0 3px rgba(225, 200, 155, 0.2));
+  filter: none;
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="kinetic"] {
@@ -3700,31 +3738,31 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="small-arms"] {
-  color: #a9c987;
+  color: #cbb991;
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="generic"] {
-  color: #aeb6b2;
+  color: #aeb2ad;
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="fragmentation"] {
-  color: #efb865;
+  color: #baa780;
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="heat"] {
-  color: #61d4e5;
+  color: #78b9be;
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="hat"] {
-  color: #4fa4ed;
+  color: #91ccd0;
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="explosives"] {
-  color: #ef735a;
+  color: #d97967;
 }
 
 .vehicle-damage-type-icon[data-damage-type-kind="thermite"] {
-  color: #f29d4b;
+  color: #c96f60;
 }
 
 .component-list {
@@ -4670,7 +4708,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   pointer-events: none;
 }
 
-.viewer-toolbar .viewer-mode-tabs button {
+.viewer-toolbar .viewer-mode-tabs button,
+.viewer-shot-history__tabs button {
   position: relative;
   z-index: 1;
   min-height: 34px;
@@ -4683,12 +4722,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   transition: color 140ms ease, background 140ms ease, box-shadow 140ms ease;
 }
 
-.viewer-toolbar .viewer-mode-tabs button:hover {
+.viewer-toolbar .viewer-mode-tabs button:hover,
+.viewer-shot-history__tabs button:hover:not(:disabled) {
   background: rgba(231, 189, 104, 0.06);
   color: rgba(241, 239, 226, 0.86);
 }
 
-.viewer-toolbar .viewer-mode-tabs button[data-active="true"] {
+.viewer-toolbar .viewer-mode-tabs button[data-active="true"],
+.viewer-shot-history__tabs button[data-active="true"] {
   background: transparent;
   color: var(--brand);
   box-shadow: none;
@@ -5628,7 +5669,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-search-select__effect svg {
   flex: none;
-  filter: drop-shadow(0 0 4px currentColor);
+  filter: none;
 }
 
 .viewer-search-select__effect b {
@@ -5642,15 +5683,15 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   [data-penetration-kind="shaped-charge"],
 .viewer-search-select__effect[data-effect-role="penetration"]
   .weapon-penetration-icon[data-penetration-kind="shaped-charge"] {
-  color: #61d4e5;
+  color: var(--analysis-flow);
 }
 
 .viewer-search-select__effect[data-effect-role="direct-damage"] {
-  color: #f06f57;
+  color: var(--analysis-damage);
 }
 
 .viewer-search-select__effect[data-effect-role="radial-damage"] {
-  color: #e9bf71;
+  color: var(--analysis-damage-strong);
 }
 
 .viewer-search-select__effect[data-zero="true"] {
@@ -6101,7 +6142,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-effect-chip {
-  --effect-color: #aeb6b2;
+  --effect-color: #aeb2ad;
   display: inline-flex;
   min-width: 0;
   min-height: 18px;
@@ -6117,31 +6158,31 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .infantry-weapon-effect-chip[data-damage-type-kind="small-arms"] {
-  --effect-color: #a9c987;
+  --effect-color: #cbb991;
 }
 
 .infantry-weapon-effect-chip[data-damage-type-kind="fragmentation"] {
-  --effect-color: #efb865;
+  --effect-color: #baa780;
 }
 
 .infantry-weapon-effect-chip[data-damage-type-kind="heat"] {
-  --effect-color: #61d4e5;
+  --effect-color: #78b9be;
 }
 
 .infantry-weapon-effect-chip[data-damage-type-kind="hat"] {
-  --effect-color: #4fa4ed;
+  --effect-color: #91ccd0;
 }
 
 .infantry-weapon-effect-chip[data-damage-type-kind="explosives"] {
-  --effect-color: #ef735a;
+  --effect-color: #d97967;
 }
 
 .infantry-weapon-effect-chip[data-damage-type-kind="thermite"] {
-  --effect-color: #f29d4b;
+  --effect-color: #c96f60;
 }
 
 .infantry-weapon-effect-chip[data-effect-role="direct-damage"] {
-  --effect-color: #ee5d61;
+  --effect-color: var(--analysis-damage);
   width: 100%;
   justify-content: flex-start;
   padding-inline: 0;
@@ -6690,6 +6731,20 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   transform: translate(calc(-100% - 22px), 22px);
 }
 
+.viewer-realtime-readout[data-outline="damage"] {
+  border-color: color-mix(in srgb, var(--pointer-outline-damage) 58%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--pointer-outline-damage) 13%, transparent),
+      transparent 64%
+    ),
+    rgba(11, 14, 12, 0.78);
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--pointer-outline-damage) 18%, transparent),
+    0 10px 22px rgba(0, 0, 0, 0.27);
+}
+
 .viewer-realtime-readout__status {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6705,6 +6760,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-realtime-readout[data-outline="damage"] .viewer-realtime-readout__status {
   color: var(--pointer-outline-damage);
+  border-top-color: color-mix(in srgb, var(--pointer-outline-damage) 28%, transparent);
 }
 
 .viewer-realtime-readout[data-outline="component-damage-no-vehicle"] .viewer-realtime-readout__status {
@@ -6817,9 +6873,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-shot-history {
   display: flex;
-  min-height: 24px;
+  min-height: 32px;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   margin: -2px 0 7px;
   padding-bottom: 6px;
   border-bottom: 1px solid rgba(225, 200, 155, 0.22);
@@ -6829,97 +6885,58 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   letter-spacing: 0.05em;
 }
 
-.viewer-shot-history > span {
-  flex: none;
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-.viewer-shot-history > div {
-  display: flex;
+.viewer-shot-history__tabs {
+  width: min(246px, calc(100% - 54px));
   min-width: 0;
-  align-items: center;
-  gap: 4px;
+  flex: 0 1 246px;
 }
 
-.viewer-shot-history button {
-  position: relative;
-  display: inline-flex;
-  overflow: hidden;
-  width: 27px;
-  height: 19px;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding: 0;
-  border: 1px solid rgba(225, 200, 155, 0.18);
-  background: rgba(225, 200, 155, 0.045);
-  color: var(--text-dim);
-  font: inherit;
-  cursor: pointer;
-  transform-origin: center;
-  animation: viewer-shot-queue-pop 460ms cubic-bezier(0.16, 1.3, 0.3, 1) both;
-  transition: border-color 120ms ease, background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+.viewer-shot-history__tabs button {
+  min-height: 25px;
+  padding: 4px 6px;
+  letter-spacing: 0.04em;
 }
 
-.viewer-shot-history button::after {
-  position: absolute;
-  inset: -3px;
-  border: 1px solid rgba(255, 224, 160, 0.78);
-  box-shadow: 0 0 10px rgba(225, 200, 155, 0.3);
-  content: "";
-  opacity: 0;
-  pointer-events: none;
-  animation: viewer-shot-queue-ripple 520ms ease-out both;
+.viewer-shot-history__tabs button > span {
+  color: inherit;
+  font-size: 6px;
+  font-weight: 650;
 }
 
-.viewer-shot-history button > i {
-  width: 8px;
-  height: 1px;
-  flex: none;
-  background: currentColor;
-  box-shadow: 0 0 4px currentColor;
-  transform: rotate(-22deg);
+.viewer-shot-history__tabs button > b {
+  margin-left: 3px;
+  color: inherit;
+  font-size: 8px;
 }
 
-.viewer-shot-history button:hover {
-  border-color: rgba(225, 200, 155, 0.48);
-  color: var(--text-muted);
-}
-
-.viewer-shot-history button[data-active="true"] {
-  border-color: var(--brand);
-  background: rgba(225, 200, 155, 0.14);
-  box-shadow: 0 0 10px rgba(225, 200, 155, 0.16), inset 0 0 7px rgba(225, 200, 155, 0.08);
-  color: var(--brand);
+.viewer-shot-history__tabs button:disabled {
+  color: rgba(241, 239, 226, 0.24);
+  cursor: default;
+  opacity: 1;
 }
 
 .viewer-shot-history__clear {
-  width: auto !important;
+  display: inline-flex;
+  width: auto;
+  height: 31px;
   min-width: max-content;
   flex: none;
+  align-items: center;
+  justify-content: center;
   margin-left: auto;
-  gap: 5px !important;
-  padding-inline: 6px !important;
-  color: var(--text-muted) !important;
+  padding-inline: 8px;
+  border: 1px solid rgba(225, 200, 155, 0.24);
+  background: rgba(225, 200, 155, 0.035);
+  color: var(--text-muted);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
 }
 
-.viewer-shot-history__clear > span {
-  color: var(--text-dim);
-  font-size: 6px;
-}
-
-@keyframes viewer-shot-queue-pop {
-  0% { opacity: 0; transform: translateX(13px) scale(0.48) rotate(7deg); }
-  58% { opacity: 1; transform: translateX(-2px) scale(1.18) rotate(-2deg); }
-  78% { transform: translateX(1px) scale(0.96) rotate(1deg); }
-  100% { opacity: 1; transform: translateX(0) scale(1) rotate(0); }
-}
-
-@keyframes viewer-shot-queue-ripple {
-  0% { opacity: 0.85; transform: scale(0.45); }
-  65% { opacity: 0.3; transform: scale(1.35); }
-  100% { opacity: 0; transform: scale(1.7); }
+.viewer-shot-history__clear:hover {
+  border-color: rgba(225, 200, 155, 0.5);
+  background: rgba(225, 200, 155, 0.08);
+  color: var(--brand);
 }
 
 .viewer-shot-heading {
@@ -6981,7 +6998,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-shot-metrics [data-penetration-kind="shaped-charge"] b {
-  color: #61d4e5;
+  color: var(--analysis-flow);
 }
 
 .viewer-shot-outcome-summary {
@@ -6991,9 +7008,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   gap: 6px;
   margin: 7px 0 5px;
   padding: 6px;
-  border: 1px solid rgba(240, 111, 87, 0.2);
+  border: 1px solid color-mix(in srgb, var(--analysis-damage) 22%, transparent);
   background:
-    linear-gradient(135deg, rgba(240, 111, 87, 0.09), transparent 48%),
+    linear-gradient(135deg, color-mix(in srgb, var(--analysis-damage) 8%, transparent), transparent 48%),
     rgba(255, 255, 255, 0.018);
   font-family: var(--font-mono-ui);
   font-variant-numeric: tabular-nums;
@@ -7032,7 +7049,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-shot-outcome-summary__total-value > strong {
-  color: #ff8c72;
+  color: var(--analysis-damage-strong);
   font-size: 30px;
   font-weight: 850;
   line-height: 0.9;
@@ -7060,7 +7077,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-shot-outcome-summary__hull-health > strong {
-  color: #ffaaa2;
+  color: color-mix(in srgb, var(--analysis-damage-strong) 78%, white);
   font-size: 9px;
   line-height: 1;
   text-align: right;
@@ -7076,7 +7093,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-shot-outcome-summary__targets > li {
-  --outcome-accent: var(--status-confirmed);
+  --outcome-accent: var(--model-component);
   --outcome-type-accent: var(--outcome-accent);
   position: relative;
   display: grid;
@@ -7094,28 +7111,26 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-shot-outcome-summary__targets > li[data-damage-pool="engine"] {
-  --outcome-accent: #ff9c52;
+  --outcome-accent: var(--model-engine);
 }
 
 .viewer-shot-outcome-summary__targets > li[data-damage-pool="ammo-rack"] {
-  --outcome-accent: #ff7080;
+  --outcome-accent: var(--model-ammo-rack);
 }
 
-.viewer-shot-outcome-summary__targets > li[data-damage-pool="seat"] {
-  --outcome-accent: #74f1ff;
-}
-
+.viewer-shot-outcome-summary__targets > li[data-damage-pool="seat"],
 .viewer-shot-outcome-summary__targets > li[data-damage-pool="track"],
-.viewer-shot-outcome-summary__targets > li[data-damage-pool="wheel"] {
-  --outcome-accent: var(--component-only-damage-accent);
+.viewer-shot-outcome-summary__targets > li[data-damage-pool="wheel"],
+.viewer-shot-outcome-summary__targets > li[data-damage-pool="other"] {
+  --outcome-accent: var(--model-component);
 }
 
 .viewer-shot-outcome-summary__targets > li[data-damage-kind="radial"] {
-  --outcome-type-accent: #f4a261;
+  --outcome-type-accent: var(--analysis-damage-strong);
 }
 
 .viewer-shot-outcome-summary__targets > li[data-damage-kind="mixed"] {
-  --outcome-type-accent: var(--brand);
+  --outcome-type-accent: var(--analysis-gold);
 }
 
 .viewer-shot-outcome-summary__target-heading {
@@ -7283,18 +7298,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   animation-duration: 1300ms;
 }
 
-.viewer-shot-outcome-summary__targets > li[data-damage-effect="track-destroyed"] {
-  --outcome-accent: #c8d2dd;
-  --damage-effect-color: #c8d2dd;
-  --damage-effect-glow: rgba(159, 178, 200, 0.32);
-}
-
 .viewer-shot-outcome-summary__targets > li[data-damage-effect="track-destroyed"] .viewer-damage-effect::before {
   inset: 0;
   background: repeating-linear-gradient(
     105deg,
     transparent 0 13px,
-    rgba(200, 210, 221, 0.16) 13px 15px,
+    color-mix(in srgb, var(--damage-effect-color) 15%, transparent) 13px 15px,
     transparent 15px 25px
   );
   animation: viewer-track-shear 1250ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -7318,12 +7327,6 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .viewer-shot-outcome-summary__targets > li[data-damage-effect="stabilization-lost"] .viewer-damage-effect i,
 .viewer-shot-outcome-summary__targets > li[data-damage-effect="turret-locked"] .viewer-damage-effect i {
   display: none;
-}
-
-.viewer-shot-outcome-summary__targets > li[data-damage-effect="wheel-destroyed"] {
-  --outcome-accent: #9fd2ff;
-  --damage-effect-color: #9fd2ff;
-  --damage-effect-glow: rgba(76, 165, 238, 0.36);
 }
 
 .viewer-shot-outcome-summary__targets > li[data-damage-effect="wheel-destroyed"] .viewer-damage-effect::before {
@@ -7354,30 +7357,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   animation-duration: 1450ms;
 }
 
-.viewer-shot-outcome-summary__targets > li[data-damage-effect="engine-destroyed"] {
-  --outcome-accent: #ff9c52;
-  --damage-effect-color: #ff9c52;
-  --damage-effect-glow: rgba(255, 112, 38, 0.42);
-}
-
 .viewer-shot-outcome-summary__targets > li[data-damage-effect="engine-destroyed"] .viewer-damage-effect::before {
   inset: 0;
   background:
-    radial-gradient(circle at 43% 115%, rgba(255, 214, 125, 0.38), transparent 28%),
-    radial-gradient(circle at 34% 120%, rgba(255, 82, 24, 0.3), transparent 42%);
+    radial-gradient(circle at 43% 115%, color-mix(in srgb, var(--damage-effect-color) 32%, transparent), transparent 28%),
+    radial-gradient(circle at 34% 120%, color-mix(in srgb, var(--damage-effect-color) 24%, transparent), transparent 42%);
   animation: viewer-engine-breathe 1450ms ease-in-out infinite;
-}
-
-.viewer-shot-outcome-summary__targets > li[data-damage-effect="ammo-rack-destroyed"] {
-  --outcome-accent: #f4a261;
-  --damage-effect-color: #f4a261;
-  --damage-effect-glow: rgba(244, 162, 97, 0.32);
-}
-
-.viewer-shot-outcome-summary__targets > li[data-damage-effect="stabilization-lost"] {
-  --outcome-accent: #74f1ff;
-  --damage-effect-color: #74f1ff;
-  --damage-effect-glow: rgba(66, 226, 255, 0.32);
 }
 
 .viewer-shot-outcome-summary__targets > li[data-damage-effect="stabilization-lost"] .viewer-damage-effect::before {
@@ -7388,8 +7373,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   width: 40px;
   height: 40px;
   background:
-    linear-gradient(90deg, transparent 48%, rgba(116, 241, 255, 0.55) 49% 51%, transparent 52%),
-    linear-gradient(transparent 48%, rgba(116, 241, 255, 0.55) 49% 51%, transparent 52%);
+    linear-gradient(90deg, transparent 48%, color-mix(in srgb, var(--damage-effect-color) 50%, transparent) 49% 51%, transparent 52%),
+    linear-gradient(transparent 48%, color-mix(in srgb, var(--damage-effect-color) 50%, transparent) 49% 51%, transparent 52%);
   transform: translateY(-50%);
   animation: viewer-stabilizer-drift 1350ms ease-in-out infinite alternate;
 }
@@ -7400,9 +7385,6 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-shot-outcome-summary__targets > li[data-damage-effect="turret-locked"] {
-  --outcome-accent: #a9f7ff;
-  --damage-effect-color: #a9f7ff;
-  --damage-effect-glow: rgba(79, 225, 247, 0.42);
   animation: viewer-turret-lock-impact 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -7414,8 +7396,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   width: 42px;
   height: 42px;
   background:
-    linear-gradient(45deg, transparent 45%, rgba(169, 247, 255, 0.9) 47% 53%, transparent 55%),
-    linear-gradient(-45deg, transparent 45%, rgba(169, 247, 255, 0.9) 47% 53%, transparent 55%);
+    linear-gradient(45deg, transparent 45%, color-mix(in srgb, var(--damage-effect-color) 84%, transparent) 47% 53%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, color-mix(in srgb, var(--damage-effect-color) 84%, transparent) 47% 53%, transparent 55%);
   filter: drop-shadow(0 0 5px var(--damage-effect-glow));
   transform: translate(-50%, -50%);
   animation: viewer-turret-lock-cross 1450ms ease-in-out infinite;
@@ -7583,7 +7565,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-layer-list li {
   --path-accent: var(--hit-marker-blocked-stroke);
-  --path-fill: var(--status-pending-bg);
+  --path-fill: color-mix(in srgb, var(--analysis-gold) 8%, transparent);
   --path-marker-fill: var(--hit-marker-blocked-fill);
   --path-marker-glow: var(--hit-marker-blocked-glow);
   --path-marker-border-style: var(--hit-marker-blocked-border-style);
@@ -7657,17 +7639,17 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   z-index: 2;
   width: 10px;
   height: calc(100% - 19px);
-  background: #83d59c;
+  background: var(--analysis-flow);
   clip-path: polygon(40% 0, 60% 0, 60% 58%, 100% 58%, 50% 100%, 0 58%, 40% 58%);
   content: "";
-  filter: drop-shadow(0 0 3px rgba(131, 213, 156, 0.9));
+  filter: drop-shadow(0 0 3px rgba(120, 185, 190, 0.46));
   pointer-events: none;
   transform: translateX(-50%);
 }
 
 .viewer-layer-list li[data-penetrated="true"] {
   --path-accent: var(--hit-marker-penetrated-stroke);
-  --path-fill: var(--status-official-bg);
+  --path-fill: color-mix(in srgb, var(--analysis-flow) 9%, transparent);
   --path-marker-fill: var(--hit-marker-penetrated-fill);
   --path-marker-glow: var(--hit-marker-penetrated-glow);
   --path-marker-border-style: var(--hit-marker-penetrated-border-style);
@@ -7716,7 +7698,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-layer-list li[data-path-marker="engine"] {
   --path-accent: var(--hit-marker-engine-stroke);
-  --path-fill: rgba(242, 111, 25, 0.12);
+  --path-fill: color-mix(in srgb, var(--model-engine) 9%, transparent);
   --path-marker-fill: var(--hit-marker-engine-fill);
   --path-marker-glow: var(--hit-marker-engine-glow);
   --path-marker-border-style: var(--hit-marker-engine-border-style);
@@ -7724,7 +7706,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-layer-list li[data-path-marker="ammo-rack"] {
   --path-accent: var(--hit-marker-ammo-rack-stroke);
-  --path-fill: rgba(255, 95, 109, 0.12);
+  --path-fill: color-mix(in srgb, var(--model-ammo-rack) 9%, transparent);
   --path-marker-fill: var(--hit-marker-ammo-rack-fill);
   --path-marker-glow: var(--hit-marker-ammo-rack-glow);
   --path-marker-border-style: var(--hit-marker-ammo-rack-border-style);
@@ -7732,7 +7714,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-layer-list li[data-path-marker="component-only-damage"] {
   --path-accent: var(--hit-marker-component-only-damage-stroke);
-  --path-fill: rgba(255, 255, 255, 0.12);
+  --path-fill: color-mix(in srgb, var(--model-component) 8%, transparent);
   --path-marker-fill: color-mix(
     in srgb,
     var(--hit-marker-component-only-damage-fill) var(--hit-marker-component-only-damage-fill-share),
@@ -7757,7 +7739,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-layer-list li[data-path-marker="other"] {
   --path-accent: var(--hit-marker-other-stroke);
-  --path-fill: var(--status-reference-bg);
+  --path-fill: color-mix(in srgb, var(--analysis-neutral) 7%, transparent);
   --path-marker-fill: var(--hit-marker-other-fill);
   --path-marker-glow: var(--hit-marker-other-glow);
   --path-marker-border-style: var(--hit-marker-other-border-style);
@@ -7865,7 +7847,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-causal-settlements > li {
-  --settlement-accent: #74f1ff;
+  --settlement-accent: var(--analysis-flow);
   position: relative;
   display: grid;
   min-width: 0;
@@ -7888,7 +7870,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-causal-settlements > li[data-damage-kind="radial"] {
-  --settlement-accent: var(--explosion-type-color, #f4a261);
+  --settlement-accent: var(--explosion-type-color, var(--analysis-damage));
 }
 
 .viewer-causal-settlements > li::before,
@@ -7961,15 +7943,15 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   position: relative;
   display: grid;
   min-width: 0;
-  gap: 3px;
+  gap: 0;
 }
 
 .viewer-causal-spine__layer,
 .viewer-causal-spine__settlement {
-  --spine-accent: #83d59c;
-  --spine-fill: rgba(131, 213, 156, 0.08);
-  --spine-marker-fill: #173622;
-  --spine-marker-glow: rgba(131, 213, 156, 0.72);
+  --spine-accent: var(--analysis-flow);
+  --spine-fill: rgba(120, 185, 190, 0.07);
+  --spine-marker-fill: #172b2c;
+  --spine-marker-glow: rgba(120, 185, 190, 0.34);
   --spine-marker-border-style: solid;
   position: relative;
   display: grid;
@@ -8014,7 +7996,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-causal-spine__layer[data-path-marker="engine"] {
   --spine-accent: var(--hit-marker-engine-stroke);
-  --spine-fill: rgba(242, 111, 25, 0.1);
+  --spine-fill: color-mix(in srgb, var(--model-engine) 8%, transparent);
   --spine-marker-fill: var(--hit-marker-engine-fill);
   --spine-marker-glow: var(--hit-marker-engine-glow);
   --spine-marker-border-style: var(--hit-marker-engine-border-style);
@@ -8022,7 +8004,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-causal-spine__layer[data-path-marker="ammo-rack"] {
   --spine-accent: var(--hit-marker-ammo-rack-stroke);
-  --spine-fill: rgba(255, 95, 109, 0.1);
+  --spine-fill: color-mix(in srgb, var(--model-ammo-rack) 8%, transparent);
   --spine-marker-fill: var(--hit-marker-ammo-rack-fill);
   --spine-marker-glow: var(--hit-marker-ammo-rack-glow);
   --spine-marker-border-style: var(--hit-marker-ammo-rack-border-style);
@@ -8030,7 +8012,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-causal-spine__layer[data-path-marker="component-only-damage"] {
   --spine-accent: var(--hit-marker-component-only-damage-stroke);
-  --spine-fill: rgba(255, 255, 255, 0.08);
+  --spine-fill: color-mix(in srgb, var(--model-component) 7%, transparent);
   --spine-marker-fill: color-mix(
     in srgb,
     var(--hit-marker-component-only-damage-fill) var(--hit-marker-component-only-damage-fill-share),
@@ -8054,7 +8036,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-causal-spine__layer[data-path-marker="other"] {
   --spine-accent: var(--hit-marker-other-stroke);
-  --spine-fill: var(--status-reference-bg);
+  --spine-fill: color-mix(in srgb, var(--analysis-neutral) 7%, transparent);
   --spine-marker-fill: var(--hit-marker-other-fill);
   --spine-marker-glow: var(--hit-marker-other-glow);
   --spine-marker-border-style: var(--hit-marker-other-border-style);
@@ -8079,8 +8061,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   opacity: 0.42;
 }
 
-.viewer-causal-spine__marker,
-.viewer-causal-spine__settlement > i {
+.viewer-causal-spine__marker {
   position: absolute;
   top: 50%;
   left: -18px;
@@ -8141,26 +8122,24 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   white-space: nowrap;
 }
 
+.viewer-causal-spine__metrics > [data-terminal="true"] {
+  color: var(--pointer-outline-effective);
+  font-weight: 700;
+}
+
 .viewer-causal-spine__settlement {
-  --spine-accent: #74f1ff;
+  --spine-accent: var(--analysis-flow);
   --spine-fill: color-mix(in srgb, var(--spine-accent) 7%, transparent);
-  --spine-marker-fill: #0b100d;
-  --spine-marker-glow: color-mix(in srgb, var(--spine-accent) 42%, transparent);
   grid-template-columns: minmax(78px, 1fr) auto;
   min-height: 30px;
-  margin-left: 28px;
-  border: 1px dashed color-mix(in srgb, var(--spine-accent) 42%, transparent);
+  margin-left: 0;
+  border: 0;
   border-left: 2px solid var(--spine-accent);
-  background: linear-gradient(90deg, var(--spine-fill), rgba(0, 0, 0, 0.08));
+  background: linear-gradient(90deg, var(--spine-fill), transparent 74%);
 }
 
 .viewer-causal-spine__settlement[data-damage-kind="radial"] {
-  --spine-accent: var(--explosion-type-color, #f4a261);
-}
-
-.viewer-causal-spine__settlement > i {
-  color: var(--spine-accent);
-  font-size: 11px;
+  --spine-accent: var(--explosion-type-color, var(--analysis-damage));
 }
 
 .viewer-causal-spine__settlement > strong {
@@ -8269,7 +8248,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   position: absolute;
   inset: 0;
   display: block;
-  filter: drop-shadow(0 0 3px rgba(131, 213, 156, 0.72));
+  filter: drop-shadow(0 0 3px rgba(120, 185, 190, 0.42));
 }
 
 .viewer-causal-spine__connector > i::before,
@@ -8283,14 +8262,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   bottom: 6px;
   left: 3px;
   width: 3px;
-  background: #83d59c;
+  background: var(--analysis-flow);
 }
 
 .viewer-causal-spine__connector > i::after {
   right: 0;
   bottom: 0;
   left: 0;
-  border-top: 7px solid #83d59c;
+  border-top: 7px solid var(--analysis-flow);
   border-right: 4.5px solid transparent;
   border-left: 4.5px solid transparent;
 }
@@ -11415,8 +11394,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .runtime-hit-damage span {
   padding: 3px 5px;
-  border: 1px solid rgba(116, 241, 255, 0.3);
-  color: #74f1ff;
+  border: 1px solid color-mix(in srgb, var(--analysis-damage) 30%, transparent);
+  color: var(--analysis-damage);
   font-size: 8px;
 }
 

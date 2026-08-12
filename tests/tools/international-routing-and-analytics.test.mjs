@@ -69,9 +69,9 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
 
-  assert.equal(currentEntry.id, "2026-08-02-native-projectile-damage-routing");
+  assert.equal(currentEntry.id, "2026-08-13-hit-analysis-polish");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-08-02");
+    assert.equal(document.siteUpdatedOn, "2026-08-13");
     assert.deepEqual(document.entries[0], currentEntry);
     assert.ok(
       !document.entries.some(({ id }) => id === "2026-07-24-hit-path-footer-selector"),

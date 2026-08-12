@@ -6,6 +6,10 @@ import { fileURLToPath } from "node:url";
 
 import { buildHitSceneRenderBatches } from "../../lib/hit-scene-render-batches.ts";
 import { armorThicknessStyle } from "../../lib/armor-thickness-ramp.ts";
+import {
+  VEHICLE_MODEL_CATEGORY_COLORS,
+  vehicleModelCategoryColorRgb,
+} from "../../lib/vehicle-model-category-palette.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -173,11 +177,11 @@ test("engine and ammo rack receive distinct procedural interior materials", () =
   assert.deepEqual([...ammoRack.interior.patternCodes], [7, 7, 7]);
   assert.deepEqual(
     [...engine.interior.colors.slice(0, 3)],
-    [...Float32Array.from([1, 156 / 255, 82 / 255])],
+    [...Float32Array.from(vehicleModelCategoryColorRgb("engine"))],
   );
   assert.deepEqual(
     [...ammoRack.interior.colors.slice(0, 3)],
-    [...Float32Array.from([0.91, 0.12, 0.16])],
+    [...Float32Array.from(vehicleModelCategoryColorRgb("ammo-rack"))],
   );
 });
 
@@ -203,8 +207,8 @@ test("gun-collision is independent from the combined add-on and no-penetration t
   assert.match(rendererSource, /float collisionEdge = outlineCore \* outlineStrength;/u);
   assert.match(rendererSource, /INTERIOR_MODE_NON_INTERIOR_OUTLINE_STRENGTH = 0\.28/u);
   assert.doesNotMatch(rendererSource, /damageDot/u);
-  assert.match(rendererSource, /vec3 collisionColor = vec3\(0\.97, 0\.985, 1\.0\)/u);
-  assert.match(rendererSource, /vec3 damageColor = vec3\(0\.78, 1\.0, 0\.29\)/u);
+  assert.match(rendererSource, /vec3 collisionColor = modelCollisionColor/u);
+  assert.match(rendererSource, /vec3 damageColor = modelComponentColor/u);
   assert.match(rendererSource, /bool isSubtleDamageableMaterial = vPatternCode > 7\.5/u);
   assert.match(rendererSource, /bool isDamageableGunCollisionMaterial = vPatternCode > 8\.5/u);
   assert.match(rendererSource, /alpha = max\(alpha, componentEdge \* 0\.34\);/u);
@@ -222,9 +226,9 @@ test("viewer labels gun collision separately from attached armor", () => {
   assert.doesNotMatch(viewerSource, /减伤组件/u);
 
   const cssSource = fs.readFileSync(path.join(root, "app/globals.css"), "utf8");
-  assert.match(cssSource, /--component-only-damage-accent: #c7ff4a/u);
-  assert.match(cssSource, /--gun-collision-accent: #f7fbff/u);
-  assert.match(cssSource, /--hit-marker-gun-collision-fill: #363a44/u);
+  assert.match(cssSource, /--component-only-damage-accent: var\(--model-component\)/u);
+  assert.match(cssSource, /--gun-collision-accent: var\(--model-collision\)/u);
+  assert.match(cssSource, /--hit-marker-gun-collision-fill: #303330/u);
   assert.match(cssSource, /--hit-marker-gun-collision-fill-share: 32%/u);
   assert.match(cssSource, /--hit-marker-gun-collision-border-style: solid/u);
   assert.match(
@@ -262,22 +266,51 @@ test("viewer labels gun collision separately from attached armor", () => {
   assert.doesNotMatch(gunCollisionPathBlock, /repeating-linear-gradient/u);
 });
 
-test("engine returns to the damage-card orange and interior semantics use distinct grids", () => {
+test("3D categories and component outcome cards share one palette", () => {
   const viewerSource = fs.readFileSync(path.join(root, "app/RuntimeVehicleViewer.tsx"), "utf8");
   const cssSource = fs.readFileSync(path.join(root, "app/globals.css"), "utf8");
   const rendererSource = fs.readFileSync(
     path.join(root, "lib/hit-scene-three-renderer.ts"),
     "utf8",
   );
+  const paletteSource = fs.readFileSync(
+    path.join(root, "lib/vehicle-model-category-palette.ts"),
+    "utf8",
+  );
+  const layoutSource = fs.readFileSync(path.join(root, "app/layout.tsx"), "utf8");
 
-  assert.match(cssSource, /--armor-legend-engine: #ff9c52/u);
-  assert.match(cssSource, /--hit-marker-engine-fill: #4a260d/u);
-  assert.match(cssSource, /--hit-marker-ammo-rack-fill: #3d1821/u);
+  assert.equal(VEHICLE_MODEL_CATEGORY_COLORS["spaced-armor"], "#55d9e6");
+  assert.equal(VEHICLE_MODEL_CATEGORY_COLORS["no-penetration"], "#d874b7");
+  assert.equal(VEHICLE_MODEL_CATEGORY_COLORS.component, "#b8d96b");
+  assert.equal(VEHICLE_MODEL_CATEGORY_COLORS.engine, "#f3a15b");
+  assert.equal(VEHICLE_MODEL_CATEGORY_COLORS["ammo-rack"], "#e95f6d");
+  assert.equal(VEHICLE_MODEL_CATEGORY_COLORS.collision, "#f3f5f2");
+  assert.match(paletteSource, /Single source of truth for categorical colors/u);
+  assert.doesNotMatch(cssSource, /#55d9e6|#d874b7|#b8d96b|#f3a15b|#e95f6d|#f3f5f2/u);
+  assert.match(layoutSource, /style=\{VEHICLE_MODEL_CATEGORY_CSS_VARIABLES as CSSProperties\}/u);
+  assert.match(rendererSource, /new Color\(VEHICLE_MODEL_CATEGORY_COLORS\["spaced-armor"\]\)/u);
+  assert.match(rendererSource, /new Color\(VEHICLE_MODEL_CATEGORY_COLORS\.component\)/u);
+  assert.match(cssSource, /--armor-legend-engine: var\(--model-engine\)/u);
+  assert.match(cssSource, /--armor-legend-ammo-rack: var\(--model-ammo-rack\)/u);
+  assert.match(cssSource, /--hit-marker-engine-fill: #3d2515/u);
+  assert.match(cssSource, /--hit-marker-ammo-rack-fill: #3a1b22/u);
   assert.match(cssSource, /--hit-marker-engine-material:/u);
   assert.match(cssSource, /--hit-marker-ammo-rack-material:/u);
   assert.match(
     cssSource,
-    /\.viewer-shot-outcome-summary__targets > li\[data-damage-pool="engine"\]\s*\{[^}]*--outcome-accent:\s*#ff9c52;/u,
+    /\.viewer-shot-outcome-summary__targets > li\s*\{[^}]*--outcome-accent:\s*var\(--model-component\);/u,
+  );
+  assert.match(
+    cssSource,
+    /li\[data-damage-pool="track"\],[\s\S]*?--outcome-accent:\s*var\(--model-component\);/u,
+  );
+  assert.match(
+    cssSource,
+    /li\[data-damage-pool="engine"\]\s*\{[^}]*--outcome-accent:\s*var\(--model-engine\);/u,
+  );
+  assert.match(
+    cssSource,
+    /li\[data-damage-pool="ammo-rack"\]\s*\{[^}]*--outcome-accent:\s*var\(--model-ammo-rack\);/u,
   );
   assert.match(rendererSource, /bool isEngineMaterial = vPatternCode > 5\.5/u);
   assert.match(rendererSource, /bool isAmmoRackMaterial = vPatternCode > 6\.5/u);
@@ -287,11 +320,11 @@ test("engine returns to the damage-card orange and interior semantics use distin
   assert.match(rendererSource, /surfacePatternUv\(vLocalPosition, vLocalNormal\) \* 10\.0/u);
   assert.match(
     cssSource,
-    /\.viewer-causal-spine__marker,[\s\S]*?\.viewer-causal-spine__settlement > i\s*\{[\s\S]*?width:\s*20px;/u,
+    /\.viewer-causal-spine__marker\s*\{[\s\S]*?width:\s*20px;/u,
   );
   assert.match(
     cssSource,
-    /\.viewer-causal-spine__marker,[\s\S]*?border:\s*2px var\(--spine-marker-border-style\) var\(--spine-accent\);/u,
+    /\.viewer-causal-spine__marker\s*\{[\s\S]*?border:\s*2px var\(--spine-marker-border-style\) var\(--spine-accent\);/u,
   );
   assert.match(viewerSource, /context\.arc\(48, 48, 40, 0, Math\.PI \* 2\)/u);
   assert.match(viewerSource, /context\.shadowBlur = 20/u);

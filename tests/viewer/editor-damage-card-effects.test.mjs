@@ -74,7 +74,7 @@ test("component effects stay centralized while causal settlements remount for re
   );
   assert.match(
     styles,
-    /\.viewer-causal-spine__settlement\[data-damage-kind="radial"\]\s*\{[^}]*--spine-accent:\s*var\(--explosion-type-color, #f4a261\);/u,
+    /\.viewer-causal-spine__settlement\[data-damage-kind="radial"\]\s*\{[^}]*--spine-accent:\s*var\(--explosion-type-color, var\(--analysis-damage\)\);/u,
   );
   assert.match(
     styles,

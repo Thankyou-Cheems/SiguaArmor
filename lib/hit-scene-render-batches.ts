@@ -9,6 +9,7 @@ import type {
   HitSceneSurfaceProfile,
   ParsedHitSceneRuntime,
 } from "./runtime-hit-scene";
+import { vehicleModelCategoryColorRgb } from "./vehicle-model-category-palette.ts";
 
 export type HitSceneRenderLayer =
   | "armor"
@@ -55,8 +56,7 @@ const SPACED_ARMOR_PATTERN_CODE = 3 as const;
 const INTERIOR_STYLES: Readonly<Record<"engine" | "ammo-rack" | "other", ArmorSurfaceVisualStyle>> = {
   engine: {
     category: "unknown",
-    // Match the orange engine accent used by the damage-resolution card.
-    rgb: [1, 156 / 255, 82 / 255],
+    rgb: vehicleModelCategoryColorRgb("engine"),
     opacity: 1,
     depthWrite: true,
     pattern: "none",
@@ -65,7 +65,7 @@ const INTERIOR_STYLES: Readonly<Record<"engine" | "ammo-rack" | "other", ArmorSu
   },
   "ammo-rack": {
     category: "unknown",
-    rgb: [0.91, 0.12, 0.16],
+    rgb: vehicleModelCategoryColorRgb("ammo-rack"),
     opacity: 1,
     depthWrite: true,
     pattern: "none",

@@ -17,6 +17,7 @@ import type {
   ParsedHitSceneRuntime,
   ParsedRuntimeHitScene,
 } from "./runtime-hit-scene";
+import { VEHICLE_MODEL_CATEGORY_COLORS } from "./vehicle-model-category-palette.ts";
 
 const VERTEX_SHADER = `
   attribute vec3 color;
@@ -62,6 +63,12 @@ const FRAGMENT_SHADER = `
   uniform float spacedArmorAlphaScale;
   uniform float spacedArmorDashOffset;
   uniform float outlineStrength;
+  uniform vec3 modelSpacedArmorColor;
+  uniform vec3 modelNoPenetrationColor;
+  uniform vec3 modelComponentColor;
+  uniform vec3 modelEngineColor;
+  uniform vec3 modelAmmoRackColor;
+  uniform vec3 modelCollisionColor;
   uniform vec3 damageHighlightColor;
   uniform float damageHighlightStrength;
   varying vec3 vColor;
@@ -121,6 +128,7 @@ const FRAGMENT_SHADER = `
     if (isEngineMaterial) {
       // A dark diamond mechanical mesh keeps the engine orange while making
       // its surface readable as a distinct internal machine volume.
+      shaded = modelEngineColor * diffuse;
       vec2 engineUv = surfacePatternUv(vLocalPosition, vLocalNormal);
       vec2 engineDiamond = vec2(
         engineUv.x + engineUv.y,
@@ -136,19 +144,20 @@ const FRAGMENT_SHADER = `
         vSpacedArmorEdgeMask;
       float engineEdge =
         max(coreBand.x, max(coreBand.y, coreBand.z)) * outlineStrength;
-      vec3 engineEdgeColor = vec3(1.0, 0.61, 0.32);
+      vec3 engineEdgeColor = modelEngineColor;
       shaded = mix(shaded, engineEdgeColor, engineEdge * 0.92);
       shaded += engineEdgeColor * engineEdge * 0.15;
       alpha = max(alpha, engineEdge * 0.88);
     } else if (isAmmoRackMaterial) {
       // Orthogonal illuminated cells evoke separate ammunition stowage bays
       // and remain visually unlike the engine's diagonal dark lattice.
+      shaded = modelAmmoRackColor * diffuse;
       vec2 ammoUv = surfacePatternUv(vLocalPosition, vLocalNormal) * 10.0;
       float ammoGrid = proceduralGrid(ammoUv);
       float ammoCell =
         mod(floor(ammoUv.x) + floor(ammoUv.y), 2.0);
       shaded *= mix(0.86, 1.04, ammoCell * 0.32);
-      vec3 ammoGridColor = vec3(1.0, 0.55, 0.31);
+      vec3 ammoGridColor = modelAmmoRackColor;
       shaded = mix(shaded, ammoGridColor, ammoGrid * 0.54);
 
       vec3 edgeWidth = max(fwidth(vOutlineBarycentric), vec3(0.00001));
@@ -157,13 +166,13 @@ const FRAGMENT_SHADER = `
         vSpacedArmorEdgeMask;
       float ammoEdge =
         max(coreBand.x, max(coreBand.y, coreBand.z)) * outlineStrength;
-      vec3 ammoEdgeColor = vec3(1.0, 0.38, 0.46);
+      vec3 ammoEdgeColor = modelAmmoRackColor;
       shaded = mix(shaded, ammoEdgeColor, ammoEdge * 0.92);
       shaded += ammoEdgeColor * ammoEdge * 0.16;
       alpha = max(alpha, ammoEdge * 0.88);
     } else if (isDamageableGunCollisionMaterial) {
       // Damageable weapon/collision meshes keep a readable white core while a
-      // faint lime outer edge also identifies them as a component health pool.
+      // lime outer edge also identifies them as a component health pool.
       vec3 edgeWidth = max(fwidth(vOutlineBarycentric), vec3(0.00001));
       vec3 coreBand =
         (vec3(1.0) - smoothstep(edgeWidth * 0.25, edgeWidth * 1.35, vOutlineBarycentric)) *
@@ -173,8 +182,8 @@ const FRAGMENT_SHADER = `
         vSpacedArmorEdgeMask;
       float outlineCore = max(coreBand.x, max(coreBand.y, coreBand.z)) * outlineStrength;
       float componentHalo = max(haloBand.x, max(haloBand.y, haloBand.z)) * outlineStrength;
-      vec3 collisionColor = vec3(0.97, 0.985, 1.0);
-      vec3 damageColor = vec3(0.78, 1.0, 0.29);
+      vec3 collisionColor = modelCollisionColor;
+      vec3 damageColor = modelComponentColor;
       shaded = mix(shaded, damageColor, componentHalo * 0.2);
       shaded = mix(shaded, collisionColor, outlineCore * 0.62);
       shaded += collisionColor * outlineCore * 0.07;
@@ -187,7 +196,7 @@ const FRAGMENT_SHADER = `
         (vec3(1.0) - smoothstep(edgeWidth * 0.35, edgeWidth * 2.2, vOutlineBarycentric)) *
         vSpacedArmorEdgeMask;
       float componentEdge = max(edgeBand.x, max(edgeBand.y, edgeBand.z)) * outlineStrength;
-      vec3 damageColor = vec3(0.78, 1.0, 0.29);
+      vec3 damageColor = modelComponentColor;
       shaded = mix(shaded, damageColor, componentEdge * 0.38);
       shaded += damageColor * componentEdge * 0.05;
       alpha = max(alpha, componentEdge * 0.34);
@@ -203,7 +212,7 @@ const FRAGMENT_SHADER = `
         vSpacedArmorEdgeMask;
       float outlineCore = max(coreBand.x, max(coreBand.y, coreBand.z));
       float collisionEdge = outlineCore * outlineStrength;
-      vec3 collisionColor = vec3(0.97, 0.985, 1.0);
+      vec3 collisionColor = modelCollisionColor;
       shaded = mix(shaded, collisionColor, collisionEdge * 0.88);
       shaded += collisionColor * collisionEdge * 0.18;
       alpha = max(alpha, collisionEdge * 0.82);
@@ -216,7 +225,7 @@ const FRAGMENT_SHADER = `
         (vec3(1.0) - smoothstep(edgeWidth * 0.25, edgeWidth * 1.35, vOutlineBarycentric)) *
         vSpacedArmorEdgeMask;
       float outlineCore = max(coreBand.x, max(coreBand.y, coreBand.z)) * outlineStrength;
-      vec3 damageColor = vec3(0.78, 1.0, 0.29);
+      vec3 damageColor = modelComponentColor;
       shaded = mix(shaded, damageColor, outlineCore * 0.92);
       shaded += damageColor * outlineCore * 0.18;
       alpha = max(alpha, outlineCore * 0.88);
@@ -246,7 +255,7 @@ const FRAGMENT_SHADER = `
       // is deliberately translucent. The wider glow remains alpha blended.
       spacedArmorOutlineAlpha =
         max(outlineCore, max(outlineGlow * 0.62, outlineHalo * 0.22)) * dash;
-      vec3 glowColor = vec3(0.42, 0.94, 1.0);
+      vec3 glowColor = modelSpacedArmorColor;
       float haloStrength = mix(0.1, 0.2, hoveredSurface) * outlineHalo * dash;
       float glowStrength = mix(0.38, 0.58, hoveredSurface) * outlineGlow * dash;
       float coreStrength = mix(0.78, 1.0, hoveredSurface) * outlineCore * dash;
@@ -277,7 +286,7 @@ const FRAGMENT_SHADER = `
       vec3 edgeBand =
         vec3(1.0) - smoothstep(edgeWidth * 0.45, edgeWidth * 2.8, vOutlineBarycentric);
       float noPenEdge = max(edgeBand.x, max(edgeBand.y, edgeBand.z));
-      vec3 glowColor = vec3(1.0, 0.24, 0.76);
+      vec3 glowColor = modelNoPenetrationColor;
       float glow = noPenEdge * noPenDotDash * outlineStrength;
       shaded = mix(shaded, glowColor, glow * 0.86);
       shaded += glowColor * glow * 0.42;
@@ -520,6 +529,12 @@ function createMaterial(layer: HitSceneRenderLayer) {
       spacedArmorAlphaScale: { value: SPACED_ARMOR_ALPHA_SCALE },
       spacedArmorDashOffset: { value: 0 },
       outlineStrength: { value: 1 },
+      modelSpacedArmorColor: { value: new Color(VEHICLE_MODEL_CATEGORY_COLORS["spaced-armor"]) },
+      modelNoPenetrationColor: { value: new Color(VEHICLE_MODEL_CATEGORY_COLORS["no-penetration"]) },
+      modelComponentColor: { value: new Color(VEHICLE_MODEL_CATEGORY_COLORS.component) },
+      modelEngineColor: { value: new Color(VEHICLE_MODEL_CATEGORY_COLORS.engine) },
+      modelAmmoRackColor: { value: new Color(VEHICLE_MODEL_CATEGORY_COLORS["ammo-rack"]) },
+      modelCollisionColor: { value: new Color(VEHICLE_MODEL_CATEGORY_COLORS.collision) },
       damageHighlightColor: { value: new Color(0xffc45c) },
       damageHighlightStrength: { value: 0 },
     },

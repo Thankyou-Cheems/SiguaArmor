@@ -91,7 +91,7 @@ test("penetration and damage cards use inline text without standalone legend row
   assert.doesNotMatch(styles, /\.viewer-path-metric-legend|\.viewer-damage-lane__legend/u);
   assert.match(
     viewerSource,
-    /className="viewer-causal-spine__columns"[\s\S]*?<span>厚度 · mm<\/span>[\s\S]*?<span>剩余 · mm<\/span>[\s\S]*?<span>吸收<\/span>/u,
+    /className="viewer-causal-spine__columns"[\s\S]*?<span>厚度 · mm<\/span>[\s\S]*?<span>剩余 · mm<\/span>[\s\S]*?<span>结果<\/span>/u,
   );
   assert.doesNotMatch(viewerSource, /viewer-layer-metric-label/u);
   const pathTimeline = viewerSource.slice(
@@ -116,6 +116,18 @@ test("shot summary uses text labels instead of pictograms", () => {
   assert.match(shotSummary, /className="viewer-shot-weapon-name"[\s\S]*?activeShotWeaponName/u);
   assert.doesNotMatch(shotSummary, /<(?:WeaponPenetrationIcon|Swords|MoveRight)\b/u);
   assert.match(styles, /\.viewer-shot-outcome-summary__hull-health > i > b\s*\{[\s\S]*?rgba\(255, 92, 82, 0\.92\)/u);
+});
+
+test("vehicle-damaging realtime aim feedback uses the shared success green", () => {
+  assert.match(styles, /--pointer-outline-damage:\s*var\(--status-confirmed\);/u);
+  assert.match(
+    styles,
+    /\.viewer-realtime-readout\[data-outline="damage"\]\s*\{[\s\S]*?border-color:[\s\S]*?var\(--pointer-outline-damage\)[\s\S]*?background:[\s\S]*?var\(--pointer-outline-damage\)/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-realtime-crosshair\[data-outline="damage"\]\s*\{[\s\S]*?--pointer-outline:\s*var\(--pointer-outline-damage\);/u,
+  );
 });
 
 test("effective damage uses the selected B health-rail summary above the causal spine", () => {
@@ -147,7 +159,14 @@ test("effective damage uses the selected B health-rail summary above the causal 
   assert.match(viewerSource, /className="viewer-causal-spine__settlement"/u);
   assert.doesNotMatch(viewerSource, /viewer-layer-list|viewer-causal-settlements/u);
   assert.match(styles, /\.viewer-causal-spine\s*\{[\s\S]*?padding:\s*0 0 0 25px;/u);
-  assert.match(styles, /\.viewer-causal-spine__settlement\s*\{[\s\S]*?margin-left:\s*28px;/u);
+  assert.match(styles, /\.viewer-causal-spine__step\s*\{[\s\S]*?gap:\s*0;/u);
+  assert.match(styles, /\.viewer-causal-spine__settlement\s*\{[\s\S]*?margin-left:\s*0;[\s\S]*?border:\s*0;/u);
+  const settlementItems = viewerSource.slice(
+    viewerSource.indexOf("function DamageSettlementListItems"),
+    viewerSource.indexOf("function paintShotPathMarker"),
+  );
+  assert.doesNotMatch(settlementItems, /<i aria-hidden="true">→<\/i>/u);
+  assert.doesNotMatch(styles, /\.viewer-causal-spine__settlement > i/u);
   assert.match(styles, /\.viewer-causal-spine__settlement\[data-damage-kind="radial"\]/u);
   assert.match(viewerSource, /className="viewer-causal-spine__settlement viewer-causal-spine__settlement--forwarded"/u);
   assert.match(viewerSource, /className="viewer-causal-spine__forwarding-calculation"/u);
@@ -158,7 +177,7 @@ test("effective damage uses the selected B health-rail summary above the causal 
   assert.doesNotMatch(styles, /damage-transfer-prototype/u);
   assert.match(viewerSource, /index < visibleShotLayers\.length - 1[\s\S]*?viewer-causal-spine__connector/u);
   assert.match(styles, /\.viewer-causal-spine__connector\s*\{[\s\S]*?top:\s*27px;[\s\S]*?bottom:\s*-10px;/u);
-  assert.match(styles, /\.viewer-causal-spine__connector > i::after\s*\{[\s\S]*?border-top:\s*7px solid #83d59c;/u);
+  assert.match(styles, /\.viewer-causal-spine__connector > i::after\s*\{[\s\S]*?border-top:\s*7px solid var\(--analysis-flow\);/u);
   assert.match(viewerSource, /"--spine-accent": vehicleDamageTypeIconColor\(settlementColorKind\)/u);
   assert.match(viewerSource, /penetrationKind === "shaped-charge" \? "heat" : "kinetic"/u);
   assert.match(viewerSource, /<strong>\{metricText\(totalEffectiveDamage\)\}<\/strong>[\s\S]*?<sub>有效伤害<\/sub>/u);
@@ -189,7 +208,7 @@ test("effective damage uses the selected B health-rail summary above the causal 
   assert.doesNotMatch(styles, /damage-card-prototype/u);
 });
 
-test("clear traces lives at the far right of the saved path row", () => {
+test("saved shots use a three-position record slider with a compact clear action", () => {
   const toolbar = viewerSource.slice(
     viewerSource.indexOf('<div className="viewer-toolbar"'),
     viewerSource.indexOf("{viewerState.kind !== \"loading\""),
@@ -200,9 +219,20 @@ test("clear traces lives at the far right of the saved path row", () => {
   );
   assert.doesNotMatch(toolbar, /viewer-clear-traces/u);
   assert.match(shotHistory, /viewer-shot-history__clear/u);
+  assert.doesNotMatch(shotHistory, /路径记录|清除射线/u);
+  assert.match(
+    shotHistory,
+    /className="viewer-mode-tabs viewer-shot-history__tabs"[\s\S]*?aria-label="三条命中记录"[\s\S]*?className="viewer-mode-tabs__thumb"[\s\S]*?Array\.from\(\{ length: MAX_SHOT_TRACES \}/u,
+  );
+  assert.match(shotHistory, /<span>记录<\/span><b>\{index \+ 1\}<\/b>/u);
+  assert.match(shotHistory, /清空\{savedShots\.length\}/u);
   assert.match(
     styles,
     /\.viewer-shot-history__clear\s*\{[\s\S]*?margin-left:\s*auto;/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-shot-history__tabs\s*\{[\s\S]*?width:\s*min\(246px, calc\(100% - 54px\)\);/u,
   );
 });
 
@@ -226,6 +256,21 @@ test("China dock scrolls with the page, search aligns right, and detail keeps wi
   assert.doesNotMatch(
     styles,
     /\.site-shell\[data-detail-open="true"\][\s\S]*?\.faction-dock\s*\{\s*padding-inline:\s*8px;/u,
+  );
+});
+
+test("compact vehicle cards wrap both identity lines instead of truncating them", () => {
+  assert.match(
+    styles,
+    /\.catalog-workspace\[data-detail-open="true"\] \.vehicle-card__name\s*\{[\s\S]*?overflow-wrap:\s*anywhere;[\s\S]*?text-overflow:\s*clip;[\s\S]*?white-space:\s*normal;/u,
+  );
+  assert.match(
+    styles,
+    /\.catalog-workspace\[data-detail-open="true"\] \.vehicle-card__alias\s*\{[\s\S]*?height:\s*auto;[\s\S]*?overflow-wrap:\s*anywhere;[\s\S]*?text-overflow:\s*clip;[\s\S]*?white-space:\s*normal;/u,
+  );
+  assert.match(
+    styles,
+    /\.catalog-workspace\[data-detail-open="true"\] \.vehicle-card__label\s*\{[\s\S]*?height:\s*auto;[\s\S]*?grid-template-rows:\s*auto auto;/u,
   );
 });
 
