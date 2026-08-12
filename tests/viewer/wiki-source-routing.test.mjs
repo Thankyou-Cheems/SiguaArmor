@@ -40,7 +40,7 @@ test("analysis mode skips shared appearance textures", () => {
   );
 });
 
-test("presentation datasets use one stable v2 cache key after the vehicle visual refresh", async () => {
+test("presentation datasets use one stable v3 cache key after the vehicle visual refresh", async () => {
   const originalFetch = globalThis.fetch;
   const requestedUrls = [];
   globalThis.fetch = async (url) => {
@@ -86,9 +86,9 @@ test("presentation datasets use one stable v2 cache key after the vehicle visual
   }
 
   assert.deepEqual(requestedUrls, [
-    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v2",
-    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v2",
-    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v2",
+    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v3",
+    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v3",
+    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v3",
   ]);
 });
 
@@ -113,6 +113,6 @@ test("runtime visual descriptors use the presentation cache key", async () => {
   }
   assert.equal(
     requestedUrl,
-    `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v2`,
+    `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v3`,
   );
 });
