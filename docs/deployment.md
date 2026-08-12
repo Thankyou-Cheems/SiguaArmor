@@ -16,4 +16,6 @@ Upload this directory to a new server-side candidate. Keep the existing `data/` 
 
 The candidate switch replaces the deployment-owned `services/` directory as well as `release/`. Recreate `sigua-content-admin` in the same switch even when its source did not change; otherwise its existing bind-mounted working directory points at the retired directory and Docker health checks fail. The analytics data directory stays outside the candidate, but rebuild `sigua-analytics` whenever its service source or image definition changes.
 
+The outer ingress mounts `/opt/Caddyfile` as one read-only file. An atomic host-side rename does not change the file inode already mounted in the running `caddy` container, so a subsequent `caddy reload` can silently report that the configuration is unchanged. After an outer-Caddy replacement, recreate only that container, wait for health, and verify both the source and CDN behavior. Wiki 404 responses must remain `Cache-Control: no-store`; run SiguaWiki's `npm run verify:public-cache` to confirm a fresh missing data URL is a CDN `MISS` on repeated requests while published data remains cacheable.
+
 Routine releases upload only changed candidate files directly to the server. They do not pull a multi-gigabyte asset archive through GitHub and do not create manifests, receipts, consumer pins, or browser hash checks.
