@@ -1971,6 +1971,11 @@ function sourceMeshRequiresStableAnalysisSurface(mesh: THREE.Mesh) {
   );
 }
 
+function isSiguaDProjectedMark(material: THREE.Material) {
+  return material.userData?.siguadRole === "projected-mark" ||
+    material.name === "SiguaD vehicle projected mark";
+}
+
 function analysisVisualDepthMaterial(source: THREE.Material) {
   const sourceWithMaps = source as THREE.Material & {
     map?: THREE.Texture | null;
@@ -2068,7 +2073,8 @@ function setAnalysisVisualPresentation(
   group.traverse((object) => {
     if (
       !(object instanceof THREE.Mesh) ||
-      object.userData.analysisVisualOnly !== true
+      object.userData.analysisVisualOnly !== true ||
+      object.userData.siguadProjectedMark === true
     ) {
       return;
     }
@@ -6807,6 +6813,10 @@ export function RuntimeVehicleViewer({
           const sourceMaterials = Array.isArray(object.material)
             ? object.material
             : [object.material];
+          if (sourceMaterials.some(isSiguaDProjectedMark)) {
+            object.visible = false;
+            return;
+          }
           object.material = Array.isArray(object.material)
             ? sourceMaterials.map(analysisVisualDepthMaterial)
             : analysisVisualDepthMaterial(sourceMaterials[0]);
@@ -6853,6 +6863,22 @@ export function RuntimeVehicleViewer({
           object.frustumCulled = false;
           object.userData.analysisVisualOnly = true;
           object.userData.stableOccurrenceId = placement.stableOccurrenceId;
+          const sourceMaterials = Array.isArray(object.material)
+            ? object.material
+            : [object.material];
+          if (sourceMaterials.some(isSiguaDProjectedMark)) {
+            object.userData.siguadProjectedMark = true;
+            object.userData.analysisVisualStableSurface = true;
+            object.renderOrder = ANALYSIS_VISUAL_STABLE_SURFACE_RENDER_ORDER + 1;
+            sourceMaterials.forEach((material) => {
+              material.depthWrite = false;
+              material.polygonOffset = true;
+              material.polygonOffsetFactor = -2;
+              material.polygonOffsetUnits = -2;
+            });
+            occurrenceMeshes.push(object);
+            return;
+          }
           const materialStableSurface =
             sourceMeshRequiresStableAnalysisSurface(object);
           const stableSurface =
