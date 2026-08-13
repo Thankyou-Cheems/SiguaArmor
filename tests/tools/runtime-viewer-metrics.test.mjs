@@ -28,6 +28,7 @@ test("repeatable iGPU gate defaults match the reviewed acceptance contract", () 
   assert.match(browserProbeSource, /maxDragMaxMs: number\("max-drag-max-ms", 160\)/u);
   assert.match(browserProbeSource, /maxLongTasks: number\("max-long-tasks", 1\)/u);
   assert.match(browserProbeSource, /minOptimizedAssets: number\("min-optimized-assets", 8\)/u);
+  assert.match(browserProbeSource, /hitGeometryRequests:/u);
 });
 
 test("runtime viewer frame summaries use nearest-rank percentiles", () => {

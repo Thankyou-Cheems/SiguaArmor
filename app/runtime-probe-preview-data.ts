@@ -8,6 +8,7 @@ import type {
   RuntimePlanarSuspensionCoverageResult,
   RuntimePlanarSuspensionPoseRecord,
 } from "./runtime-planar-suspension-pose";
+import type { RuntimeHitBufferRef } from "../lib/runtime-hit-buffer";
 
 export type RuntimePreviewStatus =
   | "visual-ready"
@@ -60,6 +61,10 @@ interface RuntimeVisualSelectionSummary {
   selectedRepresentation: "turret-component";
 }
 
+type RuntimeHitGeometrySource =
+  | { geometryUrl: string; geometry?: never }
+  | { geometryUrl?: never; geometry: RuntimeHitBufferRef };
+
 export interface RuntimeVehiclePreview {
   cardId: string;
   status: RuntimePreviewStatus;
@@ -91,19 +96,18 @@ export interface RuntimeVehiclePreview {
     placements: RuntimeVisualPlacement[];
     selection: RuntimeVisualSelectionSummary | null;
   } | null;
-  hit: {
+  hit: ({
     status: "public";
     formatVersion: "hit-scene-runtime/v1";
     vehicleId: string;
     recordUrl: string;
-    geometryUrl: string;
     bvhUrl: string;
     triangles: number;
     components: number;
     surfaceProfiles: number;
     bvhNodes: number;
     reason: string;
-  } | null;
+  } & RuntimeHitGeometrySource) | null;
   hitAvailability: {
     status: "runtime-no-hit-geometry";
     reasonCode: string;
@@ -139,13 +143,12 @@ interface WikiVehicleRuntimeVariant {
     generatedClass: string;
     placementCount: number;
   }>>;
-  hit: null | {
+  hit: null | ({
     id: string;
     formatVersion: "hit-scene-runtime/v1";
     recordUrl: string;
-    geometryUrl: string;
     bvhUrl: string;
-  };
+  } & RuntimeHitGeometrySource);
 }
 
 interface WikiVehicleRuntimeSource {
@@ -328,12 +331,15 @@ function applyVisualSelection(
 function hitForRuntimeVariant(variant: WikiVehicleRuntimeVariant) {
   const artifact = variant.hit;
   if (!artifact) return null;
+  const geometrySource = artifact.geometry
+    ? { geometry: artifact.geometry }
+    : { geometryUrl: artifact.geometryUrl };
   return {
     status: "public" as const,
     formatVersion: artifact.formatVersion,
     vehicleId: variant.runtimeVehicleRef,
     recordUrl: artifact.recordUrl,
-    geometryUrl: artifact.geometryUrl,
+    ...geometrySource,
     bvhUrl: artifact.bvhUrl,
     triangles: 0,
     components: 0,

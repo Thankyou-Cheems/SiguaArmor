@@ -6,14 +6,19 @@ import type {
   HitSceneRecordHeader,
   HitSceneSurfaceProfile,
   ParsedHitSceneRecord,
-} from "./hit-scene-record";
-import { runtimeWikiAssetUrl } from "./runtime-visual-lazy-load";
+} from "./hit-scene-record.ts";
+import {
+  runtimeHitBufferLoader,
+  type RawRuntimeHitBufferRef,
+  type RuntimeHitBufferRef,
+} from "./runtime-hit-buffer.ts";
+import { runtimeWikiAssetUrl } from "./runtime-visual-lazy-load.ts";
 
 export type {
   Evidence,
   HitSceneComponent,
   HitSceneSurfaceProfile,
-} from "./hit-scene-record";
+} from "./hit-scene-record.ts";
 
 
 export interface RuntimeHitArtifactDescriptor {
@@ -22,7 +27,8 @@ export interface RuntimeHitArtifactDescriptor {
   formatVersion: "hit-scene-runtime/v1";
   vehicleId: string;
   recordUrl: string;
-  geometryUrl: string;
+  geometryUrl?: string;
+  geometry?: RuntimeHitBufferRef;
   bvhUrl: string;
   triangles: number;
   components: number;
@@ -104,6 +110,69 @@ async function fetchRuntimeAsset(url: string, label: string) {
   return response.arrayBuffer();
 }
 
+function rawHitBufferRef(
+  url: string,
+  decodedByteLength: number,
+  decodedSha256: string,
+): RawRuntimeHitBufferRef {
+  return {
+    encoding: "raw",
+    url,
+    decodedByteLength,
+    decodedSha256,
+  };
+}
+
+function geometryHitBufferRef(
+  descriptor: RuntimeHitArtifactDescriptor,
+  record: RuntimeHitRecord,
+): RuntimeHitBufferRef {
+  assert(
+    !(descriptor.geometry && descriptor.geometryUrl),
+    "descriptor provides both geometry and geometry URL",
+  );
+  const ref = descriptor.geometry ?? (
+    descriptor.geometryUrl
+      ? rawHitBufferRef(
+        descriptor.geometryUrl,
+        record.geometry.bytes,
+        record.geometry.sha256,
+      )
+      : null
+  );
+  assert(ref, "descriptor geometry is missing");
+  assert(
+    ref.decodedByteLength === record.geometry.bytes,
+    "descriptor geometry byte length mismatch",
+  );
+  assert(
+    ref.decodedSha256 === record.geometry.sha256,
+    "descriptor geometry SHA-256 mismatch",
+  );
+  return ref;
+}
+
+function geometrySourceUrl(descriptor: RuntimeHitArtifactDescriptor): string {
+  assert(
+    !(descriptor.geometry && descriptor.geometryUrl),
+    "descriptor provides both geometry and geometry URL",
+  );
+  const url = descriptor.geometry?.url ?? descriptor.geometryUrl;
+  assert(url, "descriptor geometry is missing");
+  return url;
+}
+
+function bvhHitBufferRef(
+  descriptor: RuntimeHitArtifactDescriptor,
+  record: RuntimeHitRecord,
+): RawRuntimeHitBufferRef {
+  return rawHitBufferRef(
+    descriptor.bvhUrl,
+    record.bvh.bytes,
+    record.bvh.sha256,
+  );
+}
+
 
 function validateSection(
   section: RuntimeSection,
@@ -181,12 +250,19 @@ export async function loadRuntimeHitScene(
 ): Promise<ParsedRuntimeHitScene> {
   assert(descriptor.formatVersion === "hit-scene-runtime/v1", "descriptor format mismatch");
   assert(/^vehicle-[0-9a-f]{64}$/.test(descriptor.vehicleId), "descriptor identity is not exact");
-  const [recordBuffer, geometryBuffer, bvhBuffer] = await Promise.all([
+  const [recordBuffer, geometrySource, bvhSource] = await Promise.all([
     fetchRuntimeAsset(descriptor.recordUrl, "record"),
-    fetchRuntimeAsset(descriptor.geometryUrl, "geometry"),
+    fetchRuntimeAsset(geometrySourceUrl(descriptor), "geometry"),
     fetchRuntimeAsset(descriptor.bvhUrl, "BVH"),
   ]);
   const record = parseRuntimeHitRecord(recordBuffer, descriptor);
+  const [geometryBuffer, bvhBuffer] = await Promise.all([
+    runtimeHitBufferLoader.load(
+      geometryHitBufferRef(descriptor, record),
+      geometrySource,
+    ),
+    runtimeHitBufferLoader.load(bvhHitBufferRef(descriptor, record), bvhSource),
+  ]);
 
   const sections = record.geometry.sections;
   const positions = typedSection(

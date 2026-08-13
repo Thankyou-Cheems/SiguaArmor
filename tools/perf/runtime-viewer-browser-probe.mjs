@@ -317,6 +317,8 @@ const report = {
     forbiddenWeaponImpressionRequests: [...requests.values()]
       .map(({ url }) => url)
       .filter((url) => /\/assets\/weapons\/impressions\//u.test(url)),
+    hitGeometryRequests: [...requests.values()]
+      .filter(({ url }) => /\/assets\/runtime-probe\/hit-runtime\/geometry\//u.test(url)),
     largestRequests: [...requests.values()]
       .sort((left, right) => right.bytes - left.bytes)
       .slice(0, 20),

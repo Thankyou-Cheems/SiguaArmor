@@ -96,6 +96,8 @@ test("3D preview resolves one vehicle runtime source instead of the full vehicle
   assert.doesNotMatch(runtimeSuspensionSource, /loadWikiDataset/u);
   assert.doesNotMatch(runtimeSuspensionSource, /suspension-poses\.json/u);
   assert.match(runtimeViewerSource, /preview\.suspension\.records/u);
+  assert.match(runtimePreviewSource, /geometry:\s*artifact\.geometry/u);
+  assert.match(runtimePreviewSource, /geometryUrl:\s*artifact\.geometryUrl/u);
 });
 
 test("active catalog groups resolve faction mechanics without the full vehicle catalog", () => {
