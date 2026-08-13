@@ -175,9 +175,12 @@ test("default exterior mode skips the duplicate analysis GLTF pass", () => {
   assert.match(viewerSource, /const exteriorSource = exteriorSources\.get\(url\)/u);
 });
 
-test("viewer camera fit uses an immediate scale proxy and defers the detailed soldier", () => {
-  assert.match(viewerSource, /function createReferenceSoldierProxy\(/u);
-  assert.match(viewerSource, /host\.dataset\.referenceSoldierState = "proxy"/u);
+test("viewer camera fit uses a real-silhouette outline while deferring the detailed soldier", () => {
+  assert.match(viewerSource, /function createReferenceSoldierOutlineProxy\(/u);
+  assert.match(viewerSource, /reference-soldier-outline\.webp/u);
+  assert.match(viewerSource, /new THREE\.Sprite\(/u);
+  assert.doesNotMatch(viewerSource, /new THREE\.(?:Sphere|Box|Cylinder)Geometry\([^)]*\)[\s\S]{0,160}reference-soldier-proxy/u);
+  assert.match(viewerSource, /host\.dataset\.referenceSoldierState = "outline"/u);
   assert.match(viewerSource, /startReferenceSoldierAsset\?\.\(\)/u);
   assert.match(viewerSource, /import\("\.\/runtime-reference-soldier"\)/u);
   assert.doesNotMatch(viewerSource, /await loadWikiDataset\(/u);
@@ -185,7 +188,7 @@ test("viewer camera fit uses an immediate scale proxy and defers the detailed so
   assert.doesNotMatch(viewerSource, /if \(!referenceSoldierSettled\)/u);
   assert.match(
     viewerSource,
-    /if \(renderQuality\.tier === "compatibility"\) \{\s*host\.dataset\.referenceSoldierState = "proxy-compatibility";\s*return;/u,
+    /if \(renderQuality\.tier === "compatibility"\) \{\s*host\.dataset\.referenceSoldierState = "outline-compatibility";\s*return;/u,
   );
 });
 

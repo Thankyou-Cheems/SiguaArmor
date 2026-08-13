@@ -14,6 +14,7 @@ const visualsSource = await readFile(
   `${root}/app/international-faction-visuals.ts`,
   "utf8",
 );
+const globalStyles = await readFile(`${root}/app/globals.css`, "utf8");
 
 test("international dock routes small raster flags through SiguaWiki without local copies", async () => {
   assert.equal(Object.keys(assets).length, 17);
@@ -33,5 +34,10 @@ test("international dock routes small raster flags through SiguaWiki without loc
   assert.match(
     visualsSource,
     /const factionFlag = \(pathname: string\) => wikiUrl\(pathname\)/u,
+  );
+  assert.doesNotMatch(globalStyles, /\.faction-dock__flag-shape img\s*\{[^}]*object-fit:\s*fill/su);
+  assert.match(
+    globalStyles,
+    /\.faction-dock__flag-shape img\s*\{[^}]*object-fit:\s*cover/su,
   );
 });

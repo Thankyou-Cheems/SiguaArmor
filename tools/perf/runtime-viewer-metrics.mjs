@@ -65,6 +65,11 @@ export function evaluateRuntimeViewerBudget(report, budget) {
       `default 3D requested full catalogs: ${report.network.forbiddenCatalogRequests.length}`,
     );
   }
+  if ((report.network?.forbiddenWeaponImpressionRequests?.length ?? 0) > 0) {
+    failures.push(
+      `Armor requested Wiki weapon impression assets: ${report.network.forbiddenWeaponImpressionRequests.length}`,
+    );
+  }
   if ((report.consoleErrors?.length ?? 0) > 0) {
     failures.push(`console errors: ${report.consoleErrors.length}`);
   }

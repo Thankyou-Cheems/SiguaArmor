@@ -37,14 +37,14 @@ test("shared runtime files resolve directly to SiguaWiki", () => {
   assert.equal(runtimeWikiAssetUrl("/images/product.webp"), "/images/product.webp");
 });
 
-test("constrained exterior rendering selects the optional compatibility model", () => {
+test("every exterior tier prefers the promoted lightweight model during cache transition", () => {
   const placement = {
     assetUrl: `/assets/runtime-probe/models/${"a".repeat(64)}.gltf`,
     compatibilityAssetUrl: `/assets/runtime-probe/models/${"b".repeat(64)}.gltf`,
   };
   assert.equal(
     runtimeExteriorVisualAssetUrl(placement, "balanced"),
-    placement.assetUrl,
+    placement.compatibilityAssetUrl,
   );
   assert.equal(
     runtimeExteriorVisualAssetUrl(placement, "compatibility"),
@@ -56,6 +56,13 @@ test("constrained exterior rendering selects the optional compatibility model", 
       "compatibility",
     ),
     placement.assetUrl,
+  );
+});
+
+test("Armor refuses to turn Wiki weapon impression paths into browser requests", () => {
+  assert.throws(
+    () => runtimeWikiAssetUrl("/assets/weapons/impressions/visual-test.webp"),
+    /Weapon impression assets are not part of SiguaArmor/u,
   );
 });
 

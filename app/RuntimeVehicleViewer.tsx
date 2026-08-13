@@ -226,35 +226,34 @@ async function mapWithConcurrency<T>(
     ),
   );
 }
-function createReferenceSoldierProxy() {
-  const group = new THREE.Group();
-  group.name = "reference-soldier-proxy";
-  group.userData.referenceSoldierProxy = true;
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xb8a06d,
-    roughness: 0.88,
-    metalness: 0,
+function createReferenceSoldierOutlineProxy(onTextureReady: () => void) {
+  const material = new THREE.SpriteMaterial({
+    color: 0xe7cf99,
+    transparent: true,
+    opacity: 0,
+    alphaTest: 0.05,
+    depthTest: true,
+    depthWrite: false,
+    toneMapped: false,
   });
-  const add = (
-    geometry: THREE.BufferGeometry,
-    position: [number, number, number],
-    rotationZ = 0,
-  ) => {
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(...position);
-    mesh.rotation.z = rotationZ;
-    group.add(mesh);
-  };
-
-  add(new THREE.SphereGeometry(0.11, 8, 6), [0, 1.58, 0]);
-  add(new THREE.BoxGeometry(0.4, 0.56, 0.24), [0, 1.19, 0]);
-  add(new THREE.BoxGeometry(0.32, 0.2, 0.22), [0, 0.82, 0]);
-  add(new THREE.CylinderGeometry(0.065, 0.075, 0.72, 8), [-0.1, 0.4, 0]);
-  add(new THREE.CylinderGeometry(0.065, 0.075, 0.72, 8), [0.1, 0.4, 0]);
-  add(new THREE.CylinderGeometry(0.055, 0.065, 0.58, 8), [-0.24, 1.16, 0], -0.18);
-  add(new THREE.CylinderGeometry(0.055, 0.065, 0.58, 8), [0.24, 1.16, 0], 0.18);
-  add(new THREE.BoxGeometry(0.9, 0.055, 0.06), [0.12, 1.08, -0.18], -0.12);
-  return group;
+  const outline = new THREE.Sprite(material);
+  outline.name = "reference-soldier-outline";
+  outline.userData.referenceSoldierOutline = true;
+  outline.scale.set(0.85, 1.7, 1);
+  const texture = new THREE.TextureLoader().load(
+    "/images/reference-soldier-outline.webp",
+    () => {
+      material.opacity = 0.9;
+      material.needsUpdate = true;
+      onTextureReady();
+    },
+  );
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  material.map = texture;
+  return outline;
 }
 
 function runtimeGroundReferenceClearanceM(
@@ -5039,7 +5038,7 @@ export function RuntimeVehicleViewer({
     let startExteriorAssets: (() => void) | null = null;
     let gridHelper: THREE.GridHelper | null = null;
     let groundScale: THREE.Group | null = null;
-    let referenceSoldier: THREE.Group | null = null;
+    let referenceSoldier: THREE.Object3D | null = null;
     let referenceSoldierLoadScheduled = false;
     let referenceSoldierLoadTimer = 0;
     let referenceSoldierIdleCallback = 0;
@@ -5108,9 +5107,11 @@ export function RuntimeVehicleViewer({
 
     const modelGroup = new THREE.Group();
     modelGroup.name = preview.visualVehicleId ?? "runtime-visual";
-    referenceSoldier = createReferenceSoldierProxy();
+    referenceSoldier = createReferenceSoldierOutlineProxy(() => {
+      if (!cancelled) render();
+    });
     modelGroup.add(referenceSoldier);
-    host.dataset.referenceSoldierState = "proxy";
+    host.dataset.referenceSoldierState = "outline";
     const skeletalPoseBindings = new Set<RuntimeSkeletalPoseBinding>();
     const updateSkeletalPoseDataset = (enabled: boolean) => {
       const selectedBoneNames = new Set<string>();
@@ -6556,7 +6557,7 @@ export function RuntimeVehicleViewer({
     };
     startReferenceSoldierAsset = () => {
       if (renderQuality.tier === "compatibility") {
-        host.dataset.referenceSoldierState = "proxy-compatibility";
+        host.dataset.referenceSoldierState = "outline-compatibility";
         return;
       }
       if (referenceSoldierLoadScheduled) return;

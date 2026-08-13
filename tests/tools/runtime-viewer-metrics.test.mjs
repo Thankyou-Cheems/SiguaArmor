@@ -46,7 +46,11 @@ test("runtime viewer budget fails closed on the wrong adapter", () => {
     viewer: { renderQuality: "compatibility", compatibilityAssetCount: 8 },
     readyMs: 1000,
     drag: { frames: { p95Ms: 16, maxMs: 20 }, longTasks: [], contextLosses: 0 },
-    network: { failures: [], forbiddenCatalogRequests: [] },
+    network: {
+      failures: [],
+      forbiddenCatalogRequests: [],
+      forbiddenWeaponImpressionRequests: [],
+    },
     consoleErrors: [],
   }, {
     expectedRenderer: "Intel.*UHD.*770",
@@ -59,4 +63,28 @@ test("runtime viewer budget fails closed on the wrong adapter", () => {
   });
   assert.equal(result.pass, false);
   assert.match(result.failures[0], /does not match/u);
+});
+
+test("runtime viewer budget rejects weapon impression requests", () => {
+  const result = evaluateRuntimeViewerBudget({
+    browser: { pageRenderer: "ANGLE (Intel(R) UHD Graphics 770)" },
+    viewer: { renderQuality: "compatibility", compatibilityAssetCount: 8 },
+    readyMs: 1000,
+    drag: { frames: { p95Ms: 16, maxMs: 20 }, longTasks: [], contextLosses: 0 },
+    network: {
+      failures: [],
+      forbiddenCatalogRequests: [],
+      forbiddenWeaponImpressionRequests: ["https://wiki.siguad.icu/assets/weapons/impressions/example.webp"],
+    },
+    consoleErrors: [],
+  }, {
+    expectedRenderer: "Intel.*UHD.*770",
+    minCompatibilityAssets: 8,
+    maxReadyMs: 15000,
+    maxDragP95Ms: 34,
+    maxDragMaxMs: 80,
+    maxLongTasks: 0,
+  });
+  assert.equal(result.pass, false);
+  assert.match(result.failures.join("\n"), /weapon impression assets/u);
 });

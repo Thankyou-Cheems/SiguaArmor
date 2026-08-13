@@ -19,10 +19,11 @@ export function runtimeExteriorVisualAssetUrl(
   },
   renderQualityTier: "balanced" | "compatibility",
 ) {
-  return renderQualityTier === "compatibility" &&
-    placement.compatibilityAssetUrl
-    ? placement.compatibilityAssetUrl
-    : placement.assetUrl;
+  // During the one-release descriptor cache transition, old documents still
+  // carry both URLs. Always prefer the promoted lightweight model so no Armor
+  // client falls back to the retired full-resolution appearance.
+  void renderQualityTier;
+  return placement.compatibilityAssetUrl ?? placement.assetUrl;
 }
 
 // Analysis mode only needs source material flags and mesh geometry. Routing

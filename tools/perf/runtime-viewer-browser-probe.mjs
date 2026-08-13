@@ -314,6 +314,9 @@ const report = {
     forbiddenCatalogRequests: [...requests.values()]
       .map(({ url }) => url)
       .filter((url) => /\/data\/(?:weapons|vehicles)\/catalog\.json(?:\?|$)/u.test(url)),
+    forbiddenWeaponImpressionRequests: [...requests.values()]
+      .map(({ url }) => url)
+      .filter((url) => /\/assets\/weapons\/impressions\//u.test(url)),
     largestRequests: [...requests.values()]
       .sort((left, right) => right.bytes - left.bytes)
       .slice(0, 20),

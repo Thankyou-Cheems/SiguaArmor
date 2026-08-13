@@ -16,11 +16,11 @@ This document records the current browser path from product navigation through S
 | Fonts | third-party font host | full display family begins after load/idle; system fonts render first | the page remains readable if the font host is unavailable |
 | Administration | Armor content-admin to a narrow Wiki vehicle-data mount | ETag-protected update of community aliases only | it cannot regenerate weapon/runtime assets or write outside the named document |
 
-The deep browser modules are the catalog bootstrap (route to one faction), the Wiki source adapter (URL/schema/cache behavior), the runtime visual descriptor (placement identity plus optional compatibility asset), and the vehicle weapon-runtime slice. Removing any one of these modules would spread request selection and failure behavior back into several UI callers. Product layout, interaction, route state, quality admission, and visual selection stay in Armor; reusable facts and approved browser-ready assets stay in Wiki; extraction and derivation tools stay in Research.
+The deep browser modules are the catalog bootstrap (route to one faction), the Wiki source adapter (URL/schema/cache behavior), the runtime visual descriptor (placement identity plus one approved exterior asset), and the vehicle weapon-runtime slice. Removing any one of these modules would spread request selection and failure behavior back into several UI callers. Product layout, interaction, route state, quality admission, and visual selection stay in Armor; reusable facts and approved browser-ready assets stay in Wiki; extraction and derivation tools stay in Research.
 
 ## 3D admission and acceptance contract
 
-The compatibility profile is selected for integrated/mobile renderers or constrained memory/CPU. It uses DPR 1, two concurrent model loads, anisotropy 1, no generated mipmaps, and the descriptor's half-resolution exterior texture projection. Geometry, nodes, placements, hit-query assets, and balanced-quality models are unchanged.
+Every exterior descriptor now points to the reviewed half-resolution texture projection as its single approved model. The compatibility profile, selected for integrated/mobile renderers or constrained memory/CPU, additionally uses DPR 1, two concurrent model loads, anisotropy 1, and no generated mipmaps. Geometry, nodes, placements, and hit-query assets are unchanged.
 
 The release gate is `tools/perf/Run-RuntimeViewerIgpuProbe.ps1`. It temporarily sets Edge's Windows per-executable preference to power saving, uses an isolated hidden profile, verifies the actual renderer through both CDP and WebGL, restores the prior registry value, and stops only its own profile processes. Its default acceptance budgets are 12 seconds to exterior ready, 25 ms continuous-orbit p95, 160 ms for one isolated worst interval, at most one drag Long Task, zero context losses, no failed requests, and no default request for a full vehicle or weapon catalog. Detailed machine receipts and causal conclusions belong to the SiguaResearch `vehicle-runtime-compatibility-textures` Case rather than this product repository.
 
@@ -34,7 +34,7 @@ Reusable Wiki bytes are published before Armor references them. New immutable ha
 
 ## Remaining performance guardrails
 
-- Keep the default 3D network assertion against `/data/weapons/catalog.json` and `/data/vehicles/catalog.json`; a future summary must not claim this optimization was newly added unless the gate regressed and was fixed again.
+- Keep the default 3D network assertions against `/data/weapons/catalog.json`, `/data/vehicles/catalog.json`, and `/assets/weapons/impressions/`; a future summary must not claim these optimizations were newly added unless a gate regressed and was fixed again.
 - Keep representative tracked, many-placement, and image-free exterior receipts in the owning SiguaResearch Case after fleet compatibility changes.
 - Treat production network bytes separately from Vite development traffic; uncompressed development modules are not a CDN payload regression.
 - Do not broaden compatibility generation to hit geometry, BVH, or analysis materials. The quality alternative is only an exterior presentation adapter.

@@ -364,8 +364,12 @@ export async function loadWikiRuntimeVisual(visualArtifactRef: string) {
 export function wikiAssetUrl(pathname: string) {
   if (!pathname.startsWith("/assets/")) return pathname;
   const url = wikiUrl(pathname);
-  if (!new URL(url).pathname.startsWith("/assets/")) {
+  const normalizedPathname = new URL(url).pathname;
+  if (!normalizedPathname.startsWith("/assets/")) {
     throw new Error(`Invalid SiguaWiki asset path: ${pathname}`);
+  }
+  if (normalizedPathname.startsWith("/assets/weapons/impressions/")) {
+    throw new Error("Weapon impression assets are not part of SiguaArmor");
   }
   return url;
 }
