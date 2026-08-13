@@ -9,7 +9,7 @@ const requests = new Map<
   { expiresAt: number; request: Promise<unknown> }
 >();
 
-function wikiUrl(pathname: string) {
+export function wikiUrl(pathname: string) {
   if (!pathname.startsWith("/")) {
     throw new Error(`Invalid SiguaWiki path: ${pathname}`);
   }

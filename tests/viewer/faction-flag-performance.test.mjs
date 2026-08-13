@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, stat } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
@@ -15,7 +15,7 @@ const visualsSource = await readFile(
   "utf8",
 );
 
-test("international dock loads small raster flags instead of full source artwork", async () => {
+test("international dock routes small raster flags through SiguaWiki without local copies", async () => {
   assert.equal(Object.keys(assets).length, 17);
   assert.match(
     visualsSource,
@@ -23,16 +23,15 @@ test("international dock loads small raster flags instead of full source artwork
   );
   assert.doesNotMatch(visualsSource, /_flag_display\.(?:svg|webp)/u);
 
-  let totalBytes = 0;
   for (const [id, assetPath] of Object.entries(assets)) {
     assert.match(
       assetPath,
       new RegExp(`/${id}_flag_display-[a-f0-9]{16}\\.webp$`, "u"),
     );
-    totalBytes += (await stat(`${root}/public${assetPath}`)).size;
+    await assert.rejects(access(`${root}/public${assetPath}`), { code: "ENOENT" });
   }
-  assert.ok(
-    totalBytes <= 80 * 1024,
-    `all dock flags must stay within 80 KiB, received ${totalBytes} bytes`,
+  assert.match(
+    visualsSource,
+    /const factionFlag = \(pathname: string\) => wikiUrl\(pathname\)/u,
   );
 });

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 384" role="img" aria-labelledby="title desc">
-  <title id="title">IMF flag</title>
-  <desc id="desc">Orange flag with a black saltire outlined in white.</desc>
-  <rect width="768" height="384" fill="#f6a30a"/>
-  <g fill="none" stroke-linecap="square">
-    <path d="M-72-72 840 456M-72 456 840-72" stroke="#fff" stroke-width="78"/>
-    <path d="M-72-72 840 456M-72 456 840-72" stroke="#050505" stroke-width="56"/>
-  </g>
-</svg>

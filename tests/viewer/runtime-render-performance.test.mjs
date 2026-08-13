@@ -216,6 +216,16 @@ test("orbit redraws coalesce noisy control events to one render per animation fr
   assert.match(renderLoop, /const onControlsEnd = \(\) =>[\s\S]*scheduleProtectionMap\(\{ invalidate: true \}\)/u);
 });
 
+test("shot animation and orbit share the same per-frame render scheduler", () => {
+  const animationFrame = viewerSource.slice(
+    viewerSource.indexOf("const animateShot = (timestamp: number) =>"),
+    viewerSource.indexOf("shotAnimationFrameRef.current = requestAnimationFrame(animateShot);"),
+  );
+  assert.match(viewerSource, /requestRenderRef\.current = requestRender/u);
+  assert.match(animationFrame, /requestRenderRef\.current\?\.\(\)/u);
+  assert.doesNotMatch(animationFrame, /renderRef\.current\?\.\(\)/u);
+});
+
 test("distance dragging resolves only rendered weapon metrics", () => {
   const optionProjection = viewerSource.slice(
     viewerSource.indexOf("const runtimeWeaponOptions = useMemo"),
