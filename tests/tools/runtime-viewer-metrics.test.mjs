@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -6,6 +7,26 @@ import {
   percentile,
   summarizeFrameIntervals,
 } from "../../tools/perf/runtime-viewer-metrics.mjs";
+
+const wrapperSource = await readFile(
+  new URL("../../tools/perf/Run-RuntimeViewerIgpuProbe.ps1", import.meta.url),
+  "utf8",
+);
+const browserProbeSource = await readFile(
+  new URL("../../tools/perf/runtime-viewer-browser-probe.mjs", import.meta.url),
+  "utf8",
+);
+
+test("repeatable iGPU gate defaults match the reviewed acceptance contract", () => {
+  assert.match(wrapperSource, /\$MaxReadyMs = 12000/u);
+  assert.match(wrapperSource, /\$MaxDragP95Ms = 25/u);
+  assert.match(wrapperSource, /\$MaxDragMaxMs = 160/u);
+  assert.match(wrapperSource, /\$MaxLongTasks = 1/u);
+  assert.match(browserProbeSource, /maxReadyMs: number\("max-ready-ms", 12_000\)/u);
+  assert.match(browserProbeSource, /maxDragP95Ms: number\("max-drag-p95-ms", 25\)/u);
+  assert.match(browserProbeSource, /maxDragMaxMs: number\("max-drag-max-ms", 160\)/u);
+  assert.match(browserProbeSource, /maxLongTasks: number\("max-long-tasks", 1\)/u);
+});
 
 test("runtime viewer frame summaries use nearest-rank percentiles", () => {
   assert.equal(percentile([17, 8, 16, 50, 15], 0.95), 50);

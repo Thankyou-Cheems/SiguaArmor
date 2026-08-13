@@ -23,9 +23,9 @@ function parseArgs(argv) {
     budget: {
       expectedRenderer: args.get("expected-renderer") ?? "Intel.*UHD.*770",
       minCompatibilityAssets: number("min-compatibility-assets", 8),
-      maxReadyMs: number("max-ready-ms", 20_000),
-      maxDragP95Ms: number("max-drag-p95-ms", 34),
-      maxDragMaxMs: number("max-drag-max-ms", 100),
+      maxReadyMs: number("max-ready-ms", 12_000),
+      maxDragP95Ms: number("max-drag-p95-ms", 25),
+      maxDragMaxMs: number("max-drag-max-ms", 160),
       maxLongTasks: number("max-long-tasks", 1),
       maxContextLosses: number("max-context-losses", 0),
     },

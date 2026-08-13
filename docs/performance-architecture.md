@@ -18,23 +18,11 @@ This document records the current browser path from product navigation through S
 
 The deep browser modules are the catalog bootstrap (route to one faction), the Wiki source adapter (URL/schema/cache behavior), the runtime visual descriptor (placement identity plus optional compatibility asset), and the vehicle weapon-runtime slice. Removing any one of these modules would spread request selection and failure behavior back into several UI callers. Product layout, interaction, route state, quality admission, and visual selection stay in Armor; reusable facts and approved browser-ready assets stay in Wiki; extraction and derivation tools stay in Research.
 
-## 3D admission and measured floor
+## 3D admission and acceptance contract
 
 The compatibility profile is selected for integrated/mobile renderers or constrained memory/CPU. It uses DPR 1, two concurrent model loads, anisotropy 1, no generated mipmaps, and the descriptor's half-resolution exterior texture projection. Geometry, nodes, placements, hit-query assets, and balanced-quality models are unchanged.
 
-On 2026-08-13, three isolated Microsoft Edge 151 cold runs on this workstation's Intel UHD Graphics 770 used the live public M1A1 deep link. CDP and `WEBGL_debug_renderer_info` both named the Intel D3D11 adapter. All runs selected 8/8 compatibility models.
-
-| Budget | Observed range | Result |
-| --- | ---: | --- |
-| Exterior ready | 2.15–2.25 s | pass against 12 s |
-| Continuous orbit p95 frame interval | 20.2–20.5 ms | pass against 25 ms |
-| Worst orbit frame interval | 35.9–36.4 ms | pass against 60 ms |
-| Long tasks during drag | 0 | pass |
-| WebGL context losses | 0 | pass |
-| Full vehicle/weapon catalog requests | 0 | pass |
-| Total cold transfer | about 4.51 MB | informational |
-
-The reproducible gate is `tools/perf/Run-RuntimeViewerIgpuProbe.ps1`. It temporarily sets Edge's Windows per-executable preference to power saving, uses an isolated hidden profile, verifies the actual renderer, restores the prior registry value, and stops only its own profile processes. A deliberately impossible 1 ms p95 budget was exercised first and failed, proving the gate is red-capable.
+The release gate is `tools/perf/Run-RuntimeViewerIgpuProbe.ps1`. It temporarily sets Edge's Windows per-executable preference to power saving, uses an isolated hidden profile, verifies the actual renderer through both CDP and WebGL, restores the prior registry value, and stops only its own profile processes. Its default acceptance budgets are 12 seconds to exterior ready, 25 ms continuous-orbit p95, 160 ms for one isolated worst interval, at most one drag Long Task, zero context losses, no failed requests, and no default request for a full vehicle or weapon catalog. Detailed machine receipts and causal conclusions belong to the SiguaResearch `vehicle-runtime-compatibility-textures` Case rather than this product repository.
 
 ## Rendering locality
 
@@ -42,11 +30,11 @@ OrbitControls owns pointer state and camera math. One viewer-local request-rende
 
 ## Release order
 
-Reusable Wiki bytes are published before Armor references them. New immutable hashes need no purge; changed descriptor and data URLs are purged precisely and verified from the public origin. Armor then builds one candidate, switches the server release atomically, retains one rollback, and receives browser/console QA. Rust is not in the current hot path: CDN requests are hits, while the measured costs are browser transfer, decode, JSON construction, decoded texture memory, and WebGL rendering. A Rust service becomes justified only if future traces identify server CPU or dynamic computation that changes this request flow.
+Reusable Wiki bytes are published before Armor references them. New immutable hashes need no purge; changed descriptor and data URLs are purged precisely and verified from the public origin. Armor then builds one candidate, switches the server release atomically, retains one rollback, and receives browser/console QA. This request flow remains direct static delivery until a separately validated product requirement justifies a dynamic service.
 
 ## Remaining performance guardrails
 
 - Keep the default 3D network assertion against `/data/weapons/catalog.json` and `/data/vehicles/catalog.json`; a future summary must not claim this optimization was newly added unless the gate regressed and was fixed again.
-- Re-run the iGPU probe for a heavy tracked vehicle, a many-placement wheeled vehicle, and one exterior without textures after fleet compatibility publication.
+- Keep representative tracked, many-placement, and image-free exterior receipts in the owning SiguaResearch Case after fleet compatibility changes.
 - Treat production network bytes separately from Vite development traffic; uncompressed development modules are not a CDN payload regression.
 - Do not broaden compatibility generation to hit geometry, BVH, or analysis materials. The quality alternative is only an exterior presentation adapter.

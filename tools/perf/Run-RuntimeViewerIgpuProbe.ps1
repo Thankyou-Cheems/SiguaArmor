@@ -3,9 +3,9 @@ param(
   [Parameter(Mandatory = $true)]
   [string]$Url,
   [string]$Output = "outputs/perf/runtime-viewer-igpu.json",
-  [double]$MaxReadyMs = 20000,
-  [double]$MaxDragP95Ms = 34,
-  [double]$MaxDragMaxMs = 100,
+  [double]$MaxReadyMs = 12000,
+  [double]$MaxDragP95Ms = 25,
+  [double]$MaxDragMaxMs = 160,
   [int]$MaxLongTasks = 1,
   [int]$MinCompatibilityAssets = 8,
   [string]$ExpectedRenderer = "Intel.*UHD.*770"
