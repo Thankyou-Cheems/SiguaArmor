@@ -785,6 +785,20 @@ function RuntimeWeaponSourceSelector({
     setOpen(false);
   };
 
+  const openSelector = () => {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    if (
+      globalLibraryState === "idle" ||
+      globalLibraryState === "error"
+    ) {
+      onRequestGlobalLibrary();
+    }
+    setOpen(true);
+  };
+
   return (
     <div
       className="viewer-search-select infantry-weapon-source-select"
@@ -797,7 +811,7 @@ function RuntimeWeaponSourceSelector({
         aria-label="选择伤害来源"
         aria-haspopup="listbox"
         aria-expanded={open}
-        onClick={() => setOpen((current) => !current)}
+        onClick={openSelector}
       >
         <span
           className="viewer-search-select__value"
@@ -847,20 +861,6 @@ function RuntimeWeaponSourceSelector({
               </button>
             ) : null}
           </div>
-          {globalLibraryState !== "ready" ? (
-            <button
-              className="viewer-search-select__global-load"
-              type="button"
-              disabled={globalLibraryState === "loading"}
-              onClick={onRequestGlobalLibrary}
-            >
-              {globalLibraryState === "loading"
-                ? "正在载入全部伤害来源…"
-                : globalLibraryState === "error"
-                  ? "重试载入全部伤害来源"
-                  : "载入全部伤害来源"}
-            </button>
-          ) : null}
           <div
             className="viewer-search-select__options"
             role="listbox"
@@ -1039,6 +1039,20 @@ function RuntimeWeaponSelector({
     setOpen(false);
   };
 
+  const openSelector = () => {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    if (
+      globalLibraryState === "idle" ||
+      globalLibraryState === "error"
+    ) {
+      onRequestGlobalLibrary();
+    }
+    setOpen(true);
+  };
+
   const metrics = (option: RuntimeWeaponOption) => {
     const effects = option.effectsAtDistance(targetDistanceM);
     const effectsLabel = effects.length > 0
@@ -1090,7 +1104,7 @@ function RuntimeWeaponSelector({
             aria-label="选择武器或弹种"
             aria-haspopup="listbox"
             aria-expanded={open}
-            onClick={() => setOpen((current) => !current)}
+            onClick={openSelector}
           >
             <span className="viewer-search-select__value">
               {selectedSource
@@ -1142,20 +1156,6 @@ function RuntimeWeaponSelector({
                   </button>
                 ) : null}
               </div>
-              {globalLibraryState !== "ready" ? (
-                <button
-                  className="viewer-search-select__global-load"
-                  type="button"
-                  disabled={globalLibraryState === "loading"}
-                  onClick={onRequestGlobalLibrary}
-                >
-                  {globalLibraryState === "loading"
-                    ? "正在载入全站武器…"
-                    : globalLibraryState === "error"
-                      ? "重试搜索全站武器"
-                      : "搜索全站武器 / 弹种"}
-                </button>
-              ) : null}
               <div
                 className="infantry-weapon-select__columns"
                 aria-label="武器列表列标题"
@@ -3175,7 +3175,8 @@ export function RuntimeVehicleViewer({
     sourceCardId: string;
     optionIndex: number;
   } | null>(null);
-  const targetDistanceRef = useRef(navigationState?.distance ?? DEFAULT_TARGET_DISTANCE_M);
+  const distancePreferenceRef = useRef(DEFAULT_TARGET_DISTANCE_M);
+  const targetDistanceRef = useRef(DEFAULT_TARGET_DISTANCE_M);
   const specialArmorVisibleRef = useRef(true);
   const exteriorSpacedArmorHighlightRef = useRef(false);
   const relativeArmorScaleRef = useRef(false);
@@ -3456,7 +3457,7 @@ export function RuntimeVehicleViewer({
     optionIndex: number;
   } | null>(null);
   const [targetDistanceM, setTargetDistanceM] = useState(
-    navigationState?.distance ?? DEFAULT_TARGET_DISTANCE_M,
+    DEFAULT_TARGET_DISTANCE_M,
   );
   // The parent navigation update rerenders the full catalog tree. Keep it out
   // of continuous range input and publish the final distance on interaction end.
@@ -4475,9 +4476,7 @@ export function RuntimeVehicleViewer({
         preferredModel,
         preferredWeapon.ballisticsWeaponIndex,
       );
-      const requestedDistance = pendingByIndex >= 0
-        ? targetDistanceRef.current
-        : requestedNavigation?.distance ?? DEFAULT_TARGET_DISTANCE_M;
+      const requestedDistance = distancePreferenceRef.current;
       const initialDistance = preferredMaxDistance > 0
         ? Math.min(
             Math.max(0, requestedDistance),
@@ -4548,6 +4547,7 @@ export function RuntimeVehicleViewer({
     if (!record) return;
     cancelShotAnimation(true);
     targetDistanceRef.current = record.distanceM;
+    distancePreferenceRef.current = record.distanceM;
     setTargetDistanceM(record.distanceM);
     commitSelectedShot(record);
     renderRef.current?.();
@@ -4676,7 +4676,10 @@ export function RuntimeVehicleViewer({
       requestedWeapon.ballisticsWeaponIndex,
     );
     const requestedDistance = requestedMaxDistance > 0
-      ? Math.min(requestedMaxDistance, Math.max(0, requestedNavigation.distance))
+      ? Math.min(
+          requestedMaxDistance,
+          Math.max(0, distancePreferenceRef.current),
+        )
       : 0;
     const weaponChanged = weaponOptionIndexRef.current !== requestedOptionIndex;
     const distanceChanged = targetDistanceRef.current !== requestedDistance;
@@ -4730,7 +4733,7 @@ export function RuntimeVehicleViewer({
       weaponIndex: weaponOptionIndex === defaultAttackWeaponOptionIndex(attackSource)
         ? null
         : weaponOptionIndex,
-      distance: targetDistanceM,
+      distance: 0,
       yaw: current.yaw,
       pitch: current.pitch,
       camera: current.camera,
@@ -7741,7 +7744,7 @@ export function RuntimeVehicleViewer({
                       selection.optionIndex === defaultAttackWeaponOptionIndex(nextSource)
                         ? null
                         : selection.optionIndex,
-                    distance: targetDistanceRef.current,
+                    distance: 0,
                     shots: "",
                   } satisfies ViewerNavigationState;
                   navigationStateRef.current = next;
@@ -7758,7 +7761,7 @@ export function RuntimeVehicleViewer({
                 nextWeapon.ballisticsWeaponIndex,
               );
               const nextDistance = nextMaxDistance > 0
-                ? Math.min(targetDistanceRef.current, nextMaxDistance)
+                ? Math.min(distancePreferenceRef.current, nextMaxDistance)
                 : 0;
               attackModelRef.current = nextModel;
               setAttackHeader(nextModel);
@@ -7777,7 +7780,7 @@ export function RuntimeVehicleViewer({
                   weaponIndex: nextOptionIndex === defaultAttackWeaponOptionIndex(attackSource)
                     ? null
                     : nextOptionIndex,
-                  distance: nextDistance,
+                  distance: 0,
                 } satisfies ViewerNavigationState;
                 navigationStateRef.current = next;
                 onNavigationStateChangeRef.current?.(next);
@@ -7824,6 +7827,7 @@ export function RuntimeVehicleViewer({
               onChange={(event) => {
                 const nextDistance = Number(event.currentTarget.value);
                 setTargetDistanceM(nextDistance);
+                distancePreferenceRef.current = nextDistance;
                 targetDistanceRef.current = nextDistance;
                 simulateCurrentShot(weaponIndexRef.current, nextDistance);
               }}
@@ -7839,6 +7843,7 @@ export function RuntimeVehicleViewer({
                     aria-label={`设置距离为 ${tick} 米`}
                     onClick={() => {
                       setTargetDistanceM(tick);
+                      distancePreferenceRef.current = tick;
                       targetDistanceRef.current = tick;
                       simulateCurrentShot(weaponIndexRef.current, tick);
                     }}
