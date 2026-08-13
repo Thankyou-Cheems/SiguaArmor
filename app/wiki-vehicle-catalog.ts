@@ -8,6 +8,7 @@ import type {
   ReferenceGeneralProfile,
   ReferenceSeat,
 } from "./catalog-types";
+import { wikiVehicleFactionId } from "../lib/wiki-vehicle-identity.ts";
 
 interface WikiProfile<T> {
   id: string;
@@ -283,10 +284,7 @@ export function wikiVehicleFactionIdsForGroup(
   const factionIds = new Set<string>();
   for (const record of expectedIndex.records) {
     if (record.official.groupId !== groupId) continue;
-    const factionId = record.promoEntryId.split("--", 1)[0];
-    if (!factionId || !/^[a-z0-9-]+$/u.test(factionId)) {
-      throw new Error(`载具 ${record.promoEntryId} 无法解析 Wiki 阵营`);
-    }
+    const factionId = wikiVehicleFactionId(record.promoEntryId);
     factionIds.add(factionId);
   }
   if (factionIds.size === 0) {

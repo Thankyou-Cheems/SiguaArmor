@@ -3159,6 +3159,7 @@ export function RuntimeVehicleViewer({
     decodeSharedShotPaths(navigationState?.shots ?? ""),
   );
   const renderRef = useRef<(() => void) | null>(null);
+  const requestRenderRef = useRef<(() => void) | null>(null);
   const exteriorOccurrencesRef = useRef<Map<string, RuntimeExteriorOccurrence>>(
     new Map(),
   );
@@ -4329,7 +4330,7 @@ export function RuntimeVehicleViewer({
             ? [...highlightedComponentIndices].join(",")
             : "none";
       }
-      renderRef.current?.();
+      requestRenderRef.current?.();
       if (elapsedMs < totalDurationMs) {
         shotAnimationFrameRef.current = requestAnimationFrame(animateShot);
         return;
@@ -5418,6 +5419,7 @@ export function RuntimeVehicleViewer({
       });
     };
     renderRef.current = render;
+    requestRenderRef.current = requestRender;
     const applyTurretPose = () => {
       const appliedMatrices: string[] = [];
       let appliedAnalysisOccurrenceCount = 0;
@@ -7381,6 +7383,7 @@ export function RuntimeVehicleViewer({
       shotRecordsRef.current = [];
       activeShotIdRef.current = null;
       renderRef.current = null;
+      requestRenderRef.current = null;
       if (applyTurretPoseRef.current === applyTurretPose) {
         applyTurretPoseRef.current = null;
       }
