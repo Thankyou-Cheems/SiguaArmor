@@ -22,7 +22,7 @@ function parseArgs(argv) {
     output: args.get("output"),
     budget: {
       expectedRenderer: args.get("expected-renderer") ?? "Intel.*UHD.*770",
-      minCompatibilityAssets: number("min-compatibility-assets", 8),
+      minOptimizedAssets: number("min-optimized-assets", 8),
       maxReadyMs: number("max-ready-ms", 12_000),
       maxDragP95Ms: number("max-drag-p95-ms", 25),
       maxDragMaxMs: number("max-drag-max-ms", 160),
@@ -296,7 +296,7 @@ const report = {
     exteriorAssetState: viewer.exteriorAssetState,
     exteriorLoadedAssetCount: Number(viewer.exteriorLoadedAssetCount),
     exteriorLoadedOccurrenceCount: Number(viewer.exteriorLoadedOccurrenceCount),
-    compatibilityAssetCount: Number(viewer.exteriorCompatibilityAssetCount),
+    optimizedAssetCount: Number(viewer.exteriorOptimizedAssetCount),
     uniqueTextureCount: Number(viewer.exteriorUniqueTextureCount),
     reusedTextureCount: Number(viewer.exteriorReusedTextureCount),
     canvasCount: Number(viewer.canvasCount),

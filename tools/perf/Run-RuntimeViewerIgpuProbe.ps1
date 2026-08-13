@@ -7,7 +7,7 @@ param(
   [double]$MaxDragP95Ms = 25,
   [double]$MaxDragMaxMs = 160,
   [int]$MaxLongTasks = 1,
-  [int]$MinCompatibilityAssets = 8,
+  [int]$MinOptimizedAssets = 8,
   [string]$ExpectedRenderer = "Intel.*UHD.*770"
 )
 
@@ -75,7 +75,7 @@ try {
     --url $Url `
     --output (Join-Path $repoRoot $Output) `
     --expected-renderer $ExpectedRenderer `
-    --min-compatibility-assets $MinCompatibilityAssets `
+    --min-optimized-assets $MinOptimizedAssets `
     --max-ready-ms $MaxReadyMs `
     --max-drag-p95-ms $MaxDragP95Ms `
     --max-drag-max-ms $MaxDragMaxMs `

@@ -6971,9 +6971,7 @@ export function RuntimeVehicleViewer({
           return [url, [...selectedUrls][0]];
         }),
       );
-      host.dataset.exteriorCompatibilityAssetCount = String(
-        urls.filter((url) => exteriorAssetUrlBySourceUrl.get(url) !== url).length,
-      );
+      host.dataset.exteriorOptimizedAssetCount = String(urls.length);
       const exteriorTextureCache = new Map<string, THREE.Texture>();
       let reusedExteriorTextures = 0;
       const attachExteriorSource = (url: string, source: THREE.Object3D) => {

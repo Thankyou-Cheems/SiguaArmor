@@ -29,9 +29,9 @@ export function evaluateRuntimeViewerBudget(report, budget) {
   if (report.viewer?.renderQuality !== "compatibility") {
     failures.push(`render quality is ${report.viewer?.renderQuality ?? "missing"}, expected compatibility`);
   }
-  if ((report.viewer?.compatibilityAssetCount ?? 0) < budget.minCompatibilityAssets) {
+  if ((report.viewer?.optimizedAssetCount ?? 0) < budget.minOptimizedAssets) {
     failures.push(
-      `compatibility assets ${report.viewer?.compatibilityAssetCount ?? 0} < ${budget.minCompatibilityAssets}`,
+      `optimized assets ${report.viewer?.optimizedAssetCount ?? 0} < ${budget.minOptimizedAssets}`,
     );
   }
   if (report.readyMs > budget.maxReadyMs) {

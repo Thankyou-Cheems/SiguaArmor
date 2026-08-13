@@ -22,10 +22,12 @@ test("repeatable iGPU gate defaults match the reviewed acceptance contract", () 
   assert.match(wrapperSource, /\$MaxDragP95Ms = 25/u);
   assert.match(wrapperSource, /\$MaxDragMaxMs = 160/u);
   assert.match(wrapperSource, /\$MaxLongTasks = 1/u);
+  assert.match(wrapperSource, /\$MinOptimizedAssets = 8/u);
   assert.match(browserProbeSource, /maxReadyMs: number\("max-ready-ms", 12_000\)/u);
   assert.match(browserProbeSource, /maxDragP95Ms: number\("max-drag-p95-ms", 25\)/u);
   assert.match(browserProbeSource, /maxDragMaxMs: number\("max-drag-max-ms", 160\)/u);
   assert.match(browserProbeSource, /maxLongTasks: number\("max-long-tasks", 1\)/u);
+  assert.match(browserProbeSource, /minOptimizedAssets: number\("min-optimized-assets", 8\)/u);
 });
 
 test("runtime viewer frame summaries use nearest-rank percentiles", () => {
@@ -43,7 +45,7 @@ test("runtime viewer frame summaries use nearest-rank percentiles", () => {
 test("runtime viewer budget fails closed on the wrong adapter", () => {
   const result = evaluateRuntimeViewerBudget({
     browser: { pageRenderer: "ANGLE (NVIDIA GeForce RTX 4080 SUPER)" },
-    viewer: { renderQuality: "compatibility", compatibilityAssetCount: 8 },
+    viewer: { renderQuality: "compatibility", optimizedAssetCount: 8 },
     readyMs: 1000,
     drag: { frames: { p95Ms: 16, maxMs: 20 }, longTasks: [], contextLosses: 0 },
     network: {
@@ -54,7 +56,7 @@ test("runtime viewer budget fails closed on the wrong adapter", () => {
     consoleErrors: [],
   }, {
     expectedRenderer: "Intel.*UHD.*770",
-    minCompatibilityAssets: 8,
+    minOptimizedAssets: 8,
     maxReadyMs: 15000,
     maxDragP95Ms: 34,
     maxDragMaxMs: 80,
@@ -68,7 +70,7 @@ test("runtime viewer budget fails closed on the wrong adapter", () => {
 test("runtime viewer budget rejects weapon impression requests", () => {
   const result = evaluateRuntimeViewerBudget({
     browser: { pageRenderer: "ANGLE (Intel(R) UHD Graphics 770)" },
-    viewer: { renderQuality: "compatibility", compatibilityAssetCount: 8 },
+    viewer: { renderQuality: "compatibility", optimizedAssetCount: 8 },
     readyMs: 1000,
     drag: { frames: { p95Ms: 16, maxMs: 20 }, longTasks: [], contextLosses: 0 },
     network: {
@@ -79,7 +81,7 @@ test("runtime viewer budget rejects weapon impression requests", () => {
     consoleErrors: [],
   }, {
     expectedRenderer: "Intel.*UHD.*770",
-    minCompatibilityAssets: 8,
+    minOptimizedAssets: 8,
     maxReadyMs: 15000,
     maxDragP95Ms: 34,
     maxDragMaxMs: 80,
