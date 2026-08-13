@@ -237,4 +237,8 @@ test("distance dragging resolves only rendered weapon metrics", () => {
   assert.match(optionProjection, /effectsAtDistance/u);
   assert.match(optionProjection, /\[attackLibrary\]/u);
   assert.doesNotMatch(optionProjection, /\[attackLibrary, targetDistanceM\]/u);
+  assert.match(viewerSource, /const distancePreferenceRef = useRef\(DEFAULT_TARGET_DISTANCE_M\)/u);
+  assert.match(viewerSource, /distancePreferenceRef\.current = nextDistance/u);
+  assert.match(viewerSource, /const requestedDistance = distancePreferenceRef\.current/u);
+  assert.doesNotMatch(viewerSource, /useState\(\s*navigationState\?\.distance/u);
 });

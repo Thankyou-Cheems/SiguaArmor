@@ -32,6 +32,7 @@ import type {
 import catalogIndexJson from "../generated/catalog-index.json";
 import { loadWikiFactionCatalog, loadWikiVehicleCatalog } from "../lib/wiki-source.ts";
 import { buildCatalogIndexFromWiki } from "./wiki-vehicle-catalog.ts";
+import { composeCatalogVariantBallisticsModel } from "./runtime-attack-ballistics-model.ts";
 
 interface RuntimeAttackSourceRecord {
   cardId: string;
@@ -257,96 +258,13 @@ function catalogVariantBallisticsModel(
   const exactCurves = (configuration?.exactCurveIds ?? [])
     .map((curveId) => weaponCatalogCurves[curveId])
     .filter(Boolean);
-  const sourcePenetrationCurve =
-    exactCurves.find(
-      ({ outputUnit }) => outputUnit === "millimeters",
-    ) ?? null;
-  const sourceDamageCurve =
-    exactCurves.find(({ outputUnit }) => outputUnit === "damage") ??
-    null;
-  const curves: Array<EditorNativeModel["curves"][number]> = profileWeapon
-    ? [...ballisticProfile!.model.curves]
-    : [];
-  const penetrationCurveIndex = profileWeapon
-    ? profileWeapon.armorPenetrationCurveIndex
-    : sourcePenetrationCurve
-      ? curves.push(sourcePenetrationCurve) - 1
-      : null;
-  const damageCurveIndex = profileWeapon
-    ? profileWeapon.damageFalloffCurveIndex
-    : sourceDamageCurve
-      ? curves.push(sourceDamageCurve) - 1
-      : null;
-  const firstRadialLayer = radialSource?.layers[0] ?? null;
-  const explosiveFields = radialSource && firstRadialLayer
-    ? {
-        explosiveBaseDamage: firstRadialLayer.baseDamage,
-        explosiveMinimumDamage: firstRadialLayer.minimumDamage,
-        explosiveInnerRadiusCm: firstRadialLayer.innerRadiusMeters * 100,
-        explosiveOuterRadiusCm: firstRadialLayer.outerRadiusMeters * 100,
-        explosiveFalloff: firstRadialLayer.falloff,
-        impactNormalOffsetCm:
-          firstRadialLayer.originNormalOffsetMeters * 100,
-        explosiveLayerOrderEvidence: radialSource.layerOrderEvidence,
-        explosiveLayers: radialSource.layers.map((layer) => ({
-          layerId: layer.id,
-          label: layer.label,
-          shortLabel: layer.shortLabel,
-          damageTypePath:
-            layer.damageTypeClassPath ?? layer.damageType,
-          baseDamage: layer.baseDamage,
-          minimumDamage: layer.minimumDamage,
-          innerRadiusCm: layer.innerRadiusMeters * 100,
-          outerRadiusCm: layer.outerRadiusMeters * 100,
-          falloff: layer.falloff,
-          impactNormalOffsetCm: layer.originNormalOffsetMeters * 100,
-          onlyDamageMeshes: layer.onlyDamageMeshes,
-          orderEvidence: radialSource.layerOrderEvidence,
-        })),
-      }
-    : {};
-  return {
-    healthPools: [],
-    components: [],
-    surfaceProfiles: [],
-    weapons: [{
-      weaponId: variant.id,
-      role: "wiki-infantry-direct-hit",
-      projectileIndex: 0,
-      armorPenetrationDepthMm:
-        directModel.penetrationMm ?? 0,
-      armorPenetrationCurveIndex: penetrationCurveIndex === null
-        ? { value: null, state: "absent" }
-        : penetrationCurveIndex,
-      damageFalloffCurveIndex: damageCurveIndex === null
-        ? { value: null, state: "absent" }
-        : damageCurveIndex,
-      maxDamage: directModel.directImpactDamage,
-      minDamage:
-        sourceDamageCurve?.keys.at(-1)?.value ??
-        directModel.directImpactDamage,
-      traceDistanceAfterPenetrationMeters:
-        directModel.weaponTraceDistanceAfterPenetrationM ??
-        directModel.traceDistanceAfterPenetrationM,
-    }],
-    projectiles: [{
-      projectileId: `${variant.id}:projectile`,
-      role: "wiki-infantry-projectile",
-      damageTypePath: directModel.damageType,
-      armorPenetrationDepthMm:
-        directModel.penetrationMm ?? 0,
-      impactDamage: directModel.directImpactDamage,
-      isExplosive: radialSource !== null,
-      impactRadialOrder:
-        directModel.impactRadialOrder === "not-applicable"
-          ? null
-          : directModel.impactRadialOrder,
-      traceDistanceAfterPenetrationMeters:
-        directModel.traceDistanceAfterPenetrationM,
-      ...explosiveFields,
-    }],
-    curves,
-  };
+  return composeCatalogVariantBallisticsModel({
+    variantId: variant.id,
+    directModel,
+    ballisticProfile: profileWeapon ? ballisticProfile : null,
+    configurationCurves: exactCurves,
+    radialSource,
+  });
 }
 
 function runtimeExplosiveBallisticsModel(

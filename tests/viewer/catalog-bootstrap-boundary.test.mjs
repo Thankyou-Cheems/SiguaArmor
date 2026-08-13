@@ -66,13 +66,13 @@ test("3D startup does not statically wait for the full weapon catalog", () => {
     runtimeViewerSource,
     /onRequestGlobalLibrary=\{requestGlobalAttackLibrary\}/u,
   );
-  assert.match(
-    runtimeViewerSource,
-    /className="viewer-search-select__global-load"[\s\S]*?onClick=\{onRequestGlobalLibrary\}/u,
-  );
   assert.doesNotMatch(
     runtimeViewerSource,
-    /viewer-search-select__trigger[\s\S]{0,500}onClick=\{[^}]*onRequestGlobalLibrary/u,
+    /className="viewer-search-select__global-load"/u,
+  );
+  assert.match(
+    runtimeViewerSource,
+    /const openSelector = \(\) => \{[\s\S]*?onRequestGlobalLibrary\(\)[\s\S]*?setOpen\(true\)/u,
   );
   const defaultSourceLoad = runtimeViewerSource.slice(
     runtimeViewerSource.indexOf("loadWikiVehicleWeaponRuntimeSource(preview.cardId)"),

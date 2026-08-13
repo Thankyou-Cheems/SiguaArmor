@@ -6,13 +6,74 @@ import {
   runtimeExplosiveCanonicalName,
   runtimeExplosiveLayerOrderIsClosed,
 } from "../../lib/runtime-explosive-catalog.ts";
+import { resolveEditorNativeBallistics } from "../../lib/editor-native-hit-model.ts";
+import { composeCatalogVariantBallisticsModel } from "../../app/runtime-attack-ballistics-model.ts";
 
-const [adapterSource, viewerSource, catalogIndexText] = await Promise.all([
+const [adapterSource, ballisticsModelSource, viewerSource, catalogIndexText] = await Promise.all([
   readFile(new URL("../../app/runtime-probe-weapon-labels.ts", import.meta.url), "utf8"),
+  readFile(new URL("../../app/runtime-attack-ballistics-model.ts", import.meta.url), "utf8"),
   readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../generated/catalog-index.json", import.meta.url), "utf8"),
 ]);
 const catalogIndex = JSON.parse(catalogIndexText);
+
+test("global weapon options preserve exact penetration and damage falloff curves", () => {
+  const model = composeCatalogVariantBallisticsModel({
+    variantId: "dtc10",
+    directModel: {
+      damageType: "BP_Kinetic_DamageType_C",
+      directImpactDamage: 8000,
+      penetrationMm: 800,
+      traceDistanceAfterPenetrationM: 50,
+      weaponTraceDistanceAfterPenetrationM: 50,
+      impactRadialOrder: "not-applicable",
+    },
+    ballisticProfile: {
+      model: {
+        healthPools: [], components: [], surfaceProfiles: [],
+        weapons: [{
+          weaponId: "profile-weapon", role: "profile",
+          projectileIndex: { state: "derived", value: 0 },
+          armorPenetrationDepthMm: { state: "observed", value: 800 },
+          armorPenetrationCurveIndex: { state: "derived", value: 0 },
+          damageFalloffCurveIndex: { state: "derived", value: 1 },
+          maxDamage: { state: "observed", value: 60 },
+          minDamage: { state: "observed", value: 10 },
+          traceDistanceAfterPenetrationMeters: { state: "observed", value: 50 },
+        }],
+        projectiles: [{
+          projectileId: "profile-projectile", role: "profile",
+          damageTypePath: { state: "observed", value: "BP_Kinetic_DamageType_C" },
+          armorPenetrationDepthMm: { state: "observed", value: 0 },
+          impactDamage: { state: "absent", value: null },
+          isExplosive: { state: "observed", value: false },
+          traceDistanceAfterPenetrationMeters: { state: "observed", value: 0 },
+        }],
+        curves: [
+          { curveId: "penetration", inputUnit: "meters", outputUnit: "millimeters", keys: { state: "observed", value: [
+            { time: 0, value: 800 }, { time: 3000, value: 500 },
+          ] } },
+          { curveId: "damage", inputUnit: "unreal-centimeters", outputUnit: "damage", keys: { state: "observed", value: [
+            { time: 10000, value: 8000 }, { time: 400000, value: 1000 },
+          ] } },
+        ],
+      },
+    },
+    configurationCurves: [],
+    radialSource: null,
+  });
+
+  const atZero = resolveEditorNativeBallistics(model, 0, 0);
+  const atFourKilometers = resolveEditorNativeBallistics(model, 0, 4000);
+  assert.deepEqual(
+    [atZero.penetrationAtRangeMm, atZero.impactDamageAtRange],
+    [800, 8000],
+  );
+  assert.deepEqual(
+    [atFourKilometers.penetrationAtRangeMm, atFourKilometers.impactDamageAtRange],
+    [500, 1000],
+  );
+});
 
 test("explosive identities and evidence state stay explicit", () => {
   assert.equal(
@@ -71,12 +132,12 @@ test("product vehicle ids remain attack-source aliases for card selection and di
 test("vehicle weapon distance keeps the exact Wiki ballistic profile", () => {
   assert.match(adapterSource, /weaponCatalogBallisticProfileForVariant/u);
   assert.match(
-    adapterSource,
+    ballisticsModelSource,
     /profileWeapon\.armorPenetrationCurveIndex/u,
   );
   assert.match(
-    adapterSource,
+    ballisticsModelSource,
     /profileWeapon\.damageFalloffCurveIndex/u,
   );
-  assert.match(adapterSource, /\.\.\.ballisticProfile!\.model\.curves/u);
+  assert.match(ballisticsModelSource, /\.\.\.ballisticProfile!\.model\.curves/u);
 });

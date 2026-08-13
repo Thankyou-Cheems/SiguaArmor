@@ -78,6 +78,14 @@ test("both edition logs lead with the current release and omit superseded claims
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
+    assert.match(
+      JSON.stringify(document.entries[0]),
+      /861 份载具外观与 5,924 个部件落点[：:]核显\/低配兼容模式将贴图解码像素从 40\.09 亿降至 10\.02 亿，减少 75\.00%/u,
+    );
+    assert.match(
+      JSON.stringify(document.entries[0]),
+      /Intel UHD 770 的公开实测[\s\S]*?2\.27–2\.86 秒[\s\S]*?12\.4–12\.5 毫秒[\s\S]*?0 次 WebGL 上下文丢失与请求失败/u,
+    );
   }
 });
 
@@ -166,7 +174,7 @@ test("international catalog URLs stay under the /squad REST path", () => {
   );
 });
 
-test("international catalog URLs preserve the full 4000-meter viewer range", () => {
+test("weapon distance stays session-local and refreshes to zero", () => {
   const url = buildCatalogUrl(
     {
       groupId: "pla",
@@ -177,12 +185,12 @@ test("international catalog URLs preserve the full 4000-meter viewer range", () 
     SAMPLE_INDEX,
     { basePath: "/squad" },
   );
-  assert.equal(url, "/squad/vehicles/sample-tank?d=3900");
+  assert.equal(url, "/squad/vehicles/sample-tank");
   assert.equal(
     parseCatalogLocation(`https://sigua.example${url}`, SAMPLE_INDEX, {
       basePath: "/squad",
     }).viewer.distance,
-    3900,
+    0,
   );
   assert.equal(
     parseCatalogLocation(
@@ -190,7 +198,7 @@ test("international catalog URLs preserve the full 4000-meter viewer range", () 
       SAMPLE_INDEX,
       { basePath: "/squad" },
     ).viewer.distance,
-    4000,
+    0,
   );
 });
 
