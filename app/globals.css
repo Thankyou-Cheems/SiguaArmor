@@ -1343,7 +1343,7 @@ code {
   height: calc(100% - 4px);
   clip-path: polygon(0 0, 100% 0, 100% 72%, 50% 100%, 0 72%);
   filter: brightness(0.5) saturate(0.48) contrast(0.92);
-  object-fit: fill;
+  object-fit: cover;
   transition: filter 320ms ease;
 }
 
