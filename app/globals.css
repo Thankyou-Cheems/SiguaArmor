@@ -8682,13 +8682,14 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .site-footer__supporters-list li {
   display: inline-flex;
   max-width: 100%;
-  align-items: flex-start;
+  align-items: center;
   flex-direction: column;
   gap: 2px;
   min-height: 0;
   padding: 0;
   border: 0;
   background: transparent;
+  text-align: center;
 }
 
 .site-footer__supporters-list small {
@@ -8716,6 +8717,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .site-footer__supporter-name {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   white-space: nowrap;
 }
 
@@ -8731,6 +8733,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   font-size: 8px;
   line-height: 1.35;
   overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .site-footer__supporters-status {
