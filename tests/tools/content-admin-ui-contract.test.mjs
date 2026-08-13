@@ -27,5 +27,8 @@ test("footer keeps supporter notes on a smaller second line without the old inne
   assert.ok(itemRule?.groups?.rule);
   assert.doesNotMatch(listRule.groups.rule, /border-left/u);
   assert.match(itemRule.groups.rule, /flex-direction: column/u);
-  assert.match(styles, /\.site-footer__supporter-note \{[\s\S]*?font-size: 8px/u);
+  assert.match(itemRule.groups.rule, /align-items: center/u);
+  assert.match(itemRule.groups.rule, /text-align: center/u);
+  assert.match(styles, /\.site-footer__supporter-name \{[\s\S]*?justify-content: center/u);
+  assert.match(styles, /\.site-footer__supporter-note \{[\s\S]*?font-size: 8px[\s\S]*?text-align: center/u);
 });
