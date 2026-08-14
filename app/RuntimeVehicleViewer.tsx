@@ -3612,8 +3612,11 @@ export function RuntimeVehicleViewer({
   const attackReady =
     attackState.kind === "ready" && loadedAttackSourceCardId === attackSource?.cardId;
   const verdict = shotVerdict(shotResult);
-  const distanceControl = attackHeader && weaponIndex >= 0
-    ? runtimeAttackDistanceControl(attackHeader, weaponIndex)
+  const distanceControl = selectedAttackWeapon
+    ? runtimeAttackDistanceControl(
+        selectedAttackWeapon.ballisticsModel,
+        selectedAttackWeapon.ballisticsWeaponIndex,
+      )
     : null;
   const maxDistanceM = distanceControl?.maxDistanceM ?? 0;
   const protectionMapAvailable =
