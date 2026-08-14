@@ -8,6 +8,7 @@ import {
   editorNativeTraceIncludesDistance,
   resolveEditorNativePenetrationArithmetic,
 } from "./editor-native-penetration.ts";
+import { MAX_VIEWER_TARGET_DISTANCE_M } from "./catalog-navigation.mjs";
 
 export type EditorEvidenceState =
   | "observed"
@@ -778,6 +779,18 @@ export function maxEditorNativeWeaponDistanceM(
     }
   }
   return Math.max(0, ...distances);
+}
+
+/**
+ * The viewer's range is an engagement-distance control, not merely a curve
+ * scrubber. A weapon with constant damage and penetration still needs a
+ * target distance so its shot path and impact can be placed in the scene.
+ */
+export function editorNativeWeaponTargetDistanceLimitM(
+  model: EditorNativeModel,
+  weaponIndex: number,
+) {
+  return model.weapons[weaponIndex] ? MAX_VIEWER_TARGET_DISTANCE_M : 0;
 }
 
 /**

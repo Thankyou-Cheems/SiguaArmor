@@ -43,9 +43,9 @@ import {
 } from "../lib/turret-articulation";
 import {
   editorNativeEffectiveDamageAmount,
+  editorNativeWeaponTargetDistanceLimitM,
   isEditorNativeComponentOnlyDamageEvent,
   isEditorNativeVehicleDamageEvent,
-  maxEditorNativeWeaponDistanceM,
   resolveEditorNativeBallistics,
   simulateEditorNativeShot,
   type EditorNativeBallistics,
@@ -3610,7 +3610,7 @@ export function RuntimeVehicleViewer({
     attackState.kind === "ready" && loadedAttackSourceCardId === attackSource?.cardId;
   const verdict = shotVerdict(shotResult);
   const maxDistanceM = attackHeader && weaponIndex >= 0
-    ? maxEditorNativeWeaponDistanceM(attackHeader, weaponIndex)
+    ? editorNativeWeaponTargetDistanceLimitM(attackHeader, weaponIndex)
     : 0;
   const protectionMapAvailable =
     hitState.kind === "ready" &&
@@ -4472,7 +4472,7 @@ export function RuntimeVehicleViewer({
       const preferredWeapon = source.weapons[preferredOptionIndex];
       const preferredModel = preferredWeapon.ballisticsModel;
       if (!preferredModel) throw new Error(`攻击来源弹道未加载：${source.cardId}`);
-      const preferredMaxDistance = maxEditorNativeWeaponDistanceM(
+      const preferredMaxDistance = editorNativeWeaponTargetDistanceLimitM(
         preferredModel,
         preferredWeapon.ballisticsWeaponIndex,
       );
@@ -4671,7 +4671,7 @@ export function RuntimeVehicleViewer({
     const requestedWeapon = attackSource.weapons[requestedOptionIndex];
     const requestedModel = requestedWeapon?.ballisticsModel ?? null;
     if (!requestedWeapon || !requestedModel) return;
-    const requestedMaxDistance = maxEditorNativeWeaponDistanceM(
+    const requestedMaxDistance = editorNativeWeaponTargetDistanceLimitM(
       requestedModel,
       requestedWeapon.ballisticsWeaponIndex,
     );
@@ -7438,7 +7438,7 @@ export function RuntimeVehicleViewer({
   const ballisticsPenetrationLabel = ballisticsPenetrationKind === "shaped-charge"
     ? "破甲深度"
     : "穿深";
-  const distanceLabel = maxDistanceM === 0 ? "无距离衰减" : `${targetDistanceM.toFixed(0)} m`;
+  const distanceLabel = maxDistanceM === 0 ? "不可用" : `${targetDistanceM.toFixed(0)} m`;
   const exteriorStreaming = mode === "exterior" && viewerState.kind === "loading";
   const viewerPresentation = runtimeViewerPresentation({
     mode,
@@ -7756,7 +7756,7 @@ export function RuntimeVehicleViewer({
               const nextOptionIndex = selection.optionIndex;
               const nextModel = nextWeapon.ballisticsModel;
               if (!nextWeapon || !nextModel) return;
-              const nextMaxDistance = maxEditorNativeWeaponDistanceM(
+              const nextMaxDistance = editorNativeWeaponTargetDistanceLimitM(
                 nextModel,
                 nextWeapon.ballisticsWeaponIndex,
               );
@@ -7805,11 +7805,11 @@ export function RuntimeVehicleViewer({
           </div>
         )}
         <div className="viewer-distance-control" data-disabled={maxDistanceM === 0}>
-          <span><span>距离（衰减）</span><strong>{distanceLabel}</strong></span>
+          <span><span>攻击距离</span><strong>{distanceLabel}</strong></span>
           <div className="viewer-distance-slider" data-has-ticks={quickDistanceTicks.length > 0}>
             <input
               type="range"
-              aria-label={maxDistanceM === 0 ? "当前弹药无距离衰减" : `攻击距离 ${targetDistanceM} 米`}
+              aria-label={maxDistanceM === 0 ? "当前弹药不可调整距离" : `攻击距离 ${targetDistanceM} 米`}
               min={0}
               max={Math.max(maxDistanceM, 1)}
               step={50}
