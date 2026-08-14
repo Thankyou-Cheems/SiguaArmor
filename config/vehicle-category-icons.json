@@ -385,7 +385,7 @@
     "usa--rhib-m2--ultv": "T_map_boat_openturret",
     "usa--rhib-m240--ultv": "T_map_boat_openturret",
     "usa--uh-60m--uh": "map_transporthelo",
-    "usmc--a10--cas": "jet_a10",
+    "usmc--fa18--cas": "jet_tornado",
     "usmc--aavc-7a1-logistics--logi": "T_map_trackedapc_logistics",
     "usmc--aavp-7a1--apc": "map_trackedapc",
     "usmc--lav-25--apc": "map_ifv",

@@ -176,7 +176,7 @@ export interface CatalogVariant {
   } | null;
   data: ReferenceData | null;
   editorAvailability?: {
-    state: "observed" | "livery-alias";
+    state: "observed" | "livery-alias" | "absent-current-editor";
     mechanicsSignatureId: string;
     mechanicalBindingId: string;
     mechanicalRawName: string;
@@ -188,6 +188,7 @@ export interface CatalogVariant {
 
 export interface CatalogRecord {
   promoEntryId: string;
+  wikiSourceCardId?: string;
   promotionOrder: number;
   searchTerms?: string[];
   searchAliases?: string[];
@@ -237,6 +238,7 @@ export interface CatalogSearchVariant {
 
 export interface CatalogSearchRecord {
   promoEntryId: string;
+  wikiSourceCardId?: string;
   promotionOrder: number;
   searchTerms?: string[];
   searchAliases?: string[];
@@ -277,6 +279,7 @@ export interface CatalogTopologyVariant {
 
 export interface CatalogTopologyRecord {
   promoEntryId: string;
+  wikiSourceCardId?: string;
   promotionOrder: number;
   official: { groupId: string };
   selectedRawName: string | null;

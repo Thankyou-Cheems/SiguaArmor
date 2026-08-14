@@ -87,6 +87,7 @@ import {
   rankVehicleVariantSearch,
   searchCatalogIndexRecords,
 } from "./vehicle-search";
+import { groupVehicleCardEntries } from "./vehicle-card-grouping";
 import type { CatalogIndexSearchResult } from "./vehicle-search";
 import {
   resolveCatalogVehicleCategoryIconAsset,
@@ -205,6 +206,7 @@ interface VisibleCatalogCardGroup extends CatalogCardGroup {
 function catalogRecordFromSearchRecord(record: CatalogSearchRecord): CatalogRecord {
   return {
     promoEntryId: record.promoEntryId,
+    wikiSourceCardId: record.wikiSourceCardId,
     promotionOrder: record.promotionOrder,
     searchTerms: record.searchTerms,
     searchAliases: record.searchAliases,
@@ -292,54 +294,11 @@ function vehicleLivery(variant: Pick<CatalogVariant, "presentation"> | null) {
   return variant?.presentation?.liveryZh ?? null;
 }
 
-function variantConfigurationKey(card: CatalogCardEntry) {
-  if (!card.variant) return card.alias?.trim() ?? "";
-  if (card.variant.presentation) {
-    const vehicleName = card.variant.presentation.vehicleNameZh?.trim() ?? "";
-    const configuration = card.variant.presentation.configurationZh?.trim() ?? "";
-    const mechanicsSignature = card.variant.editorAvailability?.mechanicsSignatureId ??
-      `unverified:${card.variant.sourceRawName}`;
-    return `${vehicleName}\u0000${configuration}\u0000${mechanicsSignature}`;
-  }
-  return card.alias?.trim() ?? "";
-}
-
 function catalogCardGroups(record: CatalogRecord): CatalogCardGroup[] {
-  const entries = catalogCardEntries(record);
-  const configurationBuckets = new Map<string, CatalogCardEntry[]>();
-
-  for (const entry of entries) {
-    // Presentation marks a livery candidate; the Editor mechanics signature is
-    // the merge gate, and mechanicalRawName keeps the exact weapon loadout.
-    const key = variantConfigurationKey(entry);
-    const bucket = configurationBuckets.get(key) ?? [];
-    bucket.push(entry);
-    configurationBuckets.set(key, bucket);
-  }
-
-  const groups: CatalogCardGroup[] = [];
-  for (const bucket of configurationBuckets.values()) {
-    const liveries = bucket.map((entry) => vehicleLivery(entry.variant));
-    const canCollapseAsLiveries =
-      bucket.length > 1 &&
-      liveries.every((livery): livery is string => Boolean(livery)) &&
-      new Set(liveries).size === bucket.length;
-
-    if (canCollapseAsLiveries) {
-      groups.push({
-        groupId: `${bucket[0].cardId}--liveries`,
-        entries: bucket,
-        record,
-      });
-      continue;
-    }
-
-    for (const entry of bucket) {
-      groups.push({ groupId: entry.cardId, entries: [entry], record });
-    }
-  }
-
-  return groups;
+  return groupVehicleCardEntries(catalogCardEntries(record)).map((group) => ({
+    ...group,
+    record,
+  }));
 }
 
 type VehicleTypeLayoutStyle = CSSProperties & {
