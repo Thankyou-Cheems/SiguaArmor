@@ -11,22 +11,71 @@ import type {
 } from "../lib/weapon-catalog.ts";
 import { MAX_VIEWER_TARGET_DISTANCE_M } from "../lib/catalog-navigation.mjs";
 
-/**
- * The viewer's range is an engagement-distance control, not merely a curve
- * scrubber. Constant ballistics still need distance for shot placement.
- */
-export function runtimeAttackTargetDistanceLimitM(
-  model: EditorNativeModel,
-  weaponIndex: number,
-) {
-  return model.weapons[weaponIndex] ? MAX_VIEWER_TARGET_DISTANCE_M : 0;
-}
-
 function fieldValue<T>(field: EditorField<T>) {
   if (field !== null && typeof field === "object" && "value" in field) {
     return field.value;
   }
   return field;
+}
+
+export type RuntimeAttackDecayState = "available" | "none" | "unknown";
+
+export interface RuntimeAttackDistanceControl {
+  damageDecay: RuntimeAttackDecayState;
+  penetrationDecay: RuntimeAttackDecayState;
+  enabled: boolean;
+  maxDistanceM: number;
+}
+
+function curveDecayState(
+  field: EditorField<number>,
+  curves: readonly EditorNativeCurveRecord[],
+): RuntimeAttackDecayState {
+  if (
+    field !== null &&
+    typeof field === "object" &&
+    "state" in field &&
+    field.state === "absent"
+  ) return "none";
+  const index = fieldValue(field);
+  if (typeof index !== "number") return "unknown";
+  const curve = curves[index];
+  const keys = curve ? fieldValue(curve.keys) : null;
+  return Array.isArray(keys) && keys.length > 0 ? "available" : "unknown";
+}
+
+export function runtimeAttackDistanceControl(
+  model: EditorNativeModel,
+  weaponIndex: number,
+): RuntimeAttackDistanceControl {
+  const weapon = model.weapons[weaponIndex];
+  if (!weapon) {
+    return {
+      damageDecay: "unknown",
+      penetrationDecay: "unknown",
+      enabled: false,
+      maxDistanceM: 0,
+    };
+  }
+  const damageDecay = curveDecayState(weapon.damageFalloffCurveIndex, model.curves);
+  const penetrationDecay = curveDecayState(
+    weapon.armorPenetrationCurveIndex,
+    model.curves,
+  );
+  const enabled = damageDecay === "available" || penetrationDecay === "available";
+  return {
+    damageDecay,
+    penetrationDecay,
+    enabled,
+    maxDistanceM: enabled ? MAX_VIEWER_TARGET_DISTANCE_M : 0,
+  };
+}
+
+export function runtimeAttackTargetDistanceLimitM(
+  model: EditorNativeModel,
+  weaponIndex: number,
+) {
+  return runtimeAttackDistanceControl(model, weaponIndex).maxDistanceM;
 }
 
 export function composeCatalogVariantBallisticsModel({
@@ -142,7 +191,11 @@ export function composeCatalogVariantBallisticsModel({
         profileProjectile?.armorPenetrationDepthMm ??
         directModel.penetrationMm ?? 0,
       impactDamage:
-        profileProjectile?.impactDamage ?? directModel.directImpactDamage,
+        profileProjectile?.impactDamage ?? (
+          penetrationCurveIndex !== null || damageCurveIndex !== null
+            ? { value: null, state: "absent" }
+            : directModel.directImpactDamage
+        ),
       isExplosive: radialSource !== null,
       impactRadialOrder:
         directModel.impactRadialOrder === "not-applicable"

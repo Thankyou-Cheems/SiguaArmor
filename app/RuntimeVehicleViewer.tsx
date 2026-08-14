@@ -53,7 +53,10 @@ import {
   type EditorNativeModel,
   type EditorNativeShotResult,
 } from "../lib/editor-native-hit-model";
-import { runtimeAttackTargetDistanceLimitM } from "./runtime-attack-ballistics-model";
+import {
+  runtimeAttackDistanceControl,
+  runtimeAttackTargetDistanceLimitM,
+} from "./runtime-attack-ballistics-model";
 import {
   buildRadialDamageVisualizationPlan,
   radialDamageLegendPlacement,
@@ -3609,9 +3612,10 @@ export function RuntimeVehicleViewer({
   const attackReady =
     attackState.kind === "ready" && loadedAttackSourceCardId === attackSource?.cardId;
   const verdict = shotVerdict(shotResult);
-  const maxDistanceM = attackHeader && weaponIndex >= 0
-    ? runtimeAttackTargetDistanceLimitM(attackHeader, weaponIndex)
-    : 0;
+  const distanceControl = attackHeader && weaponIndex >= 0
+    ? runtimeAttackDistanceControl(attackHeader, weaponIndex)
+    : null;
+  const maxDistanceM = distanceControl?.maxDistanceM ?? 0;
   const protectionMapAvailable =
     hitState.kind === "ready" &&
     hitHeader !== null &&
@@ -7439,6 +7443,22 @@ export function RuntimeVehicleViewer({
     ? "破甲深度"
     : "穿深";
   const distanceLabel = maxDistanceM === 0 ? "不可用" : `${targetDistanceM.toFixed(0)} m`;
+  const distanceDecayNotice = !distanceControl
+    ? null
+    : distanceControl.damageDecay === "none" && distanceControl.penetrationDecay === "none"
+      ? "当前武器无伤害/穿深距离衰减"
+      : [
+          distanceControl.damageDecay === "none"
+            ? "伤害无距离衰减"
+            : distanceControl.damageDecay === "unknown"
+              ? "伤害衰减数据不可用"
+              : null,
+          distanceControl.penetrationDecay === "none"
+            ? "穿深无距离衰减"
+            : distanceControl.penetrationDecay === "unknown"
+              ? "穿深衰减数据不可用"
+              : null,
+        ].filter(Boolean).join(" · ");
   const exteriorStreaming = mode === "exterior" && viewerState.kind === "loading";
   const viewerPresentation = runtimeViewerPresentation({
     mode,
@@ -7805,7 +7825,15 @@ export function RuntimeVehicleViewer({
           </div>
         )}
         <div className="viewer-distance-control" data-disabled={maxDistanceM === 0}>
-          <span><span>攻击距离</span><strong>{distanceLabel}</strong></span>
+          <span>
+            <span className="viewer-distance-control__label">
+              <span>攻击距离</span>
+              {distanceDecayNotice ? (
+                <small className="viewer-distance-control__notice">{distanceDecayNotice}</small>
+              ) : null}
+            </span>
+            <strong>{distanceLabel}</strong>
+          </span>
           <div className="viewer-distance-slider" data-has-ticks={quickDistanceTicks.length > 0}>
             <input
               type="range"

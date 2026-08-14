@@ -6296,6 +6296,28 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   text-transform: none;
 }
 
+.viewer-distance-control__label {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+
+.viewer-distance-control__notice {
+  overflow: hidden;
+  color: rgba(231, 189, 104, 0.78);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.viewer-distance-control[data-disabled="true"] .viewer-distance-control__notice {
+  color: var(--text-muted);
+}
+
 .viewer-distance-control[data-disabled="true"] > span {
   color: var(--text-muted);
 }
