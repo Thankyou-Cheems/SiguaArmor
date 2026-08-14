@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -6,6 +7,11 @@ import {
   createRuntimeStationEquipmentResolver,
   resolveRuntimeAttackSourceIndexEntry,
 } from "../../app/runtime-wiki-attack-source.ts";
+
+const wikiSourceText = await readFile(
+  new URL("../../lib/wiki-source.ts", import.meta.url),
+  "utf8",
+);
 
 const selectorVariant = {
   id: "weapon-variant-test",
@@ -164,4 +170,19 @@ test("a shared vehicle attacker resolves through the small source index", () => 
     },
   );
   assert.equal(resolveRuntimeAttackSourceIndexEntry(index, "inf-weapons"), null);
+});
+
+test("weapon runtime requests bypass pre-refresh browser cache entries", () => {
+  assert.match(
+    wikiSourceText,
+    /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=exact-profile-v2"/u,
+  );
+  assert.match(
+    wikiSourceText,
+    /`\/data\/weapons\/runtime\/vehicles\/\$\{cardId\}\.json\$\{WIKI_WEAPON_RUNTIME_QUERY\}`/u,
+  );
+  assert.match(
+    wikiSourceText,
+    /`\/data\/weapons\/runtime\/vehicles\/index\.json\$\{WIKI_WEAPON_RUNTIME_QUERY\}`/u,
+  );
 });
