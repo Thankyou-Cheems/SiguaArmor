@@ -58,7 +58,9 @@ export async function loadPublicCatalogGroup(
 ): Promise<PublicCatalogIndex> {
   const topology = await loadCatalogBootstrapGroup(siteEdition, groupId);
   const factionIds = [...new Set(
-    topology.records.map((record) => wikiVehicleFactionId(record.promoEntryId)),
+    topology.records.map((record) => wikiVehicleFactionId(
+      record.wikiSourceCardId ?? record.promoEntryId,
+    )),
   )];
   const [presentationValues, factions, aliases] = await Promise.all([
     Promise.all(factionIds.map(loadWikiVehicleFactionPresentation)),

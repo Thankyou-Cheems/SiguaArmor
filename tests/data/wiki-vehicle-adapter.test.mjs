@@ -35,6 +35,16 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         displayName: "Vehicle",
         cardId: "test--vehicle--ifv--bp-test",
         routeSlug: "test--vehicle--ifv--bp-test",
+      }, {
+        sourceRawName: "BP_Test_Exclusive",
+        catalogBindingRef: "binding-test-exclusive",
+        vehicleRef: "vehicle-source-test-exclusive",
+        runtimeVehicleRef: "vehicle-runtime-test-exclusive",
+        visualArtifactRef: "visual-test-exclusive",
+        alias: "",
+        displayName: "Vehicle Exclusive",
+        cardId: "test--vehicle--ifv--bp-test-exclusive",
+        routeSlug: "test--vehicle--ifv--bp-test-exclusive",
       }],
     }],
   };
@@ -49,10 +59,25 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         runtimeVehicleRef: "vehicle-runtime-test",
         visualArtifactRefs: { international: "visual-test" },
         weaponBindingIds: ["weapon-test"],
+      }, {
+        id: "binding-test-exclusive",
+        cardId: "test--vehicle--ifv",
+        rawName: "BP_Test_Exclusive",
+        vehicleRef: "vehicle-source-test-exclusive",
+        runtimeVehicleRef: "vehicle-runtime-test-exclusive",
+        visualArtifactRefs: { international: "visual-test-exclusive" },
+        weaponBindingIds: ["weapon-test-exclusive"],
       }],
       vehicles: [{
         id: "vehicle-source-test",
         rawName: "BP_Test",
+        generalProfileRef: "general-test",
+        seatProfileRefs: ["seat-test"],
+        hullDamageProfileRefs: ["damage-test"],
+        componentProfileRefs: ["component-test"],
+      }, {
+        id: "vehicle-source-test-exclusive",
+        rawName: "BP_Test_Exclusive",
         generalProfileRef: "general-test",
         seatProfileRefs: ["seat-test"],
         hullDamageProfileRefs: ["damage-test"],
@@ -124,6 +149,16 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
           width: 640,
           height: 360,
         },
+      }, {
+        id: "visual-test-exclusive",
+        edition: "international",
+        cardId: "test--vehicle--ifv",
+        rawName: "BP_Test_Exclusive",
+        thumbnail: {
+          path: "/assets/vehicles/cards/international/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.webp",
+          width: 640,
+          height: 360,
+        },
       }],
     },
     editorAvailability: {
@@ -141,6 +176,15 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         setupIds: ["Test_Setup"],
         configurationIds: ["vehicle-configuration-test"],
         vehicleSettingsPaths: ["/Game/Settings/Vehicle/Test.Test"],
+      }, {
+        bindingId: "binding-test-exclusive",
+        cardId: "test--vehicle--ifv",
+        rawName: "BP_Test_Exclusive",
+        mechanicsSignatureId: "vehicle-mechanics-test-exclusive",
+        state: "absent-current-editor",
+        setupIds: [],
+        configurationIds: [],
+        vehicleSettingsPaths: [],
       }],
     },
   };
@@ -157,6 +201,12 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
   assert.deepEqual(variant.data.weaponBindingIds, ["weapon-test"]);
   assert.equal(variant.data.components[0].damageResistances[0].modifier, 0.5);
   assert.equal(variant.thumbnail.width, 640);
+  const exclusive = result.records[0].variants[1];
+  assert.equal(result.records[0].variants.length, 2);
+  assert.equal(exclusive.sourceRawName, "BP_Test_Exclusive");
+  assert.equal(exclusive.editorAvailability.state, "absent-current-editor");
+  assert.equal(exclusive.editorAvailability.mechanicalRawName, "BP_Test_Exclusive");
+  assert.deepEqual(exclusive.data.weaponBindingIds, ["weapon-test-exclusive"]);
 
   const mechanics = {
     ...wiki,
@@ -196,6 +246,7 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
     groups: [{ id: "test", name: "Test", order: 0, recordCount: 1 }],
     records: [{
       promoEntryId: "test--mq9--uav",
+      wikiSourceCardId: "source--mq9--uav",
       promotionOrder: 1,
       official: {
         groupId: "test",
@@ -244,8 +295,8 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
     extensions: {
       supportAir: {
         bindings: [{
-          bindingKey: "test--mq9--uav\u0000BP_CommandActor_UAV_MQ9",
-          cardId: "test--mq9--uav",
+          bindingKey: "source--mq9--uav\u0000BP_CommandActor_UAV_MQ9",
+          cardId: "source--mq9--uav",
           rawName: "BP_CommandActor_UAV_MQ9",
           visualArtifactRefs: { international: "visual-mq9" },
         }],

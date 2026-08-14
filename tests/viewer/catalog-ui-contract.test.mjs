@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const [catalogSource, viewerSource, styles, damageTypeSource] = await Promise.all([
+const [catalogSource, groupingSource, viewerSource, styles, damageTypeSource] = await Promise.all([
   readFile(new URL("../../app/CatalogApp.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../../app/vehicle-card-grouping.ts", import.meta.url), "utf8"),
   readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/globals.css", import.meta.url), "utf8"),
   readFile(new URL("../../lib/vehicle-damage-type-icons.ts", import.meta.url), "utf8"),
@@ -21,12 +22,10 @@ test("vehicle cards show crew and passenger counts and reuse encyclopedia stat i
   );
 });
 
-test("vehicle cards only collapse explicit liveries with the same Editor mechanics signature", () => {
-  assert.match(
-    catalogSource,
-    /variant\.editorAvailability\?\.mechanicsSignatureId[\s\S]*?unverified:\$\{card\.variant\.sourceRawName\}/u,
-  );
-  assert.match(catalogSource, /liveries\.every[\s\S]*?new Set\(liveries\)\.size === bucket\.length/u);
+test("vehicle cards collapse only explicit liveries of the same product configuration", () => {
+  assert.doesNotMatch(groupingSource, /mechanicsSignatureId/u);
+  assert.match(groupingSource, /vehicleName[\s\S]*?configuration/u);
+  assert.match(groupingSource, /liveries\.every[\s\S]*?new Set\(liveries\)\.size === bucket\.length/u);
   assert.match(
     catalogSource,
     /canonicalRawName:[\s\S]*?editorAvailability\?\.mechanicalRawName/u,

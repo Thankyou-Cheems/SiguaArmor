@@ -330,7 +330,9 @@ export function wikiVehicleFactionIdsForGroup(
   const factionIds = new Set<string>();
   for (const record of expectedIndex.records) {
     if (record.official.groupId !== groupId) continue;
-    const factionId = wikiVehicleFactionId(record.promoEntryId);
+    const factionId = wikiVehicleFactionId(
+      record.wikiSourceCardId ?? record.promoEntryId,
+    );
     factionIds.add(factionId);
   }
   if (factionIds.size === 0) {
@@ -409,7 +411,8 @@ export function buildCatalogIndexFromWiki(
   );
   const communityAliases = communityAliasMaps(communityAliasesValue, edition);
   const records = topology.records.flatMap((record) => {
-    const display = presentation.get(record.promoEntryId);
+    const wikiSourceCardId = record.wikiSourceCardId ?? record.promoEntryId;
+    const display = presentation.get(wikiSourceCardId);
     if (!display) return [];
     const variants = new Map(display.variants.map((variant) => [variant.rawName, variant]));
     const projectedVariants = record.variants.flatMap((variant) => {
@@ -437,6 +440,7 @@ export function buildCatalogIndexFromWiki(
     ) ?? projectedVariants[0];
     return [{
       promoEntryId: record.promoEntryId,
+      wikiSourceCardId: record.wikiSourceCardId,
       promotionOrder: record.promotionOrder,
       searchTerms: display.searchTerms,
       searchAliases: [
@@ -461,7 +465,7 @@ export function buildCatalogIndexFromWiki(
       variants: projectedVariants,
     }];
   });
-  if (records.length !== presentation.size) {
+  if (records.length !== topology.records.length) {
     throw new Error(`${edition} 的 Wiki 呈现记录数量不匹配`);
   }
   return {
@@ -607,9 +611,10 @@ export function buildFactionCatalogFromWiki(
   const records = expectedIndex.records
     .filter((record) => record.official.groupId === groupId)
     .map((record) => {
+      const wikiSourceCardId = record.wikiSourceCardId ?? record.promoEntryId;
       const variants = record.variants.flatMap<CatalogVariant>((variant): CatalogVariant[] => {
         if (!variant.catalogBindingRef) {
-          const bindingKey = `${record.promoEntryId}\u0000${variant.sourceRawName}`;
+          const bindingKey = `${wikiSourceCardId}\u0000${variant.sourceRawName}`;
           const supportAirBinding = required(
             supportAirBindings.get(bindingKey),
             `共享空中单位 ${variant.sourceRawName}`,
@@ -620,7 +625,7 @@ export function buildFactionCatalogFromWiki(
             ? required(visualArtifacts.get(visualArtifactRef), `卡片缩略图 ${visualArtifactRef}`).thumbnail
             : null;
           if (
-            supportAirBinding.cardId !== record.promoEntryId ||
+            supportAirBinding.cardId !== wikiSourceCardId ||
             supportAirBinding.rawName !== variant.sourceRawName ||
             variant.vehicleRef !== null ||
             variant.runtimeVehicleRef !== null ||
@@ -663,18 +668,21 @@ export function buildFactionCatalogFromWiki(
           bindingAvailability.get(binding.id),
           `Editor 目录可用性 ${binding.id}`,
         );
-        if (availability.state === "absent-current-editor") return [];
         const currentAvailability = {
           ...availability,
           state: availability.state,
-          mechanicalBindingId: required(
-            availability.mechanicalBindingId,
-            `Editor 机械绑定 ${binding.id}`,
-          ),
-          mechanicalRawName: required(
-            availability.mechanicalRawName,
-            `Editor 机械配置 ${binding.id}`,
-          ),
+          mechanicalBindingId: availability.state === "absent-current-editor"
+            ? binding.id
+            : required(
+              availability.mechanicalBindingId,
+              `Editor 机械绑定 ${binding.id}`,
+            ),
+          mechanicalRawName: availability.state === "absent-current-editor"
+            ? binding.rawName
+            : required(
+              availability.mechanicalRawName,
+              `Editor 机械配置 ${binding.id}`,
+            ),
         };
         return [{
           sourceRawName: variant.sourceRawName,
@@ -697,6 +705,7 @@ export function buildFactionCatalogFromWiki(
         : variants[0].sourceRawName;
       return {
         promoEntryId: record.promoEntryId,
+        wikiSourceCardId: record.wikiSourceCardId,
         promotionOrder: record.promotionOrder,
         searchTerms: record.searchTerms,
         searchAliases: record.searchAliases,

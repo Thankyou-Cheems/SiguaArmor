@@ -219,7 +219,7 @@ test("the Runtime Viewer builds explosive choices from the Wiki weapon catalog",
   );
 });
 
-test("vehicle attack sources join Wiki weapons through the product vehicle id", () => {
+test("vehicle attack sources join Wiki weapons through the exact Wiki source card", () => {
   const ztz99 = catalogIndex.records.find(
     ({ promoEntryId }) => promoEntryId === "pla--ztz99a--mbt",
   );
@@ -231,12 +231,17 @@ test("vehicle attack sources join Wiki weapons through the product vehicle id", 
   );
   assert.match(
     adapterSource,
-    /weaponCatalogVariantsForExactVehicle\(\s*record\.promoEntryId,\s*variant\.sourceRawName,\s*\)/u,
+    /const wikiSourceCardId = record\.wikiSourceCardId \?\? record\.promoEntryId/u,
   );
   assert.match(
     adapterSource,
-    /weapon\.exactCardIds\.includes\(record\.promoEntryId\)/u,
+    /weaponCatalogVariantsForExactVehicle\(\s*wikiSourceCardId,\s*variant\.sourceRawName,\s*\)/u,
   );
+  assert.match(adapterSource, /weapon\.exactCardIds\.includes\(wikiSourceCardId\)/u);
+  const usmcFa18 = catalogIndex.records.find(
+    ({ promoEntryId }) => promoEntryId === "usmc--fa18--cas",
+  );
+  assert.equal(usmcFa18?.wikiSourceCardId, "adf--fa18--cas");
 });
 
 test("product vehicle ids remain attack-source aliases for card selection and direct routes", () => {

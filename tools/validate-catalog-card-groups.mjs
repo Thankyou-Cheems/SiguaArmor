@@ -7,6 +7,7 @@ import {
   buildCatalogIndexFromWiki,
   buildFactionCatalogFromWiki,
 } from "../app/wiki-vehicle-catalog.ts";
+import { groupVehicleCardEntries } from "../app/vehicle-card-grouping.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const LOCAL_WIKI_ROOT = process.env.SIGUA_WIKI_ROOT
@@ -31,27 +32,23 @@ function configurationKey(variant) {
 
 function groupRecord(record) {
   if (!record.variants.length) return [{ entries: [null], liveryGroup: false }];
-  const buckets = new Map();
-  for (const variant of record.variants) {
-    const key = configurationKey(variant);
-    const bucket = buckets.get(key) ?? [];
-    bucket.push(variant);
-    buckets.set(key, bucket);
-  }
-  return [...buckets.values()].flatMap((entries) => {
-    const liveries = entries.map((variant) => variant.presentation?.liveryZh ?? null);
-    const liveryGroup = entries.length > 1 && liveries.every(Boolean) && new Set(liveries).size === entries.length;
-    return liveryGroup
-      ? [{ entries, liveryGroup: true }]
-      : entries.map((entry) => ({ entries: [entry], liveryGroup: false }));
-  });
+  return groupVehicleCardEntries(record.variants.map((variant) => ({
+    cardId: variant.sourceRawName,
+    alias: variant.alias,
+    variant,
+  }))).map((group) => ({
+    entries: group.entries.map(({ variant }) => variant),
+    liveryGroup: group.entries.length > 1,
+  }));
 }
 
-const [vehicleCatalog, factionCatalog, communityAliases] = await Promise.all([
+const [vehicleCatalogBase, editorAvailability, factionCatalog, communityAliases] = await Promise.all([
   readWikiJson("data/vehicles/catalog.json"),
+  readWikiJson("data/vehicles/editor-availability.json"),
   readWikiJson("data/factions/catalog.json"),
   readWikiJson("data/vehicles/community-aliases.json"),
 ]);
+const vehicleCatalog = { ...vehicleCatalogBase, editorAvailability };
 const records = [];
 for (const [edition, indexName] of [
   ["international", "catalog-index.json"],

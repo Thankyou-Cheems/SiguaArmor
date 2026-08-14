@@ -380,7 +380,7 @@
     "usa--rhib-m2--ultv": "boat",
     "usa--rhib-m240--ultv": "boat",
     "usa--uh-60m--uh": "transporthelo",
-    "usmc--a10--cas": "jet_a10",
+    "usmc--fa18--cas": "jet_tornado",
     "usmc--aavc-7a1-logistics--logi": "trackedapc_logistics",
     "usmc--aavp-7a1--apc": "trackedapc",
     "usmc--lav-25--apc": "ifv",

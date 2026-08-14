@@ -469,10 +469,11 @@ const groupOrderById = new Map(
 
 function vehicleWeaponVariants(record: CatalogSearchRecord) {
   const byId = new Map<string, WeaponCatalogVariant>();
+  const wikiSourceCardId = record.wikiSourceCardId ?? record.promoEntryId;
   for (const variant of record.variants) {
     for (
       const weapon of weaponCatalogVariantsForExactVehicle(
-        record.promoEntryId,
+        wikiSourceCardId,
         variant.sourceRawName,
       )
     ) {
@@ -488,7 +489,7 @@ function vehicleWeaponVariants(record: CatalogSearchRecord) {
   for (const weapon of weaponCatalogShippingVariants) {
     if (
       isVehicleDeliveredRadialCatalogVariant(weapon) &&
-      weapon.exactCardIds.includes(record.promoEntryId)
+      weapon.exactCardIds.includes(wikiSourceCardId)
     ) {
       byId.set(weapon.id, weapon);
     }

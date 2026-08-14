@@ -10827,23 +10827,24 @@
       ]
     },
     {
-      "promoEntryId": "usmc--a10--cas",
+      "promoEntryId": "usmc--fa18--cas",
+      "wikiSourceCardId": "adf--fa18--cas",
       "promotionOrder": 415,
       "official": {
         "groupId": "usmc"
       },
-      "selectedRawName": "BP_CommandActor_A10_Strafe_2",
-      "defaultCardId": "usmc--a10--cas--commandactor-a10-strafe-2",
-      "routeSlug": "usmc--a10--cas",
+      "selectedRawName": "BP_CommandActor_FA18_Strafe",
+      "defaultCardId": "usmc--fa18--cas--commandactor-fa18-strafe",
+      "routeSlug": "usmc--fa18--cas",
       "variants": [
         {
-          "sourceRawName": "BP_CommandActor_A10_Strafe_2",
+          "sourceRawName": "BP_CommandActor_FA18_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
           "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-4ff8757ae5aeb6000a2fc66ab6d4d9cad3b09318c38dffd16902e10b74b2ad41",
-          "cardId": "usmc--a10--cas--commandactor-a10-strafe-2",
-          "routeSlug": "usmc--a10--cas--commandactor-a10-strafe-2"
+          "visualArtifactRef": "visual-artifact-24dbeeb206a78f84ddd0f1c361939c05566d0ed87b8f86ec2d354104ad6f84f9",
+          "cardId": "usmc--fa18--cas--commandactor-fa18-strafe",
+          "routeSlug": "usmc--fa18--cas--commandactor-fa18-strafe"
         }
       ]
     },
