@@ -219,4 +219,6 @@ test("weapon runtime requests bypass pre-refresh browser cache entries", () => {
     wikiSourceText,
     /`\/data\/weapons\/runtime\/vehicles\/index\.json\$\{WIKI_WEAPON_RUNTIME_QUERY\}`/u,
   );
+  assert.match(wikiSourceText, /"sigua-weapon-runtime-source\/v2"/u);
+  assert.match(wikiSourceText, /"sigua-weapon-runtime-index\/v2"/u);
 });
