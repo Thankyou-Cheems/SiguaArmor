@@ -6,7 +6,10 @@ import {
   runtimeExplosiveCanonicalName,
   runtimeExplosiveLayerOrderIsClosed,
 } from "../../lib/runtime-explosive-catalog.ts";
-import { resolveEditorNativeBallistics } from "../../lib/editor-native-hit-model.ts";
+import {
+  editorNativeWeaponTargetDistanceLimitM,
+  resolveEditorNativeBallistics,
+} from "../../lib/editor-native-hit-model.ts";
 import { composeCatalogVariantBallisticsModel } from "../../app/runtime-attack-ballistics-model.ts";
 
 const [adapterSource, ballisticsModelSource, viewerSource, catalogIndexText] = await Promise.all([
@@ -72,6 +75,34 @@ test("global weapon options preserve exact penetration and damage falloff curves
   assert.deepEqual(
     [atFourKilometers.penetrationAtRangeMm, atFourKilometers.impactDamageAtRange],
     [500, 1000],
+  );
+});
+
+test("weapons without falloff curves still allow engagement distance adjustment", () => {
+  const model = composeCatalogVariantBallisticsModel({
+    variantId: "m830a1",
+    directModel: {
+      damageType: "BP_BasicHeatDamageType_C",
+      directImpactDamage: 1900,
+      penetrationMm: 400,
+      traceDistanceAfterPenetrationM: 2,
+      weaponTraceDistanceAfterPenetrationM: 2,
+      impactRadialOrder: "point-before-radial",
+    },
+    ballisticProfile: null,
+    configurationCurves: [],
+    radialSource: null,
+  });
+
+  assert.equal(editorNativeWeaponTargetDistanceLimitM(model, 0), 4000);
+  assert.equal(editorNativeWeaponTargetDistanceLimitM(model, 1), 0);
+  assert.deepEqual(
+    [
+      resolveEditorNativeBallistics(model, 0, 0).penetrationAtRangeMm,
+      resolveEditorNativeBallistics(model, 0, 4000).penetrationAtRangeMm,
+    ],
+    [400, 400],
+    "distance remains adjustable even when the weapon truthfully has no falloff curve",
   );
 });
 
