@@ -69,21 +69,29 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
 
-  assert.equal(currentEntry.id, "2026-08-13-hit-analysis-polish");
+  assert.equal(currentEntry.id, "2026-08-14-editor-vehicle-weapon-refresh");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-08-13");
+    assert.equal(document.siteUpdatedOn, "2026-08-14");
     assert.deepEqual(document.entries[0], currentEntry);
     assert.ok(
       !document.entries.some(({ id }) => id === "2026-07-24-hit-path-footer-selector"),
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
+    assert.match(JSON.stringify(document.entries[0]), /不同武器时继续显示为多张变体卡片/u);
+    assert.match(JSON.stringify(document.entries[0]), /机械配置完全一致的涂装会合并/u);
+    assert.match(JSON.stringify(document.entries[0]), /M919 25 毫米穿甲弹/u);
+    assert.match(JSON.stringify(document.entries[0]), /距离条会直接禁用并说明原因/u);
+    const previousEntry = document.entries.find(
+      ({ id }) => id === "2026-08-13-hit-analysis-polish",
+    );
+    assert.ok(previousEntry, "previous release entry must be retained");
     assert.match(
-      JSON.stringify(document.entries[0]),
+      JSON.stringify(previousEntry),
       /861 份载具外观与 5,924 个部件落点[：:]核显\/低配兼容模式将贴图解码像素从 40\.09 亿降至 10\.02 亿，减少 75\.00%/u,
     );
     assert.match(
-      JSON.stringify(document.entries[0]),
+      JSON.stringify(previousEntry),
       /Intel UHD 770 的公开实测[\s\S]*?2\.27–2\.86 秒[\s\S]*?12\.4–12\.5 毫秒[\s\S]*?0 次 WebGL 上下文丢失与请求失败/u,
     );
   }
