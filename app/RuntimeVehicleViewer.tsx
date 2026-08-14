@@ -43,7 +43,6 @@ import {
 } from "../lib/turret-articulation";
 import {
   editorNativeEffectiveDamageAmount,
-  editorNativeWeaponTargetDistanceLimitM,
   isEditorNativeComponentOnlyDamageEvent,
   isEditorNativeVehicleDamageEvent,
   resolveEditorNativeBallistics,
@@ -54,6 +53,7 @@ import {
   type EditorNativeModel,
   type EditorNativeShotResult,
 } from "../lib/editor-native-hit-model";
+import { runtimeAttackTargetDistanceLimitM } from "./runtime-attack-ballistics-model";
 import {
   buildRadialDamageVisualizationPlan,
   radialDamageLegendPlacement,
@@ -3610,7 +3610,7 @@ export function RuntimeVehicleViewer({
     attackState.kind === "ready" && loadedAttackSourceCardId === attackSource?.cardId;
   const verdict = shotVerdict(shotResult);
   const maxDistanceM = attackHeader && weaponIndex >= 0
-    ? editorNativeWeaponTargetDistanceLimitM(attackHeader, weaponIndex)
+    ? runtimeAttackTargetDistanceLimitM(attackHeader, weaponIndex)
     : 0;
   const protectionMapAvailable =
     hitState.kind === "ready" &&
@@ -4472,7 +4472,7 @@ export function RuntimeVehicleViewer({
       const preferredWeapon = source.weapons[preferredOptionIndex];
       const preferredModel = preferredWeapon.ballisticsModel;
       if (!preferredModel) throw new Error(`攻击来源弹道未加载：${source.cardId}`);
-      const preferredMaxDistance = editorNativeWeaponTargetDistanceLimitM(
+      const preferredMaxDistance = runtimeAttackTargetDistanceLimitM(
         preferredModel,
         preferredWeapon.ballisticsWeaponIndex,
       );
@@ -4671,7 +4671,7 @@ export function RuntimeVehicleViewer({
     const requestedWeapon = attackSource.weapons[requestedOptionIndex];
     const requestedModel = requestedWeapon?.ballisticsModel ?? null;
     if (!requestedWeapon || !requestedModel) return;
-    const requestedMaxDistance = editorNativeWeaponTargetDistanceLimitM(
+    const requestedMaxDistance = runtimeAttackTargetDistanceLimitM(
       requestedModel,
       requestedWeapon.ballisticsWeaponIndex,
     );
@@ -7756,7 +7756,7 @@ export function RuntimeVehicleViewer({
               const nextOptionIndex = selection.optionIndex;
               const nextModel = nextWeapon.ballisticsModel;
               if (!nextWeapon || !nextModel) return;
-              const nextMaxDistance = editorNativeWeaponTargetDistanceLimitM(
+              const nextMaxDistance = runtimeAttackTargetDistanceLimitM(
                 nextModel,
                 nextWeapon.ballisticsWeaponIndex,
               );
