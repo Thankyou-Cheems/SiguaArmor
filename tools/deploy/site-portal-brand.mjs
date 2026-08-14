@@ -6,7 +6,8 @@ const armorChinaFigureFile =
   "siguad-armor-china-soldier-ddd587081da0.webp";
 const armorGlobalFigureFile =
   "siguad-armor-global-soldier-ccb90707110a.webp";
-const brandLogoAssetFile = "siguad-wiki-logo-69092cecbd4b.svg";
+const brandLogoSourceUrl =
+  "https://wiki.siguad.icu/assets/brand/siguad-wiki-logo.svg";
 
 function portalAsset(id, fileName, metadata = {}) {
   return Object.freeze({
@@ -42,11 +43,13 @@ const armorGlobalFigure = portalAsset(
   armorGlobalFigureFile,
   { width: 368, height: 879 },
 );
-const brandLogoAsset = portalAsset(
-  "SiguaD Wiki logo",
-  brandLogoAssetFile,
-  { format: "svg", width: 810, height: 930 },
-);
+const brandLogoAsset = Object.freeze({
+  id: "SiguaD Wiki logo",
+  sourceUrl: brandLogoSourceUrl,
+  format: "svg",
+  width: 810,
+  height: 930,
+});
 
 export const SITE_PORTAL_BRAND = Object.freeze({
   displayName: "丝瓜地.爱惜呦",
@@ -63,7 +66,6 @@ export const SITE_PORTAL_BRAND = Object.freeze({
     fontAsset,
     fontLicenseAsset,
     sceneAsset,
-    brandLogoAsset,
     armorChinaFigure,
     armorGlobalFigure,
   ]),

@@ -494,7 +494,11 @@ test("site editions keep independent titles while sharing the optional DAU displ
     catalogApp,
     /href="https:\/\/www\.tencent\.com\/legal\/html\/zh-cn\/property\.html"/u,
   );
-  assert.match(catalogApp, /siguad-wiki-logo-69092cecbd4b\.svg/u);
+  assert.match(
+    catalogApp,
+    /wikiAssetUrl\("\/assets\/brand\/siguad-wiki-logo\.svg"\)/u,
+  );
+  assert.doesNotMatch(catalogApp, /siguad-wiki-logo-69092cecbd4b\.svg/u);
   assert.match(catalogApp, /site-footer__font-line/u);
   assert.match(catalogApp, /site-footer__sponsor-button--primary/u);
   assert.match(supportersDocument, /SUPPORTERS_DOCUMENT_URL = "\/supporters\.json"/u);
