@@ -1949,10 +1949,10 @@ function SiteFooterCopy({
   return (
     <div className="site-footer__copy">
       <div className="site-footer__identity">
-        {/* eslint-disable-next-line @next/next/no-img-element -- local transparent vector brand asset is served unchanged */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- shared transparent vector brand asset is served by SiguaWiki */}
         <img
           className="site-footer__brand-logo"
-          src="/images/site/siguad-wiki-logo-69092cecbd4b.svg"
+          src={wikiAssetUrl("/assets/brand/siguad-wiki-logo.svg")}
           alt="丝瓜地 SiguaD"
           width={42}
           height={49}
