@@ -21,6 +21,18 @@ test("vehicle cards show crew and passenger counts and reuse encyclopedia stat i
   );
 });
 
+test("vehicle cards only collapse explicit liveries with the same Editor mechanics signature", () => {
+  assert.match(
+    catalogSource,
+    /variant\.editorAvailability\?\.mechanicsSignatureId[\s\S]*?unverified:\$\{card\.variant\.sourceRawName\}/u,
+  );
+  assert.match(catalogSource, /liveries\.every[\s\S]*?new Set\(liveries\)\.size === bucket\.length/u);
+  assert.match(
+    catalogSource,
+    /canonicalRawName:[\s\S]*?editorAvailability\?\.mechanicalRawName/u,
+  );
+});
+
 test("weapon selector has no legend row and keeps per-option text labels", () => {
   const effectLegend = viewerSource.slice(
     viewerSource.indexOf("function RuntimeWeaponEffectLegend"),

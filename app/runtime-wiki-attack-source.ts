@@ -9,7 +9,7 @@ import type {
 } from "./runtime-probe-weapon-labels.ts";
 
 export interface WikiWeaponRuntimeSourceDocument {
-  schemaVersion: "sigua-weapon-runtime-source/v1";
+  schemaVersion: "sigua-weapon-runtime-source/v2";
   source: {
     kind: "vehicle";
     cardId: string;
@@ -18,14 +18,8 @@ export interface WikiWeaponRuntimeSourceDocument {
     displayNames: string[];
     types: string[];
   };
-  stationEquipment: Array<{
-    id: string;
-    rawName: string;
-    gunName: string;
-    displayName: string;
-    turretName: string | null;
-  }>;
-  weapons: Array<{
+  weaponProfiles: Array<{
+    weaponProfileId: string;
     weaponId: string;
     runtimeAssetPath: string | null;
     gunName: string;
@@ -42,6 +36,28 @@ export interface WikiWeaponRuntimeSourceDocument {
     explosiveLayerCount: number | null;
     selectorVariant: WeaponCatalogVariant;
   }>;
+  loadouts: Array<{
+    loadoutId: string;
+    rawName: string;
+    factionId: string;
+    runtimeVehicleRef: string | null;
+    stationEquipment: Array<{
+      id: string;
+      rawName: string;
+      sourceIndex: number;
+      gunName: string;
+      displayName: string;
+      turretName: string | null;
+    }>;
+    weapons: Array<{
+      weaponAssignmentId: string;
+      stationEquipmentId: string;
+      sourceIndex: number;
+      turretName: string | null;
+      weaponProfileId: string;
+      selectorVariantId: string;
+    }>;
+  }>;
 }
 
 export interface WikiWeaponRuntimeIndexEntry {
@@ -50,12 +66,14 @@ export interface WikiWeaponRuntimeIndexEntry {
   factionIds: string[];
   displayNames: string[];
   types: string[];
-  weaponCount: number;
+  loadoutCount: number;
+  weaponProfileCount: number;
+  weaponAssignmentCount: number;
   pathname: string;
 }
 
 export interface WikiWeaponRuntimeIndexDocument {
-  schemaVersion: "sigua-weapon-runtime-index/v1";
+  schemaVersion: "sigua-weapon-runtime-index/v2";
   vehicleSources: WikiWeaponRuntimeIndexEntry[];
 }
 
@@ -111,10 +129,10 @@ export function resolveRuntimeAttackSourceIndexEntry(
   entry: WikiWeaponRuntimeIndexEntry;
   presentation: RuntimeAttackSourcePresentation;
 } | null {
-  if (document.schemaVersion !== "sigua-weapon-runtime-index/v1") return null;
+  if (document.schemaVersion !== "sigua-weapon-runtime-index/v2") return null;
   for (const entry of document.vehicleSources) {
     if (entry.cardId === id) {
-      const canonicalRawName = entry.rawNames[0];
+      const canonicalRawName = entry.rawNames.length === 1 ? entry.rawNames[0] : null;
       const groupId = entry.factionIds[0];
       if (!canonicalRawName || !groupId) return null;
       return {
@@ -156,28 +174,32 @@ export function createRuntimeAttackSourceLibrary(
   presentation: RuntimeAttackSourcePresentation,
 ): RuntimeAttackSourceLibrary {
   if (
-    document.schemaVersion !== "sigua-weapon-runtime-source/v1" ||
+    document.schemaVersion !== "sigua-weapon-runtime-source/v2" ||
     document.source.kind !== "vehicle" ||
     document.source.cardId !== presentation.cardId ||
-    document.weapons.length === 0
+    document.loadouts.length === 0
   ) {
     throw new Error(`载具武器分片与 ${presentation.cardId} 不匹配`);
   }
-  const canonicalRawName = document.source.rawNames.includes(
-    presentation.canonicalRawName,
-  )
-    ? presentation.canonicalRawName
-    : document.source.rawNames[0];
-  if (!canonicalRawName) {
-    throw new Error(`载具武器分片 ${presentation.cardId} 缺少载具身份`);
-  }
+  const canonicalRawName = presentation.canonicalRawName;
+  const loadout = document.loadouts.find(({ rawName }) => rawName === canonicalRawName);
+  if (!loadout) throw new Error(`载具武器分片 ${presentation.cardId} 缺少精确配置 ${canonicalRawName}`);
+  const profiles = new Map(document.weaponProfiles.map((profile) => [profile.weaponProfileId, profile]));
   const shareSlug = buildRuntimeAttackSourceShareSlug({
     groupId: presentation.groupId,
     canonicalRawName,
   });
-  const weapons = document.weapons.map(
-    (weapon, weaponIndex): RuntimeAttackSourceWeapon => ({
+  const weapons = loadout.weapons.map(
+    (assignment, weaponIndex): RuntimeAttackSourceWeapon => {
+      const weapon = profiles.get(assignment.weaponProfileId);
+      if (!weapon) throw new Error(`载具武器分片缺少配置 ${assignment.weaponProfileId}`);
+      if (weapon.selectorVariant.id !== assignment.selectorVariantId) {
+        throw new Error(`载具武器分片选择器身份不匹配：${assignment.weaponAssignmentId}`);
+      }
+      return ({
       weaponIndex,
+      weaponAssignmentId: assignment.weaponAssignmentId,
+      stationEquipmentId: assignment.stationEquipmentId,
       weaponId: weapon.weaponId,
       runtimeAssetPath: weapon.runtimeAssetPath,
       gunName: weapon.gunName,
@@ -209,7 +231,8 @@ export function createRuntimeAttackSourceLibrary(
         weapon.selectorVariant.searchText,
         ...weapon.selectorVariant.sourceLabels,
       ]),
-    }),
+      });
+    },
   );
   const source: RuntimeAttackSource = {
     cardId: presentation.cardId,
@@ -224,7 +247,7 @@ export function createRuntimeAttackSourceLibrary(
     type: presentation.type,
     types: uniqueSorted([presentation.type, ...document.source.types]),
     canonicalRawName,
-    variantRawNames: uniqueSorted(document.source.rawNames),
+    variantRawNames: [canonicalRawName],
     catalogCompletedWeaponCount: weapons.length,
     weapons,
   };
@@ -250,7 +273,7 @@ export function createRuntimeStationEquipmentResolver(
   document: WikiWeaponRuntimeSourceDocument,
 ): RuntimeStationEquipmentResolver {
   const bindings = new Map(
-    document.stationEquipment.map((equipment) => [
+    document.loadouts.flatMap(({ stationEquipment }) => stationEquipment).map((equipment) => [
       equipment.id,
       {
         equipment: {

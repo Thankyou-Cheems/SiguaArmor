@@ -1,5 +1,6 @@
 import type {
   CatalogTopologyIndex,
+  CatalogVariant,
   PublicCatalogIndex,
   PublicFactionCatalog,
   ReferenceComponent,
@@ -57,11 +58,30 @@ interface WikiVehicleMechanics {
   runtime: {
     visualArtifacts: WikiVisualArtifact[];
   };
+  editorAvailability?: {
+    schemaVersion: "sigua-vehicle-editor-availability/v1";
+    sourceBuildId: string;
+    evidenceRevision: string;
+    bindingAvailability: WikiBindingAvailability[];
+  };
   extensions?: {
     supportAir?: {
       bindings?: WikiSupportAirBinding[];
     };
   };
+}
+
+interface WikiBindingAvailability {
+  bindingId: string;
+  cardId: string;
+  rawName: string;
+  mechanicsSignatureId: string;
+  state: "observed" | "livery-alias" | "absent-current-editor";
+  mechanicalBindingId?: string;
+  mechanicalRawName?: string;
+  setupIds: string[];
+  configurationIds: string[];
+  vehicleSettingsPaths: string[];
 }
 
 interface WikiVehicleCatalog extends WikiVehicleMechanics {
@@ -177,6 +197,15 @@ function validateVehicleMechanics(value: unknown): WikiVehicleMechanics {
   ) {
     throw new Error("SiguaWiki 载具机械数据格式不受支持");
   }
+  if (
+    document.schemaVersion === "sigua-vehicle-faction-mechanics/v1" &&
+    (
+      document.editorAvailability?.schemaVersion !== "sigua-vehicle-editor-availability/v1" ||
+      !Array.isArray(document.editorAvailability.bindingAvailability)
+    )
+  ) {
+    throw new Error("SiguaWiki 阵营配置关系格式不受支持");
+  }
   return document;
 }
 
@@ -262,6 +291,23 @@ export function mergeWikiVehicleFactionMechanics(
         (document) => document.runtime.visualArtifacts,
         (record) => record.id,
         "视觉资源",
+      ),
+    },
+    editorAvailability: {
+      schemaVersion: "sigua-vehicle-editor-availability/v1",
+      sourceBuildId: required(
+        documents.find((document) => document.editorAvailability)?.editorAvailability?.sourceBuildId,
+        "Editor 阵营配置版本",
+      ),
+      evidenceRevision: required(
+        documents.find((document) => document.editorAvailability)?.editorAvailability?.evidenceRevision,
+        "Editor 阵营配置证据",
+      ),
+      bindingAvailability: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.editorAvailability?.bindingAvailability ?? [],
+        (record) => record.bindingId,
+        "Editor 目录可用性",
       ),
     },
     extensions: {
@@ -362,10 +408,34 @@ export function buildCatalogIndexFromWiki(
     catalog.presentation.editions[edition].records.map((record) => [record.cardId, record]),
   );
   const communityAliases = communityAliasMaps(communityAliasesValue, edition);
-  const records = topology.records.map((record) => {
-    const display = required(presentation.get(record.promoEntryId), `载具呈现 ${record.promoEntryId}`);
+  const records = topology.records.flatMap((record) => {
+    const display = presentation.get(record.promoEntryId);
+    if (!display) return [];
     const variants = new Map(display.variants.map((variant) => [variant.rawName, variant]));
-    return {
+    const projectedVariants = record.variants.flatMap((variant) => {
+      const variantDisplay = variants.get(variant.sourceRawName);
+      if (!variantDisplay) return [];
+      return [{
+        ...variant,
+        alias: variantDisplay.configurationZh ?? "",
+        displayName: variantDisplay.nameZh,
+        searchTerms: variantDisplay.searchTerms,
+        searchAliases: [
+          ...variantDisplay.searchAliases,
+          ...(communityAliases.variants.get(`${record.promoEntryId}\u0000${variant.sourceRawName}`) ?? []),
+        ],
+        presentation: {
+          vehicleNameZh: variantDisplay.vehicleNameZh,
+          configurationZh: variantDisplay.configurationZh,
+          liveryZh: variantDisplay.liveryZh,
+        },
+      }];
+    });
+    if (projectedVariants.length === 0) return [];
+    const selectedVariant = projectedVariants.find(
+      ({ sourceRawName }) => sourceRawName === record.selectedRawName,
+    ) ?? projectedVariants[0];
+    return [{
       promoEntryId: record.promoEntryId,
       promotionOrder: record.promotionOrder,
       searchTerms: display.searchTerms,
@@ -384,32 +454,12 @@ export function buildCatalogIndexFromWiki(
           configurationZh: display.configurationZh,
         },
       },
-      selectedRawName: record.selectedRawName,
+      selectedRawName: selectedVariant.sourceRawName,
       selectedDisplayName: display.nameZh,
-      defaultCardId: record.defaultCardId,
+      defaultCardId: selectedVariant.cardId,
       routeSlug: record.routeSlug,
-      variants: record.variants.map((variant) => {
-        const variantDisplay = required(
-          variants.get(variant.sourceRawName),
-          `载具构型呈现 ${record.promoEntryId} ${variant.sourceRawName}`,
-        );
-        return {
-          ...variant,
-          alias: variantDisplay.configurationZh ?? "",
-          displayName: variantDisplay.nameZh,
-          searchTerms: variantDisplay.searchTerms,
-          searchAliases: [
-            ...variantDisplay.searchAliases,
-            ...(communityAliases.variants.get(`${record.promoEntryId}\u0000${variant.sourceRawName}`) ?? []),
-          ],
-          presentation: {
-            vehicleNameZh: variantDisplay.vehicleNameZh,
-            configurationZh: variantDisplay.configurationZh,
-            liveryZh: variantDisplay.liveryZh,
-          },
-        };
-      }),
-    };
+      variants: projectedVariants,
+    }];
   });
   if (records.length !== presentation.size) {
     throw new Error(`${edition} 的 Wiki 呈现记录数量不匹配`);
@@ -417,7 +467,10 @@ export function buildCatalogIndexFromWiki(
   return {
     schemaVersion: "1.0.0",
     catalogId: topology.catalogId,
-    groups,
+    groups: groups.map((group) => ({
+      ...group,
+      recordCount: records.filter(({ official }) => official.groupId === group.id).length,
+    })),
     records,
   };
 }
@@ -503,6 +556,9 @@ export function buildFactionCatalogFromWiki(
   const damageProfiles = indexById(catalog.profiles.damageResistances);
   const componentProfiles = indexById(catalog.profiles.components);
   const visualArtifacts = indexById(catalog.runtime.visualArtifacts);
+  const bindingAvailability = new Map(
+    (catalog.editorAvailability?.bindingAvailability ?? []).map((entry) => [entry.bindingId, entry]),
+  );
   const supportAirBindings = new Map(
     (catalog.extensions?.supportAir?.bindings ?? []).map((binding) => [
       binding.bindingKey,
@@ -550,15 +606,8 @@ export function buildFactionCatalogFromWiki(
 
   const records = expectedIndex.records
     .filter((record) => record.official.groupId === groupId)
-    .map((record) => ({
-      promoEntryId: record.promoEntryId,
-      promotionOrder: record.promotionOrder,
-      searchTerms: record.searchTerms,
-      searchAliases: record.searchAliases,
-      official: record.official,
-      mapping: { selectedRawName: record.selectedRawName },
-      data: null,
-      variants: record.variants.map((variant) => {
+    .map((record) => {
+      const variants = record.variants.flatMap<CatalogVariant>((variant): CatalogVariant[] => {
         if (!variant.catalogBindingRef) {
           const bindingKey = `${record.promoEntryId}\u0000${variant.sourceRawName}`;
           const supportAirBinding = required(
@@ -579,7 +628,7 @@ export function buildFactionCatalogFromWiki(
           ) {
             throw new Error(`SiguaWiki 空中单位绑定不匹配：${variant.sourceRawName}`);
           }
-          return {
+          return [{
             sourceRawName: variant.sourceRawName,
             catalogBindingRef: null,
             vehicleRef: null,
@@ -591,7 +640,7 @@ export function buildFactionCatalogFromWiki(
             presentation: variant.presentation,
             thumbnail,
             data: null,
-          };
+          }];
         }
         const binding = required(
           bindings.get(variant.catalogBindingRef),
@@ -610,7 +659,24 @@ export function buildFactionCatalogFromWiki(
         ) {
           throw new Error(`SiguaWiki 目录绑定不匹配：${variant.sourceRawName}`);
         }
-        return {
+        const availability = required(
+          bindingAvailability.get(binding.id),
+          `Editor 目录可用性 ${binding.id}`,
+        );
+        if (availability.state === "absent-current-editor") return [];
+        const currentAvailability = {
+          ...availability,
+          state: availability.state,
+          mechanicalBindingId: required(
+            availability.mechanicalBindingId,
+            `Editor 机械绑定 ${binding.id}`,
+          ),
+          mechanicalRawName: required(
+            availability.mechanicalRawName,
+            `Editor 机械配置 ${binding.id}`,
+          ),
+        };
+        return [{
           sourceRawName: variant.sourceRawName,
           catalogBindingRef: variant.catalogBindingRef,
           vehicleRef: variant.vehicleRef,
@@ -620,18 +686,31 @@ export function buildFactionCatalogFromWiki(
           searchTerms: variant.searchTerms,
           searchAliases: variant.searchAliases,
           presentation: variant.presentation,
+          editorAvailability: currentAvailability,
           thumbnail,
           data: referenceData(binding),
-        };
-      }),
-    }));
-  if (records.length !== group.recordCount) {
-    throw new Error(`阵营 ${groupId} 的卡片数量不匹配`);
-  }
+        }];
+      });
+      if (variants.length === 0) return null;
+      const selectedRawName = variants.some(({ sourceRawName }) => sourceRawName === record.selectedRawName)
+        ? record.selectedRawName
+        : variants[0].sourceRawName;
+      return {
+        promoEntryId: record.promoEntryId,
+        promotionOrder: record.promotionOrder,
+        searchTerms: record.searchTerms,
+        searchAliases: record.searchAliases,
+        official: record.official,
+        mapping: { selectedRawName },
+        data: null,
+        variants,
+      };
+    })
+    .filter((record): record is NonNullable<typeof record> => record !== null);
   return {
     schemaVersion: "1.0.0",
     catalogId: expectedIndex.catalogId,
-    group,
+    group: { ...group, recordCount: records.length },
     records,
   };
 }

@@ -126,6 +126,23 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         },
       }],
     },
+    editorAvailability: {
+      schemaVersion: "sigua-vehicle-editor-availability/v1",
+      sourceBuildId: "sdk-test",
+      evidenceRevision: "evidence-test",
+      bindingAvailability: [{
+        bindingId: "binding-test",
+        cardId: "test--vehicle--ifv",
+        rawName: "BP_Test",
+        mechanicsSignatureId: "vehicle-mechanics-test",
+        mechanicalBindingId: "binding-test",
+        mechanicalRawName: "BP_Test",
+        state: "observed",
+        setupIds: ["Test_Setup"],
+        configurationIds: ["vehicle-configuration-test"],
+        vehicleSettingsPaths: ["/Game/Settings/Vehicle/Test.Test"],
+      }],
+    },
   };
 
   const result = buildFactionCatalogFromWiki(

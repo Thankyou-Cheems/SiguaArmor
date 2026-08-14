@@ -57,6 +57,8 @@ interface RuntimeAttackBallisticsSource {
 
 interface RuntimeAttackSourceWeaponRecord {
   weaponIndex: number;
+  weaponAssignmentId?: string;
+  stationEquipmentId?: string;
   weaponId: string;
   runtimeAssetPath: string | null;
   gunName: string;

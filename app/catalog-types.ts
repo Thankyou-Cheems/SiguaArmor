@@ -175,6 +175,15 @@ export interface CatalogVariant {
     height: number;
   } | null;
   data: ReferenceData | null;
+  editorAvailability?: {
+    state: "observed" | "livery-alias";
+    mechanicsSignatureId: string;
+    mechanicalBindingId: string;
+    mechanicalRawName: string;
+    setupIds: string[];
+    configurationIds: string[];
+    vehicleSettingsPaths: string[];
+  };
 }
 
 export interface CatalogRecord {

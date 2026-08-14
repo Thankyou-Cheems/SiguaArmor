@@ -74,7 +74,7 @@ const ballisticsModel = {
 };
 
 const document = {
-  schemaVersion: "sigua-weapon-runtime-source/v1",
+  schemaVersion: "sigua-weapon-runtime-source/v2",
   source: {
     kind: "vehicle",
     cardId: "adf--m1a1--mbt",
@@ -83,14 +83,8 @@ const document = {
     displayNames: ["M1A1"],
     types: ["MBT"],
   },
-  stationEquipment: [{
-    id: "equipment-test",
-    rawName: "BP_AUS_M1A1",
-    gunName: "M256",
-    displayName: "炮塔/武器站",
-    turretName: "Turret",
-  }],
-  weapons: [{
+  weaponProfiles: [{
+    weaponProfileId: "profile-test",
     weaponId: "weapon-variant-test",
     runtimeAssetPath: null,
     gunName: "120mm Cannon",
@@ -106,6 +100,28 @@ const document = {
     explosiveLayerOrderEvidence: null,
     explosiveLayerCount: null,
     selectorVariant,
+  }],
+  loadouts: [{
+    loadoutId: "loadout-test",
+    rawName: "BP_AUS_M1A1",
+    factionId: "adf",
+    runtimeVehicleRef: "vehicle-test",
+    stationEquipment: [{
+      id: "equipment-test",
+      rawName: "BP_AUS_M1A1",
+      sourceIndex: 0,
+      gunName: "M256",
+      displayName: "炮塔/武器站",
+      turretName: "Turret",
+    }],
+    weapons: [{
+      weaponAssignmentId: "equipment-test:weapon-variant-test",
+      stationEquipmentId: "equipment-test",
+      sourceIndex: 0,
+      turretName: "Turret",
+      weaponProfileId: "profile-test",
+      selectorVariantId: "weapon-variant-test",
+    }],
   }],
 };
 
@@ -123,6 +139,7 @@ test("one Wiki vehicle source is a complete default hit-analysis library", () =>
   const source = library.runtimeAttackSourceForId("adf-ausm1a1");
   assert.equal(source?.weapons.length, 1);
   assert.equal(source?.weapons[0].weaponId, "weapon-variant-test");
+  assert.equal(source?.weapons[0].weaponAssignmentId, "equipment-test:weapon-variant-test");
   assert.equal(
     library.runtimeAttackWeaponSupportsHitAnalysis(source.weapons[0]),
     true,
@@ -143,14 +160,16 @@ test("the same source resolves turret labels without the full catalog", () => {
 
 test("a shared vehicle attacker resolves through the small source index", () => {
   const index = {
-    schemaVersion: "sigua-weapon-runtime-index/v1",
+    schemaVersion: "sigua-weapon-runtime-index/v2",
     vehicleSources: [{
       cardId: "adf--m1a1--mbt",
       rawNames: ["BP_AUS_M1A1"],
       factionIds: ["adf"],
       displayNames: ["M1A1"],
       types: ["MBT"],
-      weaponCount: 4,
+      loadoutCount: 1,
+      weaponProfileCount: 4,
+      weaponAssignmentCount: 4,
       pathname: "/data/weapons/runtime/vehicles/adf--m1a1--mbt.json",
     }],
   };
@@ -172,10 +191,25 @@ test("a shared vehicle attacker resolves through the small source index", () => 
   assert.equal(resolveRuntimeAttackSourceIndexEntry(index, "inf-weapons"), null);
 });
 
+test("a missing exact raw loadout fails closed instead of choosing the first vehicle", () => {
+  assert.throws(
+    () => createRuntimeAttackSourceLibrary(document, {
+      cardId: "adf--m1a1--mbt",
+      displayName: "M1A1",
+      groupId: "adf",
+      groupName: "ADF",
+      groupOrder: 0,
+      type: "MBT",
+      canonicalRawName: "BP_WRONG",
+    }),
+    /缺少精确配置/u,
+  );
+});
+
 test("weapon runtime requests bypass pre-refresh browser cache entries", () => {
   assert.match(
     wikiSourceText,
-    /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=exact-profile-v2"/u,
+    /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=exact-assignment-v3"/u,
   );
   assert.match(
     wikiSourceText,
