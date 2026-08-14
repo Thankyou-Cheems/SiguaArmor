@@ -191,11 +191,11 @@ test("catalog data uses direct presentation slices while runtime data keeps its 
 
   assert.deepEqual(requestedUrls, [
     "https://wiki.siguad.icu/data/vehicles/presentation.json",
-    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v4",
-    "https://wiki.siguad.icu/data/vehicles/factions/adf.json?presentation=v4",
-    "https://wiki.siguad.icu/data/vehicles/faction-presentation/adf.json?presentation=v4",
-    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v4",
-    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v4",
+    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v5",
+    "https://wiki.siguad.icu/data/vehicles/factions/adf.json?presentation=v5",
+    "https://wiki.siguad.icu/data/vehicles/faction-presentation/adf.json?presentation=v5",
+    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v5",
+    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v5",
   ]);
 });
 
@@ -220,7 +220,7 @@ test("runtime visual descriptors use the presentation cache key", async () => {
   }
   assert.equal(
     requestedUrl,
-    `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v4`,
+    `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v5`,
   );
 });
 

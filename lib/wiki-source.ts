@@ -2,7 +2,7 @@ export const SIGUA_WIKI_ORIGIN =
   process.env.NEXT_PUBLIC_SIGUA_WIKI_ORIGIN?.replace(/\/+$/u, "") ||
   "https://wiki.siguad.icu";
 
-const WIKI_PRESENTATION_QUERY = "?presentation=v4";
+const WIKI_PRESENTATION_QUERY = "?presentation=v5";
 const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-v3";
 
 const requests = new Map<
