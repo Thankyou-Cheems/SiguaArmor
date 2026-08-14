@@ -3,6 +3,7 @@ export const SIGUA_WIKI_ORIGIN =
   "https://wiki.siguad.icu";
 
 const WIKI_PRESENTATION_QUERY = "?presentation=v3";
+const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-profile-v2";
 
 const requests = new Map<
   string,
@@ -79,7 +80,7 @@ export async function loadWikiVehicleWeaponRuntimeSource(cardId: string) {
   if (!/^[a-z0-9-]+$/u.test(cardId)) {
     throw new Error(`Invalid vehicle weapon runtime card id: ${cardId}`);
   }
-  const pathname = `/data/weapons/runtime/vehicles/${cardId}.json`;
+  const pathname = `/data/weapons/runtime/vehicles/${cardId}.json${WIKI_WEAPON_RUNTIME_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
     "sigua-weapon-runtime-source/v1",
@@ -103,7 +104,7 @@ export async function loadWikiVehicleWeaponRuntimeSource(cardId: string) {
 }
 
 export async function loadWikiVehicleWeaponRuntimeIndex() {
-  const pathname = "/data/weapons/runtime/vehicles/index.json";
+  const pathname = `/data/weapons/runtime/vehicles/index.json${WIKI_WEAPON_RUNTIME_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
     "sigua-weapon-runtime-index/v1",
