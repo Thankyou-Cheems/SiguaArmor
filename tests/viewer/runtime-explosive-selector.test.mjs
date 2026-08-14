@@ -186,6 +186,10 @@ test("the slider explains each missing decay type and the fully constant state",
   assert.match(viewerSource, /穿深无距离衰减/u);
   assert.match(viewerSource, /当前武器无伤害\/穿深距离衰减/u);
   assert.match(viewerSource, /runtimeAttackDistanceControl/u);
+  assert.match(
+    viewerSource,
+    /runtimeAttackDistanceControl\(\s*selectedAttackWeapon\.ballisticsModel,\s*selectedAttackWeapon\.ballisticsWeaponIndex/u,
+  );
 });
 
 test("explosive identities and evidence state stay explicit", () => {
