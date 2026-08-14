@@ -2,7 +2,7 @@ export const SIGUA_WIKI_ORIGIN =
   process.env.NEXT_PUBLIC_SIGUA_WIKI_ORIGIN?.replace(/\/+$/u, "") ||
   "https://wiki.siguad.icu";
 
-const WIKI_PRESENTATION_QUERY = "?presentation=v3";
+const WIKI_PRESENTATION_QUERY = "?presentation=v4";
 const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-v3";
 
 const requests = new Map<
@@ -83,20 +83,20 @@ export async function loadWikiVehicleWeaponRuntimeSource(cardId: string) {
   const pathname = `/data/weapons/runtime/vehicles/${cardId}.json${WIKI_WEAPON_RUNTIME_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
-    "sigua-weapon-runtime-source/v1",
+    "sigua-weapon-runtime-source/v2",
   );
   const document = value as {
     source?: { kind?: string; cardId?: string; rawNames?: unknown[] };
-    stationEquipment?: unknown[];
-    weapons?: unknown[];
+    weaponProfiles?: unknown[];
+    loadouts?: unknown[];
   };
   if (
     document.source?.kind !== "vehicle" ||
     document.source.cardId !== cardId ||
     !Array.isArray(document.source.rawNames) ||
-    !Array.isArray(document.stationEquipment) ||
-    !Array.isArray(document.weapons) ||
-    document.weapons.length === 0
+    !Array.isArray(document.weaponProfiles) ||
+    !Array.isArray(document.loadouts) ||
+    document.loadouts.length === 0
   ) {
     throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
   }
@@ -107,7 +107,7 @@ export async function loadWikiVehicleWeaponRuntimeIndex() {
   const pathname = `/data/weapons/runtime/vehicles/index.json${WIKI_WEAPON_RUNTIME_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
-    "sigua-weapon-runtime-index/v1",
+    "sigua-weapon-runtime-index/v2",
   );
   const document = value as {
     vehicleSources?: unknown[];
@@ -145,7 +145,7 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
   if (!/^[a-z0-9-]+$/u.test(factionId)) {
     throw new Error(`Invalid vehicle mechanics faction id: ${factionId}`);
   }
-  const pathname = `/data/vehicles/factions/${factionId}.json`;
+  const pathname = `/data/vehicles/factions/${factionId}.json${WIKI_PRESENTATION_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
     "sigua-vehicle-faction-mechanics/v1",
@@ -160,6 +160,7 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
       components?: unknown[];
     };
     runtime?: { visualArtifacts?: unknown[] };
+    editorAvailability?: { schemaVersion?: string; bindingAvailability?: unknown[] };
   };
   if (
     document.factionId !== factionId ||
@@ -169,7 +170,9 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
     !Array.isArray(document.profiles?.seats) ||
     !Array.isArray(document.profiles?.damageResistances) ||
     !Array.isArray(document.profiles?.components) ||
-    !Array.isArray(document.runtime?.visualArtifacts)
+    !Array.isArray(document.runtime?.visualArtifacts) ||
+    document.editorAvailability?.schemaVersion !== "sigua-vehicle-editor-availability/v1" ||
+    !Array.isArray(document.editorAvailability?.bindingAvailability)
   ) {
     throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
   }
@@ -180,7 +183,7 @@ export async function loadWikiVehicleFactionPresentation(factionId: string) {
   if (!/^[a-z0-9-]+$/u.test(factionId)) {
     throw new Error(`Invalid vehicle presentation faction id: ${factionId}`);
   }
-  const pathname = `/data/vehicles/faction-presentation/${factionId}.json`;
+  const pathname = `/data/vehicles/faction-presentation/${factionId}.json${WIKI_PRESENTATION_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
     "sigua-vehicle-faction-presentation/v1",
