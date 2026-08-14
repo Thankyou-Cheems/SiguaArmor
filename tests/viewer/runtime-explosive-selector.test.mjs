@@ -9,6 +9,7 @@ import {
 import { resolveEditorNativeBallistics } from "../../lib/editor-native-hit-model.ts";
 import {
   composeCatalogVariantBallisticsModel,
+  runtimeAttackDistanceControl,
   runtimeAttackTargetDistanceLimitM,
 } from "../../app/runtime-attack-ballistics-model.ts";
 
@@ -78,7 +79,7 @@ test("global weapon options preserve exact penetration and damage falloff curves
   );
 });
 
-test("weapons without falloff curves still allow engagement distance adjustment", () => {
+test("distance control disables weapons with no damage or penetration decay", () => {
   const model = composeCatalogVariantBallisticsModel({
     variantId: "m830a1",
     directModel: {
@@ -94,7 +95,13 @@ test("weapons without falloff curves still allow engagement distance adjustment"
     radialSource: null,
   });
 
-  assert.equal(runtimeAttackTargetDistanceLimitM(model, 0), 4000);
+  assert.deepEqual(runtimeAttackDistanceControl(model, 0), {
+    damageDecay: "none",
+    penetrationDecay: "none",
+    enabled: false,
+    maxDistanceM: 0,
+  });
+  assert.equal(runtimeAttackTargetDistanceLimitM(model, 0), 0);
   assert.equal(runtimeAttackTargetDistanceLimitM(model, 1), 0);
   assert.deepEqual(
     [
@@ -102,8 +109,83 @@ test("weapons without falloff curves still allow engagement distance adjustment"
       resolveEditorNativeBallistics(model, 0, 4000).penetrationAtRangeMm,
     ],
     [400, 400],
-    "distance remains adjustable even when the weapon truthfully has no falloff curve",
+    "constant weapons remain truthful when the distance control is disabled",
   );
+});
+
+test("a damage-only curve stays adjustable and takes priority over static projectile damage", () => {
+  const model = composeCatalogVariantBallisticsModel({
+    variantId: "ak74",
+    directModel: {
+      damageType: "BP_Kinetic_DamageType_C",
+      directImpactDamage: 60,
+      penetrationMm: 5,
+      traceDistanceAfterPenetrationM: 1,
+      weaponTraceDistanceAfterPenetrationM: 1,
+      impactRadialOrder: "not-applicable",
+    },
+    ballisticProfile: null,
+    configurationCurves: [{
+      curveId: "ak74-damage",
+      inputUnit: "unreal-centimeters",
+      outputUnit: "damage",
+      keys: { state: "observed", value: [
+        { time: 0, value: 60 },
+        { time: 45000, value: 35 },
+      ] },
+    }],
+    radialSource: null,
+  });
+
+  assert.deepEqual(runtimeAttackDistanceControl(model, 0), {
+    damageDecay: "available",
+    penetrationDecay: "none",
+    enabled: true,
+    maxDistanceM: 4000,
+  });
+  assert.equal(resolveEditorNativeBallistics(model, 0, 450).impactDamageAtRange, 35);
+  assert.equal(resolveEditorNativeBallistics(model, 0, 450).penetrationAtRangeMm, 5);
+});
+
+test("a penetration-only curve stays adjustable and reports constant damage separately", () => {
+  const model = composeCatalogVariantBallisticsModel({
+    variantId: "penetration-only",
+    directModel: {
+      damageType: "BP_Kinetic_DamageType_C",
+      directImpactDamage: 100,
+      penetrationMm: 50,
+      traceDistanceAfterPenetrationM: 1,
+      weaponTraceDistanceAfterPenetrationM: 1,
+      impactRadialOrder: "not-applicable",
+    },
+    ballisticProfile: null,
+    configurationCurves: [{
+      curveId: "penetration-only",
+      inputUnit: "meters",
+      outputUnit: "millimeters",
+      keys: { state: "observed", value: [
+        { time: 0, value: 50 },
+        { time: 1000, value: 20 },
+      ] },
+    }],
+    radialSource: null,
+  });
+
+  assert.deepEqual(runtimeAttackDistanceControl(model, 0), {
+    damageDecay: "none",
+    penetrationDecay: "available",
+    enabled: true,
+    maxDistanceM: 4000,
+  });
+  assert.equal(resolveEditorNativeBallistics(model, 0, 1000).penetrationAtRangeMm, 20);
+  assert.equal(resolveEditorNativeBallistics(model, 0, 1000).impactDamageAtRange, 100);
+});
+
+test("the slider explains each missing decay type and the fully constant state", () => {
+  assert.match(viewerSource, /伤害无距离衰减/u);
+  assert.match(viewerSource, /穿深无距离衰减/u);
+  assert.match(viewerSource, /当前武器无伤害\/穿深距离衰减/u);
+  assert.match(viewerSource, /runtimeAttackDistanceControl/u);
 });
 
 test("explosive identities and evidence state stay explicit", () => {
