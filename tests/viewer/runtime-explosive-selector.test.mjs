@@ -6,11 +6,11 @@ import {
   runtimeExplosiveCanonicalName,
   runtimeExplosiveLayerOrderIsClosed,
 } from "../../lib/runtime-explosive-catalog.ts";
+import { resolveEditorNativeBallistics } from "../../lib/editor-native-hit-model.ts";
 import {
-  editorNativeWeaponTargetDistanceLimitM,
-  resolveEditorNativeBallistics,
-} from "../../lib/editor-native-hit-model.ts";
-import { composeCatalogVariantBallisticsModel } from "../../app/runtime-attack-ballistics-model.ts";
+  composeCatalogVariantBallisticsModel,
+  runtimeAttackTargetDistanceLimitM,
+} from "../../app/runtime-attack-ballistics-model.ts";
 
 const [adapterSource, ballisticsModelSource, viewerSource, catalogIndexText] = await Promise.all([
   readFile(new URL("../../app/runtime-probe-weapon-labels.ts", import.meta.url), "utf8"),
@@ -94,8 +94,8 @@ test("weapons without falloff curves still allow engagement distance adjustment"
     radialSource: null,
   });
 
-  assert.equal(editorNativeWeaponTargetDistanceLimitM(model, 0), 4000);
-  assert.equal(editorNativeWeaponTargetDistanceLimitM(model, 1), 0);
+  assert.equal(runtimeAttackTargetDistanceLimitM(model, 0), 4000);
+  assert.equal(runtimeAttackTargetDistanceLimitM(model, 1), 0);
   assert.deepEqual(
     [
       resolveEditorNativeBallistics(model, 0, 0).penetrationAtRangeMm,

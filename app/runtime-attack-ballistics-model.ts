@@ -9,6 +9,18 @@ import type {
   WeaponCatalogBallisticProfile,
   WeaponCatalogDirectDamageModel,
 } from "../lib/weapon-catalog.ts";
+import { MAX_VIEWER_TARGET_DISTANCE_M } from "../lib/catalog-navigation.mjs";
+
+/**
+ * The viewer's range is an engagement-distance control, not merely a curve
+ * scrubber. Constant ballistics still need distance for shot placement.
+ */
+export function runtimeAttackTargetDistanceLimitM(
+  model: EditorNativeModel,
+  weaponIndex: number,
+) {
+  return model.weapons[weaponIndex] ? MAX_VIEWER_TARGET_DISTANCE_M : 0;
+}
 
 function fieldValue<T>(field: EditorField<T>) {
   if (field !== null && typeof field === "object" && "value" in field) {
