@@ -297,7 +297,9 @@ function variantConfigurationKey(card: CatalogCardEntry) {
   if (card.variant.presentation) {
     const vehicleName = card.variant.presentation.vehicleNameZh?.trim() ?? "";
     const configuration = card.variant.presentation.configurationZh?.trim() ?? "";
-    return `${vehicleName}\u0000${configuration}`;
+    const mechanicsSignature = card.variant.editorAvailability?.mechanicsSignatureId ??
+      `unverified:${card.variant.sourceRawName}`;
+    return `${vehicleName}\u0000${configuration}\u0000${mechanicsSignature}`;
   }
   return card.alias?.trim() ?? "";
 }
@@ -307,9 +309,8 @@ function catalogCardGroups(record: CatalogRecord): CatalogCardGroup[] {
   const configurationBuckets = new Map<string, CatalogCardEntry[]>();
 
   for (const entry of entries) {
-    // Presentation metadata is the grouping authority. Every livery slice keeps
-    // its own reference data, so extractor precision noise and livery-specific
-    // blueprint names must not split one configuration into separate cards.
+    // Presentation marks a livery candidate; the Editor mechanics signature is
+    // the merge gate, and mechanicalRawName keeps the exact weapon loadout.
     const key = variantConfigurationKey(entry);
     const bucket = configurationBuckets.get(key) ?? [];
     bucket.push(entry);
@@ -2473,6 +2474,7 @@ function DetailPanel({
                 groupOrder: record.promotionOrder,
                 type: record.official.typeZh,
                 canonicalRawName:
+                  card.variant?.editorAvailability?.mechanicalRawName ??
                   data?.general.rawName ?? record.mapping.selectedRawName ?? "",
               }}
               referenceData={data}
