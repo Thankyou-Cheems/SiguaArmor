@@ -9,6 +9,7 @@ import {
 import { resolveEditorNativeBallistics } from "../../lib/editor-native-hit-model.ts";
 import {
   composeCatalogVariantBallisticsModel,
+  preferredBallisticsIdForExactCard,
   runtimeAttackDistanceControl,
   runtimeAttackTargetDistanceLimitM,
 } from "../../app/runtime-attack-ballistics-model.ts";
@@ -76,6 +77,24 @@ test("global weapon options preserve exact penetration and damage falloff curves
   assert.deepEqual(
     [atFourKilometers.penetrationAtRangeMm, atFourKilometers.impactDamageAtRange],
     [500, 1000],
+  );
+});
+
+test("global vehicle sources resolve the selected card's exact ballistic profile", () => {
+  const variant = {
+    ballisticsIds: ["ballistics-bmd4", "ballistics-bmp2"],
+  };
+  const sourceRefs = [
+    { id: "bmd4", exactCardIds: ["vdv--bmd-4m--ifv"], ballisticsId: "ballistics-bmd4" },
+    { id: "bmp2", exactCardIds: ["afu--bmp-2--ifv"], ballisticsId: "ballistics-bmp2" },
+  ];
+  assert.equal(
+    preferredBallisticsIdForExactCard(variant, sourceRefs, "afu--bmp-2--ifv"),
+    "ballistics-bmp2",
+  );
+  assert.equal(
+    preferredBallisticsIdForExactCard(variant, sourceRefs, "unknown--vehicle"),
+    null,
   );
 });
 
@@ -236,6 +255,10 @@ test("vehicle attack sources join Wiki weapons through the exact Wiki source car
   assert.match(
     adapterSource,
     /weaponCatalogVariantsForExactVehicle\(\s*wikiSourceCardId,\s*variant\.sourceRawName,\s*\)/u,
+  );
+  assert.match(
+    adapterSource,
+    /runtimeCatalogAttackSourceWeapon\(\s*variant,\s*wikiSourceCardId,\s*"vehicle",\s*\)/u,
   );
   assert.match(adapterSource, /weapon\.exactCardIds\.includes\(wikiSourceCardId\)/u);
   const usmcFa18 = catalogIndex.records.find(

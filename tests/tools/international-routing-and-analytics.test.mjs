@@ -69,19 +69,25 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
 
-  assert.equal(currentEntry.id, "2026-08-14-editor-vehicle-weapon-refresh");
+  assert.equal(currentEntry.id, "2026-08-20-weapon-rhythm-distance-curves");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-08-14");
+    assert.equal(document.siteUpdatedOn, "2026-08-20");
     assert.deepEqual(document.entries[0], currentEntry);
     assert.ok(
       !document.entries.some(({ id }) => id === "2026-07-24-hit-path-footer-selector"),
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(document.entries[0]), /不同武器时继续显示为多张变体卡片/u);
-    assert.match(JSON.stringify(document.entries[0]), /机械配置完全一致的涂装会合并/u);
-    assert.match(JSON.stringify(document.entries[0]), /M919 25 毫米穿甲弹/u);
-    assert.match(JSON.stringify(document.entries[0]), /距离条会直接禁用并说明原因/u);
+    assert.match(JSON.stringify(document.entries[0]), /武器节奏与 DPS 分析/u);
+    assert.match(JSON.stringify(document.entries[0]), /打开全站武器库后距离滑条变为不可用/u);
+    const dataRefreshEntry = document.entries.find(
+      ({ id }) => id === "2026-08-14-editor-vehicle-weapon-refresh",
+    );
+    assert.ok(dataRefreshEntry, "Editor data refresh entry must be retained");
+    assert.match(JSON.stringify(dataRefreshEntry), /不同武器时继续显示为多张变体卡片/u);
+    assert.match(JSON.stringify(dataRefreshEntry), /机械配置完全一致的涂装会合并/u);
+    assert.match(JSON.stringify(dataRefreshEntry), /M919 25 毫米穿甲弹/u);
+    assert.match(JSON.stringify(dataRefreshEntry), /距离条会直接禁用并说明原因/u);
     const previousEntry = document.entries.find(
       ({ id }) => id === "2026-08-13-hit-analysis-polish",
     );
