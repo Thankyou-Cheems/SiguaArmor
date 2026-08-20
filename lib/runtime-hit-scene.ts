@@ -101,13 +101,25 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(`Invalid hit runtime: ${message}`);
 }
 
+const inFlightRuntimeAssetRequests = new Map<string, Promise<ArrayBuffer>>();
 
 async function fetchRuntimeAsset(url: string, label: string) {
   assert(/^\/[A-Za-z0-9_./-]+$/.test(url) && !url.includes(".."), `${label} URL is unsafe`);
   const wikiUrl = runtimeWikiAssetUrl(url);
-  const response = await fetch(wikiUrl, { cache: "force-cache" });
-  assert(response.ok, `${label} request returned HTTP ${response.status}`);
-  return response.arrayBuffer();
+  const cached = inFlightRuntimeAssetRequests.get(wikiUrl);
+  if (cached) return cached;
+  const request = fetch(wikiUrl, { cache: "force-cache" })
+    .then((response) => {
+      assert(response.ok, `${label} request returned HTTP ${response.status}`);
+      return response.arrayBuffer();
+    })
+    .finally(() => {
+      if (inFlightRuntimeAssetRequests.get(wikiUrl) === request) {
+        inFlightRuntimeAssetRequests.delete(wikiUrl);
+      }
+    });
+  inFlightRuntimeAssetRequests.set(wikiUrl, request);
+  return request;
 }
 
 function rawHitBufferRef(

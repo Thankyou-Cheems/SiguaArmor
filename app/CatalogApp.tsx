@@ -102,6 +102,7 @@ import { DailyActiveDisplay } from "./DailyActiveBeacon";
 import { IronRiceHallWordmark } from "./IronRiceHallWordmark";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
 import { VehicleDamageTypeIcon } from "./VehicleDamageTypeIcon";
+import { VehicleDuelEntryLink } from "./VehicleDuelEntryLink";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
 import type { ViewerNavigationState } from "./viewer-types";
 import { SiteFooterSupporters } from "./SiteFooterSupporters";
@@ -3985,6 +3986,10 @@ function CatalogAppReady({
       <a className="skip-link" href={hasGroupSelection ? "#main-content" : "#faction-selector"}>
         {hasGroupSelection ? "跳至载具目录" : "跳至阵营选择"}
       </a>
+      <VehicleDuelEntryLink
+        siteEdition={siteEdition}
+        initialVehicleId={selectedCard?.record.promoEntryId ?? null}
+      />
       {dataAccuracyNoticeOpen ? (
         <aside className="data-accuracy-notice" role="note" aria-label="数据准确性提示">
           <CircleAlert size={16} aria-hidden="true" />
