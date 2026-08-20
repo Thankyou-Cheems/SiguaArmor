@@ -21,7 +21,7 @@ interface WikiVehicleIdentity {
   id: string;
   rawName: string;
   generalProfileRef: string;
-  burningProfileRef: string | null;
+  burningProfileRef: string;
   seatProfileRefs: string[];
   hullDamageProfileRefs: string[];
   componentProfileRefs: string[];
@@ -197,7 +197,10 @@ function validateVehicleMechanics(value: unknown): WikiVehicleMechanics {
     !Array.isArray(document.profiles?.seats) ||
     !Array.isArray(document.profiles?.damageResistances) ||
     !Array.isArray(document.profiles?.components) ||
-    !Array.isArray(document.runtime?.visualArtifacts)
+    !Array.isArray(document.runtime?.visualArtifacts) ||
+    document.identities.vehicles.some(
+      (vehicle) => typeof vehicle.burningProfileRef !== "string" || !vehicle.burningProfileRef,
+    )
   ) {
     throw new Error("SiguaWiki 载具机械数据格式不受支持");
   }
@@ -588,12 +591,10 @@ function createReferenceDataResolver(catalog: WikiVehicleMechanics) {
     });
     return {
       general: { rawName: binding.rawName, ...general },
-      burning: vehicle.burningProfileRef === null
-        ? null
-        : required(
-            burningProfiles.get(vehicle.burningProfileRef),
-            `自燃资料 ${vehicle.burningProfileRef}`,
-          ).value,
+      burning: required(
+        burningProfiles.get(vehicle.burningProfileRef),
+        `自燃资料 ${vehicle.burningProfileRef}`,
+      ).value,
       weaponBindingIds: binding.weaponBindingIds,
       seats: vehicle.seatProfileRefs.map((id) =>
         required(seatProfiles.get(id), `乘员席 ${id}`).value,
