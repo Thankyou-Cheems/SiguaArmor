@@ -255,7 +255,7 @@ test("effective damage uses the selected B health-rail summary above the causal 
   assert.doesNotMatch(styles, /damage-card-prototype/u);
 });
 
-test("saved shots use a three-position record slider with a compact clear action", () => {
+test("saved shots default to three positions while embedded callers can lower the limit", () => {
   const toolbar = viewerSource.slice(
     viewerSource.indexOf('<div className="viewer-toolbar"'),
     viewerSource.indexOf("{viewerState.kind !== \"loading\""),
@@ -269,8 +269,9 @@ test("saved shots use a three-position record slider with a compact clear action
   assert.doesNotMatch(shotHistory, /路径记录|清除射线/u);
   assert.match(
     shotHistory,
-    /className="viewer-mode-tabs viewer-shot-history__tabs"[\s\S]*?aria-label="三条命中记录"[\s\S]*?className="viewer-mode-tabs__thumb"[\s\S]*?Array\.from\(\{ length: MAX_SHOT_TRACES \}/u,
+    /className="viewer-mode-tabs viewer-shot-history__tabs"[\s\S]*?aria-label=\{`\$\{maxShotTraces\} 条命中记录`\}[\s\S]*?className="viewer-mode-tabs__thumb"[\s\S]*?Array\.from\(\{ length: maxShotTraces \}/u,
   );
+  assert.match(viewerSource, /shotTraceLimit = MAX_SHOT_TRACES/u);
   assert.match(shotHistory, /<span>记录<\/span><b>\{index \+ 1\}<\/b>/u);
   assert.match(shotHistory, /清空\{savedShots\.length\}/u);
   assert.match(

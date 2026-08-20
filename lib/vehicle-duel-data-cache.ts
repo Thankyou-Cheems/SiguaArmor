@@ -23,6 +23,9 @@ export interface VehicleDuelOption {
   visualArtifactRef: string;
   attackSourceId: string;
   attackSourcePresentation: RuntimeAttackSourcePresentation;
+  searchPrimary: string[];
+  searchAliases: string[];
+  searchContext: string[];
 }
 
 export interface VehicleDuelBundle {
@@ -84,6 +87,26 @@ export function vehicleDuelOptionsFromCatalog(
       visualArtifactRef: variant.visualArtifactRef,
       attackSourceId,
       attackSourcePresentation,
+      searchPrimary: [
+        record.official.nameZh,
+        record.selectedDisplayName ?? "",
+        record.selectedRawName ?? "",
+        variant.alias,
+        variant.displayName,
+        variant.sourceRawName,
+      ].filter(Boolean),
+      searchAliases: [
+        ...(record.searchAliases ?? []),
+        ...(variant.searchAliases ?? []),
+      ],
+      searchContext: [
+        record.official.groupNameZh,
+        record.official.groupId,
+        record.official.typeZh,
+        record.official.typeNameZh,
+        ...(record.searchTerms ?? []),
+        ...(variant.searchTerms ?? []),
+      ],
     }];
   }).sort(
     (left, right) =>

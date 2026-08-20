@@ -13,6 +13,8 @@ const catalog = {
   records: [{
     promoEntryId: "test--ifv",
     promotionOrder: 1,
+    searchTerms: ["履带式步战车"],
+    searchAliases: ["ceshibuzhanche", "测试俗称"],
     official: {
       groupId: "test",
       groupNameZh: "测试阵营",
@@ -47,6 +49,8 @@ const catalog = {
         displayName: "测试步战车",
         cardId: "test--ifv--default",
         routeSlug: "test--ifv--default",
+        searchTerms: ["默认配置"],
+        searchAliases: ["lin-di"],
         presentation: { liveryZh: "林地", configurationZh: null },
       },
     ],
@@ -62,6 +66,10 @@ test("duel catalog keeps one product card and selects its canonical default vari
   assert.equal(options[0].rawName, "BP_TEST_IFV");
   assert.equal(options[0].displayName, "测试步战车");
   assert.equal(options[0].runtimeVehicleRef, "vehicle-" + "3".repeat(64));
+  assert.ok(options[0].searchPrimary.includes("BP_TEST_IFV"));
+  assert.deepEqual(options[0].searchAliases, ["ceshibuzhanche", "测试俗称", "lin-di"]);
+  assert.ok(options[0].searchContext.includes("履带式步战车"));
+  assert.ok(options[0].searchContext.includes("默认配置"));
 });
 
 test("duel data loader shares catalog and exact vehicle promises across concurrent callers", async () => {

@@ -58,3 +58,42 @@ test("catalog entry uses client navigation so warm module caches survive launch"
   assert.match(entry, /prefetch/u);
   assert.match(entry, /initialVehicleId/u);
 });
+
+test("duel reuses catalog search ranking for both vehicles and weapons", () => {
+  assert.match(app, /rankVehicleCandidateSearch/u);
+  assert.match(app, /rankVerifiedVehicleCandidateSearch/u);
+  assert.match(app, /placeholder="搜索名称 \/ 俗称 \/ 拼音"/u);
+  assert.match(app, /placeholder="搜索武器 \/ 弹种"/u);
+  assert.match(cacheModule, /searchPrimary/u);
+  assert.match(cacheModule, /searchAliases/u);
+  assert.match(cacheModule, /searchContext/u);
+});
+
+test("duel exposes exterior view, synchronized display controls, and one trace per target", () => {
+  assert.match(app, /\["exterior", "外观"\]/u);
+  assert.match(app, /function DuelDisplayControls/u);
+  assert.match(app, /physicalPoseEnabled/u);
+  assert.match(app, /relativeArmorScale/u);
+  assert.match(app, /className="viewer-protection-switch"/u);
+  assert.match(app, /viewer-protection-switch__track/u);
+  assert.match(app, /viewer-mode-tabs vehicle-duel__mode-tabs/u);
+  assert.match(app, /global-vehicle-search__input/u);
+  assert.match(app, /displayOverrides=\{displayOverrides\}/u);
+  assert.equal((app.match(/shotTraceLimit=\{1\}/gu) ?? []).length, 1);
+  assert.match(viewer, /shotTraceLimit = MAX_SHOT_TRACES/u);
+  assert.match(viewer, /records\.length >= maxShotTraces/u);
+  assert.match(viewer, /pendingSharedShots\.paths\.slice\(-maxShotTraces\)/u);
+  assert.match(styles, /\.vehicle-duel__display-controls button\[aria-checked="true"\]/u);
+});
+
+test("duel header and verdict remove duplicate calls while retaining lead time", () => {
+  const headingStart = app.indexOf('<header className="vehicle-duel__heading">');
+  const heading = app.slice(headingStart, app.indexOf("</header>", headingStart));
+  assert.match(app, /siguad-wiki-logo\.svg/u);
+  assert.doesNotMatch(app, /ArrowLeft|<Swords/u);
+  assert.doesNotMatch(heading, /<aside>/u);
+  assert.match(app, /vehicleDuelVictoryMarginSeconds/u);
+  assert.match(app, /`领先 \$\{marginSeconds\.toFixed\(2\)\}s`/u);
+  assert.match(app, /leftName=\{leftOption\.displayName\}/u);
+  assert.match(app, /rightName=\{rightOption\.displayName\}/u);
+});

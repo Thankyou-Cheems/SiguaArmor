@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   resolveVehicleDuel,
+  vehicleDuelVictoryMarginSeconds,
 } from "../../lib/vehicle-duel-model.ts";
 
 function weapon(id, interval = 1) {
@@ -50,11 +51,27 @@ test("ammo-rack destruction is an immediate loss and cuts off later outgoing sho
   assert.equal(result.leftAttack.actualSimulation?.killTimeSeconds, 2);
   assert.equal(result.rightAttack.actualSimulation?.killTimeSeconds, null);
   assert.equal(result.rightAttack.actualSimulation?.shots, 3);
+  assert.equal(vehicleDuelVictoryMarginSeconds(result), 2);
   assert.ok(
     result.rightAttack.actualSimulation?.events.every(
       ({ timeSeconds }) => timeSeconds <= 2,
     ),
   );
+});
+
+test("victory margin stays unavailable when the losing side has no lethal path", () => {
+  const result = resolveVehicleDuel({
+    leftAttack: {
+      weapon: weapon("left"),
+      targets: [target("right-hull", "hull", 200, 100)],
+    },
+    rightAttack: {
+      weapon: weapon("right"),
+      targets: [target("left-track", "track", 100, 100)],
+    },
+  });
+  assert.equal(result.winner, "left");
+  assert.equal(vehicleDuelVictoryMarginSeconds(result), null);
 });
 
 test("hull destruction still wins when it happens before a damaged ammo rack", () => {
