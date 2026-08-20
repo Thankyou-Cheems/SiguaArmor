@@ -73,6 +73,27 @@ test("Wiki adapter keeps exact assignment identity and carries the thermal profi
     }),
     null,
   );
+  assert.equal(
+    resolveWeaponDpsWeaponForRuntimeAssignment(result.weapons, {
+      weaponAssignmentId: null,
+      sourceCardId: "afu--bmp-2--ifv",
+      sourceRawName: "9M113 Konkurs Guided Missile",
+      weaponId: "variant-thermal",
+    })?.assignmentId,
+    "assignment-exact",
+  );
+  assert.equal(
+    resolveWeaponDpsWeaponForRuntimeAssignment(
+      [...result.weapons, { ...result.weapons[0], assignmentId: "assignment-duplicate" }],
+      {
+        weaponAssignmentId: null,
+        sourceCardId: "afu--bmp-2--ifv",
+        sourceRawName: "display-only",
+        weaponId: "variant-thermal",
+      },
+    ),
+    null,
+  );
 });
 
 test("conflicting delivery profiles fail closed instead of selecting the first variant", () => {
@@ -129,10 +150,26 @@ test("Wiki infantry configurations remain selectable as separate assignments", (
 
 test("DPS analysis stays inside the clicked-hit damage card", async () => {
   const viewer = await readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../../app/globals.css", import.meta.url), "utf8");
   assert.doesNotMatch(viewer, /weaponDpsHref|viewer-weapon-dps-link|\/weapon-dps\?/u);
   assert.match(viewer, /function HitDpsTimingCard/u);
   assert.match(viewer, /optimization\.recommended/u);
   assert.match(viewer, /<WeaponRhythmTimeline/u);
+  const outcomeDetails = viewer.slice(
+    viewer.indexOf('<div className="viewer-shot-outcome-summary__details">'),
+    viewer.indexOf('<ul className="viewer-shot-outcome-summary__targets">'),
+  );
+  assert.doesNotMatch(outcomeDetails, /HitDpsTimingCard/u);
+  assert.match(
+    viewer,
+    /className="viewer-hit-dps-dock"[\s\S]*?<HitDpsTimingCard/u,
+  );
+  assert.match(viewer, /primarySimulation\.thermalState === "unavailable"/u);
+  assert.match(viewer, /单发摧毁/u);
+  assert.match(
+    styles,
+    /\.viewer-hit-dps-dock\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?bottom:/u,
+  );
   await assert.rejects(
     access(new URL("../../app/weapon-dps/page.tsx", import.meta.url)),
     { code: "ENOENT" },

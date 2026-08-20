@@ -249,8 +249,17 @@ export function simulateWeaponRhythm(
   const thermalModel = hasUsableThermalModel(weapon.overheat);
   const thermalState = thermalModel ? thermalStateFor(weapon) : "unavailable";
   const events: WeaponDpsEvent[] = [];
+  const profile = thermalModel ? weapon.overheat : null;
+  const minimum = profile?.temperatureMin ?? null;
+  const maximum = profile?.temperatureMax ?? null;
+  const triggerAt = profile
+    ? profile.triggerAt ?? profile.shutdownTemperature
+    : null;
+  const unlockAt = profile
+    ? profile.unlockTemperature ?? profile.temperatureMin
+    : null;
 
-  if (!hasDamageModel || !hasCadenceModel) {
+  if (!hasDamageModel) {
     return {
       weaponId: weapon.id,
       mode: plan.mode,
@@ -263,26 +272,91 @@ export function simulateWeaponRhythm(
       firstOverheatSeconds: null,
       killTimeSeconds: null,
       elapsedSeconds: 0,
-      finalTemperature: thermalModel ? weapon.overheat?.temperatureMin ?? null : null,
+      finalTemperature: minimum,
       events,
       timeline: [],
       heatCurve: [],
       heatRange: null,
-      unavailableReason: !hasDamageModel
-        ? "Wiki 未提供可计算的单发伤害"
-        : "Wiki 未提供可计算的射击间隔",
+      unavailableReason: "Wiki 未提供可计算的单发伤害",
     };
   }
 
-  const profile = thermalModel ? weapon.overheat : null;
-  const minimum = profile?.temperatureMin ?? null;
-  const maximum = profile?.temperatureMax ?? null;
-  const triggerAt = profile
-    ? profile.triggerAt ?? profile.shutdownTemperature
-    : null;
-  const unlockAt = profile
-    ? profile.unlockTemperature ?? profile.temperatureMin
-    : null;
+  if ((damagePerShot as number) >= targetHealth) {
+    const temperature = profile && minimum !== null && profile.heatPerShot !== null
+      ? clamp(
+          minimum + profile.heatPerShot,
+          minimum,
+          maximum ?? minimum + profile.heatPerShot,
+        )
+      : minimum;
+    const overheated =
+      temperature !== null && triggerAt !== null && temperature + EPSILON >= triggerAt;
+    events.push({
+      kind: "shot",
+      timeSeconds: 0,
+      temperature,
+      damage: damagePerShot as number,
+      shotNumber: 1,
+    });
+    if (overheated) {
+      events.push({
+        kind: "overheat",
+        timeSeconds: 0,
+        temperature,
+        damage: damagePerShot as number,
+        shotNumber: 1,
+      });
+    }
+    return {
+      weaponId: weapon.id,
+      mode: plan.mode,
+      thermalState,
+      totalDamage: damagePerShot as number,
+      averageDps: 0,
+      shots: 1,
+      reloads: 0,
+      overheatCount: overheated ? 1 : 0,
+      firstOverheatSeconds: overheated ? 0 : null,
+      killTimeSeconds: 0,
+      elapsedSeconds: 0,
+      finalTemperature: temperature,
+      events,
+      timeline: buildTimelineSamples(weapon, profile, events, 0),
+      heatCurve: buildHeatCurve(events),
+      heatRange: profile
+        ? {
+            min: profile.temperatureMin ?? 0,
+            max: profile.temperatureMax ?? 0,
+            warningAt: profile.effectTriggerLower ?? null,
+            dangerAt: profile.effectTriggerUpper ?? null,
+            triggerAt,
+          }
+        : null,
+      unavailableReason: null,
+    };
+  }
+
+  if (!hasCadenceModel) {
+    return {
+      weaponId: weapon.id,
+      mode: plan.mode,
+      thermalState,
+      totalDamage: 0,
+      averageDps: 0,
+      shots: 0,
+      reloads: 0,
+      overheatCount: 0,
+      firstOverheatSeconds: null,
+      killTimeSeconds: null,
+      elapsedSeconds: 0,
+      finalTemperature: minimum,
+      events,
+      timeline: [],
+      heatCurve: [],
+      heatRange: null,
+      unavailableReason: "Wiki 未提供可计算的射击间隔",
+    };
+  }
   let elapsedSeconds = 0;
   let temperature = minimum;
   let totalDamage = 0;

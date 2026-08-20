@@ -80,6 +80,36 @@ test("missing Wiki heat data fails closed without inventing thermal output", () 
   assert.ok(result.totalDamage > 0);
 });
 
+test("a lethal first shot resolves without cadence or thermal data", () => {
+  const result = simulateWeaponRhythm(
+    {
+      ...cannon,
+      damagePerShot: 1500,
+      timeBetweenShotsSeconds: null,
+      magazineSize: null,
+      tacticalReloadSeconds: null,
+      dryReloadSeconds: null,
+      overheat: null,
+    },
+    {
+      targetHealth: 1000,
+      horizonSeconds: 60,
+      mode: "burn",
+      burstSize: 1,
+      pauseSeconds: 0,
+      useMagazineReload: true,
+    },
+  );
+  assert.equal(result.unavailableReason, null);
+  assert.equal(result.thermalState, "unavailable");
+  assert.equal(result.shots, 1);
+  assert.equal(result.killTimeSeconds, 0);
+  assert.equal(result.totalDamage, 1500);
+  assert.deepEqual(result.events.map(({ kind, timeSeconds }) => ({ kind, timeSeconds })), [
+    { kind: "shot", timeSeconds: 0 },
+  ]);
+});
+
 test("automatic rhythm optimization chooses the fastest schedule instead of exposing a fixed user pause", () => {
   const result = optimizeWeaponRhythm(cannon, {
     targetHealth: 100_000,

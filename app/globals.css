@@ -6912,6 +6912,76 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   animation: viewer-shot-result-enter 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.viewer-hit-dps-dock {
+  position: absolute;
+  z-index: 11;
+  bottom: 12px;
+  left: 50%;
+  width: min(680px, calc(100% - 740px));
+  min-width: 420px;
+  pointer-events: auto;
+  transform: translateX(-50%);
+}
+
+.viewer-hit-dps-dock:has(.viewer-hit-dps-timing[data-mode="time-only"]) {
+  width: min(430px, calc(100% - 740px));
+}
+
+.viewer-hit-dps-dock .viewer-hit-dps-timing {
+  margin: 0;
+  border-color: color-mix(in srgb, var(--analysis-flow) 46%, transparent);
+  background: rgba(8, 12, 10, 0.95);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(14px);
+}
+
+.viewer-hit-dps-timing[data-mode="time-only"] {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+}
+
+.viewer-hit-dps-timing[data-mode="time-only"] > span {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer-hit-dps-timing[data-mode="time-only"] > strong {
+  color: var(--analysis-flow-strong);
+  font-family: var(--font-mono-ui);
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .viewer-hit-dps-dock,
+  .viewer-hit-dps-dock:has(.viewer-hit-dps-timing[data-mode="time-only"]) {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    min-width: 0;
+    transform: none;
+  }
+
+  .viewer-stage:has(.viewer-hit-dps-dock .viewer-hit-dps-timing[data-mode="thermal"])
+    .viewer-shot-result {
+    bottom: 270px;
+    max-height: calc(100% - 282px);
+  }
+
+  .viewer-stage:has(.viewer-hit-dps-dock .viewer-hit-dps-timing[data-mode="time-only"])
+    .viewer-shot-result {
+    bottom: 82px;
+    max-height: calc(100% - 94px);
+  }
+}
+
 @keyframes viewer-shot-result-enter {
   from {
     opacity: 0;

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   selectPrimaryWeaponHitDpsTarget,
+  singleShotWeaponHitTarget,
   targetPoolsForShot,
 } from "../../lib/weapon-hit-dps.ts";
 
@@ -50,4 +51,12 @@ test("a clicked hit exposes independent hull and module target pools", () => {
   assert.equal(selectPrimaryWeaponHitDpsTarget(targets, "engine")?.poolKind, "engine");
   assert.equal(selectPrimaryWeaponHitDpsTarget(targets, "armor")?.poolKind, "hull");
   assert.equal(selectPrimaryWeaponHitDpsTarget(targets, null)?.poolKind, "hull");
+  assert.equal(singleShotWeaponHitTarget(targets, "engine"), null);
+  assert.deepEqual(
+    singleShotWeaponHitTarget([
+      { key: "3:engine", poolKind: "engine", maxHealth: 300, damagePerShot: 300 },
+      { key: "0:hull", poolKind: "hull", maxHealth: 1000, damagePerShot: 120 },
+    ], "engine"),
+    { key: "3:engine", poolKind: "engine", maxHealth: 300, damagePerShot: 300 },
+  );
 });
