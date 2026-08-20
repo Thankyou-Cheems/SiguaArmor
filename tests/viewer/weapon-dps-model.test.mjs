@@ -110,6 +110,40 @@ test("a lethal first shot resolves without cadence or thermal data", () => {
   ]);
 });
 
+test("single-round reload and fire interval overlap instead of doubling missile time", () => {
+  const result = simulateWeaponRhythm(
+    {
+      ...cannon,
+      id: "9m113",
+      damagePerShot: 1125,
+      timeBetweenShotsSeconds: 12,
+      magazineSize: 1,
+      tacticalReloadSeconds: 12,
+      dryReloadSeconds: 12,
+      overheat: null,
+    },
+    {
+      targetHealth: 1250,
+      horizonSeconds: 60,
+      mode: "burn",
+      burstSize: 1,
+      pauseSeconds: 0,
+      useMagazineReload: true,
+    },
+  );
+  assert.equal(result.shots, 2);
+  assert.equal(result.reloads, 1);
+  assert.equal(result.killTimeSeconds, 12);
+  assert.deepEqual(
+    result.events.map(({ kind, timeSeconds }) => ({ kind, timeSeconds })),
+    [
+      { kind: "shot", timeSeconds: 0 },
+      { kind: "reload", timeSeconds: 12 },
+      { kind: "shot", timeSeconds: 12 },
+    ],
+  );
+});
+
 test("automatic rhythm optimization chooses the fastest schedule instead of exposing a fixed user pause", () => {
   const result = optimizeWeaponRhythm(cannon, {
     targetHealth: 100_000,

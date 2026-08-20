@@ -230,11 +230,12 @@ function buildHeatCurve(
 /**
  * Simulate a fixed rhythm until the target dies or the requested horizon ends.
  *
- * The first shot is immediate. Subsequent shots consume the exact Wiki
- * time-between-shots value. Heat is applied after each shot and cooling is
- * applied during every interval/pause/reload. In burn mode the lock is handled
- * through the lower hysteresis temperature when Wiki exposes it; no network
- * delay is invented here.
+ * The first shot is immediate. Subsequent shots wait until every active gate is
+ * ready: cadence, reload, pause, and overheat cooling share elapsed wall time
+ * rather than being blindly added. Heat is applied after each shot and cooling
+ * is applied throughout every wait. In burn mode the lock is handled through
+ * the lower hysteresis temperature when Wiki exposes it; no network delay is
+ * invented here.
  */
 export function simulateWeaponRhythm(
   weapon: WeaponDpsWeapon,
@@ -368,6 +369,7 @@ export function simulateWeaponRhythm(
   let magazineShots = 0;
   let burstShots = 0;
   let overheated = false;
+  let lastShotTimeSeconds: number | null = null;
   let guard = 0;
 
   const advance = (seconds: number) => {
@@ -443,8 +445,12 @@ export function simulateWeaponRhythm(
       burstShots = 0;
     }
 
-    if (shots > 0) {
-      advance(interval as number);
+    if (lastShotTimeSeconds !== null) {
+      const elapsedSinceLastShot = Math.max(
+        0,
+        elapsedSeconds - lastShotTimeSeconds,
+      );
+      advance(Math.max(0, (interval as number) - elapsedSinceLastShot));
       if (elapsedSeconds >= horizonSeconds - EPSILON) break;
     }
 
@@ -459,6 +465,7 @@ export function simulateWeaponRhythm(
     magazineShots += 1;
     burstShots += 1;
     totalDamage += damagePerShot as number;
+    lastShotTimeSeconds = elapsedSeconds;
     events.push({
       kind: "shot",
       timeSeconds: elapsedSeconds,

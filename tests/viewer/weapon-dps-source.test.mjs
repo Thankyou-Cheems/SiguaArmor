@@ -151,6 +151,7 @@ test("Wiki infantry configurations remain selectable as separate assignments", (
 test("DPS analysis stays inside the clicked-hit damage card", async () => {
   const viewer = await readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8");
   const styles = await readFile(new URL("../../app/globals.css", import.meta.url), "utf8");
+  const timeline = await readFile(new URL("../../app/WeaponRhythmTimeline.tsx", import.meta.url), "utf8");
   assert.doesNotMatch(viewer, /weaponDpsHref|viewer-weapon-dps-link|\/weapon-dps\?/u);
   assert.match(viewer, /function HitDpsTimingCard/u);
   assert.match(viewer, /optimization\.recommended/u);
@@ -160,16 +161,26 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
     viewer.indexOf('<ul className="viewer-shot-outcome-summary__targets">'),
   );
   assert.doesNotMatch(outcomeDetails, /HitDpsTimingCard/u);
-  assert.match(
-    viewer,
-    /className="viewer-hit-dps-dock"[\s\S]*?<HitDpsTimingCard/u,
+  assert.doesNotMatch(viewer, /viewer-hit-dps-dock/u);
+  assert.match(viewer, /className="viewer-hit-dps-fold"/u);
+  assert.ok(
+    viewer.lastIndexOf("<HitDpsTimingCard") >
+      viewer.indexOf('<ol className="viewer-causal-spine">'),
+    "the folded DPS explanation must be the final section in the right result rail",
   );
   assert.match(viewer, /primarySimulation\.thermalState === "unavailable"/u);
   assert.match(viewer, /单发摧毁/u);
+  assert.match(viewer, /首发有效伤害/u);
+  assert.match(viewer, /装填/u);
+  assert.match(viewer, /再发间隔/u);
+  assert.match(viewer, /同时计时/u);
   assert.match(
     styles,
-    /\.viewer-hit-dps-dock\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?bottom:/u,
+    /\.viewer-hit-dps-fold\s*\{[\s\S]*?margin-top:/u,
   );
+  assert.match(timeline, /<linearGradient/u);
+  assert.match(timeline, /overheat-cooling-pattern/u);
+  assert.match(timeline, /过热冷却/u);
   await assert.rejects(
     access(new URL("../../app/weapon-dps/page.tsx", import.meta.url)),
     { code: "ENOENT" },
