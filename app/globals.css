@@ -6896,11 +6896,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   right: 12px;
   bottom: 12px;
   box-sizing: border-box;
+  display: flex;
   width: min(410px, calc(100% - 36px));
   max-height: min(calc(100% - 24px), 520px);
+  flex-direction: column;
   overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow-y: hidden;
   padding: 9px 10px;
   border: 1px solid rgba(225, 200, 155, 0.32);
   background: rgba(11, 14, 12, 0.95);
@@ -6912,74 +6913,96 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   animation: viewer-shot-result-enter 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.viewer-hit-dps-dock {
-  position: absolute;
-  z-index: 11;
-  bottom: 12px;
-  left: 50%;
-  width: min(680px, calc(100% - 740px));
-  min-width: 420px;
-  pointer-events: auto;
-  transform: translateX(-50%);
+.viewer-shot-result__scroll {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--border-strong) var(--bg-1);
+  scrollbar-gutter: stable;
 }
 
-.viewer-hit-dps-dock:has(.viewer-hit-dps-timing[data-mode="time-only"]) {
-  width: min(430px, calc(100% - 740px));
+.viewer-hit-dps-fold {
+  min-height: 0;
+  flex: none;
+  margin-top: 8px;
+  border: 1px solid color-mix(in srgb, var(--analysis-flow) 38%, transparent);
+  background: rgba(8, 12, 10, 0.96);
 }
 
-.viewer-hit-dps-dock .viewer-hit-dps-timing {
-  margin: 0;
-  border-color: color-mix(in srgb, var(--analysis-flow) 46%, transparent);
-  background: rgba(8, 12, 10, 0.95);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.52);
-  backdrop-filter: blur(14px);
-}
-
-.viewer-hit-dps-timing[data-mode="time-only"] {
-  display: flex;
-  min-height: 58px;
+.viewer-hit-dps-fold > summary {
+  display: grid;
+  min-height: 42px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 14px;
+  padding: 7px 9px;
+  color: var(--text-muted);
+  cursor: pointer;
+  list-style: none;
 }
 
-.viewer-hit-dps-timing[data-mode="time-only"] > span {
+.viewer-hit-dps-fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.viewer-hit-dps-fold > summary > span {
   overflow: hidden;
-  color: var(--text-muted);
-  font-size: 10px;
+  font-size: 9px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.viewer-hit-dps-timing[data-mode="time-only"] > strong {
+.viewer-hit-dps-fold > summary > strong {
   color: var(--analysis-flow-strong);
   font-family: var(--font-mono-ui);
-  font-size: 18px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
-@media (max-width: 1100px) {
-  .viewer-hit-dps-dock,
-  .viewer-hit-dps-dock:has(.viewer-hit-dps-timing[data-mode="time-only"]) {
-    right: 12px;
-    left: 12px;
-    width: auto;
-    min-width: 0;
-    transform: none;
-  }
+.viewer-hit-dps-fold > summary > small {
+  color: var(--text-dim);
+  font-size: 7px;
+  white-space: nowrap;
+}
 
-  .viewer-stage:has(.viewer-hit-dps-dock .viewer-hit-dps-timing[data-mode="thermal"])
-    .viewer-shot-result {
-    bottom: 270px;
-    max-height: calc(100% - 282px);
-  }
+.viewer-hit-dps-fold > summary > small::after {
+  display: inline-block;
+  margin-left: 4px;
+  color: var(--analysis-flow-strong);
+  content: "⌄";
+  transition: transform 150ms ease;
+}
 
-  .viewer-stage:has(.viewer-hit-dps-dock .viewer-hit-dps-timing[data-mode="time-only"])
-    .viewer-shot-result {
-    bottom: 82px;
-    max-height: calc(100% - 94px);
-  }
+.viewer-hit-dps-fold[open] > summary > small::after {
+  transform: rotate(180deg);
+}
+
+.viewer-hit-dps-fold__body {
+  max-height: min(350px, 48vh);
+  overflow: auto;
+  border-top: 1px solid rgba(120, 185, 190, 0.18);
+  scrollbar-color: var(--border-strong) var(--bg-1);
+}
+
+.viewer-hit-dps-fold__body > .viewer-hit-dps-timing {
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
+.viewer-hit-dps-fold .rhythm-timeline__chart {
+  min-width: 360px;
+}
+
+.viewer-hit-dps-timing__reason {
+  margin: 0;
+  padding: 8px 10px;
+  color: var(--text-muted);
+  font-family: var(--font-readable-display);
+  font-size: 9px;
+  line-height: 1.65;
 }
 
 @keyframes viewer-shot-result-enter {
@@ -15640,9 +15663,50 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   pointer-events: none;
 }
 
-.rhythm-timeline__heat-safe { fill: rgba(83, 151, 112, .09); }
-.rhythm-timeline__heat-warning { fill: rgba(216, 168, 73, .12); }
-.rhythm-timeline__heat-danger { fill: rgba(217, 94, 79, .13); }
+.rhythm-timeline__heat-gradient {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1;
+}
+
+.rhythm-timeline__overheat-cooling-band {
+  stroke: rgba(255, 109, 92, 0.8);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.rhythm-timeline__overheat-cooling-cap {
+  fill: #ff5b4d;
+  filter: drop-shadow(0 0 4px rgba(255, 91, 77, 0.82));
+}
+
+.rhythm-timeline__overheat-cooling-marker {
+  fill: #ff5b4d;
+  stroke: rgba(255, 228, 218, 0.86);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.rhythm-timeline__overheat-cooling-label {
+  fill: #fff2e9;
+  font-family: var(--font-readable-display);
+  font-size: 10px;
+  font-weight: 800;
+  paint-order: stroke;
+  stroke: rgba(77, 8, 10, 0.92);
+  stroke-width: 3px;
+}
+
+.rhythm-timeline__overheat-cooling-key rect {
+  stroke: #ff8a78;
+  stroke-width: 1;
+}
+
+.rhythm-timeline__overheat-cooling-key text {
+  fill: #ffb09f;
+  font-family: var(--font-readable-display);
+  font-size: 10px;
+  font-weight: 700;
+}
 
 .rhythm-timeline__heat-trigger {
   stroke: var(--analysis-damage-strong);

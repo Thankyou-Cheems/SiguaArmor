@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
 import type {
+  WeaponDpsEvent,
   WeaponDpsSimulation,
   WeaponDpsTimelineSample,
   WeaponDpsTimelineState,
@@ -20,6 +21,36 @@ interface StateSegment {
   state: WeaponDpsTimelineState;
   startSeconds: number;
   endSeconds: number;
+}
+
+interface OverheatCoolingSegment {
+  startSeconds: number;
+  endSeconds: number;
+}
+
+function overheatCoolingSegments(
+  events: readonly WeaponDpsEvent[],
+  durationSeconds: number,
+) {
+  const segments: OverheatCoolingSegment[] = [];
+  let startSeconds: number | null = null;
+  for (const event of [...events].sort((left, right) => left.timeSeconds - right.timeSeconds)) {
+    if (event.kind === "overheat" && startSeconds === null) {
+      startSeconds = event.timeSeconds;
+      continue;
+    }
+    if (event.kind === "unlock" && startSeconds !== null) {
+      segments.push({
+        startSeconds,
+        endSeconds: Math.min(durationSeconds, event.timeSeconds),
+      });
+      startSeconds = null;
+    }
+  }
+  if (startSeconds !== null && durationSeconds > startSeconds) {
+    segments.push({ startSeconds, endSeconds: durationSeconds });
+  }
+  return segments.filter(({ startSeconds, endSeconds }) => endSeconds > startSeconds);
 }
 
 function stateSegments(
@@ -67,6 +98,9 @@ export function WeaponRhythmTimeline({
   targetHealth?: number | null;
   compact?: boolean;
 }) {
+  const id = useId().replaceAll(":", "");
+  const heatGradientId = `heat-gradient-${id}`;
+  const overheatCoolingPatternId = `overheat-cooling-pattern-${id}`;
   const [hoveredShot, setHoveredShot] = useState<number | null>(null);
   const points = simulation.heatCurve;
   const durationSeconds = Math.max(
@@ -126,6 +160,10 @@ export function WeaponRhythmTimeline({
     () => stateSegments(simulation.timeline, durationSeconds),
     [durationSeconds, simulation.timeline],
   );
+  const coolingSegments = useMemo(
+    () => overheatCoolingSegments(simulation.events, durationSeconds),
+    [durationSeconds, simulation.events],
+  );
   const ticks = Array.from(
     { length: Math.floor(durationSeconds / tickStep(durationSeconds)) + 1 },
     (_, index) => index * tickStep(durationSeconds),
@@ -151,6 +189,18 @@ export function WeaponRhythmTimeline({
         aria-label={`武器节奏时间轴，横轴 ${durationSeconds.toFixed(1)} 秒，共 ${points.length} 发`}
         onMouseLeave={() => setHoveredShot(null)}
       >
+        <defs>
+          <linearGradient id={heatGradientId} x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="#2f9d68" stopOpacity="0.42" />
+            <stop offset="48%" stopColor="#c3a53f" stopOpacity="0.36" />
+            <stop offset="72%" stopColor="#df7a42" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#e34848" stopOpacity="0.52" />
+          </linearGradient>
+          <pattern id={overheatCoolingPatternId} width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+            <rect width="10" height="10" fill="rgba(112, 18, 20, 0.22)" />
+            <rect width="4" height="10" fill="rgba(255, 91, 77, 0.5)" />
+          </pattern>
+        </defs>
         <text x="8" y={stateTop + 17} className="rhythm-timeline__lane-label">状态</text>
         <text x="8" y={heatTop + 15} className="rhythm-timeline__lane-label">热量</text>
         <text x="8" y={damageTop + 15} className="rhythm-timeline__lane-label">伤害</text>
@@ -176,19 +226,57 @@ export function WeaponRhythmTimeline({
           );
         })}
 
-        <rect x={left} y={heatTop} width={innerWidth} height={heatHeight} className="rhythm-timeline__heat-safe" />
-        {range?.warningAt !== null && range?.warningAt !== undefined ? (
-          <rect x={left} y={heatTop} width={innerWidth} height={Math.max(0, heatYFor(range.warningAt) - heatTop)} className="rhythm-timeline__heat-warning" />
-        ) : null}
-        {range?.dangerAt !== null && range?.dangerAt !== undefined ? (
-          <rect x={left} y={heatTop} width={innerWidth} height={Math.max(0, heatYFor(range.dangerAt) - heatTop)} className="rhythm-timeline__heat-danger" />
-        ) : null}
+        <rect
+          x={left}
+          y={heatTop}
+          width={innerWidth}
+          height={heatHeight}
+          fill={`url(#${heatGradientId})`}
+          className="rhythm-timeline__heat-gradient"
+        />
         {range?.triggerAt !== null && range?.triggerAt !== undefined ? (
           <>
             <line x1={left} x2={width - right} y1={heatYFor(range.triggerAt)} y2={heatYFor(range.triggerAt)} className="rhythm-timeline__heat-trigger" />
             <text x={width - right - 4} y={heatYFor(range.triggerAt) - 5} textAnchor="end" className="rhythm-timeline__threshold-label">过热锁定 {range.triggerAt}</text>
           </>
         ) : null}
+        {coolingSegments.length > 0 ? (
+          <g className="rhythm-timeline__overheat-cooling-key">
+            <rect
+              x={left + 4}
+              y={heatTop - 13}
+              width="16"
+              height="7"
+              fill={`url(#${overheatCoolingPatternId})`}
+            />
+            <text x={left + 25} y={heatTop - 6}>红色斜纹 = 过热冷却段</text>
+          </g>
+        ) : null}
+        {coolingSegments.map((segment, index) => {
+          const x = xFor(segment.startSeconds);
+          const segmentWidth = Math.max(4, xFor(segment.endSeconds) - x);
+          return (
+            <g key={`overheat-cooling-${index}`} className="rhythm-timeline__overheat-cooling">
+              <rect
+                x={x}
+                y={heatTop}
+                width={segmentWidth}
+                height={heatHeight}
+                fill={`url(#${overheatCoolingPatternId})`}
+                className="rhythm-timeline__overheat-cooling-band"
+              >
+                <title>{`过热冷却 ${segment.startSeconds.toFixed(2)}–${segment.endSeconds.toFixed(2)} 秒`}</title>
+              </rect>
+              <rect x={x} y={heatTop} width={segmentWidth} height="5" className="rhythm-timeline__overheat-cooling-cap" />
+              <path d={`M${x} ${heatTop - 7} l7 7 h-14 Z`} className="rhythm-timeline__overheat-cooling-marker" />
+              {segmentWidth > 72 ? (
+                <text x={x + segmentWidth / 2} y={heatTop + 15} textAnchor="middle" className="rhythm-timeline__overheat-cooling-label">
+                  过热冷却
+                </text>
+              ) : null}
+            </g>
+          );
+        })}
         {heatAreaPath ? <path d={heatAreaPath} className="rhythm-timeline__heat-area" /> : null}
         {heatPath ? <path d={heatPath} className="rhythm-timeline__heat-line" /> : null}
 

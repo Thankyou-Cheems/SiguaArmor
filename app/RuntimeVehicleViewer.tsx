@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleAlert } from "lucide-react";
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -134,7 +134,10 @@ import {
   resolveWeaponDpsWeaponForRuntimeAssignment,
   weaponDpsWeaponsFromWikiDocument,
 } from "../lib/weapon-dps-source";
-import type { WeaponDpsWeapon } from "../lib/weapon-dps-model";
+import type {
+  WeaponDpsSimulation,
+  WeaponDpsWeapon,
+} from "../lib/weapon-dps-model";
 import type {
   RuntimeVehiclePreview,
   RuntimeVisualPlacement,
@@ -2223,15 +2226,78 @@ function DamageSettlementListItems({
   });
 }
 
+function HitDpsFold({
+  targetLabel,
+  resultLabel,
+  state,
+  children,
+}: {
+  targetLabel: string;
+  resultLabel: string;
+  state: "loading" | "ready" | "unavailable";
+  children: ReactNode;
+}) {
+  return (
+    <details className="viewer-hit-dps-fold" data-state={state}>
+      <summary>
+        <span>{targetLabel}</span>
+        <strong>{resultLabel}</strong>
+        <small>计算依据</small>
+      </summary>
+      <div className="viewer-hit-dps-fold__body">{children}</div>
+    </details>
+  );
+}
+
+function hitDpsTimingReason(
+  target: WeaponHitDpsTarget,
+  simulation: WeaponDpsSimulation,
+  weapon: WeaponDpsWeapon | null,
+) {
+  const firstRemaining = Math.max(0, target.maxHealth - target.damagePerShot);
+  if (simulation.shots === 1 && simulation.killTimeSeconds === 0) {
+    return `本次单发有效伤害 ${metricText(target.damagePerShot)} ≥ 目标 ${metricText(target.maxHealth)} 血量，无需等待下一发。`;
+  }
+  const parts = [
+    `首发有效伤害 ${metricText(target.damagePerShot)}，目标剩余 ${metricText(firstRemaining)} 血量，需要第 ${simulation.shots} 发完成摧毁`,
+  ];
+  const interval = weapon?.timeBetweenShotsSeconds ?? null;
+  const reload = weapon
+    ? weapon.tacticalReloadSeconds ?? weapon.dryReloadSeconds
+    : null;
+  if (
+    simulation.reloads > 0 &&
+    interval !== null && interval > 0 &&
+    reload !== null && reload > 0
+  ) {
+    parts.push(
+      `装填 ${reload.toFixed(2)} s 与再发间隔 ${interval.toFixed(2)} s 同时计时，单轮等待取较长的 ${Math.max(reload, interval).toFixed(2)} s`,
+    );
+  } else if (simulation.reloads > 0 && reload !== null && reload > 0) {
+    parts.push(`共装填 ${simulation.reloads} 次，每次 ${reload.toFixed(2)} s`);
+  } else if (interval !== null && interval > 0) {
+    parts.push(`再发间隔 ${interval.toFixed(2)} s`);
+  }
+  if (simulation.overheatCount > 0) {
+    parts.push(`期间触发 ${simulation.overheatCount} 次过热锁定`);
+  }
+  if (simulation.killTimeSeconds !== null) {
+    parts.push(`因此总计 ${simulation.killTimeSeconds.toFixed(2)} s`);
+  }
+  return `${parts.join("；")}。`;
+}
+
 function HitDpsTimingCard({
   estimates,
   targets,
+  weapon,
   factsState,
   clickedTargetLabel,
   clickedSemanticKind,
 }: {
   estimates: readonly WeaponHitDpsEstimate[];
   targets: readonly WeaponHitDpsTarget[];
+  weapon: WeaponDpsWeapon | null;
   factsState: "idle" | "loading" | "ready" | "unavailable";
   clickedTargetLabel: string | null;
   clickedSemanticKind: string | null;
@@ -2246,30 +2312,29 @@ function HitDpsTimingCard({
       ? "单发摧毁"
       : `单发打坏${poolLabel}`;
     return (
-      <section
-        className="viewer-hit-dps-timing"
-        data-state="ready"
-        data-mode="time-only"
-        aria-label="当前点击位置的摧毁时间"
+      <HitDpsFold
+        targetLabel={clickedTargetLabel ?? poolLabel}
+        resultLabel={resultLabel}
+        state="ready"
       >
-        <span>{clickedTargetLabel ?? poolLabel}</span>
-        <strong>{resultLabel}</strong>
-      </section>
+        <p className="viewer-hit-dps-timing__reason">
+          本次单发有效伤害 {metricText(directOneShotTarget.damagePerShot)} ≥ 目标 {metricText(directOneShotTarget.maxHealth)} 血量，无需等待下一发。
+        </p>
+      </HitDpsFold>
     );
   }
   if (factsState === "loading") {
     return (
-      <section className="viewer-hit-dps-timing" data-state="loading" aria-live="polite">
-        <strong>正在载入当前武器的射速 / 换弹 / 过热事实…</strong>
-      </section>
+      <HitDpsFold targetLabel={clickedTargetLabel ?? "当前点击位置"} resultLabel="计算中" state="loading">
+        <p className="viewer-hit-dps-timing__reason">正在载入当前武器的射速、换弹与过热事实…</p>
+      </HitDpsFold>
     );
   }
   if (factsState === "unavailable") {
     return (
-      <section className="viewer-hit-dps-timing" data-state="unavailable" aria-live="polite">
-        <strong>当前武器的节奏数据暂不可闭合</strong>
-        <span>Wiki 没有返回唯一的精确 assignment，已保留单发伤害结算，不猜测击毁时间。</span>
-      </section>
+      <HitDpsFold targetLabel={clickedTargetLabel ?? "当前点击位置"} resultLabel="数据不可用" state="unavailable">
+        <p className="viewer-hit-dps-timing__reason">Wiki 没有返回唯一的精确 assignment，已保留单发伤害结算，不猜测击毁时间。</p>
+      </HitDpsFold>
     );
   }
   if (estimates.length === 0) return null;
@@ -2304,40 +2369,39 @@ function HitDpsTimingCard({
   const secondaryEstimates = estimates.filter(({ key }) => key !== primaryEstimate.key);
   if (primarySimulation.unavailableReason) {
     return (
-      <section className="viewer-hit-dps-timing" data-state="unavailable" aria-live="polite">
-        <strong>当前武器的摧毁时间暂不可闭合</strong>
-        <span>{primarySimulation.unavailableReason}</span>
-      </section>
+      <HitDpsFold targetLabel={clickedTargetLabel ?? primaryPoolLabel} resultLabel="数据不可用" state="unavailable">
+        <p className="viewer-hit-dps-timing__reason">{primarySimulation.unavailableReason}</p>
+      </HitDpsFold>
     );
   }
   if (primarySimulation.thermalState === "unavailable") {
     return (
-      <section
-        className="viewer-hit-dps-timing"
-        data-state="ready"
-        data-mode="time-only"
-        aria-label="当前点击位置的摧毁时间"
+      <HitDpsFold
+        targetLabel={clickedTargetLabel ?? primaryPoolLabel}
+        resultLabel={`${primaryTimeLabel} ${primaryOutcomeLabel}`}
+        state="ready"
       >
-        <span>{clickedTargetLabel ?? primaryPoolLabel}</span>
-        <strong>{primaryTimeLabel} {primaryOutcomeLabel}</strong>
-      </section>
+        <p className="viewer-hit-dps-timing__reason">
+          {hitDpsTimingReason(primaryEstimate, primarySimulation, weapon)}
+        </p>
+      </HitDpsFold>
     );
   }
   return (
-    <section
-      className="viewer-hit-dps-timing"
-      data-state="ready"
-      data-mode="thermal"
-      aria-label="当前点击位置的自动击毁时间"
+    <HitDpsFold
+      targetLabel={clickedTargetLabel ?? primaryPoolLabel}
+      resultLabel={`${primaryTimeLabel} ${primaryOutcomeLabel}`}
+      state="ready"
     >
-      <header>
+      <section className="viewer-hit-dps-timing" data-state="ready" aria-label="当前点击位置的自动击毁时间">
+        <header>
         <div>
           <span>命中后自动估算</span>
           <strong>{clickedTargetLabel ?? primaryPoolLabel}</strong>
         </div>
         <small>重复命中同一点</small>
-      </header>
-      <div className="viewer-hit-dps-timing__primary">
+        </header>
+        <div className="viewer-hit-dps-timing__primary">
         <span>
           <small>{primaryOutcomeLabel}</small>
           <strong>{primaryTimeLabel}</strong>
@@ -2348,15 +2412,18 @@ function HitDpsTimingCard({
           <div><dt>目标</dt><dd>{metricText(primaryEstimate.maxHealth)} 血量</dd></div>
           <div><dt>过热</dt><dd>{primarySimulation.overheatCount} 次</dd></div>
         </dl>
-      </div>
-      <p className="viewer-hit-dps-timing__rhythm">
+        </div>
+        <p className="viewer-hit-dps-timing__rhythm">
         <b>实战节奏</b>
         <span>{primaryPlanLabel}</span>
         {marginalMathGain === null ? null : (
           <small>数学最优只快 {marginalMathGain.toFixed(2)} s，不值得精确卡点</small>
         )}
-      </p>
-      {secondaryEstimates.length === 0 ? null : (
+        </p>
+        <p className="viewer-hit-dps-timing__reason">
+          {hitDpsTimingReason(primaryEstimate, primarySimulation, weapon)}
+        </p>
+        {secondaryEstimates.length === 0 ? null : (
         <ul className="viewer-hit-dps-timing__secondary" aria-label="同次命中的其他目标">
           {secondaryEstimates.map((estimate) => {
             const candidate = estimate.optimization.recommended ?? estimate.optimization.burn;
@@ -2369,13 +2436,14 @@ function HitDpsTimingCard({
             );
           })}
         </ul>
-      )}
-      <WeaponRhythmTimeline
-        simulation={primarySimulation}
-        targetHealth={primaryEstimate.maxHealth}
-        compact
-      />
-    </section>
+        )}
+        <WeaponRhythmTimeline
+          simulation={primarySimulation}
+          targetHealth={primaryEstimate.maxHealth}
+          compact
+        />
+      </section>
+    </HitDpsFold>
   );
 }
 
@@ -8487,7 +8555,8 @@ export function RuntimeVehicleViewer({
 
       {shotResult ? (
         <div className="viewer-shot-result" aria-live="polite">
-          <div className="viewer-shot-history" aria-label="已保存的射线">
+          <div className="viewer-shot-result__scroll">
+            <div className="viewer-shot-history" aria-label="已保存的射线">
             <div
               className="viewer-mode-tabs viewer-shot-history__tabs"
               role="group"
@@ -8767,17 +8836,17 @@ export function RuntimeVehicleViewer({
             ) : null}
           </ol>
           {shotResult.layers.length > 8 ? <span className="viewer-more-layers">另有 {shotResult.layers.length - 8} 层</span> : null}
-        </div>
-      ) : null}
-      {shotResult && effectiveDamageEvents.length > 0 ? (
-        <div className="viewer-hit-dps-dock">
+          </div>
+          {effectiveDamageEvents.length > 0 ? (
           <HitDpsTimingCard
             estimates={weaponHitDpsEstimates}
             targets={weaponHitDpsTargets}
+            weapon={weaponDpsFacts}
             factsState={weaponDpsFactsState}
             clickedTargetLabel={clickedTargetLabel}
             clickedSemanticKind={clickedComponent?.semanticKind ?? null}
           />
+          ) : null}
         </div>
       ) : null}
     </div>
