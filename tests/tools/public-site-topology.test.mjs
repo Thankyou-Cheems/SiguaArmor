@@ -354,6 +354,8 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(caddy, /rewrite \* \/navigator\/index\.html/u);
   assert.match(caddy, /handle @armorRoot \{/u);
   assert.doesNotMatch(caddy, /redir @armorRoot/u);
+  assert.match(caddy, /@legacyWeaponDps path \/weapon-dps/u);
+  assert.match(caddy, /redir @legacyWeaponDps \/squad\/weapon-dps\?\{orig_query\} 308/u);
   assert.match(caddy, /@selectorAssets path \/portal-assets\/tactical-squad-wordmark/u);
   assert.match(caddy, /header !RSC/u);
   assert.equal(

@@ -108,7 +108,19 @@ test("Wiki infantry configurations remain selectable as separate assignments", (
 
 test("selector links preserve exact DPS query coordinates", async () => {
   const viewer = await readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8");
-  assert.match(viewer, /\/weapon-dps\?cardId=\$\{encodeURIComponent\(dpsWeapon\.sourceCardId\)\}/u);
+  assert.match(
+    viewer,
+    /\$\{siteEditionBasePath\(siteEdition\)\}\/weapon-dps\?cardId=\$\{encodeURIComponent\(dpsWeapon\.sourceCardId\)\}/u,
+  );
   assert.match(viewer, /rawName=\$\{encodeURIComponent\(dpsWeapon\.sourceRawName\)\}/u);
   assert.match(viewer, /weaponAssignmentId=\$\{encodeURIComponent\(dpsWeapon\.weaponAssignmentId\)\}/u);
+});
+
+test("both Armor editions expose the shared DPS workbench", async () => {
+  const [internationalPage, chinaPage] = await Promise.all([
+    readFile(new URL("../../app/weapon-dps/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../../app/china/weapon-dps/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(internationalPage, /<WeaponDpsWorkbench siteEdition="international" \/>/u);
+  assert.match(chinaPage, /<WeaponDpsWorkbench siteEdition="china" \/>/u);
 });

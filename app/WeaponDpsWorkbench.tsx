@@ -14,6 +14,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 import { loadWikiWeaponCatalog } from "../lib/wiki-source";
+import { armorPath } from "../lib/public-site-topology.mjs";
 import {
   optimizeWeaponRhythm,
   type WeaponDpsSimulation,
@@ -22,6 +23,7 @@ import {
 } from "../lib/weapon-dps-model";
 import { weaponDpsWeaponsFromWikiDocument } from "../lib/weapon-dps-source";
 import { WeaponRhythmTimeline } from "./WeaponRhythmTimeline";
+import type { SiteEdition } from "./site-edition";
 
 function formatNumber(value: number | null, digits = 1) {
   if (value === null || !Number.isFinite(value)) return "—";
@@ -69,7 +71,11 @@ function ResultBadge({ simulation }: { simulation: WeaponDpsSimulation }) {
   );
 }
 
-export function WeaponDpsWorkbench() {
+export function WeaponDpsWorkbench({
+  siteEdition = "international",
+}: {
+  siteEdition?: SiteEdition;
+}) {
   const [weapons, setWeapons] = useState<WeaponDpsWeapon[]>([]);
   const [sourceRevision, setSourceRevision] = useState<string | null>(null);
   const [overheatProfileCount, setOverheatProfileCount] = useState(0);
@@ -156,7 +162,7 @@ export function WeaponDpsWorkbench() {
     <main className="weapon-dps-page">
       <header className="weapon-dps-hero">
         <div className="weapon-dps-hero__topline">
-          <a className="weapon-dps-back" href="/" aria-label="返回 Armor 首页">
+          <a className="weapon-dps-back" href={armorPath(siteEdition)} aria-label="返回 Armor 首页">
             <ArrowLeft size={16} aria-hidden="true" /> 返回 Armor
           </a>
           <span className="weapon-dps-kicker"><Gauge size={14} aria-hidden="true" /> Weapon rhythm lab</span>
