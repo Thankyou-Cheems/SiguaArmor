@@ -122,7 +122,9 @@ function truncateSimulation(
     burnDamage,
     averageDps: cutoff > EPSILON ? totalDamage / cutoff : 0,
     shots: shotEvents.length,
-    reloads: events.filter(({ kind }) => kind === "reload").length,
+    reloads: events.filter(
+      ({ kind, completed }) => kind === "reload" && completed !== false,
+    ).length,
     overheatCount: overheatEvents.length,
     firstOverheatSeconds: overheatEvents[0]?.timeSeconds ?? null,
     killTimeSeconds,

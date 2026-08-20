@@ -223,6 +223,7 @@ test("a low-health vehicle burns out before the next shot when burning facts are
       useMagazineReload: false,
       targetBurning: {
         state: "observed",
+        vehicleState: "normal",
         startHealthFraction: 0.5,
         healthFractionPerSecond: 0.1,
         damageModifier: 1,
@@ -238,4 +239,86 @@ test("a low-health vehicle burns out before the next shot when burning facts are
     result.events.filter(({ kind }) => kind === "burn").map(({ timeSeconds }) => timeSeconds),
     [1, 2, 3, 4],
   );
+});
+
+test("burning during a reload keeps the damage vacuum visible without counting a completed reload", () => {
+  const result = simulateWeaponRhythm(
+    {
+      ...cannon,
+      damagePerShot: 60,
+      timeBetweenShotsSeconds: 10,
+      magazineSize: 1,
+      tacticalReloadSeconds: 10,
+      dryReloadSeconds: 10,
+      overheat: null,
+    },
+    {
+      targetHealth: 100,
+      horizonSeconds: 20,
+      mode: "burn",
+      burstSize: 1,
+      pauseSeconds: 0,
+      useMagazineReload: true,
+      targetBurning: {
+        state: "observed",
+        vehicleState: "normal",
+        startHealthFraction: 0.5,
+        healthFractionPerSecond: 0.1,
+        damageModifier: 1,
+        tickIntervalSeconds: 1,
+        startDelaySeconds: 1,
+      },
+    },
+  );
+
+  assert.equal(result.killTimeSeconds, 4);
+  assert.equal(result.reloads, 0);
+  assert.deepEqual(
+    result.events
+      .filter(({ kind }) => kind === "reload")
+      .map(({ startTimeSeconds, timeSeconds, completed }) => ({
+        startTimeSeconds,
+        timeSeconds,
+        completed,
+      })),
+    [{ startTimeSeconds: 0, timeSeconds: 4, completed: false }],
+  );
+  assert.equal(result.timeline.filter(({ state }) => state === "reloading").length, 4);
+});
+
+test("the active damage timer keeps its phase when a later shot crosses the burn threshold", () => {
+  const result = simulateWeaponRhythm(
+    {
+      ...cannon,
+      damagePerShot: 30,
+      timeBetweenShotsSeconds: 0.6,
+      magazineSize: 2,
+      tacticalReloadSeconds: 10,
+      dryReloadSeconds: 10,
+      overheat: null,
+    },
+    {
+      targetHealth: 100,
+      horizonSeconds: 10,
+      mode: "burn",
+      burstSize: 2,
+      pauseSeconds: 0,
+      useMagazineReload: true,
+      targetBurning: {
+        state: "observed",
+        vehicleState: "normal",
+        startHealthFraction: 0.5,
+        healthFractionPerSecond: 0.1,
+        damageModifier: 1,
+        tickIntervalSeconds: 1,
+        startDelaySeconds: 1,
+      },
+    },
+  );
+
+  assert.deepEqual(
+    result.events.filter(({ kind }) => kind === "burn").map(({ timeSeconds }) => timeSeconds),
+    [1, 2, 3, 4],
+  );
+  assert.equal(result.killTimeSeconds, 4);
 });

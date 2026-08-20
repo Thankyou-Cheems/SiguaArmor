@@ -2295,7 +2295,7 @@ function hitDpsTimingFacts(
     facts.push({ label: "过热", value: `${simulation.overheatCount} 次` });
   }
   if (simulation.burnDamage > 0) {
-    facts.push({ label: "自燃", value: metricText(simulation.burnDamage) });
+    facts.push({ label: "正常自燃", value: metricText(simulation.burnDamage) });
   }
   if (simulation.killTimeSeconds !== null) {
     facts.push({ label: "总计", value: `${simulation.killTimeSeconds.toFixed(2)} s` });
@@ -2335,12 +2335,14 @@ function HitDpsTimingCard({
   targets,
   weapon,
   factsState,
+  factsUnavailableReason,
   clickedSemanticKind,
 }: {
   estimates: readonly WeaponHitDpsEstimate[];
   targets: readonly WeaponHitDpsTarget[];
   weapon: WeaponDpsWeapon | null;
   factsState: "idle" | "loading" | "ready" | "unavailable";
+  factsUnavailableReason?: string | null;
   clickedSemanticKind: string | null;
 }) {
   const directOneShotTarget = singleShotWeaponHitTarget(
@@ -2375,7 +2377,9 @@ function HitDpsTimingCard({
   if (factsState === "unavailable") {
     return (
       <HitDpsFold resultLabel="数据不可用" state="unavailable">
-        <p className="viewer-hit-dps-timing__reason">Wiki 没有返回唯一的精确 assignment，已保留单发伤害结算，不猜测击毁时间。</p>
+        <p className="viewer-hit-dps-timing__reason">
+          {factsUnavailableReason ?? "Wiki 没有返回唯一的精确 assignment，已保留单发伤害结算，不猜测击毁时间。"}
+        </p>
       </HitDpsFold>
     );
   }
@@ -2485,7 +2489,7 @@ function HitDpsTimingCard({
           <div><dt>目标</dt><dd>{metricText(primaryEstimate.maxHealth)} 血量</dd></div>
           <div><dt>过热</dt><dd>{primarySimulation.overheatCount} 次</dd></div>
           {primarySimulation.burnDamage > 0 ? (
-            <div><dt>自燃</dt><dd>{metricText(primarySimulation.burnDamage)}</dd></div>
+            <div><dt>正常自燃</dt><dd>{metricText(primarySimulation.burnDamage)}</dd></div>
           ) : null}
         </dl>
         </div>
@@ -7866,8 +7870,15 @@ export function RuntimeVehicleViewer({
     () => vehicleTargetBurningProfile(referenceData),
     [referenceData],
   );
+  const targetBurningProfile = targetBurning.state === "ready"
+    ? targetBurning.profile
+    : null;
+  const hitDpsFactsState =
+    weaponDpsFactsState === "ready" && targetBurning.state === "unavailable"
+      ? "unavailable"
+      : weaponDpsFactsState;
   const weaponHitDpsEstimates = useMemo(
-    () => weaponDpsFacts && shotResult
+    () => weaponDpsFacts && shotResult && targetBurning.state === "ready"
       ? estimateWeaponHitDps(
           weaponDpsFacts,
           shotResult,
@@ -7875,21 +7886,22 @@ export function RuntimeVehicleViewer({
             targetHealth: 1,
             horizonSeconds: 120,
             useMagazineReload: true,
-            targetBurning,
+            targetBurning: targetBurning.profile,
           },
         )
       : [],
     [shotResult, targetBurning, weaponDpsFacts],
   );
   const weaponHitDpsTargets = useMemo(
-    () => shotResult ? targetPoolsForShot(shotResult, targetBurning) : [],
-    [shotResult, targetBurning],
+    () => shotResult ? targetPoolsForShot(shotResult, targetBurningProfile) : [],
+    [shotResult, targetBurningProfile],
   );
   useEffect(() => {
     if (
       !selectedAttackWeapon ||
       !weaponDpsFacts ||
       weaponDpsFactsState !== "ready" ||
+      targetBurning.state !== "ready" ||
       weaponHitDpsTargets.length === 0
     ) {
       onDuelHitChangeRef.current?.(null);
@@ -7909,6 +7921,7 @@ export function RuntimeVehicleViewer({
     weaponDpsFacts,
     weaponDpsFactsState,
     weaponHitDpsTargets,
+    targetBurning.state,
   ]);
 
   if (!visual) return null;
@@ -9010,7 +9023,8 @@ export function RuntimeVehicleViewer({
             estimates={weaponHitDpsEstimates}
             targets={weaponHitDpsTargets}
             weapon={weaponDpsFacts}
-            factsState={weaponDpsFactsState}
+            factsState={hitDpsFactsState}
+            factsUnavailableReason={targetBurning.state === "unavailable" ? targetBurning.reason : null}
             clickedSemanticKind={clickedComponent?.semanticKind ?? null}
           />
           ) : null}

@@ -114,6 +114,7 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         id: "burning-test",
         value: {
           state: "observed",
+          vehicleState: "normal",
           sourceBuildId: "squad-sdk-test",
           startHealthFraction: 0.1,
           healthFractionPerSecond: 0.0033,

@@ -25,6 +25,7 @@ export interface WeaponHitDpsEstimate extends WeaponHitDpsTarget {
 interface VehicleTargetBurningSource {
   burning: null | {
     state: "observed" | "derived" | "projected" | "unknown";
+    vehicleState: "normal";
     startHealthFraction: number;
     healthFractionPerSecond: number;
     tickIntervalSeconds: number;
@@ -37,28 +38,81 @@ interface VehicleTargetBurningSource {
   }[];
 }
 
+export type VehicleTargetBurningResolution =
+  | {
+      state: "ready";
+      profile: WeaponDpsTargetBurningProfile;
+      reason: null;
+    }
+  | {
+      state: "unavailable";
+      profile: null;
+      reason: string;
+    };
+
 export function vehicleTargetBurningProfile(
   source: VehicleTargetBurningSource | null | undefined,
-): WeaponDpsTargetBurningProfile | null {
+): VehicleTargetBurningResolution {
   const burning = source?.burning;
-  if (!burning || burning.state === "unknown") return null;
+  if (!burning || burning.state === "unknown") {
+    return {
+      state: "unavailable",
+      profile: null,
+      reason: "Wiki 未提供可计算的载具低血量自燃资料",
+    };
+  }
+  if (
+    burning.vehicleState !== "normal" ||
+    !Number.isFinite(burning.startHealthFraction) ||
+    burning.startHealthFraction < 0 ||
+    burning.startHealthFraction > 1 ||
+    !Number.isFinite(burning.healthFractionPerSecond) ||
+    burning.healthFractionPerSecond <= 0 ||
+    !Number.isFinite(burning.tickIntervalSeconds) ||
+    burning.tickIntervalSeconds <= 0 ||
+    !Number.isFinite(burning.startDelaySeconds) ||
+    burning.startDelaySeconds < 0
+  ) {
+    return {
+      state: "unavailable",
+      profile: null,
+      reason: "Wiki 的载具自燃资料不适用于正常交战状态",
+    };
+  }
   const damageProfiles = source.damageResistances.filter(
     ({ damageClass }) => damageClass === burning.damageClass,
   );
-  if (damageProfiles.length !== 1) return null;
+  if (damageProfiles.length !== 1) {
+    return {
+      state: "unavailable",
+      profile: null,
+      reason: "Wiki 未提供唯一的载具燃烧伤害抗性",
+    };
+  }
   const damageModifier = damageProfiles[0].modifier;
   if (
     damageModifier === null ||
     !Number.isFinite(damageModifier) ||
     damageModifier < 0
-  ) return null;
+  ) {
+    return {
+      state: "unavailable",
+      profile: null,
+      reason: "Wiki 的载具燃烧伤害抗性不可计算",
+    };
+  }
   return {
-    state: burning.state,
-    startHealthFraction: burning.startHealthFraction,
-    healthFractionPerSecond: burning.healthFractionPerSecond,
-    damageModifier,
-    tickIntervalSeconds: burning.tickIntervalSeconds,
-    startDelaySeconds: burning.startDelaySeconds,
+    state: "ready",
+    reason: null,
+    profile: {
+      state: burning.state,
+      vehicleState: burning.vehicleState,
+      startHealthFraction: burning.startHealthFraction,
+      healthFractionPerSecond: burning.healthFractionPerSecond,
+      damageModifier,
+      tickIntervalSeconds: burning.tickIntervalSeconds,
+      startDelaySeconds: burning.startDelaySeconds,
+    },
   };
 }
 

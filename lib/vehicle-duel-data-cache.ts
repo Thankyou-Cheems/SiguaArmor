@@ -1,4 +1,5 @@
 import { buildRuntimeAttackSourceShareSlug } from "./runtime-attack-source-share.mjs";
+import { wikiVehicleFactionId } from "./wiki-vehicle-identity.ts";
 import type { PublicCatalogIndex } from "../app/catalog-types.ts";
 import type { ReferenceData } from "../app/catalog-types.ts";
 import type { RuntimeVehiclePreview } from "../app/runtime-probe-preview-data.ts";
@@ -74,7 +75,7 @@ export function vehicleDuelOptionsFromCatalog(
       siteEdition,
       cardId: record.promoEntryId,
       wikiSourceCardId,
-      wikiFactionId: wikiSourceCardId.split("--", 1)[0],
+      wikiFactionId: wikiVehicleFactionId(wikiSourceCardId),
       rawName: variant.sourceRawName,
       displayName,
       factionName: record.official.groupNameZh,

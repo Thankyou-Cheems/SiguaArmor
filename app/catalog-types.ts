@@ -9,6 +9,7 @@ export interface ReferenceDamageResistance {
 
 export interface ReferenceVehicleBurning {
   state: "observed" | "derived" | "projected" | "unknown";
+  vehicleState: "normal";
   sourceBuildId: string;
   startHealthFraction: number;
   healthFractionPerSecond: number;
@@ -119,7 +120,7 @@ export interface ReferenceData {
     hasCommandZone: boolean | null;
     commandZoneRadius: number | null;
   };
-  burning: ReferenceVehicleBurning | null;
+  burning: ReferenceVehicleBurning;
   weaponBindingIds: string[];
   seats: ReferenceSeat[];
   damageResistances: ReferenceDamageResistance[];

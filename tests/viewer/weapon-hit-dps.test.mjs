@@ -13,6 +13,7 @@ test("vehicle burning facts resolve through the exact burning damage resistance"
   const targetBurning = vehicleTargetBurningProfile({
     burning: {
       state: "observed",
+      vehicleState: "normal",
       sourceBuildId: "sdk-test",
       startHealthFraction: 0.1,
       healthFractionPerSecond: 0.0033,
@@ -26,12 +27,17 @@ test("vehicle burning facts resolve through the exact burning damage resistance"
     ],
   });
   assert.deepEqual(targetBurning, {
-    state: "observed",
-    startHealthFraction: 0.1,
-    healthFractionPerSecond: 0.0033,
-    damageModifier: 0.5,
-    tickIntervalSeconds: 1,
-    startDelaySeconds: 1,
+    state: "ready",
+    reason: null,
+    profile: {
+      state: "observed",
+      vehicleState: "normal",
+      startHealthFraction: 0.1,
+      healthFractionPerSecond: 0.0033,
+      damageModifier: 0.5,
+      tickIntervalSeconds: 1,
+      startDelaySeconds: 1,
+    },
   });
 
   const targets = targetPoolsForShot({
@@ -50,9 +56,28 @@ test("vehicle burning facts resolve through the exact burning damage resistance"
       effectiveDamage: 100,
       certainty: "resolved",
     }],
-  }, targetBurning);
-  assert.deepEqual(targets[0].targetBurning, targetBurning);
+  }, targetBurning.profile);
+  assert.deepEqual(targets[0].targetBurning, targetBurning.profile);
   assert.equal(targets[1].targetBurning, undefined);
+});
+
+test("missing burning resistance fails closed instead of becoming an exact direct-only time", () => {
+  const resolution = vehicleTargetBurningProfile({
+    burning: {
+      state: "derived",
+      vehicleState: "normal",
+      sourceBuildId: "sdk-test",
+      startHealthFraction: 0.1,
+      healthFractionPerSecond: 0.0033,
+      tickIntervalSeconds: 1,
+      startDelaySeconds: 1,
+      damageClass: "SQBurningDamage",
+    },
+    damageResistances: [],
+  });
+  assert.equal(resolution.state, "unavailable");
+  assert.equal(resolution.profile, null);
+  assert.match(resolution.reason, /燃烧伤害抗性/u);
 });
 
 test("a clicked hit exposes independent hull and module target pools", () => {

@@ -175,6 +175,10 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
     !Array.isArray(document.profiles?.damageResistances) ||
     !Array.isArray(document.profiles?.components) ||
     !Array.isArray(document.runtime?.visualArtifacts) ||
+    document.identities.vehicles.some(
+      (vehicle) =>
+        typeof (vehicle as { burningProfileRef?: unknown }).burningProfileRef !== "string",
+    ) ||
     document.editorAvailability?.schemaVersion !== "sigua-vehicle-editor-availability/v1" ||
     !Array.isArray(document.editorAvailability?.bindingAvailability)
   ) {

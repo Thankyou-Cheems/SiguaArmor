@@ -225,7 +225,10 @@ export function WeaponRhythmTimeline({
   return (
     <div className="rhythm-timeline" data-compact={compact} data-has-heat={showHeat}>
       <div className="rhythm-timeline__heading">
-        <span>{showHeat ? "累计伤害 / 热量" : "累计伤害"}</span>
+        <span>
+          {showHeat ? "累计伤害 / 热量" : "累计伤害"}
+          {simulation.burnDamage > 0 ? " · 含正常状态自燃" : ""}
+        </span>
       </div>
       <svg
         className="rhythm-timeline__chart"

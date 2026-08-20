@@ -285,7 +285,7 @@ function verdictReason(resolution: VehicleDuelResolution) {
   return loss?.poolKind === "ammo-rack"
     ? `${loser} 方弹药架归零并在同一时刻停止后续输出`
     : loss?.candidate.result.burnDamage
-      ? `${loser} 方进入低血量自燃，车体先归零`
+      ? `${loser} 方在正常交战状态进入低血量自燃，车体先归零`
       : `${loser} 方车体血量先归零`;
 }
 
@@ -328,7 +328,7 @@ function DuelCurve({
         <span>{side} 方实际输出</span>
         <strong>
           {simulation.elapsedSeconds.toFixed(2)} s 截止 · {simulation.shots} 发
-          {simulation.burnDamage > 0 ? ` · 自燃 ${simulation.burnDamage.toFixed(1)}` : ""}
+          {simulation.burnDamage > 0 ? ` · 正常自燃 ${simulation.burnDamage.toFixed(1)}` : ""}
         </strong>
       </header>
       <small>{weapon ? duelWeaponLabel(weapon) : "当前弹种"} → {poolLabel(loss.poolKind)}</small>

@@ -115,6 +115,7 @@ test("nonlethal component pools never replace hull or ammo-rack victory conditio
 test("low-health hull burning participates in the duel race and cuts off return fire", () => {
   const targetBurning = {
     state: "observed",
+    vehicleState: "normal",
     startHealthFraction: 0.5,
     healthFractionPerSecond: 0.1,
     damageModifier: 1,

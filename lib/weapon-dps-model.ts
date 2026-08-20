@@ -46,6 +46,7 @@ export interface WeaponDpsWeapon {
 
 export interface WeaponDpsTargetBurningProfile {
   state: WeaponDpsEvidenceState | "derived";
+  vehicleState: "normal";
   startHealthFraction: number;
   healthFractionPerSecond: number;
   damageModifier: number;
@@ -69,6 +70,7 @@ export interface WeaponDpsEvent {
   kind: "shot" | "burn" | "reload" | "pause" | "overheat" | "unlock";
   timeSeconds: number;
   startTimeSeconds?: number;
+  completed?: boolean;
   temperature: number | null;
   damage: number;
   damageAmount: number;
@@ -183,6 +185,7 @@ function hasUsableTargetBurningModel(
   return Boolean(
     profile &&
       profile.state !== "unknown" &&
+      profile.vehicleState === "normal" &&
       Number.isFinite(profile.startHealthFraction) &&
       profile.startHealthFraction >= 0 &&
       profile.startHealthFraction <= 1 &&
@@ -531,18 +534,23 @@ export function simulateWeaponRhythm(
         (weapon.tacticalReloadSeconds ?? weapon.dryReloadSeconds) ?? 0;
       if (reloadSeconds > EPSILON) {
         const reloadStartSeconds = elapsedSeconds;
-        if (advance(reloadSeconds)) break;
-        if (elapsedSeconds >= horizonSeconds - EPSILON) break;
-        reloads += 1;
+        const reloadEndSeconds = reloadStartSeconds + reloadSeconds;
+        const killedDuringReload = advance(reloadSeconds);
+        const reloadCompleted =
+          !killedDuringReload &&
+          elapsedSeconds + EPSILON >= reloadEndSeconds;
         events.push({
           kind: "reload",
           timeSeconds: elapsedSeconds,
           startTimeSeconds: reloadStartSeconds,
+          completed: reloadCompleted,
           temperature,
           damage: totalDamage,
           damageAmount: 0,
           shotNumber: shots,
         });
+        if (!reloadCompleted) break;
+        reloads += 1;
       }
       magazineShots = 0;
     }
