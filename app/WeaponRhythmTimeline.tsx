@@ -137,6 +137,7 @@ export function WeaponRhythmTimeline({
   const showHeat = Boolean(
     range && points.some((point) => point.temperature !== null),
   );
+  const showState = !compact;
   const durationSeconds = Math.max(
     simulation.elapsedSeconds,
     points.at(-1)?.timeSeconds ?? 0,
@@ -148,14 +149,17 @@ export function WeaponRhythmTimeline({
   const innerWidth = width - left - right;
   const stateTop = compact ? 12 : 18;
   const stateHeight = compact ? 20 : 24;
-  const heatTop = compact ? 52 : 64;
+  const heatTop = showState ? (compact ? 52 : 64) : (compact ? 12 : 18);
   const heatHeight = compact ? 62 : 104;
   const damageTop = showHeat
     ? heatTop + heatHeight + (compact ? 26 : 34)
-    : stateTop + stateHeight + (compact ? 26 : 34);
+    : showState
+      ? stateTop + stateHeight + (compact ? 26 : 34)
+      : compact ? 12 : 18;
   const damageHeight = compact ? 42 : 72;
   const axisY = damageTop + damageHeight + (compact ? 28 : 34);
   const height = axisY + 18;
+  const plotTop = showState ? stateTop : showHeat ? heatTop : damageTop;
   const heatMin = range?.min ?? 0;
   const heatMax = Math.max(range?.max ?? 1, heatMin + 1);
   const damageMax = Math.max(
@@ -244,30 +248,34 @@ export function WeaponRhythmTimeline({
             <rect width="4" height="12" fill="rgba(190, 197, 194, 0.2)" />
           </pattern>
         </defs>
-        <text x="8" y={stateTop + 17} className="rhythm-timeline__lane-label">状态</text>
+        {showState ? <text x="8" y={stateTop + 17} className="rhythm-timeline__lane-label">状态</text> : null}
         {showHeat ? <text x="8" y={heatTop + 15} className="rhythm-timeline__lane-label">热量</text> : null}
         <text x="8" y={damageTop + 15} className="rhythm-timeline__lane-label">伤害</text>
 
         {ticks.map((tick) => (
           <g key={tick}>
-            <line x1={xFor(tick)} x2={xFor(tick)} y1={stateTop} y2={axisY - 8} className="rhythm-timeline__grid" />
+            <line x1={xFor(tick)} x2={xFor(tick)} y1={plotTop} y2={axisY - 8} className="rhythm-timeline__grid" />
             <text x={xFor(tick)} y={axisY} textAnchor={tick === 0 ? "start" : tick === durationSeconds ? "end" : "middle"} className="rhythm-timeline__tick">{tick.toFixed(tick % 1 === 0 ? 0 : 1)}s</text>
           </g>
         ))}
 
-        <rect x={left} y={stateTop} width={innerWidth} height={stateHeight} className="rhythm-timeline__state-base" />
-        {segments.map((segment, index) => {
-          const x = xFor(segment.startSeconds);
-          const segmentWidth = Math.max(1, xFor(segment.endSeconds) - x);
-          return (
-            <g key={`${segment.state}-${index}`}>
-              <rect x={x} y={stateTop} width={segmentWidth} height={stateHeight} className={`rhythm-timeline__state rhythm-timeline__state--${segment.state}`}>
-                <title>{`${segment.startSeconds.toFixed(1)}–${segment.endSeconds.toFixed(1)} 秒 · ${STATE_LABELS[segment.state]}`}</title>
-              </rect>
-              {segmentWidth > 64 ? <text x={x + segmentWidth / 2} y={stateTop + 16} textAnchor="middle" className="rhythm-timeline__state-label">{STATE_LABELS[segment.state]}</text> : null}
-            </g>
-          );
-        })}
+        {showState ? (
+          <>
+            <rect x={left} y={stateTop} width={innerWidth} height={stateHeight} className="rhythm-timeline__state-base" />
+            {segments.map((segment, index) => {
+              const x = xFor(segment.startSeconds);
+              const segmentWidth = Math.max(1, xFor(segment.endSeconds) - x);
+              return (
+                <g key={`${segment.state}-${index}`}>
+                  <rect x={x} y={stateTop} width={segmentWidth} height={stateHeight} className={`rhythm-timeline__state rhythm-timeline__state--${segment.state}`}>
+                    <title>{`${segment.startSeconds.toFixed(1)}–${segment.endSeconds.toFixed(1)} 秒 · ${STATE_LABELS[segment.state]}`}</title>
+                  </rect>
+                  {segmentWidth > 64 ? <text x={x + segmentWidth / 2} y={stateTop + 16} textAnchor="middle" className="rhythm-timeline__state-label">{STATE_LABELS[segment.state]}</text> : null}
+                </g>
+              );
+            })}
+          </>
+        ) : null}
 
         {showHeat ? (
           <>
@@ -285,7 +293,7 @@ export function WeaponRhythmTimeline({
                 <text x={width - right - 4} y={heatYFor(range.triggerAt) - 5} textAnchor="end" className="rhythm-timeline__threshold-label">过热锁定 {range.triggerAt}</text>
               </>
             ) : null}
-            {coolingSegments.length > 0 ? (
+            {showState && coolingSegments.length > 0 ? (
               <g className="rhythm-timeline__overheat-cooling-key">
                 <rect
                   x={left + 4}
@@ -372,7 +380,7 @@ export function WeaponRhythmTimeline({
         )}
         {killX === null ? null : (
           <>
-            <line x1={killX} x2={killX} y1={stateTop} y2={damageTop + damageHeight} className="rhythm-timeline__kill-line" />
+            <line x1={killX} x2={killX} y1={plotTop} y2={damageTop + damageHeight} className="rhythm-timeline__kill-line" />
             <text
               x={killLabelAtEnd ? killX - 5 : killX + 5}
               y={damageTop + 13}
