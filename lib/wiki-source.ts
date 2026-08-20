@@ -3,6 +3,7 @@ export const SIGUA_WIKI_ORIGIN =
   "https://wiki.siguad.icu";
 
 const WIKI_PRESENTATION_QUERY = "?presentation=v5";
+const WIKI_WEAPON_CATALOG_QUERY = "?mechanics=overheat-v1";
 const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-v3";
 
 const requests = new Map<
@@ -58,7 +59,7 @@ export async function loadWikiDataset(
 
 export async function loadWikiWeaponCatalog() {
   const value = await loadWikiDataset(
-    "/data/weapons/catalog.json",
+    `/data/weapons/catalog.json${WIKI_WEAPON_CATALOG_QUERY}`,
     "sigua-weapon-catalog/v2",
   );
   const catalog = value as {

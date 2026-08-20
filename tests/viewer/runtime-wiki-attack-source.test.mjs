@@ -209,6 +209,14 @@ test("a missing exact raw loadout fails closed instead of choosing the first veh
 test("weapon runtime requests bypass pre-refresh browser cache entries", () => {
   assert.match(
     wikiSourceText,
+    /const WIKI_WEAPON_CATALOG_QUERY = "\?mechanics=overheat-v1"/u,
+  );
+  assert.match(
+    wikiSourceText,
+    /`\/data\/weapons\/catalog\.json\$\{WIKI_WEAPON_CATALOG_QUERY\}`/u,
+  );
+  assert.match(
+    wikiSourceText,
     /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=exact-assignment-v3"/u,
   );
   assert.match(
