@@ -169,6 +169,10 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
     "the folded DPS explanation must be the final section in the right result rail",
   );
   assert.match(viewer, /primarySimulation\.thermalState === "unavailable"/u);
+  assert.match(
+    viewer,
+    /data-thermal-state="unavailable"[\s\S]*?<WeaponRhythmTimeline/u,
+  );
   assert.match(viewer, /单发摧毁/u);
   assert.doesNotMatch(viewer, /function hitDpsTimingReason/u);
   assert.match(viewer, /function hitDpsTimingFacts/u);
@@ -184,6 +188,11 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   assert.match(timeline, /<linearGradient/u);
   assert.match(timeline, /overheat-cooling-pattern/u);
   assert.match(timeline, /过热冷却/u);
+  assert.match(timeline, /function stepPathFor/u);
+  assert.match(timeline, /reload-pattern/u);
+  assert.match(timeline, /换弹伤害真空/u);
+  assert.match(timeline, /data-has-heat=\{showHeat\}/u);
+  assert.doesNotMatch(timeline, /<circle|shot-point|hoveredShot|useState/u);
   await assert.rejects(
     access(new URL("../../app/weapon-dps/page.tsx", import.meta.url)),
     { code: "ENOENT" },

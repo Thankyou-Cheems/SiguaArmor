@@ -6983,7 +6983,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-hit-dps-fold__body {
-  max-height: min(350px, 48vh);
+  max-height: min(430px, 58vh);
   overflow: auto;
   border-top: 1px solid rgba(120, 185, 190, 0.18);
   scrollbar-color: var(--border-strong) var(--bg-1);
@@ -6997,6 +6997,11 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-hit-dps-fold .rhythm-timeline__chart {
   min-width: 360px;
+}
+
+.viewer-hit-dps-timing--damage-only {
+  gap: 0;
+  padding: 0;
 }
 
 .viewer-hit-dps-timing__reason {
@@ -15649,14 +15654,38 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   min-width: 520px;
 }
 
+.viewer-hit-dps-fold .rhythm-timeline[data-compact="true"] .rhythm-timeline__chart {
+  min-width: 100%;
+}
+
+.viewer-hit-dps-fold .rhythm-timeline[data-compact="true"] {
+  overflow-x: hidden;
+}
+
+.rhythm-timeline__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 3px 6px;
+  color: var(--text-dim);
+  font-size: 9px;
+}
+
+.rhythm-timeline__heading strong {
+  color: var(--analysis-flow-strong);
+  font-family: var(--font-mono-ui);
+  font-size: 9px;
+  font-weight: 700;
+}
+
 .rhythm-timeline__lane-label,
 .rhythm-timeline__tick,
 .rhythm-timeline__state-label,
 .rhythm-timeline__threshold-label,
 .rhythm-timeline__target-label,
 .rhythm-timeline__kill-label,
-.rhythm-timeline__tooltip-title,
-.rhythm-timeline__tooltip-copy {
+.rhythm-timeline__reload-vacuum-label {
   font-family: var(--font-mono-ui);
   font-variant-numeric: tabular-nums;
 }
@@ -15789,6 +15818,27 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   vector-effect: non-scaling-stroke;
 }
 
+.rhythm-timeline__reload-vacuum-band {
+  stroke: rgba(196, 204, 201, 0.42);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.rhythm-timeline__reload-vacuum-cap {
+  fill: #9da4a1;
+  opacity: 0.82;
+}
+
+.rhythm-timeline__reload-vacuum-label {
+  fill: #e0e5e2;
+  font-size: 10px;
+  font-weight: 800;
+  paint-order: stroke;
+  pointer-events: none;
+  stroke: rgba(18, 22, 21, 0.9);
+  stroke-width: 3px;
+}
+
 .rhythm-timeline__target-line {
   stroke: rgba(241, 239, 226, .52);
   stroke-width: 1.2;
@@ -15812,39 +15862,6 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   fill: var(--status-confirmed);
   font-size: 11px;
   font-weight: 800;
-}
-
-.rhythm-timeline__shot-point {
-  fill: rgba(245, 235, 212, .62);
-  stroke: var(--analysis-gold);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  cursor: crosshair;
-  transition: r 80ms ease;
-}
-
-.rhythm-timeline__cursor {
-  stroke: rgba(238, 241, 237, .58);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  pointer-events: none;
-}
-
-.rhythm-timeline__tooltip-bg {
-  fill: rgba(10, 13, 12, .96);
-  stroke: rgba(225, 200, 155, .34);
-  stroke-width: 1;
-}
-
-.rhythm-timeline__tooltip-title {
-  fill: var(--analysis-white);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.rhythm-timeline__tooltip-copy {
-  fill: var(--text-muted);
-  font-size: 11px;
 }
 
 .rhythm-timeline__legend {

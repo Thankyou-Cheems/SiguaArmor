@@ -134,6 +134,14 @@ test("single-round reload and fire interval overlap instead of doubling missile 
   assert.equal(result.shots, 2);
   assert.equal(result.reloads, 1);
   assert.equal(result.killTimeSeconds, 12);
+  const reload = result.events.find(({ kind }) => kind === "reload");
+  assert.equal(reload?.startTimeSeconds, 0);
+  assert.equal(reload?.timeSeconds, 12);
+  assert.equal(
+    result.timeline.filter(({ state }) => state === "reloading").length,
+    12,
+  );
+  assert.equal(result.timeline.at(-1)?.state, "firing");
   assert.deepEqual(
     result.events.map(({ kind, timeSeconds }) => ({ kind, timeSeconds })),
     [

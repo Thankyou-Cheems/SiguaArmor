@@ -2315,13 +2315,17 @@ function HitDpsFacts({ facts }: { facts: readonly HitDpsTimingFact[] }) {
 }
 
 function hitDpsEstimateTimeLabel(estimate: WeaponHitDpsEstimate) {
-  const candidate = estimate.optimization.recommended ?? estimate.optimization.burn;
+  const candidate = hitDpsEstimateCandidate(estimate);
   if (candidate.result.shots === 1 && candidate.result.killTimeSeconds === 0) {
     return "单发";
   }
   return candidate.result.killTimeSeconds === null
     ? `>${candidate.result.elapsedSeconds.toFixed(1)} s`
     : `${candidate.result.killTimeSeconds.toFixed(2)} s`;
+}
+
+function hitDpsEstimateCandidate(estimate: WeaponHitDpsEstimate) {
+  return estimate.optimization.recommended ?? estimate.optimization.burn;
 }
 
 function HitDpsTimingCard({
@@ -2421,6 +2425,14 @@ function HitDpsTimingCard({
     label: `${editorPoolLabel(estimate.poolKind)}摧毁`,
     value: hitDpsEstimateTimeLabel(estimate),
   }));
+  const timelineEstimate = primarySimulation.shots > 1
+    ? primaryEstimate
+    : secondaryEstimates.find(
+        (estimate) => hitDpsEstimateCandidate(estimate).result.shots > 1,
+      ) ?? primaryEstimate;
+  const timelineCandidate = hitDpsEstimateCandidate(timelineEstimate);
+  const timelineSimulation = timelineCandidate.result;
+  const timelineTargetLabel = editorPoolLabel(timelineEstimate.poolKind);
   if (primarySimulation.unavailableReason) {
     return (
       <HitDpsFold targetLabel={clickedTargetLabel ?? primaryPoolLabel} resultLabel="数据不可用" state="unavailable">
@@ -2436,10 +2448,24 @@ function HitDpsTimingCard({
         secondaryLabel={secondarySummary || null}
         state="ready"
       >
-        <HitDpsFacts facts={[
-          ...hitDpsTimingFacts(primaryEstimate, primarySimulation, weapon),
-          ...secondaryFacts,
-        ]} />
+        <section
+          className="viewer-hit-dps-timing viewer-hit-dps-timing--damage-only"
+          data-state="ready"
+          data-thermal-state="unavailable"
+        >
+          <HitDpsFacts facts={[
+            ...hitDpsTimingFacts(primaryEstimate, primarySimulation, weapon),
+            ...secondaryFacts,
+          ]} />
+          {timelineSimulation.shots > 1 ? (
+            <WeaponRhythmTimeline
+              simulation={timelineSimulation}
+              targetHealth={timelineEstimate.maxHealth}
+              targetLabel={timelineTargetLabel}
+              compact
+            />
+          ) : null}
+        </section>
       </HitDpsFold>
     );
   }
@@ -2492,8 +2518,9 @@ function HitDpsTimingCard({
         </ul>
         )}
         <WeaponRhythmTimeline
-          simulation={primarySimulation}
-          targetHealth={primaryEstimate.maxHealth}
+          simulation={timelineSimulation}
+          targetHealth={timelineEstimate.maxHealth}
+          targetLabel={timelineTargetLabel}
           compact
         />
       </section>
