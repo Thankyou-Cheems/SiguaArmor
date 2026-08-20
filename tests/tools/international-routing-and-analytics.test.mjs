@@ -69,17 +69,23 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
 
-  assert.equal(currentEntry.id, "2026-08-20-vehicle-duel");
+  assert.equal(currentEntry.id, "2026-08-21-vehicle-camera-perspective");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-08-20");
+    assert.equal(document.siteUpdatedOn, "2026-08-21");
     assert.deepEqual(document.entries[0], currentEntry);
     assert.ok(
       !document.entries.some(({ id }) => id === "2026-07-24-hit-path-footer-selector"),
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(document.entries[0]), /新增双载具同时交火页面/u);
-    assert.match(JSON.stringify(document.entries[0]), /弹药架先归零时立即判负/u);
+    assert.match(JSON.stringify(document.entries[0]), /90° 水平 FOV/u);
+    assert.match(JSON.stringify(document.entries[0]), /数字键 1–5/u);
+    const duelEntry = document.entries.find(
+      ({ id }) => id === "2026-08-20-vehicle-duel",
+    );
+    assert.ok(duelEntry, "vehicle duel release entry must be retained");
+    assert.match(JSON.stringify(duelEntry), /新增双载具同时交火页面/u);
+    assert.match(JSON.stringify(duelEntry), /弹药架先归零时立即判负/u);
     const rhythmEntry = document.entries.find(
       ({ id }) => id === "2026-08-20-weapon-rhythm-distance-curves",
     );

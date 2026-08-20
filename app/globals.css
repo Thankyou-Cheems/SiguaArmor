@@ -4604,7 +4604,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-toolbar {
   position: absolute;
-  z-index: 6;
+  z-index: 10;
   top: 12px;
   left: 12px;
   display: flex;
@@ -4655,6 +4655,84 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   width: 100%;
   align-items: stretch;
   gap: 4px;
+}
+
+.viewer-camera-presets {
+  display: grid;
+  width: 100%;
+  gap: 4px;
+}
+
+.viewer-camera-presets__row {
+  display: grid;
+  min-height: 34px;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: stretch;
+  border: 1px solid rgba(225, 200, 155, 0.24);
+  background: rgba(12, 15, 13, 0.76);
+  backdrop-filter: blur(10px);
+}
+
+.viewer-camera-presets__row > span {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 4px 7px;
+  border-right: 1px solid rgba(225, 200, 155, 0.14);
+}
+
+.viewer-camera-presets__row > span b {
+  color: var(--text-muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.viewer-camera-presets__row > span small {
+  color: var(--text-dim);
+  font-family: var(--font-mono-ui);
+  font-size: 6px;
+  white-space: nowrap;
+}
+
+.viewer-camera-presets__row > div {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.viewer-toolbar .viewer-camera-presets button {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 2px;
+  border: 0;
+  border-right: 1px solid rgba(225, 200, 155, 0.1);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 8px;
+  letter-spacing: 0;
+  backdrop-filter: none;
+}
+
+.viewer-toolbar .viewer-camera-presets button:last-child { border-right: 0; }
+
+.viewer-toolbar .viewer-camera-presets button:hover,
+.viewer-toolbar .viewer-camera-presets button[data-active="true"] {
+  border-color: rgba(225, 200, 155, 0.1);
+  background: rgba(231, 189, 104, 0.1);
+  color: var(--brand);
+}
+
+.viewer-camera-presets button kbd,
+.viewer-camera-presets button small {
+  color: inherit;
+  font-family: var(--font-mono-ui);
+  font-size: 6px;
+  font-weight: 500;
 }
 
 .viewer-mode-tabs {
@@ -15356,7 +15434,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-toolbar .viewer-protection-controls > .turret-preview-controls .turret-preview-controls__body {
-  max-height: 260px;
+  max-height: min(260px, 24dvh);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-color: rgba(231, 189, 104, 0.42) rgba(9, 13, 11, 0.58);

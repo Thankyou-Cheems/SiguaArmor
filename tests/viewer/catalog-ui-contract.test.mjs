@@ -333,8 +333,16 @@ test("left viewer controls share one rail and use slider-shaped state controls",
   );
   assert.equal((toolbar.match(/<TurretPreviewControls\b/gu) ?? []).length, 1);
   assert.ok(
-    toolbar.indexOf('<TurretPreviewControls') > toolbar.indexOf('className="viewer-mode-tabs"'),
-    "turret posture control should live in the left viewer control stack",
+    toolbar.indexOf('<RuntimeViewerCameraControls') > toolbar.indexOf('className="viewer-mode-tabs"'),
+    "camera shortcuts should follow the render mode switcher",
+  );
+  assert.ok(
+    toolbar.indexOf('<TurretPreviewControls') > toolbar.lastIndexOf('className="viewer-spaced-armor-row"'),
+    "turret posture control should follow every top-left state switch",
+  );
+  assert.ok(
+    toolbar.indexOf('<TurretPreviewControls') < toolbar.indexOf('className="viewer-interaction-hint'),
+    "turret posture control should be the last expandable control",
   );
   assert.match(
     styles,
@@ -357,5 +365,20 @@ test("left viewer controls share one rail and use slider-shaped state controls",
   assert.match(
     styles,
     /\.viewer-toolbar \.viewer-protection-controls > \.turret-preview-controls\s*\{[\s\S]*?position:\s*relative;[\s\S]*?width:\s*100%;/u,
+  );
+});
+
+test("camera shortcuts move the loaded camera instead of remounting vehicle assets", () => {
+  const cameraActions = viewerSource.slice(
+    viewerSource.indexOf("const applyInspectionView ="),
+    viewerSource.indexOf("resetViewRef.current = resetView"),
+  );
+  assert.match(cameraActions, /camera\.position/u);
+  assert.match(cameraActions, /controls\.target/u);
+  assert.match(cameraActions, /camera\.fov = verticalFovForHorizontalFov/u);
+  assert.match(cameraActions, /runtimeViewerInfantryCameraPosition/u);
+  assert.doesNotMatch(
+    cameraActions,
+    /fetch\(|loadWiki|GLTFLoader|startExteriorAssets|startAnalysisVisualAssets/u,
   );
 });
