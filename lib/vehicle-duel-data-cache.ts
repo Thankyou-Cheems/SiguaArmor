@@ -1,5 +1,6 @@
 import { buildRuntimeAttackSourceShareSlug } from "./runtime-attack-source-share.mjs";
 import type { PublicCatalogIndex } from "../app/catalog-types.ts";
+import type { ReferenceData } from "../app/catalog-types.ts";
 import type { RuntimeVehiclePreview } from "../app/runtime-probe-preview-data.ts";
 import type { SiteEdition } from "../app/site-edition.ts";
 import type {
@@ -11,6 +12,8 @@ export interface VehicleDuelOption {
   id: string;
   siteEdition: SiteEdition;
   cardId: string;
+  wikiSourceCardId: string;
+  wikiFactionId: string;
   rawName: string;
   displayName: string;
   factionName: string;
@@ -24,6 +27,7 @@ export interface VehicleDuelOption {
 export interface VehicleDuelBundle {
   option: VehicleDuelOption;
   preview: RuntimeVehiclePreview;
+  referenceData: ReferenceData;
   attackLibrary: RuntimeAttackSourceLibrary;
 }
 
@@ -47,6 +51,7 @@ export function vehicleDuelOptionsFromCatalog(
       !variant.runtimeVehicleRef ||
       !variant.visualArtifactRef
     ) return [];
+    const wikiSourceCardId = record.wikiSourceCardId ?? record.promoEntryId;
     const attackSourceId = buildRuntimeAttackSourceShareSlug({
       groupId: record.official.groupId,
       canonicalRawName: variant.sourceRawName,
@@ -68,6 +73,8 @@ export function vehicleDuelOptionsFromCatalog(
       id: `${siteEdition}:${record.promoEntryId}:${variant.sourceRawName}`,
       siteEdition,
       cardId: record.promoEntryId,
+      wikiSourceCardId,
+      wikiFactionId: wikiSourceCardId.split("--", 1)[0],
       rawName: variant.sourceRawName,
       displayName,
       factionName: record.official.groupNameZh,

@@ -6,6 +6,7 @@ import {
   optimizeWeaponRhythm,
   type WeaponDpsOptimization,
   type WeaponDpsOptimizationOptions,
+  type WeaponDpsTargetBurningProfile,
   type WeaponDpsWeapon,
 } from "./weapon-dps-model.ts";
 
@@ -14,10 +15,51 @@ export interface WeaponHitDpsTarget {
   poolKind: string;
   maxHealth: number;
   damagePerShot: number;
+  targetBurning?: WeaponDpsTargetBurningProfile | null;
 }
 
 export interface WeaponHitDpsEstimate extends WeaponHitDpsTarget {
   optimization: WeaponDpsOptimization;
+}
+
+interface VehicleTargetBurningSource {
+  burning: null | {
+    state: "observed" | "derived" | "projected" | "unknown";
+    startHealthFraction: number;
+    healthFractionPerSecond: number;
+    tickIntervalSeconds: number;
+    startDelaySeconds: number;
+    damageClass: string;
+  };
+  damageResistances: readonly {
+    damageClass: string;
+    modifier: number | null;
+  }[];
+}
+
+export function vehicleTargetBurningProfile(
+  source: VehicleTargetBurningSource | null | undefined,
+): WeaponDpsTargetBurningProfile | null {
+  const burning = source?.burning;
+  if (!burning || burning.state === "unknown") return null;
+  const damageProfiles = source.damageResistances.filter(
+    ({ damageClass }) => damageClass === burning.damageClass,
+  );
+  if (damageProfiles.length !== 1) return null;
+  const damageModifier = damageProfiles[0].modifier;
+  if (
+    damageModifier === null ||
+    !Number.isFinite(damageModifier) ||
+    damageModifier < 0
+  ) return null;
+  return {
+    state: burning.state,
+    startHealthFraction: burning.startHealthFraction,
+    healthFractionPerSecond: burning.healthFractionPerSecond,
+    damageModifier,
+    tickIntervalSeconds: burning.tickIntervalSeconds,
+    startDelaySeconds: burning.startDelaySeconds,
+  };
 }
 
 function poolKindForClickedSemanticKind(semanticKind: string | null) {
@@ -62,6 +104,7 @@ export function singleShotWeaponHitTarget<T extends WeaponHitDpsTarget>(
  */
 export function targetPoolsForShot(
   result: Pick<EditorNativeShotResult, "damage">,
+  targetBurning: WeaponDpsTargetBurningProfile | null = null,
 ): WeaponHitDpsTarget[] {
   const targets = new Map<string, WeaponHitDpsTarget>();
   for (const event of result.damage) {
@@ -83,6 +126,9 @@ export function targetPoolsForShot(
       poolKind: event.poolKind,
       maxHealth: event.maxHealth,
       damagePerShot: damage,
+      ...(event.poolKind === "hull" && targetBurning
+        ? { targetBurning }
+        : {}),
     });
   }
   return [...targets.values()].sort((left, right) => left.key.localeCompare(right.key, "en"));
@@ -93,11 +139,15 @@ export function estimateWeaponHitDps(
   result: Pick<EditorNativeShotResult, "damage">,
   options: WeaponDpsOptimizationOptions,
 ): WeaponHitDpsEstimate[] {
-  return targetPoolsForShot(result).map((target) => ({
+  return targetPoolsForShot(result, options.targetBurning ?? null).map((target) => ({
     ...target,
     optimization: optimizeWeaponRhythm(
       { ...weapon, damagePerShot: target.damagePerShot },
-      { ...options, targetHealth: target.maxHealth },
+      {
+        ...options,
+        targetHealth: target.maxHealth,
+        targetBurning: target.targetBurning ?? null,
+      },
     ),
   }));
 }

@@ -248,6 +248,7 @@ function TargetViewer({
         <RuntimeVehicleViewer
           key={bundle.option.id}
           preview={bundle.preview}
+          referenceData={bundle.referenceData}
           showChrome={false}
           mode={navigation.view === "interior" ? "interior" : "armor"}
           displayName={bundle.option.displayName}
@@ -283,7 +284,9 @@ function verdictReason(resolution: VehicleDuelResolution) {
   const loser = resolution.winner === "left" ? "B" : "A";
   return loss?.poolKind === "ammo-rack"
     ? `${loser} 方弹药架归零并在同一时刻停止后续输出`
-    : `${loser} 方车体血量先归零`;
+    : loss?.candidate.result.burnDamage
+      ? `${loser} 方进入低血量自燃，车体先归零`
+      : `${loser} 方车体血量先归零`;
 }
 
 function DuelJudge({ resolution }: { resolution: VehicleDuelResolution | null }) {
@@ -323,7 +326,10 @@ function DuelCurve({
     <section className="vehicle-duel__curve" data-side={side}>
       <header>
         <span>{side} 方实际输出</span>
-        <strong>{simulation.elapsedSeconds.toFixed(2)} s 截止 · {simulation.shots} 发</strong>
+        <strong>
+          {simulation.elapsedSeconds.toFixed(2)} s 截止 · {simulation.shots} 发
+          {simulation.burnDamage > 0 ? ` · 自燃 ${simulation.burnDamage.toFixed(1)}` : ""}
+        </strong>
       </header>
       <small>{weapon ? duelWeaponLabel(weapon) : "当前弹种"} → {poolLabel(loss.poolKind)}</small>
       <WeaponRhythmTimeline

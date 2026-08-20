@@ -133,6 +133,7 @@ export function WeaponRhythmTimeline({
   const overheatCoolingPatternId = `overheat-cooling-pattern-${id}`;
   const reloadPatternId = `reload-pattern-${id}`;
   const points = simulation.heatCurve;
+  const damageCurve = simulation.damageCurve;
   const range = simulation.heatRange;
   const showHeat = Boolean(
     range && points.some((point) => point.temperature !== null),
@@ -141,6 +142,7 @@ export function WeaponRhythmTimeline({
   const durationSeconds = Math.max(
     simulation.elapsedSeconds,
     points.at(-1)?.timeSeconds ?? 0,
+    damageCurve.at(-1)?.timeSeconds ?? 0,
     1,
   );
   const width = compact ? 600 : 1000;
@@ -165,7 +167,7 @@ export function WeaponRhythmTimeline({
   const damageMax = Math.max(
     targetHealth ?? 0,
     simulation.totalDamage,
-    points.at(-1)?.cumulativeDamage ?? 0,
+    damageCurve.at(-1)?.cumulativeDamage ?? 0,
     1,
   );
   const xFor = (seconds: number) => left + (seconds / durationSeconds) * innerWidth;
@@ -182,7 +184,7 @@ export function WeaponRhythmTimeline({
     }));
   const damagePoints = [
     { x: left, y: damageTop + damageHeight },
-    ...points.map((point) => ({
+    ...damageCurve.map((point) => ({
       x: xFor(point.timeSeconds),
       y: damageYFor(point.cumulativeDamage),
     })),

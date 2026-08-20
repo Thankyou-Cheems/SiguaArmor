@@ -59,6 +59,7 @@ function resolveUninterruptedAttack(
           targetHealth: target.maxHealth,
           horizonSeconds,
           useMagazineReload: true,
+          targetBurning: target.targetBurning ?? null,
         },
       ));
       if (candidate.result.killTimeSeconds === null) return [];
@@ -103,8 +104,14 @@ function truncateSimulation(
     ({ timeSeconds }) => timeSeconds <= cutoff + EPSILON,
   );
   const shotEvents = events.filter(({ kind }) => kind === "shot");
+  const damageEvents = events.filter(
+    ({ kind }) => kind === "shot" || kind === "burn",
+  );
   const overheatEvents = events.filter(({ kind }) => kind === "overheat");
-  const totalDamage = shotEvents.at(-1)?.damage ?? 0;
+  const totalDamage = damageEvents.at(-1)?.damage ?? 0;
+  const burnDamage = events
+    .filter(({ kind }) => kind === "burn")
+    .reduce((total, event) => total + event.damageAmount, 0);
   const killTimeSeconds = source.killTimeSeconds !== null &&
     source.killTimeSeconds <= cutoff + EPSILON
       ? source.killTimeSeconds
@@ -112,6 +119,7 @@ function truncateSimulation(
   return {
     ...source,
     totalDamage,
+    burnDamage,
     averageDps: cutoff > EPSILON ? totalDamage / cutoff : 0,
     shots: shotEvents.length,
     reloads: events.filter(({ kind }) => kind === "reload").length,
@@ -124,6 +132,11 @@ function truncateSimulation(
     events,
     timeline,
     heatCurve,
+    damageCurve: damageEvents.map((event) => ({
+      kind: event.kind as "shot" | "burn",
+      timeSeconds: event.timeSeconds,
+      cumulativeDamage: event.damage,
+    })),
   };
 }
 

@@ -44,6 +44,15 @@ export interface WeaponDpsWeapon {
   overheat: WeaponDpsOverheatProfile | null;
 }
 
+export interface WeaponDpsTargetBurningProfile {
+  state: WeaponDpsEvidenceState | "derived";
+  startHealthFraction: number;
+  healthFractionPerSecond: number;
+  damageModifier: number;
+  tickIntervalSeconds: number;
+  startDelaySeconds: number;
+}
+
 export type WeaponDpsRhythmMode = "burn" | "controlled";
 
 export interface WeaponDpsRhythmPlan {
@@ -53,14 +62,16 @@ export interface WeaponDpsRhythmPlan {
   burstSize: number;
   pauseSeconds: number;
   useMagazineReload: boolean;
+  targetBurning?: WeaponDpsTargetBurningProfile | null;
 }
 
 export interface WeaponDpsEvent {
-  kind: "shot" | "reload" | "pause" | "overheat" | "unlock";
+  kind: "shot" | "burn" | "reload" | "pause" | "overheat" | "unlock";
   timeSeconds: number;
   startTimeSeconds?: number;
   temperature: number | null;
   damage: number;
+  damageAmount: number;
   shotNumber: number;
 }
 
@@ -85,11 +96,18 @@ export interface WeaponDpsHeatCurvePoint {
   cumulativeDamage: number;
 }
 
+export interface WeaponDpsDamageCurvePoint {
+  kind: "shot" | "burn";
+  timeSeconds: number;
+  cumulativeDamage: number;
+}
+
 export interface WeaponDpsSimulation {
   weaponId: string;
   mode: WeaponDpsRhythmMode;
   thermalState: "observed" | "projected" | "unavailable";
   totalDamage: number;
+  burnDamage: number;
   averageDps: number;
   shots: number;
   reloads: number;
@@ -101,6 +119,7 @@ export interface WeaponDpsSimulation {
   events: WeaponDpsEvent[];
   timeline: WeaponDpsTimelineSample[];
   heatCurve: WeaponDpsHeatCurvePoint[];
+  damageCurve: WeaponDpsDamageCurvePoint[];
   heatRange: {
     min: number;
     max: number;
@@ -155,6 +174,24 @@ function hasUsableThermalModel(profile: WeaponDpsOverheatProfile | null) {
       Number.isFinite(profile.temperatureMax) &&
       finitePositive(profile.coolingRatePerSecond) &&
       Number.isFinite(profile.triggerAt ?? profile.shutdownTemperature),
+  );
+}
+
+function hasUsableTargetBurningModel(
+  profile: WeaponDpsTargetBurningProfile | null | undefined,
+) {
+  return Boolean(
+    profile &&
+      profile.state !== "unknown" &&
+      Number.isFinite(profile.startHealthFraction) &&
+      profile.startHealthFraction >= 0 &&
+      profile.startHealthFraction <= 1 &&
+      finitePositive(profile.healthFractionPerSecond) &&
+      Number.isFinite(profile.damageModifier) &&
+      profile.damageModifier >= 0 &&
+      finitePositive(profile.tickIntervalSeconds) &&
+      Number.isFinite(profile.startDelaySeconds) &&
+      profile.startDelaySeconds >= 0,
   );
 }
 
@@ -229,6 +266,20 @@ function buildHeatCurve(
     }));
 }
 
+function buildDamageCurve(
+  events: readonly WeaponDpsEvent[],
+): WeaponDpsDamageCurvePoint[] {
+  return events
+    .filter((event): event is WeaponDpsEvent & { kind: "shot" | "burn" } =>
+      event.kind === "shot" || event.kind === "burn"
+    )
+    .map((event) => ({
+      kind: event.kind,
+      timeSeconds: event.timeSeconds,
+      cumulativeDamage: event.damage,
+    }));
+}
+
 /**
  * Simulate a fixed rhythm until the target dies or the requested horizon ends.
  *
@@ -268,6 +319,7 @@ export function simulateWeaponRhythm(
       mode: plan.mode,
       thermalState,
       totalDamage: 0,
+      burnDamage: 0,
       averageDps: 0,
       shots: 0,
       reloads: 0,
@@ -279,6 +331,7 @@ export function simulateWeaponRhythm(
       events,
       timeline: [],
       heatCurve: [],
+      damageCurve: [],
       heatRange: null,
       unavailableReason: "Wiki 未提供可计算的单发伤害",
     };
@@ -299,6 +352,7 @@ export function simulateWeaponRhythm(
       timeSeconds: 0,
       temperature,
       damage: damagePerShot as number,
+      damageAmount: damagePerShot as number,
       shotNumber: 1,
     });
     if (overheated) {
@@ -307,6 +361,7 @@ export function simulateWeaponRhythm(
         timeSeconds: 0,
         temperature,
         damage: damagePerShot as number,
+        damageAmount: 0,
         shotNumber: 1,
       });
     }
@@ -315,6 +370,7 @@ export function simulateWeaponRhythm(
       mode: plan.mode,
       thermalState,
       totalDamage: damagePerShot as number,
+      burnDamage: 0,
       averageDps: 0,
       shots: 1,
       reloads: 0,
@@ -326,6 +382,7 @@ export function simulateWeaponRhythm(
       events,
       timeline: buildTimelineSamples(weapon, profile, events, 0),
       heatCurve: buildHeatCurve(events),
+      damageCurve: buildDamageCurve(events),
       heatRange: profile
         ? {
             min: profile.temperatureMin ?? 0,
@@ -345,6 +402,7 @@ export function simulateWeaponRhythm(
       mode: plan.mode,
       thermalState,
       totalDamage: 0,
+      burnDamage: 0,
       averageDps: 0,
       shots: 0,
       reloads: 0,
@@ -356,6 +414,7 @@ export function simulateWeaponRhythm(
       events,
       timeline: [],
       heatCurve: [],
+      damageCurve: [],
       heatRange: null,
       unavailableReason: "Wiki 未提供可计算的射击间隔",
     };
@@ -363,6 +422,7 @@ export function simulateWeaponRhythm(
   let elapsedSeconds = 0;
   let temperature = minimum;
   let totalDamage = 0;
+  let burnDamage = 0;
   let shots = 0;
   let reloads = 0;
   let overheatCount = 0;
@@ -372,12 +432,67 @@ export function simulateWeaponRhythm(
   let burstShots = 0;
   let overheated = false;
   let lastShotTimeSeconds: number | null = null;
+  const targetBurning = hasUsableTargetBurningModel(plan.targetBurning)
+    ? plan.targetBurning as WeaponDpsTargetBurningProfile
+    : null;
+  let burnTimerActive = false;
+  let nextBurnTickSeconds: number | null = null;
   let guard = 0;
 
-  const advance = (seconds: number) => {
-    const bounded = Math.max(seconds, 0);
+  const coolTo = (targetSeconds: number) => {
+    const bounded = Math.max(0, targetSeconds - elapsedSeconds);
     elapsedSeconds += bounded;
     temperature = coolTemperature(temperature, bounded, profile);
+  };
+
+  const advance = (seconds: number) => {
+    const targetSeconds = Math.min(
+      horizonSeconds,
+      elapsedSeconds + Math.max(seconds, 0),
+    );
+    while (
+      targetBurning &&
+      burnTimerActive &&
+      nextBurnTickSeconds !== null &&
+      nextBurnTickSeconds <= targetSeconds + EPSILON &&
+      killTimeSeconds === null
+    ) {
+      coolTo(nextBurnTickSeconds);
+      const remainingFraction = Math.max(0, targetHealth - totalDamage) / targetHealth;
+      if (remainingFraction > targetBurning.startHealthFraction + EPSILON) {
+        burnTimerActive = false;
+        nextBurnTickSeconds = null;
+        break;
+      }
+      const amount =
+        targetHealth *
+        targetBurning.healthFractionPerSecond *
+        targetBurning.tickIntervalSeconds *
+        targetBurning.damageModifier;
+      burnDamage += amount;
+      totalDamage += amount;
+      events.push({
+        kind: "burn",
+        timeSeconds: elapsedSeconds,
+        temperature,
+        damage: totalDamage,
+        damageAmount: amount,
+        shotNumber: shots,
+      });
+      if (totalDamage + EPSILON >= targetHealth) {
+        killTimeSeconds = elapsedSeconds;
+        break;
+      }
+      nextBurnTickSeconds += targetBurning.tickIntervalSeconds;
+    }
+    if (killTimeSeconds === null) coolTo(targetSeconds);
+    return killTimeSeconds !== null;
+  };
+
+  const startBurnTimer = () => {
+    if (!targetBurning || burnTimerActive) return;
+    burnTimerActive = true;
+    nextBurnTickSeconds = elapsedSeconds + targetBurning.startDelaySeconds;
   };
 
   while (
@@ -391,7 +506,7 @@ export function simulateWeaponRhythm(
         ((temperature ?? unlockAt) - unlockAt) / profile.coolingRatePerSecond,
       );
       if (coolSeconds > EPSILON) {
-        advance(coolSeconds);
+        if (advance(coolSeconds)) break;
       } else {
         temperature = unlockAt;
       }
@@ -402,6 +517,7 @@ export function simulateWeaponRhythm(
         timeSeconds: elapsedSeconds,
         temperature,
         damage: totalDamage,
+        damageAmount: 0,
         shotNumber: shots,
       });
     }
@@ -415,8 +531,8 @@ export function simulateWeaponRhythm(
         (weapon.tacticalReloadSeconds ?? weapon.dryReloadSeconds) ?? 0;
       if (reloadSeconds > EPSILON) {
         const reloadStartSeconds = elapsedSeconds;
-        advance(reloadSeconds);
-        if (elapsedSeconds > horizonSeconds + EPSILON) break;
+        if (advance(reloadSeconds)) break;
+        if (elapsedSeconds >= horizonSeconds - EPSILON) break;
         reloads += 1;
         events.push({
           kind: "reload",
@@ -424,6 +540,7 @@ export function simulateWeaponRhythm(
           startTimeSeconds: reloadStartSeconds,
           temperature,
           damage: totalDamage,
+          damageAmount: 0,
           shotNumber: shots,
         });
       }
@@ -436,13 +553,14 @@ export function simulateWeaponRhythm(
     ) {
       const pauseSeconds = Math.max(plan.pauseSeconds, 0);
       if (pauseSeconds > EPSILON) {
-        advance(pauseSeconds);
-        if (elapsedSeconds > horizonSeconds + EPSILON) break;
+        if (advance(pauseSeconds)) break;
+        if (elapsedSeconds >= horizonSeconds - EPSILON) break;
         events.push({
           kind: "pause",
           timeSeconds: elapsedSeconds,
           temperature,
           damage: totalDamage,
+          damageAmount: 0,
           shotNumber: shots,
         });
       }
@@ -454,7 +572,7 @@ export function simulateWeaponRhythm(
         0,
         elapsedSeconds - lastShotTimeSeconds,
       );
-      advance(Math.max(0, (interval as number) - elapsedSinceLastShot));
+      if (advance(Math.max(0, (interval as number) - elapsedSinceLastShot))) break;
       if (elapsedSeconds >= horizonSeconds - EPSILON) break;
     }
 
@@ -475,11 +593,13 @@ export function simulateWeaponRhythm(
       timeSeconds: elapsedSeconds,
       temperature,
       damage: totalDamage,
+      damageAmount: damagePerShot as number,
       shotNumber: shots,
     });
     if (killTimeSeconds === null && totalDamage >= targetHealth) {
       killTimeSeconds = elapsedSeconds;
     }
+    if (killTimeSeconds === null) startBurnTimer();
 
     if (
       profile &&
@@ -495,6 +615,7 @@ export function simulateWeaponRhythm(
         timeSeconds: elapsedSeconds,
         temperature,
         damage: totalDamage,
+        damageAmount: 0,
         shotNumber: shots,
       });
     }
@@ -509,6 +630,7 @@ export function simulateWeaponRhythm(
     mode: plan.mode,
     thermalState,
     totalDamage,
+    burnDamage,
     averageDps: totalDamage / elapsedForDps,
     shots,
     reloads,
@@ -520,6 +642,7 @@ export function simulateWeaponRhythm(
     events,
     timeline: buildTimelineSamples(weapon, profile, events, Math.min(elapsedSeconds, horizonSeconds)),
     heatCurve: buildHeatCurve(events),
+    damageCurve: buildDamageCurve(events),
     heatRange: profile
       ? {
           min: profile.temperatureMin ?? 0,
@@ -548,6 +671,7 @@ export interface WeaponDpsOptimizationOptions {
   targetHealth: number;
   horizonSeconds: number;
   useMagazineReload: boolean;
+  targetBurning?: WeaponDpsTargetBurningProfile | null;
   maxBurstSize?: number;
   maxPauseSeconds?: number;
   pauseStepSeconds?: number;
@@ -611,6 +735,7 @@ export function optimizeWeaponRhythm(
     burstSize: maxBurstSize,
     pauseSeconds: 0,
     useMagazineReload: options.useMagazineReload,
+    targetBurning: options.targetBurning,
   }];
   const burstSizes = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 24, 32]
     .filter((burstSize, index, values) => burstSize <= maxBurstSize && values.indexOf(burstSize) === index);
@@ -623,6 +748,7 @@ export function optimizeWeaponRhythm(
         burstSize,
         pauseSeconds: Number(pause.toFixed(4)),
         useMagazineReload: options.useMagazineReload,
+        targetBurning: options.targetBurning,
       });
     }
   }

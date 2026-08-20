@@ -7,6 +7,16 @@ export interface ReferenceDamageResistance {
   modifier: number | null;
 }
 
+export interface ReferenceVehicleBurning {
+  state: "observed" | "derived" | "projected" | "unknown";
+  sourceBuildId: string;
+  startHealthFraction: number;
+  healthFractionPerSecond: number;
+  tickIntervalSeconds: number;
+  startDelaySeconds: number;
+  damageClass: string;
+}
+
 export interface ReferenceTurretLimitSample {
   yawDegrees: number;
   minPitchDegrees: number;
@@ -109,6 +119,7 @@ export interface ReferenceData {
     hasCommandZone: boolean | null;
     commandZoneRadius: number | null;
   };
+  burning: ReferenceVehicleBurning | null;
   weaponBindingIds: string[];
   seats: ReferenceSeat[];
   damageResistances: ReferenceDamageResistance[];

@@ -127,6 +127,7 @@ import {
   selectPrimaryWeaponHitDpsTarget,
   singleShotWeaponHitTarget,
   targetPoolsForShot,
+  vehicleTargetBurningProfile,
   type WeaponHitDpsEstimate,
   type WeaponHitDpsTarget,
 } from "../lib/weapon-hit-dps";
@@ -2293,6 +2294,9 @@ function hitDpsTimingFacts(
   if (simulation.overheatCount > 0) {
     facts.push({ label: "过热", value: `${simulation.overheatCount} 次` });
   }
+  if (simulation.burnDamage > 0) {
+    facts.push({ label: "自燃", value: metricText(simulation.burnDamage) });
+  }
   if (simulation.killTimeSeconds !== null) {
     facts.push({ label: "总计", value: `${simulation.killTimeSeconds.toFixed(2)} s` });
   }
@@ -2420,10 +2424,10 @@ function HitDpsTimingCard({
     label: `${editorPoolLabel(estimate.poolKind)}摧毁`,
     value: hitDpsEstimateTimeLabel(estimate),
   }));
-  const timelineEstimate = primarySimulation.shots > 1
+  const timelineEstimate = primarySimulation.damageCurve.length > 1
     ? primaryEstimate
     : secondaryEstimates.find(
-        (estimate) => hitDpsEstimateCandidate(estimate).result.shots > 1,
+        (estimate) => hitDpsEstimateCandidate(estimate).result.damageCurve.length > 1,
       ) ?? primaryEstimate;
   const timelineCandidate = hitDpsEstimateCandidate(timelineEstimate);
   const timelineSimulation = timelineCandidate.result;
@@ -2451,7 +2455,7 @@ function HitDpsTimingCard({
             ...hitDpsTimingFacts(primaryEstimate, primarySimulation, weapon),
             ...secondaryFacts,
           ]} />
-          {timelineSimulation.shots > 1 ? (
+          {timelineSimulation.damageCurve.length > 1 ? (
             <WeaponRhythmTimeline
               simulation={timelineSimulation}
               targetHealth={timelineEstimate.maxHealth}
@@ -2480,6 +2484,9 @@ function HitDpsTimingCard({
           <div><dt>单发</dt><dd>{metricText(primaryEstimate.damagePerShot)}</dd></div>
           <div><dt>目标</dt><dd>{metricText(primaryEstimate.maxHealth)} 血量</dd></div>
           <div><dt>过热</dt><dd>{primarySimulation.overheatCount} 次</dd></div>
+          {primarySimulation.burnDamage > 0 ? (
+            <div><dt>自燃</dt><dd>{metricText(primarySimulation.burnDamage)}</dd></div>
+          ) : null}
         </dl>
         </div>
         <p className="viewer-hit-dps-timing__rhythm">
@@ -7855,6 +7862,10 @@ export function RuntimeVehicleViewer({
     visual,
   ]);
 
+  const targetBurning = useMemo(
+    () => vehicleTargetBurningProfile(referenceData),
+    [referenceData],
+  );
   const weaponHitDpsEstimates = useMemo(
     () => weaponDpsFacts && shotResult
       ? estimateWeaponHitDps(
@@ -7864,14 +7875,15 @@ export function RuntimeVehicleViewer({
             targetHealth: 1,
             horizonSeconds: 120,
             useMagazineReload: true,
+            targetBurning,
           },
         )
       : [],
-    [shotResult, weaponDpsFacts],
+    [shotResult, targetBurning, weaponDpsFacts],
   );
   const weaponHitDpsTargets = useMemo(
-    () => shotResult ? targetPoolsForShot(shotResult) : [],
-    [shotResult],
+    () => shotResult ? targetPoolsForShot(shotResult, targetBurning) : [],
+    [shotResult, targetBurning],
   );
   useEffect(() => {
     if (

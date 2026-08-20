@@ -8,6 +8,7 @@ import type {
   ReferenceData,
   ReferenceGeneralProfile,
   ReferenceSeat,
+  ReferenceVehicleBurning,
 } from "./catalog-types";
 import { wikiVehicleFactionId } from "../lib/wiki-vehicle-identity.ts";
 
@@ -20,6 +21,7 @@ interface WikiVehicleIdentity {
   id: string;
   rawName: string;
   generalProfileRef: string;
+  burningProfileRef: string | null;
   seatProfileRefs: string[];
   hullDamageProfileRefs: string[];
   componentProfileRefs: string[];
@@ -45,6 +47,7 @@ interface WikiVehicleMechanics {
   };
   profiles: {
     general: Array<WikiProfile<ReferenceGeneralProfile>>;
+    burning: Array<WikiProfile<ReferenceVehicleBurning>>;
     seats: Array<WikiProfile<ReferenceSeat>>;
     damageResistances: Array<WikiProfile<ReferenceDamageResistance>>;
     components: Array<
@@ -190,6 +193,7 @@ function validateVehicleMechanics(value: unknown): WikiVehicleMechanics {
     !Array.isArray(document.identities?.vehicles) ||
     !Array.isArray(document.identities?.catalogBindings) ||
     !Array.isArray(document.profiles?.general) ||
+    !Array.isArray(document.profiles?.burning) ||
     !Array.isArray(document.profiles?.seats) ||
     !Array.isArray(document.profiles?.damageResistances) ||
     !Array.isArray(document.profiles?.components) ||
@@ -265,6 +269,12 @@ export function mergeWikiVehicleFactionMechanics(
         (document) => document.profiles.general,
         (record) => record.id,
         "通用资料",
+      ),
+      burning: mergeVehicleMechanicsRecords(
+        documents,
+        (document) => document.profiles.burning,
+        (record) => record.id,
+        "自燃资料",
       ),
       seats: mergeVehicleMechanicsRecords(
         documents,
@@ -542,35 +552,14 @@ export function mergeWikiVehicleFactionPresentation(values: readonly unknown[]) 
   };
 }
 
-export function buildFactionCatalogFromWiki(
-  value: unknown,
-  expectedIndex: PublicCatalogIndex,
-  groupId: string,
-  edition: "international" | "china",
-): PublicFactionCatalog {
-  const catalog = validateVehicleMechanics(value);
-
-  const group = expectedIndex.groups.find(({ id }) => id === groupId);
-  if (!group) throw new Error(`当前目录不存在阵营 ${groupId}`);
-
-  const bindings = indexById(catalog.identities.catalogBindings);
+function createReferenceDataResolver(catalog: WikiVehicleMechanics) {
   const vehicles = indexById(catalog.identities.vehicles);
   const generalProfiles = indexById(catalog.profiles.general);
+  const burningProfiles = indexById(catalog.profiles.burning);
   const seatProfiles = indexById(catalog.profiles.seats);
   const damageProfiles = indexById(catalog.profiles.damageResistances);
   const componentProfiles = indexById(catalog.profiles.components);
-  const visualArtifacts = indexById(catalog.runtime.visualArtifacts);
-  const bindingAvailability = new Map(
-    (catalog.editorAvailability?.bindingAvailability ?? []).map((entry) => [entry.bindingId, entry]),
-  );
-  const supportAirBindings = new Map(
-    (catalog.extensions?.supportAir?.bindings ?? []).map((binding) => [
-      binding.bindingKey,
-      binding,
-    ]),
-  );
-
-  function referenceData(binding: WikiCatalogBinding): ReferenceData {
+  return (binding: WikiCatalogBinding): ReferenceData => {
     const vehicle = required(
       vehicles.get(binding.vehicleRef),
       `载具 ${binding.vehicleRef}`,
@@ -599,6 +588,12 @@ export function buildFactionCatalogFromWiki(
     });
     return {
       general: { rawName: binding.rawName, ...general },
+      burning: vehicle.burningProfileRef === null
+        ? null
+        : required(
+            burningProfiles.get(vehicle.burningProfileRef),
+            `自燃资料 ${vehicle.burningProfileRef}`,
+          ).value,
       weaponBindingIds: binding.weaponBindingIds,
       seats: vehicle.seatProfileRefs.map((id) =>
         required(seatProfiles.get(id), `乘员席 ${id}`).value,
@@ -606,7 +601,47 @@ export function buildFactionCatalogFromWiki(
       damageResistances: hullDamageProfiles,
       components,
     };
+  };
+}
+
+export function referenceDataForWikiVehicleBinding(
+  value: unknown,
+  cardId: string,
+  rawName: string,
+) {
+  const catalog = validateVehicleMechanics(value);
+  const matches = catalog.identities.catalogBindings.filter(
+    (binding) => binding.cardId === cardId && binding.rawName === rawName,
+  );
+  if (matches.length !== 1) {
+    throw new Error(`SiguaWiki 载具绑定不唯一：${cardId} / ${rawName}`);
   }
+  return createReferenceDataResolver(catalog)(matches[0]);
+}
+
+export function buildFactionCatalogFromWiki(
+  value: unknown,
+  expectedIndex: PublicCatalogIndex,
+  groupId: string,
+  edition: "international" | "china",
+): PublicFactionCatalog {
+  const catalog = validateVehicleMechanics(value);
+
+  const group = expectedIndex.groups.find(({ id }) => id === groupId);
+  if (!group) throw new Error(`当前目录不存在阵营 ${groupId}`);
+
+  const bindings = indexById(catalog.identities.catalogBindings);
+  const referenceData = createReferenceDataResolver(catalog);
+  const visualArtifacts = indexById(catalog.runtime.visualArtifacts);
+  const bindingAvailability = new Map(
+    (catalog.editorAvailability?.bindingAvailability ?? []).map((entry) => [entry.bindingId, entry]),
+  );
+  const supportAirBindings = new Map(
+    (catalog.extensions?.supportAir?.bindings ?? []).map((binding) => [
+      binding.bindingKey,
+      binding,
+    ]),
+  );
 
   const records = expectedIndex.records
     .filter((record) => record.official.groupId === groupId)
