@@ -13,6 +13,37 @@ export interface WeaponDpsCatalogResult {
   overheatProfileCount: number;
 }
 
+export interface RuntimeWeaponDpsCoordinates {
+  weaponAssignmentId: string | null;
+  sourceCardId: string;
+  sourceRawName: string;
+  weaponId: string;
+}
+
+export function resolveWeaponDpsWeaponForRuntimeAssignment(
+  candidates: readonly WeaponDpsWeapon[],
+  coordinates: RuntimeWeaponDpsCoordinates,
+): WeaponDpsWeapon | null {
+  const separator = coordinates.weaponAssignmentId?.indexOf(":") ?? -1;
+  const bindingId = coordinates.weaponAssignmentId
+    ? separator >= 0
+      ? coordinates.weaponAssignmentId.slice(0, separator)
+      : coordinates.weaponAssignmentId
+    : null;
+  const variantId = coordinates.weaponAssignmentId && separator >= 0
+    ? coordinates.weaponAssignmentId.slice(separator + 1)
+    : null;
+  const exact = candidates.filter((candidate) =>
+    candidate.sourceCardId === coordinates.sourceCardId &&
+    candidate.sourceRawName === coordinates.sourceRawName &&
+    (bindingId
+      ? candidate.assignmentId === bindingId &&
+        (!variantId || candidate.variantIds?.includes(variantId))
+      : candidate.variantIds?.includes(coordinates.weaponId)),
+  );
+  return exact.length === 1 ? exact[0] : null;
+}
+
 function record(value: unknown): UnknownRecord | null {
   return typeof value === "object" && value !== null && !Array.isArray(value)
     ? value as UnknownRecord

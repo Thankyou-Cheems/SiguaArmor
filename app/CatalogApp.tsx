@@ -4287,34 +4287,6 @@ function CatalogAppReady({
                 </span>
               </a>
               <DailyActiveDisplay variant="hero" />
-              <svg
-                aria-hidden="true"
-                className="faction-selector__title-filter"
-                focusable="false"
-              >
-                <defs>
-                  <filter
-                    id="faction-title-close-cuts"
-                    x="-5%"
-                    y="-15%"
-                    width="110%"
-                    height="130%"
-                    colorInterpolationFilters="sRGB"
-                  >
-                    <feMorphology
-                      in="SourceGraphic"
-                      operator="dilate"
-                      radius="0 1.85"
-                      result="title-expanded"
-                    />
-                    <feMorphology
-                      in="title-expanded"
-                      operator="erode"
-                      radius="0 1.85"
-                    />
-                  </filter>
-                </defs>
-              </svg>
               <h1 id="faction-selector-title" ref={selectorTitleRef} tabIndex={-1}>
                 选择你的阵营
               </h1>

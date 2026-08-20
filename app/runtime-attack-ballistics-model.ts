@@ -1,8 +1,9 @@
-import type {
-  EditorField,
-  EditorNativeCurveRecord,
-  EditorNativeModel,
-  EditorNativeProjectileRecord,
+import {
+  maxEditorNativeWeaponDistanceM,
+  type EditorField,
+  type EditorNativeCurveRecord,
+  type EditorNativeModel,
+  type EditorNativeProjectileRecord,
 } from "../lib/editor-native-hit-model.ts";
 import type { RuntimeExplosiveSource } from "../lib/runtime-explosive-catalog.ts";
 import type {
@@ -87,12 +88,18 @@ export function runtimeAttackDistanceControl(
     weapon.armorPenetrationCurveIndex,
     model.curves,
   );
-  const enabled = damageDecay === "available" || penetrationDecay === "available";
+  const curveDistanceM = Math.min(
+    MAX_VIEWER_TARGET_DISTANCE_M,
+    maxEditorNativeWeaponDistanceM(model, weaponIndex),
+  );
+  const enabled = curveDistanceM > 0 && (
+    damageDecay === "available" || penetrationDecay === "available"
+  );
   return {
     damageDecay,
     penetrationDecay,
     enabled,
-    maxDistanceM: enabled ? MAX_VIEWER_TARGET_DISTANCE_M : 0,
+    maxDistanceM: enabled ? curveDistanceM : 0,
   };
 }
 

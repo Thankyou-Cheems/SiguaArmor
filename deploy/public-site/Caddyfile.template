@@ -87,9 +87,6 @@
 				file_server
 			}
 
-			@legacyWeaponDps path /weapon-dps
-			redir @legacyWeaponDps /squad/weapon-dps?{orig_query} 308
-
 			@selectorAssets path /portal-assets/tactical-squad-wordmark-62bff6fb051e.png /portal-assets/siguad-armor-china-soldier-ddd587081da0.webp /portal-assets/siguad-armor-global-soldier-ccb90707110a.webp
 			header @selectorAssets Cache-Control "public, max-age=31536000, immutable"
 			handle @selectorAssets {

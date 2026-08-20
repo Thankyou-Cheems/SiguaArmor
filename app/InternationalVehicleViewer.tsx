@@ -185,7 +185,6 @@ export default function InternationalVehicleViewer({
         <RuntimeVehicleViewer
           preview={preview}
           showChrome={false}
-          siteEdition={siteEdition}
           mode={mode}
           displayName={displayName}
           attackSourcePresentation={stableAttackSourcePresentation}
