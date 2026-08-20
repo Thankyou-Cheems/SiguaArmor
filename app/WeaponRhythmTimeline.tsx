@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo } from "react";
 
 import type {
   WeaponDpsEvent,
@@ -28,6 +28,11 @@ interface OverheatCoolingSegment {
   endSeconds: number;
 }
 
+interface ReloadSegment {
+  startSeconds: number;
+  endSeconds: number;
+}
+
 function overheatCoolingSegments(
   events: readonly WeaponDpsEvent[],
   durationSeconds: number,
@@ -51,6 +56,21 @@ function overheatCoolingSegments(
     segments.push({ startSeconds, endSeconds: durationSeconds });
   }
   return segments.filter(({ startSeconds, endSeconds }) => endSeconds > startSeconds);
+}
+
+function reloadSegments(
+  events: readonly WeaponDpsEvent[],
+  durationSeconds: number,
+) {
+  return events.flatMap((event): ReloadSegment[] => {
+    if (event.kind !== "reload") return [];
+    const endSeconds = Math.min(durationSeconds, event.timeSeconds);
+    const startSeconds = Math.max(
+      0,
+      Math.min(endSeconds, event.startTimeSeconds ?? event.timeSeconds - 1),
+    );
+    return endSeconds > startSeconds ? [{ startSeconds, endSeconds }] : [];
+  });
 }
 
 function stateSegments(
@@ -81,6 +101,14 @@ function pathFor(points: readonly { x: number; y: number }[]) {
     : points.map(({ x, y }, index) => `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`).join(" ");
 }
 
+function stepPathFor(points: readonly { x: number; y: number }[]) {
+  if (points.length === 0) return "";
+  return points.slice(1).reduce(
+    (path, point) => `${path} H${point.x.toFixed(2)} V${point.y.toFixed(2)}`,
+    `M${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`,
+  );
+}
+
 function tickStep(durationSeconds: number) {
   if (durationSeconds <= 10) return 1;
   if (durationSeconds <= 30) return 5;
@@ -92,35 +120,42 @@ function tickStep(durationSeconds: number) {
 export function WeaponRhythmTimeline({
   simulation,
   targetHealth,
+  targetLabel,
   compact = false,
 }: {
   simulation: WeaponDpsSimulation;
   targetHealth?: number | null;
+  targetLabel?: string | null;
   compact?: boolean;
 }) {
   const id = useId().replaceAll(":", "");
   const heatGradientId = `heat-gradient-${id}`;
   const overheatCoolingPatternId = `overheat-cooling-pattern-${id}`;
-  const [hoveredShot, setHoveredShot] = useState<number | null>(null);
+  const reloadPatternId = `reload-pattern-${id}`;
   const points = simulation.heatCurve;
+  const range = simulation.heatRange;
+  const showHeat = Boolean(
+    range && points.some((point) => point.temperature !== null),
+  );
   const durationSeconds = Math.max(
     simulation.elapsedSeconds,
     points.at(-1)?.timeSeconds ?? 0,
     1,
   );
-  const width = 1000;
-  const height = compact ? 222 : 330;
-  const left = 74;
-  const right = 24;
+  const width = compact ? 600 : 1000;
+  const left = compact ? 48 : 74;
+  const right = compact ? 16 : 24;
   const innerWidth = width - left - right;
   const stateTop = compact ? 12 : 18;
   const stateHeight = compact ? 20 : 24;
   const heatTop = compact ? 52 : 64;
   const heatHeight = compact ? 62 : 104;
-  const damageTop = heatTop + heatHeight + (compact ? 26 : 34);
+  const damageTop = showHeat
+    ? heatTop + heatHeight + (compact ? 26 : 34)
+    : stateTop + stateHeight + (compact ? 26 : 34);
   const damageHeight = compact ? 42 : 72;
-  const axisY = height - 18;
-  const range = simulation.heatRange;
+  const axisY = damageTop + damageHeight + (compact ? 28 : 34);
+  const height = axisY + 18;
   const heatMin = range?.min ?? 0;
   const heatMax = Math.max(range?.max ?? 1, heatMin + 1);
   const damageMax = Math.max(
@@ -149,7 +184,7 @@ export function WeaponRhythmTimeline({
     })),
   ];
   const heatPath = pathFor(heatPoints);
-  const damagePath = pathFor(damagePoints);
+  const damagePath = stepPathFor(damagePoints);
   const heatAreaPath = heatPoints.length === 0
     ? ""
     : `${heatPath} L${heatPoints.at(-1)!.x.toFixed(2)} ${(heatTop + heatHeight).toFixed(2)} L${heatPoints[0].x.toFixed(2)} ${(heatTop + heatHeight).toFixed(2)} Z`;
@@ -164,30 +199,34 @@ export function WeaponRhythmTimeline({
     () => overheatCoolingSegments(simulation.events, durationSeconds),
     [durationSeconds, simulation.events],
   );
+  const reloads = useMemo(
+    () => reloadSegments(simulation.events, durationSeconds),
+    [durationSeconds, simulation.events],
+  );
   const ticks = Array.from(
     { length: Math.floor(durationSeconds / tickStep(durationSeconds)) + 1 },
     (_, index) => index * tickStep(durationSeconds),
   );
   if (ticks.at(-1) !== durationSeconds) ticks.push(durationSeconds);
-  const hoveredPoint = hoveredShot === null
-    ? null
-    : points.find(({ shotNumber }) => shotNumber === hoveredShot) ?? null;
-  const hoveredX = hoveredPoint ? xFor(hoveredPoint.timeSeconds) : null;
   const targetY = targetHealth && targetHealth > 0
     ? damageYFor(targetHealth)
     : null;
   const killX = simulation.killTimeSeconds === null
     ? null
     : xFor(simulation.killTimeSeconds);
+  const killLabelAtEnd = killX !== null && killX > width - right - 96;
 
   return (
-    <div className="rhythm-timeline" data-compact={compact}>
+    <div className="rhythm-timeline" data-compact={compact} data-has-heat={showHeat}>
+      <div className="rhythm-timeline__heading">
+        <span>{showHeat ? "累计伤害 / 热量" : "累计伤害"}</span>
+        <strong>{targetLabel ?? "当前目标"}</strong>
+      </div>
       <svg
         className="rhythm-timeline__chart"
         viewBox={`0 0 ${width} ${height}`}
         role="img"
-        aria-label={`武器节奏时间轴，横轴 ${durationSeconds.toFixed(1)} 秒，共 ${points.length} 发`}
-        onMouseLeave={() => setHoveredShot(null)}
+        aria-label={`${targetLabel ?? "当前目标"}武器节奏时间轴，横轴 ${durationSeconds.toFixed(1)} 秒，共 ${points.length} 发`}
       >
         <defs>
           <linearGradient id={heatGradientId} x1="0" y1="1" x2="0" y2="0">
@@ -200,9 +239,13 @@ export function WeaponRhythmTimeline({
             <rect width="10" height="10" fill="rgba(112, 18, 20, 0.22)" />
             <rect width="4" height="10" fill="rgba(255, 91, 77, 0.5)" />
           </pattern>
+          <pattern id={reloadPatternId} width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+            <rect width="12" height="12" fill="rgba(80, 86, 84, 0.3)" />
+            <rect width="4" height="12" fill="rgba(190, 197, 194, 0.2)" />
+          </pattern>
         </defs>
         <text x="8" y={stateTop + 17} className="rhythm-timeline__lane-label">状态</text>
-        <text x="8" y={heatTop + 15} className="rhythm-timeline__lane-label">热量</text>
+        {showHeat ? <text x="8" y={heatTop + 15} className="rhythm-timeline__lane-label">热量</text> : null}
         <text x="8" y={damageTop + 15} className="rhythm-timeline__lane-label">伤害</text>
 
         {ticks.map((tick) => (
@@ -226,63 +269,101 @@ export function WeaponRhythmTimeline({
           );
         })}
 
-        <rect
-          x={left}
-          y={heatTop}
-          width={innerWidth}
-          height={heatHeight}
-          fill={`url(#${heatGradientId})`}
-          className="rhythm-timeline__heat-gradient"
-        />
-        {range?.triggerAt !== null && range?.triggerAt !== undefined ? (
+        {showHeat ? (
           <>
-            <line x1={left} x2={width - right} y1={heatYFor(range.triggerAt)} y2={heatYFor(range.triggerAt)} className="rhythm-timeline__heat-trigger" />
-            <text x={width - right - 4} y={heatYFor(range.triggerAt) - 5} textAnchor="end" className="rhythm-timeline__threshold-label">过热锁定 {range.triggerAt}</text>
+            <rect
+              x={left}
+              y={heatTop}
+              width={innerWidth}
+              height={heatHeight}
+              fill={`url(#${heatGradientId})`}
+              className="rhythm-timeline__heat-gradient"
+            />
+            {range?.triggerAt !== null && range?.triggerAt !== undefined ? (
+              <>
+                <line x1={left} x2={width - right} y1={heatYFor(range.triggerAt)} y2={heatYFor(range.triggerAt)} className="rhythm-timeline__heat-trigger" />
+                <text x={width - right - 4} y={heatYFor(range.triggerAt) - 5} textAnchor="end" className="rhythm-timeline__threshold-label">过热锁定 {range.triggerAt}</text>
+              </>
+            ) : null}
+            {coolingSegments.length > 0 ? (
+              <g className="rhythm-timeline__overheat-cooling-key">
+                <rect
+                  x={left + 4}
+                  y={heatTop - 13}
+                  width="16"
+                  height="7"
+                  fill={`url(#${overheatCoolingPatternId})`}
+                />
+                <text x={left + 25} y={heatTop - 6}>红色斜纹 = 过热冷却段</text>
+              </g>
+            ) : null}
+            {coolingSegments.map((segment, index) => {
+              const x = xFor(segment.startSeconds);
+              const segmentWidth = Math.max(4, xFor(segment.endSeconds) - x);
+              return (
+                <g key={`overheat-cooling-${index}`} className="rhythm-timeline__overheat-cooling">
+                  <rect
+                    x={x}
+                    y={heatTop}
+                    width={segmentWidth}
+                    height={heatHeight}
+                    fill={`url(#${overheatCoolingPatternId})`}
+                    className="rhythm-timeline__overheat-cooling-band"
+                  >
+                    <title>{`过热冷却 ${segment.startSeconds.toFixed(2)}–${segment.endSeconds.toFixed(2)} 秒`}</title>
+                  </rect>
+                  <rect x={x} y={heatTop} width={segmentWidth} height="5" className="rhythm-timeline__overheat-cooling-cap" />
+                  <path d={`M${x} ${heatTop - 7} l7 7 h-14 Z`} className="rhythm-timeline__overheat-cooling-marker" />
+                  {segmentWidth > 72 ? (
+                    <text x={x + segmentWidth / 2} y={heatTop + 15} textAnchor="middle" className="rhythm-timeline__overheat-cooling-label">
+                      过热冷却
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+            {heatAreaPath ? <path d={heatAreaPath} className="rhythm-timeline__heat-area" /> : null}
+            {heatPath ? <path d={heatPath} className="rhythm-timeline__heat-line" /> : null}
           </>
         ) : null}
-        {coolingSegments.length > 0 ? (
-          <g className="rhythm-timeline__overheat-cooling-key">
-            <rect
-              x={left + 4}
-              y={heatTop - 13}
-              width="16"
-              height="7"
-              fill={`url(#${overheatCoolingPatternId})`}
-            />
-            <text x={left + 25} y={heatTop - 6}>红色斜纹 = 过热冷却段</text>
-          </g>
-        ) : null}
-        {coolingSegments.map((segment, index) => {
+
+        <rect x={left} y={damageTop} width={innerWidth} height={damageHeight} className="rhythm-timeline__damage-base" />
+        {reloads.map((segment, index) => {
           const x = xFor(segment.startSeconds);
-          const segmentWidth = Math.max(4, xFor(segment.endSeconds) - x);
+          const segmentWidth = Math.max(2, xFor(segment.endSeconds) - x);
           return (
-            <g key={`overheat-cooling-${index}`} className="rhythm-timeline__overheat-cooling">
+            <g key={`reload-vacuum-${index}`} className="rhythm-timeline__reload-vacuum">
               <rect
                 x={x}
-                y={heatTop}
+                y={damageTop}
                 width={segmentWidth}
-                height={heatHeight}
-                fill={`url(#${overheatCoolingPatternId})`}
-                className="rhythm-timeline__overheat-cooling-band"
+                height={damageHeight}
+                fill={`url(#${reloadPatternId})`}
+                className="rhythm-timeline__reload-vacuum-band"
               >
-                <title>{`过热冷却 ${segment.startSeconds.toFixed(2)}–${segment.endSeconds.toFixed(2)} 秒`}</title>
+                <title>{`换弹伤害真空 ${segment.startSeconds.toFixed(2)}–${segment.endSeconds.toFixed(2)} 秒`}</title>
               </rect>
-              <rect x={x} y={heatTop} width={segmentWidth} height="5" className="rhythm-timeline__overheat-cooling-cap" />
-              <path d={`M${x} ${heatTop - 7} l7 7 h-14 Z`} className="rhythm-timeline__overheat-cooling-marker" />
-              {segmentWidth > 72 ? (
-                <text x={x + segmentWidth / 2} y={heatTop + 15} textAnchor="middle" className="rhythm-timeline__overheat-cooling-label">
-                  过热冷却
-                </text>
-              ) : null}
+              <rect x={x} y={damageTop} width={segmentWidth} height="4" className="rhythm-timeline__reload-vacuum-cap" />
             </g>
           );
         })}
-        {heatAreaPath ? <path d={heatAreaPath} className="rhythm-timeline__heat-area" /> : null}
-        {heatPath ? <path d={heatPath} className="rhythm-timeline__heat-line" /> : null}
-
-        <rect x={left} y={damageTop} width={innerWidth} height={damageHeight} className="rhythm-timeline__damage-base" />
         {damageAreaPath ? <path d={damageAreaPath} className="rhythm-timeline__damage-area" /> : null}
         {damagePath ? <path d={damagePath} className="rhythm-timeline__damage-line" /> : null}
+        {reloads.map((segment, index) => {
+          const x = xFor(segment.startSeconds);
+          const segmentWidth = Math.max(2, xFor(segment.endSeconds) - x);
+          return segmentWidth > 90 ? (
+            <text
+              key={`reload-vacuum-label-${index}`}
+              x={x + segmentWidth / 2}
+              y={damageTop + damageHeight / 2 + 4}
+              textAnchor="middle"
+              className="rhythm-timeline__reload-vacuum-label"
+            >
+              换弹 · {`${(segment.endSeconds - segment.startSeconds).toFixed(1)}s`} 无伤害
+            </text>
+          ) : null;
+        })}
         {targetY === null ? null : (
           <>
             <line x1={left} x2={width - right} y1={targetY} y2={targetY} className="rhythm-timeline__target-line" />
@@ -292,43 +373,24 @@ export function WeaponRhythmTimeline({
         {killX === null ? null : (
           <>
             <line x1={killX} x2={killX} y1={stateTop} y2={damageTop + damageHeight} className="rhythm-timeline__kill-line" />
-            <text x={killX + 5} y={damageTop + 13} className="rhythm-timeline__kill-label">击毁 {simulation.killTimeSeconds?.toFixed(2)}s</text>
-          </>
-        )}
-
-        {points.map((point) => {
-          if (point.temperature === null) return null;
-          return (
-            <circle
-              key={point.shotNumber}
-              cx={xFor(point.timeSeconds)}
-              cy={heatYFor(point.temperature)}
-              r={hoveredShot === point.shotNumber ? 5 : 2.1}
-              className="rhythm-timeline__shot-point"
-              onMouseEnter={() => setHoveredShot(point.shotNumber)}
+            <text
+              x={killLabelAtEnd ? killX - 5 : killX + 5}
+              y={damageTop + 13}
+              textAnchor={killLabelAtEnd ? "end" : "start"}
+              className="rhythm-timeline__kill-label"
             >
-              <title>{`第 ${point.shotNumber} 发 · ${point.timeSeconds.toFixed(2)} 秒 · 热量 ${point.temperature.toFixed(1)} · 累计伤害 ${point.cumulativeDamage.toFixed(0)}`}</title>
-            </circle>
-          );
-        })}
-
-        {hoveredX === null || hoveredPoint === null ? null : (
-          <>
-            <line x1={hoveredX} x2={hoveredX} y1={stateTop} y2={damageTop + damageHeight} className="rhythm-timeline__cursor" />
-            <g transform={`translate(${Math.min(width - 220, Math.max(left, hoveredX + 8))} ${heatTop + 8})`}>
-              <rect width="208" height="55" rx="4" className="rhythm-timeline__tooltip-bg" />
-              <text x="10" y="18" className="rhythm-timeline__tooltip-title">第 {hoveredPoint.shotNumber} 发 · {hoveredPoint.timeSeconds.toFixed(2)}s</text>
-              <text x="10" y="37" className="rhythm-timeline__tooltip-copy">热量 {hoveredPoint.temperature?.toFixed(1) ?? "—"} · 伤害 {hoveredPoint.cumulativeDamage.toFixed(0)}</text>
-            </g>
+              击毁 {simulation.killTimeSeconds?.toFixed(2)}s
+            </text>
           </>
         )}
+
       </svg>
       {compact ? null : <div className="rhythm-timeline__legend" aria-label="时间轴图例">
         <span data-kind="firing">开火</span>
         <span data-kind="cooling">冷却/短停</span>
         <span data-kind="overheated">过热锁定</span>
         <span data-kind="reloading">换弹</span>
-        <span data-kind="heat">热量</span>
+        {showHeat ? <span data-kind="heat">热量</span> : null}
         <span data-kind="damage">累计伤害</span>
       </div>}
     </div>

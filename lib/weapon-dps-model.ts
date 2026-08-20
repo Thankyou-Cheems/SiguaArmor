@@ -58,6 +58,7 @@ export interface WeaponDpsRhythmPlan {
 export interface WeaponDpsEvent {
   kind: "shot" | "reload" | "pause" | "overheat" | "unlock";
   timeSeconds: number;
+  startTimeSeconds?: number;
   temperature: number | null;
   damage: number;
   shotNumber: number;
@@ -178,9 +179,10 @@ function buildTimelineSamples(
     const hasPause = pauses.some(
       ({ timeSeconds: pauseTime }) => pauseTime >= timeSeconds && pauseTime < nextTime,
     );
-    const hasReloadEnding = reloads.some(
-      ({ timeSeconds: reloadTime }) => reloadTime > timeSeconds && reloadTime <= nextTime,
-    );
+    const hasReload = reloads.some((event) => {
+      const reloadStart = event.startTimeSeconds ?? Math.max(0, event.timeSeconds - 1);
+      return reloadStart < nextTime && event.timeSeconds > timeSeconds;
+    });
     const lastOverheat = overheats.filter(({ timeSeconds: eventTime }) => eventTime <= timeSeconds).at(-1);
     const lastUnlock = unlocks.filter(({ timeSeconds: eventTime }) => eventTime <= timeSeconds).at(-1);
     const overheated = Boolean(
@@ -188,7 +190,7 @@ function buildTimelineSamples(
     );
     const state: WeaponDpsTimelineState = overheated
       ? "overheated"
-      : hasReloadEnding
+      : hasReload
         ? "reloading"
         : shotsInSecond.length > 0
           ? "firing"
@@ -412,12 +414,14 @@ export function simulateWeaponRhythm(
       const reloadSeconds =
         (weapon.tacticalReloadSeconds ?? weapon.dryReloadSeconds) ?? 0;
       if (reloadSeconds > EPSILON) {
+        const reloadStartSeconds = elapsedSeconds;
         advance(reloadSeconds);
         if (elapsedSeconds > horizonSeconds + EPSILON) break;
         reloads += 1;
         events.push({
           kind: "reload",
           timeSeconds: elapsedSeconds,
+          startTimeSeconds: reloadStartSeconds,
           temperature,
           damage: totalDamage,
           shotNumber: shots,
