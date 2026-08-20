@@ -69,7 +69,7 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
 
-  assert.equal(currentEntry.id, "2026-08-20-weapon-rhythm-distance-curves");
+  assert.equal(currentEntry.id, "2026-08-20-vehicle-duel");
   for (const document of documents) {
     assert.equal(document.siteUpdatedOn, "2026-08-20");
     assert.deepEqual(document.entries[0], currentEntry);
@@ -78,9 +78,15 @@ test("both edition logs lead with the current release and omit superseded claims
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(document.entries[0]), /武器节奏与 DPS 不再使用独立搜索页/u);
-    assert.match(JSON.stringify(document.entries[0]), /打开全站武器库后距离滑条变为不可用/u);
-    assert.match(JSON.stringify(document.entries[0]), /距离滑条上限现在跟随/u);
+    assert.match(JSON.stringify(document.entries[0]), /新增双载具同时交火页面/u);
+    assert.match(JSON.stringify(document.entries[0]), /弹药架先归零时立即判负/u);
+    const rhythmEntry = document.entries.find(
+      ({ id }) => id === "2026-08-20-weapon-rhythm-distance-curves",
+    );
+    assert.ok(rhythmEntry, "weapon rhythm release entry must be retained");
+    assert.match(JSON.stringify(rhythmEntry), /武器节奏与 DPS 不再使用独立搜索页/u);
+    assert.match(JSON.stringify(rhythmEntry), /打开全站武器库后距离滑条变为不可用/u);
+    assert.match(JSON.stringify(rhythmEntry), /距离滑条上限现在跟随/u);
     const dataRefreshEntry = document.entries.find(
       ({ id }) => id === "2026-08-14-editor-vehicle-weapon-refresh",
     );

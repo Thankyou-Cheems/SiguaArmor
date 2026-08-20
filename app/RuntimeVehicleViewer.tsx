@@ -3411,6 +3411,15 @@ function turretStationEquipmentLabel(
   return `${labels[0]} 等 ${labels.length} 项`;
 }
 
+export interface RuntimeVehicleDuelHitSnapshot {
+  weapon: WeaponDpsWeapon;
+  weaponLabel: string;
+  weaponAssignmentId: string | null;
+  targets: readonly WeaponHitDpsTarget[];
+}
+
+let sharedWeaponDpsFactsRequest: Promise<WeaponDpsWeapon[]> | null = null;
+
 export function RuntimeVehicleViewer({
   preview,
   showChrome = true,
@@ -3423,6 +3432,10 @@ export function RuntimeVehicleViewer({
   navigationState,
   onNavigationStateChange,
   onExteriorStreamingChange,
+  attackLibraryOverride,
+  duelTarget = false,
+  allowGlobalAttackSources = true,
+  onDuelHitChange,
 }: {
   preview: RuntimeVehiclePreview;
   showChrome?: boolean;
@@ -3435,6 +3448,10 @@ export function RuntimeVehicleViewer({
   navigationState?: ViewerNavigationState;
   onNavigationStateChange?: (state: ViewerNavigationState) => void;
   onExteriorStreamingChange?: (state: { loaded: number; total: number } | null) => void;
+  attackLibraryOverride?: RuntimeAttackSourceLibrary | null;
+  duelTarget?: boolean;
+  allowGlobalAttackSources?: boolean;
+  onDuelHitChange?: (snapshot: RuntimeVehicleDuelHitSnapshot | null) => void;
 }) {
   const previewIssue = officialVehiclePreviewIssue(preview.variantRawName);
   const exteriorUnavailableMessage = previewIssue?.message;
@@ -3463,6 +3480,7 @@ export function RuntimeVehicleViewer({
   const animatedShotIdRef = useRef<number | null>(null);
   const navigationStateRef = useRef(navigationState);
   const onNavigationStateChangeRef = useRef(onNavigationStateChange);
+  const onDuelHitChangeRef = useRef(onDuelHitChange);
   const pendingSharedShotsRef = useRef(
     decodeSharedShotPaths(navigationState?.shots ?? ""),
   );
@@ -3759,7 +3777,6 @@ export function RuntimeVehicleViewer({
   const [weaponDpsFactsState, setWeaponDpsFactsState] = useState<
     "idle" | "loading" | "ready" | "unavailable"
   >("idle");
-  const weaponDpsFactsRequestRef = useRef<Promise<WeaponDpsWeapon[]> | null>(null);
   const [attackSourceCardId, setAttackSourceCardId] = useState("");
   const [attackState, setAttackState] = useState<AttackState>({ kind: "loading" });
   const [loadedAttackSourceCardId, setLoadedAttackSourceCardId] = useState("");
@@ -3800,6 +3817,7 @@ export function RuntimeVehicleViewer({
     total: 0,
   });
   const requestGlobalAttackLibrary = useCallback(() => {
+    if (!allowGlobalAttackSources) return;
     setGlobalAttackLibraryState("loading");
     const request = globalAttackLibraryRequestRef.current ??
       import("./runtime-probe-weapon-labels")
@@ -3818,7 +3836,7 @@ export function RuntimeVehicleViewer({
         );
         setGlobalAttackLibraryState("error");
       });
-  }, []);
+  }, [allowGlobalAttackSources]);
 
   const loadIndexedAttackLibrary = useCallback(async (attackerId: string) => {
     const index = await loadWikiVehicleWeaponRuntimeIndex() as WikiWeaponRuntimeIndexDocument;
@@ -3839,6 +3857,14 @@ export function RuntimeVehicleViewer({
     setAttackLibraryError(null);
     setEquipmentResolver(null);
     setGlobalAttackLibraryState("idle");
+    if (attackLibraryOverride) {
+      setAttackLibrary(attackLibraryOverride);
+      setAttackLibraryError(null);
+      setGlobalAttackLibraryState("ready");
+      return () => {
+        active = false;
+      };
+    }
     void loadWikiVehicleWeaponRuntimeSource(preview.cardId)
       .then((value) => {
         if (!active) return;
@@ -3862,25 +3888,6 @@ export function RuntimeVehicleViewer({
           createRuntimeStationEquipmentResolver(document),
         );
         setAttackLibraryError(null);
-        const requestedAttacker = navigationStateRef.current?.attacker ?? "";
-        if (
-          requestedAttacker &&
-          !library.runtimeAttackSourceForId(requestedAttacker)
-        ) {
-          void loadIndexedAttackLibrary(requestedAttacker)
-            .then((indexedLibrary) => {
-              if (!active) return;
-              if (!indexedLibrary) {
-                requestGlobalAttackLibrary();
-                return;
-              }
-              setAttackLibrary(indexedLibrary);
-              setAttackLibraryError(null);
-            })
-            .catch(() => {
-              if (active) requestGlobalAttackLibrary();
-            });
-        }
       })
       .catch((error: unknown) => {
         if (!active) return;
@@ -3892,11 +3899,66 @@ export function RuntimeVehicleViewer({
       active = false;
     };
   }, [
+    attackLibraryOverride,
     attackSourcePresentation,
     displayName,
     loadIndexedAttackLibrary,
     preview.cardId,
     preview.variantRawName,
+    requestGlobalAttackLibrary,
+  ]);
+  useEffect(() => {
+    const requestedAttacker = navigationState?.attacker ?? "";
+    if (
+      !requestedAttacker ||
+      !attackLibrary ||
+      attackLibrary.runtimeAttackSourceForId(requestedAttacker)
+    ) return;
+    if (globalAttackLibraryState === "loading") return;
+    if (
+      allowGlobalAttackSources &&
+      globalAttackLibraryState === "ready"
+    ) {
+      setAttackLibraryError("请求的武器来源不在当前目录中");
+      return;
+    }
+    let active = true;
+    void loadIndexedAttackLibrary(requestedAttacker)
+      .then((indexedLibrary) => {
+        if (!active) return;
+        if (indexedLibrary) {
+          setAttackLibrary(indexedLibrary);
+          setAttackLibraryError(null);
+          setGlobalAttackLibraryState("ready");
+          return;
+        }
+        if (allowGlobalAttackSources) {
+          requestGlobalAttackLibrary();
+          return;
+        }
+        setAttackLibraryError("当前载具武器配置不可用");
+        setGlobalAttackLibraryState("error");
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        if (allowGlobalAttackSources) {
+          requestGlobalAttackLibrary();
+          return;
+        }
+        setAttackLibraryError(
+          error instanceof Error ? error.message : String(error),
+        );
+        setGlobalAttackLibraryState("error");
+      });
+    return () => {
+      active = false;
+    };
+  }, [
+    allowGlobalAttackSources,
+    attackLibrary,
+    globalAttackLibraryState,
+    loadIndexedAttackLibrary,
+    navigationState?.attacker,
     requestGlobalAttackLibrary,
   ]);
   const attackSource = attackLibrary?.runtimeAttackSourceForId(attackSourceCardId) ?? null;
@@ -3927,14 +3989,14 @@ export function RuntimeVehicleViewer({
     }
     let active = true;
     setWeaponDpsFactsState("loading");
-    const request = weaponDpsFactsRequestRef.current ??
+    const request = sharedWeaponDpsFactsRequest ??
       loadWikiWeaponCatalog()
         .then((document) => weaponDpsWeaponsFromWikiDocument(document as Record<string, unknown>).weapons)
         .catch((error: unknown) => {
-          weaponDpsFactsRequestRef.current = null;
+          sharedWeaponDpsFactsRequest = null;
           throw error;
         });
-    weaponDpsFactsRequestRef.current = request;
+    sharedWeaponDpsFactsRequest = request;
     void request
       .then((candidates) => {
         if (!active) return;
@@ -4993,6 +5055,10 @@ export function RuntimeVehicleViewer({
     }
     applyCameraNavigationRef.current?.(navigationState);
   }, [navigationState, onNavigationStateChange]);
+
+  useEffect(() => {
+    onDuelHitChangeRef.current = onDuelHitChange;
+  }, [onDuelHitChange]);
 
   useEffect(() => {
     const requestedNavigation = navigationStateRef.current;
@@ -7807,6 +7873,31 @@ export function RuntimeVehicleViewer({
     () => shotResult ? targetPoolsForShot(shotResult) : [],
     [shotResult],
   );
+  useEffect(() => {
+    if (
+      !selectedAttackWeapon ||
+      !weaponDpsFacts ||
+      weaponDpsFactsState !== "ready" ||
+      weaponHitDpsTargets.length === 0
+    ) {
+      onDuelHitChangeRef.current?.(null);
+      return;
+    }
+    onDuelHitChangeRef.current?.({
+      weapon: weaponDpsFacts,
+      weaponLabel: weaponNameZh(
+        selectedAttackWeapon.selectorVariant?.label ??
+          selectedAttackWeapon.displayNameZh,
+      ),
+      weaponAssignmentId: selectedAttackWeapon.weaponAssignmentId ?? null,
+      targets: weaponHitDpsTargets,
+    });
+  }, [
+    selectedAttackWeapon,
+    weaponDpsFacts,
+    weaponDpsFactsState,
+    weaponHitDpsTargets,
+  ]);
 
   if (!visual) return null;
 
@@ -7930,6 +8021,7 @@ export function RuntimeVehicleViewer({
         hitState.kind === "ready" ? catalogCompletedWeaponCount : undefined
       }
       data-show-chrome={showChrome}
+      data-duel-target={duelTarget ? "true" : undefined}
       data-protection-map={protectionActive ? "active" : "inactive"}
       data-physical-pose={chassisPose
         ? physicalPoseActive

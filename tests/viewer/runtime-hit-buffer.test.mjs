@@ -416,6 +416,36 @@ test("legacy geometryUrl remains a verified raw hit-scene source", async () => {
   }
 });
 
+test("concurrent viewers share exact record, geometry, and BVH requests", async () => {
+  const fixture = runtimeHitFixture();
+  const originalFetch = globalThis.fetch;
+  const counts = new Map();
+  globalThis.fetch = async (url) => {
+    const pathname = new URL(String(url)).pathname;
+    counts.set(pathname, (counts.get(pathname) ?? 0) + 1);
+    const bytes = fixture.responses.get(pathname);
+    assert.ok(bytes, `unexpected request ${pathname}`);
+    await Promise.resolve();
+    return new Response(bytes, { status: 200 });
+  };
+
+  try {
+    const [left, right] = await Promise.all([
+      loadRuntimeHitScene(fixture.descriptor),
+      loadRuntimeHitScene(fixture.descriptor),
+    ]);
+    assert.equal(left.record.vehicleId, fixture.descriptor.vehicleId);
+    assert.equal(right.record.vehicleId, fixture.descriptor.vehicleId);
+    assert.deepEqual(Object.fromEntries(counts), {
+      "/assets/hit/record.json": 1,
+      "/assets/hit/geometry.bin": 1,
+      "/assets/hit/bvh.bin": 1,
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("meshopt-v1 geometry feeds the unchanged hit-scene parser", async () => {
   const fixture = runtimeHitFixture();
   await MeshoptEncoder.ready;

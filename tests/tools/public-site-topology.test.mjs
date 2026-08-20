@@ -155,9 +155,11 @@ test("catalog bootstrap stays visually empty until the full homepage is ready", 
 test("catalog routes do not serialize the full product topology into every document", async () => {
   const routePaths = [
     "app/page.tsx",
+    "app/duel/page.tsx",
     "app/vehicles/[cardId]/page.tsx",
     "app/factions/[groupId]/page.tsx",
     "app/china/page.tsx",
+    "app/china/duel/page.tsx",
     "app/china/vehicles/[cardId]/page.tsx",
     "app/china/factions/[groupId]/page.tsx",
   ];
