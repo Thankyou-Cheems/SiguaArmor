@@ -170,10 +170,13 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   );
   assert.match(viewer, /primarySimulation\.thermalState === "unavailable"/u);
   assert.match(viewer, /单发摧毁/u);
-  assert.match(viewer, /首发有效伤害/u);
-  assert.match(viewer, /装填/u);
-  assert.match(viewer, /再发间隔/u);
-  assert.match(viewer, /同时计时/u);
+  assert.doesNotMatch(viewer, /function hitDpsTimingReason/u);
+  assert.match(viewer, /function hitDpsTimingFacts/u);
+  assert.match(viewer, /className="viewer-hit-dps-timing__facts"/u);
+  assert.match(viewer, /label: "首发"/u);
+  assert.match(viewer, /label: "装填 \/ 再发"/u);
+  assert.match(viewer, /label: "计时", value: "同时"/u);
+  assert.match(viewer, /secondaryLabel=\{secondarySummary \|\| null\}/u);
   assert.match(
     styles,
     /\.viewer-hit-dps-fold\s*\{[\s\S]*?margin-top:/u,

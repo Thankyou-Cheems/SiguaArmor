@@ -6962,8 +6962,11 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-hit-dps-fold > summary > small {
+  max-width: 112px;
+  overflow: hidden;
   color: var(--text-dim);
   font-size: 7px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -7003,6 +7006,42 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   font-family: var(--font-readable-display);
   font-size: 9px;
   line-height: 1.65;
+}
+
+.viewer-hit-dps-timing__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 1px;
+  background: rgba(120, 185, 190, 0.14);
+}
+
+.viewer-hit-dps-timing__facts[data-count="4"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.viewer-hit-dps-timing__facts > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  padding: 8px 7px;
+  background: rgba(7, 11, 9, 0.96);
+}
+
+.viewer-hit-dps-timing__facts dt {
+  color: var(--text-dim);
+  font-size: 7px;
+}
+
+.viewer-hit-dps-timing__facts dd {
+  overflow: hidden;
+  margin: 0;
+  color: var(--analysis-white);
+  font-family: var(--font-mono-ui);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @keyframes viewer-shot-result-enter {
@@ -7086,11 +7125,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-shot-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
 }
 
 .viewer-shot-heading strong {
@@ -7101,12 +7139,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-shot-weapon-name {
   min-width: 0;
-  max-width: min(320px, 46%);
-  overflow: hidden;
+  max-width: none;
+  overflow: visible;
   color: var(--text) !important;
   font-size: 11px !important;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .viewer-shot-heading span,
@@ -7119,17 +7158,18 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-shot-metrics {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 4px;
-  margin-left: auto;
+  gap: 3px;
+  margin-left: 0;
 }
 
 .viewer-shot-heading .viewer-shot-metrics > span {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 6px;
+  gap: 3px;
+  padding: 3px 4px;
   border: 1px solid rgba(225, 200, 155, 0.16);
   background: rgba(225, 200, 155, 0.055);
   color: var(--text-muted);

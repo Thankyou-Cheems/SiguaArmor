@@ -127,6 +127,18 @@ test("shot summary uses text labels instead of pictograms", () => {
   assert.match(shotSummary, /className="viewer-shot-weapon-name"[\s\S]*?activeShotWeaponName/u);
   assert.doesNotMatch(shotSummary, /<(?:WeaponPenetrationIcon|Swords|MoveRight)\b/u);
   assert.match(styles, /\.viewer-shot-outcome-summary__hull-health > i > b\s*\{[\s\S]*?rgba\(255, 92, 82, 0\.92\)/u);
+  assert.match(
+    styles,
+    /\.viewer-shot-heading\s*\{[\s\S]*?display:\s*grid;[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\) auto;/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-shot-weapon-name\s*\{[\s\S]*?max-width:\s*none;[\s\S]*?overflow-wrap:\s*anywhere;[\s\S]*?white-space:\s*normal;/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-shot-metrics\s*\{[\s\S]*?flex-wrap:\s*nowrap;[\s\S]*?margin-left:\s*0;/u,
+  );
 });
 
 test("vehicle-damaging realtime aim feedback uses the shared success green", () => {
