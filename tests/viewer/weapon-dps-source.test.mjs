@@ -192,6 +192,11 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   assert.match(timeline, /reload-pattern/u);
   assert.match(timeline, /换弹伤害真空/u);
   assert.match(timeline, /data-has-heat=\{showHeat\}/u);
+  assert.match(timeline, /const showState = !compact;/u);
+  assert.match(
+    timeline,
+    /\{showState \? \([\s\S]*?rhythm-timeline__state-base/u,
+  );
   assert.doesNotMatch(timeline, /<circle|shot-point|hoveredShot|useState/u);
   await assert.rejects(
     access(new URL("../../app/weapon-dps/page.tsx", import.meta.url)),

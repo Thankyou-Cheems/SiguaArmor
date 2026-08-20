@@ -6898,7 +6898,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   box-sizing: border-box;
   display: flex;
   width: min(410px, calc(100% - 36px));
-  max-height: min(calc(100% - 24px), 520px);
+  max-height: calc(100% - 24px);
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -6915,7 +6915,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-shot-result__scroll {
   min-height: 0;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -6982,11 +6982,29 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   transform: rotate(180deg);
 }
 
+.viewer-hit-dps-fold[open] {
+  display: flex;
+  min-height: 44px;
+  flex: 1 999 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.viewer-hit-dps-fold[open] > summary {
+  flex: none;
+}
+
 .viewer-hit-dps-fold__body {
   max-height: min(430px, 58vh);
   overflow: auto;
   border-top: 1px solid rgba(120, 185, 190, 0.18);
   scrollbar-color: var(--border-strong) var(--bg-1);
+}
+
+.viewer-hit-dps-fold[open] .viewer-hit-dps-fold__body {
+  min-height: 0;
+  flex: 1 1 auto;
+  max-height: none;
 }
 
 .viewer-hit-dps-fold__body > .viewer-hit-dps-timing {

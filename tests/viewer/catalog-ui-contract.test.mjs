@@ -141,6 +141,30 @@ test("shot summary uses text labels instead of pictograms", () => {
   );
 });
 
+test("expanded hit DPS yields vertical space to the complete hit result first", () => {
+  const resultPanelStyles = styles.slice(
+    styles.indexOf(".viewer-shot-result {"),
+    styles.indexOf(".viewer-shot-history {"),
+  );
+  assert.match(
+    resultPanelStyles,
+    /\.viewer-shot-result\s*\{[\s\S]*?max-height:\s*calc\(100% - 24px\);/u,
+  );
+  assert.doesNotMatch(resultPanelStyles, /max-height:[^;]*520px/u);
+  assert.match(
+    resultPanelStyles,
+    /\.viewer-shot-result__scroll\s*\{[\s\S]*?flex:\s*0 1 auto;/u,
+  );
+  assert.match(
+    resultPanelStyles,
+    /\.viewer-hit-dps-fold\[open\]\s*\{[\s\S]*?flex:\s*1 999 auto;[\s\S]*?overflow:\s*hidden;/u,
+  );
+  assert.match(
+    resultPanelStyles,
+    /\.viewer-hit-dps-fold\[open\] \.viewer-hit-dps-fold__body\s*\{[\s\S]*?flex:\s*1 1 auto;[\s\S]*?max-height:\s*none;/u,
+  );
+});
+
 test("vehicle-damaging realtime aim feedback uses the shared success green", () => {
   assert.match(styles, /--pointer-outline-damage:\s*var\(--status-confirmed\);/u);
   assert.match(
