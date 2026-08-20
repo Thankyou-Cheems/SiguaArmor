@@ -354,6 +354,56 @@
 .duel-prototype__attack-summary dt { color: var(--duel-muted); font-size: 7px; }
 .duel-prototype__attack-summary dd { overflow: hidden; margin: 0; color: #e5e9e3; font-family: var(--font-mono-ui), monospace; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
 
+.duel-prototype__combat-curve {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--duel-line);
+  background: rgba(4, 8, 7, 0.72);
+}
+
+.duel-prototype__combat-curve > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--duel-muted);
+  font-size: 8px;
+}
+
+.duel-prototype__combat-curve > header strong {
+  color: var(--duel-left);
+  font-family: var(--font-mono-ui), monospace;
+  font-size: 9px;
+}
+
+.duel-prototype__combat-curve[data-side="right"] > header strong { color: var(--duel-right); }
+
+.duel-prototype__combat-curve .rhythm-timeline {
+  margin: 0;
+  padding: 6px 5px 3px;
+  border-color: rgba(125, 183, 179, 0.16);
+  background: rgba(3, 6, 5, 0.7);
+  overflow-x: hidden;
+}
+
+.duel-prototype__combat-curve .rhythm-timeline[data-compact="true"] .rhythm-timeline__chart {
+  min-width: 100%;
+}
+
+.duel-prototype__combat-curve .rhythm-timeline__heading {
+  padding-bottom: 3px;
+  font-size: 8px;
+}
+
+.duel-prototype__combat-curve--empty {
+  min-height: 70px;
+  place-items: center;
+  color: var(--duel-muted);
+  font-size: 9px;
+  text-align: center;
+}
+
 .duel-prototype__verdict {
   display: grid;
   max-width: 760px;
@@ -381,31 +431,28 @@
 .duel-prototype__arena-grid {
   display: grid;
   max-width: 1540px;
-  grid-template-columns: minmax(330px, 1fr) 64px minmax(330px, 1fr);
+  grid-template-columns: minmax(330px, 1fr) 112px minmax(330px, 1fr);
   gap: 14px;
   align-items: stretch;
   margin: 0 auto;
 }
 
-.duel-prototype__versus {
+.duel-prototype__arena-judge {
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 12px;
+  gap: 6px;
+  color: #d8bb80;
+  text-align: center;
 }
 
-.duel-prototype__versus span {
-  color: #e2c58e;
-  font-family: var(--font-faction-display), sans-serif;
-  font-size: 28px;
+.duel-prototype__arena-judge svg {
+  filter: drop-shadow(0 0 10px rgba(218, 179, 105, 0.28));
 }
 
-.duel-prototype__versus i {
-  display: block;
-  width: 1px;
-  height: 70%;
-  background: linear-gradient(transparent, rgba(224, 190, 122, 0.55), transparent);
-}
+.duel-prototype__arena-judge span { color: var(--duel-muted); font-size: 8px; }
+.duel-prototype__arena-judge strong { font-size: 18px; }
+.duel-prototype__arena-judge b { color: #f0cf8e; font-family: var(--font-mono-ui), monospace; font-size: 15px; }
 
 .duel-prototype__race {
   display: grid;
@@ -426,6 +473,19 @@
 }
 
 .duel-prototype__race > header small { margin-left: auto; color: var(--duel-muted); font-size: 8px; }
+
+.duel-prototype__race > header b {
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+  color: #e7d09d;
+  font-size: 9px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duel-prototype__race > header b + small { margin-left: 0; }
 
 .duel-prototype__race-row {
   display: grid;
@@ -618,8 +678,9 @@
     grid-template-columns: 1fr;
   }
 
-  .duel-prototype__versus { grid-template-columns: 1fr auto 1fr; }
-  .duel-prototype__versus i { width: 100%; height: 1px; }
+  .duel-prototype__arena-judge { grid-template-columns: 1fr auto auto auto 1fr; }
+  .duel-prototype__arena-judge::before,
+  .duel-prototype__arena-judge::after { width: 100%; height: 1px; background: rgba(218, 179, 105, 0.28); content: ""; }
   .duel-prototype__crossfire { grid-template-columns: 1fr auto 1fr; }
   .duel-prototype__raceboard-controls .duel-prototype__verdict { order: -1; }
   .duel-prototype__referee-column { order: -1; }

@@ -13,8 +13,11 @@ import {
   TimerReset,
 } from "lucide-react";
 
+import { WeaponRhythmTimeline } from "../../WeaponRhythmTimeline";
+
 import {
   DUEL_VEHICLES,
+  duelSimulationUntil,
   resolveVehicleDuel,
   vehicleById,
   type DuelLethalPath,
@@ -193,6 +196,36 @@ function AttackSummary({
   );
 }
 
+function CombatCurve({
+  side,
+  path,
+  cutoffSeconds,
+}: {
+  side: DuelSide;
+  path: DuelLethalPath | null;
+  cutoffSeconds: number | null;
+}) {
+  const simulation = duelSimulationUntil(path, cutoffSeconds);
+  if (!simulation || !path) {
+    return <div className="duel-prototype__combat-curve duel-prototype__combat-curve--empty">当前命中点没有可绘制的致命伤害曲线</div>;
+  }
+  const cutoff = cutoffSeconds ?? simulation.elapsedSeconds;
+  return (
+    <section className="duel-prototype__combat-curve" data-side={side}>
+      <header>
+        <span>{side === "left" ? "A 方" : "B 方"}实际输出</span>
+        <strong>{cutoff.toFixed(2)} s 截止 · {simulation.shots} 发</strong>
+      </header>
+      <WeaponRhythmTimeline
+        simulation={simulation}
+        targetHealth={path.targetHealth}
+        targetLabel={path.poolLabel}
+        compact
+      />
+    </section>
+  );
+}
+
 function Verdict({ resolution }: { resolution: VehicleDuelResolution }) {
   const winner = winnerSide(resolution);
   return (
@@ -207,7 +240,13 @@ function Verdict({ resolution }: { resolution: VehicleDuelResolution }) {
   );
 }
 
-function RaceTimeline({ resolution }: { resolution: VehicleDuelResolution }) {
+function RaceTimeline({
+  resolution,
+  integratedVerdict = false,
+}: {
+  resolution: VehicleDuelResolution;
+  integratedVerdict?: boolean;
+}) {
   const leftTime = resolution.rightLosesAt?.timeSeconds ?? 180;
   const rightTime = resolution.leftLosesAt?.timeSeconds ?? 180;
   const maximum = Math.max(leftTime, rightTime, 1);
@@ -228,10 +267,27 @@ function RaceTimeline({ resolution }: { resolution: VehicleDuelResolution }) {
   };
   return (
     <section className="duel-prototype__race">
-      <header><TimerReset size={15} /><span>致命时间赛道</span><small>0 秒同时开火</small></header>
+      <header>
+        <TimerReset size={15} />
+        <span>致命时间赛道</span>
+        {integratedVerdict ? <b>{resolution.verdict}</b> : null}
+        <small>0 秒同时开火</small>
+      </header>
       {row("left", "A 方火力 → B 方", resolution.rightLosesAt)}
       {row("right", "B 方火力 → A 方", resolution.leftLosesAt)}
     </section>
+  );
+}
+
+function ArenaJudge({ resolution }: { resolution: VehicleDuelResolution }) {
+  const winner = winnerSide(resolution);
+  return (
+    <div className="duel-prototype__arena-judge" data-winner={resolution.winner}>
+      <Swords size={32} />
+      <span>交叉射击</span>
+      <strong>{winner === "left" ? "A 胜" : winner === "right" ? "B 胜" : resolution.winner === "draw" ? "平局" : "未决"}</strong>
+      <b>{resolution.decisiveTimeSeconds === null ? ">180s" : `${resolution.decisiveTimeSeconds.toFixed(2)}s`}</b>
+    </div>
   );
 }
 
@@ -250,23 +306,24 @@ function VariantA({ selection, resolution }: { selection: DuelSelection; resolut
   return (
     <main className="duel-prototype duel-prototype--arena">
       <PrototypeHeader name="A — 镜像竞技场" description="先看双方载具与瞄准点，再看中央裁定。" />
-      <Verdict resolution={resolution} />
       <div className="duel-prototype__arena-grid">
         <article className="duel-prototype__combatant">
           <VehicleIdentity side="A" vehicle={selection.leftVehicle} />
           <VehicleSelect side="A" vehicle={selection.leftVehicle} weapon={selection.leftWeapon} onVehicle={selection.setLeftVehicle} onWeapon={selection.setLeftWeapon} />
           <TargetMap vehicle={selection.leftVehicle} selectedZone={selection.leftIncomingZone} attackerLabel="B 方" onSelect={selection.setLeftIncomingZone} />
+          <CombatCurve side="left" path={resolution.rightLosesAt} cutoffSeconds={resolution.decisiveTimeSeconds} />
           <AttackSummary side="left" weapon={selection.leftWeapon} targetVehicle={selection.rightVehicle} targetZone={selection.rightIncomingZone} path={resolution.rightLosesAt} shotsBeforeCutoff={resolution.leftShotsBeforeCutoff} />
         </article>
-        <div className="duel-prototype__versus"><span>VS</span><i /></div>
+        <ArenaJudge resolution={resolution} />
         <article className="duel-prototype__combatant">
           <VehicleIdentity side="B" vehicle={selection.rightVehicle} />
           <VehicleSelect side="B" vehicle={selection.rightVehicle} weapon={selection.rightWeapon} onVehicle={selection.setRightVehicle} onWeapon={selection.setRightWeapon} />
           <TargetMap vehicle={selection.rightVehicle} selectedZone={selection.rightIncomingZone} attackerLabel="A 方" onSelect={selection.setRightIncomingZone} />
+          <CombatCurve side="right" path={resolution.leftLosesAt} cutoffSeconds={resolution.decisiveTimeSeconds} />
           <AttackSummary side="right" weapon={selection.rightWeapon} targetVehicle={selection.leftVehicle} targetZone={selection.leftIncomingZone} path={resolution.leftLosesAt} shotsBeforeCutoff={resolution.rightShotsBeforeCutoff} />
         </article>
       </div>
-      <RaceTimeline resolution={resolution} />
+      <RaceTimeline resolution={resolution} integratedVerdict />
       <StateLedger selection={selection} resolution={resolution} />
     </main>
   );

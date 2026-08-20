@@ -1,6 +1,7 @@
 import {
   optimizeWeaponRhythm,
   type WeaponDpsRhythmCandidate,
+  type WeaponDpsSimulation,
   type WeaponDpsWeapon,
 } from "../../../lib/weapon-dps-model";
 
@@ -44,6 +45,7 @@ export interface DuelLethalPath {
   poolKind: "hull" | "ammo-rack";
   poolLabel: string;
   timeSeconds: number;
+  targetHealth: number;
   shots: number;
   reloads: number;
   overheats: number;
@@ -97,6 +99,7 @@ function resolveAttack(input: DuelAttackInput): DuelAttackResolution {
       poolKind,
       poolLabel: poolKind === "ammo-rack" ? "弹药架" : "车体",
       timeSeconds: candidate.result.killTimeSeconds,
+      targetHealth: input.defender.pools[poolKind],
       shots: candidate.result.shots,
       reloads: candidate.result.reloads,
       overheats: candidate.result.overheatCount,
@@ -111,6 +114,45 @@ function resolveAttack(input: DuelAttackInput): DuelAttackResolution {
     targetZoneId: input.targetZone.id,
     lethalPath: alternatives[0] ?? null,
     alternatives,
+  };
+}
+
+export function duelSimulationUntil(
+  path: DuelLethalPath | null,
+  cutoffSeconds: number | null,
+): WeaponDpsSimulation | null {
+  if (!path) return null;
+  const source = path.candidate.result;
+  const cutoff = Math.max(
+    0,
+    Math.min(cutoffSeconds ?? source.elapsedSeconds, source.elapsedSeconds),
+  );
+  const events = source.events.filter((event) => event.timeSeconds <= cutoff + EPSILON);
+  const heatCurve = source.heatCurve.filter((point) => point.timeSeconds <= cutoff + EPSILON);
+  const timeline = source.timeline.filter((sample) => sample.timeSeconds <= cutoff + EPSILON);
+  const shots = events.filter((event) => event.kind === "shot").length;
+  const reloads = events.filter((event) => event.kind === "reload").length;
+  const overheats = events.filter((event) => event.kind === "overheat");
+  const lastShot = [...events].reverse().find((event) => event.kind === "shot") ?? null;
+  const lastEvent = events.at(-1) ?? null;
+  const totalDamage = lastShot?.damage ?? 0;
+  const killTimeSeconds = source.killTimeSeconds !== null && source.killTimeSeconds <= cutoff + EPSILON
+    ? source.killTimeSeconds
+    : null;
+  return {
+    ...source,
+    totalDamage,
+    averageDps: cutoff > EPSILON ? totalDamage / cutoff : 0,
+    shots,
+    reloads,
+    overheatCount: overheats.length,
+    firstOverheatSeconds: overheats[0]?.timeSeconds ?? null,
+    killTimeSeconds,
+    elapsedSeconds: cutoff,
+    finalTemperature: lastEvent?.temperature ?? source.heatRange?.min ?? null,
+    events,
+    timeline,
+    heatCurve,
   };
 }
 
