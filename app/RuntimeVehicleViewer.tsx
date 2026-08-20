@@ -75,6 +75,14 @@ import {
   runtimeGroundScaleLengthM,
 } from "../lib/runtime-ground-scale";
 import {
+  RUNTIME_VIEWER_CAMERA_VIEWS,
+  RUNTIME_VIEWER_INFANTRY_DISTANCES_M,
+  SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+  runtimeViewerInfantryCameraPosition,
+  verticalFovForHorizontalFov,
+  type RuntimeViewerCameraViewId,
+} from "../lib/runtime-viewer-camera-presets";
+import {
   weaponPenetrationKindForDamageTypePath,
   type WeaponPenetrationKind,
 } from "../lib/weapon-penetration-kind";
@@ -423,6 +431,73 @@ const VIEWER_MODES: Array<[ViewerAssetMode, string]> = [
   ["interior", "内构"],
   ["exterior", "外观"],
 ];
+
+function RuntimeViewerCameraControls({
+  activeView,
+  infantryDistanceM,
+  disabled,
+  onView,
+  onInfantryDistance,
+  onFit,
+}: {
+  activeView: RuntimeViewerCameraViewId | null;
+  infantryDistanceM: number | null;
+  disabled: boolean;
+  onView: (view: RuntimeViewerCameraViewId) => void;
+  onInfantryDistance: (distanceM: number) => void;
+  onFit: () => void;
+}) {
+  return (
+    <div className="viewer-camera-presets" aria-label="载具相机快捷预览">
+      <div className="viewer-camera-presets__row">
+        <span><b>五向视角</b><small>数字键 1–5</small></span>
+        <div role="group" aria-label="切换载具五向视角，不含底部视角">
+          {RUNTIME_VIEWER_CAMERA_VIEWS.map((view) => (
+            <button
+              type="button"
+              key={view.id}
+              data-active={activeView === view.id && infantryDistanceM === null}
+              aria-pressed={activeView === view.id && infantryDistanceM === null}
+              aria-keyshortcuts={view.shortcut}
+              disabled={disabled}
+              title={`${view.label}视图 · 快捷键 ${view.shortcut}`}
+              onClick={() => onView(view.id)}
+            >
+              <span>{view.label}</span><kbd>{view.shortcut}</kbd>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="viewer-camera-presets__row">
+        <span>
+          <b>观察距离</b>
+          <small>步兵 {SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG}° FOV</small>
+        </span>
+        <div role="group" aria-label="按普通步兵透视预览载具距离">
+          {RUNTIME_VIEWER_INFANTRY_DISTANCES_M.map((distanceM) => (
+            <button
+              type="button"
+              key={distanceM}
+              data-active={infantryDistanceM === distanceM}
+              aria-pressed={infantryDistanceM === distanceM}
+              disabled={disabled}
+              title={`以普通步兵视野在 ${distanceM} 米观察载具`}
+              onClick={() => onInfantryDistance(distanceM)}
+            >{distanceM}<small>m</small></button>
+          ))}
+          <button
+            type="button"
+            data-active={activeView === null && infantryDistanceM === null}
+            aria-pressed={activeView === null && infantryDistanceM === null}
+            disabled={disabled}
+            title="恢复载具检查视角"
+            onClick={onFit}
+          >适配</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface RuntimeTurretPreviewStation extends TurretPreviewStation {
   assembly: RuntimeTurretAssembly | null;
@@ -3487,6 +3562,13 @@ export function RuntimeVehicleViewer({
   const resetViewRef = useRef<
     ((options?: { preserveShotVisual?: boolean }) => void) | null
   >(null);
+  const applyCameraViewPresetRef = useRef<
+    ((viewId: RuntimeViewerCameraViewId) => void) | null
+  >(null);
+  const applyInfantryDistancePreviewRef = useRef<
+    ((distanceM: number) => void) | null
+  >(null);
+  const infantryPreviewDistanceRef = useRef<number | null>(null);
   const visualGroupRef = useRef<THREE.Group | null>(null);
   const analysisVisualGroupRef = useRef<THREE.Group | null>(null);
   const hitGroupRef = useRef<THREE.Group | null>(null);
@@ -3816,6 +3898,10 @@ export function RuntimeVehicleViewer({
   const [targetDistanceM, setTargetDistanceM] = useState(
     DEFAULT_TARGET_DISTANCE_M,
   );
+  const [activeCameraView, setActiveCameraView] =
+    useState<RuntimeViewerCameraViewId | null>(null);
+  const [infantryPreviewDistanceM, setInfantryPreviewDistanceM] =
+    useState<number | null>(null);
   // The parent navigation update rerenders the full catalog tree. Keep it out
   // of continuous range input and publish the final distance on interaction end.
   const [distanceInteractionActive, setDistanceInteractionActive] = useState(false);
@@ -3851,6 +3937,40 @@ export function RuntimeVehicleViewer({
     completed: 0,
     total: 0,
   });
+  const restoreDefaultCameraView = useCallback(() => {
+    resetViewRef.current?.({ preserveShotVisual: true });
+    const current = navigationStateRef.current;
+    if (!current || (!current.camera && current.yaw === null && current.pitch === null)) return;
+    const next = {
+      ...current,
+      camera: "",
+      yaw: null,
+      pitch: null,
+    } satisfies ViewerNavigationState;
+    navigationStateRef.current = next;
+    onNavigationStateChangeRef.current?.(next);
+  }, []);
+  useEffect(() => {
+    if (duelTarget) return;
+    const applyNumberedCameraView = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      const target = event.target as HTMLElement | null;
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement ||
+        target?.isContentEditable
+      ) return;
+      const preset = RUNTIME_VIEWER_CAMERA_VIEWS.find(
+        ({ shortcut }) => shortcut === event.key,
+      );
+      if (!preset || !applyCameraViewPresetRef.current) return;
+      event.preventDefault();
+      applyCameraViewPresetRef.current(preset.id);
+    };
+    document.addEventListener("keydown", applyNumberedCameraView, true);
+    return () => document.removeEventListener("keydown", applyNumberedCameraView, true);
+  }, [duelTarget]);
   const requestGlobalAttackLibrary = useCallback(() => {
     if (!allowGlobalAttackSources) return;
     setGlobalAttackLibraryState("loading");
@@ -5472,6 +5592,11 @@ export function RuntimeVehicleViewer({
   useEffect(() => {
     const host = hostRef.current;
     if (!host || !visual) return;
+    applyCameraViewPresetRef.current = null;
+    applyInfantryDistancePreviewRef.current = null;
+    infantryPreviewDistanceRef.current = null;
+    setActiveCameraView(null);
+    setInfantryPreviewDistanceM(null);
     setArmorThicknessRange(null);
     setInitialCameraFitReady(false);
     setExteriorPlaceholderReady(false);
@@ -5526,7 +5651,12 @@ export function RuntimeVehicleViewer({
     let lastAppliedHitPoseKey: string | null = null;
     exteriorOccurrencesRef.current = exteriorOccurrences;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 200);
+    const camera = new THREE.PerspectiveCamera(
+      SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+      1,
+      0.05,
+      200,
+    );
     const rendererLease = acquireRuntimeRenderer();
     const renderer = rendererLease.renderer;
     renderer.setClearColor(0x000000, 0);
@@ -6569,6 +6699,24 @@ export function RuntimeVehicleViewer({
     };
 
     let lastAppliedCameraNavigationKey: string | null = null;
+    const applyInspectionProjection = () => {
+      infantryPreviewDistanceRef.current = null;
+      setInfantryPreviewDistanceM(null);
+      camera.fov = verticalFovForHorizontalFov(
+        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        camera.aspect,
+      );
+      camera.updateProjectionMatrix();
+      host.dataset.cameraProjection = "squad-world";
+      host.dataset.cameraHorizontalFovDeg = String(
+        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+      );
+      host.dataset.cameraVerticalFovDeg = String(camera.fov);
+      delete host.dataset.infantryPreviewDistanceM;
+      delete host.dataset.infantryPreviewHorizontalFovDeg;
+      delete host.dataset.infantryPreviewVerticalFovDeg;
+      delete host.dataset.infantryPreviewEyeHeightM;
+    };
     const cameraNavigationKey = (state: ViewerNavigationState | undefined) => {
       if (state?.camera) return `camera:${state.camera}`;
       if (state?.yaw !== null && state?.yaw !== undefined) {
@@ -6586,6 +6734,9 @@ export function RuntimeVehicleViewer({
       if (fittedSource === null) return;
       const key = cameraNavigationKey(state);
       if (lastAppliedCameraNavigationKey === key) return;
+      applyInspectionProjection();
+      setActiveCameraView(null);
+      delete host.dataset.cameraViewPreset;
       if (key !== "default") {
         cameraFitUserLocked = true;
         initialFitStabilizationPending = false;
@@ -6680,11 +6831,16 @@ export function RuntimeVehicleViewer({
       window.clearTimeout(initialFitStabilizationTimer);
       initialFitStabilizationTimer = 0;
       setRealtimePointer(null);
+      applyInspectionProjection();
+      setActiveCameraView(null);
+      delete host.dataset.cameraViewPreset;
       protectionCache = null;
       if (protectionEnabledRef.current) cancelProtectionMap(true, false);
     };
     const onControlsEnd = () => {
-      publishCameraNavigation();
+      if (infantryPreviewDistanceRef.current === null) {
+        publishCameraNavigation();
+      }
       if (protectionEnabledRef.current) {
         scheduleProtectionMap({ invalidate: true });
       }
@@ -6702,7 +6858,18 @@ export function RuntimeVehicleViewer({
       rendererHeight = height;
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
+      camera.fov = verticalFovForHorizontalFov(
+        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        camera.aspect,
+      );
       camera.updateProjectionMatrix();
+      host.dataset.cameraHorizontalFovDeg = String(
+        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+      );
+      host.dataset.cameraVerticalFovDeg = String(camera.fov);
+      if (infantryPreviewDistanceRef.current !== null) {
+        host.dataset.infantryPreviewVerticalFovDeg = String(camera.fov);
+      }
       render();
       if (sizeChanged) protectionCache = null;
       if (sizeChanged && initialFitStabilizationPending) {
@@ -6932,6 +7099,9 @@ export function RuntimeVehicleViewer({
         { preserveShotVisual = false }: { preserveShotVisual?: boolean } = {},
       ) => {
         protectionCache = null;
+        applyInspectionProjection();
+        setActiveCameraView(null);
+        delete host.dataset.cameraViewPreset;
         controls.target.set(0, 0, 0);
         const fitDistance = updateCameraRangeAndFitEvidence();
         camera.position.copy(
@@ -6944,17 +7114,101 @@ export function RuntimeVehicleViewer({
           scheduleProtectionMap({ invalidate: true });
         }
       };
-      resetViewRef.current = resetView;
-      fittedSource = source;
-      if (preserveCamera) {
+      const applyInspectionView = (viewId: RuntimeViewerCameraViewId) => {
+        const preset = RUNTIME_VIEWER_CAMERA_VIEWS.find(({ id }) => id === viewId);
+        if (!preset) return;
         protectionCache = null;
+        cameraFitUserLocked = true;
+        initialFitStabilizationPending = false;
+        window.clearTimeout(initialFitStabilizationTimer);
+        initialFitStabilizationTimer = 0;
+        applyInspectionProjection();
         controls.target.set(0, 0, 0);
-        updateCameraRangeAndFitEvidence();
+        const fitDistance = updateCameraRangeAndFitEvidence();
+        const spherical = new THREE.Spherical(
+          fitDistance,
+          THREE.MathUtils.degToRad(90 - preset.pitchDegrees),
+          THREE.MathUtils.degToRad(preset.yawDegrees),
+        );
+        camera.position.copy(controls.target).add(
+          new THREE.Vector3().setFromSpherical(spherical),
+        );
         controls.update();
-        clearShotVisual();
+        setActiveCameraView(viewId);
+        host.dataset.cameraViewPreset = viewId;
+        render();
+        publishCameraNavigation();
+        if (protectionEnabledRef.current) {
+          scheduleProtectionMap({ invalidate: true });
+        }
+      };
+      const applyInfantryDistancePreview = (distanceM: number) => {
+        const safeDistanceM = Math.min(600, Math.max(1, distanceM));
+        const currentOffset = camera.position.clone().sub(controls.target);
+        currentOffset.y = 0;
+        const yawDegrees = currentOffset.lengthSq() > 0.000001
+          ? THREE.MathUtils.radToDeg(Math.atan2(currentOffset.x, currentOffset.z))
+          : 90;
+        protectionCache = null;
+        cameraFitUserLocked = true;
+        initialFitStabilizationPending = false;
+        window.clearTimeout(initialFitStabilizationTimer);
+        initialFitStabilizationTimer = 0;
+        infantryPreviewDistanceRef.current = safeDistanceM;
+        setInfantryPreviewDistanceM(safeDistanceM);
+        setActiveCameraView(null);
+        delete host.dataset.cameraViewPreset;
+        controls.target.set(0, 0, 0);
+        camera.position.fromArray(runtimeViewerInfantryCameraPosition({
+          yawDegrees,
+          distanceM: safeDistanceM,
+          groundY,
+        }));
+        camera.fov = verticalFovForHorizontalFov(
+          SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+          camera.aspect,
+        );
+        camera.near = Math.max(radius / 300, 0.02);
+        camera.far = Math.max(1000, safeDistanceM * 2 + radius * 8);
+        controls.maxDistance = Math.max(600, radius * 50);
+        camera.updateProjectionMatrix();
+        controls.update();
+        host.dataset.cameraProjection = "squad-infantry-world";
+        host.dataset.cameraHorizontalFovDeg = String(
+          SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        );
+        host.dataset.cameraVerticalFovDeg = String(camera.fov);
+        host.dataset.infantryPreviewDistanceM = String(safeDistanceM);
+        host.dataset.infantryPreviewHorizontalFovDeg = String(
+          SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        );
+        host.dataset.infantryPreviewVerticalFovDeg = String(camera.fov);
+        host.dataset.infantryPreviewEyeHeightM = String(
+          camera.position.y - groundY,
+        );
         render();
         if (protectionEnabledRef.current) {
           scheduleProtectionMap({ invalidate: true });
+        }
+      };
+      resetViewRef.current = resetView;
+      applyCameraViewPresetRef.current = applyInspectionView;
+      applyInfantryDistancePreviewRef.current = applyInfantryDistancePreview;
+      fittedSource = source;
+      if (preserveCamera) {
+        clearShotVisual();
+        const activeInfantryDistanceM = infantryPreviewDistanceRef.current;
+        if (activeInfantryDistanceM !== null) {
+          applyInfantryDistancePreview(activeInfantryDistanceM);
+        } else {
+          protectionCache = null;
+          controls.target.set(0, 0, 0);
+          updateCameraRangeAndFitEvidence();
+          controls.update();
+          render();
+          if (protectionEnabledRef.current) {
+            scheduleProtectionMap({ invalidate: true });
+          }
         }
       } else {
         resetView();
@@ -7835,6 +8089,9 @@ export function RuntimeVehicleViewer({
       animatedShotIdRef.current = null;
       window.clearTimeout(initialFitStabilizationTimer);
       resetViewRef.current = null;
+      applyCameraViewPresetRef.current = null;
+      applyInfantryDistancePreviewRef.current = null;
+      infantryPreviewDistanceRef.current = null;
       activateAssetModeRef.current = null;
       visualGroupRef.current = null;
       analysisVisualGroupRef.current = null;
@@ -8572,46 +8829,15 @@ export function RuntimeVehicleViewer({
                 ))}
               </div>
             </div>
-            {(mode === "exterior" || mode === "armor") && activeTurretStation ? (
-              <TurretPreviewControls
-                stations={runtimeTurretStations}
-                orientationIndicators={turretOrientationIndicators}
-                activeStationId={activeTurretStation.id}
-                yawDegrees={clampedTurretYaw}
-                pitchDegrees={clampedTurretPitch}
-                onStationChange={(stationId) => {
-                  setActiveTurretStationId(stationId);
-                  commitTurretNavigation(stationId);
-                }}
-                onYawChange={(yawDegrees) => {
-                  updateTurretStationPose(
-                    activeTurretStation,
-                    yawDegrees,
-                    activeTurretPose.pitchDegrees,
-                  );
-                }}
-                onPitchChange={(pitchDegrees) => {
-                  updateTurretStationPose(
-                    activeTurretStation,
-                    activeTurretPose.yawDegrees,
-                    pitchDegrees,
-                  );
-                }}
-                onReset={() => {
-                  const nextPoseStates = updateTurretStationPose(
-                    activeTurretStation,
-                    0,
-                    0,
-                  );
-                  commitTurretNavigation(
-                    activeTurretStation.id,
-                    nextPoseStates,
-                  );
-                }}
-                onInteractionEnd={() =>
-                  commitTurretNavigation(activeTurretStation.id)}
-              />
-            ) : null}
+            <RuntimeViewerCameraControls
+              activeView={activeCameraView}
+              infantryDistanceM={infantryPreviewDistanceM}
+              disabled={!initialCameraFitReady}
+              onView={(viewId) => applyCameraViewPresetRef.current?.(viewId)}
+              onInfantryDistance={(distanceM) =>
+                applyInfantryDistancePreviewRef.current?.(distanceM)}
+              onFit={restoreDefaultCameraView}
+            />
             <div className="viewer-physical-pose-row">
               <button
                 className="viewer-protection-switch viewer-physical-pose-switch"
@@ -8720,6 +8946,46 @@ export function RuntimeVehicleViewer({
                   <strong>{exteriorSpacedArmorHighlight ? "开启" : "关闭"}</strong>
                 </button>
               </div>
+            ) : null}
+            {(mode === "exterior" || mode === "armor") && activeTurretStation ? (
+              <TurretPreviewControls
+                stations={runtimeTurretStations}
+                orientationIndicators={turretOrientationIndicators}
+                activeStationId={activeTurretStation.id}
+                yawDegrees={clampedTurretYaw}
+                pitchDegrees={clampedTurretPitch}
+                onStationChange={(stationId) => {
+                  setActiveTurretStationId(stationId);
+                  commitTurretNavigation(stationId);
+                }}
+                onYawChange={(yawDegrees) => {
+                  updateTurretStationPose(
+                    activeTurretStation,
+                    yawDegrees,
+                    activeTurretPose.pitchDegrees,
+                  );
+                }}
+                onPitchChange={(pitchDegrees) => {
+                  updateTurretStationPose(
+                    activeTurretStation,
+                    activeTurretPose.yawDegrees,
+                    pitchDegrees,
+                  );
+                }}
+                onReset={() => {
+                  const nextPoseStates = updateTurretStationPose(
+                    activeTurretStation,
+                    0,
+                    0,
+                  );
+                  commitTurretNavigation(
+                    activeTurretStation.id,
+                    nextPoseStates,
+                  );
+                }}
+                onInteractionEnd={() =>
+                  commitTurretNavigation(activeTurretStation.id)}
+              />
             ) : null}
             <div className="viewer-interaction-hint viewer-interaction-hint--protection" aria-label="3D 操作提示">
               <span>左键旋转</span><span>右键拖动</span><span>滚轮缩放</span>
