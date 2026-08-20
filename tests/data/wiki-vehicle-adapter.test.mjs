@@ -72,6 +72,7 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         id: "vehicle-source-test",
         rawName: "BP_Test",
         generalProfileRef: "general-test",
+        burningProfileRef: "burning-test",
         seatProfileRefs: ["seat-test"],
         hullDamageProfileRefs: ["damage-test"],
         componentProfileRefs: ["component-test"],
@@ -79,6 +80,7 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         id: "vehicle-source-test-exclusive",
         rawName: "BP_Test_Exclusive",
         generalProfileRef: "general-test",
+        burningProfileRef: "burning-test",
         seatProfileRefs: ["seat-test"],
         hullDamageProfileRefs: ["damage-test"],
         componentProfileRefs: ["component-test"],
@@ -108,6 +110,18 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
           commandZoneRadius: 0,
         },
       }],
+      burning: [{
+        id: "burning-test",
+        value: {
+          state: "observed",
+          sourceBuildId: "squad-sdk-test",
+          startHealthFraction: 0.1,
+          healthFractionPerSecond: 0.0033,
+          tickIntervalSeconds: 1,
+          startDelaySeconds: 1,
+          damageClass: "SQBurningDamage",
+        },
+      }],
       seats: [{
         id: "seat-test",
         value: {
@@ -125,7 +139,7 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
       }],
       damageResistances: [{
         id: "damage-test",
-        value: { damageClass: "Damage", modifier: 0.5 },
+        value: { damageClass: "SQBurningDamage", modifier: 0.5 },
       }],
       components: [{
         id: "component-test",
@@ -198,6 +212,8 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
   const variant = result.records[0].variants[0];
   assert.equal(variant.data.general.rawName, "BP_Test");
   assert.equal(variant.data.general.vehicleHealth, 1000);
+  assert.equal(variant.data.burning.startHealthFraction, 0.1);
+  assert.equal(variant.data.burning.healthFractionPerSecond, 0.0033);
   assert.deepEqual(variant.data.weaponBindingIds, ["weapon-test"]);
   assert.equal(variant.data.components[0].damageResistances[0].modifier, 0.5);
   assert.equal(variant.thumbnail.width, 640);
@@ -275,6 +291,7 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
     identities: { catalogBindings: [], vehicles: [] },
     profiles: {
       general: [],
+      burning: [],
       seats: [],
       damageResistances: [],
       components: [],

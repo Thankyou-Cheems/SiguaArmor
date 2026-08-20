@@ -202,3 +202,40 @@ test("heat curve uses one point per shot instead of a histogram bucket", () => {
   assert.equal(result.heatCurve[0].shotNumber, 1);
   assert.equal(result.heatCurve.at(-1).shotNumber, 100);
 });
+
+test("a low-health vehicle burns out before the next shot when burning facts are supplied", () => {
+  const result = simulateWeaponRhythm(
+    {
+      ...cannon,
+      damagePerShot: 60,
+      timeBetweenShotsSeconds: 100,
+      magazineSize: null,
+      tacticalReloadSeconds: null,
+      dryReloadSeconds: null,
+      overheat: null,
+    },
+    {
+      targetHealth: 100,
+      horizonSeconds: 20,
+      mode: "burn",
+      burstSize: 1,
+      pauseSeconds: 0,
+      useMagazineReload: false,
+      targetBurning: {
+        state: "observed",
+        startHealthFraction: 0.5,
+        healthFractionPerSecond: 0.1,
+        damageModifier: 1,
+        tickIntervalSeconds: 1,
+        startDelaySeconds: 1,
+      },
+    },
+  );
+
+  assert.equal(result.killTimeSeconds, 4);
+  assert.equal(result.totalDamage, 100);
+  assert.deepEqual(
+    result.events.filter(({ kind }) => kind === "burn").map(({ timeSeconds }) => timeSeconds),
+    [1, 2, 3, 4],
+  );
+});

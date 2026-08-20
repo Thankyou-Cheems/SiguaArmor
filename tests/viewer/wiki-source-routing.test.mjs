@@ -122,6 +122,7 @@ test("catalog data uses direct presentation slices while runtime data keeps its 
             identities: { vehicles: [], catalogBindings: [] },
             profiles: {
               general: [],
+              burning: [],
               seats: [],
               damageResistances: [],
               components: [],
@@ -192,7 +193,7 @@ test("catalog data uses direct presentation slices while runtime data keeps its 
   assert.deepEqual(requestedUrls, [
     "https://wiki.siguad.icu/data/vehicles/presentation.json",
     "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v5",
-    "https://wiki.siguad.icu/data/vehicles/factions/adf.json?presentation=v5",
+    "https://wiki.siguad.icu/data/vehicles/factions/adf.json?mechanics=burning-v1",
     "https://wiki.siguad.icu/data/vehicles/faction-presentation/adf.json?presentation=v5",
     "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v5",
     "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v5",

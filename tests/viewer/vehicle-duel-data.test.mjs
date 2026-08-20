@@ -57,6 +57,8 @@ test("duel catalog keeps one product card and selects its canonical default vari
   const options = vehicleDuelOptionsFromCatalog(catalog, "international");
   assert.equal(options.length, 1);
   assert.equal(options[0].cardId, "test--ifv");
+  assert.equal(options[0].wikiSourceCardId, "test--ifv");
+  assert.equal(options[0].wikiFactionId, "test");
   assert.equal(options[0].rawName, "BP_TEST_IFV");
   assert.equal(options[0].displayName, "测试步战车");
   assert.equal(options[0].runtimeVehicleRef, "vehicle-" + "3".repeat(64));

@@ -6,7 +6,54 @@ import {
   selectPrimaryWeaponHitDpsTarget,
   singleShotWeaponHitTarget,
   targetPoolsForShot,
+  vehicleTargetBurningProfile,
 } from "../../lib/weapon-hit-dps.ts";
+
+test("vehicle burning facts resolve through the exact burning damage resistance", () => {
+  const targetBurning = vehicleTargetBurningProfile({
+    burning: {
+      state: "observed",
+      sourceBuildId: "sdk-test",
+      startHealthFraction: 0.1,
+      healthFractionPerSecond: 0.0033,
+      tickIntervalSeconds: 1,
+      startDelaySeconds: 1,
+      damageClass: "SQBurningDamage",
+    },
+    damageResistances: [
+      { damageClass: "BP_Kinetic_DamageType_C", modifier: 0.1 },
+      { damageClass: "SQBurningDamage", modifier: 0.5 },
+    ],
+  });
+  assert.deepEqual(targetBurning, {
+    state: "observed",
+    startHealthFraction: 0.1,
+    healthFractionPerSecond: 0.0033,
+    damageModifier: 0.5,
+    tickIntervalSeconds: 1,
+    startDelaySeconds: 1,
+  });
+
+  const targets = targetPoolsForShot({
+    damage: [{
+      poolIndex: 0,
+      poolId: "vehicle-hull",
+      poolKind: "hull",
+      maxHealth: 1000,
+      effectiveDamage: 950,
+      certainty: "resolved",
+    }, {
+      poolIndex: 1,
+      poolId: "engine",
+      poolKind: "engine",
+      maxHealth: 300,
+      effectiveDamage: 100,
+      certainty: "resolved",
+    }],
+  }, targetBurning);
+  assert.deepEqual(targets[0].targetBurning, targetBurning);
+  assert.equal(targets[1].targetBurning, undefined);
+});
 
 test("a clicked hit exposes independent hull and module target pools", () => {
   const targets = targetPoolsForShot({

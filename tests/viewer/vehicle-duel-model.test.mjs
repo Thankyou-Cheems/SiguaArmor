@@ -22,11 +22,12 @@ function weapon(id, interval = 1) {
   };
 }
 
-const target = (key, poolKind, maxHealth, damagePerShot) => ({
+const target = (key, poolKind, maxHealth, damagePerShot, targetBurning = null) => ({
   key,
   poolKind,
   maxHealth,
   damagePerShot,
+  targetBurning,
 });
 test("ammo-rack destruction is an immediate loss and cuts off later outgoing shots", () => {
   const result = resolveVehicleDuel({
@@ -109,4 +110,31 @@ test("nonlethal component pools never replace hull or ammo-rack victory conditio
   assert.equal(result.rightLoss?.poolKind, "hull");
   assert.equal(result.rightLoss?.timeSeconds, 4);
   assert.equal(result.winner, "left");
+});
+
+test("low-health hull burning participates in the duel race and cuts off return fire", () => {
+  const targetBurning = {
+    state: "observed",
+    startHealthFraction: 0.5,
+    healthFractionPerSecond: 0.1,
+    damageModifier: 1,
+    tickIntervalSeconds: 1,
+    startDelaySeconds: 1,
+  };
+  const result = resolveVehicleDuel({
+    leftAttack: {
+      weapon: { ...weapon("left"), damagePerShot: 60, timeBetweenShotsSeconds: 100 },
+      targets: [target("right-hull", "hull", 100, 60, targetBurning)],
+    },
+    rightAttack: {
+      weapon: weapon("right", 1),
+      targets: [target("left-hull", "hull", 1000, 100)],
+    },
+  });
+
+  assert.equal(result.winner, "left");
+  assert.equal(result.decisiveTimeSeconds, 4);
+  assert.equal(result.rightLoss?.poolKind, "hull");
+  assert.equal(result.rightLoss?.candidate.result.burnDamage, 40);
+  assert.equal(result.rightAttack.actualSimulation?.shots, 5);
 });

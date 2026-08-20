@@ -3,6 +3,7 @@ export const SIGUA_WIKI_ORIGIN =
   "https://wiki.siguad.icu";
 
 const WIKI_PRESENTATION_QUERY = "?presentation=v5";
+const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-v1";
 const WIKI_WEAPON_CATALOG_QUERY = "?mechanics=overheat-v1";
 const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-v3";
 
@@ -146,7 +147,7 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
   if (!/^[a-z0-9-]+$/u.test(factionId)) {
     throw new Error(`Invalid vehicle mechanics faction id: ${factionId}`);
   }
-  const pathname = `/data/vehicles/factions/${factionId}.json${WIKI_PRESENTATION_QUERY}`;
+  const pathname = `/data/vehicles/factions/${factionId}.json${WIKI_VEHICLE_MECHANICS_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
     "sigua-vehicle-faction-mechanics/v1",
@@ -156,6 +157,7 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
     identities?: { vehicles?: unknown[]; catalogBindings?: unknown[] };
     profiles?: {
       general?: unknown[];
+      burning?: unknown[];
       seats?: unknown[];
       damageResistances?: unknown[];
       components?: unknown[];
@@ -168,6 +170,7 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
     !Array.isArray(document.identities?.vehicles) ||
     !Array.isArray(document.identities?.catalogBindings) ||
     !Array.isArray(document.profiles?.general) ||
+    !Array.isArray(document.profiles?.burning) ||
     !Array.isArray(document.profiles?.seats) ||
     !Array.isArray(document.profiles?.damageResistances) ||
     !Array.isArray(document.profiles?.components) ||

@@ -37,7 +37,11 @@ test("duel reuses exact cached vehicle bundles and one shared weapon mechanics p
   assert.match(cacheModule, /vehicleRequests = new Map/u);
   assert.match(dataAdapter, /runtimePreviewForCatalogBinding/u);
   assert.match(dataAdapter, /loadWikiVehicleWeaponRuntimeSource/u);
+  assert.match(dataAdapter, /loadWikiVehicleFactionMechanics/u);
+  assert.match(dataAdapter, /referenceDataForWikiVehicleBinding/u);
   assert.match(viewer, /sharedWeaponDpsFactsRequest/u);
+  assert.match(viewer, /vehicleTargetBurningProfile/u);
+  assert.match(viewer, /referenceData/u);
   assert.doesNotMatch(viewer, /weaponDpsFactsRequestRef/u);
   assert.match(viewer, /attackLibraryOverride/u);
   assert.match(viewer, /onDuelHitChange/u);
