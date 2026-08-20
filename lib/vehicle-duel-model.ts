@@ -34,6 +34,20 @@ export interface VehicleDuelResolution {
   rightAttack: VehicleDuelAttackResolution;
 }
 
+export function vehicleDuelVictoryMarginSeconds(
+  resolution: VehicleDuelResolution,
+) {
+  if (resolution.winner !== "left" && resolution.winner !== "right") return null;
+  const winningTime = resolution.winner === "left"
+    ? resolution.rightLoss?.timeSeconds ?? null
+    : resolution.leftLoss?.timeSeconds ?? null;
+  const losingTime = resolution.winner === "left"
+    ? resolution.leftLoss?.timeSeconds ?? null
+    : resolution.rightLoss?.timeSeconds ?? null;
+  if (winningTime === null || losingTime === null) return null;
+  return Math.max(0, losingTime - winningTime);
+}
+
 const EPSILON = 1e-7;
 
 function selectedCandidate(

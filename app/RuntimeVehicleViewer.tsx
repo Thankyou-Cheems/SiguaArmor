@@ -3429,6 +3429,13 @@ export interface RuntimeVehicleDuelHitSnapshot {
   targets: readonly WeaponHitDpsTarget[];
 }
 
+export interface RuntimeVehicleViewerDisplayOverrides {
+  physicalPoseEnabled?: boolean;
+  relativeArmorScale?: boolean;
+  specialArmorVisible?: boolean;
+  exteriorSpacedArmorHighlight?: boolean;
+}
+
 let sharedWeaponDpsFactsRequest: Promise<WeaponDpsWeapon[]> | null = null;
 
 export function RuntimeVehicleViewer({
@@ -3447,6 +3454,8 @@ export function RuntimeVehicleViewer({
   duelTarget = false,
   allowGlobalAttackSources = true,
   onDuelHitChange,
+  displayOverrides,
+  shotTraceLimit = MAX_SHOT_TRACES,
 }: {
   preview: RuntimeVehiclePreview;
   showChrome?: boolean;
@@ -3463,10 +3472,16 @@ export function RuntimeVehicleViewer({
   duelTarget?: boolean;
   allowGlobalAttackSources?: boolean;
   onDuelHitChange?: (snapshot: RuntimeVehicleDuelHitSnapshot | null) => void;
+  displayOverrides?: RuntimeVehicleViewerDisplayOverrides;
+  shotTraceLimit?: number;
 }) {
   const previewIssue = officialVehiclePreviewIssue(preview.variantRawName);
   const exteriorUnavailableMessage = previewIssue?.message;
   const mode = previewIssue && requestedMode === "exterior" ? "armor" : requestedMode;
+  const maxShotTraces = Math.max(
+    1,
+    Math.min(MAX_SHOT_TRACES, Math.trunc(shotTraceLimit)),
+  );
   const hostRef = useRef<HTMLDivElement>(null);
   const protectionCanvasRef = useRef<HTMLCanvasElement>(null);
   const resetViewRef = useRef<
@@ -3804,11 +3819,20 @@ export function RuntimeVehicleViewer({
   // The parent navigation update rerenders the full catalog tree. Keep it out
   // of continuous range input and publish the final distance on interaction end.
   const [distanceInteractionActive, setDistanceInteractionActive] = useState(false);
-  const [specialArmorVisible, setSpecialArmorVisible] = useState(true);
-  const [exteriorSpacedArmorHighlight, setExteriorSpacedArmorHighlight] =
+  const [localSpecialArmorVisible, setSpecialArmorVisible] = useState(true);
+  const [localExteriorSpacedArmorHighlight, setExteriorSpacedArmorHighlight] =
     useState(false);
-  const [physicalPoseEnabled, setPhysicalPoseEnabled] = useState(true);
-  const [relativeArmorScale, setRelativeArmorScale] = useState(false);
+  const [localPhysicalPoseEnabled, setPhysicalPoseEnabled] = useState(true);
+  const [localRelativeArmorScale, setRelativeArmorScale] = useState(false);
+  const specialArmorVisible =
+    displayOverrides?.specialArmorVisible ?? localSpecialArmorVisible;
+  const exteriorSpacedArmorHighlight =
+    displayOverrides?.exteriorSpacedArmorHighlight ??
+    localExteriorSpacedArmorHighlight;
+  const physicalPoseEnabled =
+    displayOverrides?.physicalPoseEnabled ?? localPhysicalPoseEnabled;
+  const relativeArmorScale =
+    displayOverrides?.relativeArmorScale ?? localRelativeArmorScale;
   const [armorThicknessRange, setArmorThicknessRange] =
     useState<HitSceneArmorThicknessRange | null>(null);
   const [shotResult, setShotResult] = useState<EditorNativeShotResult | null>(null);
@@ -5005,7 +5029,7 @@ export function RuntimeVehicleViewer({
     if (!parsed || !weaponModel || selectedWeaponIndex < 0 || intersections.length === 0) return null;
     cancelShotAnimation(true);
     const records = shotRecordsRef.current;
-    const reusableRecord = records.length >= MAX_SHOT_TRACES ? records.shift() ?? null : null;
+    const reusableRecord = records.length >= maxShotTraces ? records.shift() ?? null : null;
     const visual = reusableRecord?.visual ?? shotVisualsRef.current.find(
       (candidate) => !records.some((record) => record.visual === candidate),
     );
@@ -5054,6 +5078,7 @@ export function RuntimeVehicleViewer({
     applyShotResultToVisual,
     cancelShotAnimation,
     commitSelectedShot,
+    maxShotTraces,
     savedShotSnapshot,
     startShotAnimation,
   ]);
@@ -5837,7 +5862,7 @@ export function RuntimeVehicleViewer({
     scene.add(fillLight);
 
     const shotVisuals = Array.from(
-      { length: MAX_SHOT_TRACES },
+      { length: maxShotTraces },
       (_, traceIndex) => createShotVisual(traceIndex),
     );
     shotVisualsRef.current = shotVisuals;
@@ -7752,7 +7777,7 @@ export function RuntimeVehicleViewer({
           weaponIndexRef.current >= 0
         ) {
           const restoredRecords: RuntimeShotRecord[] = [];
-          pendingSharedShots.paths.slice(-MAX_SHOT_TRACES).forEach((sharedShot) => {
+          pendingSharedShots.paths.slice(-maxShotTraces).forEach((sharedShot) => {
             const direction = new THREE.Vector3().fromArray(sharedShot.direction).normalize();
             const entryPoint = new THREE.Vector3().fromArray(sharedShot.entryPoint);
             const origin = entryPoint.clone().addScaledVector(direction, -SHARED_SHOT_RAY_LEAD_M);
@@ -7853,6 +7878,7 @@ export function RuntimeVehicleViewer({
     chassisPose,
     clearShotVisual,
     hit,
+    maxShotTraces,
     preview.cardId,
     preview.generatedClass,
     preview.suspension.records,
@@ -8741,9 +8767,9 @@ export function RuntimeVehicleViewer({
             <div
               className="viewer-mode-tabs viewer-shot-history__tabs"
               role="group"
-              aria-label="三条命中记录"
+              aria-label={`${maxShotTraces} 条命中记录`}
               style={{
-                "--viewer-mode-count": MAX_SHOT_TRACES,
+                "--viewer-mode-count": maxShotTraces,
                 "--viewer-mode-index": Math.max(
                   0,
                   savedShots.findIndex((savedShot) => savedShot.shotId === activeShotId),
@@ -8751,7 +8777,7 @@ export function RuntimeVehicleViewer({
               } as CSSProperties}
             >
               <span className="viewer-mode-tabs__thumb" aria-hidden="true" />
-              {Array.from({ length: MAX_SHOT_TRACES }, (_, index) => {
+              {Array.from({ length: maxShotTraces }, (_, index) => {
                 const savedShot = savedShots[index];
                 const active = savedShot?.shotId === activeShotId;
                 return (
