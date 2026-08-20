@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Gauge } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
@@ -119,8 +119,17 @@ import {
 } from "../lib/runtime-visual-lazy-load";
 import {
   loadWikiVehicleWeaponRuntimeIndex,
+  loadWikiWeaponCatalog,
   loadWikiVehicleWeaponRuntimeSource,
 } from "../lib/wiki-source";
+import {
+  estimateWeaponHitDps,
+  type WeaponHitDpsEstimate,
+} from "../lib/weapon-hit-dps";
+import {
+  weaponDpsWeaponsFromWikiDocument,
+} from "../lib/weapon-dps-source";
+import type { WeaponDpsWeapon } from "../lib/weapon-dps-model";
 import type {
   RuntimeVehiclePreview,
   RuntimeVisualPlacement,
@@ -192,6 +201,7 @@ import {
 import { runtimeRenderQualityProfile } from "../lib/runtime-render-quality";
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
+import { WeaponRhythmTimeline } from "./WeaponRhythmTimeline";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
 
 THREE.Mesh.prototype.raycast = acceleratedRaycast;
@@ -2208,6 +2218,77 @@ function DamageSettlementListItems({
   });
 }
 
+function HitDpsTimingCard({
+  estimates,
+  factsState,
+  clickedTargetLabel,
+}: {
+  estimates: readonly WeaponHitDpsEstimate[];
+  factsState: "idle" | "loading" | "ready" | "unavailable";
+  clickedTargetLabel: string | null;
+}) {
+  if (factsState === "loading") {
+    return (
+      <section className="viewer-hit-dps-timing" data-state="loading" aria-live="polite">
+        <strong>正在载入当前武器的射速 / 换弹 / 过热事实…</strong>
+      </section>
+    );
+  }
+  if (factsState === "unavailable") {
+    return (
+      <section className="viewer-hit-dps-timing" data-state="unavailable" aria-live="polite">
+        <strong>当前武器的节奏数据暂不可闭合</strong>
+        <span>Wiki 没有返回唯一的精确 assignment，已保留单发伤害结算，不猜测击毁时间。</span>
+      </section>
+    );
+  }
+  if (estimates.length === 0) return null;
+  const primaryEstimate = estimates.find(({ poolKind }) => poolKind === "hull") ?? estimates[0];
+  const primarySimulation = (
+    primaryEstimate.optimization.recommended ??
+    primaryEstimate.optimization.burn
+  ).result;
+  return (
+    <section className="viewer-hit-dps-timing" data-state="ready" aria-label="当前点击位置的自动击毁时间">
+      <header>
+        <div>
+          <strong>自动击毁时间</strong>
+          <span>{clickedTargetLabel ? `当前点击：${clickedTargetLabel}` : "当前点击位置"} · 假设重复命中同一点</span>
+        </div>
+        <small>自动搜索节奏</small>
+      </header>
+      <ul>
+        {estimates.map((estimate) => {
+          const best = estimate.optimization.best;
+          const bestResult = best?.result ?? null;
+          const killTime = bestResult?.killTimeSeconds ?? null;
+          const plan = best?.plan;
+          const planLabel = !plan
+            ? "无法求解"
+            : plan.mode === "burn"
+              ? "连续射击"
+              : `${plan.burstSize} 发 · 停 ${plan.pauseSeconds.toFixed(2)} s`;
+          return (
+            <li key={estimate.key}>
+              <span>
+                <strong>{editorPoolLabel(estimate.poolKind)}</strong>
+                <small>{metricText(estimate.damagePerShot)} / 发 · {metricText(estimate.maxHealth)} 血量</small>
+              </span>
+              <b>{killTime === null ? `>${bestResult?.elapsedSeconds.toFixed(1) ?? "—"} s` : `${killTime.toFixed(2)} s`}</b>
+              <em>{planLabel}{bestResult ? ` · ${bestResult.overheatCount} 次锁定` : ""}</em>
+            </li>
+          );
+        })}
+      </ul>
+      <WeaponRhythmTimeline
+        simulation={primarySimulation}
+        targetHealth={primaryEstimate.maxHealth}
+        compact
+      />
+    </section>
+  );
+}
+
 function paintShotPathMarker(
   marker: ShotPathMarkerVisual,
   number: number,
@@ -3449,6 +3530,11 @@ export function RuntimeVehicleViewer({
     "idle" | "loading" | "ready" | "error"
   >("idle");
   const [attackLibraryError, setAttackLibraryError] = useState<string | null>(null);
+  const [weaponDpsFacts, setWeaponDpsFacts] = useState<WeaponDpsWeapon | null>(null);
+  const [weaponDpsFactsState, setWeaponDpsFactsState] = useState<
+    "idle" | "loading" | "ready" | "unavailable"
+  >("idle");
+  const weaponDpsFactsRequestRef = useRef<Promise<WeaponDpsWeapon[]> | null>(null);
   const [attackSourceCardId, setAttackSourceCardId] = useState("");
   const [attackState, setAttackState] = useState<AttackState>({ kind: "loading" });
   const [loadedAttackSourceCardId, setLoadedAttackSourceCardId] = useState("");
@@ -3608,6 +3694,50 @@ export function RuntimeVehicleViewer({
   const selectedAttackWeapon = weaponOptionIndex >= 0
     ? attackSource?.weapons[weaponOptionIndex] ?? null
     : null;
+  useEffect(() => {
+    if (!selectedAttackWeapon || activeShotId === null) {
+      setWeaponDpsFacts(null);
+      setWeaponDpsFactsState("idle");
+      return;
+    }
+    let active = true;
+    setWeaponDpsFactsState("loading");
+    const request = weaponDpsFactsRequestRef.current ??
+      loadWikiWeaponCatalog()
+        .then((document) => weaponDpsWeaponsFromWikiDocument(document as Record<string, unknown>).weapons)
+        .catch((error: unknown) => {
+          weaponDpsFactsRequestRef.current = null;
+          throw error;
+        });
+    weaponDpsFactsRequestRef.current = request;
+    void request
+      .then((candidates) => {
+        if (!active) return;
+        const assignmentId = selectedAttackWeapon.weaponAssignmentId ?? null;
+        const exact = assignmentId
+          ? candidates.filter((candidate) => candidate.assignmentId === assignmentId)
+          : candidates.filter((candidate) =>
+              candidate.sourceCardId === selectedAttackWeapon.sourceCardId &&
+              candidate.sourceRawName === selectedAttackWeapon.sourceRawName &&
+              candidate.variantIds?.includes(selectedAttackWeapon.weaponId),
+            );
+        if (exact.length !== 1) {
+          setWeaponDpsFacts(null);
+          setWeaponDpsFactsState("unavailable");
+          return;
+        }
+        setWeaponDpsFacts(exact[0]);
+        setWeaponDpsFactsState("ready");
+      })
+      .catch(() => {
+        if (!active) return;
+        setWeaponDpsFacts(null);
+        setWeaponDpsFactsState("unavailable");
+      });
+    return () => {
+      active = false;
+    };
+  }, [activeShotId, selectedAttackWeapon]);
   const catalogCompletedWeaponCount = attackSource?.catalogCompletedWeaponCount ?? 0;
   const attackReady =
     attackState.kind === "ready" && loadedAttackSourceCardId === attackSource?.cardId;
@@ -7436,6 +7566,21 @@ export function RuntimeVehicleViewer({
     visual,
   ]);
 
+  const weaponHitDpsEstimates = useMemo(
+    () => weaponDpsFacts && shotResult
+      ? estimateWeaponHitDps(
+          weaponDpsFacts,
+          shotResult,
+          {
+            targetHealth: 1,
+            horizonSeconds: 120,
+            useMagazineReload: true,
+          },
+        )
+      : [],
+    [shotResult, weaponDpsFacts],
+  );
+
   if (!visual) return null;
 
   const ballistics = shotResult?.ballistics ?? null;
@@ -7501,6 +7646,13 @@ export function RuntimeVehicleViewer({
   const componentDamageOutcomes = damageOutcomeSummaries.filter(
     (outcome) => outcome.poolKind !== "hull",
   );
+  const clickedLayer = shotResult?.layers[0] ?? null;
+  const clickedComponent = clickedLayer && hitHeader
+    ? hitHeader.components[clickedLayer.componentIndex] ?? null
+    : null;
+  const clickedTargetLabel = clickedComponent
+    ? playerHitComponentLabel(clickedComponent)
+    : null;
   const hullRemainingHealth = hullDamageOutcome?.maxHealth === null
     || hullDamageOutcome?.maxHealth === undefined
     ? null
@@ -7523,6 +7675,12 @@ export function RuntimeVehicleViewer({
         selectedAttackWeapon.selectorVariant?.label
         ?? selectedAttackWeapon.displayNameZh,
       )
+    : null;
+  const dpsWeapon = attackSource && displayedWeaponOptionIndex >= 0
+    ? attackSource.weapons[displayedWeaponOptionIndex] ?? null
+    : null;
+  const weaponDpsHref = dpsWeapon
+    ? `/weapon-dps?cardId=${encodeURIComponent(dpsWeapon.sourceCardId)}&rawName=${encodeURIComponent(dpsWeapon.sourceRawName)}${dpsWeapon.weaponAssignmentId ? `&weaponAssignmentId=${encodeURIComponent(dpsWeapon.weaponAssignmentId)}` : ""}`
     : null;
 
   return (
@@ -7729,88 +7887,96 @@ export function RuntimeVehicleViewer({
 
       <div className="viewer-engagement-controls" aria-label="命中分析参数">
         {attackLibrary ? (
-          <RuntimeWeaponSelector
-            value={
-              attackSource && displayedWeaponOptionIndex >= 0
-                ? weaponSelectionValue(
-                    attackSource.cardId,
-                    displayedWeaponOptionIndex,
-                  )
-                : ""
-            }
-            options={runtimeWeaponOptions}
-            targetDistanceM={targetDistanceM}
-            onRequestGlobalLibrary={requestGlobalAttackLibrary}
-            globalLibraryState={globalAttackLibraryState}
-            onChange={(nextValue) => {
-              const selection = parseWeaponSelectionValue(nextValue);
-              if (!selection) return;
-              const nextSource = attackLibrary?.runtimeAttackSourceForId(
-                selection.sourceCardId,
-              ) ?? null;
-              const nextWeapon = nextSource?.weapons[selection.optionIndex];
-              if (!nextSource || !nextWeapon) return;
-              if (nextSource.cardId !== attackSource?.cardId) {
-                const pendingSelection = {
-                  sourceCardId: nextSource.cardId,
-                  optionIndex: selection.optionIndex,
-                };
-                pendingAttackWeaponSelectionRef.current = pendingSelection;
-                setPendingAttackWeaponSelection(pendingSelection);
+          <>
+            <RuntimeWeaponSelector
+              value={
+                attackSource && displayedWeaponOptionIndex >= 0
+                  ? weaponSelectionValue(
+                      attackSource.cardId,
+                      displayedWeaponOptionIndex,
+                    )
+                  : ""
+              }
+              options={runtimeWeaponOptions}
+              targetDistanceM={targetDistanceM}
+              onRequestGlobalLibrary={requestGlobalAttackLibrary}
+              globalLibraryState={globalAttackLibraryState}
+              onChange={(nextValue) => {
+                const selection = parseWeaponSelectionValue(nextValue);
+                if (!selection) return;
+                const nextSource = attackLibrary?.runtimeAttackSourceForId(
+                  selection.sourceCardId,
+                ) ?? null;
+                const nextWeapon = nextSource?.weapons[selection.optionIndex];
+                if (!nextSource || !nextWeapon) return;
+                if (nextSource.cardId !== attackSource?.cardId) {
+                  const pendingSelection = {
+                    sourceCardId: nextSource.cardId,
+                    optionIndex: selection.optionIndex,
+                  };
+                  pendingAttackWeaponSelectionRef.current = pendingSelection;
+                  setPendingAttackWeaponSelection(pendingSelection);
+                  const current = navigationStateRef.current;
+                  if (current) {
+                    const next = {
+                      ...current,
+                      attacker: nextSource.shareSlug,
+                      weapon: "",
+                      weaponIndex:
+                        selection.optionIndex === defaultAttackWeaponOptionIndex(nextSource)
+                          ? null
+                          : selection.optionIndex,
+                      distance: 0,
+                      shots: "",
+                    } satisfies ViewerNavigationState;
+                    navigationStateRef.current = next;
+                    onNavigationStateChangeRef.current?.(next);
+                  }
+                  setAttackSourceCardId(nextSource.cardId);
+                  return;
+                }
+                const nextOptionIndex = selection.optionIndex;
+                const nextModel = nextWeapon.ballisticsModel;
+                if (!nextWeapon || !nextModel) return;
+                const nextMaxDistance = runtimeAttackTargetDistanceLimitM(
+                  nextModel,
+                  nextWeapon.ballisticsWeaponIndex,
+                );
+                const nextDistance = nextMaxDistance > 0
+                  ? Math.min(distancePreferenceRef.current, nextMaxDistance)
+                  : 0;
+                attackModelRef.current = nextModel;
+                setAttackHeader(nextModel);
+                setWeaponIndex(nextWeapon.ballisticsWeaponIndex);
+                setWeaponOptionIndex(nextOptionIndex);
+                setTargetDistanceM(nextDistance);
+                weaponIndexRef.current = nextWeapon.ballisticsWeaponIndex;
+                weaponOptionIndexRef.current = nextOptionIndex;
+                targetDistanceRef.current = nextDistance;
                 const current = navigationStateRef.current;
-                if (current) {
+                if (current && attackSource) {
                   const next = {
                     ...current,
-                    attacker: nextSource.shareSlug,
+                    attacker: attackSource.shareSlug,
                     weapon: "",
-                    weaponIndex:
-                      selection.optionIndex === defaultAttackWeaponOptionIndex(nextSource)
-                        ? null
-                        : selection.optionIndex,
+                    weaponIndex: nextOptionIndex === defaultAttackWeaponOptionIndex(attackSource)
+                      ? null
+                      : nextOptionIndex,
                     distance: 0,
-                    shots: "",
                   } satisfies ViewerNavigationState;
                   navigationStateRef.current = next;
                   onNavigationStateChangeRef.current?.(next);
                 }
-                setAttackSourceCardId(nextSource.cardId);
-                return;
-              }
-              const nextOptionIndex = selection.optionIndex;
-              const nextModel = nextWeapon.ballisticsModel;
-              if (!nextWeapon || !nextModel) return;
-              const nextMaxDistance = runtimeAttackTargetDistanceLimitM(
-                nextModel,
-                nextWeapon.ballisticsWeaponIndex,
-              );
-              const nextDistance = nextMaxDistance > 0
-                ? Math.min(distancePreferenceRef.current, nextMaxDistance)
-                : 0;
-              attackModelRef.current = nextModel;
-              setAttackHeader(nextModel);
-              setWeaponIndex(nextWeapon.ballisticsWeaponIndex);
-              setWeaponOptionIndex(nextOptionIndex);
-              setTargetDistanceM(nextDistance);
-              weaponIndexRef.current = nextWeapon.ballisticsWeaponIndex;
-              weaponOptionIndexRef.current = nextOptionIndex;
-              targetDistanceRef.current = nextDistance;
-              const current = navigationStateRef.current;
-              if (current && attackSource) {
-                const next = {
-                  ...current,
-                  attacker: attackSource.shareSlug,
-                  weapon: "",
-                  weaponIndex: nextOptionIndex === defaultAttackWeaponOptionIndex(attackSource)
-                    ? null
-                    : nextOptionIndex,
-                  distance: 0,
-                } satisfies ViewerNavigationState;
-                navigationStateRef.current = next;
-                onNavigationStateChangeRef.current?.(next);
-              }
-              simulateCurrentShot(nextWeapon.ballisticsWeaponIndex, nextDistance);
-            }}
-          />
+                simulateCurrentShot(nextWeapon.ballisticsWeaponIndex, nextDistance);
+              }}
+            />
+            {weaponDpsHref ? (
+              <a className="viewer-weapon-dps-link" href={weaponDpsHref}>
+                <Gauge size={14} aria-hidden="true" />
+                节奏 / DPS 对比
+              </a>
+            ) : null}
+          </>
         ) : attackLibraryError ? (
           <button
             className="viewer-global-weapon-fallback"
@@ -8343,7 +8509,13 @@ export function RuntimeVehicleViewer({
                   </span>
                 )}
               </div>
-              <ul className="viewer-shot-outcome-summary__targets">
+              <div className="viewer-shot-outcome-summary__details">
+                <HitDpsTimingCard
+                  estimates={weaponHitDpsEstimates}
+                  factsState={weaponDpsFactsState}
+                  clickedTargetLabel={clickedTargetLabel}
+                />
+                <ul className="viewer-shot-outcome-summary__targets">
                 {componentDamageOutcomes.slice(0, 4).map((outcome) => {
                   const remainingHealth = outcome.maxHealth === null
                     ? null
@@ -8397,7 +8569,8 @@ export function RuntimeVehicleViewer({
                     另有 {componentDamageOutcomes.length - 4} 个组件
                   </li>
                 ) : null}
-              </ul>
+                </ul>
+              </div>
             </section>
           ) : null}
           <div className="viewer-causal-spine__columns" aria-label="路径数值列">

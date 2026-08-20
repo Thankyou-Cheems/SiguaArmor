@@ -32,7 +32,10 @@ import type {
 import catalogIndexJson from "../generated/catalog-index.json";
 import { loadWikiFactionCatalog, loadWikiVehicleCatalog } from "../lib/wiki-source.ts";
 import { buildCatalogIndexFromWiki } from "./wiki-vehicle-catalog.ts";
-import { composeCatalogVariantBallisticsModel } from "./runtime-attack-ballistics-model.ts";
+import {
+  composeCatalogVariantBallisticsModel,
+  preferredBallisticsIdForExactCard,
+} from "./runtime-attack-ballistics-model.ts";
 
 interface RuntimeAttackSourceRecord {
   cardId: string;
@@ -240,6 +243,7 @@ const runtimeExplosiveCatalog = {
 function catalogVariantBallisticsModel(
   variant: WeaponCatalogVariant,
   radialSource: RuntimeExplosiveSource | null,
+  preferredBallisticsId: string | null = null,
 ): EditorNativeModel {
   const directModel = weaponCatalogDirectModelForVariant(variant);
   if (!directModel) {
@@ -253,7 +257,10 @@ function catalogVariantBallisticsModel(
         weaponCatalogWikiConfigurationForKey(weaponKey),
       )
       .find(Boolean) ?? null;
-  const ballisticProfile = weaponCatalogBallisticProfileForVariant(variant);
+  const ballisticProfile = weaponCatalogBallisticProfileForVariant(
+    variant,
+    preferredBallisticsId,
+  );
   const profileWeapon = ballisticProfile?.model.weapons.length === 1
     ? ballisticProfile.model.weapons[0]
     : null;
@@ -348,6 +355,11 @@ function runtimeCatalogAttackSourceWeapon(
   }
   const directFireRoute = directModel !== null;
   const sourceRefs = weaponCatalogSourceRefsForVariant(selectorVariant);
+  const preferredBallisticsId = preferredBallisticsIdForExactCard(
+    selectorVariant,
+    sourceRefs,
+    sourceCardId,
+  );
   const weaponId = directFireRoute
     ? selectorVariant.id
     : radialSource!.canonicalName;
@@ -362,13 +374,18 @@ function runtimeCatalogAttackSourceWeapon(
       ? "exact-editor-ballistic-fingerprint"
       : "exact-editor-explosive-catalog",
     ballisticsId:
+      preferredBallisticsId ??
       selectorVariant.ballisticsIds[0] ??
       radialSource?.id ??
       selectorVariant.directDamageModelId ??
       selectorVariant.id,
     ballisticsWeaponIndex: 0,
     ballisticsModel: directFireRoute
-      ? catalogVariantBallisticsModel(selectorVariant, radialSource)
+      ? catalogVariantBallisticsModel(
+          selectorVariant,
+          radialSource,
+          preferredBallisticsId,
+        )
       : runtimeExplosiveBallisticsModel(radialSource!),
     ballisticsSource: {
       kind: directFireRoute
@@ -501,6 +518,7 @@ function vehicleAttackSource(
   record: CatalogSearchRecord,
 ): RuntimeAttackSource | null {
   const variants = vehicleWeaponVariants(record);
+  const wikiSourceCardId = record.wikiSourceCardId ?? record.promoEntryId;
   const firstVariant = record.variants[0];
   const canonicalRawName =
     record.selectedRawName ?? firstVariant?.sourceRawName;
@@ -526,7 +544,11 @@ function vehicleAttackSource(
     throw new Error(`Duplicate Armor attack source: ${record.promoEntryId}`);
   }
   const weapons = variants.map((variant) =>
-    runtimeCatalogAttackSourceWeapon(variant, cardId, "vehicle"),
+    runtimeCatalogAttackSourceWeapon(
+      variant,
+      wikiSourceCardId,
+      "vehicle",
+    ),
   );
   const source: RuntimeAttackSource = {
     cardId,
@@ -682,6 +704,7 @@ const wikiInfantryDirectAttackSourceWeapons: RuntimeAttackSourceWeapon[] =
       ballisticsModel: catalogVariantBallisticsModel(
         selectorVariant,
         radialSource,
+        ballisticsId,
       ),
       ballisticsSource: {
         kind: "encyclopedia-weapon-closure",

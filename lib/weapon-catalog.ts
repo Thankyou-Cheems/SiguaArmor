@@ -19,6 +19,25 @@ export type WeaponVariantKind =
   | "radial-only"
   | "composite";
 
+export interface WeaponCatalogOverheatProfile {
+  state: "observed" | "projected" | "unknown";
+  heatPerShot: number | null;
+  temperatureMin: number | null;
+  temperatureMax: number | null;
+  coolingRatePerSecond: number | null;
+  triggerStep: number | null;
+  shutdownTemperature: number | null;
+  triggerAt: number | null;
+  unlockTemperature: number | null;
+  effectTriggerLower?: number | null;
+  effectTriggerUpper?: number | null;
+  sourceBuildId?: string;
+  sourceAssetPaths?: string[];
+  propertyNames?: string[];
+  networkTriggerDelayState?: "deferred" | "observed" | "unknown";
+  evidence?: string | null;
+}
+
 export interface WeaponCatalogWikiFamily {
   displayName: string;
   factions?: string[];
@@ -134,6 +153,8 @@ export interface WeaponCatalogVariant {
   exactCardIds: string[];
   factionIds: string[];
   factionByScope: Record<string, string[]>;
+  /** Optional exact or shared thermal facts published by SiguaWiki. */
+  overheat?: WeaponCatalogOverheatProfile;
 }
 
 export interface WeaponCatalogDirectDamageModel {
@@ -298,6 +319,8 @@ export interface WeaponCatalogVehicleEquipmentBinding {
     candidateVariantIds: string[];
     reasonCodes: string[];
   };
+  /** Exact assignment-level thermal facts; never infer from a sibling variant. */
+  overheat?: WeaponCatalogOverheatProfile;
   equipment: WeaponCatalogVehicleEquipment;
 }
 

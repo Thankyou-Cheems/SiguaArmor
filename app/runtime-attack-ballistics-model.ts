@@ -8,6 +8,8 @@ import type { RuntimeExplosiveSource } from "../lib/runtime-explosive-catalog.ts
 import type {
   WeaponCatalogBallisticProfile,
   WeaponCatalogDirectDamageModel,
+  WeaponCatalogSourceRef,
+  WeaponCatalogVariant,
 } from "../lib/weapon-catalog.ts";
 import { MAX_VIEWER_TARGET_DISTANCE_M } from "../lib/catalog-navigation.mjs";
 
@@ -25,6 +27,29 @@ export interface RuntimeAttackDistanceControl {
   penetrationDecay: RuntimeAttackDecayState;
   enabled: boolean;
   maxDistanceM: number;
+}
+
+export function preferredBallisticsIdForExactCard(
+  variant: Pick<WeaponCatalogVariant, "ballisticsIds">,
+  sourceRefs: readonly Pick<
+    WeaponCatalogSourceRef,
+    "exactCardId" | "exactCardIds" | "ballisticsId"
+  >[],
+  cardId: string,
+) {
+  const variantBallisticsIds = new Set(variant.ballisticsIds);
+  const candidates = new Set(
+    sourceRefs
+      .filter((sourceRef) =>
+        sourceRef.exactCardId === cardId ||
+        sourceRef.exactCardIds?.includes(cardId),
+      )
+      .map((sourceRef) => sourceRef.ballisticsId ?? null)
+      .filter((ballisticsId): ballisticsId is string =>
+        ballisticsId !== null && variantBallisticsIds.has(ballisticsId),
+      ),
+  );
+  return candidates.size === 1 ? [...candidates][0] : null;
 }
 
 function curveDecayState(
