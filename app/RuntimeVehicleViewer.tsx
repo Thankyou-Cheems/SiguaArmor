@@ -130,6 +130,10 @@ import {
   weaponDpsWeaponsFromWikiDocument,
 } from "../lib/weapon-dps-source";
 import type { WeaponDpsWeapon } from "../lib/weapon-dps-model";
+import {
+  siteEditionBasePath,
+  type SiteEdition,
+} from "./site-edition";
 import type {
   RuntimeVehiclePreview,
   RuntimeVisualPlacement,
@@ -3189,6 +3193,7 @@ function turretStationEquipmentLabel(
 export function RuntimeVehicleViewer({
   preview,
   showChrome = true,
+  siteEdition = "international",
   mode: requestedMode = "exterior",
   displayName = preview.variantRawName,
   attackSourcePresentation,
@@ -3201,6 +3206,7 @@ export function RuntimeVehicleViewer({
 }: {
   preview: RuntimeVehiclePreview;
   showChrome?: boolean;
+  siteEdition?: SiteEdition;
   mode?: ViewerAssetMode;
   displayName?: string;
   attackSourcePresentation?: RuntimeAttackSourcePresentation;
@@ -7680,7 +7686,7 @@ export function RuntimeVehicleViewer({
     ? attackSource.weapons[displayedWeaponOptionIndex] ?? null
     : null;
   const weaponDpsHref = dpsWeapon
-    ? `/weapon-dps?cardId=${encodeURIComponent(dpsWeapon.sourceCardId)}&rawName=${encodeURIComponent(dpsWeapon.sourceRawName)}${dpsWeapon.weaponAssignmentId ? `&weaponAssignmentId=${encodeURIComponent(dpsWeapon.weaponAssignmentId)}` : ""}`
+    ? `${siteEditionBasePath(siteEdition)}/weapon-dps?cardId=${encodeURIComponent(dpsWeapon.sourceCardId)}&rawName=${encodeURIComponent(dpsWeapon.sourceRawName)}${dpsWeapon.weaponAssignmentId ? `&weaponAssignmentId=${encodeURIComponent(dpsWeapon.weaponAssignmentId)}` : ""}`
     : null;
 
   return (
