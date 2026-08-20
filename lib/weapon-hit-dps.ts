@@ -47,6 +47,14 @@ export function selectPrimaryWeaponHitDpsTarget<T extends WeaponHitDpsTarget>(
   );
 }
 
+export function singleShotWeaponHitTarget<T extends WeaponHitDpsTarget>(
+  targets: readonly T[],
+  clickedSemanticKind: string | null,
+): T | null {
+  const primary = selectPrimaryWeaponHitDpsTarget(targets, clickedSemanticKind);
+  return primary && primary.damagePerShot >= primary.maxHealth ? primary : null;
+}
+
 /**
  * Collapse one clicked ray's resolved damage events by exact health-pool
  * identity. The result is deliberately per-pool: hull and engine damage from

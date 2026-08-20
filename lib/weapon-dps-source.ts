@@ -35,9 +35,9 @@ export function resolveWeaponDpsWeaponForRuntimeAssignment(
     : null;
   const exact = candidates.filter((candidate) =>
     candidate.sourceCardId === coordinates.sourceCardId &&
-    candidate.sourceRawName === coordinates.sourceRawName &&
     (bindingId
       ? candidate.assignmentId === bindingId &&
+        candidate.sourceRawName === coordinates.sourceRawName &&
         (!variantId || candidate.variantIds?.includes(variantId))
       : candidate.variantIds?.includes(coordinates.weaponId)),
   );

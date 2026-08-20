@@ -125,7 +125,10 @@ import {
 import {
   estimateWeaponHitDps,
   selectPrimaryWeaponHitDpsTarget,
+  singleShotWeaponHitTarget,
+  targetPoolsForShot,
   type WeaponHitDpsEstimate,
+  type WeaponHitDpsTarget,
 } from "../lib/weapon-hit-dps";
 import {
   resolveWeaponDpsWeaponForRuntimeAssignment,
@@ -2222,15 +2225,38 @@ function DamageSettlementListItems({
 
 function HitDpsTimingCard({
   estimates,
+  targets,
   factsState,
   clickedTargetLabel,
   clickedSemanticKind,
 }: {
   estimates: readonly WeaponHitDpsEstimate[];
+  targets: readonly WeaponHitDpsTarget[];
   factsState: "idle" | "loading" | "ready" | "unavailable";
   clickedTargetLabel: string | null;
   clickedSemanticKind: string | null;
 }) {
+  const directOneShotTarget = singleShotWeaponHitTarget(
+    targets,
+    clickedSemanticKind,
+  );
+  if (directOneShotTarget) {
+    const poolLabel = editorPoolLabel(directOneShotTarget.poolKind);
+    const resultLabel = directOneShotTarget.poolKind === "hull"
+      ? "单发摧毁"
+      : `单发打坏${poolLabel}`;
+    return (
+      <section
+        className="viewer-hit-dps-timing"
+        data-state="ready"
+        data-mode="time-only"
+        aria-label="当前点击位置的摧毁时间"
+      >
+        <span>{clickedTargetLabel ?? poolLabel}</span>
+        <strong>{resultLabel}</strong>
+      </section>
+    );
+  }
   if (factsState === "loading") {
     return (
       <section className="viewer-hit-dps-timing" data-state="loading" aria-live="polite">
@@ -2276,8 +2302,34 @@ function HitDpsTimingCard({
       ? primaryEstimate.optimization.practical.deltaSeconds
       : null;
   const secondaryEstimates = estimates.filter(({ key }) => key !== primaryEstimate.key);
+  if (primarySimulation.unavailableReason) {
+    return (
+      <section className="viewer-hit-dps-timing" data-state="unavailable" aria-live="polite">
+        <strong>当前武器的摧毁时间暂不可闭合</strong>
+        <span>{primarySimulation.unavailableReason}</span>
+      </section>
+    );
+  }
+  if (primarySimulation.thermalState === "unavailable") {
+    return (
+      <section
+        className="viewer-hit-dps-timing"
+        data-state="ready"
+        data-mode="time-only"
+        aria-label="当前点击位置的摧毁时间"
+      >
+        <span>{clickedTargetLabel ?? primaryPoolLabel}</span>
+        <strong>{primaryTimeLabel} {primaryOutcomeLabel}</strong>
+      </section>
+    );
+  }
   return (
-    <section className="viewer-hit-dps-timing" data-state="ready" aria-label="当前点击位置的自动击毁时间">
+    <section
+      className="viewer-hit-dps-timing"
+      data-state="ready"
+      data-mode="thermal"
+      aria-label="当前点击位置的自动击毁时间"
+    >
       <header>
         <div>
           <span>命中后自动估算</span>
@@ -2294,7 +2346,7 @@ function HitDpsTimingCard({
           <div><dt>需要</dt><dd>{primarySimulation.shots} 发</dd></div>
           <div><dt>单发</dt><dd>{metricText(primaryEstimate.damagePerShot)}</dd></div>
           <div><dt>目标</dt><dd>{metricText(primaryEstimate.maxHealth)} 血量</dd></div>
-          <div><dt>过热</dt><dd>{primarySimulation.thermalState === "unavailable" ? "未闭合" : `${primarySimulation.overheatCount} 次`}</dd></div>
+          <div><dt>过热</dt><dd>{primarySimulation.overheatCount} 次</dd></div>
         </dl>
       </div>
       <p className="viewer-hit-dps-timing__rhythm">
@@ -7616,6 +7668,10 @@ export function RuntimeVehicleViewer({
       : [],
     [shotResult, weaponDpsFacts],
   );
+  const weaponHitDpsTargets = useMemo(
+    () => shotResult ? targetPoolsForShot(shotResult) : [],
+    [shotResult],
+  );
 
   if (!visual) return null;
 
@@ -8533,12 +8589,6 @@ export function RuntimeVehicleViewer({
                 )}
               </div>
               <div className="viewer-shot-outcome-summary__details">
-                <HitDpsTimingCard
-                  estimates={weaponHitDpsEstimates}
-                  factsState={weaponDpsFactsState}
-                  clickedTargetLabel={clickedTargetLabel}
-                  clickedSemanticKind={clickedComponent?.semanticKind ?? null}
-                />
                 <ul className="viewer-shot-outcome-summary__targets">
                 {componentDamageOutcomes.slice(0, 4).map((outcome) => {
                   const remainingHealth = outcome.maxHealth === null
@@ -8717,6 +8767,17 @@ export function RuntimeVehicleViewer({
             ) : null}
           </ol>
           {shotResult.layers.length > 8 ? <span className="viewer-more-layers">另有 {shotResult.layers.length - 8} 层</span> : null}
+        </div>
+      ) : null}
+      {shotResult && effectiveDamageEvents.length > 0 ? (
+        <div className="viewer-hit-dps-dock">
+          <HitDpsTimingCard
+            estimates={weaponHitDpsEstimates}
+            targets={weaponHitDpsTargets}
+            factsState={weaponDpsFactsState}
+            clickedTargetLabel={clickedTargetLabel}
+            clickedSemanticKind={clickedComponent?.semanticKind ?? null}
+          />
         </div>
       ) : null}
     </div>
