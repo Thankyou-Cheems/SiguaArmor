@@ -2227,13 +2227,11 @@ function DamageSettlementListItems({
 }
 
 function HitDpsFold({
-  targetLabel,
   resultLabel,
   secondaryLabel,
   state,
   children,
 }: {
-  targetLabel: string;
   resultLabel: string;
   secondaryLabel?: string | null;
   state: "loading" | "ready" | "unavailable";
@@ -2241,10 +2239,10 @@ function HitDpsFold({
 }) {
   return (
     <details className="viewer-hit-dps-fold" data-state={state}>
-      <summary>
-        <span>{targetLabel}</span>
+      <summary aria-label={`${resultLabel}${secondaryLabel ? `，${secondaryLabel}` : ""}，展开或收起分析`}>
         <strong>{resultLabel}</strong>
-        <small>{secondaryLabel ?? "计算依据"}</small>
+        {secondaryLabel ? <small>{secondaryLabel}</small> : null}
+        <span className="viewer-hit-dps-fold__toggle" aria-hidden="true" />
       </summary>
       <div className="viewer-hit-dps-fold__body">{children}</div>
     </details>
@@ -2333,14 +2331,12 @@ function HitDpsTimingCard({
   targets,
   weapon,
   factsState,
-  clickedTargetLabel,
   clickedSemanticKind,
 }: {
   estimates: readonly WeaponHitDpsEstimate[];
   targets: readonly WeaponHitDpsTarget[];
   weapon: WeaponDpsWeapon | null;
   factsState: "idle" | "loading" | "ready" | "unavailable";
-  clickedTargetLabel: string | null;
   clickedSemanticKind: string | null;
 }) {
   const directOneShotTarget = singleShotWeaponHitTarget(
@@ -2354,7 +2350,6 @@ function HitDpsTimingCard({
       : `单发打坏${poolLabel}`;
     return (
       <HitDpsFold
-        targetLabel={clickedTargetLabel ?? poolLabel}
         resultLabel={resultLabel}
         state="ready"
       >
@@ -2368,14 +2363,14 @@ function HitDpsTimingCard({
   }
   if (factsState === "loading") {
     return (
-      <HitDpsFold targetLabel={clickedTargetLabel ?? "当前点击位置"} resultLabel="计算中" state="loading">
+      <HitDpsFold resultLabel="计算中" state="loading">
         <p className="viewer-hit-dps-timing__reason">正在载入当前武器的射速、换弹与过热事实…</p>
       </HitDpsFold>
     );
   }
   if (factsState === "unavailable") {
     return (
-      <HitDpsFold targetLabel={clickedTargetLabel ?? "当前点击位置"} resultLabel="数据不可用" state="unavailable">
+      <HitDpsFold resultLabel="数据不可用" state="unavailable">
         <p className="viewer-hit-dps-timing__reason">Wiki 没有返回唯一的精确 assignment，已保留单发伤害结算，不猜测击毁时间。</p>
       </HitDpsFold>
     );
@@ -2435,7 +2430,7 @@ function HitDpsTimingCard({
   const timelineTargetLabel = editorPoolLabel(timelineEstimate.poolKind);
   if (primarySimulation.unavailableReason) {
     return (
-      <HitDpsFold targetLabel={clickedTargetLabel ?? primaryPoolLabel} resultLabel="数据不可用" state="unavailable">
+      <HitDpsFold resultLabel="数据不可用" state="unavailable">
         <p className="viewer-hit-dps-timing__reason">{primarySimulation.unavailableReason}</p>
       </HitDpsFold>
     );
@@ -2443,7 +2438,6 @@ function HitDpsTimingCard({
   if (primarySimulation.thermalState === "unavailable") {
     return (
       <HitDpsFold
-        targetLabel={clickedTargetLabel ?? primaryPoolLabel}
         resultLabel={primaryResultLabel}
         secondaryLabel={secondarySummary || null}
         state="ready"
@@ -2471,19 +2465,11 @@ function HitDpsTimingCard({
   }
   return (
     <HitDpsFold
-      targetLabel={clickedTargetLabel ?? primaryPoolLabel}
       resultLabel={primaryResultLabel}
       secondaryLabel={secondarySummary || null}
       state="ready"
     >
       <section className="viewer-hit-dps-timing" data-state="ready" aria-label="当前点击位置的自动击毁时间">
-        <header>
-        <div>
-          <span>命中后自动估算</span>
-          <strong>{clickedTargetLabel ?? primaryPoolLabel}</strong>
-        </div>
-        <small>重复命中同一点</small>
-        </header>
         <div className="viewer-hit-dps-timing__primary">
         <span>
           <small>{primaryOutcomeLabel}</small>
@@ -7891,9 +7877,6 @@ export function RuntimeVehicleViewer({
   const clickedComponent = clickedLayer && hitHeader
     ? hitHeader.components[clickedLayer.componentIndex] ?? null
     : null;
-  const clickedTargetLabel = clickedComponent
-    ? playerHitComponentLabel(clickedComponent)
-    : null;
   const hullRemainingHealth = hullDamageOutcome?.maxHealth === null
     || hullDamageOutcome?.maxHealth === undefined
     ? null
@@ -8924,7 +8907,6 @@ export function RuntimeVehicleViewer({
             targets={weaponHitDpsTargets}
             weapon={weaponDpsFacts}
             factsState={weaponDpsFactsState}
-            clickedTargetLabel={clickedTargetLabel}
             clickedSemanticKind={clickedComponent?.semanticKind ?? null}
           />
           ) : null}

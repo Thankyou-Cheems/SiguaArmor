@@ -163,6 +163,13 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   assert.doesNotMatch(outcomeDetails, /HitDpsTimingCard/u);
   assert.doesNotMatch(viewer, /viewer-hit-dps-dock/u);
   assert.match(viewer, /className="viewer-hit-dps-fold"/u);
+  const foldSource = viewer.slice(
+    viewer.indexOf("function HitDpsFold"),
+    viewer.indexOf("interface HitDpsTimingFact"),
+  );
+  assert.doesNotMatch(foldSource, /targetLabel|计算依据/u);
+  assert.match(foldSource, /className="viewer-hit-dps-fold__toggle"/u);
+  assert.doesNotMatch(viewer, /clickedTargetLabel/u);
   assert.ok(
     viewer.lastIndexOf("<HitDpsTimingCard") >
       viewer.indexOf('<ol className="viewer-causal-spine">'),
@@ -181,10 +188,24 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   assert.match(viewer, /label: "装填 \/ 再发"/u);
   assert.match(viewer, /label: "计时", value: "同时"/u);
   assert.match(viewer, /secondaryLabel=\{secondarySummary \|\| null\}/u);
+  const expandedTimingHeader = viewer.slice(
+    viewer.indexOf('<section className="viewer-hit-dps-timing" data-state="ready"'),
+    viewer.indexOf('<div className="viewer-hit-dps-timing__primary">'),
+  );
+  assert.doesNotMatch(
+    expandedTimingHeader,
+    /<header>|命中后自动估算|重复命中同一点|primaryPoolLabel/u,
+  );
   assert.match(
     styles,
     /\.viewer-hit-dps-fold\s*\{[\s\S]*?margin-top:/u,
   );
+  assert.match(
+    styles,
+    /\.viewer-hit-dps-fold__toggle\s*\{[\s\S]*?width:\s*30px;[\s\S]*?height:\s*30px;/u,
+  );
+  assert.match(styles, /\.viewer-hit-dps-fold__toggle::before/u);
+  assert.match(styles, /\.viewer-hit-dps-fold__toggle::after/u);
   assert.match(timeline, /<linearGradient/u);
   assert.match(timeline, /overheat-cooling-pattern/u);
   assert.match(timeline, /过热冷却/u);
@@ -193,6 +214,12 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   assert.match(timeline, /换弹伤害真空/u);
   assert.match(timeline, /data-has-heat=\{showHeat\}/u);
   assert.match(timeline, /const showState = !compact;/u);
+  const timelineHeading = timeline.slice(
+    timeline.indexOf('<div className="rhythm-timeline__heading">'),
+    timeline.indexOf("<svg"),
+  );
+  assert.match(timelineHeading, /累计伤害 \/ 热量/u);
+  assert.doesNotMatch(timelineHeading, /<strong>|targetLabel/u);
   assert.match(
     timeline,
     /\{showState \? \([\s\S]*?rhythm-timeline__state-base/u,
