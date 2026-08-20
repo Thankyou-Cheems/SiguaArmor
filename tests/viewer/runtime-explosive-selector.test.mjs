@@ -160,7 +160,7 @@ test("a damage-only curve stays adjustable and takes priority over static projec
     damageDecay: "available",
     penetrationDecay: "none",
     enabled: true,
-    maxDistanceM: 4000,
+    maxDistanceM: 450,
   });
   assert.equal(resolveEditorNativeBallistics(model, 0, 450).impactDamageAtRange, 35);
   assert.equal(resolveEditorNativeBallistics(model, 0, 450).penetrationAtRangeMm, 5);
@@ -194,10 +194,44 @@ test("a penetration-only curve stays adjustable and reports constant damage sepa
     damageDecay: "none",
     penetrationDecay: "available",
     enabled: true,
-    maxDistanceM: 4000,
+    maxDistanceM: 1000,
   });
   assert.equal(resolveEditorNativeBallistics(model, 0, 1000).penetrationAtRangeMm, 20);
   assert.equal(resolveEditorNativeBallistics(model, 0, 1000).impactDamageAtRange, 100);
+});
+
+test("a curve that reaches zero closes the distance control at its final key", () => {
+  const model = composeCatalogVariantBallisticsModel({
+    variantId: "zero-at-two-kilometers",
+    directModel: {
+      damageType: "BP_Kinetic_DamageType_C",
+      directImpactDamage: 300,
+      penetrationMm: 95,
+      traceDistanceAfterPenetrationM: 1,
+      weaponTraceDistanceAfterPenetrationM: 1,
+      impactRadialOrder: "not-applicable",
+    },
+    ballisticProfile: null,
+    configurationCurves: [{
+      curveId: "penetration-to-zero",
+      inputUnit: "meters",
+      outputUnit: "millimeters",
+      keys: { state: "observed", value: [
+        { time: 0, value: 95 },
+        { time: 1000, value: 40 },
+        { time: 2000, value: 0 },
+      ] },
+    }],
+    radialSource: null,
+  });
+
+  assert.equal(runtimeAttackTargetDistanceLimitM(model, 0), 2000);
+  assert.equal(resolveEditorNativeBallistics(model, 0, 2000).penetrationAtRangeMm, 0);
+  assert.equal(
+    resolveEditorNativeBallistics(model, 0, 2500).penetrationAtRangeMm,
+    0,
+    "the final curve value remains closed even if a stale URL supplies a longer range",
+  );
 });
 
 test("the slider explains each missing decay type and the fully constant state", () => {

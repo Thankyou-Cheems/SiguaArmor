@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { weaponDpsWeaponsFromWikiDocument } from "../../lib/weapon-dps-source.ts";
+import {
+  resolveWeaponDpsWeaponForRuntimeAssignment,
+  weaponDpsWeaponsFromWikiDocument,
+} from "../../lib/weapon-dps-source.ts";
 
 const sampleCatalog = {
   schemaVersion: "sigua-weapon-catalog/v2",
@@ -52,6 +55,24 @@ test("Wiki adapter keeps exact assignment identity and carries the thermal profi
   assert.equal(result.weapons[0].assignmentId, "assignment-exact");
   assert.equal(result.weapons[0].sourceRawName, "BP_BMP2_AFU");
   assert.equal(result.weapons[0].overheat?.triggerAt, 108);
+  assert.equal(
+    resolveWeaponDpsWeaponForRuntimeAssignment(result.weapons, {
+      weaponAssignmentId: "assignment-exact:variant-thermal",
+      sourceCardId: "afu--bmp-2--ifv",
+      sourceRawName: "BP_BMP2_AFU",
+      weaponId: "variant-thermal",
+    })?.assignmentId,
+    "assignment-exact",
+  );
+  assert.equal(
+    resolveWeaponDpsWeaponForRuntimeAssignment(result.weapons, {
+      weaponAssignmentId: "assignment-exact:wrong-variant",
+      sourceCardId: "afu--bmp-2--ifv",
+      sourceRawName: "BP_BMP2_AFU",
+      weaponId: "wrong-variant",
+    }),
+    null,
+  );
 });
 
 test("conflicting delivery profiles fail closed instead of selecting the first variant", () => {
@@ -106,21 +127,18 @@ test("Wiki infantry configurations remain selectable as separate assignments", (
   assert.equal(rifle.sourceRawName, "BP_TEST_RIFLE");
 });
 
-test("selector links preserve exact DPS query coordinates", async () => {
+test("DPS analysis stays inside the clicked-hit damage card", async () => {
   const viewer = await readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8");
-  assert.match(
-    viewer,
-    /\$\{siteEditionBasePath\(siteEdition\)\}\/weapon-dps\?cardId=\$\{encodeURIComponent\(dpsWeapon\.sourceCardId\)\}/u,
+  assert.doesNotMatch(viewer, /weaponDpsHref|viewer-weapon-dps-link|\/weapon-dps\?/u);
+  assert.match(viewer, /function HitDpsTimingCard/u);
+  assert.match(viewer, /optimization\.recommended/u);
+  assert.match(viewer, /<WeaponRhythmTimeline/u);
+  await assert.rejects(
+    access(new URL("../../app/weapon-dps/page.tsx", import.meta.url)),
+    { code: "ENOENT" },
   );
-  assert.match(viewer, /rawName=\$\{encodeURIComponent\(dpsWeapon\.sourceRawName\)\}/u);
-  assert.match(viewer, /weaponAssignmentId=\$\{encodeURIComponent\(dpsWeapon\.weaponAssignmentId\)\}/u);
-});
-
-test("both Armor editions expose the shared DPS workbench", async () => {
-  const [internationalPage, chinaPage] = await Promise.all([
-    readFile(new URL("../../app/weapon-dps/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../../app/china/weapon-dps/page.tsx", import.meta.url), "utf8"),
-  ]);
-  assert.match(internationalPage, /<WeaponDpsWorkbench siteEdition="international" \/>/u);
-  assert.match(chinaPage, /<WeaponDpsWorkbench siteEdition="china" \/>/u);
+  await assert.rejects(
+    access(new URL("../../app/china/weapon-dps/page.tsx", import.meta.url)),
+    { code: "ENOENT" },
+  );
 });

@@ -20,6 +20,33 @@ export interface WeaponHitDpsEstimate extends WeaponHitDpsTarget {
   optimization: WeaponDpsOptimization;
 }
 
+function poolKindForClickedSemanticKind(semanticKind: string | null) {
+  if (semanticKind === "armor" || semanticKind === "penetration-blocker") return "hull";
+  if (
+    semanticKind === "engine" ||
+    semanticKind === "ammo-rack" ||
+    semanticKind === "track" ||
+    semanticKind === "wheel" ||
+    semanticKind === "seat"
+  ) return semanticKind;
+  return null;
+}
+
+export function selectPrimaryWeaponHitDpsTarget<T extends WeaponHitDpsTarget>(
+  targets: readonly T[],
+  clickedSemanticKind: string | null,
+): T | null {
+  const preferredPoolKind = poolKindForClickedSemanticKind(clickedSemanticKind);
+  return (
+    (preferredPoolKind
+      ? targets.find(({ poolKind }) => poolKind === preferredPoolKind)
+      : null) ??
+    targets.find(({ poolKind }) => poolKind === "hull") ??
+    targets[0] ??
+    null
+  );
+}
+
 /**
  * Collapse one clicked ray's resolved damage events by exact health-pool
  * identity. The result is deliberately per-pool: hull and engine damage from

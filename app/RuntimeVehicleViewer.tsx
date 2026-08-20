@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, Gauge } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
@@ -124,16 +124,14 @@ import {
 } from "../lib/wiki-source";
 import {
   estimateWeaponHitDps,
+  selectPrimaryWeaponHitDpsTarget,
   type WeaponHitDpsEstimate,
 } from "../lib/weapon-hit-dps";
 import {
+  resolveWeaponDpsWeaponForRuntimeAssignment,
   weaponDpsWeaponsFromWikiDocument,
 } from "../lib/weapon-dps-source";
 import type { WeaponDpsWeapon } from "../lib/weapon-dps-model";
-import {
-  siteEditionBasePath,
-  type SiteEdition,
-} from "./site-edition";
 import type {
   RuntimeVehiclePreview,
   RuntimeVisualPlacement,
@@ -2226,10 +2224,12 @@ function HitDpsTimingCard({
   estimates,
   factsState,
   clickedTargetLabel,
+  clickedSemanticKind,
 }: {
   estimates: readonly WeaponHitDpsEstimate[];
   factsState: "idle" | "loading" | "ready" | "unavailable";
   clickedTargetLabel: string | null;
+  clickedSemanticKind: string | null;
 }) {
   if (factsState === "loading") {
     return (
@@ -2247,43 +2247,77 @@ function HitDpsTimingCard({
     );
   }
   if (estimates.length === 0) return null;
-  const primaryEstimate = estimates.find(({ poolKind }) => poolKind === "hull") ?? estimates[0];
-  const primarySimulation = (
+  const primaryEstimate = selectPrimaryWeaponHitDpsTarget(
+    estimates,
+    clickedSemanticKind,
+  );
+  if (!primaryEstimate) return null;
+  const primaryCandidate = (
     primaryEstimate.optimization.recommended ??
     primaryEstimate.optimization.burn
-  ).result;
+  );
+  const primarySimulation = primaryCandidate.result;
+  const primaryPlan = primaryCandidate.plan;
+  const primaryPoolLabel = editorPoolLabel(primaryEstimate.poolKind);
+  const primaryOutcomeLabel = primaryEstimate.poolKind === "hull"
+    ? "击毁载具"
+    : `打坏${primaryPoolLabel}`;
+  const primaryTimeLabel = primarySimulation.killTimeSeconds === null
+    ? `>${primarySimulation.elapsedSeconds.toFixed(1)} s`
+    : `${primarySimulation.killTimeSeconds.toFixed(2)} s`;
+  const primaryPlanLabel = primaryPlan.mode === "burn"
+    ? "连续射击"
+    : `每 ${primaryPlan.burstSize} 发短停 ${primaryPlan.pauseSeconds.toFixed(2)} s`;
+  const marginalMathGain =
+    !primaryEstimate.optimization.practical.meaningful &&
+    primaryEstimate.optimization.best !== primaryEstimate.optimization.burn &&
+    primaryEstimate.optimization.practical.deltaSeconds !== null &&
+    primaryEstimate.optimization.practical.deltaSeconds > 0
+      ? primaryEstimate.optimization.practical.deltaSeconds
+      : null;
+  const secondaryEstimates = estimates.filter(({ key }) => key !== primaryEstimate.key);
   return (
     <section className="viewer-hit-dps-timing" data-state="ready" aria-label="当前点击位置的自动击毁时间">
       <header>
         <div>
-          <strong>自动击毁时间</strong>
-          <span>{clickedTargetLabel ? `当前点击：${clickedTargetLabel}` : "当前点击位置"} · 假设重复命中同一点</span>
+          <span>命中后自动估算</span>
+          <strong>{clickedTargetLabel ?? primaryPoolLabel}</strong>
         </div>
-        <small>自动搜索节奏</small>
+        <small>重复命中同一点</small>
       </header>
-      <ul>
-        {estimates.map((estimate) => {
-          const best = estimate.optimization.best;
-          const bestResult = best?.result ?? null;
-          const killTime = bestResult?.killTimeSeconds ?? null;
-          const plan = best?.plan;
-          const planLabel = !plan
-            ? "无法求解"
-            : plan.mode === "burn"
-              ? "连续射击"
-              : `${plan.burstSize} 发 · 停 ${plan.pauseSeconds.toFixed(2)} s`;
-          return (
-            <li key={estimate.key}>
-              <span>
-                <strong>{editorPoolLabel(estimate.poolKind)}</strong>
-                <small>{metricText(estimate.damagePerShot)} / 发 · {metricText(estimate.maxHealth)} 血量</small>
-              </span>
-              <b>{killTime === null ? `>${bestResult?.elapsedSeconds.toFixed(1) ?? "—"} s` : `${killTime.toFixed(2)} s`}</b>
-              <em>{planLabel}{bestResult ? ` · ${bestResult.overheatCount} 次锁定` : ""}</em>
-            </li>
-          );
-        })}
-      </ul>
+      <div className="viewer-hit-dps-timing__primary">
+        <span>
+          <small>{primaryOutcomeLabel}</small>
+          <strong>{primaryTimeLabel}</strong>
+        </span>
+        <dl>
+          <div><dt>需要</dt><dd>{primarySimulation.shots} 发</dd></div>
+          <div><dt>单发</dt><dd>{metricText(primaryEstimate.damagePerShot)}</dd></div>
+          <div><dt>目标</dt><dd>{metricText(primaryEstimate.maxHealth)} 血量</dd></div>
+          <div><dt>过热</dt><dd>{primarySimulation.thermalState === "unavailable" ? "未闭合" : `${primarySimulation.overheatCount} 次`}</dd></div>
+        </dl>
+      </div>
+      <p className="viewer-hit-dps-timing__rhythm">
+        <b>实战节奏</b>
+        <span>{primaryPlanLabel}</span>
+        {marginalMathGain === null ? null : (
+          <small>数学最优只快 {marginalMathGain.toFixed(2)} s，不值得精确卡点</small>
+        )}
+      </p>
+      {secondaryEstimates.length === 0 ? null : (
+        <ul className="viewer-hit-dps-timing__secondary" aria-label="同次命中的其他目标">
+          {secondaryEstimates.map((estimate) => {
+            const candidate = estimate.optimization.recommended ?? estimate.optimization.burn;
+            const time = candidate.result.killTimeSeconds;
+            return (
+              <li key={estimate.key}>
+                <span>{editorPoolLabel(estimate.poolKind)}</span>
+                <b>{time === null ? `>${candidate.result.elapsedSeconds.toFixed(1)} s` : `${time.toFixed(2)} s`}</b>
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <WeaponRhythmTimeline
         simulation={primarySimulation}
         targetHealth={primaryEstimate.maxHealth}
@@ -3193,7 +3227,6 @@ function turretStationEquipmentLabel(
 export function RuntimeVehicleViewer({
   preview,
   showChrome = true,
-  siteEdition = "international",
   mode: requestedMode = "exterior",
   displayName = preview.variantRawName,
   attackSourcePresentation,
@@ -3206,7 +3239,6 @@ export function RuntimeVehicleViewer({
 }: {
   preview: RuntimeVehiclePreview;
   showChrome?: boolean;
-  siteEdition?: SiteEdition;
   mode?: ViewerAssetMode;
   displayName?: string;
   attackSourcePresentation?: RuntimeAttackSourcePresentation;
@@ -3719,20 +3751,18 @@ export function RuntimeVehicleViewer({
     void request
       .then((candidates) => {
         if (!active) return;
-        const assignmentId = selectedAttackWeapon.weaponAssignmentId ?? null;
-        const exact = assignmentId
-          ? candidates.filter((candidate) => candidate.assignmentId === assignmentId)
-          : candidates.filter((candidate) =>
-              candidate.sourceCardId === selectedAttackWeapon.sourceCardId &&
-              candidate.sourceRawName === selectedAttackWeapon.sourceRawName &&
-              candidate.variantIds?.includes(selectedAttackWeapon.weaponId),
-            );
-        if (exact.length !== 1) {
+        const exact = resolveWeaponDpsWeaponForRuntimeAssignment(candidates, {
+          weaponAssignmentId: selectedAttackWeapon.weaponAssignmentId ?? null,
+          sourceCardId: selectedAttackWeapon.sourceCardId,
+          sourceRawName: selectedAttackWeapon.sourceRawName,
+          weaponId: selectedAttackWeapon.weaponId,
+        });
+        if (!exact) {
           setWeaponDpsFacts(null);
           setWeaponDpsFactsState("unavailable");
           return;
         }
-        setWeaponDpsFacts(exact[0]);
+        setWeaponDpsFacts(exact);
         setWeaponDpsFactsState("ready");
       })
       .catch(() => {
@@ -7682,13 +7712,6 @@ export function RuntimeVehicleViewer({
         ?? selectedAttackWeapon.displayNameZh,
       )
     : null;
-  const dpsWeapon = attackSource && displayedWeaponOptionIndex >= 0
-    ? attackSource.weapons[displayedWeaponOptionIndex] ?? null
-    : null;
-  const weaponDpsHref = dpsWeapon
-    ? `${siteEditionBasePath(siteEdition)}/weapon-dps?cardId=${encodeURIComponent(dpsWeapon.sourceCardId)}&rawName=${encodeURIComponent(dpsWeapon.sourceRawName)}${dpsWeapon.weaponAssignmentId ? `&weaponAssignmentId=${encodeURIComponent(dpsWeapon.weaponAssignmentId)}` : ""}`
-    : null;
-
   return (
     <div
       className="viewer-stage runtime-vehicle-viewer"
@@ -7976,12 +7999,6 @@ export function RuntimeVehicleViewer({
                 simulateCurrentShot(nextWeapon.ballisticsWeaponIndex, nextDistance);
               }}
             />
-            {weaponDpsHref ? (
-              <a className="viewer-weapon-dps-link" href={weaponDpsHref}>
-                <Gauge size={14} aria-hidden="true" />
-                节奏 / DPS 对比
-              </a>
-            ) : null}
           </>
         ) : attackLibraryError ? (
           <button
@@ -8520,6 +8537,7 @@ export function RuntimeVehicleViewer({
                   estimates={weaponHitDpsEstimates}
                   factsState={weaponDpsFactsState}
                   clickedTargetLabel={clickedTargetLabel}
+                  clickedSemanticKind={clickedComponent?.semanticKind ?? null}
                 />
                 <ul className="viewer-shot-outcome-summary__targets">
                 {componentDamageOutcomes.slice(0, 4).map((outcome) => {

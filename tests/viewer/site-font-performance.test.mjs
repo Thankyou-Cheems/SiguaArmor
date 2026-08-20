@@ -10,6 +10,18 @@ const layout = await readFile(`${root}/app/layout.tsx`, "utf8");
 
 test("full display font is loaded lazily from the independent font service", async () => {
   assert.match(globalStyles, /--font-faction-display:\s*"Unbounded Sans"/u);
+  assert.match(
+    globalStyles,
+    /--font-readable-display:\s*"Microsoft YaHei UI"/u,
+  );
+  assert.match(
+    globalStyles,
+    /\.faction-selector__brand-title h1,\s*\.faction-selector__intro h1\s*\{[\s\S]*?font-family:\s*var\(--font-readable-display\)/u,
+  );
+  assert.doesNotMatch(
+    globalStyles,
+    /\.faction-selector__brand-title h1\s*\{[\s\S]*?filter:\s*url\("#faction-title-close-cuts"\)/u,
+  );
   assert.doesNotMatch(globalStyles, /@font-face|\/fonts\/.*\.woff2/u);
   assert.match(loader, /https:\/\/fontsapi\.zeoseven\.com\/18\/main\/result\.css/u);
   assert.match(loader, /requestIdleCallback/u);

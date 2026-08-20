@@ -78,8 +78,9 @@ test("both edition logs lead with the current release and omit superseded claims
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(document.entries[0]), /武器节奏与 DPS 分析/u);
+    assert.match(JSON.stringify(document.entries[0]), /武器节奏与 DPS 不再使用独立搜索页/u);
     assert.match(JSON.stringify(document.entries[0]), /打开全站武器库后距离滑条变为不可用/u);
+    assert.match(JSON.stringify(document.entries[0]), /距离滑条上限现在跟随/u);
     const dataRefreshEntry = document.entries.find(
       ({ id }) => id === "2026-08-14-editor-vehicle-weapon-refresh",
     );

@@ -75,16 +75,16 @@ export function WeaponRhythmTimeline({
     1,
   );
   const width = 1000;
-  const height = compact ? 270 : 330;
+  const height = compact ? 222 : 330;
   const left = 74;
   const right = 24;
   const innerWidth = width - left - right;
-  const stateTop = 18;
-  const stateHeight = 24;
-  const heatTop = 64;
-  const heatHeight = compact ? 78 : 104;
-  const damageTop = heatTop + heatHeight + 34;
-  const damageHeight = compact ? 52 : 72;
+  const stateTop = compact ? 12 : 18;
+  const stateHeight = compact ? 20 : 24;
+  const heatTop = compact ? 52 : 64;
+  const heatHeight = compact ? 62 : 104;
+  const damageTop = heatTop + heatHeight + (compact ? 26 : 34);
+  const damageHeight = compact ? 42 : 72;
   const axisY = height - 18;
   const range = simulation.heatRange;
   const heatMin = range?.min ?? 0;
@@ -235,14 +235,14 @@ export function WeaponRhythmTimeline({
           </>
         )}
       </svg>
-      <div className="rhythm-timeline__legend" aria-label="时间轴图例">
+      {compact ? null : <div className="rhythm-timeline__legend" aria-label="时间轴图例">
         <span data-kind="firing">开火</span>
         <span data-kind="cooling">冷却/短停</span>
         <span data-kind="overheated">过热锁定</span>
         <span data-kind="reloading">换弹</span>
         <span data-kind="heat">热量</span>
         <span data-kind="damage">累计伤害</span>
-      </div>
+      </div>}
     </div>
   );
 }
