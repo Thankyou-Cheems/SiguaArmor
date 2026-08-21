@@ -1,50 +1,45 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
 import test from "node:test";
 
 import {
   parseRuntimePlanarSuspensionPoseIndex,
   runtimePlanarSuspensionCoverageForGeneratedClass,
-  runtimePlanarSuspensionOffsetsByBoneName,
   runtimePlanarSuspensionPoseForOccurrence,
   runtimePlanarSuspensionPoseForVisualOccurrence,
 } from "../../app/runtime-planar-suspension-pose.ts";
 
-const vectorPath = new URL(
-  "../fixtures/t64-planar-native-suspension-test-vector.json",
-  import.meta.url,
-);
+const GENERATED_CLASS =
+  "/Game/Vehicles/T64_BM2/BP_T64BM2_Cage.BP_T64BM2_Cage_C";
+const STABLE_OCCURRENCE_ID =
+  "occurrence-db898447eae1a657061719c9ff876aa9eb2921a0fb06d993fca87cae7aad6d55";
 
-function checkpointFromT64Vector() {
-  const vector = JSON.parse(fs.readFileSync(vectorPath, "utf8"));
-  const stableOccurrenceId =
-    "occurrence-db898447eae1a657061719c9ff876aa9eb2921a0fb06d993fca87cae7aad6d55";
+function observedIndex() {
   const record = {
-    generatedClass: vector.generatedClass,
-    stableOccurrenceId,
-    poseState: "native-planar-reconstructed",
-    wheelCount: vector.wheels.length,
-    maxAbsContactResidualCm: Math.max(
-      ...vector.wheels
-        .filter((wheel) => wheel.contactResidualCm !== null)
-        .map((wheel) => Math.abs(wheel.contactResidualCm)),
-    ),
-    wheels: vector.wheels.map((wheel) => ({
-      boneName: wheel.sourceBone,
-      localTranslationOffsetGltfM: vector.method.localAxisGltf.map(
-        (component) => (component * wheel.offsetCm) / 100,
-      ),
-      contactState: wheel.clamped ? "clamped" : "plane-contact",
-      clamped: wheel.clamped,
+    generatedClass: GENERATED_CLASS,
+    stableOccurrenceId: STABLE_OCCURRENCE_ID,
+    poseState: "runtime-observed-normal-time",
+    sourceBuildId: "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+    currentVersionValidation: {
+      state: "representative-path-sentinel-only",
+      sourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
+    },
+    wheelCount: 16,
+    wheels: Array.from({ length: 16 }, (_, index) => ({
+      boneName: `wheel_${index < 8 ? "L" : "R"}${index % 8 + 1}`,
     })),
   };
   return {
-    schemaVersion: "runtime-planar-suspension-pose-index/v1",
+    schemaVersion: "runtime-physical-suspension-pose-index/v2",
     coverage: {
       requestedGeneratedClassCount: 1,
-      resolvedGeneratedClassCount: 1,
+      resolvedGeneratedClassCount: 0,
+      observedGeneratedClassCount: 1,
       notApplicableGeneratedClassCount: 0,
       unavailableGeneratedClassCount: 0,
+      observed: [{
+        generatedClass: GENERATED_CLASS,
+        reason: "runtime-observed-normal-time-visual-authority",
+      }],
       notApplicable: [],
       unavailable: [],
     },
@@ -53,111 +48,48 @@ function checkpointFromT64Vector() {
   };
 }
 
-test("T-64 native planar checkpoint resolves by exact class and occurrence", () => {
-  const index = parseRuntimePlanarSuspensionPoseIndex(
-    checkpointFromT64Vector(),
-  );
+test("observed running-gear record resolves by exact class and occurrence", () => {
+  const index = parseRuntimePlanarSuspensionPoseIndex(observedIndex());
   const record = runtimePlanarSuspensionPoseForOccurrence(
     index,
-    "/Game/Vehicles/T64_BM2/BP_T64BM2_Cage.BP_T64BM2_Cage_C",
-    "occurrence-db898447eae1a657061719c9ff876aa9eb2921a0fb06d993fca87cae7aad6d55",
+    GENERATED_CLASS,
+    STABLE_OCCURRENCE_ID,
   );
   assert.ok(record);
+  assert.equal(record.poseState, "runtime-observed-normal-time");
   assert.equal(record.wheelCount, 16);
   assert.equal(
-    record.wheels.filter(
-      ({ localTranslationOffsetGltfM: [x, y, z] }) =>
-        x !== 0 || y !== 0 || z !== 0,
-    ).length,
-    12,
-  );
-  assert.equal(
-    runtimePlanarSuspensionPoseForOccurrence(
-      index,
-      "/Game/Vehicles/T64_BM2/BP_T64BM2_Cage.BP_T64BM2_Cage_C",
-      "wrong-occurrence",
-    ),
+    runtimePlanarSuspensionPoseForOccurrence(index, GENERATED_CLASS, "wrong"),
     null,
   );
-});
-
-test("a vehicle runtime slice exposes exact native T-64 wheel offsets", () => {
-  const index = parseRuntimePlanarSuspensionPoseIndex(
-    checkpointFromT64Vector(),
-  );
-  const record = runtimePlanarSuspensionPoseForVisualOccurrence(
-    index.records,
-    "/Game/Vehicles/T64_BM2/BP_T64BM2_Cage.BP_T64BM2_Cage_C",
-    "occurrence-db898447eae1a657061719c9ff876aa9eb2921a0fb06d993fca87cae7aad6d55",
-  );
-  assert.ok(record);
-  assert.equal(record.poseState, "native-planar-reconstructed");
-  assert.equal(record.wheelCount, 16);
   assert.equal(
-    record.wheels.filter(
-      ({ localTranslationOffsetGltfM: [x, y, z] }) =>
-        x !== 0 || y !== 0 || z !== 0,
-    ).length,
-    12,
-  );
-  assert.ok(Number.isFinite(record.maxAbsContactResidualCm));
-});
-
-test("T-64 native planar offsets use GLTF local meters and keep end wheels static", () => {
-  const [record] = parseRuntimePlanarSuspensionPoseIndex(
-    checkpointFromT64Vector(),
-  ).records;
-  const offsets = runtimePlanarSuspensionOffsetsByBoneName(record);
-  assert.ok(Object.values(offsets.wheel_L1).every((value) => value === 0));
-  assert.ok(Object.values(offsets.wheel_R8).every((value) => value === 0));
-  assert.ok(offsets.wheel_L2.y < 0);
-  assert.ok(offsets.wheel_L7.y > 0);
-  assert.equal(
-    Object.values(offsets).filter(
-      ({ x, y, z }) => x !== 0 || y !== 0 || z !== 0,
-    ).length,
-    12,
+    runtimePlanarSuspensionPoseForVisualOccurrence(
+      index.records,
+      GENERATED_CLASS,
+      STABLE_OCCURRENCE_ID,
+    )?.wheels[0].boneName,
+    "wheel_L1",
   );
 });
 
-test("fleet coverage distinguishes explicit not-applicable from fail-closed fallback", () => {
-  const notApplicable = {
-    status: "not-applicable",
-    generatedClass:
-      "/Game/Vehicles/RHIB/BP_RHIB_US_M2.BP_RHIB_US_M2_C",
-    reason: "explicit-fake-physics-probes-no-visual-suspension",
-  };
-  const unavailable = {
-    status: "unavailable",
-    generatedClass:
-      "/Game/Vehicles/Minsk_motorbike/BP_minsk.BP_minsk_C",
-    reason: "configured-bone-missing-from-exact-release-skeleton",
-  };
-  assert.deepEqual(
-    runtimePlanarSuspensionCoverageForGeneratedClass(
-      notApplicable,
-      "/Game/Vehicles/RHIB/BP_RHIB_US_M2.BP_RHIB_US_M2_C",
-    ),
-    notApplicable,
-  );
-  assert.deepEqual(
-    runtimePlanarSuspensionCoverageForGeneratedClass(
-      unavailable,
-      "/Game/Vehicles/Minsk_motorbike/BP_minsk.BP_minsk_C",
-    ),
-    unavailable,
-  );
-  assert.equal(
-    runtimePlanarSuspensionCoverageForGeneratedClass(
-      unavailable,
-      "/Game/Vehicles/T64_BM2/BP_T64BM2_Cage.BP_T64BM2_Cage_C",
-    ),
-    null,
-  );
+test("coverage distinguishes observed, not-applicable and unavailable", () => {
+  for (const coverage of [
+    { status: "observed", generatedClass: GENERATED_CLASS, reason: "runtime-observed-normal-time-visual-authority" },
+    { status: "not-applicable", generatedClass: "/Game/Vehicles/RHIB/BP_RHIB_US_M2.BP_RHIB_US_M2_C", reason: "explicit-fake-physics-probes-no-visual-suspension" },
+    { status: "unavailable", generatedClass: "/Game/Vehicles/Minsk_motorbike/BP_minsk.BP_minsk_C", reason: "configured-bone-missing-from-exact-release-skeleton" },
+  ]) {
+    assert.deepEqual(
+      runtimePlanarSuspensionCoverageForGeneratedClass(
+        coverage,
+        coverage.generatedClass,
+      ),
+      coverage,
+    );
+  }
 });
 
-test("planar index rejects duplicate exact identities and malformed offsets", () => {
-  const duplicate = checkpointFromT64Vector();
+test("observed index rejects duplicate identities and malformed bone names", () => {
+  const duplicate = observedIndex();
   duplicate.records.push(structuredClone(duplicate.records[0]));
   duplicate.recordCount = duplicate.records.length;
   assert.throws(
@@ -165,10 +97,10 @@ test("planar index rejects duplicate exact identities and malformed offsets", ()
     /Duplicate runtime planar suspension identity/,
   );
 
-  const malformed = checkpointFromT64Vector();
-  malformed.records[0].wheels[0].localTranslationOffsetGltfM = [0, 0];
+  const malformed = observedIndex();
+  malformed.records[0].wheels[0].boneName = "";
   assert.throws(
     () => parseRuntimePlanarSuspensionPoseIndex(malformed),
-    /must contain three numbers/,
+    /must be a non-empty string/,
   );
 });

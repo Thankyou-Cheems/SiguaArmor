@@ -17,7 +17,7 @@ const ASLAV_WHEEL_COMPONENTS = [
   "SQVehicleWheel_L2",
 ];
 
-test("ASLAV maps all eight exact wheel hit components to native-planar bones", () => {
+test("ASLAV maps all eight exact wheel hit components to observed runtime bones", () => {
   const record = {
     generatedClass: ASLAV_GENERATED_CLASS,
     stableOccurrenceId: "occurrence-aslav-test",

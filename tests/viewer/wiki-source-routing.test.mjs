@@ -245,7 +245,7 @@ test("3D preview reads an exact per-card vehicle runtime source", async () => {
   }
   assert.equal(
     requestedUrl,
-    `https://wiki.siguad.icu/data/vehicles/runtime/${cardId}.json?projection=radial-query-v1`,
+    `https://wiki.siguad.icu/data/vehicles/runtime/${cardId}.json?projection=runtime-observed-physical-pose-v2`,
   );
 });
 

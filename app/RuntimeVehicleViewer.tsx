@@ -160,7 +160,6 @@ import type {
 } from "./runtime-probe-preview-data";
 import {
   runtimePlanarSuspensionCoverageForGeneratedClass,
-  runtimePlanarSuspensionOffsetsByBoneName,
   runtimePlanarSuspensionPoseForVisualOccurrence,
   type RuntimePlanarSuspensionPoseRecord,
 } from "./runtime-planar-suspension-pose";
@@ -522,7 +521,7 @@ interface RuntimeSkeletalPoseBinding {
   controller: RuntimeSkeletalPoseController;
   generatedClass: string | null;
   stableOccurrenceId: string;
-  nativePlanarRecord: RuntimePlanarSuspensionPoseRecord | null;
+  observedRunningGearRecord: RuntimePlanarSuspensionPoseRecord | null;
   skinnedMeshes: THREE.SkinnedMesh[];
   model: THREE.Object3D;
   placementMatrix: THREE.Matrix4;
@@ -3688,7 +3687,7 @@ export function RuntimeVehicleViewer({
           true,
       })
     : null;
-  const vehicleMeshPlanarSuspensionPose = vehicleMeshRuntimePosePlacement
+  const vehicleMeshObservedSuspensionPose = vehicleMeshRuntimePosePlacement
     ? runtimePlanarSuspensionPoseForVisualOccurrence(
         preview.suspension.records,
         preview.generatedClass,
@@ -3700,11 +3699,6 @@ export function RuntimeVehicleViewer({
       preview.suspension.coverage,
       preview.generatedClass,
     );
-  const vehicleMeshPlanarNonzeroWheelCount =
-    vehicleMeshPlanarSuspensionPose?.wheels.filter(
-      ({ localTranslationOffsetGltfM: [x, y, z] }) =>
-        x !== 0 || y !== 0 || z !== 0,
-    ).length ?? 0;
   const uniqueAssetCount = visual ? new Set(visual.placements.map(({ assetUrl }) => assetUrl)).size : 0;
   const runtimeTurretStations = useMemo<RuntimeTurretPreviewStation[]>(() => {
     if (!referenceData || !visual) return [];
@@ -5802,16 +5796,15 @@ export function RuntimeVehicleViewer({
     const updateSkeletalPoseDataset = (enabled: boolean) => {
       const selectedBoneNames = new Set<string>();
       const changedBoneNames = new Set<string>();
-      const nativePlanarBoneNames = new Set<string>();
-      const nativePlanarIdentities = new Set<string>();
-      const nativePlanarOccurrenceIds = new Set<string>();
-      let maxAbsContactResidualCm = 0;
+      const observedRunningGearBoneNames = new Set<string>();
+      const observedRunningGearIdentities = new Set<string>();
+      const observedRunningGearOccurrenceIds = new Set<string>();
       let declaredReferenceEquivalentMismatch = false;
       for (const {
         controller,
         generatedClass,
         stableOccurrenceId,
-        nativePlanarRecord,
+        observedRunningGearRecord,
       } of skeletalPoseBindings) {
         controller.selectedBoneNames.forEach((name) =>
           selectedBoneNames.add(name),
@@ -5821,31 +5814,19 @@ export function RuntimeVehicleViewer({
         );
         declaredReferenceEquivalentMismatch ||=
           controller.declaredReferenceEquivalentMismatch;
-        if (nativePlanarRecord) {
-          nativePlanarIdentities.add(
+        if (observedRunningGearRecord) {
+          observedRunningGearIdentities.add(
             `${generatedClass ?? "unknown"}\u0000${stableOccurrenceId}`,
           );
-          nativePlanarOccurrenceIds.add(stableOccurrenceId);
-          maxAbsContactResidualCm = Math.max(
-            maxAbsContactResidualCm,
-            nativePlanarRecord.maxAbsContactResidualCm,
-          );
-          nativePlanarRecord.wheels.forEach((wheel) => {
-            const [x, y, z] = wheel.localTranslationOffsetGltfM;
-            if (x !== 0 || y !== 0 || z !== 0) {
-              nativePlanarBoneNames.add(wheel.boneName);
-            }
-          });
+          observedRunningGearOccurrenceIds.add(stableOccurrenceId);
+          observedRunningGearRecord.wheels.forEach((wheel) =>
+            observedRunningGearBoneNames.add(wheel.boneName));
         }
       }
-      const nativePlanarActive =
-        enabled && nativePlanarIdentities.size > 0;
       host.dataset.skeletalPoseState = enabled
-        ? nativePlanarActive
-          ? "native-planar"
-          : skeletalPoseBindings.size > 0
-            ? "observed-fallback"
-            : "unavailable"
+        ? skeletalPoseBindings.size > 0
+          ? "runtime-observed"
+          : "unavailable"
         : "reference";
       host.dataset.skeletalPoseEvidence =
         vehicleMeshSkeletalPoseEvidence ?? "unavailable";
@@ -5861,39 +5842,32 @@ export function RuntimeVehicleViewer({
       host.dataset.skeletalPoseReferenceMismatch =
         declaredReferenceEquivalentMismatch ? "true" : "false";
       host.dataset.suspensionPoseState = enabled
-        ? nativePlanarActive
-          ? "native-planar"
-          : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+        ? vehiclePlanarSuspensionCoverage?.status === "not-applicable"
             ? "not-applicable"
             : skeletalPoseBindings.size > 0
-              ? "observed-fallback"
+              ? "runtime-observed"
               : "unavailable"
         : "reference";
-      host.dataset.suspensionPoseAuthority = nativePlanarActive
-        ? "odk-native-planar-sweep-reconstruction"
-        : enabled &&
-            vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+      host.dataset.suspensionPoseAuthority = enabled &&
+          vehiclePlanarSuspensionCoverage?.status === "not-applicable"
           ? "explicit-not-applicable"
           : enabled && skeletalPoseBindings.size > 0
-            ? "live-pie-observed-fallback"
+            ? "normal-time-runtime-observed"
             : enabled
               ? "unavailable"
               : "inverse-bind-reference";
       host.dataset.suspensionPoseRecordCount = String(
-        nativePlanarIdentities.size,
+        observedRunningGearIdentities.size,
       );
       host.dataset.suspensionPoseAppliedWheelOffsetCount = String(
-        nativePlanarActive ? nativePlanarBoneNames.size : 0,
-      );
-      host.dataset.suspensionPoseMaxAbsContactResidualCm = String(
-        nativePlanarActive ? maxAbsContactResidualCm : 0,
+        enabled ? observedRunningGearBoneNames.size : 0,
       );
       host.dataset.suspensionPoseGeneratedClass =
         preview.generatedClass ?? "unavailable";
       host.dataset.suspensionPoseCoverageReason =
         vehiclePlanarSuspensionCoverage?.reason ?? "resolved";
       host.dataset.suspensionPoseStableOccurrenceIds = [
-        ...nativePlanarOccurrenceIds,
+        ...observedRunningGearOccurrenceIds,
       ]
         .sort()
         .join(",");
@@ -5901,16 +5875,10 @@ export function RuntimeVehicleViewer({
     const applySkeletalPose = (enabled: boolean) => {
       for (const {
         controller,
-        nativePlanarRecord,
         skinnedMeshes,
       } of skeletalPoseBindings) {
         if (!enabled) {
           controller.apply("reference");
-        } else if (nativePlanarRecord) {
-          controller.apply(
-            "native-planar",
-            runtimePlanarSuspensionOffsetsByBoneName(nativePlanarRecord),
-          );
         } else {
           controller.apply("observed");
         }
@@ -5931,7 +5899,7 @@ export function RuntimeVehicleViewer({
       ) {
         return;
       }
-      const nativePlanarRecord =
+      const observedRunningGearRecord =
         runtimePlanarSuspensionPoseForVisualOccurrence(
           preview.suspension.records,
           preview.generatedClass,
@@ -5959,11 +5927,6 @@ export function RuntimeVehicleViewer({
         if (!controller) continue;
         if (!physicalPoseEnabledRef.current) {
           controller.apply("reference");
-        } else if (nativePlanarRecord) {
-          controller.apply(
-            "native-planar",
-            runtimePlanarSuspensionOffsetsByBoneName(nativePlanarRecord),
-          );
         } else {
           controller.apply("observed");
         }
@@ -5975,7 +5938,7 @@ export function RuntimeVehicleViewer({
           controller,
           generatedClass: preview.generatedClass,
           stableOccurrenceId: placement.stableOccurrenceId,
-          nativePlanarRecord,
+          observedRunningGearRecord,
           skinnedMeshes,
           model,
           placementMatrix: new THREE.Matrix4().fromArray(placement.matrix),
@@ -6003,7 +5966,7 @@ export function RuntimeVehicleViewer({
           : "static"
         : "unavailable";
       host.dataset.chassisPoseAuthority = chassisPose
-        ? "runtime-probe-map"
+        ? "normal-time-runtime-observed"
         : "unavailable";
       if (chassisPose) {
         host.dataset.chassisPoseGeneratedClass = chassisPose.generatedClass;
@@ -6012,8 +5975,6 @@ export function RuntimeVehicleViewer({
         host.dataset.chassisPoseActorOriginHeightCm = String(
           chassisPose.heightAbovePlaneCm,
         );
-        host.dataset.chassisPoseWheelCompression =
-          chassisPose.wheelCompressionState;
       }
     };
     applyChassisPoseMatrix(physicalPoseEnabledRef.current);
@@ -6203,13 +6164,13 @@ export function RuntimeVehicleViewer({
         for (const {
           controller,
           stableOccurrenceId,
-          nativePlanarRecord,
+          observedRunningGearRecord,
           model,
           placementMatrix,
         } of skeletalPoseBindings) {
-          if (!nativePlanarRecord) continue;
+          if (!observedRunningGearRecord) continue;
           const placementInverse = placementMatrix.clone().invert();
-          for (const wheel of nativePlanarRecord.wheels) {
+          for (const wheel of observedRunningGearRecord.wheels) {
             const identity = `${stableOccurrenceId}\u0000${wheel.boneName}`;
             if (runningGearBonePoseByIdentity.has(identity)) continue;
             const componentPose = controller.componentPoseMatrixForBone(
@@ -6350,7 +6311,7 @@ export function RuntimeVehicleViewer({
         host.dataset.runningGearHitPoseState =
           physicalPoseEnabledRef.current
             ? runningGearHitPoses.componentPoses.length > 0
-              ? "native-planar"
+              ? "runtime-observed"
               : wheelHitComponentCount > 0
                 ? "unavailable"
                 : trackHitComponentCount > 0
@@ -8519,30 +8480,26 @@ export function RuntimeVehicleViewer({
       data-suspension-pose={
         !physicalPoseEnabled
           ? "reference"
-          : vehicleMeshPlanarSuspensionPose
-            ? "native-planar"
-            : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+          : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
               ? "not-applicable"
               : vehicleMeshRuntimePosePlacement
-                ? "observed-fallback"
+                ? "runtime-observed"
                 : "unavailable"
       }
       data-suspension-pose-authority={
         !physicalPoseEnabled
           ? "inverse-bind-reference"
-          : vehicleMeshPlanarSuspensionPose
-            ? "odk-native-planar-sweep-reconstruction"
-            : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
+          : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
               ? "explicit-not-applicable"
               : vehicleMeshRuntimePosePlacement
-                ? "live-pie-observed-fallback"
+                ? "normal-time-runtime-observed"
                 : "unavailable"
       }
       data-suspension-pose-coverage-reason={
         vehiclePlanarSuspensionCoverage?.reason
       }
-      data-suspension-pose-nonzero-wheel-count={
-        vehicleMeshPlanarNonzeroWheelCount
+      data-suspension-pose-running-gear-bone-count={
+        vehicleMeshObservedSuspensionPose?.wheelCount ?? 0
       }
       data-physical-pose-pitch-degrees={chassisPose?.pitchDeg}
       data-physical-pose-roll-degrees={chassisPose?.rollDeg}
@@ -9050,28 +9007,25 @@ export function RuntimeVehicleViewer({
                 disabled={!chassisPose}
                 title={chassisPose
                   ? [
-                      "RuntimeProbeMap 绝对水平地面上的稳定刚体姿态。",
+                      "水平地面 normal-time RuntimeProbe 的稳定刚体与轮组实际输出。",
                       `俯仰 ${chassisPose.pitchDeg >= 0 ? "+" : ""}${chassisPose.pitchDeg.toFixed(2)}°，`,
                       `横滚 ${chassisPose.rollDeg >= 0 ? "+" : ""}${chassisPose.rollDeg.toFixed(2)}°，`,
                       `Actor 原点相对地面 ${chassisPose.heightAbovePlaneCm >= 0 ? "+" : ""}${chassisPose.heightAbovePlaneCm.toFixed(2)} cm。`,
-                      vehicleMeshPlanarSuspensionPose
-                        ? [
-                            `Vehicle Mesh 使用 ODK 原生平面 sweep 关系重建 ${vehicleMeshPlanarNonzeroWheelCount} 个非零轮骨偏移，`,
-                            `最大接地残差 ${vehicleMeshPlanarSuspensionPose.maxAbsContactResidualCm.toExponential(2)} cm；`,
-                            "非物理辅助骨保留 live-PIE observed pose，关闭时全部恢复 inverse-bind reference。",
-                          ].join(" ")
+                      vehicleMeshObservedSuspensionPose?.currentVersionValidation.state ===
+                        "exact-class-sentinel-validated"
+                        ? "该 exact class 已在 Squad 10.5.3 复测，当前骨骼输出与展示数据一致。"
                         : vehiclePlanarSuspensionCoverage?.status ===
                             "not-applicable"
-                          ? `该 exact generated class 已明确不适用可视轮骨 native-planar 变换（${vehiclePlanarSuspensionCoverage.reason}）；刚体仍使用稳定姿态。`
+                          ? `该 exact generated class 不适用可视轮组姿态（${vehiclePlanarSuspensionCoverage.reason}）；刚体仍使用实际稳定姿态。`
                           : vehicleMeshSkeletalPoseEvidence ===
                               "reference-equivalent"
-                            ? "当前 exact occurrence 没有 native-planar 记录；Vehicle Mesh 的 live-PIE 轮组骨与 reference 等价，关闭时仍恢复 reference。"
+                            ? "该 occurrence 的实际轮组骨与 reference 等价；关闭时恢复 reference。"
                             : vehicleMeshSkeletalPoseEvidence ===
                                 "observed-stable"
-                              ? "当前 exact occurrence 没有 native-planar 记录，使用 normal-time observed fallback；关闭时恢复 inverse-bind reference。"
+                              ? "使用 normal-time observed 稳定骨骼；10.5.3 已分别复测履带、轮式、轻型履带和卡车路径。"
                               : vehicleMeshSkeletalPoseEvidence ===
                                   "observed-snapshot"
-                                ? "当前 exact occurrence 没有 native-planar 记录，使用 observed snapshot fallback；关闭时恢复 inverse-bind reference。"
+                                ? "使用 observed snapshot 骨骼；关闭时恢复 inverse-bind reference。"
                                 : "该视觉包没有可切换的 Vehicle Mesh 轮组骨姿态。",
                     ].join(" ")
                   : "该 exact generated class 没有稳定收敛的运行时底盘姿态；不会猜测或套用相近载具。"}
