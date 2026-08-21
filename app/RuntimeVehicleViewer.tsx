@@ -8305,7 +8305,7 @@ export function RuntimeVehicleViewer({
     maxShotTraces,
     preview.cardId,
     preview.generatedClass,
-    preview.radialQuery?.recordUrl,
+    radialQuery,
     preview.suspension.records,
     preview.variantRawName,
     preview.visualVehicleId,
