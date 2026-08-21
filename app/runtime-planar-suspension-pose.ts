@@ -1,19 +1,23 @@
+// The filename is retained for import stability. Schema v2 contains observed
+// runtime running-gear identities only; it never carries or applies planar offsets.
 export const RUNTIME_PLANAR_SUSPENSION_POSE_SCHEMA =
-  "runtime-planar-suspension-pose-index/v1" as const;
+  "runtime-physical-suspension-pose-index/v2" as const;
 
 export interface RuntimePlanarSuspensionWheelPose {
   boneName: string;
-  localTranslationOffsetGltfM: [number, number, number];
-  contactState: string;
-  clamped: boolean;
 }
 
 export interface RuntimePlanarSuspensionPoseRecord {
   generatedClass: string;
   stableOccurrenceId: string;
-  poseState: "native-planar-reconstructed";
+  poseState: "runtime-observed-normal-time";
+  sourceBuildId: "squad-editor-v10.5.0.621766.2374-ue5.7.4";
+  currentVersionValidation: {
+    state: "exact-class-sentinel-validated" | "representative-path-sentinel-only";
+    sourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e";
+    summarySha256?: string;
+  };
   wheelCount: number;
-  maxAbsContactResidualCm: number;
   wheels: RuntimePlanarSuspensionWheelPose[];
 }
 
@@ -24,14 +28,16 @@ export interface RuntimePlanarSuspensionCoverageEntry {
 
 export interface RuntimePlanarSuspensionCoverageResult
   extends RuntimePlanarSuspensionCoverageEntry {
-  status: "not-applicable" | "unavailable";
+  status: "observed" | "not-applicable" | "unavailable";
 }
 
 interface RuntimePlanarSuspensionPoseCoverage {
   requestedGeneratedClassCount: number;
   resolvedGeneratedClassCount: number;
+  observedGeneratedClassCount: number;
   notApplicableGeneratedClassCount: number;
   unavailableGeneratedClassCount: number;
+  observed: RuntimePlanarSuspensionCoverageEntry[];
   notApplicable: RuntimePlanarSuspensionCoverageEntry[];
   unavailable: RuntimePlanarSuspensionCoverageEntry[];
 }
@@ -82,30 +88,18 @@ function parseCoverageEntry(value: unknown, label: string) {
 
 function parseWheel(value: unknown, label: string) {
   const wheel = objectValue(value, label);
-  if (
-    !Array.isArray(wheel.localTranslationOffsetGltfM) ||
-    wheel.localTranslationOffsetGltfM.length !== 3
-  ) {
-    throw new Error(`${label}.localTranslationOffsetGltfM must contain three numbers`);
-  }
-  const offset = wheel.localTranslationOffsetGltfM.map((component, index) =>
-    finiteNumber(component, `${label}.localTranslationOffsetGltfM[${index}]`),
-  ) as [number, number, number];
-  if (typeof wheel.clamped !== "boolean") {
-    throw new Error(`${label}.clamped must be a boolean`);
-  }
   return {
     boneName: stringValue(wheel.boneName, `${label}.boneName`),
-    localTranslationOffsetGltfM: offset,
-    contactState: stringValue(wheel.contactState, `${label}.contactState`),
-    clamped: wheel.clamped,
   };
 }
 
 function parseRecord(value: unknown, label: string) {
   const record = objectValue(value, label);
-  if (record.poseState !== "native-planar-reconstructed") {
+  if (record.poseState !== "runtime-observed-normal-time") {
     throw new Error(`${label}.poseState is unsupported`);
+  }
+  if (record.sourceBuildId !== "squad-editor-v10.5.0.621766.2374-ue5.7.4") {
+    throw new Error(`${label}.sourceBuildId is unsupported`);
   }
   if (!Array.isArray(record.wheels)) {
     throw new Error(`${label}.wheels must be an array`);
@@ -120,18 +114,46 @@ function parseRecord(value: unknown, label: string) {
   if (new Set(wheels.map(({ boneName }) => boneName)).size !== wheels.length) {
     throw new Error(`${label} repeats a wheel bone`);
   }
+  const validation = objectValue(
+    record.currentVersionValidation,
+    `${label}.currentVersionValidation`,
+  );
+  if (
+    validation.state !== "exact-class-sentinel-validated" &&
+    validation.state !== "representative-path-sentinel-only"
+  ) {
+    throw new Error(`${label}.currentVersionValidation.state is unsupported`);
+  }
+  if (validation.sourceBuildId !== "squad-sdk-v10.5.3-17c100ea5182370e") {
+    throw new Error(`${label}.currentVersionValidation.sourceBuildId is unsupported`);
+  }
+  const summarySha256 = validation.summarySha256;
+  const validationState = validation.state as
+    | "exact-class-sentinel-validated"
+    | "representative-path-sentinel-only";
+  if (
+    summarySha256 !== undefined &&
+    (typeof summarySha256 !== "string" || !/^[a-f0-9]{64}$/u.test(summarySha256))
+  ) {
+    throw new Error(`${label}.currentVersionValidation.summarySha256 is invalid`);
+  }
   return {
     generatedClass: stringValue(record.generatedClass, `${label}.generatedClass`),
     stableOccurrenceId: stringValue(
       record.stableOccurrenceId,
       `${label}.stableOccurrenceId`,
     ),
-    poseState: "native-planar-reconstructed" as const,
+    poseState: "runtime-observed-normal-time" as const,
+    sourceBuildId: stringValue(record.sourceBuildId, `${label}.sourceBuildId`) as "squad-editor-v10.5.0.621766.2374-ue5.7.4",
+    currentVersionValidation: {
+      state: validationState,
+      sourceBuildId: stringValue(
+        validation.sourceBuildId,
+        `${label}.currentVersionValidation.sourceBuildId`,
+      ) as "squad-sdk-v10.5.3-17c100ea5182370e",
+      ...(summarySha256 ? { summarySha256 } : {}),
+    },
     wheelCount,
-    maxAbsContactResidualCm: finiteNumber(
-      record.maxAbsContactResidualCm,
-      `${label}.maxAbsContactResidualCm`,
-    ),
     wheels,
   };
 }
@@ -163,6 +185,7 @@ export function parseRuntimePlanarSuspensionPoseIndex(
 
   const coverageValue = objectValue(index.coverage, "coverage");
   if (
+    !Array.isArray(coverageValue.observed) ||
     !Array.isArray(coverageValue.notApplicable) ||
     !Array.isArray(coverageValue.unavailable)
   ) {
@@ -177,6 +200,10 @@ export function parseRuntimePlanarSuspensionPoseIndex(
       coverageValue.resolvedGeneratedClassCount,
       "coverage.resolvedGeneratedClassCount",
     ),
+    observedGeneratedClassCount: countValue(
+      coverageValue.observedGeneratedClassCount,
+      "coverage.observedGeneratedClassCount",
+    ),
     notApplicableGeneratedClassCount: countValue(
       coverageValue.notApplicableGeneratedClassCount,
       "coverage.notApplicableGeneratedClassCount",
@@ -184,6 +211,9 @@ export function parseRuntimePlanarSuspensionPoseIndex(
     unavailableGeneratedClassCount: countValue(
       coverageValue.unavailableGeneratedClassCount,
       "coverage.unavailableGeneratedClassCount",
+    ),
+    observed: coverageValue.observed.map((entry, entryIndex) =>
+      parseCoverageEntry(entry, `coverage.observed[${entryIndex}]`),
     ),
     notApplicable: coverageValue.notApplicable.map((entry, entryIndex) =>
       parseCoverageEntry(entry, `coverage.notApplicable[${entryIndex}]`),
@@ -193,11 +223,13 @@ export function parseRuntimePlanarSuspensionPoseIndex(
     ),
   };
   if (
+    coverage.observed.length !== coverage.observedGeneratedClassCount ||
     coverage.notApplicable.length !==
       coverage.notApplicableGeneratedClassCount ||
     coverage.unavailable.length !== coverage.unavailableGeneratedClassCount ||
     coverage.requestedGeneratedClassCount !==
       coverage.resolvedGeneratedClassCount +
+        coverage.observedGeneratedClassCount +
         coverage.notApplicableGeneratedClassCount +
         coverage.unavailableGeneratedClassCount
   ) {
@@ -248,19 +280,4 @@ export function runtimePlanarSuspensionCoverageForGeneratedClass(
 ): RuntimePlanarSuspensionCoverageResult | null {
   if (!coverage || !generatedClass) return null;
   return coverage.generatedClass === generatedClass ? coverage : null;
-}
-
-export function runtimePlanarSuspensionOffsetsByBoneName(
-  record: RuntimePlanarSuspensionPoseRecord,
-) {
-  return Object.fromEntries(
-    record.wheels.map((wheel) => [
-      wheel.boneName,
-      {
-        x: wheel.localTranslationOffsetGltfM[0],
-        y: wheel.localTranslationOffsetGltfM[1],
-        z: wheel.localTranslationOffsetGltfM[2],
-      },
-    ]),
-  );
 }

@@ -27,11 +27,12 @@ interface RuntimeChassisPose {
   generatedClass: string;
   rawName: string;
   promoEntryIds: string[];
+  poseState: "runtime-observed-normal-time";
+  sourceBuildId: "squad-editor-v10.5.0.621766.2374-ue5.7.4";
   pitchDeg: number;
   rollDeg: number;
   heightAbovePlaneCm: number;
   gltfMatrix: RuntimeChassisPoseMatrix;
-  wheelCompressionState: "native-unknown";
 }
 
 export interface RuntimeVisualPlacement {

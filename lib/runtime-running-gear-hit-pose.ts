@@ -40,7 +40,7 @@ function validPose(pose: RuntimeRunningGearBonePose) {
 /**
  * Resolves only exact wheel-component suffixes to exact configured wheel
  * bones. Track collision components stay rigid with the chassis because the
- * planar evidence does not reconstruct track deformation between wheels.
+ * observed settled pose supplies wheel bones, not a deformable track skin.
  */
 export function resolveRuntimeRunningGearHitComponentPoses(
   components: readonly Pick<
