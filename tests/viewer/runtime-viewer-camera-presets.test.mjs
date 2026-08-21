@@ -62,9 +62,16 @@ test("direction, observation distance, and free view share one camera state", ()
   );
 });
 
-test("opening the weapon selector collapses the upper option rail with a visible cue", () => {
+test("opening either attack selector collapses the upper option rail with a visible cue", () => {
   assert.equal(/onOpenChange=\{setWeaponSelectorOpen\}/u.test(viewerSource), true);
-  assert.equal(/data-weapon-selector-open=\{weaponSelectorOpen\}/u.test(viewerSource), true);
+  assert.equal(/onSourceOpenChange=\{setSourceSelectorOpen\}/u.test(viewerSource), true);
+  assert.equal(/onOpenChange=\{onSourceOpenChange\}/u.test(viewerSource), true);
+  assert.equal(
+    /const attackSelectorOpen = sourceSelectorOpen \|\| weaponSelectorOpen/u
+      .test(viewerSource),
+    true,
+  );
+  assert.equal(/data-selector-open=\{attackSelectorOpen\}/u.test(viewerSource), true);
   assert.equal(/"展开上方选项栏"/u.test(viewerSource), true);
   assert.equal(
     /onPointerDown=\{\(event\) => event\.stopPropagation\(\)\}/u
@@ -77,7 +84,7 @@ test("opening the weapon selector collapses the upper option rail with a visible
     true,
   );
   assert.equal(
-    /\.viewer-protection-controls\[data-weapon-selector-open="true"\][\s\S]*?translateX/u
+    /\.viewer-protection-controls\[data-selector-open="true"\][\s\S]*?translateX/u
       .test(viewerStyles),
     true,
   );

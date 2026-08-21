@@ -383,3 +383,14 @@ test("camera shortcuts move the loaded camera instead of remounting vehicle asse
     /fetch\(|loadWiki|GLTFLoader|startExteriorAssets|startAnalysisVisualAssets/u,
   );
 });
+
+test("radial coverage copy requires actual radial damage to the vehicle", () => {
+  assert.match(
+    viewerSource,
+    /const hasVehicleRadialDamage = shotResult\?\.damage\.some/u,
+  );
+  assert.match(
+    viewerSource,
+    /hasVehicleRadialDamage &&[\s\S]*?viewer-radial-coverage-note/u,
+  );
+});
