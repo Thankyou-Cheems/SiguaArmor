@@ -67,6 +67,11 @@ test("opening the weapon selector collapses the upper option rail with a visible
   assert.equal(/data-weapon-selector-open=\{weaponSelectorOpen\}/u.test(viewerSource), true);
   assert.equal(/"展开上方选项栏"/u.test(viewerSource), true);
   assert.equal(
+    /onPointerDown=\{\(event\) => event\.stopPropagation\(\)\}/u
+      .test(viewerSource),
+    true,
+  );
+  assert.equal(
     /\.viewer-protection-controls\[data-weapon-selector-open="true"\][\s\S]*?translateX/u
       .test(viewerStyles),
     true,

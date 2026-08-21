@@ -8759,6 +8759,7 @@ export function RuntimeVehicleViewer({
                 title={upperOptionsRevealed
                   ? "收起上方选项栏"
                   : "展开上方选项栏"}
+                onPointerDown={(event) => event.stopPropagation()}
                 onClick={() => setUpperOptionsRevealed((revealed) => !revealed)}
               >
                 <span aria-hidden="true">{upperOptionsRevealed ? "‹" : "›"}</span>
