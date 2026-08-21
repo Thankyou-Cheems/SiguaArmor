@@ -1102,6 +1102,10 @@ function RuntimeWeaponSelector({
       searchRef.current?.focus(),
     );
     const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (
+        event.target instanceof Element &&
+        event.target.closest('[data-viewer-control-cue="weapon-selector"]')
+      ) return;
       if (!rootRef.current?.contains(event.target as Node)) changeOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -8752,6 +8756,7 @@ export function RuntimeVehicleViewer({
               <button
                 className="viewer-protection-controls__collapse-cue"
                 type="button"
+                data-viewer-control-cue="weapon-selector"
                 data-revealed={upperOptionsRevealed}
                 aria-label={upperOptionsRevealed
                   ? "收起上方选项栏"
