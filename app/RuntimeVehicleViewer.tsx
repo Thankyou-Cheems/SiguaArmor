@@ -2252,6 +2252,9 @@ function DamageSettlementListItems({
     const routeMultiplier = settlement.damageKind === "radial"
       ? ` × ${damageModifierText(settlement.routeMultiplier)}`
       : "";
+    const dispatchMultiplier = settlement.dispatchCount > 1
+      ? ` × ${settlement.dispatchCount}`
+      : "";
     const hasForwardedDamage = settlement.targets.some((target) => target.forwarded);
     if (hasForwardedDamage) {
       return (
@@ -2269,7 +2272,7 @@ function DamageSettlementListItems({
             <strong>{settlement.damageKind === "radial" ? `${typeLabel}爆炸结算` : `${typeLabel}直击结算`}</strong>
             <span>
               {metricText(settlement.incomingDamage)} × {damageModifierText(settlement.damageTypeModifier)}
-              {routeMultiplier}
+              {routeMultiplier}{dispatchMultiplier}
             </span>
             <b>{metricText(settlement.effectiveDamage)}</b>
           </section>
@@ -2303,10 +2306,10 @@ function DamageSettlementListItems({
       >
         <strong>{settlement.damageKind === "radial" ? `${typeLabel}爆炸结算` : `${typeLabel}直击结算`}</strong>
         <span
-          aria-label={`${settlement.damageKind === "radial" ? "爆炸" : "直击"}伤害 ${metricText(settlement.incomingDamage)}，伤害类型系数 ${damageModifierText(settlement.damageTypeModifier)}${settlement.damageKind === "radial" ? `，爆炸系数 ${damageModifierText(settlement.routeMultiplier)}` : ""}，合计生效 ${metricText(settlement.effectiveDamage)}`}
+          aria-label={`${settlement.damageKind === "radial" ? "爆炸" : "直击"}伤害 ${metricText(settlement.incomingDamage)}，伤害类型系数 ${damageModifierText(settlement.damageTypeModifier)}${settlement.damageKind === "radial" ? `，爆炸系数 ${damageModifierText(settlement.routeMultiplier)}，派发 ${settlement.dispatchCount} 次` : ""}，合计生效 ${metricText(settlement.effectiveDamage)}`}
         >
           {metricText(settlement.incomingDamage)} × {damageModifierText(settlement.damageTypeModifier)}
-          {routeMultiplier} <em aria-hidden="true">→</em> <b>{metricText(settlement.effectiveDamage)}</b>
+          {routeMultiplier}{dispatchMultiplier} <em aria-hidden="true">→</em> <b>{metricText(settlement.effectiveDamage)}</b>
         </span>
       </div>
     );
@@ -4442,7 +4445,11 @@ export function RuntimeVehicleViewer({
       radialVisualization?.exactRadiusReference ?? "none";
     host.dataset.shotExplosionNativeField =
       radialVisualization
-        ? "full-sphere-candidate-search-with-per-component-visibility"
+        ? radialVisualization.componentFanout === "drivetrain-resolved"
+          ? "native-component-hit-multiset"
+          : radialVisualization.componentFanout === "vehicle-radial-disabled"
+            ? "vehicle-radial-disabled"
+            : "native-component-hit-multiset-required"
         : "none";
     host.dataset.shotExplosionOriginComponent = radialVisualization
       ? String(radialVisualization.origin.componentIndex)
@@ -5110,6 +5117,8 @@ export function RuntimeVehicleViewer({
       shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
       intersections: activeRecord.intersections,
       includeRadial: true,
+      vehicleDamagedByRadial: referenceData?.general.isDamagedByRadial ?? null,
+      radialDamageModel: referenceData?.radialDamageModel ?? null,
     });
     activeRecord.distanceM = nextDistanceM;
     activeRecord.result = result;
@@ -5121,6 +5130,7 @@ export function RuntimeVehicleViewer({
     applyShotResultToVisual,
     cancelShotAnimation,
     commitSelectedShot,
+    referenceData,
     savedShotSnapshot,
   ]);
 
@@ -5181,6 +5191,8 @@ export function RuntimeVehicleViewer({
       shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
       intersections,
       includeRadial: true,
+      vehicleDamagedByRadial: referenceData?.general.isDamagedByRadial ?? null,
+      radialDamageModel: referenceData?.radialDamageModel ?? null,
     });
     const entryPoint = intersections[0].point;
     const record: RuntimeShotRecord = {
@@ -5204,6 +5216,7 @@ export function RuntimeVehicleViewer({
     cancelShotAnimation,
     commitSelectedShot,
     maxShotTraces,
+    referenceData,
     savedShotSnapshot,
     startShotAnimation,
   ]);
@@ -7420,6 +7433,8 @@ export function RuntimeVehicleViewer({
           shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
           intersections,
           includeRadial: true,
+          vehicleDamagedByRadial: referenceData?.general.isDamagedByRadial ?? null,
+          radialDamageModel: referenceData?.radialDamageModel ?? null,
         });
         const firstLayer = result.layers[0];
         const stoppedLayer = result.stoppedAtLayer === null
@@ -8198,6 +8213,8 @@ export function RuntimeVehicleViewer({
     preview.suspension.records,
     preview.variantRawName,
     preview.visualVehicleId,
+    referenceData?.general.isDamagedByRadial,
+    referenceData?.radialDamageModel,
     saveRayShot,
     selectSavedShot,
     vehiclePlanarSuspensionCoverage?.reason,
@@ -9387,6 +9404,19 @@ export function RuntimeVehicleViewer({
               </li>
             ) : null}
           </ol>
+          {shotResult.radial.layers.length > 0 &&
+          shotResult.radial.componentFanout !== "drivetrain-resolved" ? (
+            <p
+              className="viewer-radial-coverage-note"
+              data-state={shotResult.radial.componentFanout}
+            >
+              {shotResult.radial.componentFanout === "vehicle-radial-disabled"
+                ? "该载具不承受径向爆炸伤害"
+                : shotResult.radial.componentFanout === "native-query-required"
+                  ? "车体爆炸路径已结算；履带 / 车轮不臆算"
+                  : "爆炸接收路径不足，未计入不确定伤害"}
+            </p>
+          ) : null}
           {shotResult.layers.length > 8 ? <span className="viewer-more-layers">另有 {shotResult.layers.length - 8} 层</span> : null}
           </div>
           {effectiveDamageEvents.length > 0 ? (

@@ -1,4 +1,5 @@
 import type { WeaponCatalogVehicleEquipment } from "../lib/weapon-catalog";
+import type { VehicleRadialDamageModel } from "../lib/vehicle-radial-damage-model";
 
 export type ReferenceWeapon = WeaponCatalogVehicleEquipment;
 
@@ -99,6 +100,7 @@ export interface ReferenceComponent {
 }
 
 export interface ReferenceData {
+  radialDamageModel: VehicleRadialDamageModel;
   general: {
     rawName: string;
     displayName: string;
