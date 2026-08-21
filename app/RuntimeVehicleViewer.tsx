@@ -54,6 +54,12 @@ import {
   type EditorNativeShotResult,
 } from "../lib/editor-native-hit-model";
 import {
+  buildVehicleRadialLayerHitSets,
+  validateVehicleRadialQuerySource,
+  type VehicleRadialQuerySource,
+} from "../lib/vehicle-radial-query";
+import { loadWikiVehicleRadialQuery } from "../lib/wiki-source";
+import {
   runtimeAttackDistanceControl,
   runtimeAttackTargetDistanceLimitM,
 } from "./runtime-attack-ballistics-model";
@@ -3613,6 +3619,8 @@ export function RuntimeVehicleViewer({
   >(null);
   const analysisMeshRef = useRef<THREE.Mesh | null>(null);
   const parsedHitRef = useRef<ParsedRuntimeHitScene | null>(null);
+  const radialQueryRef = useRef<VehicleRadialQuerySource | null>(null);
+  const radialQueryHitPoseRef = useRef<Map<number, readonly number[]>>(new Map());
   const attackModelRef = useRef<EditorNativeModel | null>(null);
   const hitModelRef = useRef<HitSceneThreeModel | null>(null);
   const shotVisualsRef = useRef<ShotVisualRuntime[]>([]);
@@ -3663,6 +3671,7 @@ export function RuntimeVehicleViewer({
   const cancelProtectionMapRef = useRef<(() => void) | null>(null);
   const visual = preview.visual;
   const hit = preview.hit;
+  const radialQuery = preview.radialQuery;
   const chassisPose = preview.chassisPose;
   const vehicleMeshRuntimePosePlacement = visual?.placements.find(
     (placement) =>
@@ -5122,6 +5131,45 @@ export function RuntimeVehicleViewer({
     }
   }, [attackLibrary, attackLibraryError, attackSource, clearShotVisual]);
 
+  const simulatePublishedRadialShot = useCallback((
+    input: Parameters<typeof simulateEditorNativeShot>[0],
+  ) => {
+    let result = simulateEditorNativeShot(input);
+    const source = radialQueryRef.current;
+    const hitGroup = hitGroupRef.current;
+    const firstImpact = input.intersections[0];
+    if (
+      !source ||
+      !hitGroup ||
+      !firstImpact ||
+      result.ballistics.explosiveLayers.length === 0
+    ) return result;
+    hitGroup.updateMatrixWorld(true);
+    const inverseWorld = hitGroup.matrixWorld.clone().invert();
+    const pointLocal = new THREE.Vector3()
+      .fromArray(firstImpact.point)
+      .applyMatrix4(inverseWorld);
+    const normalLocal = new THREE.Vector3()
+      .fromArray(firstImpact.faceNormal)
+      .applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(inverseWorld))
+      .normalize();
+    const radialLayerHitSets = buildVehicleRadialLayerHitSets({
+      source,
+      model: input.model,
+      impactPointM: pointLocal.toArray() as [number, number, number],
+      impactNormal: normalLocal.toArray() as [number, number, number],
+      layers: result.ballistics.explosiveLayers.map((layer) => ({
+        layerId: layer.layerId,
+        outerRadiusCm: layer.outerRadiusCm,
+        killZoneRadiusCm: layer.killZoneRadiusCm,
+        impactNormalOffsetCm: layer.impactNormalOffsetCm,
+      })),
+      componentPoseByModelIndex: radialQueryHitPoseRef.current,
+    });
+    result = simulateEditorNativeShot({ ...input, radialLayerHitSets });
+    return result;
+  }, []);
+
   const simulateCurrentShot = useCallback((nextWeaponIndex: number, nextDistanceM: number) => {
     const parsed = parsedHitRef.current;
     const weaponModel = attackModelRef.current;
@@ -5130,7 +5178,7 @@ export function RuntimeVehicleViewer({
     );
     if (!parsed || !weaponModel || !activeRecord || nextWeaponIndex < 0) return;
     cancelShotAnimation(true);
-    const result = simulateEditorNativeShot({
+    const result = simulatePublishedRadialShot({
       model: parsed.header,
       weaponModel,
       weaponIndex: nextWeaponIndex,
@@ -5153,6 +5201,7 @@ export function RuntimeVehicleViewer({
     commitSelectedShot,
     referenceData,
     savedShotSnapshot,
+    simulatePublishedRadialShot,
   ]);
 
   const selectSavedShot = useCallback((shotId: number) => {
@@ -5204,7 +5253,7 @@ export function RuntimeVehicleViewer({
     visual.rayOrigin = rayOrigin.clone();
     visual.rayDirection = rayDirection.clone().normalize();
     visual.firstHitDistanceM = intersections[0].distanceFromRayOriginM;
-    const result = simulateEditorNativeShot({
+    const result = simulatePublishedRadialShot({
       model: parsed.header,
       weaponModel,
       weaponIndex: selectedWeaponIndex,
@@ -5239,6 +5288,7 @@ export function RuntimeVehicleViewer({
     maxShotTraces,
     referenceData,
     savedShotSnapshot,
+    simulatePublishedRadialShot,
     startShotAnimation,
   ]);
 
@@ -6252,20 +6302,24 @@ export function RuntimeVehicleViewer({
         }
         const hitToVisual = new THREE.Matrix4().makeRotationX(-Math.PI / 2);
         const visualToHit = hitToVisual.clone().invert();
+        const hitComponentPoses = [...componentTransforms].map(
+          ([componentIndex, visualMatrix]) => ({
+            componentIndex,
+            matrix: visualToHit
+              .clone()
+              .multiply(visualMatrix)
+              .multiply(hitToVisual)
+              .elements.slice(),
+          }),
+        );
+        radialQueryHitPoseRef.current = new Map(
+          hitComponentPoses.map(({ componentIndex, matrix }) => [componentIndex, matrix]),
+        );
         const result = setHitSceneThreeModelComponentPoses(
           hitModel,
           parsedHit,
           {
-            componentPoses: [...componentTransforms].map(
-              ([componentIndex, visualMatrix]) => ({
-                componentIndex,
-                matrix: visualToHit
-                  .clone()
-                  .multiply(visualMatrix)
-                  .multiply(hitToVisual)
-                  .elements,
-              }),
-            ),
+            componentPoses: hitComponentPoses,
           },
         );
         host.dataset.turretAppliedHitComponentCount = String(
@@ -7564,6 +7618,8 @@ export function RuntimeVehicleViewer({
     shotRecordsRef.current = [];
     activeShotIdRef.current = null;
     setHitHeader(null);
+    radialQueryRef.current = null;
+    radialQueryHitPoseRef.current = new Map();
 
     const analysisLoadingManager = new THREE.LoadingManager();
     analysisLoadingManager.setURLModifier(runtimeAnalysisVisualUrl);
@@ -7893,14 +7949,30 @@ export function RuntimeVehicleViewer({
     };
     startExteriorAssets = loadExteriorAssets;
 
+    const radialQueryPromise = radialQuery
+      ? loadWikiVehicleRadialQuery(radialQuery.recordUrl).then((value) => {
+          const source = validateVehicleRadialQuerySource(value);
+          if (
+            source.rawName !== preview.variantRawName ||
+            source.generatedClass !== preview.generatedClass
+          ) {
+            throw new Error(`SiguaWiki 径向查询身份不匹配：${preview.variantRawName}`);
+          }
+          return source;
+        })
+      : Promise.resolve(null);
     const hitPromise = hit
-      ? loadRuntimeHitScene({ ...hit, accessStatus: hit.status })
-          .then((parsed) => {
+      ? Promise.all([
+          loadRuntimeHitScene({ ...hit, accessStatus: hit.status }),
+          radialQueryPromise,
+        ])
+          .then(([parsed, querySource]) => {
             if (cancelled) {
               parsed.analysisGeometry.dispose();
               return null;
             }
             parsedHitRef.current = parsed;
+            radialQueryRef.current = querySource;
             setHitHeader(parsed.header);
             const hitGroup = new THREE.Group();
             hitGroup.name = "runtime-hit-scene";
@@ -8192,6 +8264,8 @@ export function RuntimeVehicleViewer({
       applyCameraNavigationRef.current = null;
       analysisMeshRef.current = null;
       parsedHitRef.current = null;
+      radialQueryRef.current = null;
+      radialQueryHitPoseRef.current = new Map();
       hitModelRef.current = null;
       shotVisualsRef.current = [];
       shotRecordsRef.current = [];
@@ -8231,6 +8305,7 @@ export function RuntimeVehicleViewer({
     maxShotTraces,
     preview.cardId,
     preview.generatedClass,
+    preview.radialQuery?.recordUrl,
     preview.suspension.records,
     preview.variantRawName,
     preview.visualVehicleId,

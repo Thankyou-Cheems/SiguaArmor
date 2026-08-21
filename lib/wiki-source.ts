@@ -2,8 +2,9 @@ export const SIGUA_WIKI_ORIGIN =
   process.env.NEXT_PUBLIC_SIGUA_WIKI_ORIGIN?.replace(/\/+$/u, "") ||
   "https://wiki.siguad.icu";
 
-const WIKI_PRESENTATION_QUERY = "?presentation=v5";
-const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-radial-v2";
+const WIKI_PRESENTATION_QUERY = "?presentation=v6";
+const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-radial-v3";
+const WIKI_VEHICLE_RUNTIME_QUERY = "?projection=radial-query-v1";
 const WIKI_WEAPON_CATALOG_QUERY = "?mechanics=overheat-v1";
 const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-radial-v4";
 
@@ -124,7 +125,7 @@ export async function loadWikiVehicleRuntimeSource(cardId: string) {
   if (!/^[a-z0-9-]+$/u.test(cardId)) {
     throw new Error(`Invalid vehicle runtime card id: ${cardId}`);
   }
-  const pathname = `/data/vehicles/runtime/${cardId}.json`;
+  const pathname = `/data/vehicles/runtime/${cardId}.json${WIKI_VEHICLE_RUNTIME_QUERY}`;
   const value = await loadWikiDataset(
     pathname,
     "sigua-vehicle-runtime-source/v1",
@@ -141,6 +142,16 @@ export async function loadWikiVehicleRuntimeSource(cardId: string) {
     throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
   }
   return value;
+}
+
+export async function loadWikiVehicleRadialQuery(recordPath: string) {
+  if (!/^\/assets\/runtime-probe\/radial-query\/records\/[a-f0-9]{64}\.json$/u.test(recordPath)) {
+    throw new Error(`Invalid vehicle radial query path: ${recordPath}`);
+  }
+  return loadWikiDataset(
+    recordPath,
+    "sigua-vehicle-radial-query-source/v1",
+  );
 }
 
 export async function loadWikiVehicleFactionMechanics(factionId: string) {

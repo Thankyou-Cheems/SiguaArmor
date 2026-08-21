@@ -1,18 +1,20 @@
 export interface VehicleRadialDamageModel {
-  schemaVersion: "sigua-vehicle-radial-damage-model/v1";
+  schemaVersion: "sigua-vehicle-radial-damage-model/v2";
   sourceBuildId: string;
-  sourceCase: "radial-vehicle-module-damage-closure";
+  sourceCase: "radial-query-payload-v10.5.3";
   algorithmPath: "/algorithms/explosion/editor-radial-damage.js";
-  evidenceBoundary: "native-receiver-closed-native-hit-multiset-required";
+  queryAlgorithmPath: "/algorithms/explosion/vehicle-radial-query.js";
+  evidenceBoundary: "native-query-static-closed-runtime-placement-required";
   query: {
     objectMask: 71;
-    eligibleCollisionProfiles: string[];
-    excludedCollisionProfiles: string[];
-    unresolvedCollisionProfiles: string[];
+    onlyDamageMeshes: true;
     candidateMode: "native-sphere-overlap-by-object-type";
     killZoneMode: "strict-point-to-component-aabb";
     visibilityMode: "multi-hit-object-trace-to-bounds-origin";
     hitMultiplicity: "preserved";
+    payloadSchemaVersion: "sigua-vehicle-radial-query-source/v1";
+    sourceDataRevision: string;
+    artifactCount: 470;
   };
   receiver: {
     rootActorDeliveriesPerLayer: 1;
@@ -24,7 +26,7 @@ export interface VehicleRadialDamageModel {
 }
 
 export const VEHICLE_RADIAL_DAMAGE_SOURCE_BUILD_ID =
-  "squad-sdk-v10.5.2-543fd6c7f4ae13f0" as const;
+  "squad-sdk-v10.5.3-17c100ea5182370e" as const;
 
 function stringArray(value: unknown): value is string[] {
   return Array.isArray(value) &&
@@ -38,21 +40,23 @@ export function validateVehicleRadialDamageModel(
 ): VehicleRadialDamageModel {
   const model = value as VehicleRadialDamageModel;
   if (
-    model?.schemaVersion !== "sigua-vehicle-radial-damage-model/v1" ||
+    model?.schemaVersion !== "sigua-vehicle-radial-damage-model/v2" ||
     model.sourceBuildId !== VEHICLE_RADIAL_DAMAGE_SOURCE_BUILD_ID ||
-    model.sourceCase !== "radial-vehicle-module-damage-closure" ||
+    model.sourceCase !== "radial-query-payload-v10.5.3" ||
     model.algorithmPath !== "/algorithms/explosion/editor-radial-damage.js" ||
+    model.queryAlgorithmPath !== "/algorithms/explosion/vehicle-radial-query.js" ||
     model.evidenceBoundary !==
-      "native-receiver-closed-native-hit-multiset-required" ||
+      "native-query-static-closed-runtime-placement-required" ||
     model.query?.objectMask !== 0x47 ||
-    !stringArray(model.query.eligibleCollisionProfiles) ||
-    !stringArray(model.query.excludedCollisionProfiles) ||
-    !stringArray(model.query.unresolvedCollisionProfiles) ||
+    model.query.onlyDamageMeshes !== true ||
     model.query.candidateMode !== "native-sphere-overlap-by-object-type" ||
     model.query.killZoneMode !== "strict-point-to-component-aabb" ||
     model.query.visibilityMode !==
       "multi-hit-object-trace-to-bounds-origin" ||
     model.query.hitMultiplicity !== "preserved" ||
+    model.query.payloadSchemaVersion !== "sigua-vehicle-radial-query-source/v1" ||
+    !/^[a-f0-9]{64}$/u.test(model.query.sourceDataRevision) ||
+    model.query.artifactCount !== 470 ||
     model.receiver?.rootActorDeliveriesPerLayer !== 1 ||
     !stringArray(model.receiver.driveTrainClassPaths) ||
     model.receiver.driveTrainDispatch !== "once-per-component-hit" ||
@@ -60,14 +64,6 @@ export function validateVehicleRadialDamageModel(
     model.receiver.seatForwarding !== "pass-damage-and-pass-radial"
   ) {
     throw new Error("SiguaWiki 径向载具伤害模型格式不受支持");
-  }
-  const classifiedProfiles = [
-    ...model.query.eligibleCollisionProfiles,
-    ...model.query.excludedCollisionProfiles,
-    ...model.query.unresolvedCollisionProfiles,
-  ];
-  if (new Set(classifiedProfiles).size !== classifiedProfiles.length) {
-    throw new Error("SiguaWiki 径向碰撞配置存在冲突");
   }
   for (const requiredClass of [
     "/Script/Squad.SQDriveTrainComponent",
@@ -79,21 +75,6 @@ export function validateVehicleRadialDamageModel(
     }
   }
   return model;
-}
-
-export function vehicleRadialCollisionProfileState(
-  model: VehicleRadialDamageModel,
-  collisionProfile: string | null,
-): "eligible" | "excluded" | "native-unknown" {
-  if (
-    collisionProfile !== null &&
-    model.query.eligibleCollisionProfiles.includes(collisionProfile)
-  ) return "eligible";
-  if (
-    collisionProfile !== null &&
-    model.query.excludedCollisionProfiles.includes(collisionProfile)
-  ) return "excluded";
-  return "native-unknown";
 }
 
 export function isVehicleRadialDriveTrainClass(
