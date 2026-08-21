@@ -78,6 +78,7 @@ import {
   RUNTIME_VIEWER_CAMERA_VIEWS,
   RUNTIME_VIEWER_INFANTRY_DISTANCES_M,
   SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+  runtimeViewerCameraPose,
   runtimeViewerInfantryCameraPosition,
   verticalFovForHorizontalFov,
   type RuntimeViewerCameraViewId,
@@ -438,14 +439,14 @@ function RuntimeViewerCameraControls({
   disabled,
   onView,
   onInfantryDistance,
-  onFit,
+  onFree,
 }: {
   activeView: RuntimeViewerCameraViewId | null;
   infantryDistanceM: number | null;
   disabled: boolean;
   onView: (view: RuntimeViewerCameraViewId) => void;
   onInfantryDistance: (distanceM: number) => void;
-  onFit: () => void;
+  onFree: () => void;
 }) {
   return (
     <div className="viewer-camera-presets" aria-label="载具相机快捷预览">
@@ -456,11 +457,13 @@ function RuntimeViewerCameraControls({
             <button
               type="button"
               key={view.id}
-              data-active={activeView === view.id && infantryDistanceM === null}
-              aria-pressed={activeView === view.id && infantryDistanceM === null}
+              data-active={activeView === view.id}
+              aria-pressed={activeView === view.id}
               aria-keyshortcuts={view.shortcut}
               disabled={disabled}
-              title={`${view.label}视图 · 快捷键 ${view.shortcut}`}
+              title={view.kind === "soldier-ground"
+                ? `${view.label}视图 · 标准步兵站姿眼高 · 快捷键 ${view.shortcut}`
+                : `${view.label}视图 · 快捷键 ${view.shortcut}`}
               onClick={() => onView(view.id)}
             >
               <span>{view.label}</span><kbd>{view.shortcut}</kbd>
@@ -490,9 +493,9 @@ function RuntimeViewerCameraControls({
             data-active={activeView === null && infantryDistanceM === null}
             aria-pressed={activeView === null && infantryDistanceM === null}
             disabled={disabled}
-            title="恢复载具检查视角"
-            onClick={onFit}
-          >适配</button>
+            title="退出固定方向与距离，保留当前相机进入自由旋转视角"
+            onClick={onFree}
+          >自由</button>
         </div>
       </div>
     </div>
@@ -1007,6 +1010,7 @@ function RuntimeWeaponSelector({
   onChange,
   onRequestGlobalLibrary,
   globalLibraryState,
+  onOpenChange,
 }: {
   value: string;
   options: readonly RuntimeWeaponOption[];
@@ -1014,11 +1018,16 @@ function RuntimeWeaponSelector({
   onChange: (value: string) => void;
   onRequestGlobalLibrary: () => void;
   globalLibraryState: "idle" | "loading" | "ready" | "error";
+  onOpenChange: (open: boolean) => void;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const changeOpen = useCallback((nextOpen: boolean) => {
+    setOpen(nextOpen);
+    onOpenChange(nextOpen);
+  }, [onOpenChange]);
   const sourceOptions = useMemo(
     () => runtimeWeaponSourceOptions(options),
     [options],
@@ -1093,10 +1102,10 @@ function RuntimeWeaponSelector({
       searchRef.current?.focus(),
     );
     const closeOnOutsidePointer = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      if (!rootRef.current?.contains(event.target as Node)) changeOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") changeOpen(false);
     };
     document.addEventListener("pointerdown", closeOnOutsidePointer);
     document.addEventListener("keydown", closeOnEscape);
@@ -1105,7 +1114,9 @@ function RuntimeWeaponSelector({
       document.removeEventListener("pointerdown", closeOnOutsidePointer);
       document.removeEventListener("keydown", closeOnEscape);
     };
-  }, [open]);
+  }, [changeOpen, open]);
+
+  useEffect(() => () => onOpenChange(false), [onOpenChange]);
 
   if (!selected) return null;
 
@@ -1133,12 +1144,12 @@ function RuntimeWeaponSelector({
     setSelectedSourceId(nextSource?.id ?? "");
     onChange(option.value);
     setQuery("");
-    setOpen(false);
+    changeOpen(false);
   };
 
   const openSelector = () => {
     if (open) {
-      setOpen(false);
+      changeOpen(false);
       return;
     }
     if (
@@ -1147,7 +1158,7 @@ function RuntimeWeaponSelector({
     ) {
       onRequestGlobalLibrary();
     }
-    setOpen(true);
+    changeOpen(true);
   };
 
   const metrics = (option: RuntimeWeaponOption) => {
@@ -3568,6 +3579,8 @@ export function RuntimeVehicleViewer({
   const applyInfantryDistancePreviewRef = useRef<
     ((distanceM: number) => void) | null
   >(null);
+  const enterFreeCameraViewRef = useRef<(() => void) | null>(null);
+  const activeCameraViewRef = useRef<RuntimeViewerCameraViewId | null>(null);
   const infantryPreviewDistanceRef = useRef<number | null>(null);
   const visualGroupRef = useRef<THREE.Group | null>(null);
   const analysisVisualGroupRef = useRef<THREE.Group | null>(null);
@@ -3902,6 +3915,11 @@ export function RuntimeVehicleViewer({
     useState<RuntimeViewerCameraViewId | null>(null);
   const [infantryPreviewDistanceM, setInfantryPreviewDistanceM] =
     useState<number | null>(null);
+  const [weaponSelectorOpen, setWeaponSelectorOpen] = useState(false);
+  const [upperOptionsRevealed, setUpperOptionsRevealed] = useState(false);
+  useEffect(() => {
+    if (!weaponSelectorOpen) setUpperOptionsRevealed(false);
+  }, [weaponSelectorOpen]);
   // The parent navigation update rerenders the full catalog tree. Keep it out
   // of continuous range input and publish the final distance on interaction end.
   const [distanceInteractionActive, setDistanceInteractionActive] = useState(false);
@@ -3937,19 +3955,6 @@ export function RuntimeVehicleViewer({
     completed: 0,
     total: 0,
   });
-  const restoreDefaultCameraView = useCallback(() => {
-    resetViewRef.current?.({ preserveShotVisual: true });
-    const current = navigationStateRef.current;
-    if (!current || (!current.camera && current.yaw === null && current.pitch === null)) return;
-    const next = {
-      ...current,
-      camera: "",
-      yaw: null,
-      pitch: null,
-    } satisfies ViewerNavigationState;
-    navigationStateRef.current = next;
-    onNavigationStateChangeRef.current?.(next);
-  }, []);
   useEffect(() => {
     if (duelTarget) return;
     const applyNumberedCameraView = (event: KeyboardEvent) => {
@@ -5594,6 +5599,8 @@ export function RuntimeVehicleViewer({
     if (!host || !visual) return;
     applyCameraViewPresetRef.current = null;
     applyInfantryDistancePreviewRef.current = null;
+    enterFreeCameraViewRef.current = null;
+    activeCameraViewRef.current = null;
     infantryPreviewDistanceRef.current = null;
     setActiveCameraView(null);
     setInfantryPreviewDistanceM(null);
@@ -6735,8 +6742,11 @@ export function RuntimeVehicleViewer({
       const key = cameraNavigationKey(state);
       if (lastAppliedCameraNavigationKey === key) return;
       applyInspectionProjection();
+      activeCameraViewRef.current = null;
       setActiveCameraView(null);
       delete host.dataset.cameraViewPreset;
+      delete host.dataset.cameraViewKind;
+      camera.up.set(0, 1, 0);
       if (key !== "default") {
         cameraFitUserLocked = true;
         initialFitStabilizationPending = false;
@@ -6832,8 +6842,10 @@ export function RuntimeVehicleViewer({
       initialFitStabilizationTimer = 0;
       setRealtimePointer(null);
       applyInspectionProjection();
+      activeCameraViewRef.current = null;
       setActiveCameraView(null);
       delete host.dataset.cameraViewPreset;
+      delete host.dataset.cameraViewKind;
       protectionCache = null;
       if (protectionEnabledRef.current) cancelProtectionMap(true, false);
     };
@@ -6948,6 +6960,9 @@ export function RuntimeVehicleViewer({
       const fitBounds = bounds.clone();
       if (referenceSoldierBounds) fitBounds.union(referenceSoldierBounds);
       const center = fitBounds.getCenter(new THREE.Vector3());
+      const vehicleCameraTarget = bounds
+        .getCenter(new THREE.Vector3())
+        .sub(center);
       const sphere = fitBounds.getBoundingSphere(new THREE.Sphere());
       modelGroup.position.sub(center);
       modelGroup.updateMatrixWorld(true);
@@ -7100,8 +7115,11 @@ export function RuntimeVehicleViewer({
       ) => {
         protectionCache = null;
         applyInspectionProjection();
+        activeCameraViewRef.current = null;
         setActiveCameraView(null);
         delete host.dataset.cameraViewPreset;
+        delete host.dataset.cameraViewKind;
+        camera.up.set(0, 1, 0);
         controls.target.set(0, 0, 0);
         const fitDistance = updateCameraRangeAndFitEvidence();
         camera.position.copy(
@@ -7114,41 +7132,15 @@ export function RuntimeVehicleViewer({
           scheduleProtectionMap({ invalidate: true });
         }
       };
-      const applyInspectionView = (viewId: RuntimeViewerCameraViewId) => {
-        const preset = RUNTIME_VIEWER_CAMERA_VIEWS.find(({ id }) => id === viewId);
-        if (!preset) return;
-        protectionCache = null;
-        cameraFitUserLocked = true;
-        initialFitStabilizationPending = false;
-        window.clearTimeout(initialFitStabilizationTimer);
-        initialFitStabilizationTimer = 0;
-        applyInspectionProjection();
-        controls.target.set(0, 0, 0);
-        const fitDistance = updateCameraRangeAndFitEvidence();
-        const spherical = new THREE.Spherical(
-          fitDistance,
-          THREE.MathUtils.degToRad(90 - preset.pitchDegrees),
-          THREE.MathUtils.degToRad(preset.yawDegrees),
-        );
-        camera.position.copy(controls.target).add(
-          new THREE.Vector3().setFromSpherical(spherical),
-        );
-        controls.update();
-        setActiveCameraView(viewId);
-        host.dataset.cameraViewPreset = viewId;
-        render();
-        publishCameraNavigation();
-        if (protectionEnabledRef.current) {
-          scheduleProtectionMap({ invalidate: true });
-        }
-      };
-      const applyInfantryDistancePreview = (distanceM: number) => {
+      const applySquadPerspective = (
+        distanceM: number,
+        viewId: RuntimeViewerCameraViewId | null,
+      ) => {
         const safeDistanceM = Math.min(600, Math.max(1, distanceM));
-        const currentOffset = camera.position.clone().sub(controls.target);
-        currentOffset.y = 0;
-        const yawDegrees = currentOffset.lengthSq() > 0.000001
-          ? THREE.MathUtils.radToDeg(Math.atan2(currentOffset.x, currentOffset.z))
-          : 90;
+        const preset = viewId === null
+          ? null
+          : RUNTIME_VIEWER_CAMERA_VIEWS.find(({ id }) => id === viewId) ?? null;
+        if (viewId !== null && !preset) return;
         protectionCache = null;
         cameraFitUserLocked = true;
         initialFitStabilizationPending = false;
@@ -7156,14 +7148,44 @@ export function RuntimeVehicleViewer({
         initialFitStabilizationTimer = 0;
         infantryPreviewDistanceRef.current = safeDistanceM;
         setInfantryPreviewDistanceM(safeDistanceM);
-        setActiveCameraView(null);
-        delete host.dataset.cameraViewPreset;
-        controls.target.set(0, 0, 0);
-        camera.position.fromArray(runtimeViewerInfantryCameraPosition({
-          yawDegrees,
-          distanceM: safeDistanceM,
-          groundY,
-        }));
+        activeCameraViewRef.current = viewId;
+        setActiveCameraView(viewId);
+        camera.up.set(0, 1, 0);
+        if (preset) {
+          const pose = runtimeViewerCameraPose({
+            viewId: preset.id,
+            distanceM: safeDistanceM,
+            groundY,
+            vehicleTarget: vehicleCameraTarget.toArray(),
+          });
+          controls.target.fromArray(pose.target);
+          camera.position.fromArray(pose.position);
+          host.dataset.cameraViewPreset = preset.id;
+          host.dataset.cameraViewKind = preset.kind;
+        } else {
+          const currentOffset = camera.position.clone().sub(controls.target);
+          currentOffset.y = 0;
+          const yawDegrees = currentOffset.lengthSq() > 0.000001
+            ? THREE.MathUtils.radToDeg(Math.atan2(currentOffset.x, currentOffset.z))
+            : 90;
+          const basePosition = runtimeViewerInfantryCameraPosition({
+            yawDegrees,
+            distanceM: safeDistanceM,
+            groundY,
+          });
+          controls.target.set(
+            vehicleCameraTarget.x,
+            basePosition[1],
+            vehicleCameraTarget.z,
+          );
+          camera.position.set(
+            vehicleCameraTarget.x + basePosition[0],
+            basePosition[1],
+            vehicleCameraTarget.z + basePosition[2],
+          );
+          delete host.dataset.cameraViewPreset;
+          host.dataset.cameraViewKind = "soldier-ground";
+        }
         camera.fov = verticalFovForHorizontalFov(
           SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
           camera.aspect,
@@ -7173,7 +7195,9 @@ export function RuntimeVehicleViewer({
         controls.maxDistance = Math.max(600, radius * 50);
         camera.updateProjectionMatrix();
         controls.update();
-        host.dataset.cameraProjection = "squad-infantry-world";
+        host.dataset.cameraProjection = preset?.kind === "overhead"
+          ? "squad-overhead-world"
+          : "squad-infantry-world";
         host.dataset.cameraHorizontalFovDeg = String(
           SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
         );
@@ -7183,10 +7207,40 @@ export function RuntimeVehicleViewer({
           SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
         );
         host.dataset.infantryPreviewVerticalFovDeg = String(camera.fov);
-        host.dataset.infantryPreviewEyeHeightM = String(
-          camera.position.y - groundY,
-        );
+        if (preset?.kind === "overhead") {
+          delete host.dataset.infantryPreviewEyeHeightM;
+        } else {
+          host.dataset.infantryPreviewEyeHeightM = String(
+            camera.position.y - groundY,
+          );
+        }
         render();
+        publishCameraNavigation();
+        if (protectionEnabledRef.current) {
+          scheduleProtectionMap({ invalidate: true });
+        }
+      };
+      const applyInspectionView = (viewId: RuntimeViewerCameraViewId) => {
+        applySquadPerspective(
+          infantryPreviewDistanceRef.current ??
+            RUNTIME_VIEWER_INFANTRY_DISTANCES_M[0],
+          viewId,
+        );
+      };
+      const applyInfantryDistancePreview = (distanceM: number) => {
+        applySquadPerspective(distanceM, activeCameraViewRef.current);
+      };
+      const enterFreeCameraView = () => {
+        protectionCache = null;
+        applyInspectionProjection();
+        activeCameraViewRef.current = null;
+        setActiveCameraView(null);
+        delete host.dataset.cameraViewPreset;
+        delete host.dataset.cameraViewKind;
+        camera.up.set(0, 1, 0);
+        controls.update();
+        render();
+        publishCameraNavigation();
         if (protectionEnabledRef.current) {
           scheduleProtectionMap({ invalidate: true });
         }
@@ -7194,6 +7248,7 @@ export function RuntimeVehicleViewer({
       resetViewRef.current = resetView;
       applyCameraViewPresetRef.current = applyInspectionView;
       applyInfantryDistancePreviewRef.current = applyInfantryDistancePreview;
+      enterFreeCameraViewRef.current = enterFreeCameraView;
       fittedSource = source;
       if (preserveCamera) {
         clearShotVisual();
@@ -8091,6 +8146,8 @@ export function RuntimeVehicleViewer({
       resetViewRef.current = null;
       applyCameraViewPresetRef.current = null;
       applyInfantryDistancePreviewRef.current = null;
+      enterFreeCameraViewRef.current = null;
+      activeCameraViewRef.current = null;
       infantryPreviewDistanceRef.current = null;
       activateAssetModeRef.current = null;
       visualGroupRef.current = null;
@@ -8518,6 +8575,7 @@ export function RuntimeVehicleViewer({
               targetDistanceM={targetDistanceM}
               onRequestGlobalLibrary={requestGlobalAttackLibrary}
               globalLibraryState={globalAttackLibraryState}
+              onOpenChange={setWeaponSelectorOpen}
               onChange={(nextValue) => {
                 const selection = parseWeaponSelectionValue(nextValue);
                 if (!selection) return;
@@ -8667,7 +8725,28 @@ export function RuntimeVehicleViewer({
 
       <div className="viewer-toolbar" aria-label="3D 查看模式">
         <div className="viewer-toolbar__tertiary">
-          <div className="viewer-protection-controls" data-enabled={protectionMapAvailable}>
+          <div
+            className="viewer-protection-controls"
+            data-enabled={protectionMapAvailable}
+            data-weapon-selector-open={weaponSelectorOpen}
+            data-revealed={upperOptionsRevealed}
+          >
+            {weaponSelectorOpen ? (
+              <button
+                className="viewer-protection-controls__collapse-cue"
+                type="button"
+                data-revealed={upperOptionsRevealed}
+                aria-label={upperOptionsRevealed
+                  ? "收起上方选项栏"
+                  : "展开上方选项栏"}
+                title={upperOptionsRevealed
+                  ? "收起上方选项栏"
+                  : "展开上方选项栏"}
+                onClick={() => setUpperOptionsRevealed((revealed) => !revealed)}
+              >
+                <span aria-hidden="true">{upperOptionsRevealed ? "‹" : "›"}</span>
+              </button>
+            ) : null}
             <div className="viewer-protection-primary" data-enabled={protectionMapAvailable}>
               <button
                 className="viewer-protection-switch"
@@ -8836,7 +8915,7 @@ export function RuntimeVehicleViewer({
               onView={(viewId) => applyCameraViewPresetRef.current?.(viewId)}
               onInfantryDistance={(distanceM) =>
                 applyInfantryDistancePreviewRef.current?.(distanceM)}
-              onFit={restoreDefaultCameraView}
+              onFree={() => enterFreeCameraViewRef.current?.()}
             />
             <div className="viewer-physical-pose-row">
               <button

@@ -370,13 +370,14 @@ test("left viewer controls share one rail and use slider-shaped state controls",
 
 test("camera shortcuts move the loaded camera instead of remounting vehicle assets", () => {
   const cameraActions = viewerSource.slice(
-    viewerSource.indexOf("const applyInspectionView ="),
+    viewerSource.indexOf("const applySquadPerspective ="),
     viewerSource.indexOf("resetViewRef.current = resetView"),
   );
   assert.match(cameraActions, /camera\.position/u);
   assert.match(cameraActions, /controls\.target/u);
   assert.match(cameraActions, /camera\.fov = verticalFovForHorizontalFov/u);
   assert.match(cameraActions, /runtimeViewerInfantryCameraPosition/u);
+  assert.match(cameraActions, /runtimeViewerCameraPose/u);
   assert.doesNotMatch(
     cameraActions,
     /fetch\(|loadWiki|GLTFLoader|startExteriorAssets|startAnalysisVisualAssets/u,
