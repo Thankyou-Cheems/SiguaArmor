@@ -173,3 +173,41 @@ test("a clicked hit exposes independent hull and module target pools", () => {
   assert.equal(multiTarget.find(({ poolKind }) => poolKind === "track")?.optimization.recommended?.result.killTimeSeconds, 0);
   assert.equal(multiTarget.find(({ poolKind }) => poolKind === "hull")?.optimization.recommended?.result.killTimeSeconds, 12);
 });
+
+test("DPS does not publish a precise drivetrain time without native radial hits", () => {
+  const damage = [
+    {
+      poolIndex: 0,
+      poolId: "hull",
+      poolKind: "hull",
+      maxHealth: 1250,
+      effectiveDamage: 100,
+      certainty: "resolved",
+    },
+    {
+      poolIndex: 1,
+      poolId: "left-track",
+      poolKind: "track",
+      maxHealth: 600,
+      effectiveDamage: 150,
+      certainty: "resolved",
+    },
+  ];
+  const partial = targetPoolsForShot({
+    damage,
+    radial: {
+      layers: [{}],
+      componentFanout: "native-query-required",
+    },
+  });
+  assert.deepEqual(partial.map(({ poolKind }) => poolKind), ["hull"]);
+
+  const resolved = targetPoolsForShot({
+    damage,
+    radial: {
+      layers: [{}],
+      componentFanout: "drivetrain-resolved",
+    },
+  });
+  assert.deepEqual(resolved.map(({ poolKind }) => poolKind), ["hull", "track"]);
+});

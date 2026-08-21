@@ -3,9 +3,9 @@ export const SIGUA_WIKI_ORIGIN =
   "https://wiki.siguad.icu";
 
 const WIKI_PRESENTATION_QUERY = "?presentation=v5";
-const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-v1";
+const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-radial-v2";
 const WIKI_WEAPON_CATALOG_QUERY = "?mechanics=overheat-v1";
-const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-v3";
+const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-radial-v4";
 
 const requests = new Map<
   string,

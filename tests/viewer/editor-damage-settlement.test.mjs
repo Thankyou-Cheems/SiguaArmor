@@ -96,3 +96,23 @@ test("damage chain preserves overkill beyond each component's own health", () =>
     ]);
   }
 });
+
+test("radial drivetrain multiplicity remains visible in the settlement formula", () => {
+  const settlements = summarizeEditorDamageSettlements([
+    damageEvent({
+      poolId: "health:left-track",
+      poolKind: "track",
+      damageKind: "radial",
+      route: "radial-indirect",
+      incomingDamage: 92.4058609008789,
+      damageTypeModifier: 1.25,
+      routeMultiplier: 1,
+      radialDispatchCount: 8,
+      poolDamage: 924.05859375,
+      effectiveDamage: 600,
+    }),
+  ]);
+  assert.equal(settlements.length, 1);
+  assert.equal(settlements[0].dispatchCount, 8);
+  assert.equal(settlements[0].effectiveDamage, 924.05859375);
+});

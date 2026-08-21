@@ -11,6 +11,10 @@ import type {
   ReferenceVehicleBurning,
 } from "./catalog-types";
 import { wikiVehicleFactionId } from "../lib/wiki-vehicle-identity.ts";
+import {
+  validateVehicleRadialDamageModel,
+  type VehicleRadialDamageModel,
+} from "../lib/vehicle-radial-damage-model.ts";
 
 interface WikiProfile<T> {
   id: string;
@@ -68,6 +72,7 @@ interface WikiVehicleMechanics {
     bindingAvailability: WikiBindingAvailability[];
   };
   extensions?: {
+    radialDamageModel?: VehicleRadialDamageModel;
     supportAir?: {
       bindings?: WikiSupportAirBinding[];
     };
@@ -204,6 +209,7 @@ function validateVehicleMechanics(value: unknown): WikiVehicleMechanics {
   ) {
     throw new Error("SiguaWiki 载具机械数据格式不受支持");
   }
+  validateVehicleRadialDamageModel(document.extensions?.radialDamageModel);
   if (
     document.schemaVersion === "sigua-vehicle-faction-mechanics/v1" &&
     (
@@ -244,6 +250,18 @@ export function mergeWikiVehicleFactionMechanics(
     throw new Error("当前目录没有可加载的 SiguaWiki 阵营机械数据");
   }
   const documents = values.map(validateVehicleMechanics);
+  const radialDamageModel = validateVehicleRadialDamageModel(
+    documents[0].extensions?.radialDamageModel,
+  );
+  if (
+    documents.some(
+      (document) =>
+        JSON.stringify(document.extensions?.radialDamageModel) !==
+        JSON.stringify(radialDamageModel),
+    )
+  ) {
+    throw new Error("SiguaWiki 径向载具伤害模型在阵营切片间不一致");
+  }
   const factionIds = documents.map((document) =>
     document.schemaVersion === "sigua-vehicle-faction-mechanics/v1"
       ? (document as WikiVehicleFactionMechanics).factionId
@@ -324,6 +342,7 @@ export function mergeWikiVehicleFactionMechanics(
       ),
     },
     extensions: {
+      radialDamageModel,
       supportAir: {
         bindings: mergeVehicleMechanicsRecords(
           documents,
@@ -590,6 +609,9 @@ function createReferenceDataResolver(catalog: WikiVehicleMechanics) {
       };
     });
     return {
+      radialDamageModel: validateVehicleRadialDamageModel(
+        catalog.extensions?.radialDamageModel,
+      ),
       general: { rawName: binding.rawName, ...general },
       burning: required(
         burningProfiles.get(vehicle.burningProfileRef),

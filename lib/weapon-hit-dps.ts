@@ -157,10 +157,20 @@ export function singleShotWeaponHitTarget<T extends WeaponHitDpsTarget>(
  * the same shell must never become one fake target.
  */
 export function targetPoolsForShot(
-  result: Pick<EditorNativeShotResult, "damage">,
+  result: Pick<EditorNativeShotResult, "damage"> &
+    Partial<Pick<EditorNativeShotResult, "radial">>,
   targetBurning: WeaponDpsTargetBurningProfile | null = null,
 ): WeaponHitDpsTarget[] {
   const targets = new Map<string, WeaponHitDpsTarget>();
+  const radialFanout = result.radial?.layers.length
+    ? result.radial.componentFanout
+    : null;
+  const radialUnknownPoolKinds = radialFanout === "native-unknown"
+    ? new Set(["hull", "seat", "track", "wheel"])
+    : radialFanout === "native-query-required" ||
+        radialFanout === "root-hull-resolved"
+      ? new Set(["track", "wheel"])
+      : new Set<string>();
   for (const event of result.damage) {
     const damage = editorNativeEffectiveDamageAmount(event);
     if (
@@ -169,6 +179,7 @@ export function targetPoolsForShot(
       !Number.isFinite(event.maxHealth) ||
       event.maxHealth <= 0
     ) continue;
+    if (radialUnknownPoolKinds.has(event.poolKind)) continue;
     const key = `${event.poolIndex}:${event.poolId}`;
     const existing = targets.get(key);
     if (existing) {
@@ -190,7 +201,8 @@ export function targetPoolsForShot(
 
 export function estimateWeaponHitDps(
   weapon: WeaponDpsWeapon,
-  result: Pick<EditorNativeShotResult, "damage">,
+  result: Pick<EditorNativeShotResult, "damage"> &
+    Partial<Pick<EditorNativeShotResult, "radial">>,
   options: WeaponDpsOptimizationOptions,
 ): WeaponHitDpsEstimate[] {
   return targetPoolsForShot(result, options.targetBurning ?? null).map((target) => ({

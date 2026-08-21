@@ -8,6 +8,7 @@ import {
   editorNativeTraceIncludesDistance,
   resolveEditorNativePenetrationArithmetic,
 } from "./editor-native-penetration.ts";
+import type { VehicleRadialDamageModel } from "./vehicle-radial-damage-model.ts";
 
 export type EditorEvidenceState =
   | "observed"
@@ -71,6 +72,7 @@ export interface EditorNativeOwnerRecord {
 
 export interface EditorNativeComponentRecord {
   componentId: string;
+  classPath?: string;
   semanticKind: string;
   ownerIndex: number;
   placementState: string;
@@ -95,6 +97,7 @@ export interface EditorNativeExplosiveLayerRecord {
   damageTypePath: EditorField<string>;
   baseDamage: EditorField<number>;
   minimumDamage: EditorField<number>;
+  killZoneRadiusCm?: EditorField<number>;
   innerRadiusCm: EditorField<number>;
   outerRadiusCm: EditorField<number>;
   falloff: EditorField<number>;
@@ -117,6 +120,7 @@ export interface EditorNativeProjectileRecord {
   traceDistanceAfterPenetrationMeters: EditorField<number>;
   explosiveBaseDamage?: EditorField<number>;
   explosiveMinimumDamage?: EditorField<number>;
+  explosiveKillZoneRadiusCm?: EditorField<number>;
   explosiveInnerRadiusCm?: EditorField<number>;
   explosiveOuterRadiusCm?: EditorField<number>;
   explosiveFalloff?: EditorField<number>;
@@ -197,6 +201,7 @@ export interface EditorNativeBallistics {
 export interface EditorNativeExplosiveBallistics {
   baseDamage: number;
   minimumDamage: number;
+  killZoneRadiusCm: number;
   innerRadiusCm: number;
   outerRadiusCm: number;
   falloff: number;
@@ -211,6 +216,18 @@ export interface EditorNativeExplosiveLayerBallistics
   damageTypePath: string;
   onlyDamageMeshes: boolean | null;
   orderEvidence: string | null;
+}
+
+export interface EditorNativeRadialComponentHit {
+  componentIndex: number;
+  impactPointCm: HitVector3;
+}
+
+export interface EditorNativeRadialLayerHitSet {
+  layerId: string;
+  evidence: "native-observed";
+  sourceBuildId: string;
+  componentHits: readonly EditorNativeRadialComponentHit[];
 }
 
 export interface EditorNativeHitLayer {
@@ -255,6 +272,9 @@ export interface EditorNativeDamageEvent {
   radialLayerId?: string;
   radialLayerLabel?: string;
   radialLayerIndex?: number;
+  radialComponentHitCount?: number;
+  radialDispatchCount?: number;
+  nearestImpactDistanceCm?: number;
   /** Damage submitted to this health pool after the matching damage-type modifier. */
   poolDamage: number;
   /** Maximum health loss from a full pool; null only when max health is unreadable. */
@@ -297,7 +317,12 @@ export interface EditorNativeRadialResult {
   layerOrderEvidence: string | null;
   layerOrderResolved: boolean | null;
   guaranteedPoolIndices: number[];
-  componentFanout: "root-hull-resolved" | "native-unknown";
+  componentFanout:
+    | "root-hull-resolved"
+    | "drivetrain-resolved"
+    | "native-query-required"
+    | "vehicle-radial-disabled"
+    | "native-unknown";
 }
 
 export interface EditorNativeShotResult {
@@ -638,6 +663,7 @@ export function resolveEditorNativeBallistics(
             damageTypePath: projectile?.damageTypePath ?? null,
             baseDamage: projectile?.explosiveBaseDamage ?? null,
             minimumDamage: projectile?.explosiveMinimumDamage ?? null,
+            killZoneRadiusCm: projectile?.explosiveKillZoneRadiusCm ?? 0,
             innerRadiusCm: projectile?.explosiveInnerRadiusCm ?? null,
             outerRadiusCm: projectile?.explosiveOuterRadiusCm ?? null,
             falloff: projectile?.explosiveFalloff ?? null,
@@ -663,6 +689,10 @@ export function resolveEditorNativeBallistics(
         layer.minimumDamage,
         `${prefix} minimum damage`,
       );
+      const killZoneRadiusCm = readExplosiveNumber(
+        layer.killZoneRadiusCm ?? 0,
+        `${prefix} kill-zone radius`,
+      );
       const innerRadiusCm = readExplosiveNumber(
         layer.innerRadiusCm,
         `${prefix} inner radius`,
@@ -682,6 +712,7 @@ export function resolveEditorNativeBallistics(
       if (
         baseDamage === null ||
         minimumDamage === null ||
+        killZoneRadiusCm === null ||
         innerRadiusCm === null ||
         outerRadiusCm === null ||
         falloff === null ||
@@ -697,6 +728,7 @@ export function resolveEditorNativeBallistics(
         damageTypePath: layerDamageType.value,
         baseDamage,
         minimumDamage,
+        killZoneRadiusCm,
         innerRadiusCm,
         outerRadiusCm,
         falloff,
@@ -712,6 +744,7 @@ export function resolveEditorNativeBallistics(
       ? {
           baseDamage: primaryExplosiveLayer.baseDamage,
           minimumDamage: primaryExplosiveLayer.minimumDamage,
+          killZoneRadiusCm: primaryExplosiveLayer.killZoneRadiusCm,
           innerRadiusCm: primaryExplosiveLayer.innerRadiusCm,
           outerRadiusCm: primaryExplosiveLayer.outerRadiusCm,
           falloff: primaryExplosiveLayer.falloff,
@@ -988,20 +1021,16 @@ export function editorNativeRadialDamageScale({
     !Number.isFinite(distanceCm) ||
     !Number.isFinite(innerRadiusCm) ||
     !Number.isFinite(outerRadiusCm) ||
-    !Number.isFinite(falloff) ||
-    distanceCm < 0 ||
-    innerRadiusCm < 0 ||
-    outerRadiusCm < innerRadiusCm ||
-    falloff < 0
+    !Number.isFinite(falloff)
   ) {
     throw new Error("radial damage scale parameters are invalid");
   }
-  const distance = f32(distanceCm);
-  const inner = f32(innerRadiusCm);
-  const outer = f32(outerRadiusCm);
+  const distance = f32(Math.max(0, distanceCm));
+  const inner = f32(Math.max(0, innerRadiusCm));
+  const outer = f32(Math.max(inner, Math.max(0, outerRadiusCm)));
   const exponent = f32(falloff);
-  if (distance > outer) return 0;
-  if (distance <= inner || outer <= inner || exponent === 0) return 1;
+  if (distance >= outer) return 0;
+  if (exponent === 0 || distance <= inner) return 1;
   const progress = f32(f32(distance - inner) / f32(outer - inner));
   return f32(Math.pow(f32(Math.max(0, f32(1 - progress))), exponent));
 }
@@ -1025,6 +1054,23 @@ export function editorNativeRadialDamageAtDistance({
     f32(minimumDamage) + f32(f32(falloffFactor) * damageSpan),
   );
   return { falloffFactor, rawDamage };
+}
+
+function nativeNearestRadialImpactDistanceCm(
+  originCm: HitVector3,
+  hits: readonly EditorNativeRadialComponentHit[],
+) {
+  let nearestSquared = Number.POSITIVE_INFINITY;
+  for (const { impactPointCm } of hits) {
+    const x = impactPointCm[0] - originCm[0];
+    const y = impactPointCm[1] - originCm[1];
+    const z = impactPointCm[2] - originCm[2];
+    nearestSquared = Math.min(
+      nearestSquared,
+      f32(x * x + y * y + z * z),
+    );
+  }
+  return f32(Math.sqrt(nearestSquared));
 }
 
 function vehicleHullPoolIndex(model: EditorNativeModel) {
@@ -1118,6 +1164,9 @@ export function simulateEditorNativeShot({
   shotDamageMultiplier,
   intersections,
   includeRadial = false,
+  vehicleDamagedByRadial = null,
+  radialDamageModel = null,
+  radialLayerHitSets = [],
 }: {
   /** Target armor, components, health pools, and damage routing. */
   model: EditorNativeModel;
@@ -1129,6 +1178,12 @@ export function simulateEditorNativeShot({
   shotDamageMultiplier: number;
   intersections: readonly EditorNativeIntersection[];
   includeRadial?: boolean;
+  /** Exact vehicle CDO flag published by the current mechanics slice. */
+  vehicleDamagedByRadial?: boolean | null;
+  /** Wiki-owned receiver/query contract for the locked native build. */
+  radialDamageModel?: VehicleRadialDamageModel | null;
+  /** Optional complete native helper hit multisets; never inferred from render geometry. */
+  radialLayerHitSets?: readonly EditorNativeRadialLayerHitSet[];
 }): EditorNativeShotResult {
   if (!Number.isFinite(shotDamageMultiplier) || shotDamageMultiplier < 0) {
     throw new Error("shotDamageMultiplier must be a finite non-negative scenario input");
@@ -1260,7 +1315,9 @@ export function simulateEditorNativeShot({
     const explosive = ballistics.explosive;
     const explosiveLayers = ballistics.explosiveLayers;
     const firstImpact = ordered[0];
-    if (!explosive || explosiveLayers.length === 0 || !firstImpact) {
+    if (!radialDamageModel) {
+      addUnknown(unknowns, "Wiki radial receiver model is unavailable");
+    } else if (!explosive || explosiveLayers.length === 0 || !firstImpact) {
       addUnknown(
         unknowns,
         explosive
@@ -1268,14 +1325,34 @@ export function simulateEditorNativeShot({
           : "explosive projectile parameters are unresolved",
       );
     } else {
-      const guaranteedPools = new Set<number>();
+      const hitSetsByLayer = new Map<string, EditorNativeRadialLayerHitSet>();
+      for (const hitSet of radialLayerHitSets) {
+        if (
+          hitSet.evidence !== "native-observed" ||
+          hitSet.sourceBuildId !== radialDamageModel.sourceBuildId ||
+          !hitSet.layerId ||
+          hitSetsByLayer.has(hitSet.layerId) ||
+          hitSet.componentHits.some(
+            (hit) =>
+              !Number.isInteger(hit.componentIndex) ||
+              !model.components[hit.componentIndex] ||
+              hit.impactPointCm.length !== 3 ||
+              hit.impactPointCm.some((value) => !Number.isFinite(value)),
+          )
+        ) {
+          addUnknown(unknowns, "native radial component-hit evidence is invalid");
+          continue;
+        }
+        hitSetsByLayer.set(hitSet.layerId, hitSet);
+      }
+      const allGuaranteedPools = new Set<number>();
       const firstComponent = model.components[firstImpact.componentIndex];
       const firstSurface = model.surfaceProfiles[firstImpact.surfaceProfileIndex];
       let rootActorDirectHit: boolean | null = null;
       let rootActorAdmitted = false;
-      // A full projectile hit does not re-submit radial damage to the struck
-      // seat/component pool. The native helper aggregates one event for the
-      // root vehicle actor; child-owned impacts make that root event indirect.
+      let radialEventOwnerIndex: number | null = null;
+      let rootRoute: EditorNativeDamageEvent["route"] = "radial-indirect";
+      let vehicleRadialDisabled = false;
       if (!firstComponent) {
         addUnknown(unknowns, "direct radial impact component is unresolved");
       } else {
@@ -1285,45 +1362,101 @@ export function simulateEditorNativeShot({
             unknowns,
             `${firstComponent.componentId} radial actor owner is unresolved`,
           );
+        } else if (firstOwner.kind === "vehicle-root") {
+          rootActorDirectHit = true;
+          radialEventOwnerIndex = firstComponent.ownerIndex;
+          rootRoute = "radial-direct";
+          if (vehicleDamagedByRadial === true) {
+            rootActorAdmitted = true;
+          } else if (vehicleDamagedByRadial === false) {
+            vehicleRadialDisabled = true;
+          } else {
+            addUnknown(unknowns, "vehicle radial-damage enable flag is unresolved");
+          }
         } else {
-          rootActorDirectHit = firstOwner.kind === "vehicle-root";
-          rootActorAdmitted = rootActorDirectHit ||
+          const directPool = readField(firstComponent.directDamagePoolIndex);
+          const seatPool = directPool.known && directPool.value !== null
+            ? model.healthPools[directPool.value]
+            : null;
+          const passDamage = readField(seatPool?.passDamageToParent ?? null);
+          const passRadial = readField(seatPool?.passRadialDamageToParent ?? null);
+          if (
+            seatPool?.kind === "seat" &&
+            passDamage.known && passDamage.value === true &&
+            passRadial.known && passRadial.value === true
+          ) {
+            rootActorDirectHit = true;
+            rootActorAdmitted = true;
+            radialEventOwnerIndex = firstComponent.ownerIndex;
+            rootRoute = "radial-direct-seat-forwarded-to-hull";
+          } else if (
+            vehicleDamagedByRadial === true &&
             attachedDamageBearingArmorAdmitsRootVehicle(
               model,
               firstImpact.componentIndex,
               firstComponent,
               firstSurface,
+            )
+          ) {
+            rootActorDirectHit = false;
+            rootActorAdmitted = true;
+            radialEventOwnerIndex = model.owners?.findIndex(
+              (owner) => owner.kind === "vehicle-root",
+            ) ?? null;
+            rootRoute = "radial-indirect";
+          } else if (!passDamage.known || !passRadial.known) {
+            addUnknown(
+              unknowns,
+              `${seatPool?.poolId ?? firstOwner.ownerId} radial forwarding flags are unresolved`,
             );
+          } else {
+            addUnknown(
+              unknowns,
+              `${firstComponent.componentId} radial root-Actor query is unresolved`,
+            );
+          }
         }
       }
       const hullPoolIndex = vehicleHullPoolIndex(model);
       if (hullPoolIndex === null) {
         addUnknown(unknowns, "vehicle hull radial damage pool is unresolved");
       } else if (rootActorAdmitted) {
-        guaranteedPools.add(hullPoolIndex);
-      } else if (rootActorDirectHit === false) {
-        // Detached weapon collision and other non-damage-bearing child
-        // geometry still need an exact overlap/visibility result. They are not
-        // promoted merely because their owner is attached to a vehicle.
-        addUnknown(
-          unknowns,
-          `${model.healthPools[hullPoolIndex]?.poolId ?? "vehicle hull"} indirect radial overlap/visibility is unresolved`,
-        );
+        allGuaranteedPools.add(hullPoolIndex);
       }
 
       const radialLayers: EditorNativeRadialLayerResult[] = [];
+      let everyLayerHasNativeHits = explosiveLayers.length > 0;
       for (const [layerIndex, layer] of explosiveLayers.entries()) {
-        // ApplyExplosiveDamage offsets each layer's origin along the impact
-        // normal. The seeded direct HitResult remains in ComponentHits, so its
-        // ImpactPoint is the closest guaranteed point for the struck vehicle.
-        const nearestImpactDistanceCm = Math.abs(
-          f32(layer.impactNormalOffsetCm),
-        );
+        const originCm = firstImpact.point.map(
+          (value, axis) =>
+            value * 100 + firstImpact.faceNormal[axis] * layer.impactNormalOffsetCm,
+        ) as unknown as HitVector3;
+        const hitSet = hitSetsByLayer.get(layer.layerId) ?? null;
+        everyLayerHasNativeHits &&= hitSet !== null;
+        const eventHits = hitSet?.componentHits.filter(
+          (hit) => model.components[hit.componentIndex]?.ownerIndex === radialEventOwnerIndex,
+        ) ?? [];
+        let nearestImpactDistanceCm = Math.abs(f32(layer.impactNormalOffsetCm));
+        if (eventHits.length > 0) {
+          nearestImpactDistanceCm = nativeNearestRadialImpactDistanceCm(
+            originCm,
+            eventHits,
+          );
+        } else if (hitSet && rootActorAdmitted) {
+          addUnknown(
+            unknowns,
+            `${layer.layerId} native radial event omitted its receiver Actor hits`,
+          );
+        }
         const radialDamage = editorNativeRadialDamageAtDistance({
           ...layer,
           distanceCm: nearestImpactDistanceCm,
         });
-        for (const poolIndex of guaranteedPools) {
+        const layerGuaranteedPools = new Set<number>();
+        if (rootActorAdmitted && hullPoolIndex !== null) {
+          layerGuaranteedPools.add(hullPoolIndex);
+        }
+        for (const poolIndex of layerGuaranteedPools) {
           const pool = model.healthPools[poolIndex];
           if (!pool) continue;
           if (rootActorDirectHit === null) {
@@ -1359,12 +1492,15 @@ export function simulateEditorNativeShot({
             damageTypeModifier: factors.modifier,
             routeMultiplier: factors.routeMultiplier,
             modifierSourcePoolIndex: factors.modifierSourcePoolIndex,
-            route: rootActorDirectHit ? "radial-direct" : "radial-indirect",
+            route: rootRoute,
             damageKind: "radial",
             damageTypePath: layer.damageTypePath,
             radialLayerId: layer.layerId,
             radialLayerLabel: layer.shortLabel,
             radialLayerIndex: layerIndex,
+            radialComponentHitCount: eventHits.length || 1,
+            radialDispatchCount: 1,
+            nearestImpactDistanceCm,
             poolDamage,
             effectiveDamage:
               maxHealth.known && maxHealth.value !== null
@@ -1372,6 +1508,98 @@ export function simulateEditorNativeShot({
                 : null,
             certainty: "resolved",
           });
+        }
+        if (
+          hitSet &&
+          rootActorAdmitted &&
+          !vehicleRadialDisabled &&
+          radialEventOwnerIndex !== null &&
+          rootRoute !== "radial-direct-seat-forwarded-to-hull"
+        ) {
+          const driveTrainClasses = new Set(
+            radialDamageModel.receiver.driveTrainClassPaths,
+          );
+          const hitsByComponent = new Map<number, EditorNativeRadialComponentHit[]>();
+          for (const hit of eventHits) {
+            const component = model.components[hit.componentIndex];
+            if (!component || !driveTrainClasses.has(component.classPath ?? "")) {
+              continue;
+            }
+            const group = hitsByComponent.get(hit.componentIndex) ?? [];
+            group.push(hit);
+            hitsByComponent.set(hit.componentIndex, group);
+          }
+          for (const [componentIndex, componentHits] of hitsByComponent) {
+            const component = model.components[componentIndex];
+            const poolEvidence = readField(component.directDamagePoolIndex);
+            if (
+              !poolEvidence.known ||
+              poolEvidence.value === null ||
+              !model.healthPools[poolEvidence.value]
+            ) {
+              addUnknown(unknowns, `${component.componentId} radial health pool is unresolved`);
+              continue;
+            }
+            const poolIndex = poolEvidence.value;
+            const pool = model.healthPools[poolIndex];
+            if (pool.kind !== "track" && pool.kind !== "wheel") {
+              addUnknown(unknowns, `${component.componentId} drivetrain pool kind drifted`);
+              continue;
+            }
+            const factors = radialDamageFactors(
+              model,
+              poolIndex,
+              layer.damageTypePath,
+              rootActorDirectHit === true,
+              unknowns,
+            );
+            if (factors === null) continue;
+            const componentDistanceCm = nativeNearestRadialImpactDistanceCm(
+              originCm,
+              componentHits,
+            );
+            const componentRadialDamage = editorNativeRadialDamageAtDistance({
+              ...layer,
+              distanceCm: componentDistanceCm,
+            });
+            const combinedModifier = f32(
+              f32(factors.modifier) * f32(factors.routeMultiplier),
+            );
+            const damagePerDispatch = f32(
+              f32(componentRadialDamage.rawDamage) * combinedModifier,
+            );
+            const poolDamage = f32(damagePerDispatch * componentHits.length);
+            const maxHealth = readField(pool.maxHealth);
+            radialDamageEvents.push({
+              poolIndex,
+              poolId: pool.poolId,
+              poolKind: pool.kind,
+              maxHealth: maxHealth.known ? maxHealth.value : null,
+              sourceComponentIndex: componentIndex,
+              incomingDamage: componentRadialDamage.rawDamage,
+              modifier: combinedModifier,
+              damageTypeModifier: factors.modifier,
+              routeMultiplier: factors.routeMultiplier,
+              modifierSourcePoolIndex: factors.modifierSourcePoolIndex,
+              route: rootActorDirectHit ? "radial-direct" : "radial-indirect",
+              damageKind: "radial",
+              damageTypePath: layer.damageTypePath,
+              radialLayerId: layer.layerId,
+              radialLayerLabel: layer.shortLabel,
+              radialLayerIndex: layerIndex,
+              radialComponentHitCount: componentHits.length,
+              radialDispatchCount: componentHits.length,
+              nearestImpactDistanceCm: componentDistanceCm,
+              poolDamage,
+              effectiveDamage:
+                maxHealth.known && maxHealth.value !== null
+                  ? f32(Math.min(Math.max(0, maxHealth.value), poolDamage))
+                  : null,
+              certainty: "resolved",
+            });
+            layerGuaranteedPools.add(poolIndex);
+            allGuaranteedPools.add(poolIndex);
+          }
         }
         radialLayers.push({
           layerId: layer.layerId,
@@ -1386,12 +1614,22 @@ export function simulateEditorNativeShot({
           baseDamage: layer.baseDamage,
           minimumDamage: layer.minimumDamage,
           rawDamage: radialDamage.rawDamage,
-          guaranteedPoolIndices: [...guaranteedPools],
+          guaranteedPoolIndices: [...layerGuaranteedPools],
         });
       }
       const primaryRadial = radialLayers[0];
+      const componentFanout = vehicleRadialDisabled
+        ? "vehicle-radial-disabled"
+        : everyLayerHasNativeHits
+          ? "drivetrain-resolved"
+          : rootActorAdmitted
+            ? "native-query-required"
+            : "native-unknown";
       radial = {
-        state: "partial",
+        state:
+          vehicleRadialDisabled || (rootActorAdmitted && everyLayerHasNativeHits)
+            ? "resolved"
+            : "partial",
         order: ballistics.impactRadialOrder,
         directHit: rootActorDirectHit,
         explosionOriginOffsetCm:
@@ -1405,11 +1643,8 @@ export function simulateEditorNativeShot({
         layers: radialLayers,
         layerOrderEvidence: ballistics.explosiveLayerOrderEvidence,
         layerOrderResolved: ballistics.explosiveLayerOrderResolved,
-        guaranteedPoolIndices: [...guaranteedPools],
-        componentFanout:
-          guaranteedPools.size > 0
-            ? "root-hull-resolved"
-            : "native-unknown",
+        guaranteedPoolIndices: [...allGuaranteedPools],
+        componentFanout,
       };
       if (
         radialLayers.length > 1 &&
@@ -1420,10 +1655,12 @@ export function simulateEditorNativeShot({
           `${weaponModel.weapons[weaponIndex]?.weaponId ?? "weapon"} multi-layer explosion runtime order is unresolved`,
         );
       }
-      addUnknown(
-        unknowns,
-        "additional radial actor/component visibility fan-out is not reconstructed",
-      );
+      if (!vehicleRadialDisabled && rootActorAdmitted && !everyLayerHasNativeHits) {
+        addUnknown(
+          unknowns,
+          "native radial component-hit multiset is not published",
+        );
+      }
     }
   }
 

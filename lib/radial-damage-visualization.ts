@@ -17,6 +17,7 @@ export interface RadialDamageVisualizationComponent {
 
 export type RadialDamageOutcomeState =
   | "resolved"
+  | "partial"
   | "resolved-no-damage"
   | "native-unknown";
 
@@ -155,9 +156,11 @@ export function buildRadialDamageVisualizationPlan(
   if (layers.length === 0) return null;
 
   const outcomes = resolvedRadialOutcomes(result, components);
+  const unresolvedFanout = result.radial.componentFanout === "native-unknown" ||
+    result.radial.componentFanout === "native-query-required";
   const outcomeState: RadialDamageOutcomeState = outcomes.length > 0
-    ? "resolved"
-    : result.radial.componentFanout === "native-unknown"
+    ? unresolvedFanout ? "partial" : "resolved"
+    : unresolvedFanout
       ? "native-unknown"
       : "resolved-no-damage";
 

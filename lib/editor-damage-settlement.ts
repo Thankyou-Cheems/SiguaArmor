@@ -14,6 +14,7 @@ export interface EditorDamageSettlementSummary {
   incomingDamage: number;
   damageTypeModifier: number;
   routeMultiplier: number;
+  dispatchCount: number;
   effectiveDamage: number;
   targets: EditorDamageSettlementTarget[];
 }
@@ -39,12 +40,16 @@ export function summarizeEditorDamageSettlements(
     const damageTypeKind = event.damageKind === "radial"
       ? explosiveDamageTypeIconKinds(true, event.damageTypePath ?? null)[0] ?? "generic"
       : null;
+    const dispatchCount = event.damageKind === "radial"
+      ? Math.max(1, event.radialDispatchCount ?? 1)
+      : 1;
     const key = [
       event.damageKind,
       damageTypeKind,
       event.incomingDamage,
       event.damageTypeModifier,
       event.routeMultiplier,
+      dispatchCount,
     ].join(":");
     const target = {
       poolId: event.poolId,
@@ -67,6 +72,7 @@ export function summarizeEditorDamageSettlements(
       incomingDamage: event.incomingDamage,
       damageTypeModifier: event.damageTypeModifier,
       routeMultiplier: event.routeMultiplier,
+      dispatchCount,
       effectiveDamage: target.effectiveDamage,
       targets: [target],
     });
