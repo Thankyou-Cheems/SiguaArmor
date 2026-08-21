@@ -128,7 +128,7 @@ test("radial visualization separates the struck component from resolved target p
       componentIndices: [2],
     },
   ]);
-  assert.equal(plan.outcomeState, "resolved");
+  assert.equal(plan.outcomeState, "partial");
   assert.equal(plan.componentFanout, "native-unknown");
 });
 

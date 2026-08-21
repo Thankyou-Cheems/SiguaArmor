@@ -16567,3 +16567,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   .weapon-dps-footer-note { align-items: flex-start; flex-direction: column; gap: 5px; }
   .weapon-dps-footer-note i { display: none; }
 }
+.viewer-radial-coverage-note {
+  margin: 8px 0 0;
+  padding: 7px 10px;
+  border-left: 2px solid color-mix(in srgb, var(--analysis-flow) 70%, transparent);
+  background: color-mix(in srgb, var(--surface-soft) 82%, transparent);
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.viewer-radial-coverage-note[data-state="vehicle-radial-disabled"] {
+  border-left-color: color-mix(in srgb, var(--text-dim) 60%, transparent);
+}

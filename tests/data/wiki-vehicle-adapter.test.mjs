@@ -7,6 +7,46 @@ import {
   mergeWikiVehicleFactionMechanics,
   wikiVehicleFactionIdsForGroup,
 } from "../../app/wiki-vehicle-catalog.ts";
+import { validateVehicleRadialDamageModel } from "../../lib/vehicle-radial-damage-model.ts";
+
+const radialDamageModel = {
+  schemaVersion: "sigua-vehicle-radial-damage-model/v1",
+  sourceBuildId: "squad-sdk-v10.5.2-543fd6c7f4ae13f0",
+  sourceCase: "radial-vehicle-module-damage-closure",
+  algorithmPath: "/algorithms/explosion/editor-radial-damage.js",
+  evidenceBoundary: "native-receiver-closed-native-hit-multiset-required",
+  query: {
+    objectMask: 71,
+    eligibleCollisionProfiles: ["ComplexVehicleMesh", "VehicleTireMesh"],
+    excludedCollisionProfiles: ["NoCollision"],
+    unresolvedCollisionProfiles: ["Custom"],
+    candidateMode: "native-sphere-overlap-by-object-type",
+    killZoneMode: "strict-point-to-component-aabb",
+    visibilityMode: "multi-hit-object-trace-to-bounds-origin",
+    hitMultiplicity: "preserved",
+  },
+  receiver: {
+    rootActorDeliveriesPerLayer: 1,
+    driveTrainClassPaths: [
+      "/Script/Squad.SQDriveTrainComponent",
+      "/Script/Squad.SQVehicleTrack",
+      "/Script/Squad.SQVehicleWheel",
+    ],
+    driveTrainDispatch: "once-per-component-hit",
+    nonDriveTrainComponentFanout: "none",
+    seatForwarding: "pass-damage-and-pass-radial",
+  },
+};
+
+test("Wiki radial model rejects another v10.5.2 build hash", () => {
+  assert.throws(
+    () => validateVehicleRadialDamageModel({
+      ...radialDamageModel,
+      sourceBuildId: "squad-sdk-v10.5.2-0000000000000000",
+    }),
+    /格式不受支持/u,
+  );
+});
 
 test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
   const index = {
@@ -202,6 +242,7 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
         vehicleSettingsPaths: [],
       }],
     },
+    extensions: { radialDamageModel },
   };
 
   const result = buildFactionCatalogFromWiki(
@@ -215,6 +256,10 @@ test("Armor joins its card mapping with one SiguaWiki vehicle record", () => {
   assert.equal(variant.data.general.vehicleHealth, 1000);
   assert.equal(variant.data.burning.startHealthFraction, 0.1);
   assert.equal(variant.data.burning.healthFractionPerSecond, 0.0033);
+  assert.equal(
+    variant.data.radialDamageModel.sourceCase,
+    "radial-vehicle-module-damage-closure",
+  );
   assert.deepEqual(variant.data.weaponBindingIds, ["weapon-test"]);
   assert.equal(variant.data.components[0].damageResistances[0].modifier, 0.5);
   assert.equal(variant.thumbnail.width, 640);
@@ -311,6 +356,7 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
       }],
     },
     extensions: {
+      radialDamageModel,
       supportAir: {
         bindings: [{
           bindingKey: "source--mq9--uav\u0000BP_CommandActor_UAV_MQ9",

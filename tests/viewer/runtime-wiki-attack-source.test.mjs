@@ -217,7 +217,7 @@ test("weapon runtime requests bypass pre-refresh browser cache entries", () => {
   );
   assert.match(
     wikiSourceText,
-    /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=exact-assignment-v3"/u,
+    /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=exact-assignment-radial-v4"/u,
   );
   assert.match(
     wikiSourceText,

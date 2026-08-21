@@ -163,6 +163,8 @@ export function composeCatalogVariantBallisticsModel({
       ? {
           explosiveBaseDamage: firstRadialLayer.baseDamage,
           explosiveMinimumDamage: firstRadialLayer.minimumDamage,
+          explosiveKillZoneRadiusCm:
+            firstRadialLayer.killZoneRadiusMeters * 100,
           explosiveInnerRadiusCm: firstRadialLayer.innerRadiusMeters * 100,
           explosiveOuterRadiusCm: firstRadialLayer.outerRadiusMeters * 100,
           explosiveFalloff: firstRadialLayer.falloff,
@@ -176,6 +178,7 @@ export function composeCatalogVariantBallisticsModel({
             damageTypePath: layer.damageTypeClassPath ?? layer.damageType,
             baseDamage: layer.baseDamage,
             minimumDamage: layer.minimumDamage,
+            killZoneRadiusCm: layer.killZoneRadiusMeters * 100,
             innerRadiusCm: layer.innerRadiusMeters * 100,
             outerRadiusCm: layer.outerRadiusMeters * 100,
             falloff: layer.falloff,

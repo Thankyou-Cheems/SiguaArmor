@@ -264,6 +264,10 @@ test("the Runtime Viewer builds explosive choices from the Wiki weapon catalog",
   assert.match(adapterSource, /const runtimeExplosiveCatalog = \{/u);
   assert.match(adapterSource, /weaponCatalogShippingVariants/u);
   assert.match(adapterSource, /weaponCatalogRadialModelForAsset/u);
+  assert.match(adapterSource, /explosiveKillZoneRadiusCm/u);
+  assert.match(adapterSource, /killZoneRadiusCm/u);
+  assert.match(ballisticsModelSource, /explosiveKillZoneRadiusCm/u);
+  assert.match(ballisticsModelSource, /killZoneRadiusCm/u);
   assert.match(adapterSource, /sourceKind: "explosive-catalog"/u);
   assert.match(viewerSource, /搜索全部武器或弹种/u);
   assert.doesNotMatch(
