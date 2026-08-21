@@ -72,6 +72,11 @@ test("opening the weapon selector collapses the upper option rail with a visible
     true,
   );
   assert.equal(
+    /closest\('\[data-viewer-control-cue="weapon-selector"\]'\)/u
+      .test(viewerSource),
+    true,
+  );
+  assert.equal(
     /\.viewer-protection-controls\[data-weapon-selector-open="true"\][\s\S]*?translateX/u
       .test(viewerStyles),
     true,
