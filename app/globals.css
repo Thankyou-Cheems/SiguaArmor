@@ -4653,7 +4653,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   will-change: transform;
 }
 
-.viewer-protection-controls[data-weapon-selector-open="true"][data-revealed="false"] {
+.viewer-protection-controls[data-selector-open="true"][data-revealed="false"] {
   transform: translateX(calc(-100% - 16px));
 }
 
@@ -4678,7 +4678,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.viewer-protection-controls[data-weapon-selector-open="true"]
+.viewer-protection-controls[data-selector-open="true"]
   > .viewer-protection-controls__collapse-cue {
   opacity: 1;
   pointer-events: auto;

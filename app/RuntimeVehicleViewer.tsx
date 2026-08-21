@@ -831,17 +831,23 @@ function RuntimeWeaponSourceSelector({
   onChange,
   onRequestGlobalLibrary,
   globalLibraryState,
+  onOpenChange,
 }: {
   value: string;
   options: readonly RuntimeWeaponSourceOption[];
   onChange: (value: string) => void;
   onRequestGlobalLibrary: () => void;
   globalLibraryState: "idle" | "loading" | "ready" | "error";
+  onOpenChange: (open: boolean) => void;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const changeOpen = useCallback((nextOpen: boolean) => {
+    setOpen(nextOpen);
+    onOpenChange(nextOpen);
+  }, [onOpenChange]);
   const selected = options.find((option) => option.id === value) ?? null;
   const normalizedQuery = normalizeWeaponQuery(query);
   const matchedOptions = options.filter((option) =>
@@ -865,10 +871,14 @@ function RuntimeWeaponSourceSelector({
       searchRef.current?.focus(),
     );
     const closeOnOutsidePointer = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      if (
+        event.target instanceof Element &&
+        event.target.closest('[data-viewer-control-cue="weapon-selector"]')
+      ) return;
+      if (!rootRef.current?.contains(event.target as Node)) changeOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") changeOpen(false);
     };
     document.addEventListener("pointerdown", closeOnOutsidePointer);
     document.addEventListener("keydown", closeOnEscape);
@@ -877,17 +887,19 @@ function RuntimeWeaponSourceSelector({
       document.removeEventListener("pointerdown", closeOnOutsidePointer);
       document.removeEventListener("keydown", closeOnEscape);
     };
-  }, [open]);
+  }, [changeOpen, open]);
+
+  useEffect(() => () => onOpenChange(false), [onOpenChange]);
 
   const choose = (nextValue: string) => {
     onChange(nextValue);
     setQuery("");
-    setOpen(false);
+    changeOpen(false);
   };
 
   const openSelector = () => {
     if (open) {
-      setOpen(false);
+      changeOpen(false);
       return;
     }
     if (
@@ -896,7 +908,7 @@ function RuntimeWeaponSourceSelector({
     ) {
       onRequestGlobalLibrary();
     }
-    setOpen(true);
+    changeOpen(true);
   };
 
   return (
@@ -1011,6 +1023,7 @@ function RuntimeWeaponSelector({
   onRequestGlobalLibrary,
   globalLibraryState,
   onOpenChange,
+  onSourceOpenChange,
 }: {
   value: string;
   options: readonly RuntimeWeaponOption[];
@@ -1019,6 +1032,7 @@ function RuntimeWeaponSelector({
   onRequestGlobalLibrary: () => void;
   globalLibraryState: "idle" | "loading" | "ready" | "error";
   onOpenChange: (open: boolean) => void;
+  onSourceOpenChange: (open: boolean) => void;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -1195,6 +1209,7 @@ function RuntimeWeaponSelector({
           onChange={chooseSource}
           onRequestGlobalLibrary={onRequestGlobalLibrary}
           globalLibraryState={globalLibraryState}
+          onOpenChange={onSourceOpenChange}
         />
       </div>
       <div className="viewer-weapon-control">
@@ -3922,11 +3937,13 @@ export function RuntimeVehicleViewer({
     useState<RuntimeViewerCameraViewId | null>(null);
   const [infantryPreviewDistanceM, setInfantryPreviewDistanceM] =
     useState<number | null>(null);
+  const [sourceSelectorOpen, setSourceSelectorOpen] = useState(false);
   const [weaponSelectorOpen, setWeaponSelectorOpen] = useState(false);
+  const attackSelectorOpen = sourceSelectorOpen || weaponSelectorOpen;
   const [upperOptionsRevealed, setUpperOptionsRevealed] = useState(false);
   useEffect(() => {
-    if (!weaponSelectorOpen) setUpperOptionsRevealed(false);
-  }, [weaponSelectorOpen]);
+    if (!attackSelectorOpen) setUpperOptionsRevealed(false);
+  }, [attackSelectorOpen]);
   // The parent navigation update rerenders the full catalog tree. Keep it out
   // of continuous range input and publish the final distance on interaction end.
   const [distanceInteractionActive, setDistanceInteractionActive] = useState(false);
@@ -8334,6 +8351,12 @@ export function RuntimeVehicleViewer({
   const explosionDamageEvents = shotResult
     ? effectiveDamageEventsByKind(shotResult, "radial")
     : [];
+  const hasVehicleRadialDamage = shotResult?.damage.some(
+    (damage) =>
+      damage.damageKind === "radial"
+      && editorNativeEffectiveDamageAmount(damage) > 0
+      && isEditorNativeVehicleDamageEvent(damage),
+  ) ?? false;
   const effectiveDamageEvents = [
     ...penetrationDamageEvents,
     ...explosionDamageEvents,
@@ -8597,6 +8620,7 @@ export function RuntimeVehicleViewer({
               onRequestGlobalLibrary={requestGlobalAttackLibrary}
               globalLibraryState={globalAttackLibraryState}
               onOpenChange={setWeaponSelectorOpen}
+              onSourceOpenChange={setSourceSelectorOpen}
               onChange={(nextValue) => {
                 const selection = parseWeaponSelectionValue(nextValue);
                 if (!selection) return;
@@ -8749,10 +8773,10 @@ export function RuntimeVehicleViewer({
           <div
             className="viewer-protection-controls"
             data-enabled={protectionMapAvailable}
-            data-weapon-selector-open={weaponSelectorOpen}
+            data-selector-open={attackSelectorOpen}
             data-revealed={upperOptionsRevealed}
           >
-            {weaponSelectorOpen ? (
+            {attackSelectorOpen ? (
               <button
                 className="viewer-protection-controls__collapse-cue"
                 type="button"
@@ -9410,7 +9434,8 @@ export function RuntimeVehicleViewer({
               </li>
             ) : null}
           </ol>
-          {shotResult.radial.layers.length > 0 &&
+          {hasVehicleRadialDamage &&
+          shotResult.radial.layers.length > 0 &&
           shotResult.radial.componentFanout !== "drivetrain-resolved" ? (
             <p
               className="viewer-radial-coverage-note"
