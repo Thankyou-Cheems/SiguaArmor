@@ -113,6 +113,11 @@ export interface RuntimeVehiclePreview {
     reasonCode: string;
     reason: string;
   } | null;
+  radialQuery: {
+    id: string;
+    formatVersion: "sigua-vehicle-radial-query-source/v1";
+    recordUrl: string;
+  } | null;
 }
 
 interface WikiRuntimeVisual {
@@ -149,6 +154,11 @@ interface WikiVehicleRuntimeVariant {
     recordUrl: string;
     bvhUrl: string;
   } & RuntimeHitGeometrySource);
+  radialQuery: null | {
+    id: string;
+    formatVersion: "sigua-vehicle-radial-query-source/v1";
+    recordUrl: string;
+  };
 }
 
 interface WikiVehicleRuntimeSource {
@@ -414,6 +424,7 @@ function toRuntimePreview(
           reasonCode: "not-published",
           reason: "该变体尚无已发布的命中模型。",
         },
+    radialQuery: runtimeVariant.radialQuery,
   };
 }
 

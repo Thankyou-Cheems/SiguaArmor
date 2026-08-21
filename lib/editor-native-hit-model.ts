@@ -72,6 +72,7 @@ export interface EditorNativeOwnerRecord {
 
 export interface EditorNativeComponentRecord {
   componentId: string;
+  componentPath?: string;
   classPath?: string;
   semanticKind: string;
   ownerIndex: number;
@@ -219,14 +220,18 @@ export interface EditorNativeExplosiveLayerBallistics
 }
 
 export interface EditorNativeRadialComponentHit {
-  componentIndex: number;
+  componentIndex: number | null;
+  ownerIndex?: number;
+  queryComponentId?: string;
+  nativeClassPath?: string;
   impactPointCm: HitVector3;
 }
 
 export interface EditorNativeRadialLayerHitSet {
   layerId: string;
-  evidence: "native-observed";
+  evidence: "native-observed" | "native-reconstructed";
   sourceBuildId: string;
+  originCm?: HitVector3;
   componentHits: readonly EditorNativeRadialComponentHit[];
 }
 
@@ -1328,16 +1333,30 @@ export function simulateEditorNativeShot({
       const hitSetsByLayer = new Map<string, EditorNativeRadialLayerHitSet>();
       for (const hitSet of radialLayerHitSets) {
         if (
-          hitSet.evidence !== "native-observed" ||
+          !["native-observed", "native-reconstructed"].includes(hitSet.evidence) ||
           hitSet.sourceBuildId !== radialDamageModel.sourceBuildId ||
           !hitSet.layerId ||
           hitSetsByLayer.has(hitSet.layerId) ||
           hitSet.componentHits.some(
             (hit) =>
-              !Number.isInteger(hit.componentIndex) ||
-              !model.components[hit.componentIndex] ||
+              !(
+                (Number.isInteger(hit.componentIndex) &&
+                  hit.componentIndex !== null &&
+                  model.components[hit.componentIndex]) ||
+                (hit.componentIndex === null &&
+                  Number.isInteger(hit.ownerIndex) &&
+                  model.owners?.[hit.ownerIndex ?? -1] &&
+                  typeof hit.queryComponentId === "string" &&
+                  hit.queryComponentId.length > 0 &&
+                  typeof hit.nativeClassPath === "string" &&
+                  hit.nativeClassPath.length > 0)
+              ) ||
               hit.impactPointCm.length !== 3 ||
-              hit.impactPointCm.some((value) => !Number.isFinite(value)),
+              hit.impactPointCm.some((value) => !Number.isFinite(value)) ||
+              (hitSet.evidence === "native-reconstructed" &&
+                (!hitSet.originCm ||
+                  hitSet.originCm.length !== 3 ||
+                  hitSet.originCm.some((value) => !Number.isFinite(value)))),
           )
         ) {
           addUnknown(unknowns, "native radial component-hit evidence is invalid");
@@ -1427,14 +1446,20 @@ export function simulateEditorNativeShot({
       const radialLayers: EditorNativeRadialLayerResult[] = [];
       let everyLayerHasNativeHits = explosiveLayers.length > 0;
       for (const [layerIndex, layer] of explosiveLayers.entries()) {
-        const originCm = firstImpact.point.map(
+        const computedOriginCm = firstImpact.point.map(
           (value, axis) =>
             value * 100 + firstImpact.faceNormal[axis] * layer.impactNormalOffsetCm,
         ) as unknown as HitVector3;
         const hitSet = hitSetsByLayer.get(layer.layerId) ?? null;
+        const originCm = hitSet?.originCm ?? computedOriginCm;
         everyLayerHasNativeHits &&= hitSet !== null;
         const eventHits = hitSet?.componentHits.filter(
-          (hit) => model.components[hit.componentIndex]?.ownerIndex === radialEventOwnerIndex,
+          (hit) =>
+            (hit.ownerIndex ?? (
+              hit.componentIndex === null
+                ? null
+                : model.components[hit.componentIndex]?.ownerIndex
+            )) === radialEventOwnerIndex,
         ) ?? [];
         let nearestImpactDistanceCm = Math.abs(f32(layer.impactNormalOffsetCm));
         if (eventHits.length > 0) {
@@ -1521,8 +1546,13 @@ export function simulateEditorNativeShot({
           );
           const hitsByComponent = new Map<number, EditorNativeRadialComponentHit[]>();
           for (const hit of eventHits) {
+            if (hit.componentIndex === null) continue;
             const component = model.components[hit.componentIndex];
-            if (!component || !driveTrainClasses.has(component.classPath ?? "")) {
+            if (
+              !component ||
+              !driveTrainClasses.has(hit.nativeClassPath ?? component.classPath ?? "") ||
+              (hit.nativeClassPath !== undefined && hit.nativeClassPath !== component.classPath)
+            ) {
               continue;
             }
             const group = hitsByComponent.get(hit.componentIndex) ?? [];

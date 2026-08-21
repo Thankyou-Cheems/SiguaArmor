@@ -11,20 +11,22 @@ const damageTypePath =
   "/Game/Gameplay/DamageTypes/BP_Explosives_Damagetype.BP_Explosives_Damagetype_C";
 
 const radialDamageModel = {
-  schemaVersion: "sigua-vehicle-radial-damage-model/v1",
-  sourceBuildId: "squad-sdk-v10.5.2-543fd6c7f4ae13f0",
-  sourceCase: "radial-vehicle-module-damage-closure",
+  schemaVersion: "sigua-vehicle-radial-damage-model/v2",
+  sourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
+  sourceCase: "radial-query-payload-v10.5.3",
   algorithmPath: "/algorithms/explosion/editor-radial-damage.js",
-  evidenceBoundary: "native-receiver-closed-native-hit-multiset-required",
+  queryAlgorithmPath: "/algorithms/explosion/vehicle-radial-query.js",
+  evidenceBoundary: "native-query-static-closed-runtime-placement-required",
   query: {
     objectMask: 71,
-    eligibleCollisionProfiles: ["ComplexVehicleMesh", "VehicleTireMesh"],
-    excludedCollisionProfiles: ["NoCollision"],
-    unresolvedCollisionProfiles: ["Custom"],
+    onlyDamageMeshes: true,
     candidateMode: "native-sphere-overlap-by-object-type",
     killZoneMode: "strict-point-to-component-aabb",
     visibilityMode: "multi-hit-object-trace-to-bounds-origin",
     hitMultiplicity: "preserved",
+    payloadSchemaVersion: "sigua-vehicle-radial-query-source/v1",
+    sourceDataRevision: "a".repeat(64),
+    artifactCount: 470,
   },
   receiver: {
     rootActorDeliveriesPerLayer: 1,

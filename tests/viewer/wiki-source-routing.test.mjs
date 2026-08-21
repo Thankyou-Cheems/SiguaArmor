@@ -17,6 +17,7 @@ import {
   loadWikiVehicleFactionPresentation,
   loadWikiVehiclePresentation,
   loadWikiVehicleRuntimeSource,
+  loadWikiVehicleRadialQuery,
 } from "../../lib/wiki-source.ts";
 
 test("shared runtime files resolve directly to SiguaWiki", () => {
@@ -192,11 +193,11 @@ test("catalog data uses direct presentation slices while runtime data keeps its 
 
   assert.deepEqual(requestedUrls, [
     "https://wiki.siguad.icu/data/vehicles/presentation.json",
-    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v5",
-    "https://wiki.siguad.icu/data/vehicles/factions/adf.json?mechanics=burning-radial-v2",
-    "https://wiki.siguad.icu/data/vehicles/faction-presentation/adf.json?presentation=v5",
-    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v5",
-    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v5",
+    "https://wiki.siguad.icu/data/vehicles/catalog.json?presentation=v6",
+    "https://wiki.siguad.icu/data/vehicles/factions/adf.json?mechanics=burning-radial-v3",
+    "https://wiki.siguad.icu/data/vehicles/faction-presentation/adf.json?presentation=v6",
+    "https://wiki.siguad.icu/data/factions/catalog.json?presentation=v6",
+    "https://wiki.siguad.icu/data/vehicles/community-aliases.json?presentation=v6",
   ]);
 });
 
@@ -221,7 +222,7 @@ test("runtime visual descriptors use the presentation cache key", async () => {
   }
   assert.equal(
     requestedUrl,
-    `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v5`,
+    `https://wiki.siguad.icu/assets/runtime-probe/visuals/${visualId}.json?presentation=v6`,
   );
 });
 
@@ -244,6 +245,25 @@ test("3D preview reads an exact per-card vehicle runtime source", async () => {
   }
   assert.equal(
     requestedUrl,
-    `https://wiki.siguad.icu/data/vehicles/runtime/${cardId}.json`,
+    `https://wiki.siguad.icu/data/vehicles/runtime/${cardId}.json?projection=radial-query-v1`,
   );
+});
+
+test("radial query reads the immutable per-vehicle record directly", async () => {
+  const originalFetch = globalThis.fetch;
+  const digest = "c".repeat(64);
+  const pathname = `/assets/runtime-probe/radial-query/records/${digest}.json`;
+  let requestedUrl = "";
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return Response.json({
+      schemaVersion: "sigua-vehicle-radial-query-source/v1",
+    });
+  };
+  try {
+    await loadWikiVehicleRadialQuery(pathname);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.equal(requestedUrl, `https://wiki.siguad.icu${pathname}`);
 });
