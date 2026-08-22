@@ -3,9 +3,30 @@ import test from "node:test";
 
 import {
   buildRadialDamageVisualizationPlan,
+  radialDamageCoverageState,
   radialDamageLegendPlacement,
   RADIAL_DAMAGE_VISUAL_TIMING_MS,
 } from "../../lib/radial-damage-visualization.ts";
+
+test("dynamic explosion coverage distinguishes damage, clear space, and unknown queries", () => {
+  assert.equal(radialDamageCoverageState(radialShot()), "covered");
+  const resistedShot = radialShot();
+  resistedShot.damage[0].poolDamage = 0;
+  resistedShot.damage[0].effectiveDamage = 0;
+  assert.equal(
+    radialDamageCoverageState(resistedShot),
+    "covered",
+    "a resolved radial dispatch still means the blast covered the vehicle when resistance reduces health damage to zero",
+  );
+  assert.equal(
+    radialDamageCoverageState(radialShot({ withResolvedHullDamage: false })),
+    "unknown",
+  );
+  const clearShot = radialShot({ withResolvedHullDamage: false });
+  clearShot.radial.state = "resolved";
+  clearShot.radial.componentFanout = "drivetrain-resolved";
+  assert.equal(radialDamageCoverageState(clearShot), "clear");
+});
 
 function radialShot({ withResolvedHullDamage = true } = {}) {
   return {
@@ -40,6 +61,7 @@ function radialShot({ withResolvedHullDamage = true } = {}) {
           {
             damageKind: "radial",
             certainty: "resolved",
+            incomingDamage: 450,
             effectiveDamage: 450,
             poolDamage: 450,
             poolIndex: 0,
@@ -173,4 +195,20 @@ test("non-radial shots do not create a radial presentation plan", () => {
   const result = radialShot();
   result.radial.layers = [];
   assert.equal(buildRadialDamageVisualizationPlan(result), null);
+});
+
+test("radial visualization supports a detached origin without penetration layers", () => {
+  const result = radialShot();
+  result.layers = [];
+  result.radial.componentFanout = "drivetrain-resolved";
+  result.radial.layers[0].explosionOriginOffsetCm = 0;
+  result.damage[0].sourceComponentIndex = 2;
+  const plan = buildRadialDamageVisualizationPlan(result, [
+    {},
+    {},
+    { componentId: "hull-query", semanticKind: "armor" },
+  ]);
+  assert.equal(plan?.origin.componentIndex, 2);
+  assert.equal(plan?.origin.componentLabel, "自由爆心");
+  assert.equal(plan?.outcomeState, "resolved");
 });

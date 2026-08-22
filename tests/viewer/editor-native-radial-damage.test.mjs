@@ -41,14 +41,24 @@ const radialDamageModel = {
   },
 };
 
-function damageModifier(modifier) {
+function routeModifier(
+  incomingDamageTypePath,
+  modifier,
+  directHitRadialDamageMultiplier = 1,
+  indirectHitDamageMultiplier = 1,
+  onlyPassDamageIfDirectHit = false,
+) {
   return {
-    damageTypePath,
+    damageTypePath: incomingDamageTypePath,
     modifier,
-    directHitRadialDamageMultiplier: 1,
-    indirectHitDamageMultiplier: 1,
-    onlyPassDamageIfDirectHit: false,
+    directHitRadialDamageMultiplier,
+    indirectHitDamageMultiplier,
+    onlyPassDamageIfDirectHit,
   };
+}
+
+function damageModifier(modifier) {
+  return routeModifier(damageTypePath, modifier);
 }
 
 function model() {
@@ -191,6 +201,33 @@ function simulate(overrides = {}) {
   });
 }
 
+function configureModuleDamageType(target, incomingDamageTypePath) {
+  target.projectiles[0].damageTypePath = incomingDamageTypePath;
+  target.projectiles[0].explosiveLayers[0].damageTypePath = incomingDamageTypePath;
+}
+
+function addWheelPool(target, incomingDamageTypePath, modifier) {
+  const componentIndex = target.components.length;
+  const poolIndex = target.healthPools.length;
+  target.healthPools.push({
+    poolId: "left-wheel",
+    kind: "wheel",
+    ownerIndex: 0,
+    componentIndex,
+    maxHealth: 300,
+    damageModifiers: [routeModifier(incomingDamageTypePath, modifier)],
+  });
+  target.components.push({
+    componentId: "left-wheel",
+    classPath: "/Script/Squad.SQVehicleWheel",
+    semanticKind: "wheel",
+    ownerIndex: 0,
+    placementState: "observed",
+    directDamagePoolIndex: poolIndex,
+  });
+  return componentIndex;
+}
+
 test("locked radial arithmetic clamps native inputs and excludes the outer boundary", () => {
   assert.equal(editorNativeRadialDamageScale({
     distanceCm: 500,
@@ -254,6 +291,117 @@ test("one native hit multiset resolves root plus repeated drivetrain dispatches 
   assert.equal(radial.some(({ poolKind }) => poolKind === "engine"), false);
   assert.equal(result.radial.componentFanout, "drivetrain-resolved");
   assert.equal(result.radial.state, "resolved");
+});
+
+test("HAT radial routing keeps tracked direct damage at zero but allows exact indirect drivetrain hits", () => {
+  const hatDamageTypePath =
+    "/Game/Gameplay/DamageTypes/BP_HAT_DamageType.BP_HAT_DamageType_C";
+  const target = model();
+  configureModuleDamageType(target, hatDamageTypePath);
+  target.healthPools[0].damageModifiers = [
+    routeModifier(hatDamageTypePath, 0.625, 0, 1, true),
+  ];
+  target.healthPools[1].damageModifiers = [
+    routeModifier(hatDamageTypePath, 1, 0, 1),
+  ];
+  target.healthPools[2].damageModifiers = [
+    routeModifier(hatDamageTypePath, 1),
+  ];
+  const wheelComponentIndex = addWheelPool(target, hatDamageTypePath, 2);
+  const radialLayerHitSets = [{
+    layerId: "primary",
+    evidence: "native-reconstructed",
+    sourceBuildId: radialDamageModel.sourceBuildId,
+    originCm: [0, 0, 0],
+    componentHits: [
+      { componentIndex: 0, impactPointCm: [0, 0, 0] },
+      { componentIndex: 1, impactPointCm: [0, 0, 0] },
+      { componentIndex: 2, impactPointCm: [0, 0, 0] },
+      { componentIndex: wheelComponentIndex, impactPointCm: [0, 0, 0] },
+    ],
+  }];
+  const input = {
+    model: target,
+    weaponModel: target,
+    weaponIndex: 0,
+    targetDistanceM: 0,
+    shotDamageMultiplier: 1,
+    intersections: [intersection],
+    includeRadial: true,
+    vehicleDamagedByRadial: true,
+    radialDamageModel,
+    radialLayerHitSets,
+  };
+  const direct = simulateEditorNativeShot(input);
+  const directRadial = direct.damage.filter(({ damageKind }) => damageKind === "radial");
+  assert.equal(
+    directRadial.find(({ poolKind }) => poolKind === "track")?.poolDamage ?? 0,
+    0,
+  );
+  const directWheel = directRadial.find(({ poolKind }) => poolKind === "wheel");
+  assert.ok(directWheel, JSON.stringify(directRadial));
+  assert.ok(directWheel.poolDamage > 0);
+  assert.equal(directRadial.some(({ poolKind }) => poolKind === "engine"), false);
+
+  const indirect = simulateEditorNativeShot({
+    ...input,
+    radialOriginOverrideCm: [0, 0, 0],
+  });
+  const indirectRadial = indirect.damage.filter(({ damageKind }) => damageKind === "radial");
+  assert.ok(indirectRadial.find(({ poolKind }) => poolKind === "track").poolDamage > 0);
+  assert.ok(indirectRadial.find(({ poolKind }) => poolKind === "wheel").poolDamage > 0);
+  assert.equal(indirectRadial.some(({ poolKind }) => poolKind === "engine"), false);
+});
+
+test("fragmentation radial routing damages exact wheel hits but not tracks, engines, or ammo racks", () => {
+  const fragmentationDamageTypePath =
+    "/Game/Gameplay/DamageTypes/BP_Fragmentation_DamageType.BP_Fragmentation_DamageType_C";
+  const target = model();
+  configureModuleDamageType(target, fragmentationDamageTypePath);
+  target.healthPools[0].damageModifiers = [
+    routeModifier(fragmentationDamageTypePath, 1, 0, 1, true),
+  ];
+  target.healthPools[1].damageModifiers = [
+    routeModifier(fragmentationDamageTypePath, 1, 0, 1, true),
+  ];
+  target.healthPools[2].damageModifiers = [
+    routeModifier(fragmentationDamageTypePath, 4),
+  ];
+  const wheelComponentIndex = addWheelPool(
+    target,
+    fragmentationDamageTypePath,
+    1,
+  );
+  const result = simulateEditorNativeShot({
+    model: target,
+    weaponModel: target,
+    weaponIndex: 0,
+    targetDistanceM: 0,
+    shotDamageMultiplier: 1,
+    intersections: [intersection],
+    includeRadial: true,
+    radialOriginOverrideCm: [0, 0, 0],
+    vehicleDamagedByRadial: true,
+    radialDamageModel,
+    radialLayerHitSets: [{
+      layerId: "primary",
+      evidence: "native-reconstructed",
+      sourceBuildId: radialDamageModel.sourceBuildId,
+      originCm: [0, 0, 0],
+      componentHits: [
+        { componentIndex: 1, impactPointCm: [0, 0, 0] },
+        { componentIndex: 2, impactPointCm: [0, 0, 0] },
+        { componentIndex: wheelComponentIndex, impactPointCm: [0, 0, 0] },
+      ],
+    }],
+  });
+  const radial = result.damage.filter(({ damageKind }) => damageKind === "radial");
+  assert.equal(radial.find(({ poolKind }) => poolKind === "track")?.poolDamage ?? 0, 0);
+  const wheel = radial.find(({ poolKind }) => poolKind === "wheel");
+  assert.ok(wheel, JSON.stringify(radial));
+  assert.ok(wheel.poolDamage > 0);
+  assert.equal(radial.some(({ poolKind }) => poolKind === "engine"), false);
+  assert.equal(radial.some(({ poolKind }) => poolKind === "ammo-rack"), false);
 });
 
 test("a vehicle that rejects radial explosions receives neither hull nor drivetrain damage", () => {
@@ -337,4 +485,52 @@ test("native radial hit distance rounds the squared sum before the square root",
     ({ damageKind, poolKind }) => damageKind === "radial" && poolKind === "hull",
   );
   assert.equal(hull?.nearestImpactDistanceCm, 100000.0078125);
+});
+
+test("an explicit non-contact origin resolves indirect radial damage without point layers", () => {
+  const result = simulate({
+    intersections: [],
+    radialOriginOverrideCm: [200, 0, 0],
+    radialLayerHitSets: [{
+      layerId: "primary",
+      evidence: "native-reconstructed",
+      sourceBuildId: radialDamageModel.sourceBuildId,
+      originCm: [200, 0, 0],
+      componentHits: [{
+        componentIndex: 0,
+        impactPointCm: [500, 0, 0],
+      }],
+    }],
+  });
+  assert.equal(result.layers.length, 0);
+  assert.equal(result.radial.directHit, false);
+  assert.equal(result.radial.nearestImpactDistanceCm, 300);
+  assert.equal(result.radial.explosionOriginOffsetCm, 0);
+  const radial = result.damage.filter(({ damageKind }) => damageKind === "radial");
+  assert.equal(radial.length, 1);
+  assert.equal(radial[0].route, "radial-indirect");
+  assert.equal(radial[0].poolKind, "hull");
+  assert.equal(radial[0].poolDamage, 70);
+  assert.equal(result.damage.some(({ damageKind }) => damageKind === "point"), false);
+});
+
+test("an explicit origin outside every query body delivers no radial Actor event", () => {
+  const result = simulate({
+    intersections: [],
+    radialOriginOverrideCm: [5000, 0, 0],
+    radialLayerHitSets: [{
+      layerId: "primary",
+      evidence: "native-reconstructed",
+      sourceBuildId: radialDamageModel.sourceBuildId,
+      originCm: [5000, 0, 0],
+      componentHits: [],
+    }],
+  });
+  assert.equal(result.layers.length, 0);
+  assert.equal(result.damage.length, 0);
+  assert.equal(result.radial.state, "resolved");
+  assert.equal(result.radial.guaranteedPoolIndices.length, 0);
+  assert.equal(result.unknowns.includes(
+    "primary native radial event omitted its receiver Actor hits",
+  ), false);
 });

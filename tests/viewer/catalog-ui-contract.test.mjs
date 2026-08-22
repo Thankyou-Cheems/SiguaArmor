@@ -2,13 +2,20 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const [catalogSource, groupingSource, viewerSource, styles, damageTypeSource] = await Promise.all([
+const [catalogSource, groupingSource, viewerSource, runtimeOnlySource, styles, damageTypeSource] = await Promise.all([
   readFile(new URL("../../app/CatalogApp.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/vehicle-card-grouping.ts", import.meta.url), "utf8"),
   readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../../app/RuntimeViewerOnlyPage.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/globals.css", import.meta.url), "utf8"),
   readFile(new URL("../../lib/vehicle-damage-type-icons.ts", import.meta.url), "utf8"),
 ]);
+
+test("standalone runtime preview loads vehicle mechanics before radial coverage", () => {
+  assert.match(runtimeOnlySource, /loadWikiVehicleFactionMechanics/u);
+  assert.match(runtimeOnlySource, /referenceDataForWikiVehicleBinding/u);
+  assert.match(runtimeOnlySource, /referenceData=\{state\.referenceData\}/u);
+});
 
 test("vehicle cards show crew and passenger counts and reuse encyclopedia stat icons", () => {
   assert.match(
@@ -94,6 +101,59 @@ test("weapon selector menu and collapsed trigger share labeled columns", () => {
     styles,
     /\.infantry-weapon-select \.viewer-search-select__menu\s*\{[\s\S]*?width:\s*100%;[\s\S]*?max-width:\s*none;/u,
   );
+});
+
+test("explosive shots expose one draggable non-contact origin with reset guidance", () => {
+  assert.match(viewerSource, /editor-native-shot-explosion-drag-handle/u);
+  assert.match(viewerSource, /editor-native-explosion-origin-core/u);
+  assert.match(viewerSource, /editor-native-explosion-origin-halo/u);
+  assert.match(viewerSource, /editor-native-shot-explosion-impact-anchor/u);
+  assert.doesNotMatch(viewerSource, /editor-native-explosion-origin-orbit-|editor-native-explosion-origin-burst|editor-native-shot-explosion-offset-direction/u);
+  assert.match(viewerSource, /viewer-explosion-origin-hud__offset/u);
+  assert.doesNotMatch(viewerSource, /new THREE\.RingGeometry\(0\.11, 0\.16/u);
+  assert.match(viewerSource, /pickExplosionDragHandle/u);
+  assert.match(viewerSource, /setShotExplosionOriginRef\.current/u);
+  assert.match(viewerSource, /radialOriginOverrideM/u);
+  assert.match(viewerSource, /className="viewer-explosion-origin-hud"/u);
+  assert.match(viewerSource, /自由爆心；拖动调整水平位置/u);
+  assert.match(viewerSource, /贴回命中点/u);
+  assert.match(viewerSource, /explosionGroundFloorY/u);
+  assert.match(viewerSource, /originTether\.geometry\.setFromPoints/u);
+  assert.doesNotMatch(viewerSource, /viewer-explosion-origin-control/u);
+  assert.match(
+    styles,
+    /\.viewer-explosion-origin-hud\[data-detached="true"\]/u,
+  );
+  assert.match(styles, /viewer-explosion-origin-ring/u);
+});
+
+test("explosive selection previews a ground-following true-radius ring before the first shot", () => {
+  assert.match(viewerSource, /selectedWeaponHasExplosion/u);
+  assert.match(viewerSource, /selectedWeaponBallistics[\s\S]*?resolveEditorNativeBallistics/u);
+  assert.match(viewerSource, /saveExplosionOrigin/u);
+  assert.match(viewerSource, /updateExplosionPlacementPreview/u);
+  assert.match(viewerSource, /explosionPlacementPreview\.exactRadiusRings/u);
+  assert.match(viewerSource, /outerRadiusCm\s*\/\s*100/u);
+  assert.doesNotMatch(
+    styles,
+    /viewer-explosion-origin-hud\[data-placement="true"\][\s\S]*?top:\s*58%;[\s\S]*?left:\s*50%;/u,
+  );
+  const pointerUpSource = viewerSource.slice(
+    viewerSource.indexOf("const onPointerUp ="),
+    viewerSource.indexOf("const onPointerCancel ="),
+  );
+  assert.match(pointerUpSource, /saveExplosionOriginRef\.current/u);
+  assert.doesNotMatch(
+    pointerUpSource,
+    /!pointerStart\s*\|\|\s*!parsed\s*\|\|\s*!analysisMesh/u,
+  );
+  assert.match(viewerSource, /editor-native-shot-explosion-ground-area/u);
+  assert.match(viewerSource, /explosionPlacementCoverage/u);
+  assert.match(viewerSource, /simulatePublishedRadialShot/u);
+  assert.match(viewerSource, /setHitSceneThreeModelDamageHighlight\(hitModel/u);
+  assert.match(viewerSource, /scheduleExplosionPlacementPreview/u);
+  assert.match(viewerSource, /className="viewer-explosion-origin-hud__coverage"/u);
+  assert.match(styles, /viewer-explosion-origin-hud__coverage\[data-state="covered"\]/u);
 });
 
 test("penetration and damage cards use inline text without standalone legend rows", () => {

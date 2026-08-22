@@ -242,3 +242,13 @@ test("distance dragging resolves only rendered weapon metrics", () => {
   assert.match(viewerSource, /const requestedDistance = distancePreferenceRef\.current/u);
   assert.doesNotMatch(viewerSource, /useState\(\s*navigationState\?\.distance/u);
 });
+
+test("explosion-origin dragging coalesces damage queries to one animation frame", () => {
+  const dragSource = viewerSource.slice(
+    viewerSource.indexOf("const flushExplosionDrag = () =>"),
+    viewerSource.indexOf("const onPointerLeave = () =>"),
+  );
+  assert.match(dragSource, /requestAnimationFrame\(flushExplosionDrag\)/u);
+  assert.match(dragSource, /pendingOrigin/u);
+  assert.match(dragSource, /setShotExplosionOriginRef\.current/u);
+});

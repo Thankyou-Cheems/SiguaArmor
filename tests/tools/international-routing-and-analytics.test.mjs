@@ -69,18 +69,25 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
 
-  assert.equal(currentEntry.id, "2026-08-21-radial-damage-viewer-controls");
+  assert.equal(currentEntry.id, "2026-08-22-draggable-explosion-origin");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-08-21");
+    assert.equal(document.siteUpdatedOn, "2026-08-22");
     assert.deepEqual(document.entries[0], currentEntry);
     assert.ok(
       !document.entries.some(({ id }) => id === "2026-07-24-hit-path-footer-selector"),
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(document.entries[0]), /原生接收链/u);
-    assert.match(JSON.stringify(document.entries[0]), /向左收起/u);
-    assert.match(JSON.stringify(document.entries[0]), /自由视角/u);
+    assert.match(JSON.stringify(document.entries[0]), /纯径向间接伤害/u);
+    assert.match(JSON.stringify(document.entries[0]), /0 伤害/u);
+    assert.match(JSON.stringify(document.entries[0]), /Shift \+ 滚轮/u);
+    const radialEntry = document.entries.find(
+      ({ id }) => id === "2026-08-21-radial-damage-viewer-controls",
+    );
+    assert.ok(radialEntry, "radial viewer release entry must be retained");
+    assert.match(JSON.stringify(radialEntry), /原生接收链/u);
+    assert.match(JSON.stringify(radialEntry), /向左收起/u);
+    assert.match(JSON.stringify(radialEntry), /自由视角/u);
     const cameraEntry = document.entries.find(
       ({ id }) => id === "2026-08-21-vehicle-camera-perspective",
     );

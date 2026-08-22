@@ -1172,6 +1172,7 @@ export function simulateEditorNativeShot({
   vehicleDamagedByRadial = null,
   radialDamageModel = null,
   radialLayerHitSets = [],
+  radialOriginOverrideCm = null,
 }: {
   /** Target armor, components, health pools, and damage routing. */
   model: EditorNativeModel;
@@ -1189,9 +1190,20 @@ export function simulateEditorNativeShot({
   radialDamageModel?: VehicleRadialDamageModel | null;
   /** Optional complete native helper hit multisets; never inferred from render geometry. */
   radialLayerHitSets?: readonly EditorNativeRadialLayerHitSet[];
+  /** Explicit non-contact explosion origin; bypasses point/direct-hit routing. */
+  radialOriginOverrideCm?: HitVector3 | null;
 }): EditorNativeShotResult {
   if (!Number.isFinite(shotDamageMultiplier) || shotDamageMultiplier < 0) {
     throw new Error("shotDamageMultiplier must be a finite non-negative scenario input");
+  }
+  if (
+    radialOriginOverrideCm !== null &&
+    (
+      radialOriginOverrideCm.length !== 3 ||
+      radialOriginOverrideCm.some((value) => !Number.isFinite(value))
+    )
+  ) {
+    throw new Error("radialOriginOverrideCm must contain three finite coordinates");
   }
   const ballistics = resolveEditorNativeBallistics(weaponModel, weaponIndex, targetDistanceM);
   const unknowns = [...ballistics.unknowns];
@@ -1322,11 +1334,15 @@ export function simulateEditorNativeShot({
     const firstImpact = ordered[0];
     if (!radialDamageModel) {
       addUnknown(unknowns, "Wiki radial receiver model is unavailable");
-    } else if (!explosive || explosiveLayers.length === 0 || !firstImpact) {
+    } else if (
+      !explosive ||
+      explosiveLayers.length === 0 ||
+      (!firstImpact && radialOriginOverrideCm === null)
+    ) {
       addUnknown(
         unknowns,
         explosive
-          ? "direct radial damage requires one exact impact point"
+          ? "radial damage requires one exact impact point or explicit origin"
           : "explosive projectile parameters are unresolved",
       );
     } else {
@@ -1365,14 +1381,33 @@ export function simulateEditorNativeShot({
         hitSetsByLayer.set(hitSet.layerId, hitSet);
       }
       const allGuaranteedPools = new Set<number>();
-      const firstComponent = model.components[firstImpact.componentIndex];
-      const firstSurface = model.surfaceProfiles[firstImpact.surfaceProfileIndex];
+      const firstComponent = firstImpact
+        ? model.components[firstImpact.componentIndex]
+        : null;
+      const firstSurface = firstImpact
+        ? model.surfaceProfiles[firstImpact.surfaceProfileIndex]
+        : undefined;
       let rootActorDirectHit: boolean | null = null;
       let rootActorAdmitted = false;
       let radialEventOwnerIndex: number | null = null;
       let rootRoute: EditorNativeDamageEvent["route"] = "radial-indirect";
       let vehicleRadialDisabled = false;
-      if (!firstComponent) {
+      if (radialOriginOverrideCm !== null) {
+        radialEventOwnerIndex = model.owners?.findIndex(
+          (owner) => owner.kind === "vehicle-root",
+        ) ?? null;
+        rootActorDirectHit = false;
+        rootRoute = "radial-indirect";
+        if (radialEventOwnerIndex === null || radialEventOwnerIndex < 0) {
+          addUnknown(unknowns, "vehicle root radial Actor is unresolved");
+        } else if (vehicleDamagedByRadial === true) {
+          rootActorAdmitted = true;
+        } else if (vehicleDamagedByRadial === false) {
+          vehicleRadialDisabled = true;
+        } else {
+          addUnknown(unknowns, "vehicle radial-damage enable flag is unresolved");
+        }
+      } else if (!firstComponent || !firstImpact) {
         addUnknown(unknowns, "direct radial impact component is unresolved");
       } else {
         const firstOwner = model.owners?.[firstComponent.ownerIndex];
@@ -1439,16 +1474,14 @@ export function simulateEditorNativeShot({
       const hullPoolIndex = vehicleHullPoolIndex(model);
       if (hullPoolIndex === null) {
         addUnknown(unknowns, "vehicle hull radial damage pool is unresolved");
-      } else if (rootActorAdmitted) {
-        allGuaranteedPools.add(hullPoolIndex);
       }
 
       const radialLayers: EditorNativeRadialLayerResult[] = [];
       let everyLayerHasNativeHits = explosiveLayers.length > 0;
       for (const [layerIndex, layer] of explosiveLayers.entries()) {
-        const computedOriginCm = firstImpact.point.map(
+        const computedOriginCm = radialOriginOverrideCm ?? firstImpact!.point.map(
           (value, axis) =>
-            value * 100 + firstImpact.faceNormal[axis] * layer.impactNormalOffsetCm,
+            value * 100 + firstImpact!.faceNormal[axis] * layer.impactNormalOffsetCm,
         ) as unknown as HitVector3;
         const hitSet = hitSetsByLayer.get(layer.layerId) ?? null;
         const originCm = hitSet?.originCm ?? computedOriginCm;
@@ -1461,13 +1494,25 @@ export function simulateEditorNativeShot({
                 : model.components[hit.componentIndex]?.ownerIndex
             )) === radialEventOwnerIndex,
         ) ?? [];
+        const layerRootActorAdmitted = rootActorAdmitted && (
+          radialOriginOverrideCm === null || eventHits.length > 0
+        );
+        const sourceComponentIndex = firstImpact?.componentIndex ??
+          eventHits.find((hit) => hit.componentIndex !== null)?.componentIndex ??
+          model.components.findIndex(
+            (component) => component.ownerIndex === radialEventOwnerIndex,
+          );
         let nearestImpactDistanceCm = Math.abs(f32(layer.impactNormalOffsetCm));
         if (eventHits.length > 0) {
           nearestImpactDistanceCm = nativeNearestRadialImpactDistanceCm(
             originCm,
             eventHits,
           );
-        } else if (hitSet && rootActorAdmitted) {
+        } else if (
+          hitSet &&
+          rootActorAdmitted &&
+          radialOriginOverrideCm === null
+        ) {
           addUnknown(
             unknowns,
             `${layer.layerId} native radial event omitted its receiver Actor hits`,
@@ -1478,8 +1523,9 @@ export function simulateEditorNativeShot({
           distanceCm: nearestImpactDistanceCm,
         });
         const layerGuaranteedPools = new Set<number>();
-        if (rootActorAdmitted && hullPoolIndex !== null) {
+        if (layerRootActorAdmitted && hullPoolIndex !== null) {
           layerGuaranteedPools.add(hullPoolIndex);
+          allGuaranteedPools.add(hullPoolIndex);
         }
         for (const poolIndex of layerGuaranteedPools) {
           const pool = model.healthPools[poolIndex];
@@ -1511,7 +1557,7 @@ export function simulateEditorNativeShot({
             poolId: pool.poolId,
             poolKind: pool.kind,
             maxHealth: maxHealth.known ? maxHealth.value : null,
-            sourceComponentIndex: firstImpact.componentIndex,
+            sourceComponentIndex: Math.max(0, sourceComponentIndex),
             incomingDamage: radialDamage.rawDamage,
             modifier: combinedModifier,
             damageTypeModifier: factors.modifier,
@@ -1536,7 +1582,7 @@ export function simulateEditorNativeShot({
         }
         if (
           hitSet &&
-          rootActorAdmitted &&
+          layerRootActorAdmitted &&
           !vehicleRadialDisabled &&
           radialEventOwnerIndex !== null &&
           rootRoute !== "radial-direct-seat-forwarded-to-hull"
@@ -1638,7 +1684,8 @@ export function simulateEditorNativeShot({
           damageTypePath: layer.damageTypePath,
           orderEvidence: layer.orderEvidence,
           orderResolved: ballistics.explosiveLayerOrderResolved,
-          explosionOriginOffsetCm: layer.impactNormalOffsetCm,
+          explosionOriginOffsetCm:
+            radialOriginOverrideCm === null ? layer.impactNormalOffsetCm : 0,
           nearestImpactDistanceCm,
           falloffFactor: radialDamage.falloffFactor,
           baseDamage: layer.baseDamage,
@@ -1869,7 +1916,12 @@ export function simulateEditorNativeShot({
 
   const orderedDamage = orderedDamageEvents();
   return {
-    resolution: resolutionForUnknowns(unknowns, layers.length > 0),
+    resolution: resolutionForUnknowns(
+      unknowns,
+      orderedDamage.length > 0 ||
+        layers.length > 0 ||
+        (radialOriginOverrideCm !== null && radial.state === "resolved"),
+    ),
     ballistics,
     shotDamageMultiplier,
     layers,
