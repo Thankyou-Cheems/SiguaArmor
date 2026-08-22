@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
+  ChevronDown,
   Crosshair,
   Search,
   TimerReset,
@@ -148,18 +149,134 @@ function controlledAttackNavigation(
   } satisfies ViewerNavigationState;
 }
 
-function groupedOptions(options: readonly VehicleDuelOption[]) {
-  return [...new Set(options.map(({ factionName }) => factionName))].map(
-    (factionName) => ({
-      factionName,
-      options: options.filter((option) => option.factionName === factionName),
-    }),
-  );
-}
-
 function duelWeaponLabel(weapon: RuntimeAttackSourceWeapon) {
   return weaponNameZh(
     weapon.selectorVariant?.label ?? weapon.displayNameZh,
+  );
+}
+
+interface DuelSearchChoice {
+  id: string;
+  primary: string;
+  secondary: string;
+  context: string;
+}
+
+function DuelSearchSelect({
+  label,
+  ariaLabel,
+  searchPlaceholder,
+  selectedLabel,
+  selectedId,
+  query,
+  choices,
+  disabled = false,
+  emptyLabel,
+  onQueryChange,
+  onSelect,
+}: {
+  label: string;
+  ariaLabel: string;
+  searchPlaceholder: string;
+  selectedLabel: string;
+  selectedId: string;
+  query: string;
+  choices: readonly DuelSearchChoice[];
+  disabled?: boolean;
+  emptyLabel: string;
+  onQueryChange: (query: string) => void;
+  onSelect: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
+  const listId = `${ariaLabel.replace(/\s+/gu, "-")}-results`;
+
+  useEffect(() => {
+    setPreviewIndex(0);
+  }, [choices.length, query]);
+
+  const commit = (choice: DuelSearchChoice) => {
+    onSelect(choice.id);
+    onQueryChange("");
+    setOpen(false);
+  };
+
+  return (
+    <div
+      className="vehicle-duel__search-field"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          onQueryChange("");
+          setOpen(false);
+        }
+      }}
+    >
+      <span>{label}</span>
+      <div className="vehicle-duel__search-select" data-open={open} data-disabled={disabled}>
+        <Search size={13} aria-hidden="true" />
+        <input
+          type="search"
+          role="combobox"
+          aria-label={ariaLabel}
+          aria-expanded={open}
+          aria-controls={open ? listId : undefined}
+          aria-autocomplete="list"
+          value={open ? query : selectedLabel}
+          placeholder={searchPlaceholder}
+          readOnly={!open}
+          disabled={disabled}
+          onFocus={() => setOpen(true)}
+          onClick={() => setOpen(true)}
+          onChange={(event) => onQueryChange(event.currentTarget.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              onQueryChange("");
+              setOpen(false);
+              event.currentTarget.blur();
+              return;
+            }
+            if (choices.length === 0) return;
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+              event.preventDefault();
+              const direction = event.key === "ArrowDown" ? 1 : -1;
+              setPreviewIndex((current) =>
+                (current + direction + choices.length) % choices.length,
+              );
+              return;
+            }
+            if (event.key === "Enter") {
+              event.preventDefault();
+              commit(choices[previewIndex] ?? choices[0]);
+            }
+          }}
+        />
+        <ChevronDown size={14} aria-hidden="true" />
+        {open ? (
+          <div className="vehicle-duel__search-results" id={listId} role="listbox">
+            {choices.length === 0 ? (
+              <small>{emptyLabel}</small>
+            ) : choices.map((choice, index) => (
+              <button
+                key={choice.id}
+                type="button"
+                role="option"
+                aria-selected={choice.id === selectedId}
+                data-preview={index === previewIndex}
+                data-selected={choice.id === selectedId}
+                onMouseEnter={() => setPreviewIndex(index)}
+                onFocus={() => setPreviewIndex(index)}
+                onClick={() => commit(choice)}
+              >
+                <strong>{choice.primary}</strong>
+                <span>{choice.secondary}</span>
+                <small>{choice.context}</small>
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -265,9 +382,6 @@ function VehicleSelect({
       .sort((left, right) => left.rank - right.rank || left.index - right.index)
       .map(({ option }) => option);
   }, [options, vehicleQuery]);
-  const visibleVehicleOptions = vehicleMatches.some(({ id }) => id === selected.id)
-    ? vehicleMatches
-    : [selected, ...vehicleMatches];
   const weaponMatches = useMemo(() => {
     const weapons = source?.weapons ?? [];
     if (!normalizeVehicleSearch(weaponQuery)) return weapons;
@@ -285,9 +399,24 @@ function VehicleSelect({
       .map(({ weapon }) => weapon);
   }, [source, weaponQuery]);
   const selectedWeapon = source?.weapons[weaponIndex] ?? null;
-  const visibleWeapons = selectedWeapon && !weaponMatches.includes(selectedWeapon)
-    ? [selectedWeapon, ...weaponMatches]
-    : weaponMatches;
+  const vehicleChoices = vehicleMatches.map((option) => ({
+    id: option.id,
+    primary: option.displayName,
+    secondary: option.typeName,
+    context: option.factionName,
+  }));
+  const weaponChoices = weaponMatches.map((weapon) => {
+    const index = source?.weapons.indexOf(weapon) ?? 0;
+    const primary = duelWeaponLabel(weapon);
+    return {
+      id: String(index),
+      primary,
+      secondary: weapon.gunName === primary
+        ? weapon.projectileName ?? "当前弹种"
+        : weapon.gunName,
+      context: weapon.selectorVariant?.familyLabel ?? weapon.projectileName ?? "当前载具武器",
+    };
+  });
 
   useEffect(() => {
     setVehicleQuery("");
@@ -296,85 +425,31 @@ function VehicleSelect({
 
   return (
     <div className="vehicle-duel__selectors">
-      <label>
-        <span>{side} 方载具</span>
-        <span className="vehicle-duel__selector-search global-vehicle-search__input">
-          <Search size={13} aria-hidden="true" />
-          <input
-            type="search"
-            value={vehicleQuery}
-            placeholder="搜索名称 / 俗称 / 拼音"
-            aria-label={`搜索 ${side} 方载具`}
-            onChange={(event) => setVehicleQuery(event.currentTarget.value)}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter" || vehicleMatches.length === 0) return;
-              event.preventDefault();
-              onVehicleChange(vehicleMatches[0].id);
-              setVehicleQuery("");
-            }}
-          />
-        </span>
-        <select
-          aria-label={`选择 ${side} 方载具`}
-          value={selected.id}
-          onChange={(event) => {
-            onVehicleChange(event.currentTarget.value);
-            setVehicleQuery("");
-          }}
-        >
-          {groupedOptions(visibleVehicleOptions).map((group) => (
-            <optgroup key={group.factionName} label={group.factionName}>
-              {group.options.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.displayName} · {option.typeName}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-        {normalizeVehicleSearch(vehicleQuery) && vehicleMatches.length === 0 ? (
-          <small>没有匹配载具</small>
-        ) : null}
-      </label>
-      <label>
-        <span>武器 / 弹种</span>
-        <span className="vehicle-duel__selector-search global-vehicle-search__input">
-          <Search size={13} aria-hidden="true" />
-          <input
-            type="search"
-            value={weaponQuery}
-            placeholder="搜索武器 / 弹种"
-            aria-label={`搜索 ${side} 方武器或弹种`}
-            disabled={!source}
-            onChange={(event) => setWeaponQuery(event.currentTarget.value)}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter" || !source || weaponMatches.length === 0) return;
-              event.preventDefault();
-              onWeaponChange(source.weapons.indexOf(weaponMatches[0]));
-              setWeaponQuery("");
-            }}
-          />
-        </span>
-        <select
-          aria-label={`选择 ${side} 方武器或弹种`}
-          value={source?.weapons[weaponIndex] ? weaponIndex : 0}
-          disabled={!source}
-          onChange={(event) => {
-            onWeaponChange(Number(event.currentTarget.value));
-            setWeaponQuery("");
-          }}
-        >
-          {visibleWeapons.map((weapon) => {
-            const index = source?.weapons.indexOf(weapon) ?? 0;
-            return <option key={weapon.weaponAssignmentId ?? `${weapon.weaponId}:${index}`} value={index}>
-              {duelWeaponLabel(weapon)}
-            </option>;
-          })}
-        </select>
-        {normalizeVehicleSearch(weaponQuery) && weaponMatches.length === 0 ? (
-          <small>没有匹配武器或弹种</small>
-        ) : null}
-      </label>
+      <DuelSearchSelect
+        label={`${side} 方载具`}
+        ariaLabel={`搜索并选择 ${side} 方载具`}
+        searchPlaceholder="搜索名称 / 俗称 / 拼音"
+        selectedLabel={`${selected.displayName} · ${selected.typeName}`}
+        selectedId={selected.id}
+        query={vehicleQuery}
+        choices={vehicleChoices}
+        emptyLabel="没有匹配载具"
+        onQueryChange={setVehicleQuery}
+        onSelect={onVehicleChange}
+      />
+      <DuelSearchSelect
+        label="武器 / 弹种"
+        ariaLabel={`搜索并选择 ${side} 方武器或弹种`}
+        searchPlaceholder="搜索武器 / 弹种"
+        selectedLabel={selectedWeapon ? duelWeaponLabel(selectedWeapon) : "正在载入武器"}
+        selectedId={String(source?.weapons[weaponIndex] ? weaponIndex : 0)}
+        query={weaponQuery}
+        choices={weaponChoices}
+        disabled={!source}
+        emptyLabel="没有匹配武器或弹种"
+        onQueryChange={setWeaponQuery}
+        onSelect={(index) => onWeaponChange(Number(index))}
+      />
     </div>
   );
 }
@@ -470,7 +545,14 @@ function verdictLabel(resolution: VehicleDuelResolution) {
 }
 
 function verdictReason(resolution: VehicleDuelResolution) {
-  if (resolution.winner === "unresolved") return "双方都需要先选择能够造成致命伤害的命中位置";
+  if (resolution.winner === "unresolved") {
+    const leftExhausted = resolution.leftAttack.actualSimulation?.ammoExhausted === true;
+    const rightExhausted = resolution.rightAttack.actualSimulation?.ammoExhausted === true;
+    if (leftExhausted && rightExhausted) return "双方弹药耗尽，均无法击毁目标";
+    if (leftExhausted) return "A 方弹药耗尽，当前命中无法击毁目标";
+    if (rightExhausted) return "B 方弹药耗尽，当前命中无法击毁目标";
+    return "双方都需要先选择能够造成致命伤害的命中位置";
+  }
   if (resolution.winner === "draw") {
     return `${resolution.decisiveTimeSeconds?.toFixed(2)} 秒的射击同时结算`;
   }
@@ -487,6 +569,11 @@ function DuelJudge({ resolution }: { resolution: VehicleDuelResolution | null })
   const marginSeconds = resolution
     ? vehicleDuelVictoryMarginSeconds(resolution)
     : null;
+  const losingAttack = resolution?.winner === "left"
+    ? resolution.rightAttack
+    : resolution?.winner === "right"
+      ? resolution.leftAttack
+      : null;
   return (
     <aside className="vehicle-duel__judge" data-winner={resolution?.winner ?? "pending"}>
       <span>交叉射击</span>
@@ -496,7 +583,9 @@ function DuelJudge({ resolution }: { resolution: VehicleDuelResolution | null })
         : `${resolution.decisiveTimeSeconds.toFixed(2)}s`}</b>
       <small>{resolution?.winner === "left" || resolution?.winner === "right"
         ? marginSeconds === null
-          ? "对方暂无击毁时间"
+          ? losingAttack?.actualSimulation?.ammoExhausted
+            ? "对方弹药耗尽"
+            : "对方暂无击毁时间"
           : `领先 ${marginSeconds.toFixed(2)}s`
         : resolution?.winner === "draw"
           ? "时间差 0.00s"
@@ -508,16 +597,15 @@ function DuelJudge({ resolution }: { resolution: VehicleDuelResolution | null })
 function DuelCurve({
   side,
   attack,
-  loss,
   weapon,
 }: {
   side: "A" | "B";
   attack: VehicleDuelAttackResolution | null;
-  loss: VehicleDuelLethalPath | null;
   weapon: RuntimeAttackSourceWeapon | null;
 }) {
   const simulation = attack?.actualSimulation ?? null;
-  if (!simulation || !loss) {
+  const target = attack?.actualTarget ?? null;
+  if (!simulation || !target) {
     return (
       <section className="vehicle-duel__curve vehicle-duel__curve--empty">
         <span>{side} 方实际输出</span>
@@ -530,15 +618,17 @@ function DuelCurve({
       <header>
         <span>{side} 方实际输出</span>
         <strong>
-          {simulation.elapsedSeconds.toFixed(2)} s 截止 · {simulation.shots} 发
+          {simulation.ammoExhausted
+            ? `弹药耗尽 · ${simulation.shots} 发`
+            : `${simulation.elapsedSeconds.toFixed(2)} s 截止 · ${simulation.shots} 发`}
           {simulation.burnDamage > 0 ? ` · 正常自燃 ${simulation.burnDamage.toFixed(1)}` : ""}
         </strong>
       </header>
-      <small>{weapon ? duelWeaponLabel(weapon) : "当前弹种"} → {poolLabel(loss.poolKind)}</small>
+      <small>{weapon ? duelWeaponLabel(weapon) : "当前弹种"} → {poolLabel(target.poolKind)}</small>
       <WeaponRhythmTimeline
         simulation={simulation}
-        targetHealth={loss.maxHealth}
-        targetLabel={poolLabel(loss.poolKind)}
+        targetHealth={target.maxHealth}
+        targetLabel={poolLabel(target.poolKind)}
         compact
       />
     </section>
@@ -562,12 +652,21 @@ function DuelRace({
     label: string,
     time: number | null,
     loss: VehicleDuelLethalPath | null,
+    attack: VehicleDuelAttackResolution | null,
   ) => (
     <div className="vehicle-duel__race-row" data-side={side}>
       <span title={label}>{label}</span>
       <i><b style={{ width: `${time === null ? 0 : Math.min(100, time / maximum * 100)}%` }} /></i>
-      <strong>{time === null ? "—" : `${time.toFixed(2)} s`}</strong>
-      <small>{loss ? poolLabel(loss.poolKind) : "未命中"}</small>
+      <strong>{time === null
+        ? attack?.actualSimulation?.ammoExhausted
+          ? "弹药耗尽"
+          : "—"
+        : `${time.toFixed(2)} s`}</strong>
+      <small>{loss
+        ? poolLabel(loss.poolKind)
+        : attack?.actualTarget
+          ? poolLabel(attack.actualTarget.poolKind)
+          : "未命中"}</small>
     </div>
   );
   return (
@@ -578,8 +677,8 @@ function DuelRace({
         <b>{resolution ? verdictReason(resolution) : "双方从 0 秒同时开火"}</b>
         <small>同一时间的射击同时结算</small>
       </header>
-      {row("left", `${leftName} → ${rightName}`, leftTime, resolution?.rightLoss ?? null)}
-      {row("right", `${rightName} → ${leftName}`, rightTime, resolution?.leftLoss ?? null)}
+      {row("left", `${leftName} → ${rightName}`, leftTime, resolution?.rightLoss ?? null, resolution?.leftAttack ?? null)}
+      {row("right", `${rightName} → ${leftName}`, rightTime, resolution?.leftLoss ?? null, resolution?.rightAttack ?? null)}
     </section>
   );
 }
@@ -759,7 +858,6 @@ export function VehicleDuelApp({ siteEdition }: { siteEdition: SiteEdition }) {
           <DuelCurve
             side="A"
             attack={resolution?.leftAttack ?? null}
-            loss={resolution?.rightLoss ?? null}
             weapon={leftWeapon}
           />
         </article>
@@ -793,7 +891,6 @@ export function VehicleDuelApp({ siteEdition }: { siteEdition: SiteEdition }) {
           <DuelCurve
             side="B"
             attack={resolution?.rightAttack ?? null}
-            loss={resolution?.leftLoss ?? null}
             weapon={rightWeapon}
           />
         </article>

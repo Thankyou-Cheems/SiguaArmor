@@ -16409,6 +16409,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .vehicle-duel__side[data-side="right"] { border-top: 2px solid color-mix(in srgb, var(--duel-right) 72%, transparent); }
 
 .vehicle-duel__selectors {
+  position: relative;
+  z-index: 5;
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 8px;
@@ -16417,34 +16419,40 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   background: rgba(225, 200, 155, 0.018);
 }
 
-.vehicle-duel__selectors label {
+.vehicle-duel__search-field {
+  position: relative;
   display: grid;
   min-width: 0;
   gap: 4px;
 }
 
-.vehicle-duel__selectors label > span { color: var(--text-dim); font-size: 8px; }
+.vehicle-duel__search-field > span:first-child { color: var(--text-dim); font-size: 8px; }
 
-.vehicle-duel__selector-search.global-vehicle-search__input {
-  display: flex;
-  height: 30px;
+.vehicle-duel__search-select {
+  position: relative;
+  display: grid;
+  height: 38px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 6px;
-  padding: 0 8px;
+  gap: 7px;
+  padding: 0 9px;
   border: 1px solid var(--border-strong);
   background: var(--surface-soft);
   box-shadow: none;
   backdrop-filter: none;
 }
 
-.vehicle-duel__selector-search.global-vehicle-search__input:focus-within {
+.vehicle-duel__search-select[data-open="true"] {
   border-color: var(--brand-strong);
   box-shadow: 0 0 0 1px rgba(225, 200, 155, 0.1);
 }
 
-.vehicle-duel__selector-search svg { flex: 0 0 auto; color: var(--brand); }
+.vehicle-duel__search-select > svg { color: var(--brand); }
+.vehicle-duel__search-select > svg:last-of-type { color: var(--text-dim); transition: transform 140ms ease; }
+.vehicle-duel__search-select[data-open="true"] > svg:last-of-type { transform: rotate(180deg); }
+.vehicle-duel__search-select[data-disabled="true"] { opacity: 0.58; }
 
-.vehicle-duel__selector-search input {
+.vehicle-duel__search-select > input {
   width: 100%;
   min-width: 0;
   border: 0;
@@ -16452,27 +16460,78 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   background: transparent;
   color: var(--text);
   font-family: var(--font-readable-display);
+  font-size: 9px;
+  text-overflow: ellipsis;
+}
+
+.vehicle-duel__search-select > input::placeholder { color: var(--text-dim); }
+.vehicle-duel__search-select > input::-webkit-search-cancel-button { cursor: pointer; }
+
+.vehicle-duel__search-results {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 5px);
+  right: -1px;
+  left: -1px;
+  display: grid;
+  max-height: 282px;
+  overflow-y: auto;
+  border: 1px solid var(--border-strong);
+  background: rgba(5, 9, 8, 0.985);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+}
+
+.vehicle-duel__search-results > button {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  padding: 8px 9px;
+  border: 0;
+  border-bottom: 1px solid rgba(128, 190, 187, 0.1);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+
+.vehicle-duel__search-results > button:last-child { border-bottom: 0; }
+.vehicle-duel__search-results > button[data-preview="true"] {
+  background: linear-gradient(90deg, rgba(102, 190, 190, 0.16), rgba(225, 200, 155, 0.05));
+  box-shadow: inset 2px 0 var(--analysis-flow-strong);
+}
+
+.vehicle-duel__search-results > button[data-selected="true"] strong { color: var(--brand); }
+
+.vehicle-duel__search-results > button strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--analysis-white);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vehicle-duel__search-results > button span {
+  color: var(--brand);
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.vehicle-duel__search-results > button small {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  color: var(--text-dim);
+  font-family: var(--font-mono-ui);
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vehicle-duel__search-results > small {
+  padding: 12px 9px;
+  color: var(--status-pending);
   font-size: 8px;
 }
-
-.vehicle-duel__selector-search input::placeholder { color: var(--text-dim); }
-.vehicle-duel__selector-search input::-webkit-search-cancel-button { cursor: pointer; }
-.vehicle-duel__selectors label > small { color: var(--status-pending); font-size: 7px; }
-
-.vehicle-duel__selectors select {
-  width: 100%;
-  min-width: 0;
-  height: 34px;
-  padding: 0 8px;
-  border: 1px solid var(--border-strong);
-  border-radius: 0;
-  background: var(--surface-soft);
-  color: var(--text);
-  font-family: var(--font-readable-display);
-  font-size: 9px;
-}
-
-.vehicle-duel__selectors select:disabled { color: var(--text-dim); }
 
 .vehicle-duel__target { display: grid; background: rgba(8, 10, 9, 0.72); }
 

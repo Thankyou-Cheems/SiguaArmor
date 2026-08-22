@@ -19,10 +19,16 @@ export interface VehicleDuelLethalPath extends WeaponHitDpsTarget {
   candidate: WeaponDpsRhythmCandidate;
 }
 
+export interface VehicleDuelAttackAttempt extends WeaponHitDpsTarget {
+  poolKind: "hull" | "ammo-rack";
+  candidate: WeaponDpsRhythmCandidate;
+}
+
 export interface VehicleDuelAttackResolution {
   lethalPath: VehicleDuelLethalPath | null;
   alternatives: VehicleDuelLethalPath[];
   actualSimulation: WeaponDpsSimulation | null;
+  actualTarget: WeaponHitDpsTarget | null;
 }
 
 export interface VehicleDuelResolution {
@@ -60,10 +66,11 @@ function resolveUninterruptedAttack(
   attack: VehicleDuelAttackInput,
   horizonSeconds: number,
 ) {
-  const alternatives = attack.targets
-    .flatMap((target): VehicleDuelLethalPath[] => {
+  const attempts = attack.targets
+    .flatMap((target): VehicleDuelAttackAttempt[] => {
+      const poolKind = target.poolKind;
       if (
-        (target.poolKind !== "hull" && target.poolKind !== "ammo-rack") ||
+        (poolKind !== "hull" && poolKind !== "ammo-rack") ||
         target.damagePerShot <= 0 ||
         target.maxHealth <= 0
       ) return [];
@@ -76,14 +83,21 @@ function resolveUninterruptedAttack(
           targetBurning: target.targetBurning ?? null,
         },
       ));
-      if (candidate.result.killTimeSeconds === null) return [];
       return [{
         ...target,
-        poolKind: target.poolKind,
-        timeSeconds: candidate.result.killTimeSeconds,
+        poolKind,
         candidate,
       }];
-    })
+    });
+  const alternatives = attempts
+    .flatMap((attempt): VehicleDuelLethalPath[] =>
+      attempt.candidate.result.killTimeSeconds === null
+        ? []
+        : [{
+            ...attempt,
+            poolKind: attempt.poolKind,
+            timeSeconds: attempt.candidate.result.killTimeSeconds,
+          }])
     .sort(
       (left, right) =>
         left.timeSeconds - right.timeSeconds ||
@@ -92,18 +106,28 @@ function resolveUninterruptedAttack(
           : left.poolKind === "ammo-rack" ? -1 : 1) ||
         left.key.localeCompare(right.key, "en"),
     );
+  const terminalAttempt = alternatives[0] ?? [...attempts].sort((left, right) => {
+    const leftProgress = left.candidate.result.totalDamage / left.maxHealth;
+    const rightProgress = right.candidate.result.totalDamage / right.maxHealth;
+    return rightProgress - leftProgress ||
+      (left.poolKind === right.poolKind
+        ? 0
+        : left.poolKind === "ammo-rack" ? -1 : 1) ||
+      left.key.localeCompare(right.key, "en");
+  })[0] ?? null;
   return {
     lethalPath: alternatives[0] ?? null,
     alternatives,
+    terminalAttempt,
   };
 }
 
 function truncateSimulation(
-  path: VehicleDuelLethalPath | null,
+  attempt: VehicleDuelAttackAttempt | null,
   cutoffSeconds: number | null,
 ): WeaponDpsSimulation | null {
-  if (!path) return null;
-  const source = path.candidate.result;
+  if (!attempt) return null;
+  const source = attempt.candidate.result;
   const cutoff = Math.max(
     0,
     Math.min(cutoffSeconds ?? source.elapsedSeconds, source.elapsedSeconds),
@@ -142,6 +166,8 @@ function truncateSimulation(
     overheatCount: overheatEvents.length,
     firstOverheatSeconds: overheatEvents[0]?.timeSeconds ?? null,
     killTimeSeconds,
+    ammoExhausted:
+      source.ammoExhausted && cutoff + EPSILON >= source.elapsedSeconds,
     elapsedSeconds: cutoff,
     finalTemperature:
       events.at(-1)?.temperature ?? source.heatRange?.min ?? null,
@@ -197,16 +223,18 @@ export function resolveVehicleDuel(
     leftAttack: {
       ...leftUninterrupted,
       actualSimulation: truncateSimulation(
-        leftUninterrupted.lethalPath,
+        leftUninterrupted.terminalAttempt,
         decisiveTimeSeconds,
       ),
+      actualTarget: leftUninterrupted.terminalAttempt,
     },
     rightAttack: {
       ...rightUninterrupted,
       actualSimulation: truncateSimulation(
-        rightUninterrupted.lethalPath,
+        rightUninterrupted.terminalAttempt,
         decisiveTimeSeconds,
       ),
+      actualTarget: rightUninterrupted.terminalAttempt,
     },
   };
 }

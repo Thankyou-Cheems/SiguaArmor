@@ -2433,6 +2433,9 @@ function hitDpsTimingFacts(
   if (simulation.burnDamage > 0) {
     facts.push({ label: "正常自燃", value: metricText(simulation.burnDamage) });
   }
+  if (simulation.ammoExhausted) {
+    facts.push({ label: "备弹", value: `${simulation.shots} 发已耗尽` });
+  }
   if (simulation.killTimeSeconds !== null) {
     facts.push({ label: "总计", value: `${simulation.killTimeSeconds.toFixed(2)} s` });
   }
@@ -2457,6 +2460,7 @@ function hitDpsEstimateTimeLabel(estimate: WeaponHitDpsEstimate) {
   if (candidate.result.shots === 1 && candidate.result.killTimeSeconds === 0) {
     return "单发";
   }
+  if (candidate.result.ammoExhausted) return "弹药耗尽";
   return candidate.result.killTimeSeconds === null
     ? `>${candidate.result.elapsedSeconds.toFixed(1)} s`
     : `${candidate.result.killTimeSeconds.toFixed(2)} s`;
@@ -2512,7 +2516,7 @@ function HitDpsTimingCard({
   }
   if (factsState === "unavailable") {
     return (
-      <HitDpsFold resultLabel="数据不可用" state="unavailable">
+      <HitDpsFold resultLabel="暂无DPS数据" state="unavailable">
         <p className="viewer-hit-dps-timing__reason">
           {factsUnavailableReason ?? "Wiki 没有返回唯一的精确 assignment，已保留单发伤害结算，不猜测击毁时间。"}
         </p>
@@ -2535,16 +2539,20 @@ function HitDpsTimingCard({
   const primaryOutcomeLabel = primaryEstimate.poolKind === "hull"
     ? "击毁载具"
     : `打坏${primaryPoolLabel}`;
-  const primaryTimeLabel = primarySimulation.killTimeSeconds === null
-    ? `>${primarySimulation.elapsedSeconds.toFixed(1)} s`
-    : `${primarySimulation.killTimeSeconds.toFixed(2)} s`;
+  const primaryTimeLabel = primarySimulation.ammoExhausted
+    ? "弹药耗尽"
+    : primarySimulation.killTimeSeconds === null
+      ? `>${primarySimulation.elapsedSeconds.toFixed(1)} s`
+      : `${primarySimulation.killTimeSeconds.toFixed(2)} s`;
   const primaryIsOneShot =
     primarySimulation.shots === 1 && primarySimulation.killTimeSeconds === 0;
-  const primaryResultLabel = primaryIsOneShot
-    ? primaryEstimate.poolKind === "hull"
-      ? "单发摧毁"
-      : `单发打坏${primaryPoolLabel}`
-    : `${primaryTimeLabel} ${primaryOutcomeLabel}`;
+  const primaryResultLabel = primarySimulation.ammoExhausted
+    ? "弹药耗尽"
+    : primaryIsOneShot
+      ? primaryEstimate.poolKind === "hull"
+        ? "单发摧毁"
+        : `单发打坏${primaryPoolLabel}`
+      : `${primaryTimeLabel} ${primaryOutcomeLabel}`;
   const primaryPlanLabel = primaryPlan.mode === "burn"
     ? "连续射击"
     : `每 ${primaryPlan.burstSize} 发短停 ${primaryPlan.pauseSeconds.toFixed(2)} s`;
@@ -2574,7 +2582,7 @@ function HitDpsTimingCard({
   const timelineTargetLabel = editorPoolLabel(timelineEstimate.poolKind);
   if (primarySimulation.unavailableReason) {
     return (
-      <HitDpsFold resultLabel="数据不可用" state="unavailable">
+      <HitDpsFold resultLabel="暂无DPS数据" state="unavailable">
         <p className="viewer-hit-dps-timing__reason">{primarySimulation.unavailableReason}</p>
       </HitDpsFold>
     );
@@ -2644,7 +2652,11 @@ function HitDpsTimingCard({
             return (
               <li key={estimate.key}>
                 <span>{editorPoolLabel(estimate.poolKind)}</span>
-                <b>{time === null ? `>${candidate.result.elapsedSeconds.toFixed(1)} s` : `${time.toFixed(2)} s`}</b>
+                <b>{candidate.result.ammoExhausted
+                  ? "弹药耗尽"
+                  : time === null
+                    ? `>${candidate.result.elapsedSeconds.toFixed(1)} s`
+                    : `${time.toFixed(2)} s`}</b>
               </li>
             );
           })}
