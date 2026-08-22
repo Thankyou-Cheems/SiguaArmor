@@ -2,14 +2,25 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const [catalogSource, groupingSource, viewerSource, runtimeOnlySource, styles, damageTypeSource] = await Promise.all([
+const [catalogSource, groupingSource, viewerSource, runtimeOnlySource, rendererSource, styles, damageTypeSource] = await Promise.all([
   readFile(new URL("../../app/CatalogApp.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/vehicle-card-grouping.ts", import.meta.url), "utf8"),
   readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/RuntimeViewerOnlyPage.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../../lib/hit-scene-three-renderer.ts", import.meta.url), "utf8"),
   readFile(new URL("../../app/globals.css", import.meta.url), "utf8"),
   readFile(new URL("../../lib/vehicle-damage-type-icons.ts", import.meta.url), "utf8"),
 ]);
+
+test("explosion coverage preserves armor opacity and projects elevated ranges to ground", () => {
+  assert.doesNotMatch(
+    rendererSource,
+    /alpha\s*=\s*max\(alpha,\s*settledDamageHighlight/u,
+  );
+  assert.match(viewerSource, /radialDamageGroundIntersectionRadiusM/u);
+  assert.match(viewerSource, /editor-native-shot-explosion-ground-height-label/u);
+  assert.match(viewerSource, /paintShotExplosionGroundHeight/u);
+});
 
 test("standalone runtime preview loads vehicle mechanics before radial coverage", () => {
   assert.match(runtimeOnlySource, /loadWikiVehicleFactionMechanics/u);

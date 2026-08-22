@@ -316,10 +316,9 @@ const FRAGMENT_SHADER = `
         1.0 - abs(normalize(vViewNormal).z),
         1.45
       );
-      float damageTint = settledDamageHighlight * mix(0.68, 0.94, damageRim);
+      float damageTint = settledDamageHighlight * mix(0.16, 0.3, damageRim);
       shaded = mix(shaded, damageHighlightColor, damageTint);
-      shaded += damageHighlightColor * settledDamageHighlight * (0.2 + damageRim * 0.24);
-      alpha = max(alpha, settledDamageHighlight * 0.9);
+      shaded += damageHighlightColor * settledDamageHighlight * (0.025 + damageRim * 0.045);
     }
 
     // A spaced plate is an analysis surface, not an opaque replacement for

@@ -4,9 +4,20 @@ import test from "node:test";
 import {
   buildRadialDamageVisualizationPlan,
   radialDamageCoverageState,
+  radialDamageGroundIntersectionRadiusM,
   radialDamageLegendPlacement,
   RADIAL_DAMAGE_VISUAL_TIMING_MS,
 } from "../../lib/radial-damage-visualization.ts";
+
+test("elevated blast radius projects the exact sphere intersection onto ground", () => {
+  assert.equal(radialDamageGroundIntersectionRadiusM(8, 0), 8);
+  assert.ok(
+    Math.abs(radialDamageGroundIntersectionRadiusM(8, 6) - Math.sqrt(28))
+      < 1e-12,
+  );
+  assert.equal(radialDamageGroundIntersectionRadiusM(8, 8), 0);
+  assert.equal(radialDamageGroundIntersectionRadiusM(8, 12), 0);
+});
 
 test("dynamic explosion coverage distinguishes damage, clear space, and unknown queries", () => {
   assert.equal(radialDamageCoverageState(radialShot()), "covered");

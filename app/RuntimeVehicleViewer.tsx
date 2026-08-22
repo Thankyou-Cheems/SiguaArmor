@@ -66,6 +66,7 @@ import {
 import {
   buildRadialDamageVisualizationPlan,
   radialDamageCoverageState,
+  radialDamageGroundIntersectionRadiusM,
   radialDamageLegendPlacement,
   RADIAL_DAMAGE_VISUAL_TIMING_MS,
 } from "../lib/radial-damage-visualization";
@@ -1628,6 +1629,9 @@ interface ShotExplosionLayerVisual {
   >;
   originTether: THREE.Line<THREE.BufferGeometry, THREE.LineDashedMaterial>;
   impactAnchor: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
+  groundHeightLabel: THREE.Sprite;
+  groundHeightLabelCanvas: HTMLCanvasElement;
+  groundHeightLabelTexture: THREE.CanvasTexture;
   originLabel: THREE.Sprite;
   originLabelCanvas: HTMLCanvasElement;
   originLabelTexture: THREE.CanvasTexture;
@@ -2861,6 +2865,30 @@ function paintShotExplosionOriginLabel(
   visual.originLabelTexture.needsUpdate = true;
 }
 
+function paintShotExplosionGroundHeight(
+  visual: ShotExplosionLayerVisual,
+  heightM: number,
+) {
+  const label = `${heightM.toFixed(1)} m`;
+  if (visual.groundHeightLabel.userData.heightLabel === label) return;
+  visual.groundHeightLabel.userData.heightLabel = label;
+  const canvas = visual.groundHeightLabelCanvas;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "rgba(3, 8, 11, 0.88)";
+  context.fillRect(2, 2, canvas.width - 4, canvas.height - 4);
+  context.strokeStyle = "rgba(255, 214, 127, 0.82)";
+  context.lineWidth = 2;
+  context.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+  context.fillStyle = "#ffe0a2";
+  context.font = "700 24px ui-monospace, SFMono-Regular, Consolas, monospace";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(label, canvas.width / 2, canvas.height / 2 + 1);
+  visual.groundHeightLabelTexture.needsUpdate = true;
+}
+
 function updateShotExplosionDamageTypeIconPosition(
   visual: ShotExplosionLayerVisual,
   camera: THREE.Camera,
@@ -3045,6 +3073,31 @@ function createShotExplosionLayerVisual(
   impactAnchor.renderOrder = renderOrder + 4;
   root.add(impactAnchor);
 
+  const groundHeightLabelCanvas = document.createElement("canvas");
+  groundHeightLabelCanvas.width = 160;
+  groundHeightLabelCanvas.height = 56;
+  const groundHeightLabelTexture = new THREE.CanvasTexture(
+    groundHeightLabelCanvas,
+  );
+  groundHeightLabelTexture.colorSpace = THREE.SRGBColorSpace;
+  groundHeightLabelTexture.minFilter = THREE.LinearFilter;
+  groundHeightLabelTexture.magFilter = THREE.LinearFilter;
+  groundHeightLabelTexture.generateMipmaps = false;
+  const groundHeightLabel = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: groundHeightLabelTexture,
+      transparent: true,
+      opacity: 0,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  groundHeightLabel.name = "editor-native-shot-explosion-ground-height-label";
+  groundHeightLabel.renderOrder = renderOrder + 5;
+  groundHeightLabel.scale.set(0.7, 0.245, 1);
+  root.add(groundHeightLabel);
+
   const originLabelCanvas = document.createElement("canvas");
   originLabelCanvas.width = 320;
   originLabelCanvas.height = 88;
@@ -3120,6 +3173,9 @@ function createShotExplosionLayerVisual(
     exactRadiusRing,
     originTether,
     impactAnchor,
+    groundHeightLabel,
+    groundHeightLabelCanvas,
+    groundHeightLabelTexture,
     originLabel,
     originLabelCanvas,
     originLabelTexture,
@@ -3143,6 +3199,7 @@ function createShotExplosionLayerVisual(
     shotExplosionColor("generic"),
   );
   paintShotExplosionOriginLabel(visual, "车辆部件", 0);
+  paintShotExplosionGroundHeight(visual, 0);
   return visual;
 }
 
@@ -3237,6 +3294,8 @@ function clearShotExplosionLayerVisual(visual: ShotExplosionLayerVisual) {
   visual.exactRadiusRing.material.opacity = 0;
   visual.originTether.material.opacity = 0;
   visual.impactAnchor.material.opacity = 0;
+  visual.groundHeightLabel.visible = false;
+  visual.groundHeightLabel.material.opacity = 0;
   visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = 0;
   visual.dragHandle.visible = false;
@@ -3269,6 +3328,8 @@ function settleShotExplosionLayerVisual(
   visual.originTether.material.opacity = offsetVisible ? 0.9 : 0;
   visual.impactAnchor.visible = offsetVisible;
   visual.impactAnchor.material.opacity = offsetVisible ? 0.98 : 0;
+  visual.groundHeightLabel.visible = false;
+  visual.groundHeightLabel.material.opacity = 0;
   visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = 0.96;
   visual.dragHandle.visible = visual.showOriginLabel;
@@ -3336,6 +3397,8 @@ function setShotExplosionLayerAnimationFrame(
   visual.originTether.material.opacity = offsetVisible ? iconReveal * 0.9 : 0;
   visual.impactAnchor.visible = offsetVisible;
   visual.impactAnchor.material.opacity = offsetVisible ? iconReveal * 0.98 : 0;
+  visual.groundHeightLabel.visible = false;
+  visual.groundHeightLabel.material.opacity = 0;
   visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = iconReveal * 0.96;
   visual.dragHandle.visible = visual.showOriginLabel;
@@ -6523,6 +6586,35 @@ export function RuntimeVehicleViewer({
       const activeExplosionRecord = shotRecordsRef.current.find(
         (record) => record.shotId === activeShotIdRef.current,
       );
+      const groundPlaneY = (gridHelper?.position.y ?? 0) + 0.02;
+      activeExplosionRecord?.visual.explosionLayers.forEach((layer) => {
+        if (!layer.configured || !layer.root.visible) return;
+        layer.root.updateMatrixWorld(true);
+        const layerWorldOrigin = layer.root.getWorldPosition(new THREE.Vector3());
+        const heightFromGroundM = Math.abs(layerWorldOrigin.y - groundPlaneY);
+        const groundRadiusM = radialDamageGroundIntersectionRadiusM(
+          layer.outerRadiusM,
+          heightFromGroundM,
+        );
+        const groundLocal = layer.root.worldToLocal(
+          new THREE.Vector3(
+            layerWorldOrigin.x,
+            groundPlaneY,
+            layerWorldOrigin.z,
+          ),
+        );
+        layer.groundArea.position.copy(groundLocal);
+        layer.groundArea.position.y += 0.006;
+        layer.exactRadiusRing.position.copy(groundLocal);
+        layer.exactRadiusRing.position.y += 0.012;
+        const groundVisible = groundRadiusM > 0.001;
+        layer.groundArea.visible = groundVisible;
+        layer.exactRadiusRing.visible = groundVisible;
+        if (groundVisible) {
+          layer.groundArea.scale.setScalar(groundRadiusM);
+          layer.exactRadiusRing.scale.setScalar(groundRadiusM);
+        }
+      });
       const activeExplosionLayer = activeExplosionRecord?.visual.explosionLayers.find(
         (layer) => layer.configured && layer.root.visible && layer.showOriginLabel,
       );
@@ -6546,10 +6638,13 @@ export function RuntimeVehicleViewer({
         }
         const detached = Boolean(activeExplosionRecord?.radialOriginOverrideM);
         explosionHud.dataset.detached = String(detached);
-        const groundY = gridHelper?.position.y ?? 0;
         if (activeExplosionLayer && detached) {
+          const heightAboveGroundM = Math.max(
+            0,
+            worldOrigin.y - groundPlaneY,
+          );
           const groundLocal = activeExplosionLayer.root.worldToLocal(
-            new THREE.Vector3(worldOrigin.x, groundY + 0.02, worldOrigin.z),
+            new THREE.Vector3(worldOrigin.x, groundPlaneY, worldOrigin.z),
           );
           activeExplosionLayer.originTether.geometry.setFromPoints([
             new THREE.Vector3(),
@@ -6562,12 +6657,24 @@ export function RuntimeVehicleViewer({
           activeExplosionLayer.impactAnchor.position.copy(groundLocal);
           activeExplosionLayer.impactAnchor.visible = tetherVisible;
           activeExplosionLayer.impactAnchor.material.opacity = tetherVisible ? 0.98 : 0;
+          activeExplosionLayer.groundHeightLabel.position
+            .copy(groundLocal)
+            .multiplyScalar(0.5);
+          activeExplosionLayer.groundHeightLabel.position.x += 0.32;
+          paintShotExplosionGroundHeight(
+            activeExplosionLayer,
+            heightAboveGroundM,
+          );
+          activeExplosionLayer.groundHeightLabel.visible = tetherVisible;
+          activeExplosionLayer.groundHeightLabel.material.opacity = tetherVisible ? 1 : 0;
         } else if (activeExplosionLayer) {
           const offsetVisible = Math.abs(activeExplosionLayer.originOffsetM) > 0.025;
           activeExplosionLayer.originTether.visible = offsetVisible;
           activeExplosionLayer.originTether.material.opacity = offsetVisible ? 0.9 : 0;
           activeExplosionLayer.impactAnchor.visible = offsetVisible;
           activeExplosionLayer.impactAnchor.material.opacity = offsetVisible ? 0.98 : 0;
+          activeExplosionLayer.groundHeightLabel.visible = false;
+          activeExplosionLayer.groundHeightLabel.material.opacity = 0;
         }
       } else if (explosionHud) {
         explosionHud.hidden = true;

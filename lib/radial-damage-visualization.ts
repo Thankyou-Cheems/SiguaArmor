@@ -56,6 +56,16 @@ export const RADIAL_DAMAGE_VISUAL_TIMING_MS = Object.freeze({
   fade: 260,
 });
 
+export function radialDamageGroundIntersectionRadiusM(
+  radiusM: number,
+  heightAboveGroundM: number,
+) {
+  const radius = Math.max(0, radiusM);
+  const height = Math.max(0, heightAboveGroundM);
+  if (height >= radius) return 0;
+  return Math.sqrt(Math.max(0, radius * radius - height * height));
+}
+
 export interface RadialDamageLegendPlacement {
   angleOffsetRad: number;
 }
