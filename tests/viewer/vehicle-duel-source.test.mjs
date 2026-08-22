@@ -62,11 +62,21 @@ test("catalog entry uses client navigation so warm module caches survive launch"
 test("duel reuses catalog search ranking for both vehicles and weapons", () => {
   assert.match(app, /rankVehicleCandidateSearch/u);
   assert.match(app, /rankVerifiedVehicleCandidateSearch/u);
-  assert.match(app, /placeholder="搜索名称 \/ 俗称 \/ 拼音"/u);
-  assert.match(app, /placeholder="搜索武器 \/ 弹种"/u);
+  assert.match(app, /function DuelSearchSelect/u);
+  assert.match(app, /role="combobox"/u);
+  assert.match(app, /role="listbox"/u);
+  assert.match(app, /data-preview/u);
+  assert.doesNotMatch(app, /<select/u);
   assert.match(cacheModule, /searchPrimary/u);
   assert.match(cacheModule, /searchAliases/u);
   assert.match(cacheModule, /searchContext/u);
+});
+
+test("DPS empty states and finite ammunition use player-facing terminal labels", () => {
+  assert.doesNotMatch(viewer, /resultLabel="数据不可用"/u);
+  assert.match(viewer, /resultLabel="暂无DPS数据"/u);
+  assert.match(viewer, /ammoExhausted/u);
+  assert.match(app, /弹药耗尽/u);
 });
 
 test("duel exposes exterior view, synchronized display controls, and one trace per target", () => {
@@ -77,7 +87,7 @@ test("duel exposes exterior view, synchronized display controls, and one trace p
   assert.match(app, /className="viewer-protection-switch"/u);
   assert.match(app, /viewer-protection-switch__track/u);
   assert.match(app, /viewer-mode-tabs vehicle-duel__mode-tabs/u);
-  assert.match(app, /global-vehicle-search__input/u);
+  assert.match(app, /vehicle-duel__search-select/u);
   assert.match(app, /displayOverrides=\{displayOverrides\}/u);
   assert.equal((app.match(/shotTraceLimit=\{1\}/gu) ?? []).length, 1);
   assert.match(viewer, /shotTraceLimit = MAX_SHOT_TRACES/u);

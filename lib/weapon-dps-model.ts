@@ -39,6 +39,8 @@ export interface WeaponDpsWeapon {
   damagePerShot: number | null;
   timeBetweenShotsSeconds: number | null;
   magazineSize: number | null;
+  /** Total rounds carried by this exact assignment. Null/undefined remains unknown. */
+  totalRounds?: number | null;
   tacticalReloadSeconds: number | null;
   dryReloadSeconds: number | null;
   overheat: WeaponDpsOverheatProfile | null;
@@ -116,6 +118,7 @@ export interface WeaponDpsSimulation {
   overheatCount: number;
   firstOverheatSeconds: number | null;
   killTimeSeconds: number | null;
+  ammoExhausted: boolean;
   elapsedSeconds: number;
   finalTemperature: number | null;
   events: WeaponDpsEvent[];
@@ -329,6 +332,7 @@ export function simulateWeaponRhythm(
       overheatCount: 0,
       firstOverheatSeconds: null,
       killTimeSeconds: null,
+      ammoExhausted: false,
       elapsedSeconds: 0,
       finalTemperature: minimum,
       events,
@@ -380,6 +384,7 @@ export function simulateWeaponRhythm(
       overheatCount: overheated ? 1 : 0,
       firstOverheatSeconds: overheated ? 0 : null,
       killTimeSeconds: 0,
+      ammoExhausted: false,
       elapsedSeconds: 0,
       finalTemperature: temperature,
       events,
@@ -412,6 +417,7 @@ export function simulateWeaponRhythm(
       overheatCount: 0,
       firstOverheatSeconds: null,
       killTimeSeconds: null,
+      ammoExhausted: false,
       elapsedSeconds: 0,
       finalTemperature: minimum,
       events,
@@ -441,6 +447,9 @@ export function simulateWeaponRhythm(
   let burnTimerActive = false;
   let nextBurnTickSeconds: number | null = null;
   let guard = 0;
+  const totalRoundLimit = finitePositive(weapon.totalRounds)
+    ? Math.max(1, Math.floor(weapon.totalRounds as number))
+    : null;
 
   const coolTo = (targetSeconds: number) => {
     const bounded = Math.max(0, targetSeconds - elapsedSeconds);
@@ -503,6 +512,20 @@ export function simulateWeaponRhythm(
     killTimeSeconds === null &&
     guard++ < MAX_EVENTS
   ) {
+    if (totalRoundLimit !== null && shots >= totalRoundLimit) {
+      // Ammunition stops further shots, not an already-active vehicle burn
+      // timer. Let the native periodic damage finish before declaring that the
+      // carried load cannot destroy the target.
+      if (
+        burnTimerActive &&
+        targetBurning &&
+        targetBurning.damageModifier > 0
+      ) {
+        advance(horizonSeconds - elapsedSeconds);
+      }
+      break;
+    }
+
     if (overheated && profile && unlockAt !== null && profile.coolingRatePerSecond) {
       const coolSeconds = Math.max(
         0,
@@ -645,6 +668,10 @@ export function simulateWeaponRhythm(
     overheatCount,
     firstOverheatSeconds,
     killTimeSeconds,
+    ammoExhausted:
+      killTimeSeconds === null &&
+      totalRoundLimit !== null &&
+      shots >= totalRoundLimit,
     elapsedSeconds: Math.min(elapsedSeconds, horizonSeconds),
     finalTemperature: temperature,
     events,

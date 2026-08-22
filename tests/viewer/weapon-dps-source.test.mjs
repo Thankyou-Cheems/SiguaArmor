@@ -36,6 +36,7 @@ const sampleCatalog = {
         displayName: "2A42 AP",
         gunName: "BP_BMP2_2A42_AP",
         maxDamageToApply: 300,
+        numberOfMags: 4,
         magSize: 100,
         tacticalReloadDurationSeconds: 4,
         dryReloadDurationSeconds: 4,
@@ -54,6 +55,7 @@ test("Wiki adapter keeps exact assignment identity and carries the thermal profi
   assert.equal(result.weapons.length, 1);
   assert.equal(result.weapons[0].assignmentId, "assignment-exact");
   assert.equal(result.weapons[0].sourceRawName, "BP_BMP2_AFU");
+  assert.equal(result.weapons[0].totalRounds, 400);
   assert.equal(result.weapons[0].overheat?.triggerAt, 108);
   assert.equal(
     resolveWeaponDpsWeaponForRuntimeAssignment(result.weapons, {
@@ -132,6 +134,7 @@ test("Wiki infantry configurations remain selectable as separate assignments", (
       factions: ["TEST"],
       weaponInfo: {
         timeBetweenShots: 0.1,
+        numberOfMags: 7,
         magSize: 30,
         maxDamageToApply: 60,
         tacticalReloadDuration: 2,
@@ -145,6 +148,7 @@ test("Wiki infantry configurations remain selectable as separate assignments", (
   assert.ok(rifle);
   assert.equal(rifle.timeBetweenShotsSeconds, 0.1);
   assert.equal(rifle.damagePerShot, 60);
+  assert.equal(rifle.totalRounds, 210);
   assert.equal(rifle.sourceRawName, "BP_TEST_RIFLE");
 });
 

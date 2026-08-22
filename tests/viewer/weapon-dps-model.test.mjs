@@ -152,6 +152,75 @@ test("single-round reload and fire interval overlap instead of doubling missile 
   );
 });
 
+test("finite reserve ammo stops after the last carried round without inventing a rearm", () => {
+  const result = simulateWeaponRhythm(
+    {
+      ...cannon,
+      id: "four-round-atgm",
+      damagePerShot: 100,
+      timeBetweenShotsSeconds: 12,
+      magazineSize: 1,
+      totalRounds: 4,
+      tacticalReloadSeconds: 12,
+      dryReloadSeconds: 12,
+      overheat: null,
+    },
+    {
+      targetHealth: 1000,
+      horizonSeconds: 180,
+      mode: "burn",
+      burstSize: 1,
+      pauseSeconds: 0,
+      useMagazineReload: true,
+    },
+  );
+
+  assert.equal(result.killTimeSeconds, null);
+  assert.equal(result.ammoExhausted, true);
+  assert.equal(result.shots, 4);
+  assert.equal(result.reloads, 3);
+  assert.equal(result.elapsedSeconds, 36);
+  assert.equal(result.events.at(-1)?.kind, "shot");
+  assert.equal(result.events.at(-1)?.timeSeconds, 36);
+});
+
+test("target burning continues after the final carried round and can still destroy the vehicle", () => {
+  const result = simulateWeaponRhythm(
+    {
+      ...cannon,
+      damagePerShot: 60,
+      timeBetweenShotsSeconds: 10,
+      magazineSize: 1,
+      totalRounds: 1,
+      tacticalReloadSeconds: 10,
+      dryReloadSeconds: 10,
+      overheat: null,
+    },
+    {
+      targetHealth: 100,
+      horizonSeconds: 20,
+      mode: "burn",
+      burstSize: 1,
+      pauseSeconds: 0,
+      useMagazineReload: true,
+      targetBurning: {
+        state: "observed",
+        vehicleState: "normal",
+        startHealthFraction: 0.5,
+        healthFractionPerSecond: 0.1,
+        damageModifier: 1,
+        tickIntervalSeconds: 1,
+        startDelaySeconds: 1,
+      },
+    },
+  );
+
+  assert.equal(result.killTimeSeconds, 4);
+  assert.equal(result.ammoExhausted, false);
+  assert.equal(result.shots, 1);
+  assert.equal(result.burnDamage, 40);
+});
+
 test("automatic rhythm optimization chooses the fastest schedule instead of exposing a fixed user pause", () => {
   const result = optimizeWeaponRhythm(cannon, {
     targetHealth: 100_000,

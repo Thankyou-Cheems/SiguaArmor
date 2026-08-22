@@ -74,6 +74,26 @@ test("victory margin stays unavailable when the losing side has no lethal path",
   assert.equal(vehicleDuelVictoryMarginSeconds(result), null);
 });
 
+test("an exhausted nonlethal attack stays visible without an invented rearm", () => {
+  const result = resolveVehicleDuel({
+    leftAttack: {
+      weapon: { ...weapon("left"), totalRounds: 2, magazineSize: 1 },
+      targets: [target("right-hull", "hull", 1000, 100)],
+    },
+    rightAttack: {
+      weapon: { ...weapon("right"), totalRounds: 2, magazineSize: 1 },
+      targets: [target("left-hull", "hull", 1000, 100)],
+    },
+  });
+
+  assert.equal(result.winner, "unresolved");
+  assert.equal(result.leftAttack.actualSimulation?.ammoExhausted, true);
+  assert.equal(result.leftAttack.actualSimulation?.shots, 2);
+  assert.equal(result.leftAttack.actualSimulation?.reloads, 1);
+  assert.equal(result.leftAttack.actualTarget?.poolKind, "hull");
+  assert.equal(result.rightAttack.actualSimulation?.ammoExhausted, true);
+});
+
 test("hull destruction still wins when it happens before a damaged ammo rack", () => {
   const result = resolveVehicleDuel({
     leftAttack: {

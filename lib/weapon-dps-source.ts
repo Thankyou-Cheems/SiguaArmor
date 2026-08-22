@@ -68,6 +68,13 @@ function positive(value: unknown) {
   return number !== null && number > 0 ? number : null;
 }
 
+function totalRounds(numberOfMags: unknown, magazineSize: unknown) {
+  const magazines = positive(numberOfMags);
+  const roundsPerMagazine = positive(magazineSize);
+  if (magazines === null || roundsPerMagazine === null) return null;
+  return Math.max(1, Math.floor(magazines * roundsPerMagazine));
+}
+
 function canonicalProfile(profile: UnknownRecord): WeaponDpsOverheatProfile | null {
   const state = profile.state;
   if (state !== "observed" && state !== "projected" && state !== "unknown") {
@@ -199,6 +206,7 @@ export function weaponDpsWeaponsFromWikiDocument(
         nonNegative(equipment.maxDamageToApply),
       timeBetweenShotsSeconds: interval,
       magazineSize: positive(equipment.magSize),
+      totalRounds: totalRounds(equipment.numberOfMags, equipment.magSize),
       tacticalReloadSeconds: positive(equipment.tacticalReloadDurationSeconds),
       dryReloadSeconds: positive(equipment.dryReloadDurationSeconds),
       overheat: profile,
@@ -250,6 +258,7 @@ export function weaponDpsWeaponsFromWikiDocument(
         nonNegative(weaponInfo.maxDamageToApply),
       timeBetweenShotsSeconds: interval,
       magazineSize: positive(weaponInfo.magSize),
+      totalRounds: totalRounds(weaponInfo.numberOfMags, weaponInfo.magSize),
       tacticalReloadSeconds: positive(weaponInfo.tacticalReloadDuration),
       dryReloadSeconds: positive(weaponInfo.dryReloadDuration),
       overheat: profile,
