@@ -7356,6 +7356,177 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: var(--analysis-flow);
 }
 
+.viewer-explosion-origin-hud {
+  position: absolute;
+  z-index: 12;
+  top: 0;
+  left: 0;
+  display: flex;
+  min-height: 28px;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 5px 3px 3px;
+  border: 1px solid rgba(255, 188, 84, 0.78);
+  background: rgba(4, 8, 7, 0.88);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.66), 0 0 16px rgba(255, 188, 84, 0.28);
+  color: #ffce78;
+  pointer-events: none;
+  transform:
+    translate3d(var(--explosion-hud-x, -100px), var(--explosion-hud-y, -100px), 0)
+    translate(-50%, -50%);
+  animation: viewer-explosion-origin-pulse 1.15s ease-in-out infinite;
+}
+
+.viewer-explosion-origin-hud[hidden] {
+  display: none;
+}
+
+.viewer-explosion-origin-hud[data-placement="true"] {
+  padding-right: 7px;
+}
+
+.viewer-explosion-origin-hud[data-placement="true"]
+  .viewer-explosion-origin-hud__move {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.viewer-explosion-origin-hud[data-placement="true"]
+  .viewer-explosion-origin-hud__move::before {
+  inset: -17px;
+  border-width: 2px;
+  border-radius: 50%;
+}
+
+.viewer-explosion-origin-hud[data-placement="true"]
+  .viewer-explosion-origin-hud__move::after {
+  position: absolute;
+  width: 66px;
+  height: 66px;
+  background:
+    linear-gradient(currentcolor, currentcolor) 50% 0 / 1px 14px no-repeat,
+    linear-gradient(currentcolor, currentcolor) 50% 100% / 1px 14px no-repeat,
+    linear-gradient(90deg, currentcolor, currentcolor) 0 50% / 14px 1px no-repeat,
+    linear-gradient(90deg, currentcolor, currentcolor) 100% 50% / 14px 1px no-repeat;
+  content: "";
+  opacity: 0.76;
+}
+
+.viewer-explosion-origin-hud[data-detached="true"] {
+  border-color: color-mix(in srgb, var(--analysis-flow) 78%, white 8%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.66),
+    0 0 18px color-mix(in srgb, var(--analysis-flow) 34%, transparent);
+  color: var(--analysis-flow-strong);
+  animation: none;
+}
+
+.viewer-explosion-origin-hud__move {
+  position: relative;
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid currentcolor;
+  background: color-mix(in srgb, currentcolor 12%, transparent);
+}
+
+.viewer-explosion-origin-hud__move::before {
+  position: absolute;
+  inset: -5px;
+  border: 1px solid currentcolor;
+  content: "";
+  opacity: 0.32;
+  animation: viewer-explosion-origin-ring 1.15s ease-out infinite;
+}
+
+.viewer-explosion-origin-hud b,
+.viewer-explosion-origin-hud kbd,
+.viewer-explosion-origin-hud em,
+.viewer-explosion-origin-hud__offset {
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
+  font-style: normal;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.viewer-explosion-origin-hud__offset {
+  padding: 3px 5px;
+  border: 1px solid rgba(255, 209, 102, 0.42);
+  background: rgba(255, 188, 84, 0.1);
+  color: #ffe0a2;
+}
+
+.viewer-explosion-origin-hud__coverage {
+  padding: 3px 5px;
+  border: 1px solid currentcolor;
+  font-family: var(--font-mono-ui);
+  font-size: 8px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.viewer-explosion-origin-hud__coverage[data-state="covered"] {
+  background: rgba(132, 226, 217, 0.13);
+  color: #a7eee7;
+}
+
+.viewer-explosion-origin-hud__coverage[data-state="clear"] {
+  background: rgba(255, 141, 120, 0.12);
+  color: #ffad9e;
+}
+
+.viewer-explosion-origin-hud__coverage[data-state="unknown"] {
+  background: rgba(255, 214, 127, 0.08);
+  color: var(--text-muted);
+}
+
+.viewer-explosion-origin-hud kbd {
+  padding: 3px 4px;
+  border: 1px solid rgba(225, 200, 155, 0.28);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text-muted);
+}
+
+.viewer-explosion-origin-hud em {
+  min-width: 18px;
+  padding: 3px 4px;
+  background: rgba(255, 91, 78, 0.17);
+  color: var(--analysis-damage-strong);
+  text-align: center;
+}
+
+.viewer-explosion-origin-hud button {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--analysis-flow) 48%, transparent);
+  background: rgba(5, 10, 9, 0.9);
+  color: var(--analysis-flow-strong);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.viewer-explosion-origin-hud button:hover,
+.viewer-explosion-origin-hud button:focus-visible {
+  border-color: var(--analysis-flow-strong);
+  background: color-mix(in srgb, var(--analysis-flow) 16%, rgba(5, 10, 9, 0.94));
+}
+
+@keyframes viewer-explosion-origin-pulse {
+  0%, 100% { transform: translate3d(var(--explosion-hud-x, -100px), var(--explosion-hud-y, -100px), 0) translate(-50%, -50%) scale(1); }
+  50% { transform: translate3d(var(--explosion-hud-x, -100px), var(--explosion-hud-y, -100px), 0) translate(-50%, -50%) scale(1.045); }
+}
+
+@keyframes viewer-explosion-origin-ring {
+  from { opacity: 0.45; transform: scale(0.78); }
+  to { opacity: 0; transform: scale(1.32); }
+}
+
 .viewer-shot-outcome-summary {
   display: grid;
   min-width: 0;

@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, CircleDot, RotateCcw } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
@@ -65,6 +65,7 @@ import {
 } from "./runtime-attack-ballistics-model";
 import {
   buildRadialDamageVisualizationPlan,
+  radialDamageCoverageState,
   radialDamageLegendPlacement,
   RADIAL_DAMAGE_VISUAL_TIMING_MS,
 } from "../lib/radial-damage-visualization";
@@ -1620,24 +1621,41 @@ interface ShotExplosionLayerVisual {
     THREE.SphereGeometry,
     ShotExplosionPressureSurfaceMaterial
   >;
+  groundArea: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>;
   exactRadiusRing: THREE.LineLoop<
     THREE.BufferGeometry,
     THREE.LineBasicMaterial
   >;
   originTether: THREE.Line<THREE.BufferGeometry, THREE.LineDashedMaterial>;
+  impactAnchor: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
   originLabel: THREE.Sprite;
   originLabelCanvas: HTMLCanvasElement;
   originLabelTexture: THREE.CanvasTexture;
   damageTypeIcon: THREE.Sprite;
   damageTypeIconCanvas: HTMLCanvasElement;
   damageTypeIconTexture: THREE.CanvasTexture;
+  dragHandle: THREE.Group;
+  dragHitArea: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
   iconAngleOffsetRad: number;
   showOriginLabel: boolean;
   configured: boolean;
   delayMs: number;
   innerRadiusM: number;
   outerRadiusM: number;
+  originOffsetM: number;
   settledComponentIndices: number[];
+}
+
+interface ExplosionPlacementPreview {
+  root: THREE.Group;
+  areaDiscs: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>[];
+  exactRadiusRings: THREE.LineLoop<
+    THREE.BufferGeometry,
+    THREE.LineBasicMaterial
+  >[];
+  originMarker: THREE.Group;
+  originCore: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
+  originHalo: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
 }
 
 interface ShotVisualAnimationLayout {
@@ -1684,6 +1702,7 @@ interface SavedRuntimeShot {
   result: EditorNativeShotResult;
   entryPoint: [number, number, number];
   direction: [number, number, number];
+  radialOriginOverrideM: [number, number, number] | null;
 }
 
 interface RuntimeShotRecord extends SavedRuntimeShot {
@@ -2890,6 +2909,12 @@ function updateShotExplosionDamageTypeIconPosition(
     cameraWorldPosition.distanceTo(iconWorldPosition) * 0.036,
   );
   visual.damageTypeIcon.scale.set(iconWidthM, iconWidthM * 0.7, 1);
+  const handleScale = Math.max(
+    0.9,
+    Math.min(2.6, cameraWorldPosition.distanceTo(rootWorldPosition) * 0.018),
+  );
+  visual.dragHandle.scale.setScalar(handleScale);
+  visual.impactAnchor.scale.setScalar(handleScale);
 }
 
 function createShotExplosionPressureSurfaceMaterial() {
@@ -2948,6 +2973,24 @@ function createShotExplosionLayerVisual(
   pressureSurface.renderOrder = renderOrder;
   root.add(pressureSurface);
 
+  const groundArea = new THREE.Mesh(
+    new THREE.CircleGeometry(1, 128),
+    new THREE.MeshBasicMaterial({
+      color: 0xffa12b,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0,
+      depthTest: true,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  groundArea.name = "editor-native-shot-explosion-ground-area";
+  groundArea.rotation.x = -Math.PI / 2;
+  groundArea.position.y = 0.006 + layerIndex * 0.002;
+  groundArea.renderOrder = renderOrder;
+  root.add(groundArea);
+
   const exactRadiusRingPoints = Array.from({ length: 96 }, (_, pointIndex) => {
     const angle = pointIndex / 96 * Math.PI * 2;
     return new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle));
@@ -2986,6 +3029,21 @@ function createShotExplosionLayerVisual(
   originTether.name = "editor-native-shot-explosion-origin-tether";
   originTether.renderOrder = renderOrder + 3;
   root.add(originTether);
+
+  const impactAnchor = new THREE.Mesh(
+    new THREE.SphereGeometry(0.075, 14, 10),
+    new THREE.MeshBasicMaterial({
+      color: 0xfff0c2,
+      transparent: true,
+      opacity: 0,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  impactAnchor.name = "editor-native-shot-explosion-impact-anchor";
+  impactAnchor.renderOrder = renderOrder + 4;
+  root.add(impactAnchor);
 
   const originLabelCanvas = document.createElement("canvas");
   originLabelCanvas.width = 320;
@@ -3035,25 +3093,48 @@ function createShotExplosionLayerVisual(
   damageTypeIcon.renderOrder = renderOrder + 4;
   root.add(damageTypeIcon);
 
+  const dragHandle = new THREE.Group();
+  dragHandle.name = "editor-native-shot-explosion-drag-handle";
+  dragHandle.renderOrder = renderOrder + 7;
+  addExplosionOriginGlyph(dragHandle, renderOrder + 7);
+  const dragHitArea = new THREE.Mesh(
+    new THREE.SphereGeometry(0.46, 12, 8),
+    new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0.01,
+      depthTest: false,
+      depthWrite: false,
+    }),
+  );
+  dragHitArea.name = "editor-native-shot-explosion-drag-hit-area";
+  dragHitArea.renderOrder = renderOrder + 9;
+  dragHandle.add(dragHitArea);
+  root.add(dragHandle);
+
   root.visible = false;
   const legendPlacement = radialDamageLegendPlacement(layerIndex);
   const visual: ShotExplosionLayerVisual = {
     root,
     pressureSurface,
+    groundArea,
     exactRadiusRing,
     originTether,
+    impactAnchor,
     originLabel,
     originLabelCanvas,
     originLabelTexture,
     damageTypeIcon,
     damageTypeIconCanvas,
     damageTypeIconTexture,
+    dragHandle,
+    dragHitArea,
     iconAngleOffsetRad: legendPlacement.angleOffsetRad,
     showOriginLabel: layerIndex === 0,
     configured: false,
     delayMs: 0,
     innerRadiusM: 0,
     outerRadiusM: 0,
+    originOffsetM: 0,
     settledComponentIndices: [],
   };
   paintShotExplosionDamageTypeIcon(
@@ -3099,6 +3180,7 @@ function configureShotExplosionLayerVisual(
   visual.delayMs = delayMs;
   visual.innerRadiusM = Math.max(0, Math.min(innerRadiusM, outerRadiusM));
   visual.outerRadiusM = Math.max(0, outerRadiusM);
+  visual.originOffsetM = originOffsetM;
   visual.settledComponentIndices = [...new Set(settledComponentIndices)];
   visual.root.position.copy(origin);
   const safeNormal = normal.lengthSq() < 0.000001
@@ -3125,13 +3207,17 @@ function configureShotExplosionLayerVisual(
     "per-component-native-overlap-visibility";
   visual.root.userData.surfaceNormal = safeNormal.toArray();
   visual.pressureSurface.material.uniforms.uColor.value.setHex(color);
+  visual.groundArea.material.color.setHex(color);
   visual.exactRadiusRing.material.color.setHex(color);
   visual.originTether.material.color.setHex(color).offsetHSL(0, -0.08, 0.12);
+  visual.impactAnchor.material.color.setHex(color).offsetHSL(0, -0.12, 0.2);
+  const impactAnchorPosition = safeNormal.clone().multiplyScalar(-originOffsetM);
   visual.originTether.geometry.setFromPoints([
     new THREE.Vector3(),
-    safeNormal.clone().multiplyScalar(-originOffsetM),
+    impactAnchorPosition,
   ]);
   visual.originTether.computeLineDistances();
+  visual.impactAnchor.position.copy(impactAnchorPosition);
   visual.originLabel.position.copy(safeNormal).multiplyScalar(0.24);
   visual.originLabel.scale.set(1.28, 0.352, 1);
   paintShotExplosionDamageTypeIcon(visual, damageTypeIconKind, color);
@@ -3147,10 +3233,13 @@ function clearShotExplosionLayerVisual(visual: ShotExplosionLayerVisual) {
   visual.settledComponentIndices = [];
   visual.root.visible = false;
   visual.pressureSurface.material.uniforms.uOpacity.value = 0;
+  visual.groundArea.material.opacity = 0;
   visual.exactRadiusRing.material.opacity = 0;
   visual.originTether.material.opacity = 0;
+  visual.impactAnchor.material.opacity = 0;
   visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = 0;
+  visual.dragHandle.visible = false;
 }
 
 function settleShotExplosionLayerVisual(
@@ -3165,15 +3254,24 @@ function settleShotExplosionLayerVisual(
   visual.pressureSurface.scale.setScalar(
     Math.max(0.001, visual.outerRadiusM),
   );
+  visual.groundArea.scale.setScalar(
+    Math.max(0.001, visual.outerRadiusM),
+  );
+  visual.groundArea.material.opacity = visual.showOriginLabel ? 0.055 : 0.026;
   visual.exactRadiusRing.scale.setScalar(
     Math.max(0.001, visual.outerRadiusM),
   );
   visual.pressureSurface.material.uniforms.uOpacity.value = 0;
   visual.exactRadiusRing.material.opacity = 0.72;
-  visual.originTether.visible = false;
-  visual.originTether.material.opacity = 0;
+  const offsetVisible =
+    visual.showOriginLabel && Math.abs(visual.originOffsetM) > 0.025;
+  visual.originTether.visible = offsetVisible;
+  visual.originTether.material.opacity = offsetVisible ? 0.9 : 0;
+  visual.impactAnchor.visible = offsetVisible;
+  visual.impactAnchor.material.opacity = offsetVisible ? 0.98 : 0;
   visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = 0.96;
+  visual.dragHandle.visible = visual.showOriginLabel;
 }
 
 function easeOutCubic(value: number) {
@@ -3218,21 +3316,29 @@ function setShotExplosionLayerAnimationFrame(
     visual.outerRadiusM * expansion,
   );
   visual.pressureSurface.scale.setScalar(currentRadiusM);
+  visual.groundArea.scale.setScalar(currentRadiusM);
+  visual.groundArea.material.opacity =
+    (visual.showOriginLabel ? 0.055 : 0.026) * expansion;
   visual.exactRadiusRing.scale.setScalar(
     Math.max(0.001, visual.outerRadiusM),
   );
   visual.pressureSurface.material.uniforms.uOpacity.value =
     surfaceVisibility * (0.105 + (1 - expansionProgress) * 0.055);
   visual.exactRadiusRing.material.opacity = ringReveal * 0.72;
-  visual.originTether.visible = false;
-  visual.originTether.material.opacity = 0;
-  visual.originLabel.material.opacity = 0;
   const iconReveal = THREE.MathUtils.smoothstep(
     expansionProgress,
     0.08,
     0.28,
   );
+  const offsetVisible =
+    visual.showOriginLabel && Math.abs(visual.originOffsetM) > 0.025;
+  visual.originTether.visible = offsetVisible;
+  visual.originTether.material.opacity = offsetVisible ? iconReveal * 0.9 : 0;
+  visual.impactAnchor.visible = offsetVisible;
+  visual.impactAnchor.material.opacity = offsetVisible ? iconReveal * 0.98 : 0;
+  visual.originLabel.material.opacity = 0;
   visual.damageTypeIcon.material.opacity = iconReveal * 0.96;
+  visual.dragHandle.visible = visual.showOriginLabel;
 
   if (visual.settledComponentIndices.length === 0) return 0;
   const highlightRise = THREE.MathUtils.smoothstep(
@@ -3246,6 +3352,115 @@ function setShotExplosionLayerAnimationFrame(
     THREE.MathUtils.smoothstep(fadeProgress, 0.08, 1),
   );
   return highlightRise * settledHighlightBlend;
+}
+
+function addExplosionOriginGlyph(
+  group: THREE.Group,
+  renderOrder: number,
+  color = 0xffd67f,
+) {
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(0.09, 16, 10),
+    new THREE.MeshBasicMaterial({
+      color: 0xfff3cf,
+      transparent: true,
+      opacity: 0.96,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  core.name = "editor-native-explosion-origin-core";
+  core.renderOrder = renderOrder;
+  group.add(core);
+  const halo = new THREE.Mesh(
+    new THREE.SphereGeometry(0.18, 18, 12),
+    new THREE.MeshBasicMaterial({
+      color,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.16,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  halo.name = "editor-native-explosion-origin-halo";
+  halo.renderOrder = renderOrder + 1;
+  group.add(halo);
+  return { core, halo };
+}
+
+function createExplosionPlacementPreview(): ExplosionPlacementPreview {
+  const root = new THREE.Group();
+  root.name = "editor-native-explosion-placement-preview";
+  root.renderOrder = 78;
+  const layerColors = [0xffc45b, 0xff7357, 0x7edee8, 0xc9e66b];
+  const circlePoints = Array.from({ length: 128 }, (_, pointIndex) => {
+    const angle = pointIndex / 128 * Math.PI * 2;
+    return new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle));
+  });
+  const areaDiscs = Array.from(
+    { length: MAX_SHOT_EXPLOSION_LAYERS },
+    (_, layerIndex) => {
+      const disc = new THREE.Mesh(
+        new THREE.CircleGeometry(1, 128),
+        new THREE.MeshBasicMaterial({
+          color: layerColors[layerIndex],
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: layerIndex === 0 ? 0.045 : 0.025,
+          depthTest: true,
+          depthWrite: false,
+          toneMapped: false,
+        }),
+      );
+      disc.name = `editor-native-explosion-placement-area-${layerIndex + 1}`;
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.y = 0.008 + layerIndex * 0.003;
+      disc.renderOrder = root.renderOrder + layerIndex;
+      root.add(disc);
+      return disc;
+    },
+  );
+  const exactRadiusRings = Array.from(
+    { length: MAX_SHOT_EXPLOSION_LAYERS },
+    (_, layerIndex) => {
+      const ring = new THREE.LineLoop(
+        new THREE.BufferGeometry().setFromPoints(circlePoints),
+        new THREE.LineBasicMaterial({
+          color: layerColors[layerIndex],
+          transparent: true,
+          opacity: layerIndex === 0 ? 0.95 : 0.72,
+          depthTest: false,
+          depthWrite: false,
+          toneMapped: false,
+        }),
+      );
+      ring.name = `editor-native-explosion-placement-exact-radius-${layerIndex + 1}`;
+      ring.position.y = 0.018 + layerIndex * 0.004;
+      ring.renderOrder = root.renderOrder + 5 + layerIndex;
+      root.add(ring);
+      return ring;
+    },
+  );
+  const originMarker = new THREE.Group();
+  originMarker.name = "editor-native-explosion-placement-origin";
+  originMarker.position.y = 0.08;
+  const { core: originCore, halo: originHalo } = addExplosionOriginGlyph(
+    originMarker,
+    root.renderOrder + 10,
+  );
+  root.add(originMarker);
+  root.visible = false;
+  return {
+    root,
+    areaDiscs,
+    exactRadiusRings,
+    originMarker,
+    originCore,
+    originHalo,
+  };
 }
 
 function setCylinderBetween(
@@ -3597,6 +3812,7 @@ export function RuntimeVehicleViewer({
   );
   const hostRef = useRef<HTMLDivElement>(null);
   const protectionCanvasRef = useRef<HTMLCanvasElement>(null);
+  const explosionOriginHudRef = useRef<HTMLDivElement>(null);
   const resetViewRef = useRef<
     ((options?: { preserveShotVisual?: boolean }) => void) | null
   >(null);
@@ -3624,6 +3840,23 @@ export function RuntimeVehicleViewer({
   const hitModelRef = useRef<HitSceneThreeModel | null>(null);
   const shotVisualsRef = useRef<ShotVisualRuntime[]>([]);
   const shotRecordsRef = useRef<RuntimeShotRecord[]>([]);
+  const setShotExplosionOriginRef = useRef<(
+    shotId: number,
+    originM: [number, number, number] | null,
+  ) => void>(() => undefined);
+  const saveExplosionOriginRef = useRef<(
+    originM: [number, number, number],
+    rayOrigin: THREE.Vector3,
+    rayDirection: THREE.Vector3,
+  ) => RuntimeShotRecord | null>(() => null);
+  const selectedWeaponHasExplosionRef = useRef(false);
+  const refreshExplosionPlacementPreviewRef = useRef<(() => void) | null>(null);
+  const clearExplosionPlacementPreviewRef = useRef<(() => void) | null>(null);
+  const pendingExplosionPlacementRef = useRef<{
+    originM: [number, number, number];
+    rayOrigin: THREE.Vector3;
+    rayDirection: THREE.Vector3;
+  } | null>(null);
   const activeShotIdRef = useRef<number | null>(null);
   const shotSequenceRef = useRef(0);
   const shotAnimationFrameRef = useRef(0);
@@ -3969,6 +4202,9 @@ export function RuntimeVehicleViewer({
   const [shotResult, setShotResult] = useState<EditorNativeShotResult | null>(null);
   const [savedShots, setSavedShots] = useState<SavedRuntimeShot[]>([]);
   const [activeShotId, setActiveShotId] = useState<number | null>(null);
+  const [explosionPlacementCoverage, setExplosionPlacementCoverage] = useState<
+    "covered" | "clear" | "unknown" | null
+  >(null);
   const [damageAnimationRevision, setDamageAnimationRevision] = useState(0);
   const [realtimePointer, setRealtimePointer] = useState<RuntimeRealtimePointer | null>(null);
   const [protectionEnabled, setProtectionEnabled] = useState(
@@ -4168,6 +4404,28 @@ export function RuntimeVehicleViewer({
   const selectedAttackWeapon = weaponOptionIndex >= 0
     ? attackSource?.weapons[weaponOptionIndex] ?? null
     : null;
+  const selectedWeaponBallistics = useMemo(() => {
+    if (!selectedAttackWeapon) return null;
+    return resolveEditorNativeBallistics(
+      selectedAttackWeapon.ballisticsModel,
+      selectedAttackWeapon.ballisticsWeaponIndex,
+      targetDistanceM,
+    );
+  }, [selectedAttackWeapon, targetDistanceM]);
+  const selectedWeaponHasExplosion =
+    (selectedWeaponBallistics?.explosiveLayers.length ?? 0) > 0;
+  useEffect(() => {
+    selectedWeaponHasExplosionRef.current = selectedWeaponHasExplosion;
+    if (!selectedWeaponHasExplosion) pendingExplosionPlacementRef.current = null;
+    const host = hostRef.current;
+    if (host) {
+      host.dataset.explosionOriginPlacement = selectedWeaponHasExplosion
+        ? "available"
+        : "unavailable";
+    }
+    refreshExplosionPlacementPreviewRef.current?.();
+    requestRenderRef.current?.();
+  }, [selectedWeaponHasExplosion]);
   useEffect(() => {
     if (!selectedAttackWeapon || activeShotId === null) {
       setWeaponDpsFacts(null);
@@ -4385,6 +4643,8 @@ export function RuntimeVehicleViewer({
       delete host.dataset.shotExplosionTargetSelection;
       delete host.dataset.shotExplosionHighlightState;
       delete host.dataset.shotExplosionHighlightedComponents;
+      delete host.dataset.shotExplosionOriginMode;
+      delete host.dataset.shotExplosionOriginWorldM;
       return;
     }
     const radialVisualization = buildRadialDamageVisualizationPlan(
@@ -4554,10 +4814,68 @@ export function RuntimeVehicleViewer({
     result: EditorNativeShotResult,
   ) => {
     const shotVisual = record.visual;
-    if (!shotVisual.rayOrigin || !shotVisual.rayDirection || result.layers.length === 0) {
+    if (!shotVisual.rayOrigin || !shotVisual.rayDirection) {
       shotVisual.group.visible = false;
       shotVisual.animationLayout = null;
       shotVisual.explosionLayers.forEach(clearShotExplosionLayerVisual);
+      return;
+    }
+    const detachedOrigin = record.radialOriginOverrideM
+      ? new THREE.Vector3().fromArray(record.radialOriginOverrideM)
+      : null;
+    if (result.layers.length === 0) {
+      if (!detachedOrigin || result.ballistics.explosiveLayers.length === 0) {
+        shotVisual.group.visible = false;
+        shotVisual.animationLayout = null;
+        shotVisual.explosionLayers.forEach(clearShotExplosionLayerVisual);
+        return;
+      }
+      shotVisual.trace.visible = false;
+      shotVisual.traceOutline.visible = false;
+      shotVisual.continuationTrace.visible = false;
+      shotVisual.continuationArrow.visible = false;
+      shotVisual.entryMarker.visible = false;
+      shotVisual.terminalVisible = false;
+      shotVisual.terminalMarker.visible = false;
+      shotVisual.layerMarkers.forEach((marker) => {
+        marker.sphere.visible = false;
+      });
+      shotVisual.animationActive = false;
+      shotVisual.animationLayout = null;
+      const radialVisualization = buildRadialDamageVisualizationPlan(
+        result,
+        parsedHitRef.current?.header.components ?? [],
+      );
+      shotVisual.explosionLayers.forEach((visual, layerIndex) => {
+        const ballisticsLayer = result.ballistics.explosiveLayers[layerIndex];
+        if (!ballisticsLayer) {
+          clearShotExplosionLayerVisual(visual);
+          return;
+        }
+        const damageTypeIconKind =
+          vehicleDamageTypeIconKindForPath(ballisticsLayer.damageTypePath)
+          ?? "generic";
+        configureShotExplosionLayerVisual(visual, {
+          origin: detachedOrigin,
+          normal: new THREE.Vector3(0, 1, 0),
+          color: shotExplosionColor(damageTypeIconKind),
+          damageTypeIconKind,
+          outerRadiusM: ballisticsLayer.outerRadiusCm / 100,
+          innerRadiusM: ballisticsLayer.innerRadiusCm / 100,
+          delayMs: 0,
+          layerId: ballisticsLayer.layerId,
+          damageTypePath: ballisticsLayer.damageTypePath,
+          settledComponentIndices: radialVisualization?.outcomes
+            .filter((outcome) => outcome.radialLayerId === ballisticsLayer.layerId)
+            .flatMap((outcome) => outcome.componentIndices) ?? [],
+          originComponentLabel: "自由爆心",
+          originOffsetM: 0,
+        });
+      });
+      shotVisual.group.visible = true;
+      shotVisual.explosionLayers.forEach((layer) => {
+        settleShotExplosionLayerVisual(layer, shotVisual.selected);
+      });
       return;
     }
     const ingressLength = Math.min(1.25, Math.max(0.45, shotVisual.firstHitDistanceM * 0.08));
@@ -4722,24 +5040,24 @@ export function RuntimeVehicleViewer({
       impactNormal.normalize();
     }
     shotVisual.explosionLayers.forEach((visual, layerIndex) => {
-      const radialLayer = result.radial.layers[layerIndex];
-      if (!radialLayer) {
-        clearShotExplosionLayerVisual(visual);
-        return;
-      }
-      const ballisticsLayer = result.ballistics.explosiveLayers.find(
-        (layer) => layer.layerId === radialLayer.layerId,
-      );
+      const ballisticsLayer = result.ballistics.explosiveLayers[layerIndex];
       if (!ballisticsLayer) {
         clearShotExplosionLayerVisual(visual);
         return;
       }
+      const radialLayer = result.radial.layers.find(
+        (layer) => layer.layerId === ballisticsLayer.layerId,
+      );
+      const originOffsetM = (
+        radialLayer?.explosionOriginOffsetCm
+        ?? ballisticsLayer.impactNormalOffsetCm
+      ) / 100;
       const origin = impactPoint.clone().addScaledVector(
         impactNormal,
-        radialLayer.explosionOriginOffsetCm / 100,
+        originOffsetM,
       );
       const damageTypeIconKind =
-        vehicleDamageTypeIconKindForPath(radialLayer.damageTypePath)
+        vehicleDamageTypeIconKindForPath(ballisticsLayer.damageTypePath)
         ?? "generic";
       configureShotExplosionLayerVisual(visual, {
         origin,
@@ -4751,16 +5069,16 @@ export function RuntimeVehicleViewer({
         delayMs: result.radial.layerOrderResolved === true
           ? layerIndex * SHOT_EXPLOSION_LAYER_DELAY_MS
           : 0,
-        layerId: radialLayer.layerId,
-        damageTypePath: radialLayer.damageTypePath,
+        layerId: ballisticsLayer.layerId,
+        damageTypePath: ballisticsLayer.damageTypePath,
         settledComponentIndices: radialVisualization?.outcomes
-          .filter((outcome) => outcome.radialLayerId === radialLayer.layerId)
+          .filter((outcome) => outcome.radialLayerId === ballisticsLayer.layerId)
           .flatMap((outcome) => outcome.componentIndices) ?? [],
         originComponentLabel: playerHitComponentLabel(
           parsedHitRef.current?.header.components[firstLayer.componentIndex]
           ?? firstLayer,
         ),
-        originOffsetM: radialLayer.explosionOriginOffsetCm / 100,
+        originOffsetM,
       });
     });
     shotVisual.group.visible = true;
@@ -4776,6 +5094,7 @@ export function RuntimeVehicleViewer({
     result: record.result,
     entryPoint: record.entryPoint,
     direction: record.direction,
+    radialOriginOverrideM: record.radialOriginOverrideM,
   } satisfies SavedRuntimeShot)), []);
 
   const commitSelectedShot = useCallback((record: RuntimeShotRecord) => {
@@ -4792,6 +5111,18 @@ export function RuntimeVehicleViewer({
       );
     }
     updateHostShotState(record.result);
+    const host = hostRef.current;
+    if (host) {
+      host.dataset.shotExplosionOriginMode = record.radialOriginOverrideM
+        ? "detached"
+        : "contact";
+      if (record.radialOriginOverrideM) {
+        host.dataset.shotExplosionOriginWorldM =
+          record.radialOriginOverrideM.join(",");
+      } else {
+        delete host.dataset.shotExplosionOriginWorldM;
+      }
+    }
   }, [selectShotVisual, updateHostShotState]);
 
   const cancelShotAnimation = useCallback((settle: boolean) => {
@@ -5127,26 +5458,46 @@ export function RuntimeVehicleViewer({
 
   const simulatePublishedRadialShot = useCallback((
     input: Parameters<typeof simulateEditorNativeShot>[0],
+    radialOriginOverrideM: readonly [number, number, number] | null = null,
   ) => {
     let result = simulateEditorNativeShot(input);
     const source = radialQueryRef.current;
     const hitGroup = hitGroupRef.current;
     const firstImpact = input.intersections[0];
+    const explicitOriginWorld = radialOriginOverrideM
+      ? new THREE.Vector3().fromArray(radialOriginOverrideM)
+      : null;
+    let pointLocal: THREE.Vector3 | null = null;
+    if (hitGroup && (explicitOriginWorld || firstImpact)) {
+      hitGroup.updateMatrixWorld(true);
+      const inverseWorld = hitGroup.matrixWorld.clone().invert();
+      pointLocal = (explicitOriginWorld ?? new THREE.Vector3().fromArray(firstImpact.point))
+        .clone()
+        .applyMatrix4(inverseWorld);
+      if (explicitOriginWorld) {
+        result = simulateEditorNativeShot({
+          ...input,
+          intersections: [],
+          radialOriginOverrideCm: pointLocal.toArray().map(
+            (value) => value * 100,
+          ) as [number, number, number],
+        });
+      }
+    }
     if (
       !source ||
       !hitGroup ||
-      !firstImpact ||
+      !pointLocal ||
+      (!firstImpact && !explicitOriginWorld) ||
       result.ballistics.explosiveLayers.length === 0
     ) return result;
-    hitGroup.updateMatrixWorld(true);
     const inverseWorld = hitGroup.matrixWorld.clone().invert();
-    const pointLocal = new THREE.Vector3()
-      .fromArray(firstImpact.point)
-      .applyMatrix4(inverseWorld);
-    const normalLocal = new THREE.Vector3()
-      .fromArray(firstImpact.faceNormal)
-      .applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(inverseWorld))
-      .normalize();
+    const normalLocal = explicitOriginWorld
+      ? new THREE.Vector3(0, 1, 0)
+      : new THREE.Vector3()
+          .fromArray(firstImpact!.faceNormal)
+          .applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(inverseWorld))
+          .normalize();
     const radialLayerHitSets = buildVehicleRadialLayerHitSets({
       source,
       model: input.model,
@@ -5156,11 +5507,20 @@ export function RuntimeVehicleViewer({
         layerId: layer.layerId,
         outerRadiusCm: layer.outerRadiusCm,
         killZoneRadiusCm: layer.killZoneRadiusCm,
-        impactNormalOffsetCm: layer.impactNormalOffsetCm,
+        impactNormalOffsetCm: explicitOriginWorld
+          ? 0
+          : layer.impactNormalOffsetCm,
       })),
       componentPoseByModelIndex: radialQueryHitPoseRef.current,
     });
-    result = simulateEditorNativeShot({ ...input, radialLayerHitSets });
+    result = simulateEditorNativeShot({
+      ...input,
+      intersections: explicitOriginWorld ? [] : input.intersections,
+      radialOriginOverrideCm: explicitOriginWorld
+        ? pointLocal.toArray().map((value) => value * 100) as [number, number, number]
+        : null,
+      radialLayerHitSets,
+    });
     return result;
   }, []);
 
@@ -5172,7 +5532,7 @@ export function RuntimeVehicleViewer({
     );
     if (!parsed || !weaponModel || !activeRecord || nextWeaponIndex < 0) return;
     cancelShotAnimation(true);
-    const result = simulatePublishedRadialShot({
+    const simulationInput = {
       model: parsed.header,
       weaponModel,
       weaponIndex: nextWeaponIndex,
@@ -5182,7 +5542,18 @@ export function RuntimeVehicleViewer({
       includeRadial: true,
       vehicleDamagedByRadial: referenceData?.general.isDamagedByRadial ?? null,
       radialDamageModel: referenceData?.radialDamageModel ?? null,
-    });
+    } satisfies Parameters<typeof simulateEditorNativeShot>[0];
+    let result = simulatePublishedRadialShot(
+      simulationInput,
+      activeRecord.radialOriginOverrideM,
+    );
+    if (
+      activeRecord.radialOriginOverrideM &&
+      result.ballistics.explosiveLayers.length === 0
+    ) {
+      activeRecord.radialOriginOverrideM = null;
+      result = simulatePublishedRadialShot(simulationInput, null);
+    }
     activeRecord.distanceM = nextDistanceM;
     activeRecord.result = result;
     applyShotResultToVisual(activeRecord, result);
@@ -5197,6 +5568,48 @@ export function RuntimeVehicleViewer({
     savedShotSnapshot,
     simulatePublishedRadialShot,
   ]);
+
+  const setShotExplosionOrigin = useCallback((
+    shotId: number,
+    originM: [number, number, number] | null,
+  ) => {
+    const parsed = parsedHitRef.current;
+    const weaponModel = attackModelRef.current;
+    const selectedWeaponIndex = weaponIndexRef.current;
+    const record = shotRecordsRef.current.find(
+      (candidate) => candidate.shotId === shotId,
+    );
+    if (!parsed || !weaponModel || selectedWeaponIndex < 0 || !record) return;
+    cancelShotAnimation(true);
+    const result = simulatePublishedRadialShot({
+      model: parsed.header,
+      weaponModel,
+      weaponIndex: selectedWeaponIndex,
+      targetDistanceM: record.distanceM,
+      shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
+      intersections: record.intersections,
+      includeRadial: true,
+      vehicleDamagedByRadial: referenceData?.general.isDamagedByRadial ?? null,
+      radialDamageModel: referenceData?.radialDamageModel ?? null,
+    }, originM);
+    if (originM && result.ballistics.explosiveLayers.length === 0) return;
+    record.radialOriginOverrideM = originM;
+    record.result = result;
+    applyShotResultToVisual(record, result);
+    setSavedShots(savedShotSnapshot());
+    commitSelectedShot(record);
+    renderRef.current?.();
+  }, [
+    applyShotResultToVisual,
+    cancelShotAnimation,
+    commitSelectedShot,
+    referenceData,
+    savedShotSnapshot,
+    simulatePublishedRadialShot,
+  ]);
+  useEffect(() => {
+    setShotExplosionOriginRef.current = setShotExplosionOrigin;
+  }, [setShotExplosionOrigin]);
 
   const selectSavedShot = useCallback((shotId: number) => {
     const record = shotRecordsRef.current.find((candidate) => candidate.shotId === shotId);
@@ -5215,17 +5628,32 @@ export function RuntimeVehicleViewer({
     rayDirection,
     distanceM,
     animate = true,
+    radialOriginOverrideM = null,
   }: {
     intersections: EditorNativeIntersection[];
     rayOrigin: THREE.Vector3;
     rayDirection: THREE.Vector3;
     distanceM: number;
     animate?: boolean;
+    radialOriginOverrideM?: [number, number, number] | null;
   }) => {
     const parsed = parsedHitRef.current;
     const weaponModel = attackModelRef.current;
     const selectedWeaponIndex = weaponIndexRef.current;
-    if (!parsed || !weaponModel || selectedWeaponIndex < 0 || intersections.length === 0) return null;
+    if (
+      !parsed ||
+      !weaponModel ||
+      selectedWeaponIndex < 0 ||
+      (intersections.length === 0 && !radialOriginOverrideM)
+    ) return null;
+    if (
+      radialOriginOverrideM &&
+      resolveEditorNativeBallistics(
+        weaponModel,
+        selectedWeaponIndex,
+        distanceM,
+      ).explosiveLayers.length === 0
+    ) return null;
     cancelShotAnimation(true);
     const records = shotRecordsRef.current;
     const reusableRecord = records.length >= maxShotTraces ? records.shift() ?? null : null;
@@ -5246,7 +5674,10 @@ export function RuntimeVehicleViewer({
     visual.explosionLayers.forEach(clearShotExplosionLayerVisual);
     visual.rayOrigin = rayOrigin.clone();
     visual.rayDirection = rayDirection.clone().normalize();
-    visual.firstHitDistanceM = intersections[0].distanceFromRayOriginM;
+    const entryPoint = intersections[0]?.point ?? radialOriginOverrideM;
+    if (!entryPoint) return null;
+    visual.firstHitDistanceM = intersections[0]?.distanceFromRayOriginM
+      ?? rayOrigin.distanceTo(new THREE.Vector3().fromArray(entryPoint));
     const result = simulatePublishedRadialShot({
       model: parsed.header,
       weaponModel,
@@ -5257,14 +5688,19 @@ export function RuntimeVehicleViewer({
       includeRadial: true,
       vehicleDamagedByRadial: referenceData?.general.isDamagedByRadial ?? null,
       radialDamageModel: referenceData?.radialDamageModel ?? null,
-    });
-    const entryPoint = intersections[0].point;
+    }, radialOriginOverrideM);
+    if (
+      radialOriginOverrideM &&
+      result.ballistics.explosiveLayers.length === 0
+    ) return null;
+    clearExplosionPlacementPreviewRef.current?.();
     const record: RuntimeShotRecord = {
       shotId: ++shotSequenceRef.current,
       distanceM,
       result,
       entryPoint: [entryPoint[0], entryPoint[1], entryPoint[2]],
       direction: [visual.rayDirection.x, visual.rayDirection.y, visual.rayDirection.z],
+      radialOriginOverrideM,
       intersections,
       visual,
     };
@@ -5285,6 +5721,22 @@ export function RuntimeVehicleViewer({
     simulatePublishedRadialShot,
     startShotAnimation,
   ]);
+
+  const saveExplosionOrigin = useCallback((
+    originM: [number, number, number],
+    rayOrigin: THREE.Vector3,
+    rayDirection: THREE.Vector3,
+  ) => saveRayShot({
+    intersections: [],
+    rayOrigin,
+    rayDirection,
+    distanceM: targetDistanceRef.current,
+    animate: false,
+    radialOriginOverrideM: originM,
+  }), [saveRayShot]);
+  useEffect(() => {
+    saveExplosionOriginRef.current = saveExplosionOrigin;
+  }, [saveExplosionOrigin]);
 
   useEffect(() => {
     navigationStateRef.current = navigationState;
@@ -5720,6 +6172,16 @@ export function RuntimeVehicleViewer({
     let startReferenceSoldierAsset: (() => void) | null = null;
     let fittedSource: "hit" | "analysis" | "exterior" | null = null;
     let pointerStart: { x: number; y: number } | null = null;
+    let lastPlacementPointer: THREE.Vector2 | null = null;
+    let explosionDrag: {
+      pointerId: number;
+      shotId: number;
+      plane: THREE.Plane;
+      pendingOrigin: [number, number, number] | null;
+    } | null = null;
+    let explosionDragFrame = 0;
+    let placementPreviewFrame = 0;
+    let pendingPlacementPointer: THREE.Vector2 | null = null;
     let hoverFrame = 0;
     let pendingHover: { clientX: number; clientY: number } | null = null;
     let protectionFrame = 0;
@@ -6049,6 +6511,8 @@ export function RuntimeVehicleViewer({
     );
     shotVisualsRef.current = shotVisuals;
     shotVisuals.forEach((shotVisual) => scene.add(shotVisual.group));
+    const explosionPlacementPreview = createExplosionPlacementPreview();
+    scene.add(explosionPlacementPreview.root);
 
     const render = () => {
       shotVisuals.forEach((shotVisual) => {
@@ -6056,6 +6520,58 @@ export function RuntimeVehicleViewer({
           updateShotExplosionDamageTypeIconPosition(visual, camera);
         });
       });
+      const activeExplosionRecord = shotRecordsRef.current.find(
+        (record) => record.shotId === activeShotIdRef.current,
+      );
+      const activeExplosionLayer = activeExplosionRecord?.visual.explosionLayers.find(
+        (layer) => layer.configured && layer.root.visible && layer.showOriginLabel,
+      );
+      const explosionHud = explosionOriginHudRef.current;
+      const placementPreviewVisible = explosionPlacementPreview.root.visible;
+      const hudAnchor = activeExplosionLayer?.root ?? (
+        placementPreviewVisible ? explosionPlacementPreview.root : null
+      );
+      if (hudAnchor && explosionHud) {
+        const worldOrigin = hudAnchor.getWorldPosition(
+          new THREE.Vector3(),
+        );
+        const projected = worldOrigin.clone().project(camera);
+        const onScreen = projected.z >= -1 && projected.z <= 1;
+        explosionHud.hidden = !onScreen;
+        if (onScreen) {
+          const x = (projected.x * 0.5 + 0.5) * renderer.domElement.clientWidth;
+          const y = (-projected.y * 0.5 + 0.5) * renderer.domElement.clientHeight;
+          explosionHud.style.setProperty("--explosion-hud-x", `${x}px`);
+          explosionHud.style.setProperty("--explosion-hud-y", `${y - 34}px`);
+        }
+        const detached = Boolean(activeExplosionRecord?.radialOriginOverrideM);
+        explosionHud.dataset.detached = String(detached);
+        const groundY = gridHelper?.position.y ?? 0;
+        if (activeExplosionLayer && detached) {
+          const groundLocal = activeExplosionLayer.root.worldToLocal(
+            new THREE.Vector3(worldOrigin.x, groundY + 0.02, worldOrigin.z),
+          );
+          activeExplosionLayer.originTether.geometry.setFromPoints([
+            new THREE.Vector3(),
+            groundLocal,
+          ]);
+          activeExplosionLayer.originTether.computeLineDistances();
+          const tetherVisible = groundLocal.length() > 0.025;
+          activeExplosionLayer.originTether.visible = tetherVisible;
+          activeExplosionLayer.originTether.material.opacity = tetherVisible ? 0.88 : 0;
+          activeExplosionLayer.impactAnchor.position.copy(groundLocal);
+          activeExplosionLayer.impactAnchor.visible = tetherVisible;
+          activeExplosionLayer.impactAnchor.material.opacity = tetherVisible ? 0.98 : 0;
+        } else if (activeExplosionLayer) {
+          const offsetVisible = Math.abs(activeExplosionLayer.originOffsetM) > 0.025;
+          activeExplosionLayer.originTether.visible = offsetVisible;
+          activeExplosionLayer.originTether.material.opacity = offsetVisible ? 0.9 : 0;
+          activeExplosionLayer.impactAnchor.visible = offsetVisible;
+          activeExplosionLayer.impactAnchor.material.opacity = offsetVisible ? 0.98 : 0;
+        }
+      } else if (explosionHud) {
+        explosionHud.hidden = true;
+      }
       renderer.render(scene, camera);
     };
     let renderFrame = 0;
@@ -7435,15 +7951,249 @@ export function RuntimeVehicleViewer({
       );
       return { bounds, pointer };
     };
+    const explosionGroundFloorY = () => (gridHelper?.position.y ?? 0) + 0.02;
+    const explosionGroundPoint = (normalizedPointer: THREE.Vector2) => {
+      raycaster.setFromCamera(normalizedPointer, camera);
+      return raycaster.ray.intersectPlane(
+        new THREE.Plane(
+          new THREE.Vector3(0, 1, 0),
+          -explosionGroundFloorY(),
+        ),
+        new THREE.Vector3(),
+      );
+    };
+    const clearExplosionPlacementPreview = () => {
+      lastPlacementPointer = null;
+      pendingPlacementPointer = null;
+      cancelAnimationFrame(placementPreviewFrame);
+      placementPreviewFrame = 0;
+      setExplosionPlacementCoverage(null);
+      explosionPlacementPreview.root.visible = false;
+      explosionPlacementPreview.areaDiscs.forEach((disc) => {
+        disc.visible = false;
+      });
+      explosionPlacementPreview.exactRadiusRings.forEach((ring) => {
+        ring.visible = false;
+      });
+      delete host.dataset.explosionPlacementWorldM;
+      delete host.dataset.explosionPlacementRadiiM;
+      delete host.dataset.explosionPlacementCoverage;
+      applySettledShotDamageHighlight(activeShotIdRef.current);
+      requestRender();
+    };
+    const updateExplosionPlacementPreview = (
+      normalizedPointer: THREE.Vector2 | null = lastPlacementPointer,
+    ) => {
+      if (normalizedPointer) lastPlacementPointer = normalizedPointer.clone();
+      const weaponModel = attackModelRef.current;
+      const selectedWeaponIndex = weaponIndexRef.current;
+      const activeRecord = shotRecordsRef.current.find(
+        (record) => record.shotId === activeShotIdRef.current,
+      );
+      if (
+        !lastPlacementPointer ||
+        !selectedWeaponHasExplosionRef.current ||
+        !weaponModel ||
+        selectedWeaponIndex < 0 ||
+        (
+          activeRecord &&
+          activeRecord.result.ballistics.explosiveLayers.length > 0
+        )
+      ) {
+        explosionPlacementPreview.root.visible = false;
+        requestRender();
+        return null;
+      }
+      const ballistics = resolveEditorNativeBallistics(
+        weaponModel,
+        selectedWeaponIndex,
+        targetDistanceRef.current,
+      );
+      const origin = explosionGroundPoint(lastPlacementPointer);
+      if (!origin || ballistics.explosiveLayers.length === 0) {
+        explosionPlacementPreview.root.visible = false;
+        requestRender();
+        return null;
+      }
+      explosionPlacementPreview.root.position.copy(origin);
+      explosionPlacementPreview.areaDiscs.forEach((disc, layerIndex) => {
+        const layer = ballistics.explosiveLayers[layerIndex];
+        disc.visible = Boolean(layer);
+        if (layer) disc.scale.setScalar(Math.max(0.001, layer.outerRadiusCm / 100));
+      });
+      explosionPlacementPreview.exactRadiusRings.forEach((ring, layerIndex) => {
+        const layer = ballistics.explosiveLayers[layerIndex];
+        ring.visible = Boolean(layer);
+        if (layer) ring.scale.setScalar(Math.max(0.001, layer.outerRadiusCm / 100));
+      });
+      explosionPlacementPreview.root.visible = true;
+      const parsed = parsedHitRef.current;
+      let coverageState: "covered" | "clear" | "unknown" = "unknown";
+      let highlightedComponentIndices: number[] = [];
+      if (parsed && radialQueryRef.current && hitGroupRef.current) {
+        const previewResult = simulatePublishedRadialShot({
+          model: parsed.header,
+          weaponModel,
+          weaponIndex: selectedWeaponIndex,
+          targetDistanceM: targetDistanceRef.current,
+          shotDamageMultiplier: STANDARD_SHOT_DAMAGE_MULTIPLIER,
+          intersections: [],
+          includeRadial: true,
+          vehicleDamagedByRadial: referenceData?.general.isDamagedByRadial ?? null,
+          radialDamageModel: referenceData?.radialDamageModel ?? null,
+        }, origin.toArray() as [number, number, number]);
+        const radialDamageEvents = previewResult.damage.filter(
+          (event) => event.damageKind === "radial",
+        );
+        coverageState = radialDamageCoverageState(previewResult);
+        const coveragePlan = buildRadialDamageVisualizationPlan(
+          previewResult,
+          parsed.header.components,
+        );
+        highlightedComponentIndices = [...new Set([
+          ...(coveragePlan?.outcomes.flatMap(
+            (outcome) => outcome.componentIndices,
+          ) ?? []),
+          ...radialDamageEvents.map((event) => event.sourceComponentIndex),
+        ])].filter(
+          (componentIndex) =>
+            componentIndex >= 0 && componentIndex < parsed.header.components.length,
+        );
+      }
+      const coverageColor = coverageState === "covered"
+        ? 0x84e2d9
+        : coverageState === "clear"
+          ? 0xff8d78
+          : 0xffd67f;
+      explosionPlacementPreview.originCore.material.color.setHex(
+        coverageState === "covered" ? 0xe5fffb : coverageColor,
+      );
+      explosionPlacementPreview.originHalo.material.color.setHex(coverageColor);
+      setExplosionPlacementCoverage(coverageState);
+      host.dataset.explosionPlacementCoverage = coverageState;
+      const hitModel = hitModelRef.current;
+      if (
+        hitModel &&
+        coverageState === "covered" &&
+        highlightedComponentIndices.length > 0
+      ) {
+        setHitSceneThreeModelDamageHighlight(hitModel, {
+          componentIndices: highlightedComponentIndices,
+          colorHex: 0x84e2d9,
+          strength: 0.62,
+        });
+      } else if (hitModel) {
+        clearHitSceneThreeModelDamageHighlight(hitModel);
+      }
+      host.dataset.explosionPlacementWorldM = origin.toArray().join(",");
+      host.dataset.explosionPlacementRadiiM = ballistics.explosiveLayers
+        .map((layer) => layer.outerRadiusCm / 100)
+        .join(",");
+      requestRender();
+      return origin;
+    };
+    const scheduleExplosionPlacementPreview = (
+      normalizedPointer: THREE.Vector2,
+    ) => {
+      pendingPlacementPointer = normalizedPointer.clone();
+      if (placementPreviewFrame !== 0) return;
+      placementPreviewFrame = requestAnimationFrame(() => {
+        placementPreviewFrame = 0;
+        const nextPointer = pendingPlacementPointer;
+        pendingPlacementPointer = null;
+        if (nextPointer) updateExplosionPlacementPreview(nextPointer);
+      });
+    };
+    refreshExplosionPlacementPreviewRef.current = () => {
+      updateExplosionPlacementPreview();
+    };
+    clearExplosionPlacementPreviewRef.current = clearExplosionPlacementPreview;
+    const pickExplosionDragHandle = (event: PointerEvent) => {
+      const activeRecord = shotRecordsRef.current.find(
+        (record) => record.shotId === activeShotIdRef.current,
+      );
+      const layer = activeRecord?.visual.explosionLayers.find(
+        (candidate) => candidate.configured && candidate.root.visible,
+      );
+      if (!activeRecord || !layer) return null;
+      normalizedPointerForEvent(event);
+      raycaster.setFromCamera(pointer, camera);
+      return raycaster.intersectObject(layer.dragHitArea, false).length > 0
+        ? { record: activeRecord, layer }
+        : null;
+    };
+    const flushExplosionDrag = () => {
+      explosionDragFrame = 0;
+      if (!explosionDrag?.pendingOrigin) return;
+      const origin = explosionDrag.pendingOrigin;
+      explosionDrag.pendingOrigin = null;
+      setShotExplosionOriginRef.current(explosionDrag.shotId, origin);
+    };
     const onPointerDown = (event: PointerEvent) => {
+      if (event.button === 0) {
+        const pickedExplosion = pickExplosionDragHandle(event);
+        if (pickedExplosion) {
+          const origin = pickedExplosion.layer.root.getWorldPosition(
+            new THREE.Vector3(),
+          );
+          explosionDrag = {
+            pointerId: event.pointerId,
+            shotId: pickedExplosion.record.shotId,
+            plane: new THREE.Plane(new THREE.Vector3(0, 1, 0), -origin.y),
+            pendingOrigin: null,
+          };
+          pointerStart = null;
+          controls.enabled = false;
+          renderer.domElement.setPointerCapture(event.pointerId);
+          renderer.domElement.style.setProperty("cursor", "grabbing");
+          host.dataset.shotExplosionOriginDrag = "active";
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+      }
       pointerStart = { x: event.clientX, y: event.clientY };
     };
     const onPointerMove = (event: PointerEvent) => {
+      if (explosionDrag?.pointerId === event.pointerId) {
+        normalizedPointerForEvent(event);
+        raycaster.setFromCamera(pointer, camera);
+        const origin = raycaster.ray.intersectPlane(
+          explosionDrag.plane,
+          new THREE.Vector3(),
+        );
+        if (origin) {
+          origin.y = Math.max(origin.y, explosionGroundFloorY());
+          explosionDrag.pendingOrigin = origin.toArray() as [number, number, number];
+          if (explosionDragFrame === 0) {
+            explosionDragFrame = requestAnimationFrame(flushExplosionDrag);
+          }
+        }
+        return;
+      }
       if (event.buttons !== 0) {
         setRealtimePointer(null);
         return;
       }
+      const { pointer: placementPointer } = normalizedPointerForEvent(event);
+      if (selectedWeaponHasExplosionRef.current) {
+        scheduleExplosionPlacementPreview(placementPointer);
+      } else if (explosionPlacementPreview.root.visible) {
+        clearExplosionPlacementPreview();
+      }
       pendingHover = { clientX: event.clientX, clientY: event.clientY };
+      if (pickExplosionDragHandle(event)) {
+        pendingHover = null;
+        cancelAnimationFrame(hoverFrame);
+        hoverFrame = 0;
+        renderer.domElement.style.setProperty("cursor", "grab");
+        setRealtimePointer(null);
+        return;
+      }
+      renderer.domElement.style.setProperty(
+        "cursor",
+        selectedWeaponHasExplosionRef.current ? "crosshair" : "",
+      );
       if (hoverFrame !== 0) return;
       hoverFrame = requestAnimationFrame(() => {
         hoverFrame = 0;
@@ -7524,15 +8274,30 @@ export function RuntimeVehicleViewer({
       });
     };
     const onPointerLeave = () => {
+      if (explosionDrag) return;
       pendingHover = null;
       cancelAnimationFrame(hoverFrame);
       hoverFrame = 0;
+      clearExplosionPlacementPreview();
+      renderer.domElement.style.removeProperty("cursor");
       setRealtimePointer(null);
     };
     const onPointerUp = (event: PointerEvent) => {
-      const parsed = parsedHitRef.current;
-      const analysisMesh = analysisMeshRef.current;
-      if (!pointerStart || !parsed || !analysisMesh) {
+      if (explosionDrag?.pointerId === event.pointerId) {
+        if (explosionDragFrame !== 0) {
+          cancelAnimationFrame(explosionDragFrame);
+          flushExplosionDrag();
+        }
+        explosionDrag = null;
+        controls.enabled = true;
+        if (renderer.domElement.hasPointerCapture(event.pointerId)) {
+          renderer.domElement.releasePointerCapture(event.pointerId);
+        }
+        renderer.domElement.style.setProperty("cursor", "grab");
+        host.dataset.shotExplosionOriginDrag = "settled";
+        return;
+      }
+      if (!pointerStart) {
         pointerStart = null;
         return;
       }
@@ -7540,10 +8305,37 @@ export function RuntimeVehicleViewer({
       pointerStart = null;
       if (movement > SHOT_GESTURE_THRESHOLD_PX) return;
       const { pointer: shotPointer } = normalizedPointerForEvent(event);
-      const intersections = collectIntersections(shotPointer);
-      if (intersections.length === 0) {
+      const parsed = parsedHitRef.current;
+      if (!parsed) {
+        if (!selectedWeaponHasExplosionRef.current) return;
+        const origin = explosionGroundPoint(shotPointer);
+        if (!origin) return;
+        raycaster.setFromCamera(shotPointer, camera);
+        pendingExplosionPlacementRef.current = {
+          originM: origin.toArray() as [number, number, number],
+          rayOrigin: raycaster.ray.origin.clone(),
+          rayDirection: raycaster.ray.direction.clone(),
+        };
+        host.dataset.explosionPlacementState = "queued";
         return;
       }
+      const intersections = analysisMeshRef.current
+        ? collectIntersections(shotPointer)
+        : [];
+      if (intersections.length === 0) {
+        if (!selectedWeaponHasExplosionRef.current) return;
+        const origin = explosionGroundPoint(shotPointer);
+        if (!origin) return;
+        clearExplosionPlacementPreview();
+        raycaster.setFromCamera(shotPointer, camera);
+        saveExplosionOriginRef.current(
+          origin.toArray() as [number, number, number],
+          raycaster.ray.origin,
+          raycaster.ray.direction,
+        );
+        return;
+      }
+      clearExplosionPlacementPreview();
       saveRayShot({
         intersections,
         rayOrigin: raycaster.ray.origin,
@@ -7551,10 +8343,42 @@ export function RuntimeVehicleViewer({
         distanceM: targetDistanceRef.current,
       });
     };
-    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    const onPointerCancel = (event: PointerEvent) => {
+      if (explosionDrag?.pointerId !== event.pointerId) return;
+      explosionDrag = null;
+      controls.enabled = true;
+      cancelAnimationFrame(explosionDragFrame);
+      cancelAnimationFrame(placementPreviewFrame);
+      explosionDragFrame = 0;
+      delete host.dataset.shotExplosionOriginDrag;
+    };
+    const onExplosionWheel = (event: WheelEvent) => {
+      if (!event.shiftKey) return;
+      const record = shotRecordsRef.current.find(
+        (candidate) => candidate.shotId === activeShotIdRef.current,
+      );
+      if (!record?.radialOriginOverrideM) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const direction = event.deltaY < 0 ? 1 : -1;
+      setShotExplosionOriginRef.current(record.shotId, [
+        record.radialOriginOverrideM[0],
+        Math.max(
+          explosionGroundFloorY(),
+          record.radialOriginOverrideM[1] + direction * 0.25,
+        ),
+        record.radialOriginOverrideM[2],
+      ]);
+    };
+    renderer.domElement.addEventListener("pointerdown", onPointerDown, true);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
     renderer.domElement.addEventListener("pointerleave", onPointerLeave);
     renderer.domElement.addEventListener("pointerup", onPointerUp);
+    renderer.domElement.addEventListener("pointercancel", onPointerCancel);
+    renderer.domElement.addEventListener("wheel", onExplosionWheel, {
+      capture: true,
+      passive: false,
+    });
 
     const urls = [...new Set(renderPlacements.map(({ assetUrl }) => assetUrl))];
     const sourceAlphaAssetUrls = new Set(
@@ -7578,6 +8402,7 @@ export function RuntimeVehicleViewer({
     setActiveShotId(null);
     shotRecordsRef.current = [];
     activeShotIdRef.current = null;
+    pendingExplosionPlacementRef.current = null;
     setHitHeader(null);
     radialQueryRef.current = null;
     radialQueryHitPoseRef.current = new Map();
@@ -7997,6 +8822,16 @@ export function RuntimeVehicleViewer({
               triangles: parsed.record.header.counts.triangles,
               components: parsed.record.header.counts.components,
             });
+            const pendingExplosion = pendingExplosionPlacementRef.current;
+            if (pendingExplosion && selectedWeaponHasExplosionRef.current) {
+              pendingExplosionPlacementRef.current = null;
+              delete host.dataset.explosionPlacementState;
+              saveExplosionOriginRef.current(
+                pendingExplosion.originM,
+                pendingExplosion.rayOrigin,
+                pendingExplosion.rayDirection,
+              );
+            }
             host.dataset.hitVehicleId = hit.vehicleId;
             host.dataset.staticHitRuntime = String(
               parsed.record.header.formatVersion === "hit-scene-record/v1",
@@ -8205,6 +9040,7 @@ export function RuntimeVehicleViewer({
       window.clearTimeout(referenceSoldierLoadTimer);
       cancelProtectionMap(true);
       cancelAnimationFrame(hoverFrame);
+      cancelAnimationFrame(explosionDragFrame);
       cancelAnimationFrame(renderFrame);
       if (shotAnimationFrameRef.current !== 0) {
         cancelAnimationFrame(shotAnimationFrameRef.current);
@@ -8231,6 +9067,9 @@ export function RuntimeVehicleViewer({
       shotVisualsRef.current = [];
       shotRecordsRef.current = [];
       activeShotIdRef.current = null;
+      pendingExplosionPlacementRef.current = null;
+      refreshExplosionPlacementPreviewRef.current = null;
+      clearExplosionPlacementPreviewRef.current = null;
       renderRef.current = null;
       requestRenderRef.current = null;
       if (applyTurretPoseRef.current === applyTurretPose) {
@@ -8245,10 +9084,12 @@ export function RuntimeVehicleViewer({
       scheduleProtectionMapRef.current = null;
       cancelProtectionMapRef.current = null;
       resizeObserver.disconnect();
-      renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+      renderer.domElement.removeEventListener("pointerdown", onPointerDown, true);
       renderer.domElement.removeEventListener("pointermove", onPointerMove);
       renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
+      renderer.domElement.removeEventListener("pointercancel", onPointerCancel);
+      renderer.domElement.removeEventListener("wheel", onExplosionWheel, true);
       if (viewerRoot?.dataset.renderQuality === renderQuality.tier) {
         delete viewerRoot.dataset.renderQuality;
       }
@@ -8260,6 +9101,7 @@ export function RuntimeVehicleViewer({
       rendererLease.release();
     };
   }, [
+    applySettledShotDamageHighlight,
     chassisPose,
     clearShotVisual,
     hit,
@@ -8272,8 +9114,10 @@ export function RuntimeVehicleViewer({
     preview.visualVehicleId,
     referenceData?.general.isDamagedByRadial,
     referenceData?.radialDamageModel,
+    saveExplosionOrigin,
     saveRayShot,
     selectSavedShot,
+    simulatePublishedRadialShot,
     vehiclePlanarSuspensionCoverage?.reason,
     vehiclePlanarSuspensionCoverage?.status,
     vehicleMeshSkeletalPoseEvidence,
@@ -8338,9 +9182,37 @@ export function RuntimeVehicleViewer({
     targetBurning.state,
   ]);
 
+  useEffect(() => {
+    requestRenderRef.current?.();
+  }, [activeShotId, shotResult]);
+
   if (!visual) return null;
 
   const ballistics = shotResult?.ballistics ?? null;
+  const activeSavedShot = savedShots.find(
+    (savedShot) => savedShot.shotId === activeShotId,
+  ) ?? null;
+  const explosionOriginDraggable =
+    (ballistics?.explosiveLayers.length ?? 0) > 0 &&
+    activeShotId !== null;
+  const explosionOriginPlacement =
+    selectedWeaponHasExplosion && !explosionOriginDraggable;
+  const explosionOriginDetached = Boolean(
+    activeSavedShot?.radialOriginOverrideM,
+  );
+  const activeExplosionCoverage = !explosionOriginDraggable || !shotResult
+    ? null
+    : radialDamageCoverageState(shotResult);
+  const explosionOriginCoverage = explosionOriginPlacement
+    ? explosionPlacementCoverage
+    : activeExplosionCoverage;
+  const explosionOriginContactOffsetM = explosionOriginDetached
+    ? null
+    : (
+        shotResult?.radial.layers[0]?.explosionOriginOffsetCm
+        ?? ballistics?.explosiveLayers[0]?.impactNormalOffsetCm
+        ?? 0
+      ) / 100;
   const ballisticsPenetrationKind = weaponPenetrationKindForDamageTypePath(
     ballistics?.damageTypePath ?? null,
   );
@@ -8531,6 +9403,58 @@ export function RuntimeVehicleViewer({
           hidden
           aria-hidden="true"
         />
+        <div
+          className="viewer-explosion-origin-hud"
+          data-placement={explosionOriginPlacement ? "true" : "false"}
+          data-detached={explosionOriginDetached ? "true" : "false"}
+          data-coverage={explosionOriginCoverage ?? undefined}
+          ref={explosionOriginHudRef}
+          hidden={!explosionOriginDraggable && !explosionOriginPlacement}
+          aria-label={explosionOriginPlacement
+            ? "点击场景地面放置爆心"
+            : explosionOriginDetached
+              ? "自由爆心；拖动调整水平位置，Shift 加滚轮调整高度"
+              : "拖动爆心计算非接触爆炸伤害"}
+        >
+          <span className="viewer-explosion-origin-hud__move" aria-hidden="true">
+            <CircleDot size={16} />
+          </span>
+          <b>{explosionOriginPlacement
+            ? "放置"
+            : explosionOriginDetached
+              ? "自由"
+              : "拖动"}</b>
+          {explosionOriginCoverage ? (
+            <span
+              className="viewer-explosion-origin-hud__coverage"
+              data-state={explosionOriginCoverage}
+            >
+              {explosionOriginCoverage === "covered"
+                ? "覆盖"
+                : explosionOriginCoverage === "clear"
+                  ? "未覆盖"
+                  : "待算"}
+            </span>
+          ) : null}
+          {!explosionOriginPlacement &&
+          explosionOriginContactOffsetM !== null &&
+          Math.abs(explosionOriginContactOffsetM) > 0.025 ? (
+            <span className="viewer-explosion-origin-hud__offset">
+              ↗ {explosionOriginContactOffsetM.toFixed(1)} m
+            </span>
+          ) : null}
+          {explosionOriginDetached ? <kbd>Shift ⇅</kbd> : null}
+          {explosionOriginDetached && activeShotId !== null ? (
+            <button
+              type="button"
+              onClick={() => setShotExplosionOrigin(activeShotId, null)}
+              aria-label="将爆心贴回原命中点"
+              title="贴回命中点"
+            >
+              <RotateCcw size={13} aria-hidden="true" />
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {showSceneLoadingOverlay ? (
@@ -9344,11 +10268,13 @@ export function RuntimeVehicleViewer({
               </div>
             </section>
           ) : null}
+          {visibleShotLayers.length > 0 ? (
           <div className="viewer-causal-spine__columns" aria-label="路径数值列">
             <span>厚度 · mm</span>
             <span>剩余 · mm</span>
             <span>结果</span>
           </div>
+          ) : null}
           <ol className="viewer-causal-spine">
             {visibleShotLayers.map((layer, index) => {
               const component = hitHeader?.components[layer.componentIndex];

@@ -3,14 +3,22 @@
 import { useEffect, useState } from "react";
 
 import { RuntimeVehicleViewer } from "./RuntimeVehicleViewer";
+import type { ReferenceData } from "./catalog-types";
 import type { RuntimeVehiclePreview } from "./runtime-probe-preview-data";
 import {
   runtimePreviewForVariant,
 } from "./runtime-probe-preview-data";
+import { referenceDataForWikiVehicleBinding } from "./wiki-vehicle-catalog";
+import { loadWikiVehicleFactionMechanics } from "../lib/wiki-source";
+import { wikiVehicleFactionId } from "../lib/wiki-vehicle-identity";
 
 type ViewerRouteState =
   | { kind: "loading" }
-  | { kind: "ready"; preview: RuntimeVehiclePreview }
+  | {
+      kind: "ready";
+      preview: RuntimeVehiclePreview;
+      referenceData: ReferenceData;
+    }
   | { kind: "error"; message: string };
 
 export function RuntimeViewerOnlyPage() {
@@ -33,7 +41,10 @@ export function RuntimeViewerOnlyPage() {
     }
 
     void (async () => {
-      const preview = await runtimePreviewForVariant(cardId, rawName);
+      const [preview, mechanics] = await Promise.all([
+        runtimePreviewForVariant(cardId, rawName),
+        loadWikiVehicleFactionMechanics(wikiVehicleFactionId(cardId)),
+      ]);
       if (cancelled) return;
       if (!preview?.visual) {
         setState({
@@ -42,7 +53,12 @@ export function RuntimeViewerOnlyPage() {
         });
         return;
       }
-      setState({ kind: "ready", preview });
+      const referenceData = referenceDataForWikiVehicleBinding(
+        mechanics,
+        cardId,
+        rawName,
+      );
+      setState({ kind: "ready", preview, referenceData });
     })().catch((error: unknown) => {
       if (cancelled) return;
       setState({
@@ -62,7 +78,11 @@ export function RuntimeViewerOnlyPage() {
       data-viewer-route-state={state.kind}
     >
       {state.kind === "ready" ? (
-        <RuntimeVehicleViewer preview={state.preview} showChrome={false} />
+        <RuntimeVehicleViewer
+          preview={state.preview}
+          referenceData={state.referenceData}
+          showChrome={false}
+        />
       ) : null}
       {state.kind === "error" ? (
         <div className="runtime-viewer-only__error" role="alert">

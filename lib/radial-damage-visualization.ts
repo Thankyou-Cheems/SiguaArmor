@@ -60,6 +60,30 @@ export interface RadialDamageLegendPlacement {
   angleOffsetRad: number;
 }
 
+export type RadialDamageCoverageState = "covered" | "clear" | "unknown";
+
+export function radialDamageCoverageState(
+  result: EditorNativeShotResult,
+): RadialDamageCoverageState {
+  if (
+    result.damage.some(
+      (event) =>
+        event.damageKind === "radial" &&
+        event.certainty !== "native-unknown" &&
+        event.incomingDamage > 0,
+    )
+  ) return "covered";
+  if (
+    result.radial.state === "native-unknown" ||
+    result.radial.componentFanout === "native-unknown" ||
+    result.damage.some(
+      (event) =>
+        event.damageKind === "radial" && event.certainty === "native-unknown",
+    )
+  ) return "unknown";
+  return "clear";
+}
+
 export function radialDamageLegendPlacement(
   layerIndex: number,
 ): RadialDamageLegendPlacement {
@@ -128,12 +152,16 @@ export function buildRadialDamageVisualizationPlan(
   result: EditorNativeShotResult,
   components: readonly RadialDamageVisualizationComponent[] = [],
 ): RadialDamageVisualizationPlan | null {
-  if (result.radial.layers.length === 0 || result.layers.length === 0) {
+  if (result.radial.layers.length === 0) {
     return null;
   }
 
-  const firstImpact = result.layers[0];
-  const originComponent = components[firstImpact.componentIndex] ?? firstImpact;
+  const firstImpact = result.layers[0] ?? null;
+  const radialSourceComponentIndex = result.damage.find(
+    (event) => event.damageKind === "radial",
+  )?.sourceComponentIndex ?? 0;
+  const originComponentIndex = firstImpact?.componentIndex ?? radialSourceComponentIndex;
+  const originComponent = components[originComponentIndex] ?? firstImpact;
   const layers = result.radial.layers.flatMap((radialLayer) => {
     const ballisticsLayer = result.ballistics.explosiveLayers.find(
       (candidate) => candidate.layerId === radialLayer.layerId,
@@ -173,9 +201,12 @@ export function buildRadialDamageVisualizationPlan(
     targetSelection: "root-actor-impact-topology",
     radiusPresentation: "exact",
     origin: {
-      componentIndex: firstImpact.componentIndex,
-      componentId: originComponent.componentId ?? firstImpact.componentId,
-      componentLabel: playerHitComponentLabel(originComponent),
+      componentIndex: originComponentIndex,
+      componentId:
+        originComponent?.componentId ?? firstImpact?.componentId ?? "radial-origin",
+      componentLabel: firstImpact
+        ? playerHitComponentLabel(originComponent)
+        : "自由爆心",
     },
     layers,
     outcomes,
