@@ -82,6 +82,7 @@ import {
   RUNTIME_GROUND_SCALE_TICK_INTERVAL_M,
   runtimeGroundScaleLengthM,
 } from "../lib/runtime-ground-scale";
+import { shotResultRendersDirectTrace } from "../lib/shot-visual-policy";
 import {
   RUNTIME_VIEWER_CAMERA_VIEWS,
   RUNTIME_VIEWER_INFANTRY_DISTANCES_M,
@@ -4702,6 +4703,8 @@ export function RuntimeVehicleViewer({
       delete host.dataset.shotExplosionVisualClip;
       delete host.dataset.shotExplosionSurfaceHemisphere;
       delete host.dataset.shotExplosionLegendPlacement;
+      delete host.dataset.shotDirectTraceState;
+      delete host.dataset.shotHoveredSurfaceState;
       delete host.dataset.shotExplosionLegendRadiusPresentation;
       delete host.dataset.shotExplosionLegendScale;
       delete host.dataset.shotExplosionExpansionDurationMs;
@@ -4727,6 +4730,9 @@ export function RuntimeVehicleViewer({
       parsedHitRef.current?.header.components ?? [],
     );
     host.dataset.hitResolution = result.resolution;
+    host.dataset.shotDirectTraceState = shotResultRendersDirectTrace(result)
+      ? "visible"
+      : "radial-only-hidden";
     host.dataset.hitStoppedAtLayer = result.stoppedAtLayer === null
       ? "none"
       : String(result.stoppedAtLayer);
@@ -4898,6 +4904,7 @@ export function RuntimeVehicleViewer({
     const detachedOrigin = record.radialOriginOverrideM
       ? new THREE.Vector3().fromArray(record.radialOriginOverrideM)
       : null;
+    const rendersDirectTrace = shotResultRendersDirectTrace(result);
     if (result.layers.length === 0) {
       if (!detachedOrigin || result.ballistics.explosiveLayers.length === 0) {
         shotVisual.group.visible = false;
@@ -5156,6 +5163,20 @@ export function RuntimeVehicleViewer({
         originOffsetM,
       });
     });
+    if (!rendersDirectTrace) {
+      shotVisual.trace.visible = false;
+      shotVisual.traceOutline.visible = false;
+      shotVisual.continuationTrace.visible = false;
+      shotVisual.continuationArrow.visible = false;
+      shotVisual.entryMarker.visible = false;
+      shotVisual.terminalVisible = false;
+      shotVisual.terminalMarker.visible = false;
+      shotVisual.layerMarkers.forEach((marker) => {
+        marker.sphere.visible = false;
+      });
+      shotVisual.animationActive = false;
+      shotVisual.animationLayout = null;
+    }
     shotVisual.group.visible = true;
     setShotTraceAnimationProgress(shotVisual, 1, 1);
     shotVisual.explosionLayers.forEach((layer) => {
@@ -5179,15 +5200,19 @@ export function RuntimeVehicleViewer({
     setDamageAnimationRevision((revision) => revision + 1);
     selectShotVisual(record.shotId);
     const firstLayer = record.result.layers[0];
+    const rendersDirectTrace = shotResultRendersDirectTrace(record.result);
     if (hitModelRef.current) {
       setHitSceneThreeModelHoveredProfile(
         hitModelRef.current,
-        firstLayer?.surfaceProfileIndex ?? null,
+        rendersDirectTrace ? firstLayer?.surfaceProfileIndex ?? null : null,
       );
     }
     updateHostShotState(record.result);
     const host = hostRef.current;
     if (host) {
+      host.dataset.shotHoveredSurfaceState = rendersDirectTrace
+        ? "direct"
+        : "radial-only-cleared";
       host.dataset.shotExplosionOriginMode = record.radialOriginOverrideM
         ? "detached"
         : "contact";

@@ -997,7 +997,11 @@ export function setHitSceneThreeModelDamageHighlight(
     ? Math.max(0, Math.min(1, strength))
     : 0;
   for (const mesh of modelMeshes(model)) {
-    mesh.material.uniforms.damageHighlightStrength.value = safeStrength;
+    mesh.material.uniforms.damageHighlightStrength.value =
+      mesh.userData.hitSceneLayer === "armor-overlay" ||
+        mesh.userData.hitSceneLayer === "blocker-overlay"
+        ? 0
+        : safeStrength;
   }
   hitSceneDamageHighlightStates.set(model, {
     componentKey,
