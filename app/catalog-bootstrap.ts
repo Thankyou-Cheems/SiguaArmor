@@ -1,6 +1,7 @@
 import {
   loadWikiFactionCatalog,
   loadWikiVehicleCommunityAliases,
+  loadWikiVehicleCatalog,
   loadWikiVehicleFactionPresentation,
   loadWikiVehiclePresentation,
 } from "../lib/wiki-source";
@@ -103,6 +104,24 @@ export async function loadPublicCatalog(
   const [topology, vehicles, factions, aliases] = await Promise.all([
     loadFullCatalogTopology(siteEdition),
     loadWikiVehiclePresentation(),
+    loadWikiFactionCatalog(),
+    loadWikiVehicleCommunityAliases(),
+  ]);
+  return buildCatalogIndexFromWiki(
+    vehicles,
+    factions,
+    topology,
+    siteEdition,
+    aliases,
+  );
+}
+
+export async function loadPublicRankerCatalog(
+  siteEdition: SiteEdition,
+): Promise<PublicCatalogIndex> {
+  const [topology, vehicles, factions, aliases] = await Promise.all([
+    loadFullCatalogTopology(siteEdition),
+    loadWikiVehicleCatalog(),
     loadWikiFactionCatalog(),
     loadWikiVehicleCommunityAliases(),
   ]);

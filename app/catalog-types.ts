@@ -248,6 +248,11 @@ export interface CatalogSearchVariant {
   };
   cardId: string;
   routeSlug: string;
+  thumbnail?: {
+    path: string;
+    width: number;
+    height: number;
+  } | null;
 }
 
 export interface CatalogSearchRecord {

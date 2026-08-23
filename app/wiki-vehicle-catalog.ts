@@ -441,6 +441,13 @@ export function buildCatalogIndexFromWiki(
   const presentation = new Map(
     catalog.presentation.editions[edition].records.map((record) => [record.cardId, record]),
   );
+  const visualArtifacts = new Map(
+    (catalog.schemaVersion === "sigua-vehicle-catalog/v3.1"
+      ? catalog.runtime?.visualArtifacts ?? []
+      : []
+    ).filter((artifact) => artifact.edition === edition)
+      .map((artifact) => [artifact.id, artifact]),
+  );
   const communityAliases = communityAliasMaps(communityAliasesValue, edition);
   const records = topology.records.flatMap((record) => {
     const wikiSourceCardId = record.wikiSourceCardId ?? record.promoEntryId;
@@ -452,6 +459,9 @@ export function buildCatalogIndexFromWiki(
       if (!variantDisplay) return [];
       return [{
         ...variant,
+        thumbnail: variant.visualArtifactRef
+          ? visualArtifacts.get(variant.visualArtifactRef)?.thumbnail ?? null
+          : null,
         alias: variantDisplay.configurationZh ?? "",
         displayName: variantDisplay.nameZh,
         searchTerms: variantDisplay.searchTerms,

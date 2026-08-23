@@ -103,6 +103,7 @@ import { IronRiceHallWordmark } from "./IronRiceHallWordmark";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
 import { VehicleDamageTypeIcon } from "./VehicleDamageTypeIcon";
 import { VehicleDuelEntryLink } from "./VehicleDuelEntryLink";
+import { VehicleRankerEntryLink } from "./VehicleRankerEntryLink";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
 import type { ViewerNavigationState } from "./viewer-types";
 import { SiteFooterSupporters } from "./SiteFooterSupporters";
@@ -127,6 +128,28 @@ const WikiTurretStationIndicator = lazy(() =>
 const ALL_GROUPS = ALL_CATALOG_GROUPS;
 const DONATE_QR_SRC = new URL("../donateQR.jpg", import.meta.url).href;
 const FEEDBACK_FORM_URL = "https://docs.qq.com/form/page/DRnd4bWtKUGNnT3Vu";
+
+function HomepageUtilityNav({
+  siteEdition,
+  switchHref,
+  switchLabel,
+}: {
+  siteEdition: SiteEdition;
+  switchHref: string;
+  switchLabel: string;
+}) {
+  return (
+    <nav className="homepage-utility-nav" aria-label="站点与载具工具">
+      <a className="homepage-utility-nav__edition" href={switchHref}>
+        <ExternalLink size={13} aria-hidden="true" />
+        <span>{switchLabel}</span>
+      </a>
+      <DailyActiveDisplay variant="hero" />
+      <VehicleDuelEntryLink siteEdition={siteEdition} />
+      <VehicleRankerEntryLink siteEdition={siteEdition} />
+    </nav>
+  );
+}
 const EMPTY_FACTION_FOREGROUND_SRC =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 const FACTION_IMAGE_PRELOADS = new Map<string, Promise<void>>();
@@ -3986,10 +4009,6 @@ function CatalogAppReady({
       <a className="skip-link" href={hasGroupSelection ? "#main-content" : "#faction-selector"}>
         {hasGroupSelection ? "跳至载具目录" : "跳至阵营选择"}
       </a>
-      <VehicleDuelEntryLink
-        siteEdition={siteEdition}
-        initialVehicleId={selectedCard?.record.promoEntryId ?? null}
-      />
       {dataAccuracyNoticeOpen ? (
         <aside className="data-accuracy-notice" role="note" aria-label="数据准确性提示">
           <CircleAlert size={16} aria-hidden="true" />
@@ -4113,23 +4132,18 @@ function CatalogAppReady({
 
             <header className="faction-selector__brand">
               <div className="brand-lockup brand-lockup--iron-rice-hall">
-                <div className="faction-selector__brand-identity">
-                  <a
-                    className="site-edition-switch site-edition-switch--china-hero"
-                    href={editionProfile.switchHref}
-                    aria-label={editionProfile.switchLabel}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- local CDN-ready brand asset preserves the complete official wordmark */}
-                    <img
-                      className="brand-wordmark"
-                      src="/china-assets/local-preview/official/brand/iron-rice-hall-wordmark.png"
-                      alt="铁皮饭堂"
-                    />
-                    <small className="site-edition-switch__label">
-                      {editionProfile.switchLabel}
-                    </small>
-                  </a>
-                  <DailyActiveDisplay variant="hero" />
+                <div className="faction-selector__brand-identity faction-selector__brand-identity--hero">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- local CDN-ready brand asset preserves the complete official wordmark */}
+                  <img
+                    className="brand-wordmark"
+                    src="/china-assets/local-preview/official/brand/iron-rice-hall-wordmark.png"
+                    alt="铁皮饭堂"
+                  />
+                  <HomepageUtilityNav
+                    siteEdition={siteEdition}
+                    switchHref={editionProfile.switchHref}
+                    switchLabel={editionProfile.switchLabel}
+                  />
                 </div>
                 <span>公益项目 · 实装内容以游戏内为准 · 不代表最终品质</span>
               </div>
@@ -4281,17 +4295,12 @@ function CatalogAppReady({
         <header className="faction-selector__brand">
           <div className="faction-selector__brand-copy">
             <div className="faction-selector__brand-title">
-              <a
-                className="site-edition-switch site-edition-switch--hero"
-                href={editionProfile.switchHref}
-                aria-label={editionProfile.switchLabel}
-              >
-                <IronRiceHallWordmark className="brand-wordmark" />
-                <span className="site-edition-switch__label">
-                  {editionProfile.switchLabel}
-                </span>
-              </a>
-              <DailyActiveDisplay variant="hero" />
+              <IronRiceHallWordmark className="brand-wordmark" />
+              <HomepageUtilityNav
+                siteEdition={siteEdition}
+                switchHref={editionProfile.switchHref}
+                switchLabel={editionProfile.switchLabel}
+              />
               <h1 id="faction-selector-title" ref={selectorTitleRef} tabIndex={-1}>
                 选择你的阵营
               </h1>
