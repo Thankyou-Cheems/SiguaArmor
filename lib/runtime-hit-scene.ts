@@ -174,6 +174,49 @@ function geometrySourceUrl(descriptor: RuntimeHitArtifactDescriptor): string {
   return url;
 }
 
+function rawGeometryHitBufferRef(record: RuntimeHitRecord): RawRuntimeHitBufferRef {
+  const url = record.geometry.path.startsWith("/")
+    ? record.geometry.path
+    : `/${record.geometry.path}`;
+  assert(
+    /^\/assets\/runtime-probe\/hit-runtime\/geometry\/[0-9a-f]{64}\.bin$/u.test(url),
+    "record raw geometry URL is invalid",
+  );
+  assert(
+    url.endsWith(`/${record.geometry.sha256}.bin`),
+    "record raw geometry URL does not match its SHA-256",
+  );
+  return rawHitBufferRef(
+    url,
+    record.geometry.bytes,
+    record.geometry.sha256,
+  );
+}
+
+async function loadGeometryBuffer(
+  descriptor: RuntimeHitArtifactDescriptor,
+  record: RuntimeHitRecord,
+  source: Promise<
+    | { buffer: ArrayBuffer; error?: never }
+    | { buffer?: never; error: unknown }
+  >,
+) {
+  const ref = geometryHitBufferRef(descriptor, record);
+  try {
+    const result = await source;
+    if (result.error !== undefined) throw result.error;
+    return await runtimeHitBufferLoader.load(ref, result.buffer);
+  } catch (error) {
+    if (ref.encoding !== "meshopt-v1") throw error;
+    const fallbackRef = rawGeometryHitBufferRef(record);
+    const fallbackSource = await fetchRuntimeAsset(
+      fallbackRef.url,
+      "raw geometry fallback",
+    );
+    return runtimeHitBufferLoader.load(fallbackRef, fallbackSource);
+  }
+}
+
 function bvhHitBufferRef(
   descriptor: RuntimeHitArtifactDescriptor,
   record: RuntimeHitRecord,
@@ -262,18 +305,26 @@ export async function loadRuntimeHitScene(
 ): Promise<ParsedRuntimeHitScene> {
   assert(descriptor.formatVersion === "hit-scene-runtime/v1", "descriptor format mismatch");
   assert(/^vehicle-[0-9a-f]{64}$/.test(descriptor.vehicleId), "descriptor identity is not exact");
-  const [recordBuffer, geometrySource, bvhSource] = await Promise.all([
-    fetchRuntimeAsset(descriptor.recordUrl, "record"),
-    fetchRuntimeAsset(geometrySourceUrl(descriptor), "geometry"),
-    fetchRuntimeAsset(descriptor.bvhUrl, "BVH"),
-  ]);
-  const record = parseRuntimeHitRecord(recordBuffer, descriptor);
-  const [geometryBuffer, bvhBuffer] = await Promise.all([
+  const recordPromise = fetchRuntimeAsset(descriptor.recordUrl, "record")
+    .then((recordBuffer) => parseRuntimeHitRecord(recordBuffer, descriptor));
+  const geometrySource = fetchRuntimeAsset(
+    geometrySourceUrl(descriptor),
+    "geometry",
+  ).then(
+    (buffer) => ({ buffer }),
+    (error: unknown) => ({ error }),
+  );
+  const bvhSource = fetchRuntimeAsset(descriptor.bvhUrl, "BVH");
+  const bvhBufferPromise = bvhSource.then(async (source) =>
     runtimeHitBufferLoader.load(
-      geometryHitBufferRef(descriptor, record),
-      geometrySource,
-    ),
-    runtimeHitBufferLoader.load(bvhHitBufferRef(descriptor, record), bvhSource),
+      bvhHitBufferRef(descriptor, await recordPromise),
+      source,
+    )
+  );
+  const record = await recordPromise;
+  const [geometryBuffer, bvhBuffer] = await Promise.all([
+    loadGeometryBuffer(descriptor, record, geometrySource),
+    bvhBufferPromise,
   ]);
 
   const sections = record.geometry.sections;

@@ -9316,6 +9316,8 @@ export function RuntimeVehicleViewer({
     activeShotId !== null;
   const explosionOriginPlacement =
     selectedWeaponHasExplosion && !explosionOriginDraggable;
+  const explosionOriginPlacementTargetsVehicle =
+    explosionOriginPlacement && realtimePointer !== null;
   const explosionOriginDetached = Boolean(
     activeSavedShot?.radialOriginOverrideM,
   );
@@ -9525,12 +9527,15 @@ export function RuntimeVehicleViewer({
         <div
           className="viewer-explosion-origin-hud"
           data-placement={explosionOriginPlacement ? "true" : "false"}
+          data-placement-target={explosionOriginPlacementTargetsVehicle ? "vehicle" : "scene"}
           data-detached={explosionOriginDetached ? "true" : "false"}
           data-coverage={explosionOriginCoverage ?? undefined}
           ref={explosionOriginHudRef}
           hidden={!explosionOriginDraggable && !explosionOriginPlacement}
           aria-label={explosionOriginPlacement
-            ? "点击场景地面放置爆心"
+            ? explosionOriginPlacementTargetsVehicle
+              ? "点击载具命中并在接触点引爆"
+              : "点击场景地面放置爆心"
             : explosionOriginDetached
               ? "自由爆心；拖动调整水平位置，Shift 加滚轮调整高度"
               : "拖动爆心计算非接触爆炸伤害"}
@@ -9539,7 +9544,9 @@ export function RuntimeVehicleViewer({
             <CircleDot size={16} />
           </span>
           <b>{explosionOriginPlacement
-            ? "放置"
+            ? explosionOriginPlacementTargetsVehicle
+              ? "命中"
+              : "放置"
             : explosionOriginDetached
               ? "自由"
               : "拖动"}</b>
