@@ -514,6 +514,54 @@ test("meshopt-v1 geometry feeds the unchanged hit-scene parser", async () => {
   }
 });
 
+test("missing meshopt geometry falls back to the record-bound verified raw geometry", async () => {
+  const fixture = runtimeHitFixture();
+  const rawGeometry = fixture.responses.get("/assets/hit/geometry.bin");
+  const rawGeometryPath = `/assets/runtime-probe/hit-runtime/geometry/${sha256(rawGeometry)}.bin`;
+  const record = JSON.parse(new TextDecoder().decode(
+    fixture.responses.get("/assets/hit/record.json"),
+  ));
+  record.geometry.path = rawGeometryPath.slice(1);
+  fixture.responses.set(
+    "/assets/hit/record.json",
+    new TextEncoder().encode(JSON.stringify(record)).buffer,
+  );
+  fixture.responses.set(rawGeometryPath, rawGeometry);
+  fixture.descriptor.geometry = {
+    encoding: "meshopt-v1",
+    url: "/assets/hit/missing.meshopt.bin",
+    decodedByteLength: rawGeometry.byteLength,
+    decodedSha256: sha256(rawGeometry),
+    chunks: [],
+  };
+  delete fixture.descriptor.geometryUrl;
+  const originalFetch = globalThis.fetch;
+  const requestedPaths = [];
+  globalThis.fetch = async (url) => {
+    const pathname = new URL(String(url)).pathname;
+    requestedPaths.push(pathname);
+    if (pathname === "/assets/hit/missing.meshopt.bin") {
+      return new Response("missing", { status: 404 });
+    }
+    const bytes = fixture.responses.get(pathname);
+    assert.ok(bytes, `unexpected request ${pathname}`);
+    return new Response(bytes, { status: 200 });
+  };
+
+  try {
+    const scene = await loadRuntimeHitScene(fixture.descriptor);
+    assert.deepEqual([...scene.indices], [0, 1, 2]);
+    assert.deepEqual(requestedPaths.sort(), [
+      "/assets/hit/bvh.bin",
+      "/assets/hit/missing.meshopt.bin",
+      "/assets/hit/record.json",
+      rawGeometryPath,
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 function semanticRayIntersections(scene) {
   // This is the same public-consumer mapping used by RuntimeVehicleViewer:
   // raycast the parsed analysis mesh, then resolve each source face through

@@ -126,6 +126,9 @@ test("explosive shots expose one draggable non-contact origin with reset guidanc
   assert.match(viewerSource, /setShotExplosionOriginRef\.current/u);
   assert.match(viewerSource, /radialOriginOverrideM/u);
   assert.match(viewerSource, /className="viewer-explosion-origin-hud"/u);
+  assert.match(viewerSource, /explosionOriginPlacementTargetsVehicle/u);
+  assert.match(viewerSource, /点击载具命中并在接触点引爆/u);
+  assert.match(viewerSource, /\? "命中"/u);
   assert.match(viewerSource, /自由爆心；拖动调整水平位置/u);
   assert.match(viewerSource, /贴回命中点/u);
   assert.match(viewerSource, /explosionGroundFloorY/u);
