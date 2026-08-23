@@ -7,6 +7,7 @@ import { MeshBVH } from "three-mesh-bvh";
 import {
   createHitSceneThreeModel,
   setHitSceneThreeModelComponentPoses,
+  setHitSceneThreeModelDamageHighlight,
 } from "../../lib/hit-scene-three-renderer.ts";
 
 const observed = (value) => ({ state: "observed", value });
@@ -110,4 +111,21 @@ test("viewer parents visual and hit groups under the same chassis pose", () => {
   assert.match(source, /chassisPoseGroup\.add\(visualGroup, analysisVisualGroup\)/u);
   assert.match(source, /chassisPoseGroup\.add\(hitGroup\)/u);
   assert.match(source, /setHitSceneThreeModelComponentPoses\(/u);
+});
+
+test("radial damage highlight never lights translucent overlay volumes", () => {
+  const pack = physicalHitPack();
+  const model = createHitSceneThreeModel(pack);
+  setHitSceneThreeModelDamageHighlight(model, {
+    componentIndices: [0],
+    colorHex: 0xd97967,
+    strength: 0.82,
+  });
+
+  assert.equal(model.armor.material.uniforms.damageHighlightStrength.value, 0.82);
+  assert.equal(model.interior.material.uniforms.damageHighlightStrength.value, 0.82);
+  assert.equal(model.armorOverlay.material.uniforms.damageHighlightStrength.value, 0);
+  assert.equal(model.blockerOverlay.material.uniforms.damageHighlightStrength.value, 0);
+  model.dispose();
+  pack.analysisGeometry.dispose();
 });
