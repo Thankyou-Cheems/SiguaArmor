@@ -49,8 +49,9 @@ test("ranked cards keep only the vehicle name, optional configuration, and remov
 });
 
 test("ranked cards use the vehicle impression as a full-card background", () => {
-  assert.match(styles, /\.vehicle-ranker-card__visual \{ position: absolute;[^}]*inset: -7%/u);
-  assert.match(styles, /\.vehicle-ranker-card__visual img \{[^}]*object-fit: contain;[^}]*transform: scale\(1\.18\)/u);
+  assert.match(styles, /\.vehicle-ranker-card__visual \{ position: absolute;[^}]*inset: 0/u);
+  assert.match(styles, /\.vehicle-ranker-card__visual img \{[^}]*inset: 2px;[^}]*width: calc\(100% - 4px\);[^}]*height: calc\(100% - 4px\);[^}]*object-fit: contain/u);
+  assert.doesNotMatch(styles, /\.vehicle-ranker-card__visual img \{[^}]*transform:/u);
   assert.match(styles, /\.vehicle-ranker-card::after \{[^}]*linear-gradient/u);
   assert.match(styles, /\.vehicle-ranker-card__copy \{[^}]*background: transparent/u);
   assert.match(styles, /\.vehicle-ranker-card__copy strong \{[^}]*-webkit-text-stroke: 0\.9px #cdb37a/u);
