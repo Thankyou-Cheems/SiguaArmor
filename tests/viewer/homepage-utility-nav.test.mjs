@@ -37,3 +37,14 @@ test("homepage tool links are inline instead of independent fixed overlays", () 
   assert.doesNotMatch(rootOpening, /<VehicleDuelEntryLink/u);
   assert.doesNotMatch(rootOpening, /<VehicleRankerEntryLink/u);
 });
+
+test("international character preview shows the Wiki faction full name", () => {
+  const previewStart = catalogSource.indexOf(
+    '<div className="faction-selector__preview-identity"',
+  );
+  const previewEnd = catalogSource.indexOf("</div>", previewStart);
+  const previewSource = catalogSource.slice(previewStart, previewEnd);
+  assert.match(previewSource, /faction-selector__faction-name/u);
+  assert.match(previewSource, /\{previewFaction\.name\}/u);
+  assert.doesNotMatch(previewSource, /公益项目|以游戏内实装为准/u);
+});
