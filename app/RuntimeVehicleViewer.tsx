@@ -8170,7 +8170,7 @@ export function RuntimeVehicleViewer({
         ring.visible = Boolean(layer);
         if (layer) ring.scale.setScalar(Math.max(0.001, layer.outerRadiusCm / 100));
       });
-      explosionPlacementPreview.root.visible = true;
+      explosionPlacementPreview.root.visible = false;
       const parsed = parsedHitRef.current;
       let coverageState: "covered" | "clear" | "unknown" = "unknown";
       let highlightedComponentIndices: number[] = [];
