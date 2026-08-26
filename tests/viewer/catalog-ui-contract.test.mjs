@@ -141,13 +141,19 @@ test("explosive shots expose one draggable non-contact origin with reset guidanc
   assert.match(styles, /viewer-explosion-origin-ring/u);
 });
 
-test("explosive selection previews a ground-following true-radius ring before the first shot", () => {
+test("explosive radial visualization stays hidden until the first shot settles", () => {
   assert.match(viewerSource, /selectedWeaponHasExplosion/u);
   assert.match(viewerSource, /selectedWeaponBallistics[\s\S]*?resolveEditorNativeBallistics/u);
   assert.match(viewerSource, /saveExplosionOrigin/u);
   assert.match(viewerSource, /updateExplosionPlacementPreview/u);
-  assert.match(viewerSource, /explosionPlacementPreview\.exactRadiusRings/u);
-  assert.match(viewerSource, /outerRadiusCm\s*\/\s*100/u);
+  assert.doesNotMatch(
+    viewerSource,
+    /explosionPlacementPreview\.root\.visible = true/u,
+  );
+  assert.match(
+    viewerSource,
+    /const explosionOriginDraggable =[\s\S]*?activeShotId !== null/u,
+  );
   assert.doesNotMatch(
     styles,
     /viewer-explosion-origin-hud\[data-placement="true"\][\s\S]*?top:\s*58%;[\s\S]*?left:\s*50%;/u,
@@ -162,12 +168,7 @@ test("explosive selection previews a ground-following true-radius ring before th
     /!pointerStart\s*\|\|\s*!parsed\s*\|\|\s*!analysisMesh/u,
   );
   assert.match(viewerSource, /editor-native-shot-explosion-ground-area/u);
-  assert.match(viewerSource, /explosionPlacementCoverage/u);
-  assert.match(viewerSource, /simulatePublishedRadialShot/u);
-  assert.match(viewerSource, /setHitSceneThreeModelDamageHighlight\(hitModel/u);
   assert.match(viewerSource, /scheduleExplosionPlacementPreview/u);
-  assert.match(viewerSource, /className="viewer-explosion-origin-hud__coverage"/u);
-  assert.match(styles, /viewer-explosion-origin-hud__coverage\[data-state="covered"\]/u);
 });
 
 test("penetration and damage cards use inline text without standalone legend rows", () => {
