@@ -4310,8 +4310,8 @@ function CatalogAppReady({
                 {/* eslint-disable-next-line @next/next/no-img-element -- compact local faction insignia */}
                 <img src={factionVisualAsset(previewFaction, siteEdition).logo} alt="" />
                 <strong>{previewFaction.id.toUpperCase()}</strong>
-                <small className="faction-selector__project-note">
-                  公益项目 · 以游戏内实装为准
+                <small className="faction-selector__faction-name">
+                  {previewFaction.name}
                 </small>
               </div>
             ) : null}

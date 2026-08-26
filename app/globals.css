@@ -11516,7 +11516,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .site-shell[data-site-edition="international"]
   .faction-selector__preview-identity
-  .faction-selector__project-note {
+  .faction-selector__faction-name {
   min-width: 0;
   overflow: hidden;
   padding-left: 12px;
@@ -12507,7 +12507,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
   .site-shell[data-site-edition="international"]
     .faction-selector__preview-identity
-    .faction-selector__project-note {
+    .faction-selector__faction-name {
     grid-column: auto;
     padding-top: 0;
     padding-left: 8px;
