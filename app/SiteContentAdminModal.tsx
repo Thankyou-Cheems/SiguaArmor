@@ -32,6 +32,11 @@ import {
   type RuntimeDocumentName,
 } from "../lib/runtime-document-events";
 import type { SiteEdition } from "./site-edition";
+import {
+  AdminAnalyticsDashboard,
+  parseAdminAnalyticsOverview,
+  type AdminAnalyticsOverview,
+} from "./AdminAnalyticsDashboard";
 
 type SupportersDocument = NonNullable<ReturnType<typeof parseSupportersDocument>>;
 type SupporterEntry = SupportersDocument["entries"][number];
@@ -41,6 +46,7 @@ type DataAccuracyNoticesDocument = NonNullable<
   ReturnType<typeof parseDataAccuracyNoticesDocument>
 >;
 type AdminDocumentName = RuntimeDocumentName;
+type AdminViewName = "analytics" | AdminDocumentName;
 
 interface LoadedDocument<T> {
   document: T;
@@ -69,6 +75,10 @@ const DOCUMENT_LABELS: Record<AdminDocumentName, string> = {
   supporters: "赞助名单",
   "updates-china": "国服更新日志",
   "updates-international": "国际版更新日志",
+};
+const ADMIN_VIEW_LABELS: Record<AdminViewName, string> = {
+  analytics: "日活总览",
+  ...DOCUMENT_LABELS,
 };
 
 class AdminRequestError extends Error {
@@ -706,6 +716,8 @@ export function SiteContentAdminModal({
   const [csrfToken, setCsrfToken] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [documents, setDocuments] = useState<LoadedDocuments | null>(null);
+  const [analytics, setAnalytics] = useState<AdminAnalyticsOverview | null>(null);
+  const [activeView, setActiveView] = useState<AdminViewName>("analytics");
   const [activeDocument, setActiveDocument] = useState<AdminDocumentName>(
     initialEdition === "china" ? "updates-china" : "updates-international",
   );
@@ -740,6 +752,13 @@ export function SiteContentAdminModal({
     setDocuments(Object.fromEntries(loaded) as unknown as LoadedDocuments);
   }, []);
 
+  const loadAnalytics = useCallback(async () => {
+    const result = await requestAdminJson<AdminAnalyticsOverview>("/analytics");
+    const parsed = parseAdminAnalyticsOverview(result.value);
+    if (!parsed) throw new Error("日活总览接口返回了无效数据");
+    setAnalytics(parsed);
+  }, []);
+
   useEffect(() => {
     let disposed = false;
     const boot = async () => {
@@ -748,7 +767,7 @@ export function SiteContentAdminModal({
         if (disposed) return;
         setCsrfToken(result.value.csrfToken);
         setExpiresAt(result.value.expiresAt);
-        await loadDocuments();
+        await Promise.all([loadDocuments(), loadAnalytics()]);
         if (!disposed) setSessionState("ready");
       } catch (requestError) {
         if (disposed) return;
@@ -765,7 +784,7 @@ export function SiteContentAdminModal({
     return () => {
       disposed = true;
     };
-  }, [loadDocuments]);
+  }, [loadAnalytics, loadDocuments]);
 
   useEffect(() => {
     if (sessionState !== "locked") return;
@@ -829,7 +848,7 @@ export function SiteContentAdminModal({
       });
       setCsrfToken(result.value.csrfToken);
       setExpiresAt(result.value.expiresAt);
-      await loadDocuments();
+      await Promise.all([loadDocuments(), loadAnalytics()]);
       setSessionState("ready");
     } catch (requestError) {
       setError(
@@ -857,6 +876,7 @@ export function SiteContentAdminModal({
       setManagementKey("");
       if (keyInputRef.current) keyInputRef.current.value = "";
       setDocuments(null);
+      setAnalytics(null);
       setCsrfToken("");
       setExpiresAt("");
       setSessionState("locked");
@@ -931,6 +951,7 @@ export function SiteContentAdminModal({
       } else if (requestError instanceof AdminRequestError && requestError.status === 401) {
         setSessionState("locked");
         setDocuments(null);
+        setAnalytics(null);
         setCsrfToken("");
         setError("管理会话已过期，请重新输入密钥。");
       } else {
@@ -946,7 +967,7 @@ export function SiteContentAdminModal({
     setError("");
     setNotice("");
     try {
-      await loadDocuments();
+      await Promise.all([loadDocuments(), loadAnalytics()]);
       setNotice("已重新载入服务器上的最新内容。");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "载入失败");
@@ -1024,28 +1045,29 @@ export function SiteContentAdminModal({
           </form>
         ) : null}
 
-        {sessionState === "ready" && documents ? (
+        {sessionState === "ready" && documents && analytics ? (
           <>
             <div className="site-content-admin__toolbar">
               <div
                 className="site-content-admin__tabs"
                 role="tablist"
-                aria-label="选择要管理的运行时文档"
+                aria-label="选择管理视图"
               >
-                {(Object.keys(DOCUMENT_LABELS) as AdminDocumentName[]).map((documentName) => (
+                {(Object.keys(ADMIN_VIEW_LABELS) as AdminViewName[]).map((viewName) => (
                   <button
-                    key={documentName}
+                    key={viewName}
                     type="button"
                     role="tab"
-                    aria-selected={activeDocument === documentName}
-                    data-active={activeDocument === documentName}
+                    aria-selected={activeView === viewName}
+                    data-active={activeView === viewName}
                     onClick={() => {
-                      setActiveDocument(documentName);
+                      setActiveView(viewName);
+                      if (viewName !== "analytics") setActiveDocument(viewName);
                       setError("");
                       setNotice("");
                     }}
                   >
-                    {DOCUMENT_LABELS[documentName]}
+                    {ADMIN_VIEW_LABELS[viewName]}
                   </button>
                 ))}
               </div>
@@ -1062,9 +1084,11 @@ export function SiteContentAdminModal({
             <div
               className="site-content-admin__editor"
               role="tabpanel"
-              aria-label={DOCUMENT_LABELS[activeDocument]}
+              aria-label={ADMIN_VIEW_LABELS[activeView]}
             >
-              {activeDocument === "supporters" ? (
+              {activeView === "analytics" ? (
+                <AdminAnalyticsDashboard overview={analytics} />
+              ) : activeDocument === "supporters" ? (
                 <SupportersEditor
                   document={documents.supporters.document}
                   onChange={(document) =>
@@ -1121,10 +1145,14 @@ export function SiteContentAdminModal({
                   })}
                 </time>
               </div>
-              <button type="button" disabled={busy} onClick={() => void save()}>
-                <Save size={16} aria-hidden="true" />
-                {busy ? "正在保存…" : `保存${DOCUMENT_LABELS[activeDocument]}`}
-              </button>
+              {activeView === "analytics" ? (
+                <span className="site-content-admin__readonly">只读 · 每次重新载入获取最新数据</span>
+              ) : (
+                <button type="button" disabled={busy} onClick={() => void save()}>
+                  <Save size={16} aria-hidden="true" />
+                  {busy ? "正在保存…" : `保存${DOCUMENT_LABELS[activeDocument]}`}
+                </button>
+              )}
             </footer>
           </>
         ) : null}
