@@ -4167,6 +4167,9 @@ export function RuntimeVehicleViewer({
   );
   const crewOccupantCounts = useMemo(() => ({
     total: crewOccupantPlan.length,
+    rendered: crewOccupantPlan.filter(
+      ({ renderKind }) => renderKind !== "protected-nonspatial",
+    ).length,
     hittable: crewOccupantPlan.filter(
       ({ renderKind }) => renderKind === "hittable-model-and-proxy",
     ).length,
@@ -4180,6 +4183,12 @@ export function RuntimeVehicleViewer({
       ({ renderKind }) => renderKind === "unresolved-outline",
     ).length,
   }), [crewOccupantPlan]);
+  const nonSpatialCrewOccupants = useMemo(
+    () => crewOccupantPlan.filter(
+      ({ renderKind }) => renderKind === "protected-nonspatial",
+    ),
+    [crewOccupantPlan],
+  );
   const vehicleMeshRuntimePosePlacement = visual?.placements.find(
     (placement) =>
       placement.name.trim().toLowerCase() === "vehicle mesh" &&
@@ -11145,7 +11154,9 @@ export function RuntimeVehicleViewer({
                 <strong className="viewer-control-section__status">
                   {crewOccupantCounts.total > 0
                     ? crewOccupantDisplayEnabled
-                      ? `${crewOccupantCounts.total} 人显示`
+                      ? crewOccupantCounts.nonSpatial > 0
+                        ? `${crewOccupantCounts.rendered} 人 · ${crewOccupantCounts.nonSpatial} 席说明`
+                        : `${crewOccupantCounts.rendered} 人显示`
                       : `${crewOccupantCounts.total} 席`
                     : "无数据"}
                 </strong>
@@ -11222,6 +11233,35 @@ export function RuntimeVehicleViewer({
                       <i />隐藏且无空间人物
                       <b>{crewOccupantCounts.nonSpatial}</b>
                     </span>
+                  ) : null}
+                  {nonSpatialCrewOccupants.length > 0 ? (
+                    <details className="viewer-crew-nonspatial-seats">
+                      <summary>
+                        <span>查看未绘制席位</span>
+                        <b>{nonSpatialCrewOccupants.length}</b>
+                      </summary>
+                      <ul>
+                        {nonSpatialCrewOccupants.map((occupant) => (
+                          <li key={occupant.seatKey}>
+                            <strong>
+                              F{occupant.catalogSeatIndex} · {turretStationRoleLabel(
+                                occupant.role as ReferenceSeat["role"],
+                              )}
+                            </strong>
+                            <span>
+                              {occupant.requestedSocketName ?? "未命名人物 socket"}
+                              {occupant.attachmentComponentName
+                                ? ` @ ${occupant.attachmentComponentName}`
+                                : ""}
+                              {" 不存在；原生 Hidden，Actor fallback 不作为人体位置"}
+                              {occupant.directRadialDamageEligibility === "enabled"
+                                ? "；直接爆炸伤害仍启用"
+                                : ""}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
                   ) : null}
                   {crewOccupantCounts.unresolved > 0 ? (
                     <span data-kind="unresolved">

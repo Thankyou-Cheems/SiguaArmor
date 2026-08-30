@@ -26,6 +26,8 @@ function seat({
   animation,
   stationId = null,
   spatialMeaning = "runtime-soldier-attachment",
+  requestedSocketName = null,
+  directRadialDamageEligibility = "disabled",
   poseRef = category === "hittable"
     ? "vehicle-crew-animation-aaaaaaaaaaaaaaaaaaaaaaaa"
     : null,
@@ -35,7 +37,18 @@ function seat({
     stationId,
     catalogSeatIndex: index,
     role,
-    positionSemantics: { spatialMeaning },
+    positionSemantics: {
+      spatialMeaning,
+      runtimeAttachmentParent: requestedSocketName
+        ? {
+            kind: "station-component",
+            stationId,
+            componentName: "DefaultSceneRoot",
+            componentClassPath: "/Script/Engine.SceneComponent",
+            socketName: requestedSocketName,
+          }
+        : undefined,
+    },
     occupantBaseFrame: identityFrame({ x: index * 100, y: 20, z: 50 }),
     config: { initialStateIndex: 0, exposedSeat: index > 1 },
     occupantStates: [{
@@ -54,7 +67,7 @@ function seat({
         soldierActorCollision: collision,
         absoluteInvulnerability: "not-claimed",
       },
-      directRadialDamageEligibility: "disabled",
+      directRadialDamageEligibility,
     }],
     views: [],
   };
@@ -156,6 +169,8 @@ test("Hidden actors without a real socket are not drawn at a misleading fallback
       eligibility: "collision-ineligible",
       animation: "/Game/Vehicles/MATV/Animations/Passenger/Aimoffset",
       spatialMeaning: "hidden-runtime-fallback-no-rendered-body",
+      requestedSocketName: "socket_commander",
+      directRadialDamageEligibility: "enabled",
     })],
   });
   assert.equal(plans[0].renderKind, "protected-nonspatial");
@@ -163,6 +178,9 @@ test("Hidden actors without a real socket are not drawn at a misleading fallback
     plans[0].spatialMeaning,
     "hidden-runtime-fallback-no-rendered-body",
   );
+  assert.equal(plans[0].requestedSocketName, "socket_commander");
+  assert.equal(plans[0].attachmentComponentName, "DefaultSceneRoot");
+  assert.equal(plans[0].directRadialDamageEligibility, "enabled");
 });
 
 test("hittable crew without an exact BaseAnimation pose fails closed to an outline", () => {
