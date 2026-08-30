@@ -18,6 +18,7 @@ export interface RuntimeCrewOccupantLayer {
     occupants: number;
     hittable: number;
     protectedOutlines: number;
+    protectedNonSpatial: number;
     unresolvedOutlines: number;
     modelDrawCalls: number;
     modelInstances: number;
@@ -407,11 +408,14 @@ export async function createRuntimeCrewOccupantLayer({
   });
 
   const outlinePlans = plans.filter((plan) =>
-    detailState === "outline-fallback" ||
-      plan.renderKind === "unresolved-outline" ||
+    plan.renderKind !== "protected-nonspatial" &&
       (
-        plan.renderKind === "protected-outline" &&
-        plan.animationPoseRef === null
+        detailState === "outline-fallback" ||
+        plan.renderKind === "unresolved-outline" ||
+        (
+          plan.renderKind === "protected-outline" &&
+          plan.animationPoseRef === null
+        )
       )
   );
   const protectedMaterial = outlineMaterial(texture, 0x8fc2cf, 0.7);
@@ -493,6 +497,9 @@ export async function createRuntimeCrewOccupantLayer({
       hittable: hittable.length,
       protectedOutlines: plans.filter(
         ({ renderKind }) => renderKind === "protected-outline",
+      ).length,
+      protectedNonSpatial: plans.filter(
+        ({ renderKind }) => renderKind === "protected-nonspatial",
       ).length,
       unresolvedOutlines: plans.filter(
         ({ renderKind }) => renderKind === "unresolved-outline",

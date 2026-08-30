@@ -5205,6 +5205,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: #8fc2cf;
 }
 
+.viewer-crew-occupant-legend span[data-kind="nonspatial"] {
+  color: #8d9ca0;
+}
+
+.viewer-crew-occupant-legend span[data-kind="nonspatial"] i {
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+}
+
 .viewer-crew-occupant-legend span[data-kind="unresolved"] {
   color: #e5ad5b;
 }

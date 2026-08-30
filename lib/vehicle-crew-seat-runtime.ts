@@ -46,6 +46,16 @@ export interface RuntimeCrewSeatStation {
         | "station-graph-parent";
       parentCatalogSeatIndex: number;
     };
+    runtimeAttachmentParent?: {
+      kind: "vehicle-component" | "station-component";
+      stationId: string | null;
+      componentName: string;
+      componentClassPath: string;
+      socketName: string | null;
+    };
+    spatialMeaning?:
+      | "runtime-soldier-attachment"
+      | "hidden-runtime-fallback-no-rendered-body";
   };
   config: {
     initialStateIndex?: number;

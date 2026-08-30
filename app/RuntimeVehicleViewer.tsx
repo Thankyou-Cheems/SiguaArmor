@@ -255,6 +255,7 @@ interface RuntimeTurretPreviewStation extends TurretPreviewStation {
     visualAttachment: RuntimeVisualAttachmentStation | null;
     parentCatalogSeatIndex: number | null;
     inheritedMotionChannels: Array<"yaw" | "pitch">;
+    occupantMotionChannels: Array<"yaw" | "pitch">;
 }
 interface CrewViewpointMarker {
     root: THREE.Sprite;
@@ -2936,6 +2937,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         total: crewOccupantPlan.length,
         hittable: crewOccupantPlan.filter(({ renderKind }) => renderKind === "hittable-model-and-proxy").length,
         protected: crewOccupantPlan.filter(({ renderKind }) => renderKind === "protected-outline").length,
+        nonSpatial: crewOccupantPlan.filter(({ renderKind }) => renderKind === "protected-nonspatial").length,
         unresolved: crewOccupantPlan.filter(({ renderKind }) => renderKind === "unresolved-outline").length,
     }), [crewOccupantPlan]);
     const vehicleMeshRuntimePosePlacement = visual?.placements.find((placement) => placement.name.trim().toLowerCase() === "vehicle mesh" &&
@@ -3036,6 +3038,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 visualAttachment,
                 parentCatalogSeatIndex: visualAttachment?.parentCatalogSeatIndex ?? null,
                 inheritedMotionChannels: visualAttachment?.inheritedMotionChannels ?? [],
+                occupantMotionChannels: visualAttachment?.occupantMotion?.channels ?? [],
             };
         });
         const nestedAssemblies = carryNestedRuntimeTurretAssemblies(stations.map((station) => station.assembly), stations.map((station) => {
@@ -5307,13 +5310,21 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }
             return runtimeTurretParentStation(station, stations);
         };
-        const stationArticulationMatrixChain = (station: RuntimeTurretPreviewStation) => {
+        const stationArticulationMatrixChainForChannels = (station: RuntimeTurretPreviewStation, ownChannels: Array<"yaw" | "pitch">) => {
             const stations = runtimeTurretStationsRef.current;
             const matrices: number[][] = [];
             const own = stationMotionMatrices(station);
             if (!own)
                 return matrices;
-            matrices.push(own.yawPitch);
+            if (ownChannels.includes("yaw") && ownChannels.includes("pitch")) {
+                matrices.push(own.yawPitch);
+            }
+            else if (ownChannels.includes("yaw")) {
+                matrices.push(own.yaw);
+            }
+            else if (ownChannels.includes("pitch")) {
+                matrices.push(own.pitch);
+            }
             const seen = new Set([station.id]);
             let parent = parentStationForView(station, stations);
             let child = station;
@@ -5337,6 +5348,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }
             return matrices;
         };
+        const stationArticulationMatrixChain = (station: RuntimeTurretPreviewStation) => stationArticulationMatrixChainForChannels(station, ["yaw", "pitch"]);
+        const stationOccupantArticulationMatrixChain = (station: RuntimeTurretPreviewStation) => stationArticulationMatrixChainForChannels(station, station.occupantMotionChannels);
         const crewPoseForStation = (station: RuntimeTurretPreviewStation): CrewViewPose | null => {
             if (!station.view)
                 return null;
@@ -5386,7 +5399,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 const station = runtimeTurretStationsRef.current.find(({ crewSeat }) => crewSeat.stationId === plan.stationId);
                 if (!station)
                     continue;
-                const chain = stationArticulationMatrixChain(station);
+                const chain = stationOccupantArticulationMatrixChain(station);
                 if (chain.length === 0)
                     continue;
                 const combined = new THREE.Matrix4();
@@ -5397,6 +5410,16 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }
             crewOccupantLayer.updateArticulation(matrices);
             host.dataset.crewOccupantArticulatedCount = String(matrices.size);
+            host.dataset.crewOccupantPitchAttachedCount = String(runtimeTurretStationsRef.current.filter(({ occupantMotionChannels }) => occupantMotionChannels.includes("pitch")).length);
+            const serializedMatrices = [...matrices]
+                .sort(([left], [right]) => left.localeCompare(right, "en"))
+                .map(([seatKey, matrix]) => `${seatKey}:${matrix.map((value) => value.toFixed(7)).join(",")}`).join(";");
+            let occupantMatrixChecksum = 2166136261;
+            for (const character of serializedMatrices) {
+                occupantMatrixChecksum ^= character.charCodeAt(0);
+                occupantMatrixChecksum = Math.imul(occupantMatrixChecksum, 16777619);
+            }
+            host.dataset.crewOccupantArticulationChecksum = (occupantMatrixChecksum >>> 0).toString(16).padStart(8, "0");
         };
         const publishCrewOccupantLayer = (layer: RuntimeCrewOccupantLayer) => {
             host.dataset.crewOccupantState = layer.detailState === "instanced-model"
@@ -5405,6 +5428,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             host.dataset.crewOccupantCount = String(layer.stats.occupants);
             host.dataset.crewOccupantHittableCount = String(layer.stats.hittable);
             host.dataset.crewOccupantProtectedOutlineCount = String(layer.stats.protectedOutlines);
+            host.dataset.crewOccupantProtectedNonSpatialCount = String(layer.stats.protectedNonSpatial);
             host.dataset.crewOccupantUnresolvedOutlineCount = String(layer.stats.unresolvedOutlines);
             host.dataset.crewOccupantModelDrawCalls = String(layer.stats.modelDrawCalls);
             host.dataset.crewOccupantModelInstances = String(layer.stats.modelInstances);
@@ -8019,7 +8043,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 ? "explicit-not-applicable"
                 : vehicleMeshRuntimePosePlacement
                     ? "normal-time-runtime-observed"
-                    : "unavailable"} data-suspension-pose-coverage-reason={vehiclePlanarSuspensionCoverage?.reason} data-suspension-pose-running-gear-bone-count={vehicleMeshObservedSuspensionPose?.wheelCount ?? 0} data-physical-pose-pitch-degrees={chassisPose?.pitchDeg} data-physical-pose-roll-degrees={chassisPose?.rollDeg} data-physical-pose-actor-origin-height-cm={chassisPose?.heightAbovePlaneCm} data-armor-thickness-scale={relativeArmorScaleActive ? "relative" : "absolute"} data-exterior-unavailable={exteriorUnavailableMessage ? "true" : undefined} data-exterior-streaming={exteriorStreaming ? "true" : "false"} data-realtime-crosshair={realtimePointer ? "visible" : "hidden"} data-turret-preview={runtimeTurretStations.length > 0 ? "available" : "absent"} data-turret-station-id={activeTurretStation?.id} data-turret-yaw-degrees={activeTurretStation ? clampedTurretYaw : undefined} data-turret-pitch-degrees={activeTurretStation ? clampedTurretPitch : undefined} data-turret-authority={activeTurretStation?.turret.limits?.authority ?? undefined} data-gunner-sight={gunnerSightPresentationAvailable ? "available" : "absent"} data-gunner-sight-visible={gunnerSightOverlayVisible || undefined} data-crew-view-active={activeCrewViewStationId !== null || undefined} data-crew-occupants={crewOccupantDisplayEnabled ? "visible" : "hidden"} data-crew-hit-proxies={crewHitProxyDisplayEnabled ? "visible" : "hidden"} data-crew-hittable-count={crewOccupantCounts.hittable} data-crew-outline-count={crewOccupantCounts.protected + crewOccupantCounts.unresolved} data-post-penetration-distance-m={ballistics?.traceDistanceAfterPenetrationM ?? undefined}>
+                    : "unavailable"} data-suspension-pose-coverage-reason={vehiclePlanarSuspensionCoverage?.reason} data-suspension-pose-running-gear-bone-count={vehicleMeshObservedSuspensionPose?.wheelCount ?? 0} data-physical-pose-pitch-degrees={chassisPose?.pitchDeg} data-physical-pose-roll-degrees={chassisPose?.rollDeg} data-physical-pose-actor-origin-height-cm={chassisPose?.heightAbovePlaneCm} data-armor-thickness-scale={relativeArmorScaleActive ? "relative" : "absolute"} data-exterior-unavailable={exteriorUnavailableMessage ? "true" : undefined} data-exterior-streaming={exteriorStreaming ? "true" : "false"} data-realtime-crosshair={realtimePointer ? "visible" : "hidden"} data-turret-preview={runtimeTurretStations.length > 0 ? "available" : "absent"} data-turret-station-id={activeTurretStation?.id} data-turret-yaw-degrees={activeTurretStation ? clampedTurretYaw : undefined} data-turret-pitch-degrees={activeTurretStation ? clampedTurretPitch : undefined} data-turret-authority={activeTurretStation?.turret.limits?.authority ?? undefined} data-gunner-sight={gunnerSightPresentationAvailable ? "available" : "absent"} data-gunner-sight-visible={gunnerSightOverlayVisible || undefined} data-crew-view-active={activeCrewViewStationId !== null || undefined} data-crew-occupants={crewOccupantDisplayEnabled ? "visible" : "hidden"} data-crew-hit-proxies={crewHitProxyDisplayEnabled ? "visible" : "hidden"} data-crew-hittable-count={crewOccupantCounts.hittable} data-crew-outline-count={crewOccupantCounts.protected + crewOccupantCounts.unresolved} data-crew-nonspatial-count={crewOccupantCounts.nonSpatial} data-post-penetration-distance-m={ballistics?.traceDistanceAfterPenetrationM ?? undefined}>
       <div className="viewer-canvas" aria-label={`${displayName} 交互式 3D 视图`}>
         <div className="runtime-vehicle-viewer__host" ref={hostRef}/>
         <canvas className="runtime-protection-map-canvas" ref={protectionCanvasRef} hidden aria-hidden="true"/>
@@ -8386,6 +8410,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 `${crewOccupantCounts.hittable} 个可自然命中乘员按各自 exact BaseAnimation 的 Editor frame-zero 骨姿态显示。`,
                 "真实人物与姿态化轮廓默认显示；简化判定体由同一骨姿态生成并使用独立开关。",
                 `${crewOccupantCounts.protected} 个 Hidden/保护状态仅显示轮廓。`,
+                crewOccupantCounts.nonSpatial > 0
+                    ? `${crewOccupantCounts.nonSpatial} 个 Hidden 状态没有可用人物 socket；游戏不渲染其身体，站点不把 Actor fallback 冒充成空间位置。`
+                    : "",
                 crewOccupantCounts.unresolved > 0
                     ? `${crewOccupantCounts.unresolved} 个未闭合状态使用警示轮廓。`
                     : "",
@@ -8413,13 +8440,18 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     <i />保护/隐藏轮廓
                     <b>{crewOccupantCounts.protected}</b>
                   </span>
+                  {crewOccupantCounts.nonSpatial > 0 ? (<span data-kind="nonspatial">
+                      <i />隐藏且无空间人物
+                      <b>{crewOccupantCounts.nonSpatial}</b>
+                    </span>) : null}
                   {crewOccupantCounts.unresolved > 0 ? (<span data-kind="unresolved">
                       <i />未闭合轮廓
                       <b>{crewOccupantCounts.unresolved}</b>
                     </span>) : null}
                   <small>
                     位置：construction frame · 骨姿态：Editor BaseAnimation 首帧 ·
-                    判定代理：同骨架近似、默认隐藏
+                    判定代理：同骨架近似、默认隐藏 · 无人物 socket 的 Hidden
+                    状态不绘制误导性 3D 轮廓
                   </small>
                 </div>) : null}
             </div>
