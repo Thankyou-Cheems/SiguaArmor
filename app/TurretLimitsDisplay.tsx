@@ -60,6 +60,7 @@ export interface TurretPreviewStation {
 }
 
 interface TurretPreviewControlsProps {
+  embedded?: boolean;
   stations: TurretPreviewStation[];
   orientationIndicators: TurretOrientationIndicator[];
   activeStationId: string;
@@ -764,6 +765,7 @@ export function TurretEnvelopeCard({
 }
 
 export function TurretPreviewControls({
+  embedded = false,
   stations,
   orientationIndicators,
   activeStationId,
@@ -870,24 +872,8 @@ export function TurretPreviewControls({
       turret.limits?.authority === "editor" ? "var(--brand)" : "rgba(241, 239, 226, 0.62)",
   } as CSSProperties;
 
-  return (
-    <aside
-      className="turret-preview-controls"
-      data-authority={turret.limits?.authority ?? "reference"}
-      data-yaw-available={activeStation.yawAvailable}
-      data-pitch-available={activeStation.pitchAvailable}
-      style={sourceStyle}
-      aria-label="炮塔姿态预览"
-    >
-      <details>
-        <summary>
-          <span>
-            <i aria-hidden="true" />
-            炮塔姿态
-          </span>
-          <strong>{angleLabel(yawDegrees)} / {angleLabel(pitchDegrees)}</strong>
-        </summary>
-        <div className="turret-preview-controls__body">
+  const body = (
+    <div className="turret-preview-controls__body">
           {stations.length > 1 ? (
             <label className="turret-preview-controls__station">
               <span>武器站</span>
@@ -1066,8 +1052,31 @@ export function TurretPreviewControls({
           ) : !activeStation.pitchAvailable ? (
             <p role="note">炮塔可水平旋转；枪管俯仰部件仍待精确映射。</p>
           ) : null}
-        </div>
-      </details>
+    </div>
+  );
+
+  return (
+    <aside
+      className="turret-preview-controls"
+      data-authority={turret.limits?.authority ?? "reference"}
+      data-yaw-available={activeStation.yawAvailable}
+      data-pitch-available={activeStation.pitchAvailable}
+      data-embedded={embedded || undefined}
+      style={sourceStyle}
+      aria-label="炮塔姿态预览"
+    >
+      {embedded ? body : (
+        <details>
+          <summary>
+            <span>
+              <i aria-hidden="true" />
+              炮塔姿态
+            </span>
+            <strong>{angleLabel(yawDegrees)} / {angleLabel(pitchDegrees)}</strong>
+          </summary>
+          {body}
+        </details>
+      )}
     </aside>
   );
 }

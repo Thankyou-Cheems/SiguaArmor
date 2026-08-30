@@ -4925,6 +4925,149 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   will-change: transform;
 }
 
+.viewer-control-deck {
+  max-height: min(55dvh, 620px);
+  padding: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid rgba(225, 200, 155, 0.22);
+  background:
+    linear-gradient(145deg, rgba(231, 189, 104, 0.055), transparent 44%),
+    rgba(7, 10, 8, 0.86);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.34),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(14px);
+  scrollbar-color: rgba(231, 189, 104, 0.4) rgba(7, 10, 8, 0.44);
+  scrollbar-width: thin;
+}
+
+.viewer-control-deck__header {
+  display: flex;
+  min-height: 28px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 6px 5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono-ui);
+}
+
+.viewer-control-deck__header > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.viewer-control-deck__header > span i {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--brand);
+  box-shadow: 0 0 7px rgba(231, 189, 104, 0.42);
+  transform: rotate(45deg);
+}
+
+.viewer-control-deck__header > strong {
+  color: var(--text-dim);
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.viewer-control-section {
+  --viewer-control-section-tone: var(--brand);
+  width: 100%;
+  overflow: clip;
+  border: 1px solid rgba(225, 200, 155, 0.18);
+  background: rgba(10, 13, 11, 0.72);
+}
+
+.viewer-control-section[data-control-section="view"] {
+  --viewer-control-section-tone: #75c4ff;
+}
+
+.viewer-control-section[data-control-section="crew"] {
+  --viewer-control-section-tone: #ff7566;
+}
+
+.viewer-control-section[data-control-section="weapon"] {
+  --viewer-control-section-tone: #63d7e9;
+}
+
+.viewer-control-section > summary {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  color: rgba(241, 239, 226, 0.7);
+  cursor: pointer;
+  list-style: none;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.viewer-control-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.viewer-control-section > summary:hover,
+.viewer-control-section[open] > summary {
+  background: color-mix(in srgb, var(--viewer-control-section-tone) 9%, transparent);
+  color: var(--text);
+}
+
+.viewer-control-section > summary > span {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.viewer-control-section > summary > span i {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-right: 1px solid var(--viewer-control-section-tone);
+  border-bottom: 1px solid var(--viewer-control-section-tone);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--viewer-control-section-tone) 52%, transparent));
+  transform: rotate(-45deg);
+  transition: transform 160ms ease;
+}
+
+.viewer-control-section[open] > summary > span i {
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.viewer-control-section__status {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--viewer-control-section-tone);
+  font-family: var(--font-mono-ui);
+  font-size: 7px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer-control-section__body {
+  display: grid;
+  gap: 4px;
+  padding: 4px;
+  border-top: 1px solid rgba(225, 200, 155, 0.13);
+  background: rgba(4, 7, 5, 0.38);
+}
+
+.viewer-control-section:not([open]) > .viewer-control-section__body {
+  display: none;
+}
+
 .viewer-protection-controls[data-selector-open="true"][data-revealed="false"] {
   transform: translateX(calc(-100% - 16px));
 }
@@ -11398,6 +11541,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     gap: 4px;
   }
 
+  .viewer-control-deck {
+    max-height: min(47dvh, 420px);
+  }
+
   .viewer-protection-opacity,
   .viewer-protection-precision {
     gap: 5px;
@@ -16606,7 +16753,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   }
 }
 
-.viewer-toolbar .viewer-protection-controls > .turret-preview-controls {
+.viewer-toolbar .viewer-protection-controls .turret-preview-controls {
   position: relative;
   z-index: auto;
   top: auto;
@@ -16614,18 +16761,31 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   width: 100%;
 }
 
-.viewer-toolbar .viewer-protection-controls > .turret-preview-controls details,
-.viewer-toolbar .viewer-protection-controls > .turret-preview-controls details:not([open]) {
+.viewer-toolbar .viewer-protection-controls .turret-preview-controls details,
+.viewer-toolbar .viewer-protection-controls .turret-preview-controls details:not([open]) {
   width: 100%;
   margin-left: 0;
 }
 
-.viewer-toolbar .viewer-protection-controls > .turret-preview-controls .turret-preview-controls__body {
+.viewer-toolbar .viewer-protection-controls .turret-preview-controls .turret-preview-controls__body {
   max-height: min(260px, 24dvh);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-color: rgba(231, 189, 104, 0.42) rgba(9, 13, 11, 0.58);
   scrollbar-width: thin;
+}
+
+.turret-preview-controls[data-embedded="true"] {
+  position: relative;
+  z-index: auto;
+  inset: auto;
+  width: 100%;
+}
+
+.turret-preview-controls[data-embedded="true"] .turret-preview-controls__body {
+  padding: 4px;
+  border-top: 0;
+  background: transparent;
 }
 
 /* Weapon DPS / rhythm prototype. Product UI lives in Armor; Wiki only feeds
