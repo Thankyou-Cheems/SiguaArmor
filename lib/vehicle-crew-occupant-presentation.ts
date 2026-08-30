@@ -22,6 +22,9 @@ export interface CrewOccupantPresentationPlan {
   postureEvidence: "source-animation-family" | "role-approximation";
   frame: RuntimeCrewSeatFrame;
   soldierSeatState: string | null;
+  requestedSocketName: string | null;
+  attachmentComponentName: string | null;
+  directRadialDamageEligibility: string | null;
   animationRef: string | null;
   animationPoseRef: string | null;
   animationPoseState:
@@ -121,6 +124,13 @@ export function buildCrewOccupantPresentationPlan(
         ...postureForSeat(seat, animationRef),
         frame: seat.occupantBaseFrame,
         soldierSeatState: state?.soldierSeatState ?? null,
+        requestedSocketName:
+          seat.positionSemantics?.runtimeAttachmentParent?.socketName ??
+          seat.config.soldierAttachSocket ?? null,
+        attachmentComponentName:
+          seat.positionSemantics?.runtimeAttachmentParent?.componentName ?? null,
+        directRadialDamageEligibility:
+          state?.directRadialDamageEligibility ?? null,
         animationRef,
         animationPoseRef,
         animationPoseState: animationPoseRef
