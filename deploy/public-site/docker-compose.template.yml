@@ -89,6 +89,7 @@ services:
       SIGUA_CONTENT_ADMIN_LISTEN_HOST: 0.0.0.0
       SIGUA_CONTENT_ADMIN_PORT: "8083"
       SIGUA_CONTENT_ADMIN_SESSION_TTL_SECONDS: "900"
+      SIGUA_ANALYTICS_ADMIN_URL: http://sigua-analytics:8081/__analytics/admin/overview
     command: ["node", "/app/server.mjs"]
     volumes:
       - ./services/content-admin:/app:ro

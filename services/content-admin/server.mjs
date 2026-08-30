@@ -97,6 +97,18 @@ export function loadContentAdminConfig(environment = process.env) {
   ) {
     throw new ConfigError("SIGUA_WIKI_ORIGIN must be an HTTPS origin without a path");
   }
+  const analyticsAdminUrl = new URL(required(environment, "SIGUA_ANALYTICS_ADMIN_URL"));
+  if (
+    analyticsAdminUrl.protocol !== "http:" ||
+    analyticsAdminUrl.hostname !== "sigua-analytics" ||
+    analyticsAdminUrl.pathname !== "/__analytics/admin/overview" ||
+    analyticsAdminUrl.username ||
+    analyticsAdminUrl.password ||
+    analyticsAdminUrl.search ||
+    analyticsAdminUrl.hash
+  ) {
+    throw new ConfigError("SIGUA_ANALYTICS_ADMIN_URL must target the internal analytics overview");
+  }
   return Object.freeze({
     publicOrigin: publicOrigin.origin,
     publicOrigins: Object.freeze([
@@ -110,6 +122,7 @@ export function loadContentAdminConfig(environment = process.env) {
     wikiRoot: environment.SIGUA_WIKI_ROOT
       ? path.resolve(environment.SIGUA_WIKI_ROOT)
       : null,
+    analyticsAdminUrl: analyticsAdminUrl.href,
     listenHost: environment.SIGUA_CONTENT_ADMIN_LISTEN_HOST || "0.0.0.0",
     port: integer(environment, "SIGUA_CONTENT_ADMIN_PORT", 8083, 1, 65535),
     sessionTtlSeconds: integer(
@@ -365,6 +378,7 @@ export function createContentAdminApp(config, options = {}) {
   const now = options.now || (() => new Date());
   const random = options.randomBytes || randomBytes;
   const authenticationDelayMs = options.authenticationDelayMs ?? 180;
+  const fetchImpl = options.fetch ?? fetch;
   const failedLogins = new Map();
   let writeChain = Promise.resolve();
 
@@ -514,6 +528,31 @@ export function createContentAdminApp(config, options = {}) {
     );
   }
 
+  async function handleAnalytics(request, response) {
+    requireSession(request, config, now());
+    if (request.method !== "GET") {
+      throw new RequestError(405, "Method Not Allowed", { Allow: "GET" });
+    }
+    const upstream = await fetchImpl(config.analyticsAdminUrl, {
+      headers: {
+        Accept: "application/json",
+        "X-Sigua-Admin-Proxy": config.proxyAuthSecret.toString("base64url"),
+      },
+      signal: AbortSignal.timeout(4_000),
+    });
+    if (!upstream.ok) {
+      throw new Error(`analytics overview upstream returned ${upstream.status}`);
+    }
+    const overview = await upstream.json();
+    if (
+      overview?.schemaVersion !== "sigua-admin-dau-overview/v1" ||
+      !Array.isArray(overview.days)
+    ) {
+      throw new Error("analytics overview upstream returned an invalid document");
+    }
+    sendJson(response, 200, overview);
+  }
+
   async function handle(request, response) {
     const url = new URL(request.url || "/", config.publicOrigin);
     if (url.pathname === "/healthz") {
@@ -530,6 +569,10 @@ export function createContentAdminApp(config, options = {}) {
     }
     if (url.pathname === `${API_ROOT}/session`) {
       await handleSession(request, response);
+      return;
+    }
+    if (url.pathname === `${API_ROOT}/analytics`) {
+      await handleAnalytics(request, response);
       return;
     }
     const match = url.pathname.match(

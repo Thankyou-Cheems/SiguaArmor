@@ -54,6 +54,10 @@ export function loadPublicAnalyticsConfig(environment = process.env) {
     listenHost: environment.SIGUA_ANALYTICS_LISTEN_HOST || "0.0.0.0",
     port: integer(environment, "SIGUA_ANALYTICS_PORT", 8081, 1, 65535),
     originAuthSecret: base64UrlSecret(environment, "SIGUA_ORIGIN_AUTH_SECRET"),
+    adminProxySecret: base64UrlSecret(
+      environment,
+      "SIGUA_CONTENT_ADMIN_PROXY_SECRET",
+    ),
     analyticsEnabled: true,
     analyticsDir: path.resolve(required(environment, "SIGUA_ANALYTICS_DIR")),
     analyticsSecret: base64UrlSecret(environment, "SIGUA_ANALYTICS_SECRET"),
@@ -118,6 +122,16 @@ function publicDauSnapshot(analytics) {
   });
 }
 
+function adminDauOverview(config, analytics) {
+  return Object.freeze({
+    schemaVersion: "sigua-admin-dau-overview/v1",
+    generatedAt: new Date().toISOString(),
+    geoIpDatabaseRelease: config.geoIpDatabaseRelease,
+    cityThreshold: config.analyticsCityThreshold,
+    days: analytics.overview(),
+  });
+}
+
 export async function createPublicAnalyticsApp(config, options = {}) {
   const analytics = await createDauAnalytics(config, options.analyticsOptions);
 
@@ -125,6 +139,19 @@ export async function createPublicAnalyticsApp(config, options = {}) {
     const url = new URL(request.url || "/", config.publicOrigin);
     if (url.pathname === "/healthz") {
       send(response, 200, "ok\n");
+      return;
+    }
+    if (url.pathname === "/__analytics/admin/overview") {
+      if (!equalSecret(request.headers["x-sigua-admin-proxy"], config.adminProxySecret)) {
+        send(response, 403, "Forbidden\n");
+        return;
+      }
+      if (request.method !== "GET") {
+        response.setHeader("Allow", "GET");
+        send(response, 405, "Method Not Allowed\n");
+        return;
+      }
+      sendJson(response, 200, adminDauOverview(config, analytics));
       return;
     }
     if (url.pathname !== "/__analytics/dau") {

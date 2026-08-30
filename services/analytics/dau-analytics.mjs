@@ -300,6 +300,9 @@ export async function createDauAnalytics(config, options = {}) {
       snapshot() {
         return [];
       },
+      overview() {
+        return [];
+      },
       async flush() {},
       async close() {},
     });
@@ -512,6 +515,30 @@ export async function createDauAnalytics(config, options = {}) {
     });
   }
 
+  function overview(at = now()) {
+    const currentDate = utcDay(at);
+    const dates = [...new Set([
+      ...archivesByDay.keys(),
+      ...visitorsByDay.keys(),
+    ])].sort();
+    return Object.freeze(dates.map((date) => {
+      const visitors = visitorsByDay.get(date);
+      if (visitors) {
+        return Object.freeze({
+          ...buildDayAggregate(date, visitors, config.analyticsCityThreshold),
+          cityStatus: date === currentDate
+            ? "live_thresholded"
+            : "raw_thresholded",
+        });
+      }
+      const aggregate = archivesByDay.get(date);
+      return Object.freeze({
+        ...aggregate,
+        cityStatus: "archived",
+      });
+    }));
+  }
+
   async function flush() {
     if (flushTimer) {
       clearTimeout(flushTimer);
@@ -528,5 +555,5 @@ export async function createDauAnalytics(config, options = {}) {
     await flush();
   }
 
-  return Object.freeze({ enabled: true, record, snapshot, flush, close });
+  return Object.freeze({ enabled: true, record, snapshot, overview, flush, close });
 }
