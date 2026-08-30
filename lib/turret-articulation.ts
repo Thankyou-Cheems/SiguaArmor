@@ -23,7 +23,58 @@ export interface RuntimeTurretPlacement {
   name: string;
   actor: string;
   sourceMeshPath: string;
+  componentClassPath?: string;
   matrix: number[];
+}
+
+export interface RuntimeTurretVisualAttachmentMember {
+  stableOccurrenceId: string;
+  actorClassName: string;
+  componentName: string;
+  componentClassPath: string;
+  sourceMeshPath: string;
+  equipmentRefIds?: string[];
+  gunNames?: string[];
+  assignmentMode?: "exact-class-and-seat-anchor";
+}
+
+interface RuntimeTurretVehicleLocalFrame {
+  state: "derived" | "derived-with-fallback" | "unresolved";
+  value: null | {
+    translationCm: { x: number; y: number; z: number };
+    rotationQuaternion: { x: number; y: number; z: number; w: number };
+    scale3D: { x: number; y: number; z: number };
+  };
+  reason: string | null;
+}
+
+interface RuntimeTurretMotionDriver {
+  componentName: string;
+  componentClassPath: string;
+  vehicleLocalFrame: RuntimeTurretVehicleLocalFrame;
+}
+
+interface RuntimeTurretMotion {
+  state: "derived" | "unresolved";
+  driverMode:
+    | "split-yaw-pitch-components"
+    | "combined-updated-component"
+    | "paired-rotating-components";
+  yawDriver: RuntimeTurretMotionDriver | null;
+  pitchDriver: RuntimeTurretMotionDriver | null;
+}
+
+export interface RuntimeTurretVisualAttachment {
+  state: "closed" | "partial";
+  closureMode:
+    | "visual-occurrence-membership"
+    | "view-component-rotation";
+  movementState: "observed" | "unresolved";
+  motion: RuntimeTurretMotion;
+  yawMembers: RuntimeTurretVisualAttachmentMember[];
+  pitchMembers: RuntimeTurretVisualAttachmentMember[];
+  yawAnchor: RuntimeTurretVisualAttachmentMember | null;
+  pitchAnchor: RuntimeTurretVisualAttachmentMember | null;
 }
 
 export interface RuntimeTurretAssembly {
@@ -33,8 +84,15 @@ export interface RuntimeTurretAssembly {
   hitActorClassNames?: string[];
   yawPivot: [number, number, number];
   pitchPivot: [number, number, number];
+  yawAxis?: [number, number, number];
+  pitchAxis?: [number, number, number];
   yawComponentPlacementId: string;
   pitchComponentPlacementId: string | null;
+}
+
+export interface RuntimeTurretParentRelation {
+  parentIndex: number;
+  inheritedMotionChannels: Array<"yaw" | "pitch">;
 }
 
 /**
@@ -50,7 +108,45 @@ export interface RuntimeTurretAssembly {
  */
 export function carryNestedRuntimeTurretAssemblies(
   assemblies: readonly (RuntimeTurretAssembly | null)[],
+  parentRelations?: readonly (RuntimeTurretParentRelation | null)[],
 ) {
+  if (parentRelations) {
+    if (parentRelations.length !== assemblies.length) {
+      throw new Error("Runtime turret parent relation count differs from assemblies");
+    }
+    parentRelations.forEach((relation, childIndex) => {
+      if (
+        relation &&
+        (
+          !Number.isSafeInteger(relation.parentIndex) ||
+          relation.parentIndex < 0 ||
+          relation.parentIndex >= assemblies.length ||
+          relation.parentIndex === childIndex ||
+          relation.inheritedMotionChannels.length === 0 ||
+          relation.inheritedMotionChannels.some((channel) =>
+            channel !== "yaw" && channel !== "pitch"
+          )
+        )
+      ) {
+        throw new Error(`Runtime turret parent relation ${childIndex} is invalid`);
+      }
+    });
+    const relationState = new Map<number, "visiting" | "visited">();
+    const visitRelation = (childIndex: number) => {
+      const state = relationState.get(childIndex);
+      if (state === "visiting") {
+        throw new Error(`Runtime turret parent relation cycle at ${childIndex}`);
+      }
+      if (state === "visited") return;
+      relationState.set(childIndex, "visiting");
+      const relation = parentRelations[childIndex];
+      if (relation) visitRelation(relation.parentIndex);
+      relationState.set(childIndex, "visited");
+    };
+    for (let index = 0; index < parentRelations.length; index += 1) {
+      visitRelation(index);
+    }
+  }
   const expanded = assemblies.map((assembly) =>
     assembly
       ? {
@@ -91,16 +187,33 @@ export function carryNestedRuntimeTurretAssemblies(
       for (let childIndex = 0; childIndex < expanded.length; childIndex += 1) {
         if (parentIndex === childIndex) continue;
         const child = expanded[childIndex];
+        const explicitRelation = parentRelations?.[childIndex] ?? null;
+        const parentCarriesChild = parentRelations
+          ? explicitRelation?.parentIndex === parentIndex
+          : Boolean(
+              child &&
+                child.yawComponentPlacementId !==
+                  parent.yawComponentPlacementId &&
+                parent.yawPlacementIds.includes(
+                  child.yawComponentPlacementId,
+                ),
+            );
         if (
           !child ||
-          child.yawComponentPlacementId === parent.yawComponentPlacementId ||
-          !parent.yawPlacementIds.includes(child.yawComponentPlacementId)
+          !parentCarriesChild
         ) {
           continue;
         }
-        changed =
-          appendUnique(parent.yawPlacementIds, child.yawPlacementIds) ||
-          changed;
+        if (!parentRelations || explicitRelation?.inheritedMotionChannels.includes("yaw")) {
+          changed =
+            appendUnique(parent.yawPlacementIds, child.yawPlacementIds) ||
+            changed;
+        }
+        if (explicitRelation?.inheritedMotionChannels.includes("pitch")) {
+          changed =
+            appendUnique(parent.pitchPlacementIds, child.yawPlacementIds) ||
+            changed;
+        }
         if (child.hitYawPlacementIds) {
           parent.hitYawPlacementIds ??= [];
           changed =
@@ -164,10 +277,10 @@ const SIBLING_CARRY_RADIUS_METRES = 2.5;
  *   `+X -> +Y`. That is a positive right-handed rotation about glTF +Z, so
  *   pitch keeps its sign.
  */
-export const TURRET_YAW_AXIS = "y" as const;
-export const TURRET_PITCH_AXIS = "z" as const;
-
 type Vector3 = [number, number, number];
+
+export const TURRET_YAW_AXIS = [0, 1, 0] as const;
+export const TURRET_PITCH_AXIS = [0, 0, 1] as const;
 
 function identityMatrix(): number[] {
   return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -178,24 +291,30 @@ function identityMatrix(): number[] {
  * three.js uses for `Matrix4.fromArray`.
  */
 function rotationAboutPivot(
-  axis: "y" | "z",
+  axis: readonly [number, number, number],
   radians: number,
   pivot: Vector3,
 ): number[] {
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
-  const matrix = identityMatrix();
-  if (axis === "y") {
-    matrix[0] = cos;
-    matrix[2] = -sin;
-    matrix[8] = sin;
-    matrix[10] = cos;
-  } else {
-    matrix[0] = cos;
-    matrix[1] = sin;
-    matrix[4] = -sin;
-    matrix[5] = cos;
+  const magnitude = Math.hypot(axis[0], axis[1], axis[2]);
+  if (!Number.isFinite(magnitude) || magnitude <= Number.EPSILON) {
+    return identityMatrix();
   }
+  const x = axis[0] / magnitude;
+  const y = axis[1] / magnitude;
+  const z = axis[2] / magnitude;
+  const oneMinusCos = 1 - cos;
+  const matrix = identityMatrix();
+  matrix[0] = cos + x * x * oneMinusCos;
+  matrix[4] = x * y * oneMinusCos - z * sin;
+  matrix[8] = x * z * oneMinusCos + y * sin;
+  matrix[1] = y * x * oneMinusCos + z * sin;
+  matrix[5] = cos + y * y * oneMinusCos;
+  matrix[9] = y * z * oneMinusCos - x * sin;
+  matrix[2] = z * x * oneMinusCos - y * sin;
+  matrix[6] = z * y * oneMinusCos + x * sin;
+  matrix[10] = cos + z * z * oneMinusCos;
   // translate(pivot) * rotation * translate(-pivot)
   matrix[12] = pivot[0] -
     (matrix[0] * pivot[0] + matrix[4] * pivot[1] + matrix[8] * pivot[2]);
@@ -207,19 +326,20 @@ function rotationAboutPivot(
 }
 
 export function turretArticulationMatrices(
-  assembly: Pick<RuntimeTurretAssembly, "yawPivot" | "pitchPivot">,
+  assembly: Pick<RuntimeTurretAssembly, "yawPivot" | "pitchPivot"> &
+    Partial<Pick<RuntimeTurretAssembly, "yawAxis" | "pitchAxis">>,
   yawDegrees: number,
   pitchDegrees: number,
 ) {
   const toRadians = Math.PI / 180;
   return {
     yaw: rotationAboutPivot(
-      TURRET_YAW_AXIS,
+      assembly.yawAxis ?? TURRET_YAW_AXIS,
       -yawDegrees * toRadians,
       assembly.yawPivot,
     ),
     pitch: rotationAboutPivot(
-      TURRET_PITCH_AXIS,
+      assembly.pitchAxis ?? TURRET_PITCH_AXIS,
       pitchDegrees * toRadians,
       assembly.pitchPivot,
     ),
@@ -590,6 +710,93 @@ function addVectors(
   return [base[0] + offset[0], base[1] + offset[1], base[2] + offset[2]];
 }
 
+function rotateVectorByQuaternion(
+  vector: Vector3,
+  quaternion: { x: number; y: number; z: number; w: number },
+): Vector3 | null {
+  const magnitude = Math.hypot(
+    quaternion.x,
+    quaternion.y,
+    quaternion.z,
+    quaternion.w,
+  );
+  if (!Number.isFinite(magnitude) || magnitude <= Number.EPSILON) return null;
+  const qx = quaternion.x / magnitude;
+  const qy = quaternion.y / magnitude;
+  const qz = quaternion.z / magnitude;
+  const qw = quaternion.w / magnitude;
+  const tx = 2 * (qy * vector[2] - qz * vector[1]);
+  const ty = 2 * (qz * vector[0] - qx * vector[2]);
+  const tz = 2 * (qx * vector[1] - qy * vector[0]);
+  return [
+    vector[0] + qw * tx + (qy * tz - qz * ty),
+    vector[1] + qw * ty + (qz * tx - qx * tz),
+    vector[2] + qw * tz + (qx * ty - qy * tx),
+  ];
+}
+
+function driverKinematics(
+  driver: RuntimeTurretMotionDriver | null,
+  localAxisUe: Vector3,
+): { pivot: Vector3; axis: Vector3 } | null {
+  const frame = driver?.vehicleLocalFrame;
+  const translation = frame?.value?.translationCm;
+  const quaternion = frame?.value?.rotationQuaternion;
+  if (
+    !frame ||
+    !["derived", "derived-with-fallback"].includes(frame.state) ||
+    !translation ||
+    !quaternion ||
+    ![translation.x, translation.y, translation.z].every(finiteNumber) ||
+    ![quaternion.x, quaternion.y, quaternion.z, quaternion.w].every(finiteNumber)
+  ) {
+    return null;
+  }
+  const axisUe = rotateVectorByQuaternion(localAxisUe, quaternion);
+  if (!axisUe) return null;
+  // UE centimetres X-forward/Y-right/Z-up -> glTF metres X-forward/Y-up/Z-right.
+  return {
+    pivot: [translation.x / 100, translation.z / 100, translation.y / 100],
+    axis: [axisUe[0], axisUe[2], axisUe[1]],
+  };
+}
+
+export interface RuntimeTurretMotionFrame {
+  yawPivot: [number, number, number];
+  pitchPivot: [number, number, number];
+  yawAxis: [number, number, number];
+  pitchAxis: [number, number, number];
+}
+
+export function resolveRuntimeTurretMotionFrame(
+  visualAttachment: RuntimeTurretVisualAttachment | null | undefined,
+): RuntimeTurretMotionFrame | null {
+  if (
+    !visualAttachment ||
+    visualAttachment.state !== "closed" ||
+    visualAttachment.movementState !== "observed" ||
+    visualAttachment.motion?.state !== "derived"
+  ) {
+    return null;
+  }
+  const yaw = driverKinematics(
+    visualAttachment.motion.yawDriver,
+    [0, 0, 1],
+  );
+  const pitch = driverKinematics(
+    visualAttachment.motion.pitchDriver,
+    [0, 1, 0],
+  );
+  return yaw && pitch
+    ? {
+        yawPivot: yaw.pivot,
+        pitchPivot: pitch.pivot,
+        yawAxis: yaw.axis,
+        pitchAxis: pitch.axis,
+      }
+    : null;
+}
+
 /**
  * Anchor a sibling station so weapon actors shared between identical stations
  * (helicopter door guns, twin remote mounts) attach to the nearest one instead
@@ -622,6 +829,7 @@ export function resolveRuntimeTurretAssembly({
   fallbackHitActorClassNames = [],
   carriedHitActorClassNames = [],
   siblingFallbackYawAnchorComponentNames = [],
+  visualAttachment,
 }: {
   placements: RuntimeTurretPlacement[];
   vehicleGeneratedClass: string | null;
@@ -642,7 +850,91 @@ export function resolveRuntimeTurretAssembly({
   fallbackHitActorClassNames?: string[];
   carriedHitActorClassNames?: string[];
   siblingFallbackYawAnchorComponentNames?: string[];
+  visualAttachment?: RuntimeTurretVisualAttachment | null;
 }): RuntimeTurretAssembly | null {
+  if (visualAttachment) {
+    if (
+      visualAttachment.state === "closed" &&
+      visualAttachment.closureMode === "view-component-rotation"
+    ) {
+      return null;
+    }
+    const motionFrame = resolveRuntimeTurretMotionFrame(visualAttachment);
+    if (
+      visualAttachment.state !== "closed" ||
+      visualAttachment.closureMode !== "visual-occurrence-membership" ||
+      visualAttachment.movementState !== "observed" ||
+      visualAttachment.motion?.state !== "derived" ||
+      !motionFrame
+    ) {
+      return null;
+    }
+    const placementById = new Map<string, RuntimeTurretPlacement>();
+    for (const placement of placements) {
+      if (placementById.has(placement.stableOccurrenceId)) {
+        throw new Error(
+          `Duplicate runtime visual occurrence ID: ${placement.stableOccurrenceId}`,
+        );
+      }
+      placementById.set(placement.stableOccurrenceId, placement);
+    }
+    const resolveMember = (
+      member: RuntimeTurretVisualAttachmentMember,
+      label: string,
+    ) => {
+      const placement = placementById.get(member.stableOccurrenceId);
+      if (
+        !placement ||
+        !actorMatchesClass(placement.actor, member.actorClassName) ||
+        placement.name !== member.componentName ||
+        placement.sourceMeshPath !== member.sourceMeshPath ||
+        placement.componentClassPath !== member.componentClassPath
+      ) {
+        throw new Error(
+          `Exact visual attachment ${label} drifted: ${member.stableOccurrenceId}`,
+        );
+      }
+      return placement;
+    };
+    const yawPlacements = visualAttachment.yawMembers.map((member) =>
+      resolveMember(member, "yaw member")
+    );
+    const pitchPlacements = visualAttachment.pitchMembers.map((member) =>
+      resolveMember(member, "pitch member")
+    );
+    if (yawPlacements.length === 0) {
+      throw new Error(`Exact visual attachment for ${turretName} has no yaw members`);
+    }
+    const yawIds = new Set(yawPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId));
+    if (
+      yawIds.size !== yawPlacements.length ||
+      new Set(pitchPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId)).size !==
+        pitchPlacements.length ||
+      pitchPlacements.some(({ stableOccurrenceId }) => !yawIds.has(stableOccurrenceId))
+    ) {
+      throw new Error(`Exact visual attachment for ${turretName} is not a closed set`);
+    }
+    const yawAnchorPlacement = visualAttachment.yawAnchor
+      ? resolveMember(visualAttachment.yawAnchor, "yaw anchor")
+      : yawPlacements[0];
+    const pitchAnchorPlacement = visualAttachment.pitchAnchor
+      ? resolveMember(visualAttachment.pitchAnchor, "pitch anchor")
+      : pitchPlacements[0] ?? yawAnchorPlacement;
+    return {
+      yawPlacementIds: yawPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId),
+      pitchPlacementIds: pitchPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId),
+      hitYawPlacementIds: yawPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId),
+      // Current-build driver frames are direct pivot authority. Never apply an
+      // old anchor-relative offset to a new sidecar anchor.
+      yawPivot: motionFrame.yawPivot,
+      pitchPivot: motionFrame.pitchPivot,
+      yawAxis: motionFrame.yawAxis,
+      pitchAxis: motionFrame.pitchAxis,
+      yawComponentPlacementId: yawAnchorPlacement.stableOccurrenceId,
+      pitchComponentPlacementId:
+        pitchPlacements.length > 0 ? pitchAnchorPlacement.stableOccurrenceId : null,
+    };
+  }
   const exactTurretActorPlacements = placements.filter((placement) =>
     actorMatchesClass(placement.actor, turretName)
   );
