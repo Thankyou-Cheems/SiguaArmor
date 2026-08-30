@@ -16,7 +16,8 @@ test("crew display is opt-in and loads the detailed layer only on demand", () =>
   );
   assert.match(viewerSource, /显示乘员位置与受击判定/u);
   assert.match(viewerSource, /exact BaseAnimation 的 Editor frame-zero 骨姿态/u);
-  assert.match(viewerSource, /判定体由同一骨姿态生成/u);
+  assert.match(viewerSource, /原生 PhysicsAsset 参考判定体按同一骨姿态变换/u);
+  assert.match(viewerSource, /PhysicsAsset 逐帧变形仍不声称已复现/u);
   assert.doesNotMatch(viewerSource, /三段简化判定体/u);
   assert.match(viewerSource, /import\("\.\/runtime-crew-occupants"\)/u);
   assert.match(viewerSource, /crewOccupantDisplayEnabledRef/u);
@@ -24,11 +25,18 @@ test("crew display is opt-in and loads the detailed layer only on demand", () =>
   assert.match(referenceSource, /cloneSkeleton\(source\.scene\)/u);
 });
 
-test("hittable occupants use exact animation poses and pose-batched hit proxies", () => {
+test("hittable occupants use exact animation poses and the shared PhysicsAsset", () => {
   assert.match(runtimeSource, /new THREE\.InstancedMesh/u);
   assert.match(runtimeSource, /realistic-low-poly-appearance/u);
   assert.match(runtimeSource, /appearanceModels\.crowdReal\.assetUrl/u);
-  assert.match(runtimeSource, /skeletonMannequinGeometry/u);
+  assert.match(runtimeSource, /loadVehicleCrewPhysicsAsset/u);
+  assert.match(runtimeSource, /posedCrewPhysicsAssetGeometry/u);
+  assert.match(
+    runtimeSource,
+    /includeHittableGeometry \? loadVehicleCrewPhysicsAsset\(\) : null/u,
+  );
+  assert.match(runtimeSource, /skeletonOutlineGeometry/u);
+  assert.doesNotMatch(runtimeSource, /skeletonMannequinGeometry/u);
   assert.match(runtimeSource, /loadVehicleCrewAnimationPose/u);
   assert.match(runtimeSource, /loadRuntimeReferenceSoldierAnimationPose/u);
   assert.match(runtimeSource, /proxyBindings/u);

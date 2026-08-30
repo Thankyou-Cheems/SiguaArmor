@@ -11163,7 +11163,7 @@ export function RuntimeVehicleViewer({
                 title={crewOccupantCounts.total > 0
                   ? [
                       `${crewOccupantCounts.hittable} 个可自然命中乘员按各自 exact BaseAnimation 的 Editor frame-zero 骨姿态显示。`,
-                      "真实人物与姿态化轮廓默认显示；简化判定体由同一骨姿态生成并使用独立开关。",
+                      "真实人物与姿态化轮廓默认显示；原生 PhysicsAsset 参考判定体按同一骨姿态变换，并使用独立开关。",
                       `${crewOccupantCounts.protected} 个 Hidden/保护状态仅显示轮廓。`,
                       crewOccupantCounts.nonSpatial > 0
                         ? `${crewOccupantCounts.nonSpatial} 个 Hidden 状态没有可用人物 socket；游戏不渲染其身体，站点不把 Actor fallback 冒充成空间位置。`
@@ -11171,7 +11171,7 @@ export function RuntimeVehicleViewer({
                       crewOccupantCounts.unresolved > 0
                         ? `${crewOccupantCounts.unresolved} 个未闭合状态使用警示轮廓。`
                         : "",
-                      "AimOffset、hand/weapon IK、逐帧相位与原生 PhysicsAsset 几何仍不声称已复现。",
+                      "AimOffset、hand/weapon IK、逐帧相位与 PhysicsAsset 逐帧变形仍不声称已复现。",
                     ].filter(Boolean).join(" ")
                   : "该载具没有可定位的乘员 construction-reference frame。"}
                 onClick={() =>
@@ -11231,7 +11231,7 @@ export function RuntimeVehicleViewer({
                   ) : null}
                   <small>
                     位置：construction frame · 骨姿态：Editor BaseAnimation 首帧 ·
-                    判定代理：同骨架近似、默认隐藏 · 无人物 socket 的 Hidden
+                    判定体：原生 PhysicsAsset 参考形状、默认隐藏 · 无人物 socket 的 Hidden
                     状态不绘制误导性 3D 轮廓
                   </small>
                 </div>
