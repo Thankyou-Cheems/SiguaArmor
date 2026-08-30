@@ -19,16 +19,18 @@ const viewerStyles = await readFile(
   "utf8",
 );
 
-test("3D viewport controls are grouped into four collapsible feature domains", () => {
+test("left 3D controls contain three scene domains and no remote panel trigger", () => {
   const sectionIds = [...viewerSource.matchAll(
     /data-control-section="([^"]+)"/gu,
   )].map((match) => match[1]);
 
-  assert.deepEqual(sectionIds, ["protection", "view", "crew", "weapon"]);
-  assert.match(viewerSource, /视角与姿态/u);
-  assert.match(viewerSource, /防护分析/u);
-  assert.match(viewerSource, /乘员与判定/u);
-  assert.match(viewerSource, /武器站与炮镜/u);
+  assert.deepEqual(sectionIds, ["analysis", "camera", "crew"]);
+  assert.match(viewerSource, /场景与分析/u);
+  assert.match(viewerSource, /显示模式/u);
+  assert.match(viewerSource, /装甲与分析/u);
+  assert.match(viewerSource, /相机与姿态/u);
+  assert.match(viewerSource, /乘员显示/u);
+  assert.doesNotMatch(viewerSource, /data-control-section="weapon"/u);
   assert.equal(
     sectionIds.every((sectionId) => viewerSource.includes(
       `data-control-section="${sectionId}"`,
@@ -40,7 +42,7 @@ test("3D viewport controls are grouped into four collapsible feature domains", (
 test("render mode remains visible while feature groups expose collapsed status", () => {
   const modeTabsIndex = viewerSource.indexOf('className="viewer-mode-tabs"');
   const firstSectionIndex = viewerSource.indexOf(
-    'data-control-section="protection"',
+    'data-control-section="analysis"',
   );
 
   assert.ok(modeTabsIndex >= 0 && modeTabsIndex < firstSectionIndex);
@@ -55,8 +57,9 @@ test("render mode remains visible while feature groups expose collapsed status",
   );
 });
 
-test("weapon controls open in a dedicated right-side panel without nested details", () => {
+test("weapon controls open from a dedicated right-side launcher and panel", () => {
   assert.match(viewerSource, /const \[weaponPanelOpen, setWeaponPanelOpen\]/u);
+  assert.match(viewerSource, /className="viewer-weapon-panel-launcher"/u);
   assert.match(viewerSource, /aria-controls="viewer-weapon-panel"/u);
   assert.match(viewerSource, /id="viewer-weapon-panel"/u);
   assert.match(viewerSource, /className="viewer-weapon-panel"/u);
@@ -76,6 +79,29 @@ test("weapon controls open in a dedicated right-side panel without nested detail
   assert.match(
     viewerStyles,
     /\.viewer-weapon-panel\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*12px;/u,
+  );
+  assert.match(
+    viewerStyles,
+    /\.viewer-weapon-panel-launcher\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*12px;/u,
+  );
+  assert.ok(
+    viewerSource.indexOf('className="viewer-weapon-panel-launcher"') >
+      viewerSource.indexOf('className="viewer-interaction-hint'),
+    "right-side launcher must not live inside the left control deck",
+  );
+});
+
+test("state switches share one slider treatment and category colors stay neutral", () => {
+  assert.match(viewerSource, /viewer-state-switch/u);
+  assert.match(turretSource, /viewer-state-switch/u);
+  assert.match(turretSource, /viewer-state-switch__track/u);
+  assert.match(
+    viewerStyles,
+    /\.viewer-state-switch__track\s*\{[\s\S]*?border-radius:\s*0;/u,
+  );
+  assert.doesNotMatch(
+    viewerStyles,
+    /viewer-control-section\[data-control-section="(?:view|crew|weapon)"\]/u,
   );
 });
 
@@ -111,5 +137,5 @@ test("armor, interior, and exterior modes retain the same adjustment entries", (
     /mode === "exterior" && hitState\.kind === "ready"/u,
   );
   assert.match(viewerSource, /const specialArmorDisplayActive =/u);
-  assert.match(controlSurface, /data-control-section="weapon"/u);
+  assert.match(controlSurface, /className="viewer-weapon-panel-launcher"/u);
 });

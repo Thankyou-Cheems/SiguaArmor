@@ -27,9 +27,11 @@ test("viewpoint marker is an optional camera-facing optic billboard", () => {
   assert.match(viewerSource, /crewViewpointMarkerEnabled/u);
   assert.match(controlsSource, /viewpointMarkerEnabled/u);
   assert.match(controlsSource, /role="switch"/u);
-  assert.match(controlsSource, /显示观察点/u);
-  assert.match(controlsSource, /隐藏观察点/u);
-  assert.match(styles, /\.turret-preview-controls__viewpoint-switch/u);
+  assert.match(controlsSource, /观察点标记/u);
+  assert.match(controlsSource, /viewpointMarkerEnabled \? "显示" : "隐藏"/u);
+  assert.match(controlsSource, /viewer-state-switch/u);
+  assert.match(controlsSource, /viewer-state-switch__track/u);
+  assert.match(styles, /\.viewer-state-switch__track/u);
   assert.match(markerFactorySource, /new THREE\.CanvasTexture/u);
   assert.match(markerFactorySource, /new THREE\.Sprite/u);
   assert.doesNotMatch(
