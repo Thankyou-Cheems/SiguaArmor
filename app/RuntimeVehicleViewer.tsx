@@ -8306,14 +8306,14 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 <span aria-hidden="true">{upperOptionsRevealed ? "‹" : "›"}</span>
               </button>) : null}
             <header className="viewer-control-deck__header">
-              <span><i aria-hidden="true"/>3D 视窗控制</span>
-              <strong>
-                {activeTurretStation
-            ? "4 个功能组"
-            : "3 个功能组"}
-              </strong>
+              <span><i aria-hidden="true"/>场景与分析</span>
+              <strong>3 个功能组</strong>
             </header>
             <div className="viewer-render-row">
+              <span className="viewer-render-row__label">
+                <b>显示模式</b>
+                <small>场景层</small>
+              </span>
               <div className="viewer-mode-tabs" role="group" aria-label="渲染模式" data-mode-count={exteriorUnavailableMessage ? 2 : 3} style={{
             "--viewer-mode-count": exteriorUnavailableMessage ? 2 : 3,
             "--viewer-mode-index": Math.max(0, VIEWER_MODES
@@ -8328,16 +8328,16 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     </button>))}
               </div>
             </div>
-            <details className="viewer-control-section" data-control-section="protection">
+            <details className="viewer-control-section" data-control-section="analysis">
               <summary>
-                <span><i aria-hidden="true"/>防护分析</span>
-                <strong className="viewer-control-section__status">
+                <span><i aria-hidden="true"/>装甲与分析</span>
+                <strong className="viewer-control-section__status" data-active={protectionActive || undefined}>
                   {protectionActive ? "已开启" : "关闭"}
                 </strong>
               </summary>
               <div className="viewer-control-section__body">
             <div className="viewer-protection-primary" data-enabled={protectionMapAvailable}>
-              <button className="viewer-protection-switch" type="button" role="switch" aria-label="防护图，仅在当前浏览器本机计算" aria-checked={protectionActive} data-active={protectionActive} disabled={!protectionMapAvailable} title="射线与伤害求解仅在当前浏览器分帧执行，不占用服务器算力" onClick={() => {
+              <button className="viewer-protection-switch viewer-state-switch" type="button" role="switch" aria-label="防护图，仅在当前浏览器本机计算" aria-checked={protectionActive} data-active={protectionActive} disabled={!protectionMapAvailable} title="射线与伤害求解仅在当前浏览器分帧执行，不占用服务器算力" onClick={() => {
             const nextEnabled = !protectionEnabled;
             setProtectionEnabled(nextEnabled);
             const current = navigationStateRef.current;
@@ -8351,7 +8351,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 onNavigationStateChangeRef.current?.(next);
             }
         }}>
-                <span className="viewer-protection-switch__track" aria-hidden="true"><span /></span>
+                <span className="viewer-protection-switch__track viewer-state-switch__track" aria-hidden="true"><span /></span>
                 <span>防护图</span>
                 <strong>{protectionActive ? "开" : "关"}</strong>
               </button>
@@ -8404,19 +8404,19 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             </label>
             {hitState.kind === "ready" ? (<>
                 <div className="viewer-spaced-armor-row">
-                  <button className="viewer-protection-switch viewer-spaced-armor-switch" type="button" role="switch" aria-label="显示附加装甲/无敌区域" aria-checked={specialArmorDisplayActive} data-active={specialArmorDisplayActive} title={mode === "exterior"
+                  <button className="viewer-protection-switch viewer-state-switch viewer-spaced-armor-switch" type="button" role="switch" aria-label="显示附加装甲/无敌区域" aria-checked={specialArmorDisplayActive} data-active={specialArmorDisplayActive} title={mode === "exterior"
                 ? "在外观模式叠加附加装甲与命中层高亮"
                 : "在装甲或内构模式显示附加装甲与无敌区域"} onClick={toggleSpecialArmorDisplay}>
-                    <span className="viewer-protection-switch__track" aria-hidden="true"><span /></span>
+                    <span className="viewer-protection-switch__track viewer-state-switch__track" aria-hidden="true"><span /></span>
                     <span>附加装甲/无敌区域</span>
                     <strong>{specialArmorDisplayActive ? "显示" : "隐藏"}</strong>
                   </button>
                 </div>
                 <div className="viewer-relative-armor-row">
-                  <button className="viewer-protection-switch viewer-relative-armor-switch" type="button" role="switch" aria-label="按当前载具相对厚度着色" aria-checked={relativeArmorScaleActive} data-active={relativeArmorScaleActive} disabled={!relativeArmorScaleAvailable} title={relativeArmorScaleAvailable && armorThicknessRange
+                  <button className="viewer-protection-switch viewer-state-switch viewer-relative-armor-switch" type="button" role="switch" aria-label="按当前载具相对厚度着色" aria-checked={relativeArmorScaleActive} data-active={relativeArmorScaleActive} disabled={!relativeArmorScaleAvailable} title={relativeArmorScaleAvailable && armorThicknessRange
                 ? `将本车 ${formatArmorThicknessLegendValue(armorThicknessRange.minMm)}–${formatArmorThicknessLegendValue(armorThicknessRange.maxMm)} 映射到完整色阶`
                 : "当前载具没有两个以上可比较的装甲厚度"} onClick={() => setRelativeArmorScale((enabled) => !enabled)}>
-                    <span className="viewer-protection-switch__track" aria-hidden="true"><span /></span>
+                    <span className="viewer-protection-switch__track viewer-state-switch__track" aria-hidden="true"><span /></span>
                     <span>相对厚度色阶</span>
                     <strong>{relativeArmorScaleAvailable
                 ? relativeArmorScaleActive ? "开启" : "关闭"
@@ -8431,9 +8431,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
               </div>) : null}
               </div>
             </details>
-            <details className="viewer-control-section" data-control-section="view">
+            <details className="viewer-control-section" data-control-section="camera">
               <summary>
-                <span><i aria-hidden="true"/>视角与姿态</span>
+                <span><i aria-hidden="true"/>相机与姿态</span>
                 <strong className="viewer-control-section__status">
                   {RUNTIME_VIEWER_CAMERA_VIEWS.find(({ id }) => id === activeCameraView)?.label ?? "自由"}
                 </strong>
@@ -8441,7 +8441,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
               <div className="viewer-control-section__body">
             <RuntimeViewerCameraControls activeView={activeCameraView} infantryDistanceM={infantryPreviewDistanceM} disabled={!initialCameraFitReady} onView={(viewId) => applyCameraViewPresetRef.current?.(viewId)} onInfantryDistance={(distanceM) => applyInfantryDistancePreviewRef.current?.(distanceM)} onFree={() => enterFreeCameraViewRef.current?.()}/>
             <div className="viewer-physical-pose-row">
-              <button className="viewer-protection-switch viewer-physical-pose-switch" type="button" role="switch" aria-label="真实物理状态" aria-checked={physicalPoseActive} data-active={physicalPoseActive} disabled={!chassisPose} title={chassisPose
+              <button className="viewer-protection-switch viewer-state-switch viewer-physical-pose-switch" type="button" role="switch" aria-label="真实物理状态" aria-checked={physicalPoseActive} data-active={physicalPoseActive} disabled={!chassisPose} title={chassisPose
             ? [
                 "水平地面 normal-time RuntimeProbe 的稳定刚体与轮组实际输出。",
                 `俯仰 ${chassisPose.pitchDeg >= 0 ? "+" : ""}${chassisPose.pitchDeg.toFixed(2)}°，`,
@@ -8465,7 +8465,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                                     : "该视觉包没有可切换的 Vehicle Mesh 轮组骨姿态。",
             ].join(" ")
             : "该 exact generated class 没有稳定收敛的运行时底盘姿态；不会猜测或套用相近载具。"} onClick={() => setPhysicalPoseEnabled((enabled) => !enabled)}>
-                <span className="viewer-protection-switch__track" aria-hidden="true">
+                <span className="viewer-protection-switch__track viewer-state-switch__track" aria-hidden="true">
                   <span />
                 </span>
                 <span>真实物理状态</span>
@@ -8480,8 +8480,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             </details>
             <details className="viewer-control-section" data-control-section="crew">
               <summary>
-                <span><i aria-hidden="true"/>乘员与判定</span>
-                <strong className="viewer-control-section__status">
+                <span><i aria-hidden="true"/>乘员显示</span>
+                <strong className="viewer-control-section__status" data-active={crewOccupantDisplayEnabled || undefined}>
                   {crewOccupantCounts.total > 0
             ? crewOccupantDisplayEnabled
                 ? crewOccupantCounts.nonSpatial > 0
@@ -8493,7 +8493,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
               </summary>
               <div className="viewer-control-section__body">
             <div className="viewer-crew-occupant-row">
-              <button className="viewer-protection-switch viewer-crew-occupant-switch" type="button" role="switch" aria-label="显示乘员位置与受击判定" aria-checked={crewOccupantDisplayEnabled} data-active={crewOccupantDisplayEnabled} disabled={crewOccupantCounts.total === 0} title={crewOccupantCounts.total > 0
+              <button className="viewer-protection-switch viewer-state-switch viewer-crew-occupant-switch" type="button" role="switch" aria-label="显示乘员位置与受击判定" aria-checked={crewOccupantDisplayEnabled} data-active={crewOccupantDisplayEnabled} disabled={crewOccupantCounts.total === 0} title={crewOccupantCounts.total > 0
             ? [
                 `${crewOccupantCounts.hittable} 个可自然命中乘员按各自 exact BaseAnimation 的 Editor frame-zero 骨姿态显示。`,
                 "真实人物与姿态化轮廓默认显示；原生 PhysicsAsset 参考判定体按同一骨姿态变换，并使用独立开关。",
@@ -8507,7 +8507,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 "AimOffset、hand/weapon IK、逐帧相位与 PhysicsAsset 逐帧变形仍不声称已复现。",
             ].filter(Boolean).join(" ")
             : "该载具没有可定位的乘员 construction-reference frame。"} onClick={() => setCrewOccupantDisplayEnabled((enabled) => !enabled)}>
-                <span className="viewer-protection-switch__track" aria-hidden="true">
+                <span className="viewer-protection-switch__track viewer-state-switch__track" aria-hidden="true">
                   <span />
                 </span>
                 <span>乘员位置</span>
@@ -8520,9 +8520,10 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     <i />可受击真实人物
                     <b>{crewOccupantCounts.hittable}</b>
                   </span>
-                  {crewOccupantCounts.hittable > 0 ? (<button type="button" className="viewer-crew-hit-proxy-toggle" role="switch" aria-label="显示乘员受击判定范围" aria-checked={crewHitProxyDisplayEnabled} data-active={crewHitProxyDisplayEnabled || undefined} onClick={() => setCrewHitProxyDisplayEnabled((enabled) => !enabled)}>
-                      <i />受击判定范围
-                      <b>{crewHitProxyDisplayEnabled ? "显示" : "隐藏"}</b>
+                  {crewOccupantCounts.hittable > 0 ? (<button type="button" className="viewer-state-switch viewer-crew-hit-proxy-toggle" role="switch" aria-label="显示乘员受击判定范围" aria-checked={crewHitProxyDisplayEnabled} data-active={crewHitProxyDisplayEnabled || undefined} onClick={() => setCrewHitProxyDisplayEnabled((enabled) => !enabled)}>
+                      <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
+                      <span>受击判定范围</span>
+                      <strong>{crewHitProxyDisplayEnabled ? "显示" : "隐藏"}</strong>
                     </button>) : null}
                   <span data-kind="protected">
                     <i />保护/隐藏轮廓
@@ -8568,19 +8569,6 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             </div>
               </div>
             </details>
-            {activeTurretStation ? (<details className="viewer-control-section" data-control-section="weapon" open={weaponPanelOpen}>
-                <summary aria-controls="viewer-weapon-panel" aria-expanded={weaponPanelOpen} onClick={(event) => {
-                event.preventDefault();
-                setWeaponPanelOpen((open) => !open);
-            }}>
-                  <span><i aria-hidden="true"/>武器站与炮镜</span>
-                  <strong className="viewer-control-section__status">
-                    {activeCrewViewStationId === activeTurretStation.id
-                ? "炮手视角"
-                : activeTurretStation.label}
-                  </strong>
-                </summary>
-              </details>) : null}
             <div className="viewer-interaction-hint viewer-interaction-hint--protection" aria-label="3D 操作提示">
               <span>左键旋转</span><span>右键拖动</span><span>滚轮缩放</span>
             </div>
@@ -8588,15 +8576,29 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         </div>
       </div>
 
+      {!weaponPanelOpen && activeTurretStation ? (<button className="viewer-weapon-panel-launcher" type="button" aria-controls="viewer-weapon-panel" aria-expanded="false" onClick={() => setWeaponPanelOpen(true)}>
+          <span>
+            <i aria-hidden="true"/>
+            <b>火控与武器站</b>
+            <small>右侧面板</small>
+          </span>
+          <strong>
+            {activeCrewViewStationId === activeTurretStation.id
+                ? "炮手视角"
+                : activeTurretStation.label}
+          </strong>
+          <em aria-hidden="true">‹</em>
+        </button>) : null}
+
       {weaponPanelOpen && activeTurretStation ? (<aside className="viewer-weapon-panel" id="viewer-weapon-panel" aria-labelledby="viewer-weapon-panel-title">
           <header className="viewer-weapon-panel__header">
             <span id="viewer-weapon-panel-title">
               <i aria-hidden="true"/>
-              武器站与炮镜
+              火控与武器站
             </span>
             <strong>{activeTurretStation.label}</strong>
             <button type="button" onClick={() => setWeaponPanelOpen(false)} aria-label="收起武器站与炮镜面板">
-              收起
+              收起 ›
             </button>
           </header>
           <div className="viewer-weapon-panel__body">
