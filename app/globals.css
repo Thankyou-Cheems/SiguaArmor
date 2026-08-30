@@ -8144,8 +8144,15 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: #ffe3ad;
 }
 
-.viewer-crew-viewpoint-hud span {
+.viewer-crew-viewpoint-hud__copy {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+}
+
+.viewer-crew-viewpoint-hud__copy > span {
   color: var(--text-muted);
+  font-size: 7px;
 }
 
 .viewer-crew-viewpoint-hud__optic {
