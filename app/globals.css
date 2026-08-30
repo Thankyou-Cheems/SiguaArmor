@@ -5406,6 +5406,68 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   color: inherit;
 }
 
+.viewer-crew-nonspatial-seats {
+  border-top: 1px solid rgba(225, 200, 155, 0.12);
+  color: #8d9ca0;
+}
+
+.viewer-crew-nonspatial-seats summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 6px;
+  padding: 4px 0 2px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.viewer-crew-nonspatial-seats summary::-webkit-details-marker {
+  display: none;
+}
+
+.viewer-crew-nonspatial-seats summary::before {
+  content: "+";
+  grid-column: 2;
+  grid-row: 1;
+  color: rgba(241, 239, 226, 0.45);
+}
+
+.viewer-crew-nonspatial-seats[open] summary::before {
+  content: "−";
+}
+
+.viewer-crew-nonspatial-seats summary b {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.viewer-crew-nonspatial-seats ul {
+  display: grid;
+  gap: 4px;
+  max-height: 132px;
+  margin: 3px 0 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+.viewer-crew-nonspatial-seats li {
+  display: grid;
+  gap: 1px;
+  padding: 4px 5px;
+  border-left: 2px solid rgba(141, 156, 160, 0.38);
+  background: rgba(141, 156, 160, 0.06);
+}
+
+.viewer-crew-nonspatial-seats li strong {
+  color: rgba(216, 226, 228, 0.82);
+  font-weight: 700;
+}
+
+.viewer-crew-nonspatial-seats li span {
+  color: rgba(190, 205, 208, 0.55);
+  overflow-wrap: anywhere;
+}
+
 .viewer-crew-occupant-legend small {
   padding-top: 3px;
   border-top: 1px solid rgba(225, 200, 155, 0.12);
