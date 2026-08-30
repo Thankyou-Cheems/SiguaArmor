@@ -89,3 +89,22 @@ test("rejects activating the default-collapsed damage overlay", () => {
     /enabled a damage overlay/u,
   );
 });
+
+test("accepts a source-proven dynamic widget with no static image layer", () => {
+  const record = fixture();
+  record.projectionRefs = [];
+  record.projections = [];
+  Object.assign(record.stations[0], {
+    state: "absent-dynamic-widget-no-static-image",
+    absenceReason: "observed-widget-has-no-image-layer",
+    layers: [],
+    defaultZoomStages: [],
+    weaponModes: [],
+    dynamicChannels: ["weapon-rotation-elevation"],
+  });
+  const compiled = compileVehicleGunnerSight(record, graph);
+  assert.equal(
+    compiled.stations[0].state,
+    "absent-dynamic-widget-no-static-image",
+  );
+});
