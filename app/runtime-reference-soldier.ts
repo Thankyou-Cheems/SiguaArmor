@@ -188,6 +188,10 @@ export async function loadRuntimeReferenceSoldierAnimationPose(
   modelPath = REFERENCE_SOLDIER_MODEL_PATH,
 ) {
   const source = await loadReferenceSoldierSource(modelPath);
+  const referenceScene = cloneSkeleton(source.scene) as THREE.Group;
+  referenceScene.name = "reference-pose-soldier";
+  referenceScene.position.set(0, 0, 0);
+  referenceScene.updateMatrixWorld(true);
   const scene = cloneSkeleton(source.scene) as THREE.Group;
   applyReferenceSoldierPose(scene, pose);
   scene.name = `${pose.id}-reference-soldier`;
@@ -195,6 +199,7 @@ export async function loadRuntimeReferenceSoldierAnimationPose(
   scene.updateMatrixWorld(true);
   return {
     scene,
+    referenceScene,
     modelUrl: source.modelUrl,
     glassRebind: source.glassRebind,
   };

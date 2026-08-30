@@ -7,6 +7,8 @@ import {
   loadVehicleCrewAnimationPose,
   loadVehicleCrewAppearanceModels,
 } from "../lib/vehicle-crew-animation-pose";
+import { loadVehicleCrewPhysicsAsset } from "../lib/vehicle-crew-physics-asset";
+import { posedCrewPhysicsAssetGeometry } from "./runtime-crew-physics-geometry";
 import { loadRuntimeReferenceSoldierAnimationPose } from "./runtime-reference-soldier";
 
 type OccupantMatrixMap = ReadonlyMap<string, readonly number[]>;
@@ -150,7 +152,7 @@ function capsuleBetween(
   return geometry;
 }
 
-function skeletonMannequinGeometry(root: THREE.Object3D) {
+function skeletonOutlineGeometry(root: THREE.Object3D) {
   root.updateMatrixWorld(true);
   const bonePosition = (name: string) => {
     const bone = root.getObjectByName(name);
@@ -209,17 +211,29 @@ function skeletonMannequinGeometry(root: THREE.Object3D) {
 async function loadPosedGeometry(
   animationPoseRef: string,
   modelPath: string,
-  includeAppearance: boolean,
+  includeHittableGeometry: boolean,
+  includeProtectedOutline: boolean,
 ) {
-  const pose = await loadVehicleCrewAnimationPose(animationPoseRef);
-  const { scene } = await loadRuntimeReferenceSoldierAnimationPose(
+  const [pose, physicsAsset] = await Promise.all([
+    loadVehicleCrewAnimationPose(animationPoseRef),
+    includeHittableGeometry ? loadVehicleCrewPhysicsAsset() : null,
+  ]);
+  const { scene, referenceScene } = await loadRuntimeReferenceSoldierAnimationPose(
     pose,
     modelPath,
   );
-  const hitProxy = skeletonMannequinGeometry(scene);
   return {
-    appearance: includeAppearance ? posedGeometry(scene) : null,
-    hitProxy,
+    appearance: includeHittableGeometry ? posedGeometry(scene) : null,
+    hitProxy: physicsAsset
+      ? posedCrewPhysicsAssetGeometry({
+          physicsAsset,
+          referenceRoot: referenceScene,
+          posedRoot: scene,
+        })
+      : null,
+    protectedOutline: includeProtectedOutline
+      ? skeletonOutlineGeometry(scene)
+      : null,
   };
 }
 
@@ -290,7 +304,11 @@ export async function createRuntimeCrewOccupantLayer({
   root.add(crewDepthReset);
   const posed = new Map<
     string,
-    { appearance: THREE.BufferGeometry | null; hitProxy: THREE.BufferGeometry }
+    {
+      appearance: THREE.BufferGeometry | null;
+      hitProxy: THREE.BufferGeometry | null;
+      protectedOutline: THREE.BufferGeometry | null;
+    }
   >();
   if (detailedModels && exactPosePlans.length > 0) {
     try {
@@ -311,6 +329,9 @@ export async function createRuntimeCrewOccupantLayer({
             animationPoseRef,
             modelPath,
             hittable.some((plan) => plan.animationPoseRef === animationPoseRef),
+            protectedWithPose.some(
+              (plan) => plan.animationPoseRef === animationPoseRef,
+            ),
           ),
         ] as const),
       );
@@ -366,7 +387,7 @@ export async function createRuntimeCrewOccupantLayer({
     const posePlans = hittable.filter(
       (plan) => plan.animationPoseRef === poseRef,
     );
-    if (posePlans.length === 0) return [];
+    if (posePlans.length === 0 || !geometry.hitProxy) return [];
     const mesh = new THREE.InstancedMesh(
       geometry.hitProxy,
       hitProxyMaterial,
@@ -393,9 +414,9 @@ export async function createRuntimeCrewOccupantLayer({
     const posePlans = protectedWithPose.filter(
       (plan) => plan.animationPoseRef === poseRef,
     );
-    if (posePlans.length === 0) return [];
+    if (posePlans.length === 0 || !geometry.protectedOutline) return [];
     const mesh = new THREE.InstancedMesh(
-      geometry.hitProxy,
+      geometry.protectedOutline,
       protectedPoseMaterial,
       posePlans.length,
     );
@@ -542,9 +563,14 @@ export async function createRuntimeCrewOccupantLayer({
     dispose() {
       root.removeFromParent();
       new Set(
-        [...posed.values()].flatMap(({ appearance, hitProxy }) => [
-          ...(appearance ? [appearance] : []),
+        [...posed.values()].flatMap(({
+          appearance,
           hitProxy,
+          protectedOutline,
+        }) => [
+          ...(appearance ? [appearance] : []),
+          ...(hitProxy ? [hitProxy] : []),
+          ...(protectedOutline ? [protectedOutline] : []),
         ]),
       ).forEach((geometry) => geometry.dispose());
       disposableMaterials.forEach((material) => material.dispose());
