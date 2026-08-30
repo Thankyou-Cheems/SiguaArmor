@@ -75,3 +75,20 @@ test("crew readability never collapses exact poses into standing sprites or caps
   assert.doesNotMatch(referenceSource, /CREW_PROTOTYPE_MODEL_PATHS/u);
   assert.match(viewerSource, /crewHitProxyDisplayEnabled/u);
 });
+
+test("real crew appearance is opaque so equipment and the body remain readable", () => {
+  assert.match(
+    runtimeSource,
+    /const appearanceMaterial = new THREE\.MeshStandardMaterial\(\{[\s\S]*?transparent: false,[\s\S]*?opacity: 1,/u,
+  );
+  assert.doesNotMatch(runtimeSource, /opacity: 0\.72/u);
+  assert.match(runtimeSource, /\["MI_USArmyGlass", 0x101714\]/u);
+  assert.match(runtimeSource, /materialName === "MI_GreenEye"/u);
+  assert.match(runtimeSource, /vertexColors: true/u);
+  assert.match(runtimeSource, /depthTest: true,[\s\S]{0,80}depthWrite: true/u);
+  assert.match(runtimeSource, /crew-occupant-depth-reset/u);
+  assert.match(
+    runtimeSource,
+    /crewDepthReset\.onBeforeRender = \(renderer\) => \{\s*renderer\.clearDepth\(\)/u,
+  );
+});

@@ -38,6 +38,25 @@ export interface RuntimeCrewOccupantLayer {
 }
 
 const OUTLINE_PATH = "/images/reference-soldier-outline.webp";
+const CREW_APPEARANCE_COLORS = new Map<string, number>([
+  ["MI_USA_Heads", 0xc99572],
+  ["MI_USA_1P_Sleeves", 0xa69b77],
+  ["MI_USA_3P_Uniform", 0x9f9570],
+  ["M_Master_Patch", 0x5f5943],
+  ["MI_USA_Equipment", 0x625f49],
+  ["MI_USA_Equipment_Set2", 0x777058],
+  ["MI_USArmyGlass", 0x101714],
+]);
+
+function crewAppearanceMaterialName(object: THREE.SkinnedMesh) {
+  const materials = Array.isArray(object.material)
+    ? object.material
+    : [object.material];
+  if (materials.length !== 1 || !materials[0].name) {
+    throw new Error("Crew appearance primitive has no unique source material");
+  }
+  return materials[0].name;
+}
 
 function baseMatrix(plan: CrewOccupantPresentationPlan) {
   const pose = crewOccupantBasePose(plan.frame);
@@ -55,10 +74,16 @@ function posedGeometry(root: THREE.Object3D) {
   const geometries: THREE.BufferGeometry[] = [];
   root.traverse((object) => {
     if (!(object instanceof THREE.SkinnedMesh)) return;
+    const materialName = crewAppearanceMaterialName(object);
+    if (materialName === "MI_GreenEye") return;
     object.skeleton.update();
     const sourcePosition = object.geometry.getAttribute("position");
     if (!sourcePosition || sourcePosition.count === 0) return;
     const positions = new Float32Array(sourcePosition.count * 3);
+    const colors = new Float32Array(sourcePosition.count * 3);
+    const color = new THREE.Color(
+      CREW_APPEARANCE_COLORS.get(materialName) ?? 0x9f9570,
+    );
     const vertex = new THREE.Vector3();
     for (let index = 0; index < sourcePosition.count; index += 1) {
       vertex.fromBufferAttribute(sourcePosition, index);
@@ -67,9 +92,11 @@ function posedGeometry(root: THREE.Object3D) {
       positions[index * 3] = vertex.x;
       positions[index * 3 + 1] = vertex.y;
       positions[index * 3 + 2] = vertex.z;
+      color.toArray(colors, index * 3);
     }
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     if (object.geometry.index) geometry.setIndex(object.geometry.index.clone());
     geometry.computeVertexNormals();
     geometries.push(geometry);
@@ -242,6 +269,24 @@ export async function createRuntimeCrewOccupantLayer({
   const modelGeometryMode = detailedModels
     ? "realistic-low-poly-appearance" as const
     : "outline-fallback" as const;
+  const crewDepthResetMaterial = new THREE.MeshBasicMaterial({
+    colorWrite: false,
+    depthTest: false,
+    depthWrite: false,
+    transparent: false,
+    toneMapped: false,
+  });
+  const crewDepthReset = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.001, 0.001),
+    crewDepthResetMaterial,
+  );
+  crewDepthReset.name = "crew-occupant-depth-reset";
+  crewDepthReset.frustumCulled = false;
+  crewDepthReset.renderOrder = 20;
+  crewDepthReset.onBeforeRender = (renderer) => {
+    renderer.clearDepth();
+  };
+  root.add(crewDepthReset);
   const posed = new Map<
     string,
     { appearance: THREE.BufferGeometry | null; hitProxy: THREE.BufferGeometry }
@@ -276,13 +321,14 @@ export async function createRuntimeCrewOccupantLayer({
   }
 
   const appearanceMaterial = new THREE.MeshStandardMaterial({
-    color: 0xcdbd90,
+    color: 0xffffff,
+    vertexColors: true,
     roughness: 0.86,
     metalness: 0,
-    transparent: true,
-    opacity: 0.72,
-    depthTest: false,
-    depthWrite: false,
+    transparent: false,
+    opacity: 1,
+    depthTest: true,
+    depthWrite: true,
   });
   const modelBindings = [...posed].flatMap(([poseRef, geometry]) => {
     const posePlans = hittable.filter(
@@ -437,6 +483,7 @@ export async function createRuntimeCrewOccupantLayer({
     hittableFallbackMaterial,
     hitProxyMaterial,
     protectedPoseMaterial,
+    crewDepthResetMaterial,
   ]);
   return {
     root,
@@ -494,6 +541,7 @@ export async function createRuntimeCrewOccupantLayer({
         ]),
       ).forEach((geometry) => geometry.dispose());
       disposableMaterials.forEach((material) => material.dispose());
+      crewDepthReset.geometry.dispose();
       texture.dispose();
     },
   };
