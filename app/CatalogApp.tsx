@@ -2401,7 +2401,7 @@ function DetailPanel({
   if (!card) return null;
   const { data, record } = card;
   const hasViewer = data !== null || Boolean(
-    card.variant?.runtimeVehicleRef || card.variant?.visualArtifactRef,
+    card.variant?.runtimeVehicleRef && card.variant?.visualArtifactRef,
   );
   const displayName = vehicleDisplayName(record, card.variant, card.alias);
   const viewerTextureVariants = textureVariants.flatMap((entry, index) => {

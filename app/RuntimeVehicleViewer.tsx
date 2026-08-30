@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, CircleDot, RotateCcw } from "lucide-react";
+import { CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
@@ -37,6 +37,7 @@ import {
   normalizeTurretYaw,
   resolveRuntimeTurretAssembly,
   resolveRuntimeTurretHitComponentAssembly,
+  resolveRuntimeTurretMotionFrame,
   runtimeTurretFallbackSpec,
   turretArticulationMatrices,
   type RuntimeTurretAssembly,
@@ -140,6 +141,7 @@ import {
   loadWikiWeaponCatalog,
   loadWikiVehicleWeaponRuntimeSource,
 } from "../lib/wiki-source";
+import { GunnerSightOverlay } from "./GunnerSightOverlay";
 import {
   estimateWeaponHitDps,
   selectPrimaryWeaponHitDpsTarget,
@@ -159,8 +161,23 @@ import type {
 } from "../lib/weapon-dps-model";
 import type {
   RuntimeVehiclePreview,
+  RuntimeVisualAttachmentStation,
   RuntimeVisualPlacement,
 } from "./runtime-probe-preview-data";
+import type {
+  RuntimeCrewSeatStation,
+  RuntimeCrewSeatView,
+} from "../lib/vehicle-crew-seat-runtime";
+import {
+  buildCrewOccupantPresentationPlan,
+} from "../lib/vehicle-crew-occupant-presentation";
+import {
+  crewViewBasePose,
+  crewViewHorizontalFovForZoom,
+  preferredCrewViewStation,
+  transformCrewViewPose,
+  type CrewViewPose,
+} from "../lib/vehicle-crew-viewpoint";
 import {
   runtimePlanarSuspensionCoverageForGeneratedClass,
   runtimePlanarSuspensionPoseForVisualOccurrence,
@@ -169,6 +186,7 @@ import {
 import type {
   ReferenceData,
   ReferenceSeat,
+  ReferenceTurret,
   ReferenceTurretArticulation,
 } from "./catalog-types";
 import {
@@ -229,6 +247,7 @@ import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
 import { WeaponRhythmTimeline } from "./WeaponRhythmTimeline";
 import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
+import type { RuntimeCrewOccupantLayer } from "./runtime-crew-occupants";
 
 THREE.Mesh.prototype.raycast = acceleratedRaycast;
 
@@ -513,6 +532,137 @@ function RuntimeViewerCameraControls({
 interface RuntimeTurretPreviewStation extends TurretPreviewStation {
   assembly: RuntimeTurretAssembly | null;
   seat: ReferenceSeat;
+  crewSeat: RuntimeCrewSeatStation;
+  view: RuntimeCrewSeatView | null;
+  visualAttachment: RuntimeVisualAttachmentStation | null;
+  parentCatalogSeatIndex: number | null;
+  inheritedMotionChannels: Array<"yaw" | "pitch">;
+}
+
+interface CrewViewpointMarker {
+  root: THREE.Sprite;
+}
+
+function createCrewViewpointMarker(): CrewViewpointMarker {
+  const canvas = document.createElement("canvas");
+  canvas.width = 128;
+  canvas.height = 128;
+  const context = canvas.getContext("2d");
+  if (!context) {
+    throw new Error("Crew viewpoint optic canvas is unavailable");
+  }
+  const centerX = 64;
+  const centerY = 58;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.lineCap = "round";
+  context.lineJoin = "round";
+
+  const lens = context.createRadialGradient(
+    centerX - 9,
+    centerY - 11,
+    3,
+    centerX,
+    centerY,
+    36,
+  );
+  lens.addColorStop(0, "rgba(255, 229, 168, 0.32)");
+  lens.addColorStop(0.32, "rgba(63, 91, 81, 0.9)");
+  lens.addColorStop(1, "rgba(6, 11, 10, 0.97)");
+  context.beginPath();
+  context.arc(centerX, centerY, 34, 0, Math.PI * 2);
+  context.fillStyle = lens;
+  context.shadowColor = "rgba(255, 190, 78, 0.72)";
+  context.shadowBlur = 13;
+  context.fill();
+  context.shadowBlur = 0;
+
+  context.strokeStyle = "rgba(255, 214, 132, 0.98)";
+  context.lineWidth = 6;
+  context.beginPath();
+  context.arc(centerX, centerY, 36, 0, Math.PI * 2);
+  context.stroke();
+  context.strokeStyle = "rgba(255, 242, 209, 0.5)";
+  context.lineWidth = 2;
+  context.beginPath();
+  context.arc(centerX, centerY, 27, 0, Math.PI * 2);
+  context.stroke();
+
+  context.fillStyle = "rgba(255, 207, 112, 0.96)";
+  context.fillRect(52, 14, 24, 7);
+  context.fillRect(57, 9, 14, 8);
+  context.fillRect(16, 50, 11, 16);
+  context.fillRect(101, 50, 11, 16);
+  context.fillRect(48, 95, 32, 7);
+  context.fillRect(55, 101, 18, 11);
+
+  context.strokeStyle = "rgba(255, 224, 157, 0.96)";
+  context.lineWidth = 2.5;
+  context.beginPath();
+  context.moveTo(centerX, centerY - 24);
+  context.lineTo(centerX, centerY - 8);
+  context.moveTo(centerX, centerY + 8);
+  context.lineTo(centerX, centerY + 24);
+  context.moveTo(centerX - 24, centerY);
+  context.lineTo(centerX - 8, centerY);
+  context.moveTo(centerX + 8, centerY);
+  context.lineTo(centerX + 24, centerY);
+  context.stroke();
+  context.beginPath();
+  context.arc(centerX, centerY, 3.5, 0, Math.PI * 2);
+  context.fillStyle = "rgba(255, 236, 194, 1)";
+  context.fill();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = false;
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+    toneMapped: false,
+  });
+  const root = new THREE.Sprite(material);
+  root.name = "crew-viewpoint-marker";
+  root.visible = false;
+  root.scale.set(0.38, 0.38, 1);
+  root.center.set(0.5, 0.46);
+  root.renderOrder = 96;
+  return { root };
+}
+
+function referenceTurretFromStationControl(
+  station: RuntimeVisualAttachmentStation | null,
+): ReferenceTurret | null {
+  const control = station?.control;
+  if (
+    control?.state !== "observed" ||
+    control.source !==
+      "paired-sq-rotating-movement-components-native-layout" ||
+    control.sourceFunction !==
+      "USQRotatingMovementComponent::SetCurrentRotation@0x1803f03f0" ||
+    control.maxYawSpeedDegreesPerSecond === null ||
+    control.maxPitchSpeedDegreesPerSecond === null ||
+    !control.yaw ||
+    !control.pitch
+  ) {
+    return null;
+  }
+  return {
+    maxYawSpeed: control.maxYawSpeedDegreesPerSecond,
+    maxPitchSpeed: control.maxPitchSpeedDegreesPerSecond,
+    minPitchDegrees: control.pitch.minDegrees,
+    maxPitchDegrees: control.pitch.maxDegrees,
+    limits: {
+      authority: "editor",
+      sourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
+      observedAt: null,
+      yaw: { ...control.yaw },
+      pitchByYaw: [],
+    },
+  };
 }
 
 interface RuntimeExteriorOccurrence {
@@ -547,6 +697,11 @@ function runtimeTurretParentStation(
   station: RuntimeTurretPreviewStation,
   stations: RuntimeTurretPreviewStation[],
 ) {
+  if (station.parentCatalogSeatIndex !== null) {
+    return stations.find(
+      (candidate) => candidate.seat.index === station.parentCatalogSeatIndex,
+    ) ?? null;
+  }
   const componentId = station.assembly?.yawComponentPlacementId;
   if (!componentId) return null;
   return stations
@@ -584,7 +739,9 @@ function runtimeTurretWorldYaw(
   const ownYaw = poseStates[station.id]?.yawDegrees ?? 0;
   if (visiting.has(station.id)) return normalizeTurretYaw(ownYaw);
   const parent = runtimeTurretParentStation(station, stations);
-  if (!parent) return normalizeTurretYaw(ownYaw);
+  if (!parent || !station.inheritedMotionChannels.includes("yaw")) {
+    return normalizeTurretYaw(ownYaw);
+  }
   return normalizeTurretYaw(
     runtimeTurretWorldYaw(
       parent,
@@ -3889,6 +4046,7 @@ export function RuntimeVehicleViewer({
   const hostRef = useRef<HTMLDivElement>(null);
   const protectionCanvasRef = useRef<HTMLCanvasElement>(null);
   const explosionOriginHudRef = useRef<HTMLDivElement>(null);
+  const crewViewpointHudRef = useRef<HTMLDivElement>(null);
   const resetViewRef = useRef<
     ((options?: { preserveShotVisual?: boolean }) => void) | null
   >(null);
@@ -3899,6 +4057,18 @@ export function RuntimeVehicleViewer({
     ((distanceM: number) => void) | null
   >(null);
   const enterFreeCameraViewRef = useRef<(() => void) | null>(null);
+  const enterCrewViewpointRef = useRef<
+    ((stationId: string) => boolean) | null
+  >(null);
+  const exitCrewViewpointRef = useRef<(() => void) | null>(null);
+  const applyCrewViewZoomRef = useRef<
+    ((stationId: string, zoomIndex: number) => boolean) | null
+  >(null);
+  const activeCrewViewZoomIndexRef = useRef(0);
+  const activeCrewViewStationIdRef = useRef<string | null>(null);
+  const crewViewpointMarkerEnabledRef = useRef(false);
+  const runtimeTurretStationsRef = useRef<RuntimeTurretPreviewStation[]>([]);
+  const activeTurretStationIdRef = useRef<string | null>(null);
   const activeCameraViewRef = useRef<RuntimeViewerCameraViewId | null>(null);
   const infantryPreviewDistanceRef = useRef<number | null>(null);
   const visualGroupRef = useRef<THREE.Group | null>(null);
@@ -3951,6 +4121,14 @@ export function RuntimeVehicleViewer({
   const applyChassisPoseRef = useRef<((enabled: boolean) => void) | null>(null);
   const physicalPoseEnabledRef = useRef(true);
   const applyTurretPoseRef = useRef<(() => void) | null>(null);
+  const applyCrewOccupantVisibilityRef = useRef<
+    ((visible: boolean) => void) | null
+  >(null);
+  const applyCrewHitProxyVisibilityRef = useRef<
+    ((visible: boolean) => void) | null
+  >(null);
+  const crewOccupantDisplayEnabledRef = useRef(false);
+  const crewHitProxyDisplayEnabledRef = useRef(false);
   const turretPosesRef = useRef<RuntimeTurretPose[]>([]);
   const turretPoseStatesRef = useRef<Record<string, RuntimeTurretPoseState>>({});
   const appliedTurretNavigationKeyRef = useRef("");
@@ -3981,6 +4159,23 @@ export function RuntimeVehicleViewer({
   const hit = preview.hit;
   const radialQuery = preview.radialQuery;
   const chassisPose = preview.chassisPose;
+  const gunnerSight = preview.gunnerSight;
+  const crewOccupantPlan = useMemo(
+    () => buildCrewOccupantPresentationPlan(preview.crewSeat),
+    [preview.crewSeat],
+  );
+  const crewOccupantCounts = useMemo(() => ({
+    total: crewOccupantPlan.length,
+    hittable: crewOccupantPlan.filter(
+      ({ renderKind }) => renderKind === "hittable-model-and-proxy",
+    ).length,
+    protected: crewOccupantPlan.filter(
+      ({ renderKind }) => renderKind === "protected-outline",
+    ).length,
+    unresolved: crewOccupantPlan.filter(
+      ({ renderKind }) => renderKind === "unresolved-outline",
+    ).length,
+  }), [crewOccupantPlan]);
   const vehicleMeshRuntimePosePlacement = visual?.placements.find(
     (placement) =>
       placement.name.trim().toLowerCase() === "vehicle mesh" &&
@@ -4011,17 +4206,46 @@ export function RuntimeVehicleViewer({
   const uniqueAssetCount = visual ? new Set(visual.placements.map(({ assetUrl }) => assetUrl)).size : 0;
   const runtimeTurretStations = useMemo<RuntimeTurretPreviewStation[]>(() => {
     if (!referenceData || !visual) return [];
-    const seats = referenceData.seats.filter(
-      (seat) => Boolean(seat.turret && seat.turretName),
-    );
-    const primarySeat = seats.find(
-      (seat) => seat.role === "gunner" && seat.stationKind === "weapon-station",
-    ) ?? seats.find((seat) => seat.role === "gunner") ?? seats[0];
+    const stationInputs = referenceData.seats.flatMap((seat) => {
+      if (!seat.turretName) return [];
+      const crewSeat = preview.crewSeat?.seats.find(
+        (candidate) =>
+          candidate.catalogSeatIndex === seat.index &&
+          candidate.turretName === seat.turretName,
+      );
+      if (
+        !crewSeat ||
+        crewSeat.role !== seat.role ||
+        crewSeat.stationKind !== seat.stationKind
+      ) {
+        return [];
+      }
+      const visualAttachment = preview.visualAttachment?.stations.find(
+        (station) =>
+          station.catalogSeatIndex === seat.index &&
+          station.turretName === seat.turretName,
+      ) ?? null;
+      const turret = seat.turret ??
+        referenceTurretFromStationControl(visualAttachment);
+      const view = crewSeat.views.find(
+        (candidate) => candidate.source === "seat-pawn-get-camera-component",
+      ) ?? crewSeat.views.find(
+        (candidate) => candidate.viewId.endsWith("-default"),
+      ) ?? crewSeat.views[0] ?? null;
+      return turret
+        ? [{ seat, turret, visualAttachment, crewSeat, view }]
+        : [];
+    });
+    const primaryInput = stationInputs.find(
+      ({ seat }) =>
+        seat.role === "gunner" && seat.stationKind === "weapon-station",
+    ) ?? stationInputs.find(({ seat }) => seat.role === "gunner") ??
+      stationInputs[0];
     const dedupedPlacements = dedupeIdenticalVisualPlacements(
       visual.placements,
     ).placements;
     const allTurretNames = [
-      ...new Set(seats.map((seat) => seat.turretName!)),
+      ...new Set(stationInputs.map(({ seat }) => seat.turretName!)),
     ];
     const fallbackSpecs = new Map(
       allTurretNames.map((turretName) => [
@@ -4029,9 +4253,10 @@ export function RuntimeVehicleViewer({
         runtimeTurretFallbackSpec(preview.generatedClass, turretName),
       ]),
     );
-    const stations = seats.map((seat) => {
+    const stations = stationInputs.map((input) => {
+      const { seat, turret, visualAttachment, crewSeat, view } = input;
       const indicatorKind: TurretPreviewIndicatorKind =
-        seat === primarySeat
+        input === primaryInput
           ? "main-turret"
           : seat.stationKind === "remote-weapon-station"
             ? "weapon-station"
@@ -4050,10 +4275,11 @@ export function RuntimeVehicleViewer({
         vehicleGeneratedClass: preview.generatedClass,
         turretName: seat.turretName!,
         stationWeaponNames,
-        articulation: seat.turret!.articulation,
-        primary: seat === primarySeat,
+        articulation: turret.articulation,
+        primary: input === primaryInput,
         siblingTurretNames: allTurretNames,
-        absorbsSiblingStations: seat === primarySeat && seat.role === "gunner",
+        absorbsSiblingStations:
+          input === primaryInput && seat.role === "gunner",
         fallbackYawAnchorComponentName:
           fallbackSpecs.get(seat.turretName!)?.yawAnchorComponentName,
         fallbackYawAnchorActorName:
@@ -4062,7 +4288,8 @@ export function RuntimeVehicleViewer({
           fallbackSpecs.get(seat.turretName!)?.pitchUsesYawAnchor,
         fallbackHitActorClassNames:
           fallbackSpecs.get(seat.turretName!)?.hitActorClassNames,
-        carriedHitActorClassNames: seat === primarySeat && seat.role === "gunner"
+        carriedHitActorClassNames:
+          input === primaryInput && seat.role === "gunner"
           ? allTurretNames.flatMap((turretName) =>
               fallbackSpecs.get(turretName)?.hitActorClassNames ?? []
             )
@@ -4073,6 +4300,7 @@ export function RuntimeVehicleViewer({
             fallbackSpecs.get(turretName)?.yawAnchorComponentName
           )
           .filter((name): name is string => Boolean(name)),
+        visualAttachment,
       });
       return {
         id: `${seat.index}:${seat.turretName}`,
@@ -4082,16 +4310,40 @@ export function RuntimeVehicleViewer({
           seat,
           equipmentResolver,
         ),
-        turret: seat.turret!,
+        turret,
         indicatorKind,
         yawAvailable: Boolean(assembly?.yawPlacementIds.length),
         pitchAvailable: Boolean(assembly?.pitchPlacementIds.length),
+        viewpointAvailable: view?.vehicleLocalFrame.value !== null,
         assembly,
         seat,
+        crewSeat,
+        view,
+        visualAttachment,
+        parentCatalogSeatIndex:
+          visualAttachment?.parentCatalogSeatIndex ?? null,
+        inheritedMotionChannels:
+          visualAttachment?.inheritedMotionChannels ?? [],
       };
     });
     const nestedAssemblies = carryNestedRuntimeTurretAssemblies(
       stations.map((station) => station.assembly),
+      stations.map((station) => {
+        if (station.parentCatalogSeatIndex === null) return null;
+        const parentIndex = stations.findIndex(
+          (candidate) =>
+            candidate.seat.index === station.parentCatalogSeatIndex,
+        );
+        if (parentIndex < 0) {
+          throw new Error(
+            `${preview.variantRawName} station F${station.seat.index} parent F${station.parentCatalogSeatIndex} is missing`,
+          );
+        }
+        return {
+          parentIndex,
+          inheritedMotionChannels: station.inheritedMotionChannels,
+        };
+      }),
     );
     return stations.map((station, index) => {
       const assembly = nestedAssemblies[index];
@@ -4102,14 +4354,18 @@ export function RuntimeVehicleViewer({
         pitchAvailable: Boolean(assembly?.pitchPlacementIds.length),
       };
     });
-  }, [equipmentResolver, preview.generatedClass, referenceData, visual]);
-  const defaultTurretStation = runtimeTurretStations.find(
-    (station) =>
-      station.seat.role === "gunner" &&
-      station.seat.stationKind === "weapon-station",
-  ) ?? runtimeTurretStations.find(
-    (station) => station.seat.role === "gunner",
-  ) ?? runtimeTurretStations[0] ?? null;
+  }, [
+    equipmentResolver,
+    preview.crewSeat?.seats,
+    preview.generatedClass,
+    preview.variantRawName,
+    preview.visualAttachment?.stations,
+    referenceData,
+    visual,
+  ]);
+  const defaultTurretStation =
+    preferredCrewViewStation(runtimeTurretStations) ??
+    runtimeTurretStations[0] ?? null;
   const [activeTurretStationId, setActiveTurretStationId] = useState("");
   const [turretPoseStates, setTurretPoseStates] = useState<
     Record<string, RuntimeTurretPoseState>
@@ -4123,6 +4379,10 @@ export function RuntimeVehicleViewer({
         pitchDegrees: 0,
       }
     : { yawDegrees: 0, pitchDegrees: 0 };
+  useEffect(() => {
+    runtimeTurretStationsRef.current = runtimeTurretStations;
+    activeTurretStationIdRef.current = activeTurretStation?.id ?? null;
+  }, [activeTurretStation?.id, runtimeTurretStations]);
   const clampedTurretYaw = activeTurretStation
     ? clampTurretYaw(
         activeTurretStation.turret,
@@ -4247,6 +4507,77 @@ export function RuntimeVehicleViewer({
   );
   const [activeCameraView, setActiveCameraView] =
     useState<RuntimeViewerCameraViewId | null>(null);
+  const [activeCrewViewStationId, setActiveCrewViewStationId] =
+    useState<string | null>(null);
+  const [crewViewpointMarkerEnabled, setCrewViewpointMarkerEnabled] =
+    useState(false);
+  const [crewOccupantDisplayEnabled, setCrewOccupantDisplayEnabled] =
+    useState(false);
+  const [crewHitProxyDisplayEnabled, setCrewHitProxyDisplayEnabled] =
+    useState(false);
+  const [gunnerSightOverlayEnabled, setGunnerSightOverlayEnabled] =
+    useState(true);
+  useEffect(() => {
+    activeCrewViewStationIdRef.current = activeCrewViewStationId;
+  }, [activeCrewViewStationId]);
+  useEffect(() => {
+    crewViewpointMarkerEnabledRef.current = crewViewpointMarkerEnabled;
+  }, [crewViewpointMarkerEnabled]);
+  useEffect(() => {
+    crewOccupantDisplayEnabledRef.current = crewOccupantDisplayEnabled;
+    applyCrewOccupantVisibilityRef.current?.(crewOccupantDisplayEnabled);
+  }, [crewOccupantDisplayEnabled]);
+  useEffect(() => {
+    crewHitProxyDisplayEnabledRef.current = crewHitProxyDisplayEnabled;
+    applyCrewHitProxyVisibilityRef.current?.(crewHitProxyDisplayEnabled);
+  }, [crewHitProxyDisplayEnabled]);
+  useEffect(() => {
+    crewOccupantDisplayEnabledRef.current = false;
+    crewHitProxyDisplayEnabledRef.current = false;
+    setCrewOccupantDisplayEnabled(false);
+    setCrewHitProxyDisplayEnabled(false);
+  }, [preview.visualVehicleId]);
+  useEffect(() => {
+    setGunnerSightOverlayEnabled(true);
+  }, [gunnerSight?.sourceDataRevision]);
+  useEffect(() => {
+    if (activeCrewViewStationId === null) return;
+    const exitOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      exitCrewViewpointRef.current?.();
+    };
+    document.addEventListener("keydown", exitOnEscape, true);
+    return () => document.removeEventListener("keydown", exitOnEscape, true);
+  }, [activeCrewViewStationId]);
+  const activeGunnerSightStation = activeTurretStation?.crewSeat.stationId
+    ? gunnerSight?.stations.find(
+        (station) => station.stationId === activeTurretStation.crewSeat.stationId,
+      ) ?? null
+    : null;
+  const gunnerSightPresentationAvailable = Boolean(
+    activeGunnerSightStation?.state === "observed-static-presentation" &&
+      (
+        activeGunnerSightStation.defaultZoomStages.some(
+          ({ projectionRef }) => projectionRef !== null,
+        ) ||
+        activeGunnerSightStation.weaponModes.some(({ zoomStages }) =>
+          zoomStages.some(({ projectionRef }) => projectionRef !== null)
+        ) ||
+        activeGunnerSightStation.layers.some(
+          ({ role, projectionRef }) =>
+            (role === "viewport-screen" || role === "reticle") &&
+            projectionRef !== null,
+        )
+      )
+  );
+  const gunnerSightOverlayVisible = Boolean(
+    gunnerSightPresentationAvailable &&
+      gunnerSightOverlayEnabled &&
+      activeTurretStation &&
+      activeCrewViewStationId === activeTurretStation.id,
+  );
   const [infantryPreviewDistanceM, setInfantryPreviewDistanceM] =
     useState<number | null>(null);
   const [sourceSelectorOpen, setSourceSelectorOpen] = useState(false);
@@ -6230,9 +6561,16 @@ export function RuntimeVehicleViewer({
     applyCameraViewPresetRef.current = null;
     applyInfantryDistancePreviewRef.current = null;
     enterFreeCameraViewRef.current = null;
+    enterCrewViewpointRef.current = null;
+    exitCrewViewpointRef.current = null;
+    applyCrewViewZoomRef.current = null;
+    applyCrewHitProxyVisibilityRef.current = null;
+    activeCrewViewZoomIndexRef.current = 0;
+    activeCrewViewStationIdRef.current = null;
     activeCameraViewRef.current = null;
     infantryPreviewDistanceRef.current = null;
     setActiveCameraView(null);
+    setActiveCrewViewStationId(null);
     setInfantryPreviewDistanceM(null);
     setArmorThicknessRange(null);
     setInitialCameraFitReady(false);
@@ -6552,8 +6890,16 @@ export function RuntimeVehicleViewer({
     );
     visualGroup.visible = modeRef.current === "exterior";
     analysisVisualGroup.visible = modeRef.current !== "exterior";
+    const crewViewpointMarker = createCrewViewpointMarker();
+    const crewOccupantHolder = new THREE.Group();
+    crewOccupantHolder.name = "runtime-crew-occupant-holder";
+    crewOccupantHolder.visible = false;
+    let crewOccupantLayer: RuntimeCrewOccupantLayer | null = null;
+    let crewOccupantLoadRequest: Promise<RuntimeCrewOccupantLayer | null> | null = null;
+    let activeCrewViewPose: CrewViewPose | null = null;
     modelGroup.add(chassisPoseGroup);
     chassisPoseGroup.add(visualGroup, analysisVisualGroup);
+    chassisPoseGroup.add(crewViewpointMarker.root, crewOccupantHolder);
     visualGroupRef.current = visualGroup;
     analysisVisualGroupRef.current = analysisVisualGroup;
     scene.add(modelGroup);
@@ -6613,6 +6959,260 @@ export function RuntimeVehicleViewer({
     shotVisuals.forEach((shotVisual) => scene.add(shotVisual.group));
     const explosionPlacementPreview = createExplosionPlacementPreview();
     scene.add(explosionPlacementPreview.root);
+
+    const stationPose = (stationId: string) =>
+      turretPosesRef.current.find((pose) => pose.stationId === stationId) ?? {
+        stationId,
+        assembly: null,
+        yawDegrees: 0,
+        pitchDegrees: 0,
+      };
+    const stationMotionMatrices = (
+      station: RuntimeTurretPreviewStation,
+    ) => {
+      const pose = stationPose(station.id);
+      const frame = station.assembly ??
+        resolveRuntimeTurretMotionFrame(station.visualAttachment);
+      if (!frame) return null;
+      const matrices = turretArticulationMatrices(
+        frame,
+        pose.yawDegrees,
+        pose.pitchDegrees,
+      );
+      const yaw = new THREE.Matrix4().fromArray(matrices.yaw);
+      return {
+        yaw: matrices.yaw,
+        pitch: matrices.pitch,
+        yawPitch: yaw
+          .multiply(new THREE.Matrix4().fromArray(matrices.pitch))
+          .elements.slice(),
+      };
+    };
+    const parentStationForView = (
+      station: RuntimeTurretPreviewStation,
+      stations: RuntimeTurretPreviewStation[],
+    ) => {
+      const parentCatalogSeatIndex =
+        station.crewSeat.positionSemantics?.seatPawnAttachment
+          ?.parentCatalogSeatIndex;
+      if (Number.isSafeInteger(parentCatalogSeatIndex)) {
+        return stations.find(
+          (candidate) => candidate.seat.index === parentCatalogSeatIndex,
+        ) ?? null;
+      }
+      return runtimeTurretParentStation(station, stations);
+    };
+    const stationArticulationMatrixChain = (
+      station: RuntimeTurretPreviewStation,
+    ) => {
+      const stations = runtimeTurretStationsRef.current;
+      const matrices: number[][] = [];
+      const own = stationMotionMatrices(station);
+      if (!own) return matrices;
+      matrices.push(own.yawPitch);
+      const seen = new Set([station.id]);
+      let parent = parentStationForView(station, stations);
+      let child = station;
+      while (parent && !seen.has(parent.id)) {
+        seen.add(parent.id);
+        const parentMatrices = stationMotionMatrices(parent);
+        if (parentMatrices) {
+          const inherited = child.inheritedMotionChannels;
+          if (inherited.includes("yaw") && inherited.includes("pitch")) {
+            matrices.push(parentMatrices.yawPitch);
+          } else if (inherited.includes("yaw")) {
+            matrices.push(parentMatrices.yaw);
+          } else if (inherited.includes("pitch")) {
+            matrices.push(parentMatrices.pitch);
+          }
+        }
+        child = parent;
+        parent = parentStationForView(parent, stations);
+      }
+      return matrices;
+    };
+    const crewPoseForStation = (
+      station: RuntimeTurretPreviewStation,
+    ): CrewViewPose | null => {
+      if (!station.view) return null;
+      try {
+        const matrices = stationArticulationMatrixChain(station);
+        if (matrices.length === 0) return null;
+        return transformCrewViewPose(
+          crewViewBasePose(station.view),
+          matrices,
+        );
+      } catch {
+        return null;
+      }
+    };
+    const updateCrewViewpointMarker = () => {
+      const station = runtimeTurretStationsRef.current.find(
+        ({ id }) => id === activeTurretStationIdRef.current,
+      ) ?? preferredCrewViewStation(runtimeTurretStationsRef.current);
+      const pose = station ? crewPoseForStation(station) : null;
+      const crewViewActive =
+        station?.id === activeCrewViewStationIdRef.current;
+      crewViewpointMarker.root.visible = Boolean(
+        crewViewpointMarkerEnabledRef.current && pose && !crewViewActive,
+      );
+      host.dataset.crewViewpointMarkerEnabled = String(
+        crewViewpointMarkerEnabledRef.current,
+      );
+      if (!station || !pose) {
+        activeCrewViewPose = null;
+        delete host.dataset.crewViewpointStationId;
+        delete host.dataset.crewViewpointPosition;
+        return null;
+      }
+      crewViewpointMarker.root.position.fromArray(pose.position);
+      crewViewpointMarker.root.updateMatrixWorld(true);
+      host.dataset.crewViewpointStationId = station.id;
+      host.dataset.crewViewpointPosition = pose.position.join(",");
+      host.dataset.crewViewpointHorizontalFovDeg = String(
+        pose.horizontalFovDegrees,
+      );
+      if (crewViewActive) {
+        activeCrewViewPose = {
+          ...pose,
+          horizontalFovDegrees:
+            activeCrewViewPose?.horizontalFovDegrees ??
+            pose.horizontalFovDegrees,
+        };
+      }
+      return { station, pose };
+    };
+
+    const updateCrewOccupantArticulation = () => {
+      if (!crewOccupantLayer) return;
+      const matrices = new Map<string, number[]>();
+      for (const plan of crewOccupantPlan) {
+        if (!plan.stationId) continue;
+        const station = runtimeTurretStationsRef.current.find(
+          ({ crewSeat }) => crewSeat.stationId === plan.stationId,
+        );
+        if (!station) continue;
+        const chain = stationArticulationMatrixChain(station);
+        if (chain.length === 0) continue;
+        const combined = new THREE.Matrix4();
+        for (const matrix of chain) {
+          combined.premultiply(new THREE.Matrix4().fromArray(matrix));
+        }
+        matrices.set(plan.seatKey, combined.elements.slice());
+      }
+      crewOccupantLayer.updateArticulation(matrices);
+      host.dataset.crewOccupantArticulatedCount = String(matrices.size);
+    };
+
+    const publishCrewOccupantLayer = (layer: RuntimeCrewOccupantLayer) => {
+      host.dataset.crewOccupantState = layer.detailState === "instanced-model"
+        ? "ready-instanced-model"
+        : "ready-outline-fallback";
+      host.dataset.crewOccupantCount = String(layer.stats.occupants);
+      host.dataset.crewOccupantHittableCount = String(layer.stats.hittable);
+      host.dataset.crewOccupantProtectedOutlineCount = String(
+        layer.stats.protectedOutlines,
+      );
+      host.dataset.crewOccupantUnresolvedOutlineCount = String(
+        layer.stats.unresolvedOutlines,
+      );
+      host.dataset.crewOccupantModelDrawCalls = String(
+        layer.stats.modelDrawCalls,
+      );
+      host.dataset.crewOccupantModelInstances = String(
+        layer.stats.modelInstances,
+      );
+      host.dataset.crewOccupantModelGeometry =
+        layer.stats.modelGeometryMode;
+      host.dataset.crewOccupantUniqueModelVertices = String(
+        layer.stats.uniqueModelVertices,
+      );
+      host.dataset.crewOccupantEstimatedModelTriangles = String(
+        layer.stats.estimatedModelTriangles,
+      );
+      host.dataset.crewOccupantHitProxyDrawCalls = String(
+        layer.stats.hitProxyDrawCalls,
+      );
+      host.dataset.crewOccupantProtectedPoseDrawCalls = String(
+        layer.stats.protectedPoseDrawCalls,
+      );
+      host.dataset.crewOccupantExactAnimationPoses = String(
+        layer.stats.exactAnimationPoses,
+      );
+      host.dataset.crewOccupantBuildDurationMs = String(
+        layer.stats.buildDurationMs,
+      );
+      host.dataset.crewOccupantPoseAuthority =
+        "construction-reference+station-articulation+editor-base-animation-frame-zero";
+      host.dataset.crewOccupantRuntimePoseLayers =
+        "aim-offset+hand-ik+weapon-ik+per-frame-phase-not-applied";
+    };
+
+    const applyCrewHitProxyVisibility = (visible: boolean) => {
+      crewOccupantLayer?.setHitProxyVisible(visible);
+      host.dataset.crewOccupantHitProxyVisible = String(visible);
+      renderRef.current?.();
+    };
+
+    const applyCrewOccupantVisibility = (visible: boolean) => {
+      const externalVisible = visible &&
+        activeCrewViewStationIdRef.current === null;
+      if (referenceSoldier) referenceSoldier.visible = !visible;
+      crewOccupantHolder.visible = externalVisible;
+      crewOccupantLayer?.setVisible(externalVisible);
+      host.dataset.crewOccupantVisible = String(externalVisible);
+      if (!visible || crewOccupantPlan.length === 0) {
+        if (crewOccupantPlan.length === 0) {
+          host.dataset.crewOccupantState = "unavailable";
+        }
+        renderRef.current?.();
+        return;
+      }
+      if (crewOccupantLayer) {
+        updateCrewOccupantArticulation();
+        renderRef.current?.();
+        return;
+      }
+      if (crewOccupantLoadRequest) return;
+      host.dataset.crewOccupantState = "loading";
+      crewOccupantLoadRequest = import("./runtime-crew-occupants")
+        .then(({ createRuntimeCrewOccupantLayer }) =>
+          createRuntimeCrewOccupantLayer({
+            plans: crewOccupantPlan,
+            detailedModels: renderQuality.tier !== "compatibility",
+          }))
+        .then((layer) => {
+          if (cancelled) {
+            layer.dispose();
+            return layer;
+          }
+          crewOccupantLayer = layer;
+          crewOccupantHolder.add(layer.root);
+          updateCrewOccupantArticulation();
+          const shouldShow = crewOccupantDisplayEnabledRef.current &&
+            activeCrewViewStationIdRef.current === null;
+          crewOccupantHolder.visible = shouldShow;
+          layer.setVisible(shouldShow);
+          layer.setHitProxyVisible(crewHitProxyDisplayEnabledRef.current);
+          publishCrewOccupantLayer(layer);
+          host.dataset.crewOccupantVisible = String(shouldShow);
+          renderRef.current?.();
+          return layer;
+        })
+        .catch((error: unknown) => {
+          crewOccupantLoadRequest = null;
+          if (cancelled) return null;
+          host.dataset.crewOccupantState = "error";
+          host.dataset.crewOccupantError =
+            error instanceof Error ? error.message : String(error);
+          renderRef.current?.();
+          return null;
+        });
+    };
+    applyCrewHitProxyVisibilityRef.current = applyCrewHitProxyVisibility;
+    applyCrewOccupantVisibilityRef.current = applyCrewOccupantVisibility;
+    applyCrewHitProxyVisibility(crewHitProxyDisplayEnabledRef.current);
+    applyCrewOccupantVisibility(crewOccupantDisplayEnabledRef.current);
 
     const render = () => {
       shotVisuals.forEach((shotVisual) => {
@@ -6716,6 +7316,32 @@ export function RuntimeVehicleViewer({
       } else if (explosionHud) {
         explosionHud.hidden = true;
       }
+      const crewViewpointHud = crewViewpointHudRef.current;
+      if (
+        crewViewpointHud &&
+        crewViewpointMarker.root.visible
+      ) {
+        modelGroup.updateMatrixWorld(true);
+        const worldPosition = crewViewpointMarker.root.getWorldPosition(
+          new THREE.Vector3(),
+        );
+        const projected = worldPosition.clone().project(camera);
+        const onScreen = projected.z >= -1 && projected.z <= 1;
+        crewViewpointHud.hidden = !onScreen;
+        if (onScreen) {
+          const x = (projected.x * 0.5 + 0.5) *
+            renderer.domElement.clientWidth;
+          const y = (-projected.y * 0.5 + 0.5) *
+            renderer.domElement.clientHeight;
+          crewViewpointHud.style.setProperty("--crew-viewpoint-x", `${x}px`);
+          crewViewpointHud.style.setProperty(
+            "--crew-viewpoint-y",
+            `${y - 30}px`,
+          );
+        }
+      } else if (crewViewpointHud) {
+        crewViewpointHud.hidden = true;
+      }
       renderer.render(scene, camera);
     };
     let renderFrame = 0;
@@ -6728,6 +7354,61 @@ export function RuntimeVehicleViewer({
     };
     renderRef.current = render;
     requestRenderRef.current = requestRender;
+    const applyCrewViewCameraPose = (
+      station: RuntimeTurretPreviewStation,
+      pose: CrewViewPose,
+      zoomIndex = activeCrewViewZoomIndexRef.current,
+    ) => {
+      const zoomHorizontalFovDegrees = station.view
+        ? crewViewHorizontalFovForZoom(station.view, zoomIndex)
+        : null;
+      const horizontalFovDegrees = zoomHorizontalFovDegrees ??
+        pose.horizontalFovDegrees;
+      activeCrewViewPose = {
+        ...pose,
+        horizontalFovDegrees,
+      };
+      chassisPoseGroup.updateMatrixWorld(true);
+      const worldPosition = new THREE.Vector3()
+        .fromArray(pose.position)
+        .applyMatrix4(chassisPoseGroup.matrixWorld);
+      const worldForward = new THREE.Vector3()
+        .fromArray(pose.forward)
+        .transformDirection(chassisPoseGroup.matrixWorld);
+      const worldUp = new THREE.Vector3()
+        .fromArray(pose.up)
+        .transformDirection(chassisPoseGroup.matrixWorld);
+      camera.position.copy(worldPosition);
+      camera.up.copy(worldUp);
+      controls.target.copy(worldPosition).addScaledVector(worldForward, 25);
+      camera.fov = verticalFovForHorizontalFov(
+        horizontalFovDegrees,
+        camera.aspect,
+      );
+      camera.near = 0.01;
+      camera.far = Math.max(camera.far, 1000);
+      camera.updateProjectionMatrix();
+      controls.update();
+      activeCameraViewRef.current = null;
+      setActiveCameraView(null);
+      infantryPreviewDistanceRef.current = null;
+      setInfantryPreviewDistanceM(null);
+      host.dataset.cameraViewKind = "crew-station";
+      host.dataset.cameraViewPreset = station.id;
+      host.dataset.cameraProjection = "crew-vehicle-local";
+      host.dataset.cameraHorizontalFovDeg = String(
+        horizontalFovDegrees,
+      );
+      host.dataset.cameraVerticalFovDeg = String(camera.fov);
+      host.dataset.cameraZoomIndex = String(zoomIndex);
+      host.dataset.cameraZoomMagnification = String(
+        station.view?.magnificationLevels[zoomIndex] ?? 1,
+      );
+      host.dataset.cameraZoomHorizontalFovDeg = String(
+        horizontalFovDegrees,
+      );
+      crewViewpointMarker.root.visible = false;
+    };
     const applyTurretPose = () => {
       const appliedMatrices: string[] = [];
       let appliedAnalysisOccurrenceCount = 0;
@@ -7013,12 +7694,24 @@ export function RuntimeVehicleViewer({
       visualGroup.updateMatrixWorld(true);
       analysisVisualGroup.updateMatrixWorld(true);
       hitGroupRef.current?.updateMatrixWorld(true);
+      updateCrewOccupantArticulation();
+      const crewViewpoint = updateCrewViewpointMarker();
+      if (
+        crewViewpoint &&
+        crewViewpoint.station.id === activeCrewViewStationIdRef.current
+      ) {
+        applyCrewViewCameraPose(
+          crewViewpoint.station,
+          crewViewpoint.pose,
+        );
+      }
       if (hitPoseChanged && protectionEnabledRef.current) {
         scheduleProtectionMapRef.current?.({ invalidate: true });
       }
       render();
     };
     applyTurretPoseRef.current = applyTurretPose;
+    applyTurretPose();
     host.dataset.spacedArmorAnimation = "disabled";
     const raycaster = new THREE.Raycaster();
     raycaster.firstHitOnly = false;
@@ -7416,22 +8109,30 @@ export function RuntimeVehicleViewer({
 
     let lastAppliedCameraNavigationKey: string | null = null;
     const applyInspectionProjection = () => {
+      activeCrewViewPose = null;
+      if (activeCrewViewStationIdRef.current !== null) {
+        activeCrewViewStationIdRef.current = null;
+        setActiveCrewViewStationId(null);
+      }
       infantryPreviewDistanceRef.current = null;
       setInfantryPreviewDistanceM(null);
+      const horizontalFovDegrees = SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG;
       camera.fov = verticalFovForHorizontalFov(
-        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        horizontalFovDegrees,
         camera.aspect,
       );
       camera.updateProjectionMatrix();
       host.dataset.cameraProjection = "squad-world";
       host.dataset.cameraHorizontalFovDeg = String(
-        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        horizontalFovDegrees,
       );
       host.dataset.cameraVerticalFovDeg = String(camera.fov);
       delete host.dataset.infantryPreviewDistanceM;
       delete host.dataset.infantryPreviewHorizontalFovDeg;
       delete host.dataset.infantryPreviewVerticalFovDeg;
       delete host.dataset.infantryPreviewEyeHeightM;
+      delete host.dataset.crewViewCameraStationId;
+      updateCrewViewpointMarker();
     };
     const cameraNavigationKey = (state: ViewerNavigationState | undefined) => {
       if (state?.camera) return `camera:${state.camera}`;
@@ -7579,13 +8280,15 @@ export function RuntimeVehicleViewer({
       rendererHeight = height;
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
+      const horizontalFovDegrees = activeCrewViewPose
+        ?.horizontalFovDegrees ?? SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG;
       camera.fov = verticalFovForHorizontalFov(
-        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        horizontalFovDegrees,
         camera.aspect,
       );
       camera.updateProjectionMatrix();
       host.dataset.cameraHorizontalFovDeg = String(
-        SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
+        horizontalFovDegrees,
       );
       host.dataset.cameraVerticalFovDeg = String(camera.fov);
       if (infantryPreviewDistanceRef.current !== null) {
@@ -7850,6 +8553,7 @@ export function RuntimeVehicleViewer({
           ? null
           : RUNTIME_VIEWER_CAMERA_VIEWS.find(({ id }) => id === viewId) ?? null;
         if (viewId !== null && !preset) return;
+        applyInspectionProjection();
         protectionCache = null;
         cameraFitUserLocked = true;
         initialFitStabilizationPending = false;
@@ -7954,10 +8658,69 @@ export function RuntimeVehicleViewer({
           scheduleProtectionMap({ invalidate: true });
         }
       };
+      const enterCrewViewpoint = (stationId: string) => {
+        const station = runtimeTurretStationsRef.current.find(
+          ({ id }) => id === stationId,
+        );
+        const pose = station ? crewPoseForStation(station) : null;
+        if (!station || !pose) return false;
+        cameraFitUserLocked = true;
+        initialFitStabilizationPending = false;
+        window.clearTimeout(initialFitStabilizationTimer);
+        initialFitStabilizationTimer = 0;
+        activeTurretStationIdRef.current = station.id;
+        setActiveTurretStationId(station.id);
+        activeCrewViewStationIdRef.current = station.id;
+        setActiveCrewViewStationId(station.id);
+        crewOccupantHolder.visible = false;
+        crewOccupantLayer?.setVisible(false);
+        host.dataset.crewOccupantVisible = "false";
+        host.dataset.crewViewCameraStationId = station.id;
+        setRealtimePointer(null);
+        activeCrewViewZoomIndexRef.current = 0;
+        applyCrewViewCameraPose(station, pose, 0);
+        updateCrewViewpointMarker();
+        render();
+        return true;
+      };
+      const applyCrewViewZoom = (stationId: string, zoomIndex: number) => {
+        if (activeCrewViewStationIdRef.current !== stationId) return false;
+        const station = runtimeTurretStationsRef.current.find(
+          ({ id }) => id === stationId,
+        );
+        const pose = station ? crewPoseForStation(station) : null;
+        const horizontalFovDegrees = station?.view
+          ? crewViewHorizontalFovForZoom(station.view, zoomIndex)
+          : null;
+        if (!station || !pose || horizontalFovDegrees === null) return false;
+        activeCrewViewZoomIndexRef.current = zoomIndex;
+        applyCrewViewCameraPose(station, pose, zoomIndex);
+        render();
+        return true;
+      };
+      const exitCrewViewpoint = () => {
+        activeCrewViewStationIdRef.current = null;
+        setActiveCrewViewStationId(null);
+        activeCrewViewZoomIndexRef.current = 0;
+        activeCrewViewPose = null;
+        delete host.dataset.crewViewCameraStationId;
+        delete host.dataset.cameraZoomIndex;
+        delete host.dataset.cameraZoomMagnification;
+        delete host.dataset.cameraZoomHorizontalFovDeg;
+        const showCrew = crewOccupantDisplayEnabledRef.current;
+        crewOccupantHolder.visible = showCrew;
+        crewOccupantLayer?.setVisible(showCrew);
+        host.dataset.crewOccupantVisible = String(showCrew);
+        resetView({ preserveShotVisual: true });
+        updateCrewViewpointMarker();
+      };
       resetViewRef.current = resetView;
       applyCameraViewPresetRef.current = applyInspectionView;
       applyInfantryDistancePreviewRef.current = applyInfantryDistancePreview;
       enterFreeCameraViewRef.current = enterFreeCameraView;
+      enterCrewViewpointRef.current = enterCrewViewpoint;
+      exitCrewViewpointRef.current = exitCrewViewpoint;
+      applyCrewViewZoomRef.current = applyCrewViewZoom;
       fittedSource = source;
       if (preserveCamera) {
         clearShotVisual();
@@ -8020,6 +8783,7 @@ export function RuntimeVehicleViewer({
           disposeScene(proxy);
         }
         referenceSoldier = soldierScene;
+        soldierScene.visible = !crewOccupantDisplayEnabledRef.current;
         modelGroup.add(soldierScene);
         host.dataset.referenceSoldierState = "ready";
         host.dataset.referenceSoldierPose = "standing-rifle";
@@ -9196,6 +9960,11 @@ export function RuntimeVehicleViewer({
       applyCameraViewPresetRef.current = null;
       applyInfantryDistancePreviewRef.current = null;
       enterFreeCameraViewRef.current = null;
+      enterCrewViewpointRef.current = null;
+      exitCrewViewpointRef.current = null;
+      applyCrewViewZoomRef.current = null;
+      activeCrewViewZoomIndexRef.current = 0;
+      activeCrewViewStationIdRef.current = null;
       activeCameraViewRef.current = null;
       infantryPreviewDistanceRef.current = null;
       activateAssetModeRef.current = null;
@@ -9219,6 +9988,18 @@ export function RuntimeVehicleViewer({
       if (applyTurretPoseRef.current === applyTurretPose) {
         applyTurretPoseRef.current = null;
       }
+      if (
+        applyCrewOccupantVisibilityRef.current ===
+          applyCrewOccupantVisibility
+      ) {
+        applyCrewOccupantVisibilityRef.current = null;
+      }
+      if (
+        applyCrewHitProxyVisibilityRef.current ===
+          applyCrewHitProxyVisibility
+      ) {
+        applyCrewHitProxyVisibilityRef.current = null;
+      }
       if (applyChassisPoseRef.current === applyChassisPose) {
         applyChassisPoseRef.current = null;
       }
@@ -9241,6 +10022,8 @@ export function RuntimeVehicleViewer({
       controls.removeEventListener("change", onControlsChange);
       controls.removeEventListener("end", onControlsEnd);
       controls.dispose();
+      crewOccupantLayer?.dispose();
+      crewOccupantLayer = null;
       disposeScene(scene);
       rendererLease.release();
     };
@@ -9248,6 +10031,7 @@ export function RuntimeVehicleViewer({
     applySettledShotDamageHighlight,
     chassisPose,
     clearShotVisual,
+    crewOccupantPlan,
     hit,
     maxShotTraces,
     preview.cardId,
@@ -9537,6 +10321,19 @@ export function RuntimeVehicleViewer({
       data-turret-authority={
         activeTurretStation?.turret.limits?.authority ?? undefined
       }
+      data-gunner-sight={
+        gunnerSightPresentationAvailable ? "available" : "absent"
+      }
+      data-gunner-sight-visible={gunnerSightOverlayVisible || undefined}
+      data-crew-view-active={activeCrewViewStationId !== null || undefined}
+      data-crew-occupants={crewOccupantDisplayEnabled ? "visible" : "hidden"}
+      data-crew-hit-proxies={
+        crewHitProxyDisplayEnabled ? "visible" : "hidden"
+      }
+      data-crew-hittable-count={crewOccupantCounts.hittable}
+      data-crew-outline-count={
+        crewOccupantCounts.protected + crewOccupantCounts.unresolved
+      }
       data-post-penetration-distance-m={
         ballistics?.traceDistanceAfterPenetrationM ?? undefined
       }
@@ -9606,7 +10403,76 @@ export function RuntimeVehicleViewer({
             </button>
           ) : null}
         </div>
+        <div
+          className="viewer-crew-viewpoint-hud"
+          ref={crewViewpointHudRef}
+          hidden
+          aria-label={activeTurretStation
+            ? `${activeTurretStation.label}观察点`
+            : "操作手观察点"}
+        >
+          <span className="viewer-crew-viewpoint-hud__optic" aria-hidden="true">
+            <Crosshair size={13} />
+          </span>
+          <b>{activeTurretStation?.label ?? "武器站"}</b>
+          <span>炮镜观察点</span>
+        </div>
       </div>
+
+      {gunnerSightOverlayVisible && activeGunnerSightStation && activeTurretStation && gunnerSight ? (
+        <GunnerSightOverlay
+          station={activeGunnerSightStation}
+          projections={gunnerSight.projections}
+          stationLabel={activeTurretStation.label}
+          magnificationLevels={
+            activeTurretStation.view?.magnificationLevels ?? []
+          }
+          zoomHorizontalFovDegrees={
+            activeTurretStation.view?.magnificationLevels.map((_, zoomIndex) =>
+              crewViewHorizontalFovForZoom(
+                activeTurretStation.view!,
+                zoomIndex,
+              )
+            ) ?? []
+          }
+          onZoomStageChange={(zoomIndex) => {
+            applyCrewViewZoomRef.current?.(
+              activeTurretStation.id,
+              zoomIndex,
+            );
+          }}
+        />
+      ) : null}
+
+      {activeCrewViewStationId !== null ? (
+        <div
+          className="crew-view-immersive-controls"
+          aria-label="炮手视角控制"
+        >
+          {gunnerSightPresentationAvailable ? (
+            <button
+              type="button"
+              role="switch"
+              aria-label="显示炮镜遮罩与分划"
+              aria-checked={gunnerSightOverlayEnabled}
+              data-active={gunnerSightOverlayEnabled || undefined}
+              onClick={() =>
+                setGunnerSightOverlayEnabled((enabled) => !enabled)}
+            >
+              {gunnerSightOverlayEnabled ? "隐藏炮镜" : "显示炮镜"}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            aria-label="退出炮手视角"
+            aria-keyshortcuts="Escape"
+            onClick={() => exitCrewViewpointRef.current?.()}
+          >
+            退出炮手视角
+            <kbd>Esc</kbd>
+          </button>
+        </div>
+      ) : null}
 
       {showSceneLoadingOverlay ? (
         <VehicleViewerLoading
@@ -10120,6 +10986,82 @@ export function RuntimeVehicleViewer({
                   : "无数据"}</strong>
               </button>
             </div>
+            <div className="viewer-crew-occupant-row">
+              <button
+                className="viewer-protection-switch viewer-crew-occupant-switch"
+                type="button"
+                role="switch"
+                aria-label="显示乘员位置与受击判定"
+                aria-checked={crewOccupantDisplayEnabled}
+                data-active={crewOccupantDisplayEnabled}
+                disabled={crewOccupantCounts.total === 0}
+                title={crewOccupantCounts.total > 0
+                  ? [
+                      `${crewOccupantCounts.hittable} 个可自然命中乘员按各自 exact BaseAnimation 的 Editor frame-zero 骨姿态显示。`,
+                      "真实人物与姿态化轮廓默认显示；简化判定体由同一骨姿态生成并使用独立开关。",
+                      `${crewOccupantCounts.protected} 个 Hidden/保护状态仅显示轮廓。`,
+                      crewOccupantCounts.unresolved > 0
+                        ? `${crewOccupantCounts.unresolved} 个未闭合状态使用警示轮廓。`
+                        : "",
+                      "AimOffset、hand/weapon IK、逐帧相位与原生 PhysicsAsset 几何仍不声称已复现。",
+                    ].filter(Boolean).join(" ")
+                  : "该载具没有可定位的乘员 construction-reference frame。"}
+                onClick={() =>
+                  setCrewOccupantDisplayEnabled((enabled) => !enabled)}
+              >
+                <span
+                  className="viewer-protection-switch__track"
+                  aria-hidden="true"
+                >
+                  <span />
+                </span>
+                <span>乘员位置</span>
+                <strong>{crewOccupantCounts.total > 0
+                  ? crewOccupantDisplayEnabled ? "显示" : "隐藏"
+                  : "无数据"}</strong>
+              </button>
+              {crewOccupantDisplayEnabled ? (
+                <div
+                  className="viewer-crew-occupant-legend"
+                  aria-label="乘员位置图例"
+                >
+                  <span data-kind="hittable">
+                    <i />可受击真实人物
+                    <b>{crewOccupantCounts.hittable}</b>
+                  </span>
+                  {crewOccupantCounts.hittable > 0 ? (
+                    <button
+                      type="button"
+                      className="viewer-crew-hit-proxy-toggle"
+                      role="switch"
+                      aria-label="显示乘员受击判定范围"
+                      aria-checked={crewHitProxyDisplayEnabled}
+                      data-active={crewHitProxyDisplayEnabled || undefined}
+                      onClick={() => setCrewHitProxyDisplayEnabled(
+                        (enabled) => !enabled,
+                      )}
+                    >
+                      <i />受击判定范围
+                      <b>{crewHitProxyDisplayEnabled ? "显示" : "隐藏"}</b>
+                    </button>
+                  ) : null}
+                  <span data-kind="protected">
+                    <i />保护/隐藏轮廓
+                    <b>{crewOccupantCounts.protected}</b>
+                  </span>
+                  {crewOccupantCounts.unresolved > 0 ? (
+                    <span data-kind="unresolved">
+                      <i />未闭合轮廓
+                      <b>{crewOccupantCounts.unresolved}</b>
+                    </span>
+                  ) : null}
+                  <small>
+                    位置：construction frame · 骨姿态：Editor BaseAnimation 首帧 ·
+                    判定代理：同骨架近似、默认隐藏
+                  </small>
+                </div>
+              ) : null}
+            </div>
             {mode === "armor" && hitState.kind === "ready" ? (
               <>
                 <div className="viewer-spaced-armor-row">
@@ -10186,6 +11128,9 @@ export function RuntimeVehicleViewer({
                 pitchDegrees={clampedTurretPitch}
                 onStationChange={(stationId) => {
                   setActiveTurretStationId(stationId);
+                  if (activeCrewViewStationId !== null) {
+                    enterCrewViewpointRef.current?.(stationId);
+                  }
                   commitTurretNavigation(stationId);
                 }}
                 onYawChange={(yawDegrees) => {
@@ -10212,6 +11157,27 @@ export function RuntimeVehicleViewer({
                     activeTurretStation.id,
                     nextPoseStates,
                   );
+                }}
+                viewpointActive={
+                  activeCrewViewStationId === activeTurretStation.id
+                }
+                viewpointMarkerEnabled={crewViewpointMarkerEnabled}
+                sightPresentationAvailable={gunnerSightPresentationAvailable}
+                sightPresentationVisible={gunnerSightOverlayEnabled}
+                onViewpointMarkerToggle={() => {
+                  const enabled = !crewViewpointMarkerEnabledRef.current;
+                  crewViewpointMarkerEnabledRef.current = enabled;
+                  setCrewViewpointMarkerEnabled(enabled);
+                  applyTurretPoseRef.current?.();
+                }}
+                onSightPresentationToggle={() =>
+                  setGunnerSightOverlayEnabled((enabled) => !enabled)}
+                onViewpointToggle={(stationId) => {
+                  if (activeCrewViewStationId === stationId) {
+                    exitCrewViewpointRef.current?.();
+                  } else {
+                    enterCrewViewpointRef.current?.(stationId);
+                  }
                 }}
                 onInteractionEnd={() =>
                   commitTurretNavigation(activeTurretStation.id)}

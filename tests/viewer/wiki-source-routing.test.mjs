@@ -16,8 +16,13 @@ import {
   loadWikiVehicleFactionMechanics,
   loadWikiVehicleFactionPresentation,
   loadWikiVehiclePresentation,
+  loadWikiVehicleCrewSeat,
+  loadWikiVehicleGunnerSight,
+  loadOptionalWikiVehicleGunnerSight,
+  loadWikiVehicleStationGraph,
   loadWikiVehicleRuntimeSource,
   loadWikiVehicleRadialQuery,
+  loadWikiVehicleVisualAttachment,
 } from "../../lib/wiki-source.ts";
 
 test("shared runtime files resolve directly to SiguaWiki", () => {
@@ -245,8 +250,112 @@ test("3D preview reads an exact per-card vehicle runtime source", async () => {
   }
   assert.equal(
     requestedUrl,
-    `https://wiki.siguad.icu/data/vehicles/runtime/${cardId}.json?projection=runtime-observed-physical-pose-v2`,
+    `https://wiki.siguad.icu/data/vehicles/runtime/${cardId}.json?projection=vehicle-station-graph-v1`,
   );
+});
+
+test("crew seats read the exact source-vehicle sidecar", async () => {
+  const originalFetch = globalThis.fetch;
+  const sourceVehicleRef = `vehicle-${"e".repeat(24)}`;
+  const pathname = `/data/vehicles/crew-seats/${sourceVehicleRef}.json`;
+  let requestedUrl = "";
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return Response.json({
+      schemaVersion: "sigua-vehicle-crew-seat/v1",
+      sourceVehicleRef,
+      runtimeVehicleRefs: [],
+      seats: [],
+    });
+  };
+  try {
+    await loadWikiVehicleCrewSeat(pathname);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.equal(requestedUrl, `https://wiki.siguad.icu${pathname}`);
+});
+
+test("visual attachment reads the exact source-vehicle sidecar", async () => {
+  const originalFetch = globalThis.fetch;
+  const sourceVehicleRef = `vehicle-${"d".repeat(24)}`;
+  const pathname = `/data/vehicles/visual-attachments/${sourceVehicleRef}.json`;
+  let requestedUrl = "";
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return Response.json({
+      schemaVersion: "sigua-vehicle-visual-attachment/v2",
+      sourceVehicleRef,
+      stations: [],
+      visualBindings: [],
+    });
+  };
+  try {
+    await loadWikiVehicleVisualAttachment(pathname);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.equal(requestedUrl, `https://wiki.siguad.icu${pathname}`);
+});
+
+test("station graph reads the exact source-vehicle relationship authority", async () => {
+  const originalFetch = globalThis.fetch;
+  const sourceVehicleRef = `vehicle-${"f".repeat(24)}`;
+  const pathname = `/data/vehicles/station-graphs/${sourceVehicleRef}.json`;
+  let requestedUrl = "";
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return Response.json({
+      schemaVersion: "sigua-vehicle-station-graph/v1",
+      sourceVehicleRef,
+      runtimeVehicleRefs: [],
+      stations: [],
+      visualBindings: [],
+    });
+  };
+  try {
+    await loadWikiVehicleStationGraph(pathname);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.equal(requestedUrl, `https://wiki.siguad.icu${pathname}`);
+});
+
+test("gunner sight reads the exact source-vehicle presentation sidecar", async () => {
+  const originalFetch = globalThis.fetch;
+  const sourceVehicleRef = `vehicle-${"e".repeat(24)}`;
+  const pathname = `/data/vehicles/gunner-sights/${sourceVehicleRef}.json`;
+  let requestedUrl = "";
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return Response.json({
+      schemaVersion: "sigua-vehicle-gunner-sight/v1",
+      sourceVehicleRef,
+      runtimeVehicleRefs: [],
+      stations: [],
+      projections: [],
+    });
+  };
+  try {
+    await loadWikiVehicleGunnerSight(sourceVehicleRef);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  assert.equal(requestedUrl, `https://wiki.siguad.icu${pathname}`);
+});
+
+test("missing optional gunner sight does not block the existing 3D viewer", async () => {
+  const originalFetch = globalThis.fetch;
+  const sourceVehicleRef = `vehicle-${"9".repeat(24)}`;
+  globalThis.fetch = async () => new Response("not found", { status: 404 });
+  try {
+    assert.equal(
+      await loadOptionalWikiVehicleGunnerSight(sourceVehicleRef),
+      null,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
 
 test("radial query reads the immutable per-vehicle record directly", async () => {
