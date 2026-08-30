@@ -27,7 +27,8 @@ test("weapon and zoom controls switch only observed Station-owned routes", () =>
   assert.match(overlaySource, /切换当前站位武器分划/u);
   assert.match(overlaySource, /切换炮镜倍率/u);
   assert.match(controlsSource, /显示炮镜遮罩与分划/u);
-  assert.match(controlsSource, /炮镜遮罩已开启/u);
+  assert.match(controlsSource, /炮镜遮罩与分划/u);
+  assert.match(controlsSource, /viewer-state-switch__track/u);
   assert.match(viewerSource, /gunnerSightOverlayEnabled/u);
 });
 

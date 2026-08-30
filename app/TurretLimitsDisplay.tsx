@@ -984,23 +984,22 @@ export function TurretPreviewControls({
               <div className="turret-preview-controls__viewpoint-heading">
                 <span>
                   <i aria-hidden="true" />
-                  <b>炮手观察点</b>
+                  <b>观察与炮镜</b>
                 </span>
-                <button
-                  className="turret-preview-controls__viewpoint-switch"
-                  type="button"
-                  role="switch"
-                  aria-label="显示炮手观察点"
-                  aria-checked={viewpointMarkerEnabled}
-                  data-active={viewpointMarkerEnabled || undefined}
-                  onClick={onViewpointMarkerToggle}
-                >
-                  <span aria-hidden="true"><i /></span>
-                  <strong>
-                    {viewpointMarkerEnabled ? "隐藏观察点" : "显示观察点"}
-                  </strong>
-                </button>
               </div>
+              <button
+                className="viewer-state-switch turret-preview-controls__viewpoint-switch"
+                type="button"
+                role="switch"
+                aria-label="显示炮手观察点"
+                aria-checked={viewpointMarkerEnabled}
+                data-active={viewpointMarkerEnabled || undefined}
+                onClick={onViewpointMarkerToggle}
+              >
+                <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
+                <span>观察点标记</span>
+                <strong>{viewpointMarkerEnabled ? "显示" : "隐藏"}</strong>
+              </button>
               <button
                 className="turret-preview-controls__viewpoint-camera"
                 type="button"
@@ -1012,7 +1011,7 @@ export function TurretPreviewControls({
               </button>
               {sightPresentationAvailable ? (
                 <button
-                  className="turret-preview-controls__viewpoint-camera turret-preview-controls__sight-switch"
+                  className="viewer-state-switch turret-preview-controls__sight-switch"
                   type="button"
                   role="switch"
                   aria-label="显示炮镜遮罩与分划"
@@ -1020,7 +1019,9 @@ export function TurretPreviewControls({
                   data-active={sightPresentationVisible || undefined}
                   onClick={onSightPresentationToggle}
                 >
-                  {sightPresentationVisible ? "炮镜遮罩已开启" : "炮镜遮罩已隐藏"}
+                  <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
+                  <span>炮镜遮罩与分划</span>
+                  <strong>{sightPresentationVisible ? "显示" : "隐藏"}</strong>
                 </button>
               ) : null}
               <p>

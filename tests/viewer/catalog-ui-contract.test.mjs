@@ -427,9 +427,9 @@ test("left viewer controls share one grouped rail and use slider-shaped state co
     "turret posture control should follow every top-left state switch",
   );
   assert.ok(
-    toolbar.indexOf('aria-controls="viewer-weapon-panel"') <
+    toolbar.indexOf('className="viewer-weapon-panel-launcher"') >
       toolbar.indexOf('className="viewer-interaction-hint'),
-    "weapon panel trigger should be the last expandable control in the left rail",
+    "weapon panel launcher should follow the left rail and live on the right",
   );
   assert.ok(
     toolbar.indexOf('<TurretPreviewControls') >
@@ -453,6 +453,10 @@ test("left viewer controls share one grouped rail and use slider-shaped state co
   assert.match(
     styles,
     /\.viewer-protection-switch__track > span\s*\{[\s\S]*?border-radius:\s*0;/u,
+  );
+  assert.match(
+    styles,
+    /\.viewer-state-switch__track\s*\{[\s\S]*?border-radius:\s*0;/u,
   );
   assert.match(
     styles,
