@@ -408,7 +408,7 @@ test("compact vehicle cards wrap both identity lines instead of truncating them"
   );
 });
 
-test("left viewer controls share one rail and use slider-shaped state controls", () => {
+test("left viewer controls share one grouped rail and use slider-shaped state controls", () => {
   const toolbar = viewerSource.slice(
     viewerSource.indexOf('<div className="viewer-toolbar"'),
     viewerSource.indexOf('{viewerState.kind !== "loading"'),
@@ -450,7 +450,7 @@ test("left viewer controls share one rail and use slider-shaped state controls",
   );
   assert.match(
     styles,
-    /\.viewer-toolbar \.viewer-protection-controls > \.turret-preview-controls\s*\{[\s\S]*?position:\s*relative;[\s\S]*?width:\s*100%;/u,
+    /\.viewer-toolbar \.viewer-protection-controls \.turret-preview-controls\s*\{[\s\S]*?position:\s*relative;[\s\S]*?width:\s*100%;/u,
   );
 });
 
