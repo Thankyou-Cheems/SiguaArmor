@@ -2425,6 +2425,16 @@ function DetailPanel({
       aria-modal="false"
       aria-label={`${displayName}载具详情`}
     >
+      {hasViewer && !encyclopediaOpen && (
+        <button
+          className="detail-close detail-close--viewer"
+          type="button"
+          onClick={onClose}
+          aria-label="关闭载具详情"
+        >
+          <X size={19} aria-hidden="true" />
+        </button>
+      )}
       {!hasViewer && !encyclopediaOpen && (
         <button className="detail-close" type="button" onClick={onClose}>
           <X size={19} aria-hidden="true" />
@@ -2437,7 +2447,6 @@ function DetailPanel({
             fallback={(
               <VehicleViewerLoading
                 vehicleName={displayName}
-                onClose={encyclopediaOpen ? undefined : onClose}
               />
             )}
           >
@@ -2466,7 +2475,6 @@ function DetailPanel({
                 const nextVariant = textureVariants.find((entry) => entry.cardId === variantId);
                 if (nextVariant) onTextureVariantSelect(nextVariant);
               }}
-              onClose={encyclopediaOpen ? undefined : onClose}
               navigationState={viewerNavigation}
               onNavigationStateChange={onViewerNavigationChange}
             />

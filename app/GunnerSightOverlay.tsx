@@ -224,9 +224,11 @@ export function GunnerSightOverlay({
           </div>
         ) : null}
       </div>
-      <p className="gunner-sight-overlay__scope">
-        静态炮镜与视口遮罩；倍率使用源 ZoomLevels 的原生公式投影，
-        不表示逐帧 ViewTarget；不表示光学损坏、失明或命中机制。
+      <p
+        className="gunner-sight-overlay__scope"
+        title="静态炮镜与视口遮罩；倍率使用源 ZoomLevels 的原生公式投影，不表示逐帧 ViewTarget；不表示光学损坏、失明或命中机制。"
+      >
+        静态炮镜 · 源倍率 · 非损伤机制
       </p>
     </section>
   );
