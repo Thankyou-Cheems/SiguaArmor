@@ -4515,6 +4515,7 @@ export function RuntimeVehicleViewer({
     useState<RuntimeViewerCameraViewId | null>(null);
   const [activeCrewViewStationId, setActiveCrewViewStationId] =
     useState<string | null>(null);
+  const [weaponPanelOpen, setWeaponPanelOpen] = useState(false);
   const [crewViewpointMarkerEnabled, setCrewViewpointMarkerEnabled] =
     useState(false);
   const [crewOccupantDisplayEnabled, setCrewOccupantDisplayEnabled] =
@@ -4525,6 +4526,7 @@ export function RuntimeVehicleViewer({
     useState(true);
   useEffect(() => {
     activeCrewViewStationIdRef.current = activeCrewViewStationId;
+    if (activeCrewViewStationId !== null) setWeaponPanelOpen(false);
   }, [activeCrewViewStationId]);
   useEffect(() => {
     crewViewpointMarkerEnabledRef.current = crewViewpointMarkerEnabled;
@@ -4540,9 +4542,15 @@ export function RuntimeVehicleViewer({
   useEffect(() => {
     crewOccupantDisplayEnabledRef.current = false;
     crewHitProxyDisplayEnabledRef.current = false;
+    setWeaponPanelOpen(false);
     setCrewOccupantDisplayEnabled(false);
     setCrewHitProxyDisplayEnabled(false);
   }, [preview.visualVehicleId]);
+  useEffect(() => {
+    if (!activeTurretStation) {
+      setWeaponPanelOpen(false);
+    }
+  }, [activeTurretStation]);
   useEffect(() => {
     setGunnerSightOverlayEnabled(true);
   }, [gunnerSight?.sourceDataRevision]);
@@ -4904,6 +4912,14 @@ export function RuntimeVehicleViewer({
     armorThicknessRange && armorThicknessRange.distinctThicknessCount > 1,
   );
   const relativeArmorScaleActive = relativeArmorScale && relativeArmorScaleAvailable;
+  const specialArmorDisplayActive = mode === "exterior"
+    ? exteriorSpacedArmorHighlight
+    : specialArmorVisible;
+  const toggleSpecialArmorDisplay = () => {
+    const nextVisible = !specialArmorDisplayActive;
+    setSpecialArmorVisible(nextVisible);
+    setExteriorSpacedArmorHighlight(nextVisible);
+  };
   const armorThicknessLegendTicks = useMemo(
     () => relativeArmorScaleActive
       ? relativeArmorThicknessLegendTicks(armorThicknessRange)
@@ -10371,6 +10387,7 @@ export function RuntimeVehicleViewer({
         gunnerSightPresentationAvailable ? "available" : "absent"
       }
       data-gunner-sight-visible={gunnerSightOverlayVisible || undefined}
+      data-weapon-panel={weaponPanelOpen ? "open" : "closed"}
       data-crew-view-active={activeCrewViewStationId !== null || undefined}
       data-crew-occupants={crewOccupantDisplayEnabled ? "visible" : "hidden"}
       data-crew-hit-proxies={
@@ -10817,7 +10834,7 @@ export function RuntimeVehicleViewer({
             <header className="viewer-control-deck__header">
               <span><i aria-hidden="true" />3D 视窗控制</span>
               <strong>
-                {(mode === "exterior" || mode === "armor") && activeTurretStation
+                {activeTurretStation
                   ? "4 个功能组"
                   : "3 个功能组"}
               </strong>
@@ -10994,7 +11011,7 @@ export function RuntimeVehicleViewer({
                 </span>
               </span>
             </label>
-            {mode === "armor" && hitState.kind === "ready" ? (
+            {hitState.kind === "ready" ? (
               <>
                 <div className="viewer-spaced-armor-row">
                   <button
@@ -11002,13 +11019,16 @@ export function RuntimeVehicleViewer({
                     type="button"
                     role="switch"
                     aria-label="显示附加装甲/无敌区域"
-                    aria-checked={specialArmorVisible}
-                    data-active={specialArmorVisible}
-                    onClick={() => setSpecialArmorVisible((visible) => !visible)}
+                    aria-checked={specialArmorDisplayActive}
+                    data-active={specialArmorDisplayActive}
+                    title={mode === "exterior"
+                      ? "在外观模式叠加附加装甲与命中层高亮"
+                      : "在装甲或内构模式显示附加装甲与无敌区域"}
+                    onClick={toggleSpecialArmorDisplay}
                   >
                     <span className="viewer-protection-switch__track" aria-hidden="true"><span /></span>
                     <span>附加装甲/无敌区域</span>
-                    <strong>{specialArmorVisible ? "显示" : "隐藏"}</strong>
+                    <strong>{specialArmorDisplayActive ? "显示" : "隐藏"}</strong>
                   </button>
                 </div>
                 <div className="viewer-relative-armor-row">
@@ -11033,23 +11053,6 @@ export function RuntimeVehicleViewer({
                   </button>
                 </div>
               </>
-            ) : null}
-            {mode === "exterior" && hitState.kind === "ready" ? (
-              <div className="viewer-spaced-armor-row">
-                <button
-                  className="viewer-protection-switch viewer-spaced-armor-switch"
-                  type="button"
-                  role="switch"
-                  aria-label="高亮附加装甲"
-                  aria-checked={exteriorSpacedArmorHighlight}
-                  data-active={exteriorSpacedArmorHighlight}
-                  onClick={() => setExteriorSpacedArmorHighlight((visible) => !visible)}
-                >
-                  <span className="viewer-protection-switch__track" aria-hidden="true"><span /></span>
-                  <span>附加装甲高亮</span>
-                  <strong>{exteriorSpacedArmorHighlight ? "开启" : "关闭"}</strong>
-                </button>
-              </div>
             ) : null}
             {protectionActive ? (
               <div className="viewer-protection-legend" aria-label="防护图图例">
@@ -11236,12 +11239,20 @@ export function RuntimeVehicleViewer({
             </div>
               </div>
             </details>
-            {(mode === "exterior" || mode === "armor") && activeTurretStation ? (
+            {activeTurretStation ? (
               <details
                 className="viewer-control-section"
                 data-control-section="weapon"
+                open={weaponPanelOpen}
               >
-                <summary>
+                <summary
+                  aria-controls="viewer-weapon-panel"
+                  aria-expanded={weaponPanelOpen}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setWeaponPanelOpen((open) => !open);
+                  }}
+                >
                   <span><i aria-hidden="true" />武器站与炮镜</span>
                   <strong className="viewer-control-section__status">
                     {activeCrewViewStationId === activeTurretStation.id
@@ -11249,71 +11260,6 @@ export function RuntimeVehicleViewer({
                       : activeTurretStation.label}
                   </strong>
                 </summary>
-                <div className="viewer-control-section__body">
-              <TurretPreviewControls
-                embedded
-                stations={runtimeTurretStations}
-                orientationIndicators={turretOrientationIndicators}
-                activeStationId={activeTurretStation.id}
-                yawDegrees={clampedTurretYaw}
-                pitchDegrees={clampedTurretPitch}
-                onStationChange={(stationId) => {
-                  setActiveTurretStationId(stationId);
-                  if (activeCrewViewStationId !== null) {
-                    enterCrewViewpointRef.current?.(stationId);
-                  }
-                  commitTurretNavigation(stationId);
-                }}
-                onYawChange={(yawDegrees) => {
-                  updateTurretStationPose(
-                    activeTurretStation,
-                    yawDegrees,
-                    activeTurretPose.pitchDegrees,
-                  );
-                }}
-                onPitchChange={(pitchDegrees) => {
-                  updateTurretStationPose(
-                    activeTurretStation,
-                    activeTurretPose.yawDegrees,
-                    pitchDegrees,
-                  );
-                }}
-                onReset={() => {
-                  const nextPoseStates = updateTurretStationPose(
-                    activeTurretStation,
-                    0,
-                    0,
-                  );
-                  commitTurretNavigation(
-                    activeTurretStation.id,
-                    nextPoseStates,
-                  );
-                }}
-                viewpointActive={
-                  activeCrewViewStationId === activeTurretStation.id
-                }
-                viewpointMarkerEnabled={crewViewpointMarkerEnabled}
-                sightPresentationAvailable={gunnerSightPresentationAvailable}
-                sightPresentationVisible={gunnerSightOverlayEnabled}
-                onViewpointMarkerToggle={() => {
-                  const enabled = !crewViewpointMarkerEnabledRef.current;
-                  crewViewpointMarkerEnabledRef.current = enabled;
-                  setCrewViewpointMarkerEnabled(enabled);
-                  applyTurretPoseRef.current?.();
-                }}
-                onSightPresentationToggle={() =>
-                  setGunnerSightOverlayEnabled((enabled) => !enabled)}
-                onViewpointToggle={(stationId) => {
-                  if (activeCrewViewStationId === stationId) {
-                    exitCrewViewpointRef.current?.();
-                  } else {
-                    enterCrewViewpointRef.current?.(stationId);
-                  }
-                }}
-                onInteractionEnd={() =>
-                  commitTurretNavigation(activeTurretStation.id)}
-              />
-                </div>
               </details>
             ) : null}
             <div className="viewer-interaction-hint viewer-interaction-hint--protection" aria-label="3D 操作提示">
@@ -11322,6 +11268,95 @@ export function RuntimeVehicleViewer({
           </div>
         </div>
       </div>
+
+      {weaponPanelOpen && activeTurretStation ? (
+        <aside
+          className="viewer-weapon-panel"
+          id="viewer-weapon-panel"
+          aria-labelledby="viewer-weapon-panel-title"
+        >
+          <header className="viewer-weapon-panel__header">
+            <span id="viewer-weapon-panel-title">
+              <i aria-hidden="true" />
+              武器站与炮镜
+            </span>
+            <strong>{activeTurretStation.label}</strong>
+            <button
+              type="button"
+              onClick={() => setWeaponPanelOpen(false)}
+              aria-label="收起武器站与炮镜面板"
+            >
+              收起
+            </button>
+          </header>
+          <div className="viewer-weapon-panel__body">
+            <TurretPreviewControls
+              embedded
+              stations={runtimeTurretStations}
+              orientationIndicators={turretOrientationIndicators}
+              activeStationId={activeTurretStation.id}
+              yawDegrees={clampedTurretYaw}
+              pitchDegrees={clampedTurretPitch}
+              onStationChange={(stationId) => {
+                setActiveTurretStationId(stationId);
+                if (activeCrewViewStationId !== null) {
+                  enterCrewViewpointRef.current?.(stationId);
+                }
+                commitTurretNavigation(stationId);
+              }}
+              onYawChange={(yawDegrees) => {
+                updateTurretStationPose(
+                  activeTurretStation,
+                  yawDegrees,
+                  activeTurretPose.pitchDegrees,
+                );
+              }}
+              onPitchChange={(pitchDegrees) => {
+                updateTurretStationPose(
+                  activeTurretStation,
+                  activeTurretPose.yawDegrees,
+                  pitchDegrees,
+                );
+              }}
+              onReset={() => {
+                const nextPoseStates = updateTurretStationPose(
+                  activeTurretStation,
+                  0,
+                  0,
+                );
+                commitTurretNavigation(
+                  activeTurretStation.id,
+                  nextPoseStates,
+                );
+              }}
+              viewpointActive={
+                activeCrewViewStationId === activeTurretStation.id
+              }
+              viewpointMarkerEnabled={crewViewpointMarkerEnabled}
+              sightPresentationAvailable={gunnerSightPresentationAvailable}
+              sightPresentationVisible={gunnerSightOverlayEnabled}
+              onViewpointMarkerToggle={() => {
+                const enabled = !crewViewpointMarkerEnabledRef.current;
+                crewViewpointMarkerEnabledRef.current = enabled;
+                setCrewViewpointMarkerEnabled(enabled);
+                applyTurretPoseRef.current?.();
+              }}
+              onSightPresentationToggle={() =>
+                setGunnerSightOverlayEnabled((enabled) => !enabled)}
+              onViewpointToggle={(stationId) => {
+                if (activeCrewViewStationId === stationId) {
+                  exitCrewViewpointRef.current?.();
+                } else {
+                  setWeaponPanelOpen(false);
+                  enterCrewViewpointRef.current?.(stationId);
+                }
+              }}
+              onInteractionEnd={() =>
+                commitTurretNavigation(activeTurretStation.id)}
+            />
+          </div>
+        </aside>
+      ) : null}
 
       {viewerState.kind !== "loading" ? (
         <div className="viewer-load-status" data-with-close={Boolean(onClose)} aria-live="polite">

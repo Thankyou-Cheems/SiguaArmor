@@ -6,6 +6,10 @@ const viewerSource = await readFile(
   new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url),
   "utf8",
 );
+const catalogSource = await readFile(
+  new URL("../../app/CatalogApp.tsx", import.meta.url),
+  "utf8",
+);
 const turretSource = await readFile(
   new URL("../../app/TurretLimitsDisplay.tsx", import.meta.url),
   "utf8",
@@ -51,7 +55,11 @@ test("render mode remains visible while feature groups expose collapsed status",
   );
 });
 
-test("turret controls embed directly into the weapon group without nested details", () => {
+test("weapon controls open in a dedicated right-side panel without nested details", () => {
+  assert.match(viewerSource, /const \[weaponPanelOpen, setWeaponPanelOpen\]/u);
+  assert.match(viewerSource, /aria-controls="viewer-weapon-panel"/u);
+  assert.match(viewerSource, /id="viewer-weapon-panel"/u);
+  assert.match(viewerSource, /className="viewer-weapon-panel"/u);
   assert.match(
     viewerSource,
     /<TurretPreviewControls[\s\S]*?embedded/u,
@@ -65,4 +73,43 @@ test("turret controls embed directly into the weapon group without nested detail
     viewerStyles,
     /\.turret-preview-controls\[data-embedded="true"\]/u,
   );
+  assert.match(
+    viewerStyles,
+    /\.viewer-weapon-panel\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*12px;/u,
+  );
+});
+
+test("vehicle close control belongs to dialog chrome outside the 3D stage", () => {
+  const viewerCall = catalogSource.slice(
+    catalogSource.indexOf("<VehicleViewer"),
+    catalogSource.indexOf("</Suspense>"),
+  );
+
+  assert.match(catalogSource, /className="detail-close detail-close--viewer"/u);
+  assert.doesNotMatch(viewerCall, /onClose=/u);
+  assert.match(
+    viewerStyles,
+    /\.detail-panel--viewer > \.detail-close\.detail-close--viewer\s*\{[\s\S]*?top:\s*-\d+px;/u,
+  );
+});
+
+test("armor, interior, and exterior modes retain the same adjustment entries", () => {
+  const controlSurface = viewerSource.slice(
+    viewerSource.indexOf('<div className="viewer-toolbar"'),
+    viewerSource.indexOf('{viewerState.kind !== "loading"'),
+  );
+  assert.doesNotMatch(
+    controlSurface,
+    /\(mode === "exterior" \|\| mode === "armor"\) && activeTurretStation/u,
+  );
+  assert.doesNotMatch(
+    controlSurface,
+    /mode === "armor" && hitState\.kind === "ready"/u,
+  );
+  assert.doesNotMatch(
+    controlSurface,
+    /mode === "exterior" && hitState\.kind === "ready"/u,
+  );
+  assert.match(viewerSource, /const specialArmorDisplayActive =/u);
+  assert.match(controlSurface, /data-control-section="weapon"/u);
 });

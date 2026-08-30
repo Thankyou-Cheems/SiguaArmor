@@ -55,7 +55,7 @@ test("zoom stages change the crew camera FOV as well as the reticle asset", () =
   assert.match(viewerSource, /host\.dataset\.cameraZoomIndex/u);
 });
 
-test("active crew view becomes an immersive surface without legacy viewer UI", () => {
+test("active crew view fills only the 3D viewport with compact corner controls", () => {
   assert.match(
     viewerSource,
     /data-crew-view-active=\{activeCrewViewStationId !== null \|\| undefined\}/u,
@@ -65,7 +65,7 @@ test("active crew view becomes an immersive surface without legacy viewer UI", (
     viewerSource,
     /const exitOnEscape = \(event: KeyboardEvent\) => \{[^}]*event\.preventDefault\(\);\s*event\.stopImmediatePropagation\(\)/u,
   );
-  assert.match(
+  assert.doesNotMatch(
     styles,
     /\.detail-panel--viewer:has\(\s*\.runtime-vehicle-viewer\[data-crew-view-active="true"\]\s*\)\s*\{[^}]*position:\s*fixed/u,
   );
@@ -73,8 +73,16 @@ test("active crew view becomes an immersive surface without legacy viewer UI", (
     styles,
     /\.runtime-vehicle-viewer\[data-crew-view-active="true"\]\s*>\s*:not\(\.viewer-canvas\)[^{]*\{[^}]*display:\s*none/u,
   );
-  assert.match(
+  assert.doesNotMatch(
     styles,
     /body:has\(\.runtime-vehicle-viewer\[data-crew-view-active="true"\]\)\s*\{[^}]*overflow:\s*hidden/u,
+  );
+  assert.match(
+    styles,
+    /\.gunner-sight-overlay__controls\s*\{[\s\S]*?top:\s*8px;[\s\S]*?left:\s*8px;[\s\S]*?transform:\s*none;/u,
+  );
+  assert.match(
+    styles,
+    /\.crew-view-immersive-controls\s*\{[\s\S]*?top:\s*8px;[\s\S]*?right:\s*8px;/u,
   );
 });
