@@ -117,7 +117,12 @@ export interface GunnerSightStation {
   state:
     | "observed-static-presentation"
     | "absent-no-turret-overlay"
+    | "absent-dynamic-widget-no-static-image"
     | "unresolved-no-web-projection";
+  absenceReason?:
+    | "no-turret-overlay"
+    | "observed-widget-has-no-image-layer"
+    | null;
   overlayClassPath: string | null;
   widgetPackage: string | null;
   widgetParentClassPath: string | null;
@@ -183,6 +188,18 @@ function validateStation(
       sight.layers.length !== 0 ||
       sight.weaponModes.length !== 0
     ) throw new Error(`SiguaWiki gunner sight inferred an absent overlay for ${graph.id}`);
+    return;
+  }
+  if (sight.state === "absent-dynamic-widget-no-static-image") {
+    if (
+      !sight.overlayClassPath?.startsWith("/Game/") ||
+      !sight.widgetPackage?.startsWith("/Game/") ||
+      sight.absenceReason !== "observed-widget-has-no-image-layer" ||
+      sight.layers.length !== 0 ||
+      sight.defaultZoomStages.length !== 0 ||
+      sight.weaponModes.length !== 0 ||
+      !sameValues(sight.dynamicChannels, ["weapon-rotation-elevation"])
+    ) throw new Error(`SiguaWiki gunner sight dynamic-only absence differs for ${graph.id}`);
     return;
   }
   if (!sight.overlayClassPath?.startsWith("/Game/") || !sight.widgetPackage?.startsWith("/Game/")) {
