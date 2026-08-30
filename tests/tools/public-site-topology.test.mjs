@@ -383,6 +383,10 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(compose, /\.\/services\/content-admin:\/app:ro/u);
   assert.match(compose, /SIGUA_WIKI_ORIGIN: https:\/\/wiki\.siguad\.icu/u);
   assert.match(compose, /SIGUA_WIKI_ROOT: \/srv\/wiki/u);
+  assert.match(
+    compose,
+    /SIGUA_ANALYTICS_ADMIN_URL: http:\/\/sigua-analytics:8081\/__analytics\/admin\/overview/u,
+  );
   assert.ok(
     compose.includes(
       "${SIGUA_WIKI_VEHICLE_DATA_ROOT:-/opt/Website/sigua-wiki/data/vehicles}:/srv/wiki/data/vehicles",

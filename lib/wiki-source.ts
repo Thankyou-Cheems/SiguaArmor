@@ -4,7 +4,7 @@ export const SIGUA_WIKI_ORIGIN =
 
 const WIKI_PRESENTATION_QUERY = "?presentation=v6";
 const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-radial-v3";
-const WIKI_VEHICLE_RUNTIME_QUERY = "?projection=runtime-observed-physical-pose-v2";
+const WIKI_VEHICLE_RUNTIME_QUERY = "?projection=vehicle-station-graph-v1";
 const WIKI_WEAPON_CATALOG_QUERY = "?mechanics=overheat-v1";
 const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-radial-v4";
 
@@ -152,6 +152,117 @@ export async function loadWikiVehicleRadialQuery(recordPath: string) {
     recordPath,
     "sigua-vehicle-radial-query-source/v1",
   );
+}
+
+export async function loadWikiVehicleVisualAttachment(recordPath: string) {
+  if (!/^\/data\/vehicles\/visual-attachments\/vehicle-[a-f0-9]+\.json$/u.test(recordPath)) {
+    throw new Error(`Invalid vehicle visual-attachment path: ${recordPath}`);
+  }
+  const value = await loadWikiDataset(
+    recordPath,
+    "sigua-vehicle-visual-attachment/v2",
+  );
+  const document = value as {
+    sourceVehicleRef?: string;
+    stations?: unknown[];
+    visualBindings?: unknown[];
+  };
+  if (
+    !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
+    !Array.isArray(document.stations) ||
+    !Array.isArray(document.visualBindings)
+  ) {
+    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+  }
+  return value;
+}
+
+export async function loadWikiVehicleCrewSeat(recordPath: string) {
+  if (!/^\/data\/vehicles\/crew-seats\/vehicle-[a-f0-9]+\.json$/u.test(recordPath)) {
+    throw new Error(`Invalid vehicle crew-seat path: ${recordPath}`);
+  }
+  const value = await loadWikiDataset(
+    recordPath,
+    "sigua-vehicle-crew-seat/v1",
+  );
+  const document = value as {
+    sourceVehicleRef?: string;
+    runtimeVehicleRefs?: unknown[];
+    seats?: unknown[];
+  };
+  if (
+    !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
+    !Array.isArray(document.runtimeVehicleRefs) ||
+    !Array.isArray(document.seats)
+  ) {
+    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+  }
+  return value;
+}
+
+export async function loadWikiVehicleStationGraph(recordPath: string) {
+  if (!/^\/data\/vehicles\/station-graphs\/vehicle-[a-f0-9]+\.json$/u.test(recordPath)) {
+    throw new Error(`Invalid vehicle station-graph path: ${recordPath}`);
+  }
+  const value = await loadWikiDataset(
+    recordPath,
+    "sigua-vehicle-station-graph/v1",
+  );
+  const document = value as {
+    sourceVehicleRef?: string;
+    runtimeVehicleRefs?: unknown[];
+    stations?: unknown[];
+    visualBindings?: unknown[];
+  };
+  if (
+    !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
+    !Array.isArray(document.runtimeVehicleRefs) ||
+    !Array.isArray(document.stations) ||
+    !Array.isArray(document.visualBindings)
+  ) {
+    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+  }
+  return value;
+}
+
+export async function loadWikiVehicleGunnerSight(sourceVehicleRef: string) {
+  if (!/^vehicle-[a-f0-9]+$/u.test(sourceVehicleRef)) {
+    throw new Error(`Invalid vehicle gunner-sight source: ${sourceVehicleRef}`);
+  }
+  const recordPath = `/data/vehicles/gunner-sights/${sourceVehicleRef}.json`;
+  const value = await loadWikiDataset(
+    recordPath,
+    "sigua-vehicle-gunner-sight/v1",
+  );
+  const document = value as {
+    sourceVehicleRef?: string;
+    runtimeVehicleRefs?: unknown[];
+    stations?: unknown[];
+    projections?: unknown[];
+  };
+  if (
+    document.sourceVehicleRef !== sourceVehicleRef ||
+    !Array.isArray(document.runtimeVehicleRefs) ||
+    !Array.isArray(document.stations) ||
+    !Array.isArray(document.projections)
+  ) {
+    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+  }
+  return value;
+}
+
+export async function loadOptionalWikiVehicleGunnerSight(
+  sourceVehicleRef: string,
+) {
+  try {
+    return await loadWikiVehicleGunnerSight(sourceVehicleRef);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      /returned HTTP 404$/u.test(error.message)
+    ) return null;
+    throw error;
+  }
 }
 
 export async function loadWikiVehicleFactionMechanics(factionId: string) {

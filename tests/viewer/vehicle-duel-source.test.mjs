@@ -11,9 +11,10 @@ const files = await Promise.all([
   "../../app/duel/page.tsx",
   "../../app/china/duel/page.tsx",
   "../../app/globals.css",
+  "../../app/WeaponRhythmTimeline.tsx",
 ].map((relativePath) => readFile(new URL(relativePath, import.meta.url), "utf8")));
 
-const [app, entry, viewer, dataAdapter, cacheModule, internationalRoute, chinaRoute, styles] = files;
+const [app, entry, viewer, dataAdapter, cacheModule, internationalRoute, chinaRoute, styles, timeline] = files;
 
 test("production duel contains two real hit viewers and no prototype surface", () => {
   assert.match(app, /function TargetViewer/u);
@@ -106,4 +107,61 @@ test("duel header and verdict remove duplicate calls while retaining lead time",
   assert.match(app, /`领先 \$\{marginSeconds\.toFixed\(2\)\}s`/u);
   assert.match(app, /leftName=\{leftOption\.displayName\}/u);
   assert.match(app, /rightName=\{rightOption\.displayName\}/u);
+});
+
+test("duel keeps damage charts by each viewer and centers a vertical interaction track", () => {
+  assert.doesNotMatch(app, /A 方胜出|B 方胜出/u);
+  assert.match(app, /`\$\{leftName\}胜出`/u);
+  assert.match(app, /`\$\{rightName\}胜出`/u);
+  assert.match(app, /function DuelInteractionDiagram/u);
+  assert.match(app, /className="vehicle-duel__interaction-track"/u);
+  assert.match(app, /sampledShotNumbers/u);
+  assert.equal((app.match(/<DuelCurve/gu) ?? []).length, 2);
+  const interactionStart = app.indexOf("function DuelInteractionDiagram");
+  const judgeStart = app.indexOf("function DuelJudge", interactionStart);
+  assert.doesNotMatch(app.slice(interactionStart, judgeStart), /WeaponRhythmTimeline/u);
+  assert.match(app, /leftName=\{leftOption\.displayName\}[\s\S]*?rightName=\{rightOption\.displayName\}/u);
+  assert.match(styles, /\.vehicle-duel__arena \{[\s\S]*?minmax\(230px, 270px\)/u);
+  assert.match(styles, /\.vehicle-duel__interaction-track::before/u);
+});
+
+test("compact duel charts move milestone copy outside the SVG plot", () => {
+  assert.match(timeline, /className="rhythm-timeline__milestones"/u);
+  assert.match(timeline, /compact && range\?\.triggerAt/u);
+  assert.match(timeline, /compact && targetHealth/u);
+  assert.match(timeline, /compact && simulation\.killTimeSeconds/u);
+  assert.match(timeline, /!compact && range\?\.triggerAt/u);
+  assert.match(timeline, /!compact && targetY !== null/u);
+  assert.match(timeline, /!compact && killX !== null/u);
+});
+
+test("duel interaction groups simultaneous events into one time node", () => {
+  assert.match(app, /interface DuelInteractionMoment/u);
+  assert.match(app, /function duelInteractionMoments/u);
+  assert.match(app, /timeSeconds\.toFixed\(2\)/u);
+  assert.match(app, /moments\.map\(\(moment\)/u);
+  assert.match(styles, /\.vehicle-duel__interaction-beat time \{[^}]*background:/u);
+  assert.doesNotMatch(styles, /\.vehicle-duel__interaction-beat::before/u);
+});
+
+test("each viewer chart aligns received damage, own heat, and dealt damage", () => {
+  const arenaStart = app.indexOf('<section className="vehicle-duel__arena">');
+  const arenaEnd = app.indexOf("</section>", arenaStart);
+  const arena = app.slice(arenaStart, arenaEnd);
+  assert.match(
+    arena,
+    /side="A"[\s\S]*?vehicleName=\{leftOption\.displayName\}[\s\S]*?incomingAttack=\{resolution\?\.rightAttack \?\? null\}[\s\S]*?selfAttack=\{resolution\?\.leftAttack \?\? null\}[\s\S]*?incomingWeapon=\{rightWeapon\}/u,
+  );
+  assert.match(
+    arena,
+    /side="B"[\s\S]*?vehicleName=\{rightOption\.displayName\}[\s\S]*?incomingAttack=\{resolution\?\.leftAttack \?\? null\}[\s\S]*?selfAttack=\{resolution\?\.rightAttack \?\? null\}[\s\S]*?incomingWeapon=\{leftWeapon\}/u,
+  );
+  assert.match(app, /simulation=\{selfSimulation\}/u);
+  assert.match(app, /receivedDamageSimulation=\{incomingSimulation\}/u);
+  assert.match(timeline, /receivedDamageSimulation\?: WeaponDpsSimulation \| null/u);
+  assert.doesNotMatch(timeline, /所受伤害 \/ 热量 \/ 造成伤害/u);
+  assert.match(timeline, /\{comparesReceivedDamage \? null : \(/u);
+  assert.match(timeline, />所受伤害<\/text>/u);
+  assert.match(timeline, />热量<\/text>/u);
+  assert.match(timeline, />造成伤害<\/text>/u);
 });

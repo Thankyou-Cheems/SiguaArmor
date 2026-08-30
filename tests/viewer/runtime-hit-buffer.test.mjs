@@ -446,6 +446,27 @@ test("concurrent viewers share exact record, geometry, and BVH requests", async 
   }
 });
 
+test("failed sibling hit requests stay inside the caller rejection boundary", async () => {
+  const fixture = runtimeHitFixture();
+  const originalFetch = globalThis.fetch;
+  const unhandled = [];
+  const onUnhandled = (error) => unhandled.push(error);
+  process.on("unhandledRejection", onUnhandled);
+  globalThis.fetch = async () => new Response(null, { status: 502 });
+
+  try {
+    await assert.rejects(
+      loadRuntimeHitScene(fixture.descriptor),
+      /record request returned HTTP 502/u,
+    );
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.deepEqual(unhandled, []);
+  } finally {
+    globalThis.fetch = originalFetch;
+    process.off("unhandledRejection", onUnhandled);
+  }
+});
+
 test("meshopt-v1 geometry feeds the unchanged hit-scene parser", async () => {
   const fixture = runtimeHitFixture();
   await MeshoptEncoder.ready;

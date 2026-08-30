@@ -26,6 +26,10 @@ import {
   type VehicleDuelResolution,
 } from "../lib/vehicle-duel-model.ts";
 import { weaponNameZh } from "../lib/weapon-display-name.ts";
+import type {
+  WeaponDpsEvent,
+  WeaponDpsSimulation,
+} from "../lib/weapon-dps-model.ts";
 import { armorPath } from "../lib/public-site-topology.mjs";
 import { wikiAssetUrl } from "../lib/wiki-source.ts";
 import {
@@ -537,35 +541,184 @@ function poolLabel(poolKind: string) {
   return poolKind === "ammo-rack" ? "弹药架" : "车体";
 }
 
-function verdictLabel(resolution: VehicleDuelResolution) {
-  if (resolution.winner === "left") return "A 方胜出";
-  if (resolution.winner === "right") return "B 方胜出";
+function verdictLabel(
+  resolution: VehicleDuelResolution,
+  leftName: string,
+  rightName: string,
+) {
+  if (resolution.winner === "left") return `${leftName}胜出`;
+  if (resolution.winner === "right") return `${rightName}胜出`;
   if (resolution.winner === "draw") return "同归于尽";
   return "等待有效命中";
 }
 
-function verdictReason(resolution: VehicleDuelResolution) {
+function verdictReason(
+  resolution: VehicleDuelResolution,
+  leftName: string,
+  rightName: string,
+) {
   if (resolution.winner === "unresolved") {
     const leftExhausted = resolution.leftAttack.actualSimulation?.ammoExhausted === true;
     const rightExhausted = resolution.rightAttack.actualSimulation?.ammoExhausted === true;
     if (leftExhausted && rightExhausted) return "双方弹药耗尽，均无法击毁目标";
-    if (leftExhausted) return "A 方弹药耗尽，当前命中无法击毁目标";
-    if (rightExhausted) return "B 方弹药耗尽，当前命中无法击毁目标";
+    if (leftExhausted) return `${leftName}弹药耗尽，当前命中无法击毁目标`;
+    if (rightExhausted) return `${rightName}弹药耗尽，当前命中无法击毁目标`;
     return "双方都需要先选择能够造成致命伤害的命中位置";
   }
   if (resolution.winner === "draw") {
     return `${resolution.decisiveTimeSeconds?.toFixed(2)} 秒的射击同时结算`;
   }
   const loss = resolution.winner === "left" ? resolution.rightLoss : resolution.leftLoss;
-  const loser = resolution.winner === "left" ? "B" : "A";
+  const loser = resolution.winner === "left" ? rightName : leftName;
   return loss?.poolKind === "ammo-rack"
-    ? `${loser} 方弹药架归零并在同一时刻停止后续输出`
+    ? `${loser}弹药架归零并在同一时刻停止后续输出`
     : loss?.candidate.result.burnDamage
-      ? `${loser} 方在正常交战状态进入低血量自燃，车体先归零`
-      : `${loser} 方车体血量先归零`;
+      ? `${loser}在正常交战状态进入低血量自燃，车体先归零`
+      : `${loser}车体血量先归零`;
 }
 
-function DuelJudge({ resolution }: { resolution: VehicleDuelResolution | null }) {
+interface DuelInteractionBeat {
+  key: string;
+  side: "left" | "right";
+  timeSeconds: number;
+  kind: WeaponDpsEvent["kind"];
+  label: string;
+}
+
+interface DuelInteractionMoment {
+  key: string;
+  timeSeconds: number;
+  left: DuelInteractionBeat[];
+  right: DuelInteractionBeat[];
+}
+
+function sampledShotNumbers(events: readonly WeaponDpsEvent[], limit = 7) {
+  const shots = events.filter(({ kind }) => kind === "shot");
+  if (shots.length <= limit) return new Set(shots.map(({ shotNumber }) => shotNumber));
+  return new Set(Array.from({ length: limit }, (_, index) =>
+    shots[Math.round(index * (shots.length - 1) / (limit - 1))].shotNumber
+  ));
+}
+
+function duelInteractionBeats(
+  simulation: WeaponDpsSimulation | null,
+  side: DuelInteractionBeat["side"],
+) {
+  if (!simulation) return [];
+  const shownShots = sampledShotNumbers(simulation.events);
+  const burnEvents = simulation.events.filter(({ kind }) => kind === "burn");
+  const shownBurnTimes = new Set(
+    [burnEvents[0]?.timeSeconds, burnEvents.at(-1)?.timeSeconds]
+      .filter((value): value is number => value !== undefined),
+  );
+  return simulation.events.flatMap((event, index): DuelInteractionBeat[] => {
+    if (event.kind === "pause") return [];
+    if (event.kind === "shot" && !shownShots.has(event.shotNumber)) return [];
+    if (event.kind === "burn" && !shownBurnTimes.has(event.timeSeconds)) return [];
+    const label = event.kind === "shot"
+      ? `第 ${event.shotNumber} 发`
+      : event.kind === "reload"
+        ? "换弹完成"
+        : event.kind === "overheat"
+          ? "过热锁定"
+          : event.kind === "unlock"
+            ? "冷却解锁"
+            : "目标自燃";
+    return [{
+      key: `${side}:${event.kind}:${event.timeSeconds}:${index}`,
+      side,
+      timeSeconds: event.timeSeconds,
+      kind: event.kind,
+      label,
+    }];
+  });
+}
+
+function duelInteractionMoments(beats: readonly DuelInteractionBeat[]) {
+  const moments = new Map<string, DuelInteractionMoment>();
+  for (const beat of beats) {
+    const key = beat.timeSeconds.toFixed(2);
+    const moment = moments.get(key) ?? {
+      key,
+      timeSeconds: beat.timeSeconds,
+      left: [],
+      right: [],
+    };
+    moment[beat.side].push(beat);
+    moments.set(key, moment);
+  }
+  return [...moments.values()].sort((left, right) =>
+    left.timeSeconds - right.timeSeconds || left.key.localeCompare(right.key, "en")
+  );
+}
+
+function DuelInteractionDiagram({
+  resolution,
+  leftName,
+  rightName,
+}: {
+  resolution: VehicleDuelResolution | null;
+  leftName: string;
+  rightName: string;
+}) {
+  const beats = [
+    ...duelInteractionBeats(resolution?.leftAttack.actualSimulation ?? null, "left"),
+    ...duelInteractionBeats(resolution?.rightAttack.actualSimulation ?? null, "right"),
+  ].sort(
+    (left, right) =>
+      left.timeSeconds - right.timeSeconds ||
+      left.side.localeCompare(right.side, "en") ||
+      left.key.localeCompare(right.key, "en"),
+  );
+  const moments = duelInteractionMoments(beats);
+  return (
+    <section className="vehicle-duel__interaction" aria-label="双方射击互动时间轴">
+      <header>
+        <strong title={leftName}>{leftName}</strong>
+        <span>时间</span>
+        <strong title={rightName}>{rightName}</strong>
+      </header>
+      <div className="vehicle-duel__interaction-track">
+        {moments.length === 0 ? (
+          <p>双方选择命中点后显示交战互动</p>
+        ) : moments.map((moment) => (
+          <div
+            className="vehicle-duel__interaction-beat"
+            key={moment.key}
+          >
+            <span className="vehicle-duel__interaction-events" data-side="left">
+              {moment.left.map((beat) => (
+                <span data-kind={beat.kind} key={beat.key}><b>{beat.label}</b><i>→</i></span>
+              ))}
+            </span>
+            <time>{moment.timeSeconds.toFixed(2)}s</time>
+            <span className="vehicle-duel__interaction-events" data-side="right">
+              {moment.right.map((beat) => (
+                <span data-kind={beat.kind} key={beat.key}><i>←</i><b>{beat.label}</b></span>
+              ))}
+            </span>
+          </div>
+        ))}
+        {resolution?.decisiveTimeSeconds !== null && resolution ? (
+          <div className="vehicle-duel__interaction-terminal">
+            <strong>胜负判定</strong>
+          </div>
+        ) : null}
+      </div>
+      <footer>同一时间发生的攻击同时结算</footer>
+    </section>
+  );
+}
+
+function DuelJudge({
+  resolution,
+  leftName,
+  rightName,
+}: {
+  resolution: VehicleDuelResolution | null;
+  leftName: string;
+  rightName: string;
+}) {
   const marginSeconds = resolution
     ? vehicleDuelVictoryMarginSeconds(resolution)
     : null;
@@ -576,59 +729,77 @@ function DuelJudge({ resolution }: { resolution: VehicleDuelResolution | null })
       : null;
   return (
     <aside className="vehicle-duel__judge" data-winner={resolution?.winner ?? "pending"}>
-      <span>交叉射击</span>
-      <strong>{resolution ? verdictLabel(resolution) : "等待命中"}</strong>
-      <b>{resolution?.decisiveTimeSeconds === null || !resolution
-        ? "—"
-        : `${resolution.decisiveTimeSeconds.toFixed(2)}s`}</b>
-      <small>{resolution?.winner === "left" || resolution?.winner === "right"
-        ? marginSeconds === null
-          ? losingAttack?.actualSimulation?.ammoExhausted
-            ? "对方弹药耗尽"
-            : "对方暂无击毁时间"
-          : `领先 ${marginSeconds.toFixed(2)}s`
-        : resolution?.winner === "draw"
-          ? "时间差 0.00s"
-          : ""}</small>
+      <header className="vehicle-duel__verdict">
+        <span>交战节奏</span>
+        <strong>{resolution
+          ? verdictLabel(resolution, leftName, rightName)
+          : "等待命中"}</strong>
+        <b>{resolution?.decisiveTimeSeconds === null || !resolution
+          ? "—"
+          : `${resolution.decisiveTimeSeconds.toFixed(2)}s`}</b>
+        <small>{resolution?.winner === "left" || resolution?.winner === "right"
+          ? marginSeconds === null
+            ? losingAttack?.actualSimulation?.ammoExhausted
+              ? "对方弹药耗尽"
+              : "对方暂无击毁时间"
+            : `领先 ${marginSeconds.toFixed(2)}s`
+          : resolution?.winner === "draw"
+            ? "时间差 0.00s"
+            : "双方从 0 秒同时开火"}</small>
+      </header>
+      <DuelInteractionDiagram
+        resolution={resolution}
+        leftName={leftName}
+        rightName={rightName}
+      />
     </aside>
   );
 }
 
 function DuelCurve({
   side,
-  attack,
-  weapon,
+  vehicleName,
+  incomingAttack,
+  selfAttack,
+  incomingWeapon,
 }: {
   side: "A" | "B";
-  attack: VehicleDuelAttackResolution | null;
-  weapon: RuntimeAttackSourceWeapon | null;
+  vehicleName: string;
+  incomingAttack: VehicleDuelAttackResolution | null;
+  selfAttack: VehicleDuelAttackResolution | null;
+  incomingWeapon: RuntimeAttackSourceWeapon | null;
 }) {
-  const simulation = attack?.actualSimulation ?? null;
-  const target = attack?.actualTarget ?? null;
-  if (!simulation || !target) {
+  const incomingSimulation = incomingAttack?.actualSimulation ?? null;
+  const incomingTarget = incomingAttack?.actualTarget ?? null;
+  const selfSimulation = selfAttack?.actualSimulation ?? null;
+  const selfTarget = selfAttack?.actualTarget ?? null;
+  if (!incomingSimulation || !incomingTarget || !selfSimulation || !selfTarget) {
     return (
       <section className="vehicle-duel__curve vehicle-duel__curve--empty">
-        <span>{side} 方实际输出</span>
-        <strong>请在对方载具上选择有效命中位置</strong>
+        <span>{vehicleName}交战图表</span>
+        <strong>请在双方载具上选择有效命中位置</strong>
       </section>
     );
   }
   return (
     <section className="vehicle-duel__curve" data-side={side}>
       <header>
-        <span>{side} 方实际输出</span>
+        <span title={vehicleName}>{vehicleName}</span>
         <strong>
-          {simulation.ammoExhausted
-            ? `弹药耗尽 · ${simulation.shots} 发`
-            : `${simulation.elapsedSeconds.toFixed(2)} s 截止 · ${simulation.shots} 发`}
-          {simulation.burnDamage > 0 ? ` · 正常自燃 ${simulation.burnDamage.toFixed(1)}` : ""}
+          本车 {selfSimulation.shots} 发 · 承受 {incomingSimulation.shots} 发
         </strong>
       </header>
-      <small>{weapon ? duelWeaponLabel(weapon) : "当前弹种"} → {poolLabel(target.poolKind)}</small>
+      <small>
+        {incomingWeapon ? duelWeaponLabel(incomingWeapon) : "对方弹种"} → 本车{poolLabel(incomingTarget.poolKind)}
+        {" · "}本车输出 → 对方{poolLabel(selfTarget.poolKind)}
+      </small>
       <WeaponRhythmTimeline
-        simulation={simulation}
-        targetHealth={target.maxHealth}
-        targetLabel={poolLabel(target.poolKind)}
+        simulation={selfSimulation}
+        targetHealth={selfTarget.maxHealth}
+        targetLabel={poolLabel(selfTarget.poolKind)}
+        receivedDamageSimulation={incomingSimulation}
+        receivedTargetHealth={incomingTarget.maxHealth}
+        receivedTargetLabel={poolLabel(incomingTarget.poolKind)}
         compact
       />
     </section>
@@ -674,7 +845,9 @@ function DuelRace({
       <header>
         <TimerReset size={15} />
         <span>致命时间赛道</span>
-        <b>{resolution ? verdictReason(resolution) : "双方从 0 秒同时开火"}</b>
+        <b>{resolution
+          ? verdictReason(resolution, leftName, rightName)
+          : "双方从 0 秒同时开火"}</b>
         <small>同一时间的射击同时结算</small>
       </header>
       {row("left", `${leftName} → ${rightName}`, leftTime, resolution?.rightLoss ?? null, resolution?.leftAttack ?? null)}
@@ -857,12 +1030,18 @@ export function VehicleDuelApp({ siteEdition }: { siteEdition: SiteEdition }) {
           )}
           <DuelCurve
             side="A"
-            attack={resolution?.leftAttack ?? null}
-            weapon={leftWeapon}
+            vehicleName={leftOption.displayName}
+            incomingAttack={resolution?.rightAttack ?? null}
+            selfAttack={resolution?.leftAttack ?? null}
+            incomingWeapon={rightWeapon}
           />
         </article>
 
-        <DuelJudge resolution={resolution} />
+        <DuelJudge
+          resolution={resolution}
+          leftName={leftOption.displayName}
+          rightName={rightOption.displayName}
+        />
 
         <article className="vehicle-duel__side" data-side="right">
           <VehicleSelect
@@ -890,8 +1069,10 @@ export function VehicleDuelApp({ siteEdition }: { siteEdition: SiteEdition }) {
           )}
           <DuelCurve
             side="B"
-            attack={resolution?.rightAttack ?? null}
-            weapon={rightWeapon}
+            vehicleName={rightOption.displayName}
+            incomingAttack={resolution?.leftAttack ?? null}
+            selfAttack={resolution?.rightAttack ?? null}
+            incomingWeapon={leftWeapon}
           />
         </article>
       </section>

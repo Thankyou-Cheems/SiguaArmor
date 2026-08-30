@@ -41,7 +41,7 @@ function authHeaders({ proxyAuthToken, cookie, csrfToken, headers = {}, origin }
   );
 }
 
-async function withContentAdminServer(callback) {
+async function withContentAdminServer(callback, options = {}) {
   const originAuthToken = randomBytes(32).toString("base64url");
   const adminPlain = "sigua-admin-pass";
   const adminKeyDigest = createHash("sha256").update(adminPlain).digest();
@@ -56,11 +56,15 @@ async function withContentAdminServer(callback) {
     sessionSecret,
     contentRoot,
     wikiRoot,
+    analyticsAdminUrl:
+      "http://sigua-analytics:8081/__analytics/admin/overview",
     listenHost: "127.0.0.1",
     port: 0,
     sessionTtlSeconds: 900,
   };
-  const app = createContentAdminApp(config);
+  const app = createContentAdminApp(config, {
+    fetch: options.fetch,
+  });
   const server = createContentAdminServer(app);
   try {
     await new Promise((resolve, reject) => {
@@ -152,6 +156,52 @@ async function withContentAdminServer(callback) {
     await rm(contentRoot, { recursive: true, force: true });
   }
 }
+
+test("content-admin reuses the management session for the analytics overview", async () => {
+  const overview = {
+    schemaVersion: "sigua-admin-dau-overview/v1",
+    generatedAt: "2026-08-28T12:00:00.000Z",
+    geoIpDatabaseRelease: "2026-08",
+    cityThreshold: 3,
+    days: [],
+  };
+  let proxiedRequest = null;
+  await withContentAdminServer(async ({ baseUrl, adminPlain, adminKeyDigest, authHeaders }) => {
+    const unauthenticated = await fetch(`${baseUrl}/__admin/content/analytics`, {
+      headers: headersForApi(adminKeyDigest, null),
+    });
+    assert.equal(unauthenticated.status, 401);
+
+    const loginResponse = await fetch(`${baseUrl}/__admin/content/session`, {
+      method: "POST",
+      headers: headersForApi(adminKeyDigest, null, {
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify({ key: adminPlain }),
+    });
+    assert.equal(loginResponse.status, 200);
+    const cookieHeader = loginResponse.headers.get("set-cookie");
+    const cookie = cookieHeader ? cookieHeader.split(";", 1)[0] : "";
+
+    const analyticsResponse = await fetch(`${baseUrl}/__admin/content/analytics`, {
+      headers: authHeaders({ proxyAuthToken: adminKeyDigest, cookie }),
+    });
+    assert.equal(analyticsResponse.status, 200);
+    assert.deepEqual(await analyticsResponse.json(), overview);
+    assert.equal(
+      proxiedRequest.headers.get("x-sigua-admin-proxy"),
+      adminKeyDigest,
+    );
+  }, {
+    fetch: async (url, init) => {
+      proxiedRequest = new Request(url, init);
+      return new Response(JSON.stringify(overview), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+  });
+});
 
 test("content-admin preserves ETag lifecycle and Unicode supporters through consecutive saves", async () => {
   await withContentAdminServer(async ({ baseUrl, adminPlain, adminKeyDigest, authHeaders }) => {

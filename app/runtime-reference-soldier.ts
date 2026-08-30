@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
+import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 import { runtimeWikiAssetUrl } from "../lib/runtime-visual-lazy-load";
 import { loadWikiDataset } from "../lib/wiki-source";
+import type { VehicleCrewAnimationPose } from "../lib/vehicle-crew-animation-pose";
 
 const REFERENCE_SOLDIER_MODEL_PATH =
   "/assets/infantry-hit/models/4b6caa60516b49563a968cbcf53875126157d15665cc54b9d8921d832d09ae14.glb";
@@ -27,7 +29,12 @@ type InfantryPostureDataset = {
   postures: Record<string, InfantryPosture>;
 };
 
-function standingRiflePose(value: unknown) {
+export type RuntimeReferenceSoldierPosture =
+  | "standing-rifle"
+  | "crouching"
+  | "prone";
+
+function postureDataset(value: unknown) {
   const dataset = value as InfantryPostureDataset;
   if (
     dataset.count !== Object.keys(dataset.postures).length ||
@@ -37,14 +44,10 @@ function standingRiflePose(value: unknown) {
   ) {
     throw new Error("SiguaWiki infantry posture data is invalid");
   }
-  const posture = dataset.postures["standing-rifle"];
-  if (!posture) {
-    throw new Error("SiguaWiki is missing the standing-rifle infantry posture");
-  }
-  return posture;
+  return dataset;
 }
 
-function applyStandingRiflePose(
+function applyReferenceSoldierPose(
   root: THREE.Object3D,
   posture: InfantryPosture,
 ) {
@@ -68,6 +71,38 @@ function applyStandingRiflePose(
     object.frustumCulled = false;
     object.skeleton.update();
   });
+}
+
+const referenceSoldierSourceRequests = new Map<string, Promise<{
+  scene: THREE.Group;
+  dataset: InfantryPostureDataset;
+  modelUrl: string;
+  glassRebind: ReturnType<typeof rebindGlassToHead>;
+}>>();
+
+function loadReferenceSoldierSource(modelPath = REFERENCE_SOLDIER_MODEL_PATH) {
+  const existing = referenceSoldierSourceRequests.get(modelPath);
+  if (existing) return existing;
+  const modelUrl = runtimeWikiAssetUrl(modelPath);
+  const loader = new GLTFLoader();
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  const request = Promise.all([
+    loadWikiDataset(
+      "/data/infantry/postures.json",
+      "sigua-infantry-posture-runtime/v1",
+    ),
+    loader.loadAsync(modelUrl),
+  ]).then(([postureValue, { scene }]) => ({
+    scene,
+    dataset: postureDataset(postureValue),
+    modelUrl,
+    glassRebind: rebindGlassToHead(scene),
+  })).catch((error) => {
+    referenceSoldierSourceRequests.delete(modelPath);
+    throw error;
+  });
+  referenceSoldierSourceRequests.set(modelPath, request);
+  return request;
 }
 
 function rebindGlassToHead(root: THREE.Object3D) {
@@ -128,21 +163,39 @@ function rebindGlassToHead(root: THREE.Object3D) {
   return { reboundMeshCount, reboundVertexCount };
 }
 
-export async function loadRuntimeReferenceSoldier() {
-  const modelUrl = runtimeWikiAssetUrl(REFERENCE_SOLDIER_MODEL_PATH);
-  const loader = new GLTFLoader();
-  loader.setMeshoptDecoder(MeshoptDecoder);
-  const [postureValue, { scene }] = await Promise.all([
-    loadWikiDataset(
-      "/data/infantry/postures.json",
-      "sigua-infantry-posture-runtime/v1",
-    ),
-    loader.loadAsync(modelUrl),
-  ]);
-  const glassRebind = rebindGlassToHead(scene);
-  applyStandingRiflePose(scene, standingRiflePose(postureValue));
-  scene.name = "standing-rifle-reference-soldier";
+export async function loadRuntimeReferenceSoldier(
+  postureName: RuntimeReferenceSoldierPosture = "standing-rifle",
+) {
+  const source = await loadReferenceSoldierSource();
+  const posture = source.dataset.postures[postureName];
+  if (!posture) {
+    throw new Error(`SiguaWiki is missing the ${postureName} infantry posture`);
+  }
+  const scene = cloneSkeleton(source.scene) as THREE.Group;
+  applyReferenceSoldierPose(scene, posture);
+  scene.name = `${postureName}-reference-soldier`;
   scene.position.set(0, 0, 0);
   scene.updateMatrixWorld(true);
-  return { scene, modelUrl, glassRebind };
+  return {
+    scene,
+    modelUrl: source.modelUrl,
+    glassRebind: source.glassRebind,
+  };
+}
+
+export async function loadRuntimeReferenceSoldierAnimationPose(
+  pose: VehicleCrewAnimationPose,
+  modelPath = REFERENCE_SOLDIER_MODEL_PATH,
+) {
+  const source = await loadReferenceSoldierSource(modelPath);
+  const scene = cloneSkeleton(source.scene) as THREE.Group;
+  applyReferenceSoldierPose(scene, pose);
+  scene.name = `${pose.id}-reference-soldier`;
+  scene.position.set(0, 0, 0);
+  scene.updateMatrixWorld(true);
+  return {
+    scene,
+    modelUrl: source.modelUrl,
+    glassRebind: source.glassRebind,
+  };
 }

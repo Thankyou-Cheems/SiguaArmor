@@ -32,3 +32,23 @@ test("footer keeps supporter notes on a smaller second line without the old inne
   assert.match(styles, /\.site-footer__supporter-name \{[\s\S]*?justify-content: center/u);
   assert.match(styles, /\.site-footer__supporter-note \{[\s\S]*?font-size: 8px[\s\S]*?text-align: center/u);
 });
+
+test("management session opens a source-backed all-history DAU dashboard", async () => {
+  const [modal, dashboard, styles] = await Promise.all([
+    readFile(path.join(ROOT, "app", "SiteContentAdminModal.tsx"), "utf8"),
+    readFile(path.join(ROOT, "app", "AdminAnalyticsDashboard.tsx"), "utf8"),
+    readFile(path.join(ROOT, "app", "globals.css"), "utf8"),
+  ]);
+  assert.match(modal, /requestAdminJson<AdminAnalyticsOverview>\("\/analytics"\)/u);
+  assert.match(modal, /<AdminAnalyticsDashboard overview=\{analytics\}/u);
+  assert.match(modal, /analytics: "日活总览"/u);
+  assert.match(dashboard, /schemaVersion !== "sigua-admin-dau-overview\/v1"/u);
+  assert.match(dashboard, /今日 DAU/u);
+  assert.match(dashboard, /近 7 日均值/u);
+  assert.match(dashboard, /地区可见率/u);
+  assert.match(dashboard, /累计活跃人次/u);
+  assert.match(dashboard, /原始 IP 不下发/u);
+  assert.match(dashboard, /overview\.days/u);
+  assert.match(styles, /\.admin-analytics__trend/u);
+  assert.match(styles, /\.admin-analytics__cities/u);
+});

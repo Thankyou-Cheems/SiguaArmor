@@ -2,13 +2,27 @@ import visualSelectionPolicyJson from "./runtime-probe-visual-selection-policy.j
 import type { SiteEdition } from "./site-edition";
 import {
   loadWikiRuntimeVisual,
+  loadOptionalWikiVehicleGunnerSight,
   loadWikiVehicleRuntimeSource,
+  loadWikiVehicleStationGraph,
 } from "../lib/wiki-source";
 import type {
   RuntimePlanarSuspensionCoverageResult,
   RuntimePlanarSuspensionPoseRecord,
 } from "./runtime-planar-suspension-pose";
 import type { RuntimeHitBufferRef } from "../lib/runtime-hit-buffer";
+import type { RuntimeCrewSeatBinding } from "../lib/vehicle-crew-seat-runtime";
+import {
+  compileVehicleStationGraph,
+  type CompiledVehicleStationGraph,
+  type VehicleStationGraphRecord,
+  type VehicleStationGraphPointer,
+} from "../lib/vehicle-station-graph";
+import {
+  compileVehicleGunnerSight,
+  type CompiledVehicleGunnerSight,
+  type VehicleGunnerSightRecord,
+} from "../lib/vehicle-gunner-sight";
 
 export type RuntimePreviewStatus =
   | "visual-ready"
@@ -49,6 +63,155 @@ export interface RuntimeVisualPlacement {
   runtimeBonePoseJointCount?: number;
   runtimeBonePoseNormalTimeSampleCount?: number;
   runtimeBonePoseReferenceEquivalent?: boolean;
+}
+
+export interface RuntimeVisualAttachmentMember {
+  stableOccurrenceId: string;
+  actorClassName: string;
+  componentName: string;
+  componentClassPath: string;
+  sourceMeshPath: string;
+  source:
+    | "v10.5.3-seat-pawn-component-descendant"
+    | "exact-station-equipment";
+  equipmentRefIds?: string[];
+  gunNames?: string[];
+  assignmentMode?: "exact-class-and-seat-anchor";
+}
+
+interface RuntimeComponentTransform {
+  translationCm: { x: number; y: number; z: number };
+  rotationQuaternion: { x: number; y: number; z: number; w: number };
+  scale3D: { x: number; y: number; z: number };
+}
+
+interface RuntimeMotionVehicleLocalFrame {
+  state: "derived" | "derived-with-fallback" | "unresolved";
+  value: RuntimeComponentTransform | null;
+  reason: string | null;
+}
+
+interface RuntimeMotionDriver {
+  componentName: string;
+  componentClassPath: string;
+  vehicleLocalFrame: RuntimeMotionVehicleLocalFrame;
+}
+
+interface RuntimeStationMotion {
+  state: "derived" | "unresolved";
+  driverMode:
+    | "split-yaw-pitch-components"
+    | "combined-updated-component"
+    | "paired-rotating-components";
+  coordinateSystem: {
+    space: "vehicle-local";
+    units: "unreal-centimeters";
+    axes: "x-forward-y-right-z-up";
+    pose: "construction-reference-pose";
+  };
+  sourceFunction:
+    | "USQTurretMovementComponent::SetCurrentRotation@0x18043ed50"
+    | "USQRotatingMovementComponent::SetCurrentRotation@0x1803f03f0";
+  yawDriver: RuntimeMotionDriver | null;
+  pitchDriver: RuntimeMotionDriver | null;
+  reason: string | null;
+}
+
+export interface RuntimeStationControl {
+  state: "observed" | "unresolved";
+  source: "paired-sq-rotating-movement-components-native-layout";
+  sourceFunction:
+    "USQRotatingMovementComponent::SetCurrentRotation@0x1803f03f0";
+  maxYawSpeedDegreesPerSecond: number | null;
+  maxPitchSpeedDegreesPerSecond: number | null;
+  yaw: {
+    minDegrees: number;
+    maxDegrees: number;
+    continuous: boolean;
+  } | null;
+  pitch: {
+    minDegrees: number;
+    maxDegrees: number;
+  } | null;
+  reason: string | null;
+}
+
+interface RuntimeViewVehicleLocalFrame {
+  state: "derived";
+  value: RuntimeComponentTransform;
+  relation: {
+    mode: "nested-seat-pawn-via-parent-seat-socket";
+    ownerCatalogSeatIndex: 3;
+    ownerRole: "commander";
+    ownerSeatPawnClassPath: string;
+    parentCatalogSeatIndex: 2;
+    parentRole: "gunner";
+    parentSeatPawnClassPath: string;
+    parentComponentName: string;
+    parentComponentClassPath: string;
+    parentSourceMeshPath: string;
+    socketName: "socket_commander";
+  };
+  reason: null;
+}
+
+export interface RuntimeViewRotationComponent {
+  actorClassName: string;
+  componentName: string;
+  componentClassPath: "/Script/Engine.CameraComponent";
+  source: "v10.5.3-seat-pawn-get-camera-component";
+  yawDepth: number;
+  pitchDepth: number;
+  componentToSeatPawn: RuntimeComponentTransform;
+  vehicleLocalFrame: RuntimeViewVehicleLocalFrame;
+  cameraMeshState: "hidden-no-mesh";
+}
+
+export interface RuntimeVisualAttachmentStation {
+  seatKey: string;
+  catalogSeatIndex: number;
+  turretName: string;
+  state: "closed" | "partial";
+  closureMode:
+    | "visual-occurrence-membership"
+    | "view-component-rotation";
+  movementState: "observed" | "unresolved";
+  motion: RuntimeStationMotion;
+  control: RuntimeStationControl | null;
+  evidenceLimits: string[];
+  yawMembers: RuntimeVisualAttachmentMember[];
+  pitchMembers: RuntimeVisualAttachmentMember[];
+  yawAnchor: RuntimeVisualAttachmentMember | null;
+  pitchAnchor: RuntimeVisualAttachmentMember | null;
+  viewComponent: RuntimeViewRotationComponent | null;
+  reasons: string[];
+  parentStationId?: string | null;
+  parentCatalogSeatIndex?: number | null;
+  inheritedMotionChannels?: Array<"yaw" | "pitch">;
+  occupantMotion?: {
+    state: "derived-static-component-ancestry";
+    channels: Array<"yaw" | "pitch">;
+    attachmentComponent: {
+      componentName: string;
+      componentClassPath: string;
+    };
+    source: "v10.5.3-get-soldier-attach-component-ancestry";
+    reason: null;
+  };
+}
+
+export interface RuntimeVisualAttachmentBinding {
+  schemaVersion: "sigua-vehicle-visual-attachment/v2";
+  sourceBuildId: string;
+  sourceDataRevision: string;
+  sourceVehicleRef: string;
+  catalogBindingRef: string;
+  cardId: string;
+  rawName: string;
+  runtimeVehicleRef: string;
+  edition: SiteEdition;
+  visualArtifactRef: string;
+  stations: RuntimeVisualAttachmentStation[];
 }
 
 interface RuntimeVisualSelectionSummary {
@@ -119,6 +282,10 @@ export interface RuntimeVehiclePreview {
     formatVersion: "sigua-vehicle-radial-query-source/v1";
     recordUrl: string;
   } | null;
+  visualAttachment: RuntimeVisualAttachmentBinding | null;
+  crewSeat: RuntimeCrewSeatBinding | null;
+  stationGraph: CompiledVehicleStationGraph | null;
+  gunnerSight: CompiledVehicleGunnerSight | null;
 }
 
 interface WikiRuntimeVisual {
@@ -160,6 +327,19 @@ interface WikiVehicleRuntimeVariant {
     formatVersion: "sigua-vehicle-radial-query-source/v1";
     recordUrl: string;
   };
+  visualAttachment: null | {
+    id: string;
+    formatVersion: "sigua-vehicle-visual-attachment/v2";
+    sourceVehicleRef: string;
+    recordUrl: string;
+  };
+  crewSeat: null | {
+    id: string;
+    formatVersion: "sigua-vehicle-crew-seat/v1";
+    sourceVehicleRef: string;
+    recordUrl: string;
+  };
+  stationGraph: VehicleStationGraphPointer | null;
 }
 
 interface WikiVehicleRuntimeSource {
@@ -366,6 +546,8 @@ function toRuntimePreview(
   artifactRef: string,
   runtimeVariant: WikiVehicleRuntimeVariant,
   descriptor: WikiRuntimeVisual,
+  stationGraphRecord: VehicleStationGraphRecord | null,
+  gunnerSightRecord: VehicleGunnerSightRecord | null,
 ): RuntimeVehiclePreview {
   if (
     descriptor.status !== "complete" ||
@@ -381,6 +563,29 @@ function toRuntimePreview(
   );
   const skeletalPlacements = placements.filter((placement) =>
     placement.componentClassPath.includes("SkeletalMeshComponent"),
+  );
+  const stationGraph = compileVehicleStationGraph(
+    stationGraphRecord,
+    runtimeVariant.stationGraph,
+    {
+      rawName,
+      runtimeVehicleRef: runtimeVariant.runtimeVehicleRef,
+      generatedClass: runtimeVariant.generatedClass,
+      cardId,
+      edition: descriptor.edition,
+      visualArtifactRef: artifactRef,
+    },
+    placements,
+  );
+  if (!stationGraph) {
+    throw new Error(`SiguaWiki station graph is missing for ${cardId} / ${rawName}`);
+  }
+  const visualAttachment =
+    stationGraph.visualAttachment as RuntimeVisualAttachmentBinding;
+  const crewSeat = stationGraph.crewSeat;
+  const gunnerSight = compileVehicleGunnerSight(
+    gunnerSightRecord,
+    stationGraph,
   );
   const hit = hitForRuntimeVariant(runtimeVariant);
   return {
@@ -426,6 +631,10 @@ function toRuntimePreview(
           reason: "该变体尚无已发布的命中模型。",
         },
     radialQuery: runtimeVariant.radialQuery,
+    visualAttachment,
+    crewSeat,
+    stationGraph,
+    gunnerSight,
   };
 }
 
@@ -444,7 +653,7 @@ export async function runtimePreviewForCatalogBinding(
   const request = Promise.all([
     loadWikiVehicleRuntimeSource(cardId),
     loadWikiRuntimeVisual(expectedVisualArtifactRef),
-  ]).then(([runtimeValue, value]) => {
+  ]).then(async ([runtimeValue, value]) => {
     const runtimeSource = runtimeValue as WikiVehicleRuntimeSource;
     const runtimeVariant = runtimeSource.variants.find(
       (variant) => variant.rawName === rawName,
@@ -466,12 +675,35 @@ export async function runtimePreviewForCatalogBinding(
     ) {
       throw new Error(`SiguaWiki visual mapping differs for ${cardId} / ${rawName}`);
     }
+    const stationGraphRecord = runtimeVariant.stationGraph
+      ? await loadWikiVehicleStationGraph(
+          runtimeVariant.stationGraph.recordUrl,
+        ) as VehicleStationGraphRecord
+      : null;
+    if (
+      stationGraphRecord &&
+      (
+        runtimeVariant.stationGraph?.formatVersion !==
+          stationGraphRecord.schemaVersion ||
+        runtimeVariant.stationGraph?.sourceVehicleRef !==
+          stationGraphRecord.sourceVehicleRef
+      )
+    ) {
+      throw new Error(`SiguaWiki station graph mapping differs for ${cardId} / ${rawName}`);
+    }
+    const gunnerSightRecord = stationGraphRecord
+      ? await loadOptionalWikiVehicleGunnerSight(
+          stationGraphRecord.sourceVehicleRef,
+        ) as VehicleGunnerSightRecord
+      : null;
     return toRuntimePreview(
       cardId,
       rawName,
       expectedVisualArtifactRef,
       runtimeVariant,
       descriptor,
+      stationGraphRecord,
+      gunnerSightRecord,
     );
   });
   previewCache.set(expectedVisualArtifactRef, request);

@@ -314,14 +314,22 @@ export async function loadRuntimeHitScene(
     (buffer) => ({ buffer }),
     (error: unknown) => ({ error }),
   );
-  const bvhSource = fetchRuntimeAsset(descriptor.bvhUrl, "BVH");
-  const bvhBufferPromise = bvhSource.then(async (source) =>
-    runtimeHitBufferLoader.load(
-      bvhHitBufferRef(descriptor, await recordPromise),
-      source,
-    )
+  // Settle sibling requests before awaiting the record. If the record fails,
+  // a derived BVH promise must not reject independently and trigger Vite's
+  // unhandled-rejection overlay while the viewer is already degrading the hit
+  // model failure to an exterior-only preview.
+  const bvhSource = fetchRuntimeAsset(descriptor.bvhUrl, "BVH").then(
+    (buffer) => ({ buffer }),
+    (error: unknown) => ({ error }),
   );
   const record = await recordPromise;
+  const bvhBufferPromise = bvhSource.then(async (result) => {
+    if ("error" in result) throw result.error;
+    return runtimeHitBufferLoader.load(
+      bvhHitBufferRef(descriptor, record),
+      result.buffer,
+    );
+  });
   const [geometryBuffer, bvhBuffer] = await Promise.all([
     loadGeometryBuffer(descriptor, record, geometrySource),
     bvhBufferPromise,

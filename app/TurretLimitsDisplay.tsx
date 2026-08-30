@@ -56,6 +56,7 @@ export interface TurretPreviewStation {
   indicatorKind: TurretPreviewIndicatorKind;
   yawAvailable: boolean;
   pitchAvailable: boolean;
+  viewpointAvailable?: boolean;
 }
 
 interface TurretPreviewControlsProps {
@@ -68,6 +69,13 @@ interface TurretPreviewControlsProps {
   onYawChange: (yawDegrees: number) => void;
   onPitchChange: (pitchDegrees: number) => void;
   onReset: () => void;
+  viewpointActive: boolean;
+  viewpointMarkerEnabled: boolean;
+  sightPresentationAvailable: boolean;
+  sightPresentationVisible: boolean;
+  onViewpointMarkerToggle: () => void;
+  onSightPresentationToggle: () => void;
+  onViewpointToggle: (stationId: string) => void;
   onInteractionEnd: () => void;
 }
 
@@ -765,6 +773,13 @@ export function TurretPreviewControls({
   onYawChange,
   onPitchChange,
   onReset,
+  viewpointActive,
+  viewpointMarkerEnabled,
+  sightPresentationAvailable,
+  sightPresentationVisible,
+  onViewpointMarkerToggle,
+  onSightPresentationToggle,
+  onViewpointToggle,
   onInteractionEnd,
 }: TurretPreviewControlsProps) {
   const pitchPointerIdRef = useRef<number | null>(null);
@@ -884,6 +899,7 @@ export function TurretPreviewControls({
                 {stations.map((station) => (
                   <option value={station.id} key={station.id}>
                     {station.label} · {station.equipmentLabel}
+                    {station.viewpointAvailable ? " · 视点已定位" : ""}
                   </option>
                 ))}
               </select>
@@ -977,6 +993,58 @@ export function TurretPreviewControls({
               回正炮塔
             </button>
           </div>
+          {activeStation.viewpointAvailable ? (
+            <div className="turret-preview-controls__viewpoint">
+              <div className="turret-preview-controls__viewpoint-heading">
+                <span>
+                  <i aria-hidden="true" />
+                  <b>炮手观察点</b>
+                </span>
+                <button
+                  className="turret-preview-controls__viewpoint-switch"
+                  type="button"
+                  role="switch"
+                  aria-label="显示炮手观察点"
+                  aria-checked={viewpointMarkerEnabled}
+                  data-active={viewpointMarkerEnabled || undefined}
+                  onClick={onViewpointMarkerToggle}
+                >
+                  <span aria-hidden="true"><i /></span>
+                  <strong>
+                    {viewpointMarkerEnabled ? "隐藏观察点" : "显示观察点"}
+                  </strong>
+                </button>
+              </div>
+              <button
+                className="turret-preview-controls__viewpoint-camera"
+                type="button"
+                data-active={viewpointActive || undefined}
+                aria-pressed={viewpointActive}
+                onClick={() => onViewpointToggle(activeStation.id)}
+              >
+                {viewpointActive ? "退出炮手视角" : "进入炮手视角"}
+              </button>
+              {sightPresentationAvailable ? (
+                <button
+                  className="turret-preview-controls__viewpoint-camera turret-preview-controls__sight-switch"
+                  type="button"
+                  role="switch"
+                  aria-label="显示炮镜遮罩与分划"
+                  aria-checked={sightPresentationVisible}
+                  data-active={sightPresentationVisible || undefined}
+                  onClick={onSightPresentationToggle}
+                >
+                  {sightPresentationVisible ? "炮镜遮罩已开启" : "炮镜遮罩已隐藏"}
+                </button>
+              ) : null}
+              <p>
+                {viewpointMarkerEnabled
+                  ? `外部视图以炮镜图标标记 ${activeStation.label} 的观察点。`
+                  : "打开显示后，外部视图会标记所选站位的观察点。"}
+                持续命中该视点产生的火花可干扰操作手观察；这是战术参考，不代表游戏会损伤光学设备或施加视觉状态。
+              </p>
+            </div>
+          ) : null}
           <ul
             className="turret-preview-controls__orientation-legend"
             aria-label="炮塔与武器站世界朝向"
