@@ -52,16 +52,21 @@ export interface VehicleCrewAppearanceModel {
     weldTolerance: number;
   };
   presentationCleanup?: {
-    policy: "source-locked-internal-face-cull-v1";
+    policy: "source-locked-eye-cull-mouth-retained-v2";
     removedEye: {
       materialName: "MI_GreenEye";
       primitives: 1;
       triangles: 840;
     };
-    removedOralCavity: {
+    retainedOralCavity: {
       materialName: "MI_USA_Heads";
       connectedComponents: 8;
       triangles: 984;
+    };
+    simplifiedOralCavity: {
+      materialName: "MI_USA_Heads";
+      connectedComponents: 8;
+      triangles: number;
     };
     retainedGlasses: {
       materialName: "MI_USArmyGlass";
@@ -114,27 +119,31 @@ function validateAppearanceModels(library: VehicleCrewAnimationPoseLibrary) {
     fullReference.vertices !== 90_462 ||
     fullReference.bytes !== 2_548_376 ||
     crowdReal?.assetUrl !==
-      "/assets/vehicle-crew/models/reference-soldier-crowd-real-68ffdddd34f93e12a3feee2f3aeb2f13344e9b99916cfe27422e4588524a1b52.glb" ||
+      "/assets/vehicle-crew/models/reference-soldier-crowd-real-76e6f6cc4d0e3b921045ac9e6d2223e599dc473b45eafc53737236830f7f9cd1.glb" ||
     crowdReal.sha256 !==
-      "68ffdddd34f93e12a3feee2f3aeb2f13344e9b99916cfe27422e4588524a1b52" ||
+      "76e6f6cc4d0e3b921045ac9e6d2223e599dc473b45eafc53737236830f7f9cd1" ||
     crowdReal.state !== "derived-meshoptimizer-skinned-lod" ||
     crowdReal.boneCount !== library.compatibleBoneCount ||
-    crowdReal.triangles !== 12_688 ||
+    crowdReal.triangles !== 12_757 ||
     crowdReal.triangles > 13_000 ||
-    crowdReal.vertices !== 24_217 ||
-    crowdReal.bytes !== 1_669_408 ||
+    crowdReal.vertices !== 24_300 ||
+    crowdReal.bytes !== 1_670_784 ||
     crowdReal.simplification?.ratio !== 0.07 ||
     crowdReal.simplification.error !== 0.025 ||
     crowdReal.simplification.weldTolerance !== 0.00001 ||
     crowdReal.presentationCleanup?.policy !==
-      "source-locked-internal-face-cull-v1" ||
+      "source-locked-eye-cull-mouth-retained-v2" ||
     crowdReal.presentationCleanup.removedEye.materialName !== "MI_GreenEye" ||
     crowdReal.presentationCleanup.removedEye.primitives !== 1 ||
     crowdReal.presentationCleanup.removedEye.triangles !== 840 ||
-    crowdReal.presentationCleanup.removedOralCavity.materialName !==
+    crowdReal.presentationCleanup.retainedOralCavity.materialName !==
       "MI_USA_Heads" ||
-    crowdReal.presentationCleanup.removedOralCavity.connectedComponents !== 8 ||
-    crowdReal.presentationCleanup.removedOralCavity.triangles !== 984 ||
+    crowdReal.presentationCleanup.retainedOralCavity.connectedComponents !== 8 ||
+    crowdReal.presentationCleanup.retainedOralCavity.triangles !== 984 ||
+    crowdReal.presentationCleanup.simplifiedOralCavity.materialName !==
+      "MI_USA_Heads" ||
+    crowdReal.presentationCleanup.simplifiedOralCavity.connectedComponents !== 8 ||
+    crowdReal.presentationCleanup.simplifiedOralCavity.triangles !== 108 ||
     crowdReal.presentationCleanup.retainedGlasses.materialName !==
       "MI_USArmyGlass" ||
     crowdReal.presentationCleanup.retainedGlasses.primitives !== 1 ||
