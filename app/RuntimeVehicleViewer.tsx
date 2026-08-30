@@ -10487,8 +10487,10 @@ export function RuntimeVehicleViewer({
           <span className="viewer-crew-viewpoint-hud__optic" aria-hidden="true">
             <Crosshair size={13} />
           </span>
-          <b>{activeTurretStation?.label ?? "武器站"}</b>
-          <span>炮镜观察点</span>
+          <span className="viewer-crew-viewpoint-hud__copy">
+            <b>{activeTurretStation?.label ?? "武器站"}</b>
+            <span>观察点</span>
+          </span>
         </div>
       </div>
 

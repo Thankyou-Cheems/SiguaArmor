@@ -21,6 +21,13 @@ test("selected weapon station exposes an exact viewpoint marker and camera toggl
   assert.match(controlsSource, /退出炮手视角/u);
   assert.match(controlsSource, /持续命中该视点产生的火花可干扰操作手观察/u);
   assert.match(styles, /\.turret-preview-controls__viewpoint/u);
+  assert.match(viewerSource, /viewer-crew-viewpoint-hud__copy/u);
+  assert.match(viewerSource, /<span>观察点<\/span>/u);
+  assert.doesNotMatch(viewerSource, /炮镜观察点/u);
+  assert.match(
+    styles,
+    /\.viewer-crew-viewpoint-hud__copy\s*\{[\s\S]*?display:\s*grid;/u,
+  );
 });
 
 test("viewpoint marker is an optional camera-facing optic billboard", () => {
