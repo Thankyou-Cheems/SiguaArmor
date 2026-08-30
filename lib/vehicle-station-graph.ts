@@ -79,6 +79,38 @@ export interface StationGraphStation {
     yaw: StationGraphMotionChannel;
     pitch: StationGraphMotionChannel;
   };
+  occupantMotion: {
+    state:
+      | "derived-static-component-ancestry"
+      | "derived-blueprint-vehicle-component-route";
+    channels: Array<"yaw" | "pitch">;
+    attachmentComponent: {
+      componentName: string;
+      componentClassPath: string;
+    };
+    source: string;
+    reason: string | null;
+  };
+  occupantAttachment: {
+    state:
+      | "derived-seat-pawn-component-ancestry"
+      | "observed-blueprint-vehicle-component-socket"
+      | "derived-hidden-missing-socket-fallback";
+    parent: {
+      kind: "vehicle-component" | "station-component";
+      stationId: string | null;
+      componentName: string;
+      componentClassPath: string;
+      socketName: string | null;
+    };
+    referenceFrame: StationGraphFrame;
+    spatialMeaning:
+      | "runtime-soldier-attachment"
+      | "hidden-runtime-fallback-no-rendered-body";
+    source: string;
+    sourcePackage: string | null;
+    reason: string | null;
+  };
   views: Array<{
     viewId: string;
     component: {
@@ -283,6 +315,8 @@ export interface RuntimeStationGraphVisualStation {
   parentStationId: string | null;
   parentCatalogSeatIndex: number | null;
   inheritedMotionChannels: Array<"yaw" | "pitch">;
+  occupantMotion: StationGraphStation["occupantMotion"];
+  occupantAttachment: StationGraphStation["occupantAttachment"];
 }
 
 export interface CompiledVehicleStationGraph {
@@ -403,6 +437,45 @@ export function compileVehicleStationGraph(
         !frameClosed(channel.stationLocalFrame) ||
         !frameClosed(channel.referenceFrame)
       ) throw new Error(`SiguaWiki station ${station.id} motion is invalid`);
+    }
+    if (
+      ![
+        "derived-static-component-ancestry",
+        "derived-blueprint-vehicle-component-route",
+      ].includes(station.occupantMotion?.state) ||
+      !Array.isArray(station.occupantMotion.channels) ||
+      new Set(station.occupantMotion.channels).size !==
+        station.occupantMotion.channels.length ||
+      station.occupantMotion.channels.some(
+        (channel) => channel !== "yaw" && channel !== "pitch",
+      ) ||
+      !station.occupantMotion.attachmentComponent?.componentName ||
+      !station.occupantMotion.attachmentComponent.componentClassPath ||
+      typeof station.occupantMotion.source !== "string" ||
+      (station.occupantMotion.reason !== null &&
+        typeof station.occupantMotion.reason !== "string")
+    ) {
+      throw new Error(`SiguaWiki station ${station.id} occupant motion is invalid`);
+    }
+    if (
+      ![
+        "derived-seat-pawn-component-ancestry",
+        "observed-blueprint-vehicle-component-socket",
+        "derived-hidden-missing-socket-fallback",
+      ].includes(station.occupantAttachment?.state) ||
+      !["vehicle-component", "station-component"].includes(
+        station.occupantAttachment.parent?.kind,
+      ) ||
+      !station.occupantAttachment.parent.componentName ||
+      !station.occupantAttachment.parent.componentClassPath ||
+      !frameClosed(station.occupantAttachment.referenceFrame) ||
+      !station.occupantAttachment.spatialMeaning ||
+      (station.occupantAttachment.parent.kind === "vehicle-component"
+        ? station.occupantAttachment.parent.stationId !== null ||
+          station.occupantMotion.channels.length !== 0
+        : station.occupantAttachment.parent.stationId !== station.id)
+    ) {
+      throw new Error(`SiguaWiki station ${station.id} occupant attachment is invalid`);
     }
     for (const view of station.views) {
       if (!frameClosed(view.stationLocalFrame) || !frameClosed(view.referenceFrame)) {
@@ -548,6 +621,8 @@ export function compileVehicleStationGraph(
           ? stationById.get(station.mount.parent.stationId)?.catalogSeatIndex ?? null
           : null,
         inheritedMotionChannels: station.mount.parent.inheritedMotionChannels,
+        occupantMotion: station.occupantMotion,
+        occupantAttachment: station.occupantAttachment,
       };
     },
   );

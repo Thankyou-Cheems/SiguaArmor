@@ -25,6 +25,7 @@ function seat({
   eligibility,
   animation,
   stationId = null,
+  spatialMeaning = "runtime-soldier-attachment",
   poseRef = category === "hittable"
     ? "vehicle-crew-animation-aaaaaaaaaaaaaaaaaaaaaaaa"
     : null,
@@ -34,6 +35,7 @@ function seat({
     stationId,
     catalogSeatIndex: index,
     role,
+    positionSemantics: { spatialMeaning },
     occupantBaseFrame: identityFrame({ x: index * 100, y: 20, z: 50 }),
     config: { initialStateIndex: 0, exposedSeat: index > 1 },
     occupantStates: [{
@@ -141,6 +143,26 @@ test("hidden and classification-mismatched occupants never receive a body model"
   });
   assert.equal(plans[0].renderKind, "protected-outline");
   assert.equal(plans[1].renderKind, "unresolved-outline");
+});
+
+test("Hidden actors without a real socket are not drawn at a misleading fallback transform", () => {
+  const plans = buildCrewOccupantPresentationPlan({
+    seats: [seat({
+      index: 3,
+      role: "commander",
+      category: "protected",
+      soldierSeatState: "Hidden",
+      collision: "disabled",
+      eligibility: "collision-ineligible",
+      animation: "/Game/Vehicles/MATV/Animations/Passenger/Aimoffset",
+      spatialMeaning: "hidden-runtime-fallback-no-rendered-body",
+    })],
+  });
+  assert.equal(plans[0].renderKind, "protected-nonspatial");
+  assert.equal(
+    plans[0].spatialMeaning,
+    "hidden-runtime-fallback-no-rendered-body",
+  );
 });
 
 test("hittable crew without an exact BaseAnimation pose fails closed to an outline", () => {

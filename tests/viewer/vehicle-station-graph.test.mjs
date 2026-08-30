@@ -114,6 +114,31 @@ function station(index, parentIndex = null) {
       yaw: motionChannel("yaw", 200 + index),
       pitch: motionChannel("pitch", 200 + index),
     },
+    occupantMotion: {
+      state: "derived-static-component-ancestry",
+      channels: ["yaw"],
+      attachmentComponent: {
+        componentName: "YawRoot",
+        componentClassPath: "/Script/Engine.SceneComponent",
+      },
+      source: "v10.5.3-get-soldier-attach-component-ancestry",
+      reason: null,
+    },
+    occupantAttachment: {
+      state: "derived-seat-pawn-component-ancestry",
+      parent: {
+        kind: "station-component",
+        stationId: id,
+        componentName: "YawRoot",
+        componentClassPath: "/Script/Engine.SceneComponent",
+        socketName: "socket_operator",
+      },
+      referenceFrame: graphFrame(200 + index),
+      spatialMeaning: "runtime-soldier-attachment",
+      source: "v10.5.3-get-soldier-attach-component-ancestry",
+      sourcePackage: null,
+      reason: null,
+    },
     views: [],
     equipmentRefs: [],
     closure: {

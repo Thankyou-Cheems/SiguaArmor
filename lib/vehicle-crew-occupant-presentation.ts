@@ -9,6 +9,7 @@ export type CrewOccupantPosture = "standing-rifle" | "crouching";
 export type CrewOccupantRenderKind =
   | "hittable-model-and-proxy"
   | "protected-outline"
+  | "protected-nonspatial"
   | "unresolved-outline";
 
 export interface CrewOccupantPresentationPlan {
@@ -26,6 +27,9 @@ export interface CrewOccupantPresentationPlan {
   animationPoseState:
     | "derived-editor-animation-frame-zero"
     | "unresolved";
+  spatialMeaning:
+    | "runtime-soldier-attachment"
+    | "hidden-runtime-fallback-no-rendered-body";
   animationRuntimeLayers: {
     aimOffsetRef: string | null;
     handIkRequired: boolean | null;
@@ -72,6 +76,7 @@ function postureForSeat(
 function renderKindForSeat(
   state: RuntimeCrewSeatStation["occupantStates"][number] | null,
   animationPoseRef: string | null,
+  spatialMeaning: CrewOccupantPresentationPlan["spatialMeaning"],
 ): CrewOccupantRenderKind {
   const classification = state?.hitClassification;
   if (
@@ -85,7 +90,9 @@ function renderKindForSeat(
     classification?.userCategory === "protected" &&
     classification.naturalPointHitEligibility === "collision-ineligible" &&
     classification.soldierActorCollision === "disabled"
-  ) return "protected-outline";
+  ) return spatialMeaning === "hidden-runtime-fallback-no-rendered-body"
+    ? "protected-nonspatial"
+    : "protected-outline";
   return "unresolved-outline";
 }
 
@@ -103,12 +110,14 @@ export function buildCrewOccupantPresentationPlan(
       const state = activeOccupantState(seat);
       const animationRef = state?.baseAnimation ?? null;
       const animationPoseRef = state?.baseAnimationPoseRef ?? null;
+      const spatialMeaning = seat.positionSemantics?.spatialMeaning ??
+        "runtime-soldier-attachment";
       return [{
         seatKey: seat.seatKey,
         catalogSeatIndex: seat.catalogSeatIndex,
         stationId: seat.stationId ?? null,
         role: seat.role,
-        renderKind: renderKindForSeat(state, animationPoseRef),
+        renderKind: renderKindForSeat(state, animationPoseRef, spatialMeaning),
         ...postureForSeat(seat, animationRef),
         frame: seat.occupantBaseFrame,
         soldierSeatState: state?.soldierSeatState ?? null,
@@ -117,6 +126,7 @@ export function buildCrewOccupantPresentationPlan(
         animationPoseState: animationPoseRef
           ? "derived-editor-animation-frame-zero" as const
           : "unresolved" as const,
+        spatialMeaning,
         animationRuntimeLayers: {
           aimOffsetRef: state?.animationState?.aimOffsets ?? null,
           handIkRequired: state?.animationState?.useHandIK ?? null,

@@ -62,6 +62,8 @@ test("protected occupants use exact-pose wireframes with sprites only as fail-cl
   assert.match(runtimeSource, /new THREE\.Sprite\(material\)/u);
   assert.match(runtimeSource, /outline-fallback/u);
   assert.match(styles, /\.viewer-crew-occupant-legend/u);
+  assert.match(runtimeSource, /plan\.renderKind !== "protected-nonspatial"/u);
+  assert.match(viewerSource, /无人物 socket 的 Hidden/u);
 });
 
 test("crew readability never collapses exact poses into standing sprites or capsule mannequins", () => {
@@ -91,4 +93,13 @@ test("real crew appearance is opaque so equipment and the body remain readable",
     runtimeSource,
     /crewDepthReset\.onBeforeRender = \(renderer\) => \{\s*renderer\.clearDepth\(\)/u,
   );
+});
+
+test("crew roots use occupant attachment channels instead of weapon pitch", () => {
+  assert.match(viewerSource, /stationOccupantArticulationMatrixChain/u);
+  const updateBody = viewerSource.match(
+    /const updateCrewOccupantArticulation = \(\) => \{[\s\S]*?\n    \};/u,
+  )?.[0] ?? "";
+  assert.doesNotMatch(updateBody, /stationArticulationMatrixChain\(station\)/u);
+  assert.match(updateBody, /stationOccupantArticulationMatrixChain\(station\)/u);
 });

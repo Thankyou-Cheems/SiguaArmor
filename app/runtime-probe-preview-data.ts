@@ -188,6 +188,16 @@ export interface RuntimeVisualAttachmentStation {
   parentStationId?: string | null;
   parentCatalogSeatIndex?: number | null;
   inheritedMotionChannels?: Array<"yaw" | "pitch">;
+  occupantMotion?: {
+    state: "derived-static-component-ancestry";
+    channels: Array<"yaw" | "pitch">;
+    attachmentComponent: {
+      componentName: string;
+      componentClassPath: string;
+    };
+    source: "v10.5.3-get-soldier-attach-component-ancestry";
+    reason: null;
+  };
 }
 
 export interface RuntimeVisualAttachmentBinding {
