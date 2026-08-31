@@ -5098,10 +5098,6 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   white-space: nowrap;
 }
 
-.viewer-control-target-slider__station-group > button {
-  padding-top: 8px;
-}
-
 .viewer-control-target-slider > button:hover,
 .viewer-control-target-slider > button:focus-visible,
 .viewer-control-target-slider__station-group > button:hover,
@@ -5149,13 +5145,19 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .viewer-control-target-slider__station-group > b {
   position: absolute;
   z-index: 4;
-  top: 3px;
-  right: 0;
-  left: 0;
+  top: 0;
+  bottom: 0;
+  left: 2px;
+  display: grid;
+  width: 9px;
+  border-right: 1px solid rgba(99, 215, 233, 0.22);
+  background: rgba(99, 215, 233, 0.08);
   color: rgba(99, 215, 233, 0.72);
   font: 700 6px/1 var(--font-readable-display);
   letter-spacing: 0.08em;
-  text-align: center;
+  place-items: center;
+  text-orientation: upright;
+  writing-mode: vertical-rl;
   pointer-events: none;
 }
 
@@ -5685,9 +5687,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 }
 
 .viewer-protection-precision__label {
-  width: 42px;
+  display: grid;
+  width: 48px;
   flex: none;
+  gap: 1px;
   line-height: 1.25;
+  white-space: nowrap;
 }
 
 .viewer-protection-primary .viewer-protection-opacity {
