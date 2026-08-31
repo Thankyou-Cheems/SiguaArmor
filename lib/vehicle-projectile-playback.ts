@@ -381,12 +381,17 @@ export function compileVehicleProjectilePlaybackBinding({
   const exactEquipmentAnchors = visualMembers.filter((candidate) =>
     candidate.equipmentRefIds?.includes(equipmentBindingId)
   );
-  const anchorCandidates = exactEquipmentAnchors.length > 0
-    ? exactEquipmentAnchors
-    : visualMembers.filter(
-    (candidate): candidate is NonNullable<typeof candidate> =>
-      candidate.sourceMeshPath === launchOrigin.sourceMeshPath,
-    );
+  const exactEquipmentAndSourceAnchors = exactEquipmentAnchors.filter(
+    (candidate) => candidate.sourceMeshPath === launchOrigin.sourceMeshPath,
+  );
+  const anchorCandidates = exactEquipmentAndSourceAnchors.length > 0
+    ? exactEquipmentAndSourceAnchors
+    : exactEquipmentAnchors.length > 0
+      ? exactEquipmentAnchors
+      : visualMembers.filter(
+          (candidate): candidate is NonNullable<typeof candidate> =>
+            candidate.sourceMeshPath === launchOrigin.sourceMeshPath,
+        );
   const anchorOccurrenceIds = [
     ...new Set(anchorCandidates.map((candidate) => candidate.stableOccurrenceId)),
   ];

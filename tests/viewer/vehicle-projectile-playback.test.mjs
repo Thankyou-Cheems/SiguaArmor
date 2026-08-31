@@ -230,6 +230,24 @@ test("reports a stable reason when one Station owns two matching launch anchors"
   );
 });
 
+test("intersects equipment ownership with the WeaponMesh1P source before declaring ambiguity", () => {
+  const graph = stationGraph();
+  graph.visualAttachment.stations[0].pitchAnchor.equipmentRefIds = [EQUIPMENT];
+  graph.visualAttachment.stations[0].pitchMembers.push({
+    stableOccurrenceId: "occurrence-same-equipment-other-mesh",
+    sourceMeshPath: "/Game/Test/SK_OtherGun.SK_OtherGun",
+    equipmentRefIds: [EQUIPMENT],
+  });
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: catalog(),
+    stationGraph: graph,
+    stationId: STATION,
+    weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  assert.equal(resolution.binding.anchorOccurrenceId, "occurrence-test");
+});
+
 test("builds native integration input in the current launch direction", () => {
   const resolution = compileVehicleProjectilePlaybackBinding({
     catalog: catalog(),
