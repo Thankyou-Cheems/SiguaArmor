@@ -37,6 +37,7 @@ interface LaunchOriginProfile {
     shots: Array<{
         socketName: string;
         socketResolved: boolean;
+        socketTransformComponentSpace: ProjectileTransform;
         translationCm: ProjectileVector3;
         direction: ProjectileVector3;
     }>;
@@ -52,6 +53,13 @@ interface ProjectileProfile {
 interface ProjectileMovementMode {
     assetPath: string;
     fields: Record<string, unknown>;
+}
+export interface VehicleGuidanceAimPose {
+    aimLocationCm: ProjectileVector3;
+    aimDirection: ProjectileVector3;
+}
+export interface VehicleProjectileMagazineState {
+    shotsFiredInMagazine: number;
 }
 interface ProjectileCurveAsset {
     assetPath: string;
@@ -79,6 +87,11 @@ export interface WikiWeaponBallisticsDocument {
     physics: {
         worldGravityZCentimetresPerSecondSquared: number;
         serverFrameDeltaSeconds: number;
+    };
+    launchOriginEvidence: {
+        evidenceLevel: string;
+        nativeFunctions: Record<string, string>;
+        coverage: Record<string, number>;
     };
     launchOriginProfiles: LaunchOriginProfile[];
     projectileProfiles: ProjectileProfile[];
@@ -127,7 +140,13 @@ export interface VehicleProjectilePlaybackBinding {
         referenceFrame: StationGraphTransform;
         motionChannels: Array<"yaw" | "pitch">;
     };
-    launchShot: LaunchOriginProfile["shots"][number];
+    launchSelection: {
+        kind: "single-barrel-socket";
+    } | {
+        kind: "runtime-indexed-launch-pod";
+        podCount: number;
+    };
+    launchShots: LaunchOriginProfile["shots"];
     launchPrecision: "socket-resolved" | "component-origin-fallback";
     forwardOffsetCm: number;
     muzzleVelocityCmPerSecond: number;
@@ -136,6 +155,9 @@ export interface VehicleProjectilePlaybackBinding {
     physics: WikiWeaponBallisticsDocument["physics"];
     projectileProfile: ProjectileProfile;
     movementMode: ProjectileMovementMode | null;
+    movementModes: ProjectileMovementMode[];
+    guidanceController: Record<string, unknown> | null;
+    guidanceInputPolicy: "none" | "launch-time-operation-camera-clear-los";
     curveAssets: ProjectileCurveAsset[];
 }
 export type VehicleProjectilePlaybackResolution = {
@@ -159,6 +181,7 @@ export interface NativeProjectileSimulationResult {
 }
 export interface NativeProjectileAlgorithm {
     simulateNonGuidedProjectile(input: Record<string, unknown>): NativeProjectileSimulationResult;
+    simulateGuidedProjectile(input: Record<string, unknown>): NativeProjectileSimulationResult;
     moaDiameterToHalfAngleRadians(moaDiameter: number): number;
     sampleNativeConeDirection(input: {
         direction: ProjectileVector3;
@@ -178,6 +201,31 @@ function normalize(value: ProjectileVector3): ProjectileVector3 {
         throw new Error("Projectile direction must be non-zero");
     return { x: value.x / length, y: value.y / length, z: value.z / length };
 }
+function componentSpaceLaunchShot(shot: LaunchOriginProfile["shots"][number]): LaunchOriginProfile["shots"][number] | null {
+    const transform = shot.socketTransformComponentSpace;
+    if (!transform ||
+        ![
+            transform.translation.x,
+            transform.translation.y,
+            transform.translation.z,
+            transform.rotation.x,
+            transform.rotation.y,
+            transform.rotation.z,
+            transform.rotation.w,
+        ].every(Number.isFinite))
+        return null;
+    const { x, y, z, w } = transform.rotation;
+    const direction = normalize({
+        x: 1 - 2 * (y * y + z * z),
+        y: 2 * (x * y + w * z),
+        z: 2 * (x * z - w * y),
+    });
+    return {
+        ...shot,
+        translationCm: { ...transform.translation },
+        direction,
+    };
+}
 function add(left: ProjectileVector3, right: ProjectileVector3) {
     return {
         x: left.x + right.x,
@@ -195,21 +243,6 @@ function cross(left: ProjectileVector3, right: ProjectileVector3) {
         z: left.x * right.y - left.y * right.x,
     };
 }
-function identityTransform(transform: ProjectileTransform | null | undefined) {
-    if (!transform)
-        return false;
-    const epsilon = 1e-6;
-    return (Math.abs(transform.translation.x) <= epsilon &&
-        Math.abs(transform.translation.y) <= epsilon &&
-        Math.abs(transform.translation.z) <= epsilon &&
-        Math.abs(transform.rotation.x) <= epsilon &&
-        Math.abs(transform.rotation.y) <= epsilon &&
-        Math.abs(transform.rotation.z) <= epsilon &&
-        Math.abs(transform.rotation.w - 1) <= epsilon &&
-        Math.abs(transform.scale3d.x - 1) <= epsilon &&
-        Math.abs(transform.scale3d.y - 1) <= epsilon &&
-        Math.abs(transform.scale3d.z - 1) <= epsilon);
-}
 function hasGuidanceValue(value: Record<string, unknown> | null) {
     return Boolean(value && Object.values(value).some((entry) => entry !== null && entry !== undefined));
 }
@@ -221,6 +254,33 @@ function guidedProjectile(profile: ProjectileProfile) {
             guided.guidanceLossBehaviours !== undefined ||
         guided.trackedFovByDistanceCurve !== null &&
             guided.trackedFovByDistanceCurve !== undefined);
+}
+function guidanceLossBehaviours(guided: Record<string, unknown>) {
+    const source = guided.guidanceLossBehaviours;
+    return Array.isArray(source) ? source : source ? [source] : [];
+}
+function guidedPlaybackSupported(projectileProfile: ProjectileProfile, movementModes: ProjectileMovementMode[]) {
+    if (movementModes.length === 0 ||
+        movementModes[0]?.fields.bIsHoming !== true ||
+        !(finite(projectileProfile.guided.aimMaxDistanceCm) > 0))
+        return false;
+    return guidanceLossBehaviours(projectileProfile.guided).every((entry) => {
+        const value = entry && typeof entry === "object"
+            ? (entry as {
+                Value?: Record<string, unknown>;
+            }).Value
+            : null;
+        const behaviour = value?.Behaviour;
+        if (finite(value?.TimeBeforeDetonationAfterGuidanceLoss) !== 0)
+            return false;
+        if (behaviour === "ContinueLastKnownTarget")
+            return true;
+        if (behaviour !== "ChangeMovementMode")
+            return false;
+        const index = value?.NewMovementModeIndex;
+        return typeof index === "number" && Number.isInteger(index) &&
+            movementModes[index] !== undefined;
+    });
 }
 function projectileMovementModePaths(value: unknown) {
     const candidates = Array.isArray(value) ? value : [value];
@@ -345,13 +405,17 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
     if (!launchOrigin) {
         return unsupported("launch-origin-missing", "武器缺少 WeaponMesh1P 发射点档案");
     }
-    if (launchOrigin.kind !== "weapon-mesh1p-socket" ||
-        launchOrigin.anchorRole !== "weapon-actor-root" ||
-        launchOrigin.componentRole !== "WeaponMesh1P" ||
-        launchOrigin.shotSelection !== "single-barrel-socket" ||
-        launchOrigin.shots.length !== 1 ||
-        !identityTransform(launchOrigin.componentRelativeTransform)) {
-        return unsupported("launch-route-unsupported", "当前版本只播放已闭合的单炮口 WeaponMesh1P 路线");
+    const invalidCommonLaunchRoute = launchOrigin.anchorRole !== "weapon-actor-root" ||
+        launchOrigin.componentRole !== "WeaponMesh1P";
+    const singleBarrelRoute = launchOrigin.kind === "weapon-mesh1p-socket" &&
+        launchOrigin.shotSelection === "single-barrel-socket" &&
+        launchOrigin.shots.length === 1;
+    const runtimeMultipodRoute = launchOrigin.kind === "multipod-socket-forward-offset" &&
+        launchOrigin.shotSelection === "runtime-indexed-launch-pod" &&
+        launchOrigin.shots.length >= 2 &&
+        launchOrigin.shots.every((shot) => shot.socketResolved);
+    if (invalidCommonLaunchRoute || (!singleBarrelRoute && !runtimeMultipodRoute)) {
+        return unsupported("launch-route-unsupported", "发射点不是已闭合的单炮口或原生运行时多筒 WeaponMesh1P 路线");
     }
     const projectileProfile = catalog.projectileProfiles.find((candidate) => candidate.id === assignment.projectileProfileRef);
     if (!projectileProfile) {
@@ -359,13 +423,19 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
     }
     const movementModePaths = projectileMovementModePaths(projectileProfile.movement.MovementModes);
     const movementModes = movementModePaths.map((path) => catalog.movementModes.find((mode) => mode.assetPath === path) ?? null);
-    if (movementModes.some((mode) => mode === null) || movementModes.length > 1) {
-        return unsupported("movement-mode-unresolved", "弹丸需要当前网页尚未选择的运行时 movement mode");
+    if (movementModes.some((mode) => mode === null)) {
+        return unsupported("movement-mode-unresolved", "弹丸引用了未收录的运行时 movement mode");
     }
-    if (hasGuidanceValue(assignment.guidanceController) ||
+    const resolvedMovementModes = movementModes.filter((mode): mode is ProjectileMovementMode => mode !== null);
+    const isGuided = hasGuidanceValue(assignment.guidanceController) ||
         guidedProjectile(projectileProfile) ||
-        movementModes.some((mode) => mode?.fields.bIsHoming === true)) {
-        return unsupported("guidance-live-input-required", "制导段需要实时 aim、LOS 与 controller 输入");
+        resolvedMovementModes.some((mode) => mode.fields.bIsHoming === true);
+    if (!isGuided && resolvedMovementModes.length > 1) {
+        return unsupported("movement-mode-unresolved", "非制导弹丸存在多个未选择的运行时 movement mode");
+    }
+    if (isGuided && (!hasGuidanceValue(assignment.guidanceController) ||
+        !guidedPlaybackSupported(projectileProfile, resolvedMovementModes))) {
+        return unsupported("guidance-live-input-required", "制导档案缺少可验证的 controller、loss behaviour 或 movement mode");
     }
     let anchorOccurrenceIds: string[] = [];
     let launchAnchor: VehicleProjectilePlaybackBinding["launchAnchor"] | null = null;
@@ -423,6 +493,12 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
                 ? "车辆 Actor 中存在多个同源姿态炮口锚点"
                 : "Station 中存在多个同源炮口锚点");
     }
+    const launchShots = launchAnchor.kind === "station-weapon-attachment"
+        ? launchOrigin.shots
+        : launchOrigin.shots.map(componentSpaceLaunchShot);
+    if (launchShots.some((shot) => shot === null)) {
+        return unsupported("launch-route-unsupported", "组件锚点缺少可验证的插槽组件空间变换");
+    }
     return {
         state: "ready",
         binding: {
@@ -442,8 +518,14 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
             projectileProfileRef: assignment.projectileProfileRef,
             launchOriginProfileRef: assignment.launchOriginProfileRef,
             launchAnchor,
-            launchShot: launchOrigin.shots[0]!,
-            launchPrecision: launchOrigin.shots[0]!.socketResolved
+            launchSelection: runtimeMultipodRoute
+                ? {
+                    kind: "runtime-indexed-launch-pod",
+                    podCount: launchOrigin.shots.length,
+                }
+                : { kind: "single-barrel-socket" },
+            launchShots: launchShots.filter((shot): shot is LaunchOriginProfile["shots"][number] => shot !== null),
+            launchPrecision: launchOrigin.shots.every((shot) => shot.socketResolved)
                 ? "socket-resolved"
                 : "component-origin-fallback",
             forwardOffsetCm: launchOrigin.forwardOffsetCm,
@@ -452,9 +534,34 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
             moaCurve: assignment.moaCurve,
             physics: catalog.physics,
             projectileProfile,
-            movementMode: movementModes[0] ?? null,
+            movementMode: resolvedMovementModes[0] ?? null,
+            movementModes: resolvedMovementModes,
+            guidanceController: assignment.guidanceController,
+            guidanceInputPolicy: isGuided
+                ? "launch-time-operation-camera-clear-los"
+                : "none",
             curveAssets: catalog.curveAssets,
         },
+    };
+}
+export function selectVehicleProjectileLaunchShot(binding: VehicleProjectilePlaybackBinding, state: VehicleProjectileMagazineState) {
+    if (!Number.isInteger(state.shotsFiredInMagazine) ||
+        state.shotsFiredInMagazine < 0) {
+        throw new Error("弹仓已发射计数必须是非负整数");
+    }
+    const shotIndex = binding.launchSelection.kind ===
+        "runtime-indexed-launch-pod"
+        ? state.shotsFiredInMagazine % binding.launchSelection.podCount
+        : 0;
+    const shot = binding.launchShots[shotIndex];
+    if (!shot)
+        throw new Error("当前发射筒索引没有源锁定插槽");
+    return {
+        shotIndex,
+        shot,
+        launchPrecision: shot.socketResolved
+            ? "socket-resolved" as const
+            : "component-origin-fallback" as const,
     };
 }
 export function localProjectileAccelerationToWorld(local: Record<string, unknown>, direction: ProjectileVector3): ProjectileVector3 {
@@ -470,12 +577,12 @@ export function localProjectileAccelerationToWorld(local: Record<string, unknown
 export function buildVehicleProjectileSimulationInput(binding: VehicleProjectilePlaybackBinding, launch: {
     positionCm: ProjectileVector3;
     direction: ProjectileVector3;
-}, direction = launch.direction) {
+}, direction = launch.direction, guidanceAim: VehicleGuidanceAimPose | null = null) {
     const movement = binding.projectileProfile.movement;
     const collision = binding.projectileProfile.collision;
     const fuze = binding.projectileProfile.fuze;
     const lifespan = finite(fuze.initialLifeSpanSeconds);
-    return {
+    const base = {
         positionCm: launch.positionCm,
         direction: normalize(direction),
         muzzleVelocityCmPerSecond: binding.muzzleVelocityCmPerSecond,
@@ -499,7 +606,29 @@ export function buildVehicleProjectileSimulationInput(binding: VehicleProjectile
         bounceVelocityStopSimulatingThresholdCmPerSecond: finite(movement.BounceVelocityStopSimulatingThreshold, 5),
         bounceAdditionalIterations: finite(movement.BounceAdditionalIterations, 1),
         movementMode: binding.movementMode,
+        movementModes: binding.movementModes,
         movementModeCurves: new Map(binding.curveAssets.map((curve) => [curve.assetPath, curve])),
+    };
+    if (binding.guidanceInputPolicy === "none")
+        return base;
+    if (!guidanceAim) {
+        throw new Error("制导弹体需要当前真实操作视角的瞄准线");
+    }
+    const frozenAim = {
+        aimLocationCm: { ...guidanceAim.aimLocationCm },
+        aimDirection: normalize(guidanceAim.aimDirection),
+    };
+    return {
+        ...base,
+        guided: binding.projectileProfile.guided,
+        guidanceController: binding.guidanceController,
+        guidanceInputAt: () => ({
+            ...frozenAim,
+            fireOriginDisplacementCm: 0,
+            connectionBlockReason: null,
+            guidanceBlockReason: null,
+        }),
+        guidanceScenario: "controlled-clear-los-launch-time-aim",
     };
 }
 function hashSeed(value: string) {
@@ -569,6 +698,7 @@ export function loadWikiNativeProjectileAlgorithm(pathname: string) {
         .then((module) => {
         const candidate = module as Partial<NativeProjectileAlgorithm>;
         if (typeof candidate.simulateNonGuidedProjectile !== "function" ||
+            typeof candidate.simulateGuidedProjectile !== "function" ||
             typeof candidate.moaDiameterToHalfAngleRadians !== "function" ||
             typeof candidate.sampleNativeConeDirection !== "function") {
             throw new Error("SiguaWiki projectile algorithm has an unsupported shape");
