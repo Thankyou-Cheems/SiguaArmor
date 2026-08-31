@@ -2,11 +2,23 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const [viewerSource, overlaySource, controlsSource, styles] = await Promise.all([
+const [
+  viewerSource,
+  overlaySource,
+  controlsSource,
+  styles,
+  wikiSource,
+  projectileThreeRuntimeSource,
+] = await Promise.all([
   readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/GunnerSightOverlay.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/TurretLimitsDisplay.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/globals.css", import.meta.url), "utf8"),
+  readFile(new URL("../../lib/wiki-source.ts", import.meta.url), "utf8"),
+  readFile(
+    new URL("../../lib/vehicle-projectile-three-runtime.ts", import.meta.url),
+    "utf8",
+  ),
 ]);
 
 test("gunner view renders the exact Station sidecar as screen and reticle layers", () => {
@@ -145,4 +157,20 @@ test("gunner operation view preserves one 16:9 combat frame with black UI gutter
   );
   assert.match(viewerSource, /camera\.aspect = OPERATION_VIEW_STANDARD_ASPECT_RATIO/u);
   assert.match(overlaySource, /standard-16:9-90-horizontal-baseline/u);
+});
+
+test("operation fire shares one equipment identity and uses a pooled projectile layer", () => {
+  assert.match(overlaySource, /activeEquipmentRef/u);
+  assert.match(overlaySource, /onEquipmentChange/u);
+  assert.doesNotMatch(overlaySource, /useState\(defaultEquipmentRef\)/u);
+  assert.match(viewerSource, /compileVehicleProjectilePlaybackBinding/u);
+  assert.match(viewerSource, /presentation-sample-native-cone/u);
+  assert.match(viewerSource, /散布为网页样本/u);
+  assert.match(viewerSource, /event\.code === "Space"/u);
+  assert.match(viewerSource, /buildVehicleProjectileSimulationInput/u);
+  assert.match(projectileThreeRuntimeSource, /new THREE\.InstancedMesh/u);
+  assert.match(projectileThreeRuntimeSource, /DEFAULT_MAX_ACTIVE_PROJECTILES/u);
+  assert.match(viewerSource, /spawnVehicleProjectileVisualRef/u);
+  assert.match(wikiSource, /loadWikiWeaponBallistics/u);
+  assert.match(wikiSource, /launchOriginProfiles\.length === 0/u);
 });
