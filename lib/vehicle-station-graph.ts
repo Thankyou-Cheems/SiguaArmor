@@ -231,7 +231,7 @@ interface VehicleStationGraphOwner {
     visualArtifactRef: string;
     catalogBindingRef?: string;
 }
-interface VehicleStationGraphVisualPlacement {
+export interface VehicleStationGraphVisualPlacement {
     stableOccurrenceId: string;
     actor: string;
     name: string;
@@ -355,6 +355,7 @@ export interface CompiledVehicleStationGraph {
     schemaVersion: "sigua-vehicle-station-graph/v1";
     sourceVehicleRef: string;
     sourceDataRevision: string;
+    vehicleEquipmentRefs: string[];
     stations: StationGraphStation[];
     crewSeat: RuntimeCrewSeatBinding;
     visualAttachment: {
@@ -665,6 +666,7 @@ export function compileVehicleStationGraph(record: VehicleStationGraphRecord | n
         schemaVersion: record.schemaVersion,
         sourceVehicleRef: record.sourceVehicleRef,
         sourceDataRevision: record.sourceDataRevision,
+        vehicleEquipmentRefs: record.vehicleEquipmentRefs,
         stations: record.stations,
         crewSeat,
         visualAttachment: {

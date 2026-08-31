@@ -1,4 +1,4 @@
-import type { CompiledVehicleStationGraph, StationGraphTransform, } from "./vehicle-station-graph.ts";
+import type { CompiledVehicleStationGraph, StationGraphTransform, VehicleStationGraphVisualPlacement, } from "./vehicle-station-graph.ts";
 import { wikiUrl } from "./wiki-source.ts";
 export interface ProjectileVector3 {
     x: number;
@@ -98,7 +98,14 @@ export interface VehicleProjectileRuntimeWeapon {
 export interface VehicleProjectilePlaybackBinding {
     evidenceClass: "local-source-derived-playback";
     sourceBuildId: string;
-    stationId: string;
+    operationOwner: {
+        kind: "station";
+        stationId: string;
+    } | {
+        kind: "vehicle-attitude";
+        sourceVehicleRef: string;
+    };
+    stationId: string | null;
     equipmentBindingId: string;
     weaponAssignmentId: string;
     weaponClassPath: string;
@@ -108,6 +115,10 @@ export interface VehicleProjectilePlaybackBinding {
     launchAnchor: {
         kind: "visual-occurrence";
         occurrenceId: string;
+    } | {
+        kind: "vehicle-attitude-occurrence";
+        occurrenceId: string;
+        componentName: string;
     } | {
         kind: "station-weapon-attachment";
         stationId: string;
@@ -211,6 +222,15 @@ function guidedProjectile(profile: ProjectileProfile) {
         guided.trackedFovByDistanceCurve !== null &&
             guided.trackedFovByDistanceCurve !== undefined);
 }
+function projectileMovementModePaths(value: unknown) {
+    const candidates = Array.isArray(value) ? value : [value];
+    return [
+        ...new Set(candidates.map(stripObjectPath).filter(Boolean)),
+    ];
+}
+function runtimeActorClass(value: string) {
+    return (value.split(/[/.]/u).at(-1) ?? value).replace(/_\d+$/u, "");
+}
 function unsupported(reason: Exclude<VehicleProjectilePlaybackResolution, {
     state: "ready";
 }>["reason"], detail: string): VehicleProjectilePlaybackResolution {
@@ -257,10 +277,11 @@ function stationWeaponLaunchAnchor(station: CompiledVehicleStationGraph["station
         motionChannels: [...attachment.motionChannels],
     };
 }
-export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph, stationId, weapon, }: {
+export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph, stationId, visualPlacements = [], weapon, }: {
     catalog: WikiWeaponBallisticsDocument;
     stationGraph: CompiledVehicleStationGraph;
-    stationId: string;
+    stationId: string | null;
+    visualPlacements?: readonly VehicleStationGraphVisualPlacement[];
     weapon: VehicleProjectileRuntimeWeapon;
 }): VehicleProjectilePlaybackResolution {
     if (catalog.schemaVersion !== "sigua-weapon-ballistics/v1" ||
@@ -297,16 +318,25 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
     }
     const [mountBinding] = mountBindings;
     const graphStations = stationGraph.stations.filter((station) => station.equipmentRefs.includes(equipmentBindingId));
-    if (graphStations.length === 0) {
-        return unsupported("station-binding-missing", "当前 equipment 没有 Station 归属");
+    const vehicleAttitudeOwned = mountBinding.launchConstraintKind ===
+        "vehicle-attitude" &&
+        graphStations.length === 0 &&
+        stationGraph.vehicleEquipmentRefs.includes(equipmentBindingId);
+    if (!vehicleAttitudeOwned) {
+        if (graphStations.length === 0) {
+            return unsupported("station-binding-missing", "当前 equipment 没有 Station 归属");
+        }
+        if (graphStations.length !== 1) {
+            return unsupported("station-binding-ambiguous", "当前 equipment 同时属于多个 Station");
+        }
+        if (graphStations[0]!.id !== stationId) {
+            return unsupported("station-mismatch", "所选武器不属于当前真实操作 Station");
+        }
     }
-    if (graphStations.length !== 1) {
-        return unsupported("station-binding-ambiguous", "当前 equipment 同时属于多个 Station");
+    else if (stationId !== null) {
+        return unsupported("station-mismatch", "载具姿态武器不能伪装为普通 Station 武器");
     }
-    const [graphStation] = graphStations;
-    if (graphStation.id !== stationId) {
-        return unsupported("station-mismatch", "所选武器不属于当前真实操作 Station");
-    }
+    const graphStation = graphStations[0] ?? null;
     const assignment = catalog.weaponAssignments.find((candidate) => candidate.weaponClassPath === mountBinding.weaponClassPath);
     if (!assignment) {
         return unsupported("mount-binding-missing", "武器挂载无法连接到 projectile assignment");
@@ -327,9 +357,7 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
     if (!projectileProfile) {
         return unsupported("projectile-profile-missing", "武器缺少 projectile profile");
     }
-    const movementModePaths = Array.isArray(projectileProfile.movement.MovementModes)
-        ? projectileProfile.movement.MovementModes.map(stripObjectPath).filter(Boolean)
-        : [];
+    const movementModePaths = projectileMovementModePaths(projectileProfile.movement.MovementModes);
     const movementModes = movementModePaths.map((path) => catalog.movementModes.find((mode) => mode.assetPath === path) ?? null);
     if (movementModes.some((mode) => mode === null) || movementModes.length > 1) {
         return unsupported("movement-mode-unresolved", "弹丸需要当前网页尚未选择的运行时 movement mode");
@@ -339,45 +367,74 @@ export function compileVehicleProjectilePlaybackBinding({ catalog, stationGraph,
         movementModes.some((mode) => mode?.fields.bIsHoming === true)) {
         return unsupported("guidance-live-input-required", "制导段需要实时 aim、LOS 与 controller 输入");
     }
-    const visualStation = stationGraph.visualAttachment.stations.find((candidate) => candidate.catalogSeatIndex === graphStation.catalogSeatIndex);
-    if (!visualStation || visualStation.state !== "closed") {
-        return unsupported("launch-frame-unresolved", "Station 的视觉运动链未闭合");
-    }
-    const visualMembers = [
-        visualStation.pitchAnchor,
-        visualStation.yawAnchor,
-        ...visualStation.pitchMembers,
-        ...visualStation.yawMembers,
-    ].filter((candidate): candidate is NonNullable<typeof candidate> => candidate !== null);
-    const exactEquipmentAnchors = visualMembers.filter((candidate) => candidate.equipmentRefIds?.includes(equipmentBindingId));
-    const exactEquipmentAndSourceAnchors = exactEquipmentAnchors.filter((candidate) => candidate.sourceMeshPath === launchOrigin.sourceMeshPath);
-    const anchorCandidates = exactEquipmentAndSourceAnchors.length > 0
-        ? exactEquipmentAndSourceAnchors
-        : exactEquipmentAnchors.length > 0
-            ? exactEquipmentAnchors
-            : visualMembers.filter((candidate): candidate is NonNullable<typeof candidate> => candidate.sourceMeshPath === launchOrigin.sourceMeshPath);
-    const anchorOccurrenceIds = [
-        ...new Set(anchorCandidates.map((candidate) => candidate.stableOccurrenceId)),
-    ];
-    const launchAnchor: VehicleProjectilePlaybackBinding["launchAnchor"] | null = anchorOccurrenceIds.length === 1
-        ? {
-            kind: "visual-occurrence",
-            occurrenceId: anchorOccurrenceIds[0]!,
+    let anchorOccurrenceIds: string[] = [];
+    let launchAnchor: VehicleProjectilePlaybackBinding["launchAnchor"] | null = null;
+    if (vehicleAttitudeOwned) {
+        const vehicleActorClass = runtimeActorClass(stationGraph.crewSeat.generatedClass);
+        const candidates = visualPlacements.filter((placement) => placement.sourceMeshPath === launchOrigin.sourceMeshPath &&
+            runtimeActorClass(placement.actor) === vehicleActorClass);
+        anchorOccurrenceIds = [
+            ...new Set(candidates.map(({ stableOccurrenceId }) => stableOccurrenceId)),
+        ];
+        if (anchorOccurrenceIds.length === 1) {
+            launchAnchor = {
+                kind: "vehicle-attitude-occurrence",
+                occurrenceId: anchorOccurrenceIds[0]!,
+                componentName: candidates[0]!.name,
+            };
         }
-        : stationWeaponLaunchAnchor(graphStation);
+    }
+    else if (graphStation) {
+        const visualStation = stationGraph.visualAttachment.stations.find((candidate) => candidate.catalogSeatIndex === graphStation.catalogSeatIndex);
+        if (!visualStation || visualStation.state !== "closed") {
+            return unsupported("launch-frame-unresolved", "Station 的视觉运动链未闭合");
+        }
+        const visualMembers = [
+            visualStation.pitchAnchor,
+            visualStation.yawAnchor,
+            ...visualStation.pitchMembers,
+            ...visualStation.yawMembers,
+        ].filter((candidate): candidate is NonNullable<typeof candidate> => candidate !== null);
+        const exactEquipmentAnchors = visualMembers.filter((candidate) => candidate.equipmentRefIds?.includes(equipmentBindingId));
+        const exactEquipmentAndSourceAnchors = exactEquipmentAnchors.filter((candidate) => candidate.sourceMeshPath === launchOrigin.sourceMeshPath);
+        const anchorCandidates = exactEquipmentAndSourceAnchors.length > 0
+            ? exactEquipmentAndSourceAnchors
+            : exactEquipmentAnchors.length > 0
+                ? exactEquipmentAnchors
+                : visualMembers.filter((candidate): candidate is NonNullable<typeof candidate> => candidate.sourceMeshPath === launchOrigin.sourceMeshPath);
+        anchorOccurrenceIds = [
+            ...new Set(anchorCandidates.map((candidate) => candidate.stableOccurrenceId)),
+        ];
+        launchAnchor = anchorOccurrenceIds.length === 1
+            ? {
+                kind: "visual-occurrence",
+                occurrenceId: anchorOccurrenceIds[0]!,
+            }
+            : stationWeaponLaunchAnchor(graphStation);
+    }
     if (!launchAnchor) {
         return unsupported(anchorOccurrenceIds.length === 0
             ? "launch-anchor-missing"
             : "launch-anchor-ambiguous", anchorOccurrenceIds.length === 0
-            ? "Station 中没有与 WeaponMesh1P 同源的炮口锚点"
-            : "Station 中存在多个同源炮口锚点");
+            ? vehicleAttitudeOwned
+                ? "车辆 Actor 中没有与 WeaponMesh1P 同源的姿态炮口锚点"
+                : "Station 中没有与 WeaponMesh1P 同源的炮口锚点"
+            : vehicleAttitudeOwned
+                ? "车辆 Actor 中存在多个同源姿态炮口锚点"
+                : "Station 中存在多个同源炮口锚点");
     }
     return {
         state: "ready",
         binding: {
             evidenceClass: "local-source-derived-playback",
             sourceBuildId: catalog.sourceBuildId,
-            stationId,
+            operationOwner: vehicleAttitudeOwned
+                ? {
+                    kind: "vehicle-attitude",
+                    sourceVehicleRef: stationGraph.sourceVehicleRef,
+                }
+                : { kind: "station", stationId: graphStation!.id },
+            stationId: graphStation?.id ?? null,
             equipmentBindingId,
             weaponAssignmentId,
             weaponClassPath: assignment.weaponClassPath,

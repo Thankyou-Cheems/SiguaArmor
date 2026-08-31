@@ -3426,7 +3426,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             if (event.altKey || event.ctrlKey || event.metaKey ||
                 editableTarget(event.target))
                 return;
-            if (event.code === "Space" && !driverViewActive && station) {
+            if (event.code === "Space" && (driverViewActive || station)) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
                 if (!event.repeat)
@@ -3687,10 +3687,13 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const vehicleOperationSource = vehicleOperationLibrary?.runtimeAttackSourceForId(preview.cardId) ??
         vehicleOperationLibrary?.runtimeAttackSources[0] ?? null;
     const activeOperationGraphStation = preview.stationGraph?.stations.find((station) => station.id === activeTurretStation?.crewSeat.stationId) ?? null;
-    const vehicleOperationWeapons = useMemo<RuntimeAttackSourceWeapon[]>(() => activeOperationGraphStation && vehicleOperationSource
+    const activeOperationEquipmentRefs = driverViewActive
+        ? preview.stationGraph?.vehicleEquipmentRefs ?? []
+        : activeOperationGraphStation?.equipmentRefs ?? [];
+    const vehicleOperationWeapons = useMemo<RuntimeAttackSourceWeapon[]>(() => vehicleOperationSource
         ? vehicleOperationSource.weapons.filter((weapon) => typeof weapon.stationEquipmentId === "string" &&
-            activeOperationGraphStation.equipmentRefs.includes(weapon.stationEquipmentId))
-        : [], [activeOperationGraphStation, vehicleOperationSource]);
+            activeOperationEquipmentRefs.includes(weapon.stationEquipmentId))
+        : [], [activeOperationEquipmentRefs, vehicleOperationSource]);
     useEffect(() => {
         const sightEquipmentRefs = activeGunnerSightStation?.weaponModes.map((mode) => mode.equipmentRef) ??
             [];
@@ -3713,7 +3716,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         }
     }, [activeGunnerSightStation, vehicleOperationWeapons]);
     useEffect(() => {
-        if (activeCrewViewStationId === null || driverViewActive)
+        if (activeCrewViewStationId === null)
             return;
         if (vehicleProjectileResource) {
             setVehicleProjectileResourceState("ready");
@@ -3744,27 +3747,30 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         };
     }, [
         activeCrewViewStationId,
-        driverViewActive,
         vehicleProjectileResource,
     ]);
     const vehicleProjectileResolution = useMemo<VehicleProjectilePlaybackResolution | null>(() => {
-        const stationId = activeTurretStation?.crewSeat.stationId;
+        const stationId = driverViewActive
+            ? null
+            : activeTurretStation?.crewSeat.stationId ?? null;
         if (!vehicleProjectileResource ||
             !preview.stationGraph ||
-            !stationId ||
             !activeOperationWeapon)
             return null;
         return compileVehicleProjectilePlaybackBinding({
             catalog: vehicleProjectileResource.catalog,
             stationGraph: preview.stationGraph,
             stationId,
+            visualPlacements: visual?.placements ?? [],
             weapon: activeOperationWeapon,
         });
     }, [
         activeOperationWeapon,
         activeTurretStation?.crewSeat.stationId,
+        driverViewActive,
         preview.stationGraph,
         vehicleProjectileResource,
+        visual?.placements,
     ]);
     useEffect(() => {
         if (vehicleProjectileResourceState === "loading") {
@@ -8973,8 +8979,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             </button>) : !driverViewActive && gunnerSightPresentationAvailable ? (<button type="button" role="switch" aria-label="显示炮镜遮罩与分划" aria-checked={gunnerSightOverlayEnabled} data-active={gunnerSightOverlayEnabled || undefined} onClick={() => setGunnerSightOverlayEnabled((enabled) => !enabled)}>
               {gunnerSightOverlayEnabled ? "隐藏炮镜" : "显示炮镜"}
             </button>) : null}
-          {!driverViewActive &&
-                !gunnerSightPresentationAvailable &&
+          {(driverViewActive || !gunnerSightPresentationAvailable) &&
                 vehicleOperationWeapons.length > 1 ? (<label className="crew-view-projectile-weapon">
               <span>弹种</span>
               <select value={activeOperationWeapon?.stationEquipmentId ?? ""} onChange={(event) => selectOperationEquipment(event.currentTarget.value)} aria-label="选择真实操作视角武器">
@@ -8983,7 +8988,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                   </option>))}
               </select>
             </label>) : null}
-          {!driverViewActive ? (<button type="button" className="crew-view-projectile-fire" aria-label="按当前载具武器发射源锁定弹体" aria-keyshortcuts="Space" data-state={vehicleProjectileResolution?.state === "ready"
+          {activeOperationWeapon ? (<button type="button" className="crew-view-projectile-fire" aria-label="按当前载具武器发射源锁定弹体" aria-keyshortcuts="Space" data-state={vehicleProjectileResolution?.state === "ready"
                     ? "ready"
                     : vehicleProjectileResourceState} disabled={vehicleProjectileResolution?.state !== "ready"} title={vehicleProjectileResolution?.state === "unsupported"
                     ? vehicleProjectileResolution.detail
@@ -9003,7 +9008,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             {driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}
             <kbd>Esc</kbd>
           </button>
-          {!driverViewActive && vehicleProjectileNotice ? (<output className="crew-view-projectile-status" data-state={vehicleProjectileResolution?.state ??
+          {vehicleProjectileNotice ? (<output className="crew-view-projectile-status" data-state={vehicleProjectileResolution?.state ??
                     vehicleProjectileResourceState}>
               {vehicleProjectileNotice}
             </output>) : null}
