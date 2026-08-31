@@ -24,6 +24,10 @@ import {
 import { dedupeIdenticalVisualPlacements } from "../lib/runtime-visual-occurrence-dedupe";
 import { createAnalysisProjectedMarkMaterial } from "../lib/runtime-projected-mark-material";
 import { dedupeRuntimeSceneTextures } from "../lib/runtime-texture-dedupe";
+import {
+  buildRuntimeVehicleTopDownProjection,
+  type RuntimeVehicleTopDownProjection,
+} from "../lib/runtime-vehicle-topdown-projection";
 import { resolveRuntimeRunningGearHitComponentPoses } from "../lib/runtime-running-gear-hit-pose";
 import {
   createRuntimeSkeletalPoseController,
@@ -4461,6 +4465,8 @@ export function RuntimeVehicleViewer({
   const [turretPoseStates, setTurretPoseStates] = useState<
     Record<string, RuntimeTurretPoseState>
   >({});
+  const [turretTopDownProjection, setTurretTopDownProjection] =
+    useState<RuntimeVehicleTopDownProjection | null>(null);
   const activeTurretStation = runtimeTurretStations.find(
     (station) => station.id === activeTurretStationId,
   ) ?? defaultTurretStation;
@@ -4489,17 +4495,24 @@ export function RuntimeVehicleViewer({
     : 0;
   const turretOrientationIndicators = useMemo<TurretOrientationIndicator[]>(
     () =>
-      runtimeTurretStations.map((station) => ({
-        id: station.id,
-        label: station.label,
-        kind: station.indicatorKind,
-        yawDegrees: runtimeTurretWorldYaw(
-          station,
-          runtimeTurretStations,
-          turretPoseStates,
-        ),
-        active: station.id === activeTurretStation?.id,
-      })),
+      runtimeTurretStations.map((station) => {
+        const relativeYawDegrees = clampTurretYaw(
+          station.turret,
+          turretPoseStates[station.id]?.yawDegrees ?? 0,
+        );
+        return {
+          id: station.id,
+          label: station.label,
+          kind: station.indicatorKind,
+          yawDegrees: runtimeTurretWorldYaw(
+            station,
+            runtimeTurretStations,
+            turretPoseStates,
+          ),
+          relativeYawDegrees,
+          active: station.id === activeTurretStation?.id,
+        };
+      }),
     [activeTurretStation?.id, runtimeTurretStations, turretPoseStates],
   );
   const updateTurretStationPose = useCallback((
@@ -6867,6 +6880,7 @@ export function RuntimeVehicleViewer({
     setActiveCrewViewStationId(null);
     setInfantryPreviewDistanceM(null);
     setArmorThicknessRange(null);
+    setTurretTopDownProjection(null);
     setInitialCameraFitReady(false);
     setExteriorPlaceholderReady(false);
     host.dataset.armorThicknessScale = "absolute";
@@ -8022,6 +8036,25 @@ export function RuntimeVehicleViewer({
           pose.yawDegrees.toFixed(3),
           pose.pitchDegrees.toFixed(3),
         ].join(":")).join(";");
+        const poseByStationId = new Map(
+          poses.map((pose) => [pose.stationId, pose]),
+        );
+        host.closest(".runtime-vehicle-viewer")
+          ?.querySelectorAll<SVGGElement>("[data-topdown-station-id]")
+          .forEach((element) => {
+            const pose = poseByStationId.get(
+              element.dataset.topdownStationId ?? "",
+            );
+            const pivotX = Number(element.dataset.yawPivotX);
+            const pivotY = Number(element.dataset.yawPivotY);
+            if (!pose || !Number.isFinite(pivotX) || !Number.isFinite(pivotY)) {
+              return;
+            }
+            element.setAttribute(
+              "transform",
+              `rotate(${pose.yawDegrees.toFixed(3)} ${pivotX} ${pivotY})`,
+            );
+          });
         visualGroup.updateMatrixWorld(true);
         analysisVisualGroup.updateMatrixWorld(true);
         const crewViewpoint = updateCrewViewpointMarker();
@@ -10004,6 +10037,61 @@ export function RuntimeVehicleViewer({
         }
         },
       );
+      const projectionStations = runtimeTurretStationsRef.current.flatMap(
+        (station) => {
+          if (!station.assembly) return [];
+          const parent = runtimeTurretParentStation(
+            station,
+            runtimeTurretStationsRef.current,
+          );
+          return [{
+            id: station.id,
+            parentId: parent?.id ?? null,
+            depth: runtimeTurretStationDepth(
+              station,
+              runtimeTurretStationsRef.current,
+            ),
+            placementIds: station.assembly.yawPlacementIds,
+            barrelPlacementIds:
+              station.assembly.pitchPlacementIds.length > 0
+                ? station.assembly.pitchPlacementIds
+                : station.assembly.yawPlacementIds,
+            yawPivot: station.assembly.yawPivot,
+          }];
+        },
+      );
+      const topDownProjectionStartedAt = performance.now();
+      const topDownProjection = buildRuntimeVehicleTopDownProjection({
+        occurrences: renderPlacements.flatMap((placement) => {
+          const source = sources.get(placement.assetUrl);
+          return source ? [{
+            stableOccurrenceId: placement.stableOccurrenceId,
+            source,
+            matrix: placement.matrix,
+          }] : [];
+        }),
+        stations: projectionStations,
+      });
+      if (!cancelled) {
+        setTurretTopDownProjection(topDownProjection);
+        host.dataset.turretTopDownProjection = topDownProjection
+          ? "runtime-geometry"
+          : "fallback";
+        host.dataset.turretTopDownSampledVertexCount = String(
+          topDownProjection?.sampledVertexCount ?? 0,
+        );
+        host.dataset.turretTopDownOutputPointCount = String(
+          topDownProjection?.outputPointCount ?? 0,
+        );
+        host.dataset.turretTopDownPayloadBytes = String(
+          topDownProjection
+            ? new TextEncoder().encode(JSON.stringify(topDownProjection)).length
+            : 0,
+        );
+        host.dataset.turretTopDownBuildDurationMs = (
+          performance.now() - topDownProjectionStartedAt
+        ).toFixed(2);
+      }
       renderPlacements.forEach((placement) => {
         const source = sources.get(placement.assetUrl);
         if (!source) throw new Error(`Missing loaded source for ${placement.assetUrl}`);
@@ -11132,6 +11220,7 @@ export function RuntimeVehicleViewer({
             operationOverlay
             stations={runtimeTurretStations}
             orientationIndicators={turretOrientationIndicators}
+            topDownProjection={turretTopDownProjection}
             activeStationId={activeTurretStation.id}
             yawDegrees={clampedTurretYaw}
             pitchDegrees={clampedTurretPitch}
@@ -12011,6 +12100,7 @@ export function RuntimeVehicleViewer({
                 showStationSelector={false}
                 stations={runtimeTurretStations}
                 orientationIndicators={turretOrientationIndicators}
+                topDownProjection={turretTopDownProjection}
                 activeStationId={controlTargetStation.id}
                 yawDegrees={controlTargetYaw}
                 pitchDegrees={controlTargetPitch}
