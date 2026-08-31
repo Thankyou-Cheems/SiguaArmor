@@ -4909,127 +4909,37 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   scrollbar-width: thin;
 }
 
-.viewer-control-deck__header {
-  display: flex;
-  min-height: 28px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 3px 6px 5px;
-  color: var(--text-muted);
-  font-family: var(--font-mono-ui);
-}
-
-.viewer-control-deck__header > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.viewer-control-deck__header > span i {
-  width: 7px;
-  height: 7px;
-  border: 1px solid var(--brand);
-  box-shadow: 0 0 7px rgba(231, 189, 104, 0.42);
-  transform: rotate(45deg);
-}
-
-.viewer-control-deck__header > strong {
-  color: var(--text-dim);
-  font-size: 7px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.viewer-control-section {
-  --viewer-control-section-tone: rgba(231, 189, 104, 0.9);
-  width: 100%;
-  overflow: clip;
-  border: 1px solid rgba(225, 216, 194, 0.16);
-  background: rgba(10, 13, 12, 0.7);
-}
-
-.viewer-control-section > summary {
-  display: flex;
-  min-height: 34px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px 8px;
-  color: rgba(241, 239, 226, 0.7);
-  cursor: pointer;
-  list-style: none;
-  transition: background 140ms ease, color 140ms ease;
-}
-
-.viewer-control-section > summary::-webkit-details-marker {
-  display: none;
-}
-
-.viewer-control-section > summary:hover,
-.viewer-control-section[open] > summary {
-  background: color-mix(in srgb, var(--viewer-control-section-tone) 9%, transparent);
-  color: var(--text);
-}
-
-.viewer-control-section > summary > span {
-  display: inline-flex;
-  min-width: 0;
-  align-items: center;
-  gap: 8px;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-}
-
-.viewer-control-section > summary > span i {
-  width: 7px;
-  height: 7px;
-  flex: none;
-  border-right: 1px solid var(--viewer-control-section-tone);
-  border-bottom: 1px solid var(--viewer-control-section-tone);
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--viewer-control-section-tone) 52%, transparent));
-  transform: rotate(-45deg);
-  transition: transform 160ms ease;
-}
-
-.viewer-control-section[open] > summary > span i {
-  transform: rotate(45deg) translate(-1px, -1px);
-}
-
-.viewer-control-section__status {
-  min-width: 0;
-  overflow: hidden;
-  color: rgba(241, 239, 226, 0.52);
-  font-family: var(--font-mono-ui);
-  font-size: 8px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.viewer-control-section[open] .viewer-control-section__status {
-  color: var(--brand);
-}
-
-.viewer-control-section__status[data-active="true"] {
-  color: var(--brand);
-  text-shadow: 0 0 7px rgba(231, 189, 104, 0.22);
-}
-
-.viewer-control-section__body {
+.viewer-flat-control-list {
   display: grid;
   gap: 4px;
-  padding: 4px;
-  border-top: 1px solid rgba(225, 200, 155, 0.13);
-  background: rgba(4, 7, 5, 0.38);
 }
 
-.viewer-control-section:not([open]) > .viewer-control-section__body {
-  display: none;
+.viewer-flat-control-list > .viewer-spaced-armor-row {
+  order: 10;
+}
+
+.viewer-flat-control-list > .viewer-relative-armor-row {
+  order: 11;
+}
+
+.viewer-flat-control-list > .viewer-crew-occupant-row {
+  order: 20;
+}
+
+.viewer-flat-control-list > .viewer-interaction-hint {
+  order: 30;
+}
+
+.viewer-flat-control-list > .viewer-protection-primary {
+  order: 40;
+}
+
+.viewer-flat-control-list > .viewer-protection-precision {
+  order: 50;
+}
+
+.viewer-flat-control-list > .viewer-protection-legend {
+  order: 60;
 }
 
 .viewer-weapon-panel-launcher {
@@ -5554,75 +5464,6 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 .viewer-crew-occupant-legend b {
   color: inherit;
-}
-
-.viewer-crew-nonspatial-seats {
-  border-top: 1px solid rgba(225, 200, 155, 0.12);
-  color: #8d9ca0;
-}
-
-.viewer-crew-nonspatial-seats summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 6px;
-  padding: 4px 0 2px;
-  cursor: pointer;
-  list-style: none;
-}
-
-.viewer-crew-nonspatial-seats summary::-webkit-details-marker {
-  display: none;
-}
-
-.viewer-crew-nonspatial-seats summary::before {
-  content: "+";
-  grid-column: 2;
-  grid-row: 1;
-  color: rgba(241, 239, 226, 0.45);
-}
-
-.viewer-crew-nonspatial-seats[open] summary::before {
-  content: "−";
-}
-
-.viewer-crew-nonspatial-seats summary b {
-  grid-column: 3;
-  grid-row: 1;
-}
-
-.viewer-crew-nonspatial-seats ul {
-  display: grid;
-  gap: 4px;
-  max-height: 132px;
-  margin: 3px 0 0;
-  padding: 0;
-  overflow: auto;
-  list-style: none;
-}
-
-.viewer-crew-nonspatial-seats li {
-  display: grid;
-  gap: 1px;
-  padding: 4px 5px;
-  border-left: 2px solid rgba(141, 156, 160, 0.38);
-  background: rgba(141, 156, 160, 0.06);
-}
-
-.viewer-crew-nonspatial-seats li strong {
-  color: rgba(216, 226, 228, 0.82);
-  font-weight: 700;
-}
-
-.viewer-crew-nonspatial-seats li span {
-  color: rgba(190, 205, 208, 0.55);
-  overflow-wrap: anywhere;
-}
-
-.viewer-crew-occupant-legend small {
-  padding-top: 3px;
-  border-top: 1px solid rgba(225, 200, 155, 0.12);
-  color: rgba(241, 239, 226, 0.45);
-  font: inherit;
 }
 
 .viewer-physical-pose-row .viewer-physical-pose-switch[data-active="true"] {
