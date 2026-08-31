@@ -131,6 +131,32 @@ test("camera preset keys and distance units inherit one readable type scale", ()
   );
 });
 
+test("weapon-station label uses a vertical side rail without lowering station options", () => {
+  assert.match(
+    viewerStyles,
+    /\.viewer-control-target-slider__station-group > b\s*\{[^}]*writing-mode:\s*vertical-rl;/u,
+  );
+  assert.doesNotMatch(
+    viewerStyles,
+    /\.viewer-control-target-slider__station-group > button\s*\{[^}]*padding-top:/u,
+  );
+});
+
+test("protection-map precision keeps its two label lines intact", () => {
+  assert.match(
+    viewerSource,
+    /viewer-protection-precision__label">\s*<span>防护图<\/span>\s*<span>计算精度<\/span>/u,
+  );
+  assert.doesNotMatch(
+    viewerSource,
+    /viewer-protection-precision__label">防护图<br\s*\/>计算精度<\/span>/u,
+  );
+  assert.match(
+    viewerStyles,
+    /\.viewer-protection-precision__label\s*\{[^}]*white-space:\s*nowrap;/u,
+  );
+});
+
 test("state switches share one slider treatment and category colors stay neutral", () => {
   assert.match(viewerSource, /viewer-state-switch/u);
   assert.match(turretSource, /viewer-state-switch/u);

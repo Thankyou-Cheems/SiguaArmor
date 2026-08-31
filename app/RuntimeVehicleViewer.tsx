@@ -144,7 +144,7 @@ import {
 import { GunnerSightOverlay } from "./GunnerSightOverlay";
 import {
   estimateWeaponHitDps,
-  selectPrimaryWeaponHitDpsTarget,
+  selectPrimaryWeaponHitDpsEstimate,
   singleShotWeaponHitTarget,
   targetPoolsForShot,
   vehicleTargetBurningProfile,
@@ -2083,6 +2083,22 @@ function createRuntimeGroundScale(
   return group;
 }
 
+function setRuntimeGroundScaleVehicleOcclusion(
+  root: THREE.Object3D | null,
+  vehicleOccluded: boolean,
+) {
+  root?.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    const materials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+    materials.forEach((material) => {
+      material.depthTest = vehicleOccluded;
+      material.needsUpdate = true;
+    });
+  });
+}
+
 function shotTerminalDistanceFromFirstHitM(result: EditorNativeShotResult) {
   const traceDistanceAfterPenetrationM =
     result.ballistics.traceDistanceAfterPenetrationM;
@@ -2695,7 +2711,7 @@ function HitDpsTimingCard({
     );
   }
   if (estimates.length === 0) return null;
-  const primaryEstimate = selectPrimaryWeaponHitDpsTarget(
+  const primaryEstimate = selectPrimaryWeaponHitDpsEstimate(
     estimates,
     clickedSemanticKind,
   );
@@ -2707,9 +2723,15 @@ function HitDpsTimingCard({
   const primarySimulation = primaryCandidate.result;
   const primaryPlan = primaryCandidate.plan;
   const primaryPoolLabel = editorPoolLabel(primaryEstimate.poolKind);
+  const primaryIsAmmoRackVehicleKill =
+    primaryEstimate.poolKind === "ammo-rack" &&
+    !primarySimulation.ammoExhausted &&
+    primarySimulation.killTimeSeconds !== null;
   const primaryOutcomeLabel = primaryEstimate.poolKind === "hull"
     ? "击毁载具"
-    : `打坏${primaryPoolLabel}`;
+    : primaryIsAmmoRackVehicleKill
+      ? "击毁载具（弹药架）"
+      : `打坏${primaryPoolLabel}`;
   const primaryTimeLabel = primarySimulation.ammoExhausted
     ? "弹药耗尽"
     : primarySimulation.killTimeSeconds === null
@@ -2722,7 +2744,9 @@ function HitDpsTimingCard({
     : primaryIsOneShot
       ? primaryEstimate.poolKind === "hull"
         ? "单发摧毁"
-        : `单发打坏${primaryPoolLabel}`
+        : primaryIsAmmoRackVehicleKill
+          ? "单发击毁载具（弹药架）"
+          : `单发打坏${primaryPoolLabel}`
       : `${primaryTimeLabel} ${primaryOutcomeLabel}`;
   const primaryPlanLabel = primaryPlan.mode === "burn"
     ? "连续射击"
@@ -4153,6 +4177,7 @@ export function RuntimeVehicleViewer({
   const turretPoseStatesRef = useRef<Record<string, RuntimeTurretPoseState>>({});
   const appliedTurretNavigationKeyRef = useRef("");
   const modeRef = useRef(mode);
+  const groundScaleRef = useRef<THREE.Group | null>(null);
   const weaponIndexRef = useRef(-1);
   const weaponOptionIndexRef = useRef(-1);
   const pendingAttackWeaponSelectionRef = useRef<{
@@ -6517,7 +6542,14 @@ export function RuntimeVehicleViewer({
       hostRef.current.dataset.exteriorSpacedArmorHighlight = String(
         exteriorSpacedArmorHighlight,
       );
+      hostRef.current.dataset.groundScaleDepthMode = mode === "exterior"
+        ? "vehicle-occluded"
+        : "overlay";
     }
+    setRuntimeGroundScaleVehicleOcclusion(
+      groundScaleRef.current,
+      mode === "exterior",
+    );
     activateAssetModeRef.current?.(mode);
     setRealtimePointer(null);
     if (protectionEnabledRef.current) scheduleProtectionMapRef.current?.();
@@ -8800,6 +8832,9 @@ export function RuntimeVehicleViewer({
         disposeScene(gridHelper);
       }
       if (groundScale) {
+        if (groundScaleRef.current === groundScale) {
+          groundScaleRef.current = null;
+        }
         scene.remove(groundScale);
         disposeScene(groundScale);
       }
@@ -8845,6 +8880,11 @@ export function RuntimeVehicleViewer({
       groundScale = createRuntimeGroundScale(
         groundScaleLengthM,
         groundScaleWidthM,
+      );
+      groundScaleRef.current = groundScale;
+      setRuntimeGroundScaleVehicleOcclusion(
+        groundScale,
+        modeRef.current === "exterior",
       );
       const groundScaleOriginX = groundScaleOriginWorldX - center.x;
       const groundScaleOriginZ = groundScaleOriginWorldZ - center.z;
@@ -8893,7 +8933,9 @@ export function RuntimeVehicleViewer({
       host.dataset.groundScaleVehicleClearanceM = String(
         groundReferenceClearanceM,
       );
-      host.dataset.groundScaleDepthMode = "overlay";
+      host.dataset.groundScaleDepthMode = modeRef.current === "exterior"
+        ? "vehicle-occluded"
+        : "overlay";
       host.dataset.groundScaleOriginX = String(groundScaleOriginX);
       host.dataset.groundScaleOriginY = String(groundY + 0.006);
       host.dataset.groundScaleOriginZ = String(groundScaleOriginZ);
@@ -10447,6 +10489,7 @@ export function RuntimeVehicleViewer({
       visualGroupRef.current = null;
       analysisVisualGroupRef.current = null;
       hitGroupRef.current = null;
+      groundScaleRef.current = null;
       applyCameraNavigationRef.current = null;
       analysisMeshRef.current = null;
       parsedHitRef.current = null;
@@ -11424,7 +11467,10 @@ export function RuntimeVehicleViewer({
               data-disabled={!protectionActive}
               data-super={protectionPrecision === RUNTIME_PROTECTION_MAP_SUPER_PRECISION}
             >
-              <span className="viewer-protection-precision__label">防护图<br />计算精度</span>
+              <span className="viewer-protection-precision__label">
+                <span>防护图</span>
+                <span>计算精度</span>
+              </span>
               <span
                 className="viewer-protection-precision__range"
                 data-super={protectionPrecision === RUNTIME_PROTECTION_MAP_SUPER_PRECISION}

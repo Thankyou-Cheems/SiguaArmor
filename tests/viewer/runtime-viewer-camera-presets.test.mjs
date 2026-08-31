@@ -161,3 +161,18 @@ test("every ground direction composes with every observation distance", () => {
     }
   }
 });
+
+test("exterior mode lets the vehicle occlude the ground scale", () => {
+  assert.match(
+    viewerSource,
+    /function setRuntimeGroundScaleVehicleOcclusion\([\s\S]*?material\.depthTest = vehicleOccluded;/u,
+  );
+  assert.match(
+    viewerSource,
+    /setRuntimeGroundScaleVehicleOcclusion\(\s*groundScaleRef\.current,\s*mode === "exterior",?\s*\)/u,
+  );
+  assert.match(
+    viewerSource,
+    /groundScaleDepthMode = mode === "exterior"\s*\? "vehicle-occluded"\s*:\s*"overlay"/u,
+  );
+});

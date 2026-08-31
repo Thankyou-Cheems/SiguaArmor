@@ -3,11 +3,57 @@ import test from "node:test";
 
 import {
   estimateWeaponHitDps,
+  selectPrimaryWeaponHitDpsEstimate,
   selectPrimaryWeaponHitDpsTarget,
   singleShotWeaponHitTarget,
   targetPoolsForShot,
   vehicleTargetBurningProfile,
 } from "../../lib/weapon-hit-dps.ts";
+
+test("an earlier ammo-rack loss replaces the later hull depletion headline", () => {
+  const estimates = estimateWeaponHitDps(
+    {
+      id: "nm225",
+      label: "NM225",
+      sourceLabel: "test vehicle",
+      assignmentId: "autocannon",
+      sourceCardId: "test--vehicle",
+      sourceRawName: "BP_TestVehicle",
+      damagePerShot: 1,
+      timeBetweenShotsSeconds: 1,
+      magazineSize: 30,
+      tacticalReloadSeconds: 5,
+      dryReloadSeconds: 5,
+      overheat: null,
+    },
+    {
+      damage: [{
+        poolIndex: 0,
+        poolId: "vehicle-hull",
+        poolKind: "hull",
+        maxHealth: 2000,
+        effectiveDamage: 100,
+        certainty: "resolved",
+      }, {
+        poolIndex: 2,
+        poolId: "ammo-rack",
+        poolKind: "ammo-rack",
+        maxHealth: 2000,
+        effectiveDamage: 525,
+        certainty: "resolved",
+      }],
+    },
+    { targetHealth: 1, horizonSeconds: 60, useMagazineReload: true },
+  );
+
+  const primary = selectPrimaryWeaponHitDpsEstimate(estimates, "armor");
+  assert.equal(primary?.poolKind, "ammo-rack");
+  assert.equal(
+    primary?.optimization.recommended?.result.killTimeSeconds ??
+      primary?.optimization.burn.result.killTimeSeconds,
+    3,
+  );
+});
 
 test("vehicle burning facts resolve through the exact burning damage resistance", () => {
   const targetBurning = vehicleTargetBurningProfile({
