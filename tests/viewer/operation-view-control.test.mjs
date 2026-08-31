@@ -2,9 +2,25 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  OPERATION_VIEW_STANDARD_ASPECT_RATIO,
+  OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES,
   operationViewKeyAction,
+  operationViewHorizontalFovForMagnification,
   operationViewScenePresentation,
 } from "../../lib/operation-view-control.ts";
+
+test("operation view uses a 16:9 90-degree horizontal-FOV reference", () => {
+  assert.equal(OPERATION_VIEW_STANDARD_ASPECT_RATIO, 16 / 9);
+  assert.equal(OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES, 90);
+  assert.equal(operationViewHorizontalFovForMagnification(1), 90);
+  assert.ok(
+    Math.abs(
+      operationViewHorizontalFovForMagnification(2.1) -
+        50.92669012374322,
+    ) < 1e-10,
+  );
+  assert.equal(operationViewHorizontalFovForMagnification(0), null);
+});
 
 test("operation view uses a visible world reference instead of a transparent black scene", () => {
   assert.deepEqual(operationViewScenePresentation(false), {

@@ -6,6 +6,24 @@ export interface OperationViewKeyInput {
   zoomCount: number;
 }
 
+export const OPERATION_VIEW_STANDARD_ASPECT_RATIO = 16 / 9;
+export const OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES = 90;
+
+export function operationViewHorizontalFovForMagnification(
+  magnification: number | null | undefined,
+) {
+  if (
+    typeof magnification !== "number" ||
+    !Number.isFinite(magnification) ||
+    magnification <= 0
+  ) return null;
+  const baseHalfAngleRadians =
+    OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES * Math.PI / 360;
+  return 2 * Math.atan(
+    Math.tan(baseHalfAngleRadians) / magnification,
+  ) * 180 / Math.PI;
+}
+
 export type OperationViewKeyAction =
   | { kind: "pose"; yawDelta: number; pitchDelta: number }
   | { kind: "zoom"; zoomIndex: number };

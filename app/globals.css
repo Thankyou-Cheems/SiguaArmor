@@ -145,6 +145,7 @@
   pointer-events: none;
   color: #f2d88d;
   isolation: isolate;
+  container-type: size;
 }
 
 .gunner-sight-overlay__layers,
@@ -158,6 +159,14 @@
 
 .gunner-sight-overlay__layers {
   z-index: 0;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  width: min(100cqw, calc(100cqh * 16 / 9));
+  height: min(100cqh, calc(100cqw * 9 / 16));
+  overflow: hidden;
+  transform: translate(-50%, -50%);
 }
 
 .gunner-sight-overlay__layout {
@@ -259,8 +268,23 @@
 .runtime-vehicle-viewer[data-crew-view-active="true"] {
   position: relative !important;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, #27312b 0 58%, #1c241f 58% 100%) !important;
+  background: #000 !important;
+}
+
+.runtime-vehicle-viewer[data-crew-view-active="true"] .viewer-canvas {
+  background: #000;
+  container-type: size;
+}
+
+.runtime-vehicle-viewer[data-crew-view-active="true"]
+  .runtime-vehicle-viewer__host {
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  width: min(100cqw, calc(100cqh * 16 / 9));
+  height: min(100cqh, calc(100cqw * 9 / 16));
+  transform: translate(-50%, -50%);
 }
 
 .runtime-vehicle-viewer[data-crew-view-active="true"]
@@ -313,10 +337,10 @@
 .crew-view-operation-panel {
   position: absolute;
   z-index: 13;
-  bottom: 8px;
-  left: 8px;
+  top: 42px;
+  right: 8px;
   width: min(250px, calc(100% - 16px));
-  max-height: calc(100% - 72px);
+  max-height: calc(100% - 50px);
   overflow-y: auto;
   border: 1px solid rgba(242, 216, 141, 0.28);
   background: rgba(5, 8, 7, 0.82);
