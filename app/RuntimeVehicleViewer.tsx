@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
+import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
@@ -464,6 +464,8 @@ const SHOT_EXPLOSION_DURATION_MS =
   SHOT_EXPLOSION_EXPANSION_DURATION_MS + SHOT_EXPLOSION_FADE_DURATION_MS;
 const PROTECTION_MAP_DEBOUNCE_MS = 150;
 const DRIVER_VIEWPOINT_ID = "driver-f1";
+const CAMERA_CONTROL_TARGET_ID = "camera";
+const DRIVER_CONTROL_TARGET_ID = "driver-f1-control";
 const VIEWER_MODES: Array<[ViewerAssetMode, string]> = [
   ["armor", "装甲"],
   ["interior", "内构"],
@@ -4545,7 +4547,10 @@ export function RuntimeVehicleViewer({
   const [activeCrewViewStationId, setActiveCrewViewStationId] =
     useState<string | null>(null);
   const [activeCrewViewZoomIndex, setActiveCrewViewZoomIndex] = useState(0);
-  const [weaponPanelOpen, setWeaponPanelOpen] = useState(false);
+  const [controlPanelOpen, setControlPanelOpen] = useState(false);
+  const [controlTargetId, setControlTargetId] = useState(
+    CAMERA_CONTROL_TARGET_ID,
+  );
   const [crewViewpointMarkerEnabled, setCrewViewpointMarkerEnabled] =
     useState(false);
   const [driverViewpointMarkerEnabled, setDriverViewpointMarkerEnabled] =
@@ -4559,7 +4564,7 @@ export function RuntimeVehicleViewer({
     useState(true);
   useEffect(() => {
     activeCrewViewStationIdRef.current = activeCrewViewStationId;
-    if (activeCrewViewStationId !== null) setWeaponPanelOpen(false);
+    if (activeCrewViewStationId !== null) setControlPanelOpen(false);
   }, [activeCrewViewStationId]);
   useEffect(() => {
     crewViewpointMarkerEnabledRef.current = crewViewpointMarkerEnabled;
@@ -4582,7 +4587,8 @@ export function RuntimeVehicleViewer({
   useEffect(() => {
     crewOccupantDisplayEnabledRef.current = false;
     crewHitProxyDisplayEnabledRef.current = false;
-    setWeaponPanelOpen(false);
+    setControlPanelOpen(false);
+    setControlTargetId(CAMERA_CONTROL_TARGET_ID);
     driverViewpointMarkerEnabledRef.current = false;
     driverMaskEnabledRef.current = true;
     setDriverViewpointMarkerEnabled(false);
@@ -4591,11 +4597,38 @@ export function RuntimeVehicleViewer({
     setCrewHitProxyDisplayEnabled(false);
   }, [preview.visualVehicleId]);
   const driverViewActive = activeCrewViewStationId === DRIVER_VIEWPOINT_ID;
+  const controlTargetStation = runtimeTurretStations.find(
+    ({ id }) => id === controlTargetId,
+  ) ?? null;
+  const controlTargetPose = controlTargetStation
+    ? turretPoseStates[controlTargetStation.id] ?? {
+        yawDegrees: 0,
+        pitchDegrees: 0,
+      }
+    : { yawDegrees: 0, pitchDegrees: 0 };
+  const controlTargetYaw = controlTargetStation
+    ? clampTurretYaw(controlTargetStation.turret, controlTargetPose.yawDegrees)
+    : 0;
+  const controlTargetPitch = controlTargetStation
+    ? clampTurretPitch(
+        controlTargetStation.turret,
+        controlTargetYaw,
+        controlTargetPose.pitchDegrees,
+      )
+    : 0;
+  const controlTargetLabel = controlTargetId === DRIVER_CONTROL_TARGET_ID
+    ? "驾驶员 · F1"
+    : controlTargetStation?.label ?? (
+        RUNTIME_VIEWER_CAMERA_VIEWS.find(({ id }) => id === activeCameraView)
+          ?.label ?? "自由相机"
+      );
   useEffect(() => {
-    if (!activeTurretStation) {
-      setWeaponPanelOpen(false);
-    }
-  }, [activeTurretStation]);
+    if (
+      controlTargetId !== CAMERA_CONTROL_TARGET_ID &&
+      controlTargetId !== DRIVER_CONTROL_TARGET_ID &&
+      !runtimeTurretStations.some(({ id }) => id === controlTargetId)
+    ) setControlTargetId(CAMERA_CONTROL_TARGET_ID);
+  }, [controlTargetId, runtimeTurretStations]);
   useEffect(() => {
     setGunnerSightOverlayEnabled(true);
   }, [gunnerSight?.sourceDataRevision]);
@@ -10761,7 +10794,8 @@ export function RuntimeVehicleViewer({
         gunnerSightPresentationAvailable ? "available" : "absent"
       }
       data-gunner-sight-visible={gunnerSightOverlayVisible || undefined}
-      data-weapon-panel={weaponPanelOpen ? "open" : "closed"}
+      data-control-panel={controlPanelOpen ? "open" : "closed"}
+      data-control-target={controlTargetId}
       data-crew-view-active={activeCrewViewStationId !== null || undefined}
       data-driver-view-active={driverViewActive || undefined}
       data-driver-mask-available={driverMaskAvailable || undefined}
@@ -11522,119 +11556,6 @@ export function RuntimeVehicleViewer({
             </details>
             <details
               className="viewer-control-section"
-              data-control-section="camera"
-            >
-              <summary>
-                <span><i aria-hidden="true" />相机与姿态</span>
-                <strong className="viewer-control-section__status">
-                  {RUNTIME_VIEWER_CAMERA_VIEWS.find(
-                    ({ id }) => id === activeCameraView,
-                  )?.label ?? "自由"}
-                </strong>
-              </summary>
-              <div className="viewer-control-section__body">
-            <RuntimeViewerCameraControls
-              activeView={activeCameraView}
-              infantryDistanceM={infantryPreviewDistanceM}
-              disabled={!initialCameraFitReady}
-              onView={(viewId) => applyCameraViewPresetRef.current?.(viewId)}
-              onInfantryDistance={(distanceM) =>
-                applyInfantryDistancePreviewRef.current?.(distanceM)}
-              onFree={() => enterFreeCameraViewRef.current?.()}
-            />
-            <div
-              className="viewer-driver-view-controls"
-              data-mask-available={driverMaskAvailable || undefined}
-            >
-              <div className="viewer-driver-view-controls__heading">
-                <span>驾驶员视角</span>
-                <strong>
-                  {driverMaskAvailable ? "专属遮罩" : "无专属遮罩"}
-                </strong>
-              </div>
-              <button
-                className="viewer-state-switch"
-                type="button"
-                role="switch"
-                aria-label="显示驾驶员观察点"
-                aria-checked={driverViewpointMarkerEnabled}
-                data-active={driverViewpointMarkerEnabled || undefined}
-                onClick={() => {
-                  const enabled = !driverViewpointMarkerEnabledRef.current;
-                  driverViewpointMarkerEnabledRef.current = enabled;
-                  setDriverViewpointMarkerEnabled(enabled);
-                  applyTurretPoseRef.current?.();
-                }}
-              >
-                <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
-                <span>驾驶员观察点</span>
-                <strong>{driverViewpointMarkerEnabled ? "显示" : "隐藏"}</strong>
-              </button>
-              <button
-                className="viewer-driver-view-controls__enter"
-                type="button"
-                data-active={driverViewActive || undefined}
-                onClick={() => {
-                  if (driverViewActive) exitCrewViewpointRef.current?.();
-                  else enterDriverViewpointRef.current?.();
-                }}
-              >
-                {driverViewActive ? "退出驾驶员视角" : "进入真实驾驶视角"}
-              </button>
-            </div>
-            <div className="viewer-physical-pose-row">
-              <button
-                className="viewer-protection-switch viewer-state-switch viewer-physical-pose-switch"
-                type="button"
-                role="switch"
-                aria-label="真实物理状态"
-                aria-checked={physicalPoseActive}
-                data-active={physicalPoseActive}
-                disabled={!chassisPose}
-                title={chassisPose
-                  ? [
-                      "水平地面 normal-time RuntimeProbe 的稳定刚体与轮组实际输出。",
-                      `俯仰 ${chassisPose.pitchDeg >= 0 ? "+" : ""}${chassisPose.pitchDeg.toFixed(2)}°，`,
-                      `横滚 ${chassisPose.rollDeg >= 0 ? "+" : ""}${chassisPose.rollDeg.toFixed(2)}°，`,
-                      `Actor 原点相对地面 ${chassisPose.heightAbovePlaneCm >= 0 ? "+" : ""}${chassisPose.heightAbovePlaneCm.toFixed(2)} cm。`,
-                      vehicleMeshObservedSuspensionPose?.currentVersionValidation.state ===
-                        "exact-class-sentinel-validated"
-                        ? "该 exact class 已在 Squad 10.5.3 复测，当前骨骼输出与展示数据一致。"
-                        : vehiclePlanarSuspensionCoverage?.status ===
-                            "not-applicable"
-                          ? `该 exact generated class 不适用可视轮组姿态（${vehiclePlanarSuspensionCoverage.reason}）；刚体仍使用实际稳定姿态。`
-                          : vehicleMeshSkeletalPoseEvidence ===
-                              "reference-equivalent"
-                            ? "该 occurrence 的实际轮组骨与 reference 等价；关闭时恢复 reference。"
-                            : vehicleMeshSkeletalPoseEvidence ===
-                                "observed-stable"
-                              ? "使用 normal-time observed 稳定骨骼；10.5.3 已分别复测履带、轮式、轻型履带和卡车路径。"
-                              : vehicleMeshSkeletalPoseEvidence ===
-                                  "observed-snapshot"
-                                ? "使用 observed snapshot 骨骼；关闭时恢复 inverse-bind reference。"
-                                : "该视觉包没有可切换的 Vehicle Mesh 轮组骨姿态。",
-                    ].join(" ")
-                  : "该 exact generated class 没有稳定收敛的运行时底盘姿态；不会猜测或套用相近载具。"}
-                onClick={() => setPhysicalPoseEnabled((enabled) => !enabled)}
-              >
-                <span
-                  className="viewer-protection-switch__track viewer-state-switch__track"
-                  aria-hidden="true"
-                >
-                  <span />
-                </span>
-                <span>真实物理状态</span>
-                <strong>{chassisPose
-                  ? physicalPoseActive
-                    ? "开启"
-                    : "关闭"
-                  : "无数据"}</strong>
-              </button>
-            </div>
-              </div>
-            </details>
-            <details
-              className="viewer-control-section"
               data-control-section="crew"
             >
               <summary>
@@ -11778,103 +11699,217 @@ export function RuntimeVehicleViewer({
         </div>
       </div>
 
-      {!weaponPanelOpen && activeTurretStation ? (
+      {!controlPanelOpen ? (
         <button
           className="viewer-weapon-panel-launcher"
           type="button"
           aria-controls="viewer-weapon-panel"
           aria-expanded="false"
-          onClick={() => setWeaponPanelOpen(true)}
+          aria-label="打开视角与武器站控制"
+          onClick={() => setControlPanelOpen(true)}
         >
           <span>
             <i aria-hidden="true" />
-            <b>火控与武器站</b>
-            <small>右侧面板</small>
+            <b>视角与武器站</b>
           </span>
-          <strong>
-            {activeCrewViewStationId === activeTurretStation.id
-              ? "炮手视角"
-              : activeTurretStation.label}
-          </strong>
+          <strong>{controlTargetLabel}</strong>
           <em aria-hidden="true">‹</em>
         </button>
       ) : null}
 
-      {weaponPanelOpen && activeTurretStation ? (
+      {controlPanelOpen ? (
         <aside
           className="viewer-weapon-panel"
           id="viewer-weapon-panel"
-          aria-label="武器站与真实操作视角"
+          aria-label="视角与武器站控制"
         >
-          <button
-            className="viewer-weapon-panel__collapse"
-            type="button"
-            onClick={() => setWeaponPanelOpen(false)}
-            aria-label="收起武器站与炮镜面板"
+          <div className="viewer-control-target-row">
+            <div
+              className="viewer-control-target-slider"
+              role="tablist"
+              aria-label="选择视角或操控位置"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={controlTargetId === CAMERA_CONTROL_TARGET_ID}
+                data-active={controlTargetId === CAMERA_CONTROL_TARGET_ID || undefined}
+                onClick={() => setControlTargetId(CAMERA_CONTROL_TARGET_ID)}
+              >
+                相机
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={controlTargetId === DRIVER_CONTROL_TARGET_ID}
+                data-active={controlTargetId === DRIVER_CONTROL_TARGET_ID || undefined}
+                onClick={() => setControlTargetId(DRIVER_CONTROL_TARGET_ID)}
+              >
+                驾驶 · F1
+              </button>
+              {runtimeTurretStations.map((station) => (
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={controlTargetId === station.id}
+                  data-active={controlTargetId === station.id || undefined}
+                  title={`${station.label} · ${station.equipmentLabel}`}
+                  onClick={() => {
+                    setControlTargetId(station.id);
+                    setActiveTurretStationId(station.id);
+                    commitTurretNavigation(station.id);
+                  }}
+                  key={station.id}
+                >
+                  {station.label}
+                </button>
+              ))}
+            </div>
+            <button
+              className="viewer-weapon-panel__collapse"
+              type="button"
+              onClick={() => setControlPanelOpen(false)}
+              aria-label="收起视角与武器站控制"
+              title="收起"
+            >
+              <ChevronRight size={15} aria-hidden="true" />
+            </button>
+          </div>
+          <div
+            className="viewer-weapon-panel__body"
+            data-control-target={controlTargetId}
           >
-            收起 ›
-          </button>
-          <div className="viewer-weapon-panel__body">
-            <TurretPreviewControls
-              embedded
-              stations={runtimeTurretStations}
-              orientationIndicators={turretOrientationIndicators}
-              activeStationId={activeTurretStation.id}
-              yawDegrees={clampedTurretYaw}
-              pitchDegrees={clampedTurretPitch}
-              onStationChange={(stationId) => {
-                setActiveTurretStationId(stationId);
-                if (activeCrewViewStationId !== null) {
-                  enterCrewViewpointRef.current?.(stationId);
+            {controlTargetId === CAMERA_CONTROL_TARGET_ID ? (
+              <div className="viewer-unified-camera-controls">
+                <RuntimeViewerCameraControls
+                  activeView={activeCameraView}
+                  infantryDistanceM={infantryPreviewDistanceM}
+                  disabled={!initialCameraFitReady}
+                  onView={(viewId) => applyCameraViewPresetRef.current?.(viewId)}
+                  onInfantryDistance={(distanceM) =>
+                    applyInfantryDistancePreviewRef.current?.(distanceM)}
+                  onFree={() => enterFreeCameraViewRef.current?.()}
+                />
+                <div className="viewer-physical-pose-row">
+                  <button
+                    className="viewer-state-switch viewer-physical-pose-switch"
+                    type="button"
+                    role="switch"
+                    aria-label="真实物理状态"
+                    aria-checked={physicalPoseActive}
+                    data-active={physicalPoseActive}
+                    disabled={!chassisPose}
+                    title={chassisPose
+                      ? `稳定物理姿态：俯仰 ${chassisPose.pitchDeg.toFixed(2)}°，横滚 ${chassisPose.rollDeg.toFixed(2)}°`
+                      : "当前载具没有稳定收敛的运行时底盘姿态"}
+                    onClick={() => setPhysicalPoseEnabled((enabled) => !enabled)}
+                  >
+                    <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
+                    <span>真实物理状态</span>
+                    <strong>{chassisPose
+                      ? physicalPoseActive ? "开启" : "关闭"
+                      : "无数据"}</strong>
+                  </button>
+                </div>
+              </div>
+            ) : controlTargetId === DRIVER_CONTROL_TARGET_ID ? (
+              <div
+                className="viewer-driver-view-controls"
+                data-mask-available={driverMaskAvailable || undefined}
+              >
+                <span className="viewer-control-inline-status">
+                  {driverMaskAvailable ? "专属遮罩" : "无专属遮罩"}
+                </span>
+                <button
+                  className="viewer-state-switch"
+                  type="button"
+                  role="switch"
+                  aria-label="显示驾驶员观察点"
+                  aria-checked={driverViewpointMarkerEnabled}
+                  data-active={driverViewpointMarkerEnabled || undefined}
+                  onClick={() => {
+                    const enabled = !driverViewpointMarkerEnabledRef.current;
+                    driverViewpointMarkerEnabledRef.current = enabled;
+                    setDriverViewpointMarkerEnabled(enabled);
+                    applyTurretPoseRef.current?.();
+                  }}
+                >
+                  <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
+                  <span>驾驶员观察点</span>
+                  <strong>{driverViewpointMarkerEnabled ? "显示" : "隐藏"}</strong>
+                </button>
+                <button
+                  className="viewer-driver-view-controls__enter"
+                  type="button"
+                  data-active={driverViewActive || undefined}
+                  onClick={() => {
+                    if (driverViewActive) exitCrewViewpointRef.current?.();
+                    else {
+                      setControlPanelOpen(false);
+                      enterDriverViewpointRef.current?.();
+                    }
+                  }}
+                >
+                  {driverViewActive ? "退出驾驶员视角" : "进入真实驾驶视角"}
+                </button>
+              </div>
+            ) : controlTargetStation ? (
+              <TurretPreviewControls
+                embedded
+                showStationSelector={false}
+                stations={runtimeTurretStations}
+                orientationIndicators={turretOrientationIndicators}
+                activeStationId={controlTargetStation.id}
+                yawDegrees={controlTargetYaw}
+                pitchDegrees={controlTargetPitch}
+                onStationChange={() => undefined}
+                onYawChange={(yawDegrees) => {
+                  updateTurretStationPose(
+                    controlTargetStation,
+                    yawDegrees,
+                    controlTargetPose.pitchDegrees,
+                  );
+                }}
+                onPitchChange={(pitchDegrees) => {
+                  updateTurretStationPose(
+                    controlTargetStation,
+                    controlTargetPose.yawDegrees,
+                    pitchDegrees,
+                  );
+                }}
+                onReset={() => {
+                  const nextPoseStates = updateTurretStationPose(
+                    controlTargetStation,
+                    0,
+                    0,
+                  );
+                  commitTurretNavigation(
+                    controlTargetStation.id,
+                    nextPoseStates,
+                  );
+                }}
+                viewpointActive={
+                  activeCrewViewStationId === controlTargetStation.id
                 }
-                commitTurretNavigation(stationId);
-              }}
-              onYawChange={(yawDegrees) => {
-                updateTurretStationPose(
-                  activeTurretStation,
-                  yawDegrees,
-                  activeTurretPose.pitchDegrees,
-                );
-              }}
-              onPitchChange={(pitchDegrees) => {
-                updateTurretStationPose(
-                  activeTurretStation,
-                  activeTurretPose.yawDegrees,
-                  pitchDegrees,
-                );
-              }}
-              onReset={() => {
-                const nextPoseStates = updateTurretStationPose(
-                  activeTurretStation,
-                  0,
-                  0,
-                );
-                commitTurretNavigation(
-                  activeTurretStation.id,
-                  nextPoseStates,
-                );
-              }}
-              viewpointActive={
-                activeCrewViewStationId === activeTurretStation.id
-              }
-              viewpointMarkerEnabled={crewViewpointMarkerEnabled}
-              onViewpointMarkerToggle={() => {
-                const enabled = !crewViewpointMarkerEnabledRef.current;
-                crewViewpointMarkerEnabledRef.current = enabled;
-                setCrewViewpointMarkerEnabled(enabled);
-                applyTurretPoseRef.current?.();
-              }}
-              onViewpointToggle={(stationId) => {
-                if (activeCrewViewStationId === stationId) {
-                  exitCrewViewpointRef.current?.();
-                } else {
-                  setWeaponPanelOpen(false);
-                  enterCrewViewpointRef.current?.(stationId);
-                }
-              }}
-              onInteractionEnd={() =>
-                commitTurretNavigation(activeTurretStation.id)}
-            />
+                viewpointMarkerEnabled={crewViewpointMarkerEnabled}
+                onViewpointMarkerToggle={() => {
+                  const enabled = !crewViewpointMarkerEnabledRef.current;
+                  crewViewpointMarkerEnabledRef.current = enabled;
+                  setCrewViewpointMarkerEnabled(enabled);
+                  applyTurretPoseRef.current?.();
+                }}
+                onViewpointToggle={(stationId) => {
+                  if (activeCrewViewStationId === stationId) {
+                    exitCrewViewpointRef.current?.();
+                  } else {
+                    setControlPanelOpen(false);
+                    enterCrewViewpointRef.current?.(stationId);
+                  }
+                }}
+                onInteractionEnd={() =>
+                  commitTurretNavigation(controlTargetStation.id)}
+              />
+            ) : null}
           </div>
         </aside>
       ) : null}

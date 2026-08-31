@@ -19,17 +19,17 @@ const viewerStyles = await readFile(
   "utf8",
 );
 
-test("left 3D controls keep only the three render choices above feature groups", () => {
+test("left 3D controls keep render choices above two non-camera feature groups", () => {
   const sectionIds = [...viewerSource.matchAll(
     /data-control-section="([^"]+)"/gu,
   )].map((match) => match[1]);
 
-  assert.deepEqual(sectionIds, ["analysis", "camera", "crew"]);
+  assert.deepEqual(sectionIds, ["analysis", "crew"]);
   assert.doesNotMatch(viewerSource, /场景与分析/u);
   assert.doesNotMatch(viewerSource, /显示模式/u);
   assert.match(viewerSource, /装甲与分析/u);
-  assert.match(viewerSource, /相机与姿态/u);
   assert.match(viewerSource, /乘员显示/u);
+  assert.doesNotMatch(viewerSource, /data-control-section="camera"/u);
   assert.doesNotMatch(viewerSource, /data-control-section="weapon"/u);
   assert.equal(
     sectionIds.every((sectionId) => viewerSource.includes(
@@ -57,16 +57,21 @@ test("render mode remains visible while feature groups expose collapsed status",
   );
 });
 
-test("weapon controls open from a dedicated right-side launcher and panel", () => {
-  assert.match(viewerSource, /const \[weaponPanelOpen, setWeaponPanelOpen\]/u);
+test("camera, driver and station controls share one flat right-side panel", () => {
+  assert.match(viewerSource, /const \[controlPanelOpen, setControlPanelOpen\]/u);
+  assert.match(viewerSource, /const \[controlTargetId, setControlTargetId\]/u);
   assert.match(viewerSource, /className="viewer-weapon-panel-launcher"/u);
   assert.match(viewerSource, /aria-controls="viewer-weapon-panel"/u);
   assert.match(viewerSource, /id="viewer-weapon-panel"/u);
   assert.match(viewerSource, /className="viewer-weapon-panel"/u);
   assert.match(
     viewerSource,
-    /<TurretPreviewControls[\s\S]*?embedded/u,
+    /className="viewer-control-target-slider"[\s\S]*?相机[\s\S]*?驾驶 · F1/u,
   );
+  assert.match(viewerSource, /showStationSelector=\{false\}/u);
+  assert.match(viewerSource, /<RuntimeViewerCameraControls/u);
+  assert.match(viewerSource, /<ChevronRight size=\{15\}/u);
+  assert.doesNotMatch(viewerSource, /收起 ›/u);
   assert.match(turretSource, /embedded\?:\s*boolean/u);
   assert.match(
     turretSource,
@@ -84,6 +89,8 @@ test("weapon controls open from a dedicated right-side launcher and panel", () =
     viewerStyles,
     /\.viewer-weapon-panel-launcher\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*12px;/u,
   );
+  assert.match(viewerStyles, /\.viewer-control-target-row/u);
+  assert.match(viewerStyles, /\.viewer-control-target-slider/u);
   assert.ok(
     viewerSource.indexOf('className="viewer-weapon-panel-launcher"') >
       viewerSource.indexOf('className="viewer-interaction-hint'),
