@@ -4,10 +4,27 @@ import test from "node:test";
 import {
   OPERATION_VIEW_STANDARD_ASPECT_RATIO,
   OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES,
+  operationViewContinuousPoseDelta,
   operationViewKeyAction,
   operationViewHorizontalFovForMagnification,
   operationViewScenePresentation,
 } from "../../lib/operation-view-control.ts";
+
+test("held operation keys produce frame-rate-independent continuous motion", () => {
+  assert.deepEqual(
+    operationViewContinuousPoseDelta(["KeyW"], 1 / 60),
+    { yawDelta: 0, pitchDelta: 0.25 },
+  );
+  assert.deepEqual(
+    operationViewContinuousPoseDelta(["KeyA", "KeyW"], 1 / 60),
+    { yawDelta: -0.5, pitchDelta: 0.25 },
+  );
+  assert.equal(
+    operationViewContinuousPoseDelta(["KeyA", "KeyD"], 1 / 60),
+    null,
+  );
+  assert.equal(operationViewContinuousPoseDelta(["KeyW"], 0), null);
+});
 
 test("operation view uses a 16:9 90-degree horizontal-FOV reference", () => {
   assert.equal(OPERATION_VIEW_STANDARD_ASPECT_RATIO, 16 / 9);
