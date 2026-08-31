@@ -65,6 +65,10 @@ test("render mode stays above flat switches and protection tuning stays last", (
 
 test("camera, driver and station controls share one flat right-side panel", () => {
   assert.match(viewerSource, /const \[controlPanelOpen, setControlPanelOpen\]/u);
+  assert.match(
+    viewerSource,
+    /const \[controlPanelOpen, setControlPanelOpen\] = useState\(true\)/u,
+  );
   assert.match(viewerSource, /const \[controlTargetId, setControlTargetId\]/u);
   assert.match(viewerSource, /className="viewer-weapon-panel-launcher"/u);
   assert.match(viewerSource, /aria-controls="viewer-weapon-panel"/u);
@@ -78,6 +82,9 @@ test("camera, driver and station controls share one flat right-side panel", () =
   assert.match(viewerSource, /<RuntimeViewerCameraControls/u);
   assert.match(viewerSource, /<ChevronRight size=\{15\}/u);
   assert.doesNotMatch(viewerSource, /收起 ›/u);
+  assert.match(viewerSource, /viewer-control-target-slider__thumb/u);
+  assert.match(viewerSource, /viewer-control-target-slider__station-zone/u);
+  assert.match(viewerSource, />\s*<b>武器站<\/b>/u);
   assert.match(turretSource, /embedded\?:\s*boolean/u);
   assert.match(
     turretSource,
@@ -97,6 +104,14 @@ test("camera, driver and station controls share one flat right-side panel", () =
   );
   assert.match(viewerStyles, /\.viewer-control-target-row/u);
   assert.match(viewerStyles, /\.viewer-control-target-slider/u);
+  assert.match(
+    viewerStyles,
+    /\.viewer-control-target-slider__thumb\s*\{[\s\S]*?transform:\s*translateX/u,
+  );
+  assert.match(
+    viewerStyles,
+    /\.viewer-control-target-slider__station-zone\s*\{[\s\S]*?border:\s*1px solid rgba\(99, 215, 233/u,
+  );
   assert.ok(
     viewerSource.indexOf('className="viewer-weapon-panel-launcher"') >
       viewerSource.indexOf('className="viewer-interaction-hint'),
@@ -111,6 +126,10 @@ test("state switches share one slider treatment and category colors stay neutral
   assert.match(
     viewerStyles,
     /\.viewer-state-switch__track\s*\{[\s\S]*?border-radius:\s*0;/u,
+  );
+  assert.match(
+    viewerStyles,
+    /\.viewer-state-switch,[\s\S]*?font:\s*700 8px\/1\.2 var\(--font-readable-display\);/u,
   );
   assert.doesNotMatch(
     viewerStyles,
