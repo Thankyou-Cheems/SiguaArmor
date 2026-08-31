@@ -8863,26 +8863,26 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             <div className="viewer-control-target-slider" role="tablist" aria-label="选择视角或操控位置" style={{
                 "--control-target-count": controlTargetCount,
                 "--control-target-index": controlTargetIndex,
-                "--control-station-left": `${(2 / controlTargetCount) * 100}%`,
-                "--control-station-width": `${(runtimeTurretStations.length / controlTargetCount) * 100}%`,
             } as CSSProperties}>
               <span className="viewer-control-target-slider__thumb" aria-hidden="true"/>
-              {runtimeTurretStations.length > 0 ? (<span className="viewer-control-target-slider__station-zone" aria-hidden="true">
-                  <b>武器站</b>
-                </span>) : null}
               <button type="button" role="tab" data-target-kind="camera" aria-selected={controlTargetId === CAMERA_CONTROL_TARGET_ID} data-active={controlTargetId === CAMERA_CONTROL_TARGET_ID || undefined} onClick={() => setControlTargetId(CAMERA_CONTROL_TARGET_ID)}>
                 相机
               </button>
               <button type="button" role="tab" data-target-kind="driver" aria-selected={controlTargetId === DRIVER_CONTROL_TARGET_ID} data-active={controlTargetId === DRIVER_CONTROL_TARGET_ID || undefined} onClick={() => setControlTargetId(DRIVER_CONTROL_TARGET_ID)}>
                 驾驶 · F1
               </button>
-              {runtimeTurretStations.map((station) => (<button type="button" role="tab" data-target-kind="station" aria-selected={controlTargetId === station.id} data-active={controlTargetId === station.id || undefined} title={`${station.label} · ${station.equipmentLabel}`} onClick={() => {
-                    setControlTargetId(station.id);
-                    setActiveTurretStationId(station.id);
-                    commitTurretNavigation(station.id);
-                }} key={station.id}>
-                  {station.label}
-                </button>))}
+              {runtimeTurretStations.length > 0 ? (<div className="viewer-control-target-slider__station-group" role="presentation" style={{
+                    "--control-station-count": runtimeTurretStations.length,
+                } as CSSProperties}>
+                  <b aria-hidden="true">武器站</b>
+                  {runtimeTurretStations.map((station) => (<button type="button" role="tab" data-target-kind="station" aria-selected={controlTargetId === station.id} data-active={controlTargetId === station.id || undefined} title={`${station.label} · ${station.equipmentLabel}`} onClick={() => {
+                        setControlTargetId(station.id);
+                        setActiveTurretStationId(station.id);
+                        commitTurretNavigation(station.id);
+                    }} key={station.id}>
+                      {station.label}
+                    </button>))}
+                </div>) : null}
             </div>
             <button className="viewer-weapon-panel__collapse" type="button" onClick={() => setControlPanelOpen(false)} aria-label="收起视角与武器站控制" title="收起">
               <ChevronRight size={15} aria-hidden="true"/>

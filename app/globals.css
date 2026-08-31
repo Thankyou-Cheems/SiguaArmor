@@ -5078,7 +5078,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   isolation: isolate;
 }
 
-.viewer-control-target-slider > button {
+.viewer-control-target-slider > button,
+.viewer-control-target-slider__station-group > button {
   position: relative;
   z-index: 3;
   display: grid;
@@ -5097,17 +5098,20 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   white-space: nowrap;
 }
 
-.viewer-control-target-slider > button[data-target-kind="station"] {
+.viewer-control-target-slider__station-group > button {
   padding-top: 8px;
 }
 
 .viewer-control-target-slider > button:hover,
-.viewer-control-target-slider > button:focus-visible {
+.viewer-control-target-slider > button:focus-visible,
+.viewer-control-target-slider__station-group > button:hover,
+.viewer-control-target-slider__station-group > button:focus-visible {
   background: rgba(231, 189, 104, 0.06);
   color: rgba(241, 239, 226, 0.88);
 }
 
-.viewer-control-target-slider > button[data-active="true"] {
+.viewer-control-target-slider > button[data-active="true"],
+.viewer-control-target-slider__station-group > button[data-active="true"] {
   color: var(--brand);
 }
 
@@ -5129,27 +5133,30 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   pointer-events: none;
 }
 
-.viewer-control-target-slider__station-zone {
-  position: absolute;
+.viewer-control-target-slider__station-group {
+  position: relative;
   z-index: 2;
-  top: 1px;
-  bottom: 1px;
-  left: var(--control-station-left);
-  width: var(--control-station-width);
+  display: grid;
+  min-width: 0;
+  grid-column: 3 / -1;
+  grid-row: 1;
+  grid-template-columns: repeat(var(--control-station-count), minmax(0, 1fr));
   border: 1px solid rgba(99, 215, 233, 0.42);
   background: rgba(99, 215, 233, 0.025);
   box-shadow: inset 0 0 10px rgba(99, 215, 233, 0.06);
-  pointer-events: none;
 }
 
-.viewer-control-target-slider__station-zone > b {
+.viewer-control-target-slider__station-group > b {
   position: absolute;
-  top: 2px;
-  left: 50%;
+  z-index: 4;
+  top: 3px;
+  right: 0;
+  left: 0;
   color: rgba(99, 215, 233, 0.72);
-  font: 600 5px/1 var(--font-mono-ui);
-  letter-spacing: 0.12em;
-  transform: translateX(-50%);
+  font: 700 6px/1 var(--font-readable-display);
+  letter-spacing: 0.08em;
+  text-align: center;
+  pointer-events: none;
 }
 
 .viewer-unified-camera-controls {
@@ -5317,7 +5324,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   border-right: 1px solid rgba(225, 200, 155, 0.1);
   background: transparent;
   color: var(--text-dim);
-  font-size: 8px;
+  font: 600 8px/1 var(--font-readable-display);
   letter-spacing: 0;
   backdrop-filter: none;
 }
@@ -5334,9 +5341,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .viewer-camera-presets button kbd,
 .viewer-camera-presets button small {
   color: inherit;
-  font-family: var(--font-mono-ui);
-  font-size: 6px;
-  font-weight: 500;
+  font: inherit;
 }
 
 .viewer-mode-tabs {
