@@ -9,6 +9,7 @@ import {
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
 } from "react";
 
 import {
@@ -22,6 +23,10 @@ import {
   turretYawBounds,
 } from "../lib/turret-articulation";
 import type { ReferenceTurret } from "./catalog-types";
+import type {
+  RuntimeVehicleTopDownProjection,
+  RuntimeVehicleTopDownStationProjection,
+} from "../lib/runtime-vehicle-topdown-projection";
 
 interface TurretLimitCompassProps {
   turret: ReferenceTurret;
@@ -31,6 +36,7 @@ interface TurretLimitCompassProps {
   disabled?: boolean;
   activeIndicatorKind?: TurretPreviewIndicatorKind;
   orientationIndicators?: TurretOrientationIndicator[];
+  topDownProjection?: RuntimeVehicleTopDownProjection | null;
   onYawChange?: (yawDegrees: number) => void;
   onInteractionEnd?: () => void;
 }
@@ -45,6 +51,7 @@ export interface TurretOrientationIndicator {
   label: string;
   kind: TurretPreviewIndicatorKind;
   yawDegrees: number;
+  relativeYawDegrees: number;
   active: boolean;
 }
 
@@ -65,6 +72,7 @@ interface TurretPreviewControlsProps {
   showStationSelector?: boolean;
   stations: TurretPreviewStation[];
   orientationIndicators: TurretOrientationIndicator[];
+  topDownProjection?: RuntimeVehicleTopDownProjection | null;
   activeStationId: string;
   yawDegrees: number;
   pitchDegrees: number;
@@ -204,6 +212,129 @@ function authorityNote(turret: ReferenceTurret) {
   return "旧百科只提供单一俯仰范围；环图暂按全向同值展示，水平限界与分方位变化仍待编辑器核验。";
 }
 
+function projectionPoints(points: readonly (readonly [number, number])[]) {
+  return points.map(([x, y]) => `${x},${y}`).join(" ");
+}
+
+function rotateProjectionPoint(
+  point: readonly [number, number],
+  pivot: readonly [number, number],
+  degrees: number,
+) {
+  const radians = degrees * Math.PI / 180;
+  const cosine = Math.cos(radians);
+  const sine = Math.sin(radians);
+  const x = point[0] - pivot[0];
+  const y = point[1] - pivot[1];
+  return [
+    pivot[0] + x * cosine - y * sine,
+    pivot[1] + x * sine + y * cosine,
+  ] as const;
+}
+
+function displayedProjectionPivot(
+  station: RuntimeVehicleTopDownStationProjection,
+  projection: RuntimeVehicleTopDownProjection,
+  indicators: readonly TurretOrientationIndicator[],
+) {
+  let point = station.pivot as readonly [number, number];
+  let parentId = station.parentId;
+  const visited = new Set([station.id]);
+  while (parentId && !visited.has(parentId)) {
+    visited.add(parentId);
+    const parent = projection.stations.find(({ id }) => id === parentId);
+    if (!parent) break;
+    const yawDegrees = indicators.find(({ id }) => id === parent.id)
+      ?.relativeYawDegrees ?? 0;
+    point = rotateProjectionPoint(point, parent.pivot, yawDegrees);
+    parentId = parent.parentId;
+  }
+  return point;
+}
+
+function TurretTopDownProjection({
+  projection,
+  orientationIndicators,
+}: {
+  projection: RuntimeVehicleTopDownProjection;
+  orientationIndicators: readonly TurretOrientationIndicator[];
+}) {
+  const stationById = new Map(
+    projection.stations.map((station) => [station.id, station]),
+  );
+  const renderStation = (
+    station: RuntimeVehicleTopDownStationProjection,
+    visited: ReadonlySet<string>,
+  ): ReactNode => {
+    if (visited.has(station.id)) return null;
+    const nextVisited = new Set(visited).add(station.id);
+    const indicator = orientationIndicators.find(({ id }) => id === station.id);
+    const relativeYawDegrees = indicator?.relativeYawDegrees ?? 0;
+    const children = projection.stations.filter(
+      ({ parentId }) => parentId === station.id,
+    );
+    return (
+      <g
+        className="turret-limit-compass__projected-station-transform"
+        data-topdown-station-id={station.id}
+        data-yaw-pivot-x={station.pivot[0]}
+        data-yaw-pivot-y={station.pivot[1]}
+        transform={`rotate(${relativeYawDegrees.toFixed(3)} ${station.pivot[0]} ${station.pivot[1]})`}
+        key={station.id}
+      >
+        <g
+          className="turret-limit-compass__projected-station"
+          data-kind={indicator?.kind ?? "weapon-station"}
+          data-active={indicator?.active || undefined}
+        >
+          {station.outline.length >= 3 ? (
+            <polygon points={projectionPoints(station.outline)} />
+          ) : null}
+          <line
+            className="turret-limit-compass__projected-barrel"
+            x1={station.pivot[0]}
+            y1={station.pivot[1]}
+            x2={station.barrelEnd[0]}
+            y2={station.barrelEnd[1]}
+          />
+          <circle
+            className="turret-limit-compass__projected-pivot"
+            cx={station.pivot[0]}
+            cy={station.pivot[1]}
+            r={indicator?.active ? 1.5 : 1}
+          />
+          {indicator?.active ? (
+            <circle
+              className="turret-limit-compass__projected-handle"
+              cx={station.barrelEnd[0]}
+              cy={station.barrelEnd[1]}
+              r="2.3"
+            />
+          ) : null}
+        </g>
+        {children.map((child) => renderStation(child, nextVisited))}
+      </g>
+    );
+  };
+  const roots = projection.stations.filter(
+    ({ parentId }) => !parentId || !stationById.has(parentId),
+  );
+  return (
+    <g className="turret-limit-compass__topdown" aria-hidden="true">
+      <polygon
+        className="turret-limit-compass__projected-hull"
+        points={projectionPoints(projection.hull)}
+      />
+      {roots.map((station) => renderStation(station, new Set()))}
+      <g className="turret-limit-compass__vehicle-reference">
+        <path d="M50 8 47.8 12h4.4Z" />
+        <text x="50" y="6.2">车头</text>
+        <text x="50" y="95">车尾</text>
+      </g>
+    </g>
+  );
+}
+
 export function TurretLimitCompass({
   turret,
   yawDegrees,
@@ -212,6 +343,7 @@ export function TurretLimitCompass({
   disabled = false,
   activeIndicatorKind = "main-turret",
   orientationIndicators = [],
+  topDownProjection = null,
   onYawChange,
   onInteractionEnd,
 }: TurretLimitCompassProps) {
@@ -223,6 +355,32 @@ export function TurretLimitCompass({
   const samples = useMemo(() => turretProfileSamples(turret), [turret]);
   const pointer = polarPoint(yawDegrees, 44);
   const current = turretPitchWindowAtYaw(turret, yawDegrees);
+  const projectionStation = topDownProjection?.stations.find(
+    ({ id }) => orientationIndicators.find(
+      (indicator) => indicator.id === id && indicator.active,
+    ),
+  ) ?? null;
+  const interactionOrigin = projectionStation && topDownProjection
+    ? displayedProjectionPivot(
+        projectionStation,
+        topDownProjection,
+        orientationIndicators,
+      )
+    : [50, 50] as const;
+  const depressionInnerRadius = topDownProjection
+    ? 43.5
+    : DEPRESSION_INNER_RADIUS;
+  const depressionOuterRadius = topDownProjection
+    ? 47
+    : DEPRESSION_OUTER_RADIUS;
+  const elevationInnerRadius = topDownProjection
+    ? 39.5
+    : ELEVATION_INNER_RADIUS;
+  const elevationOuterRadius = topDownProjection
+    ? 42.5
+    : ELEVATION_OUTER_RADIUS;
+  const yawArcInnerRadius = topDownProjection ? 39 : 24;
+  const yawArcOuterRadius = topDownProjection ? 47.5 : 44;
   const interactive = typeof onYawChange === "function";
   const enabled = interactive && !disabled;
   const bounds = turretYawBounds(turret);
@@ -232,11 +390,11 @@ export function TurretLimitCompass({
   );
   const yawLimited = !bounds.continuous;
   const hasLockedArc = yawLimited && yawSpanDegrees < 359.95;
-  const minimumYawInner = polarPoint(bounds.minDegrees, 23);
-  const minimumYawOuter = polarPoint(bounds.minDegrees, 45);
+  const minimumYawInner = polarPoint(bounds.minDegrees, yawArcInnerRadius);
+  const minimumYawOuter = polarPoint(bounds.minDegrees, yawArcOuterRadius);
   const minimumYawLabel = polarPoint(bounds.minDegrees, 47.5);
-  const maximumYawInner = polarPoint(bounds.maxDegrees, 23);
-  const maximumYawOuter = polarPoint(bounds.maxDegrees, 45);
+  const maximumYawInner = polarPoint(bounds.maxDegrees, yawArcInnerRadius);
+  const maximumYawOuter = polarPoint(bounds.maxDegrees, yawArcOuterRadius);
   const maximumYawLabel = polarPoint(bounds.maxDegrees, 47.5);
   const availableDetents = useMemo(
     () => TURRET_YAW_DETENTS.filter((detent) => (
@@ -247,7 +405,7 @@ export function TurretLimitCompass({
     [turret],
   );
   const accessibleLabel = current
-    ? `炮塔当前朝向 ${angleLabel(yawDegrees)}，可俯至 ${angleLabel(current.minPitchDegrees)}，可仰至 ${angleLabel(current.maxPitchDegrees)}${
+    ? `${topDownProjection ? "当前组件相对车头" : "炮塔当前朝向"} ${angleLabel(yawDegrees)}，可俯至 ${angleLabel(current.minPitchDegrees)}，可仰至 ${angleLabel(current.maxPitchDegrees)}${
         yawLimited
           ? `，水平可转 ${angleLabel(bounds.minDegrees)} 至 ${angleLabel(bounds.maxDegrees)}`
           : ""
@@ -269,9 +427,13 @@ export function TurretLimitCompass({
     const boundsRect = compassRef.current?.getBoundingClientRect();
     if (!boundsRect) return;
     const horizontalOffset =
-      event.clientX - (boundsRect.left + boundsRect.width / 2);
+      event.clientX - (
+        boundsRect.left + boundsRect.width * interactionOrigin[0] / 100
+      );
     const verticalOffset =
-      event.clientY - (boundsRect.top + boundsRect.height / 2);
+      event.clientY - (
+        boundsRect.top + boundsRect.height * interactionOrigin[1] / 100
+      );
     if (Math.hypot(horizontalOffset, verticalOffset) < boundsRect.width * 0.08) {
       return;
     }
@@ -336,11 +498,16 @@ export function TurretLimitCompass({
       data-interactive={interactive || undefined}
       data-dragging={dragging || undefined}
       data-yaw-limited={yawLimited || undefined}
+      data-projection={topDownProjection?.state ?? "fallback"}
       width={size}
       height={size}
       viewBox="0 0 100 100"
       role={interactive ? "slider" : "img"}
-      aria-label={interactive ? "炮塔方位，拖动圆盘调整" : accessibleLabel}
+      aria-label={interactive
+        ? topDownProjection
+          ? "组件相对车头方位，拖动俯视图调整"
+          : "炮塔方位，拖动圆盘调整"
+        : accessibleLabel}
       aria-valuemin={interactive ? bounds.minDegrees : undefined}
       aria-valuemax={interactive ? bounds.maxDegrees : undefined}
       aria-valuenow={interactive ? yawDegrees : undefined}
@@ -387,20 +554,31 @@ export function TurretLimitCompass({
           />
         </pattern>
       </defs>
-      <circle className="turret-limit-compass__backdrop" cx="50" cy="50" r="46" />
+      {topDownProjection ? (
+        <rect
+          className="turret-limit-compass__backdrop turret-limit-compass__topdown-backdrop"
+          x="3"
+          y="3"
+          width="94"
+          height="94"
+          rx="2"
+        />
+      ) : (
+        <circle className="turret-limit-compass__backdrop" cx="50" cy="50" r="46" />
+      )}
       <circle
         className="turret-limit-compass__range-track"
         data-kind="depression"
         cx="50"
         cy="50"
-        r="38.5"
+        r={(depressionInnerRadius + depressionOuterRadius) / 2}
       />
       <circle
         className="turret-limit-compass__range-track"
         data-kind="elevation"
         cx="50"
         cy="50"
-        r="28.5"
+        r={(elevationInnerRadius + elevationOuterRadius) / 2}
       />
       {hasLockedArc ? (
         <path
@@ -408,8 +586,8 @@ export function TurretLimitCompass({
           d={annularSectorPath(
             bounds.maxDegrees,
             bounds.minDegrees + 360,
-            24,
-            44,
+            yawArcInnerRadius,
+            yawArcOuterRadius,
           )}
           fill={`url(#${patternIdPrefix}-yaw-locked)`}
           aria-hidden="true"
@@ -427,8 +605,8 @@ export function TurretLimitCompass({
             d={annularSectorPath(
               sample.startDegrees,
               sample.endDegrees,
-              DEPRESSION_INNER_RADIUS,
-              DEPRESSION_OUTER_RADIUS,
+              depressionInnerRadius,
+              depressionOuterRadius,
             )}
             fill={depressionColor(sample.minPitchDegrees)}
           >
@@ -442,8 +620,8 @@ export function TurretLimitCompass({
             d={annularSectorPath(
               sample.startDegrees,
               sample.endDegrees,
-              ELEVATION_INNER_RADIUS,
-              ELEVATION_OUTER_RADIUS,
+              elevationInnerRadius,
+              elevationOuterRadius,
             )}
             fill={elevationColor(sample.maxPitchDegrees)}
           >
@@ -459,14 +637,18 @@ export function TurretLimitCompass({
           d={annularSectorPath(
             bounds.minDegrees,
             bounds.maxDegrees,
-            24,
-            44,
+            yawArcInnerRadius,
+            yawArcOuterRadius,
           )}
           aria-hidden="true"
         />
       ) : null}
-      <circle className="turret-limit-compass__guide" cx="50" cy="50" r="40" />
-      <circle className="turret-limit-compass__guide" cx="50" cy="50" r="29" />
+      {!topDownProjection ? (
+        <>
+          <circle className="turret-limit-compass__guide" cx="50" cy="50" r="40" />
+          <circle className="turret-limit-compass__guide" cx="50" cy="50" r="29" />
+        </>
+      ) : null}
       {yawLimited ? (
         <g className="turret-limit-compass__yaw-limits" aria-hidden="true">
           <line
@@ -507,8 +689,8 @@ export function TurretLimitCompass({
       ) : null}
       <g className="turret-limit-compass__detents" aria-hidden="true">
         {availableDetents.map((detent) => {
-          const inner = polarPoint(detent, 43);
-          const outer = polarPoint(detent, 47);
+          const inner = polarPoint(detent, topDownProjection ? 45 : 43);
+          const outer = polarPoint(detent, topDownProjection ? 48 : 47);
           return (
             <line
               key={detent}
@@ -524,66 +706,75 @@ export function TurretLimitCompass({
           );
         })}
       </g>
-      <g className="turret-limit-compass__vehicle" aria-hidden="true">
-        <path d="M43 65V42l7-9 7 9v23l-7 4z" />
-        <path d="M50 33V22" />
-        <path d="m46 27 4-5 4 5" />
-      </g>
-      {interactive && orientationIndicators.length > 0 ? (
-        <g className="turret-limit-compass__orientations" aria-hidden="true">
-          {orientationIndicators.map((indicator) => {
-            const position = polarPoint(indicator.yawDegrees, 26.5);
-            return (
-              <g
-                key={indicator.id}
-                className="turret-limit-compass__orientation"
-                data-kind={indicator.kind}
-                data-active={indicator.active || undefined}
-                transform={`translate(${position.x.toFixed(3)} ${position.y.toFixed(3)}) rotate(${indicator.yawDegrees.toFixed(3)})`}
-              >
-                {indicator.kind === "main-turret" ? (
-                  <>
-                    <path d="M-3 2 0-4 3 2Z" />
-                    <path d="M0-4V-8" />
-                  </>
-                ) : indicator.kind === "weapon-station" ? (
-                  <>
-                    <path d="M0-4 4 0 0 4-4 0Z" />
-                    <path d="M-2 0H2M0-2V2" />
-                  </>
-                ) : (
-                  <>
-                    <circle cx="0" cy="-1" r="1.1" />
-                    <path d="M-3 2 0-2 3 2M-3 5 0 1 3 5" />
-                  </>
-                )}
-              </g>
-            );
-          })}
-        </g>
-      ) : null}
-      <g
-        className="turret-limit-compass__pointer"
-        data-kind={activeIndicatorKind}
-        aria-hidden="true"
-      >
-        <line x1="50" y1="50" x2={pointer.x} y2={pointer.y} />
-        <circle cx={pointer.x} cy={pointer.y} r="1.8" />
-        {interactive ? (
-          <circle
-            className="turret-limit-compass__handle"
-            cx={pointer.x}
-            cy={pointer.y}
-            r="3.4"
-          />
-        ) : null}
-      </g>
-      <g className="turret-limit-compass__labels" aria-hidden="true">
-        <text x="50" y="7">前</text>
-        <text x="94" y="52">右</text>
-        <text x="50" y="97">后</text>
-        <text x="6" y="52">左</text>
-      </g>
+      {topDownProjection ? (
+        <TurretTopDownProjection
+          projection={topDownProjection}
+          orientationIndicators={orientationIndicators}
+        />
+      ) : (
+        <>
+          <g className="turret-limit-compass__vehicle" aria-hidden="true">
+            <path d="M43 65V42l7-9 7 9v23l-7 4z" />
+            <path d="M50 33V22" />
+            <path d="m46 27 4-5 4 5" />
+          </g>
+          {interactive && orientationIndicators.length > 0 ? (
+            <g className="turret-limit-compass__orientations" aria-hidden="true">
+              {orientationIndicators.map((indicator) => {
+                const position = polarPoint(indicator.yawDegrees, 26.5);
+                return (
+                  <g
+                    key={indicator.id}
+                    className="turret-limit-compass__orientation"
+                    data-kind={indicator.kind}
+                    data-active={indicator.active || undefined}
+                    transform={`translate(${position.x.toFixed(3)} ${position.y.toFixed(3)}) rotate(${indicator.yawDegrees.toFixed(3)})`}
+                  >
+                    {indicator.kind === "main-turret" ? (
+                      <>
+                        <path d="M-3 2 0-4 3 2Z" />
+                        <path d="M0-4V-8" />
+                      </>
+                    ) : indicator.kind === "weapon-station" ? (
+                      <>
+                        <path d="M0-4 4 0 0 4-4 0Z" />
+                        <path d="M-2 0H2M0-2V2" />
+                      </>
+                    ) : (
+                      <>
+                        <circle cx="0" cy="-1" r="1.1" />
+                        <path d="M-3 2 0-2 3 2M-3 5 0 1 3 5" />
+                      </>
+                    )}
+                  </g>
+                );
+              })}
+            </g>
+          ) : null}
+          <g
+            className="turret-limit-compass__pointer"
+            data-kind={activeIndicatorKind}
+            aria-hidden="true"
+          >
+            <line x1="50" y1="50" x2={pointer.x} y2={pointer.y} />
+            <circle cx={pointer.x} cy={pointer.y} r="1.8" />
+            {interactive ? (
+              <circle
+                className="turret-limit-compass__handle"
+                cx={pointer.x}
+                cy={pointer.y}
+                r="3.4"
+              />
+            ) : null}
+          </g>
+          <g className="turret-limit-compass__labels" aria-hidden="true">
+            <text x="50" y="7">前</text>
+            <text x="94" y="52">右</text>
+            <text x="50" y="97">后</text>
+            <text x="6" y="52">左</text>
+          </g>
+        </>
+      )}
       {interactive ? (
         <circle
           className="turret-limit-compass__interaction-surface"
@@ -769,6 +960,7 @@ export function TurretPreviewControls({
   showStationSelector = true,
   stations,
   orientationIndicators,
+  topDownProjection = null,
   activeStationId,
   yawDegrees,
   pitchDegrees,
@@ -914,7 +1106,7 @@ export function TurretPreviewControls({
           <div className="turret-preview-controls__main">
             <div className="turret-preview-controls__yaw">
               <span className="turret-preview-controls__readout">
-                <span>方位</span>
+                <span>{topDownProjection ? "相对车头" : "方位"}</span>
                 <output>{angleLabel(yawDegrees)}</output>
               </span>
               <TurretLimitCompass
@@ -925,10 +1117,15 @@ export function TurretPreviewControls({
                 disabled={!activeStation.yawAvailable}
                 activeIndicatorKind={activeStation.indicatorKind}
                 orientationIndicators={orientationIndicators}
+                topDownProjection={topDownProjection}
                 onYawChange={onYawChange}
                 onInteractionEnd={onInteractionEnd}
               />
-              <small>外圈调相对方位 · 内圈显示世界朝向</small>
+              <small>
+                {topDownProjection
+                  ? "车头固定朝上 · 外沿色带表示该方向俯仰能力"
+                  : "拖动调节相对车头方位 · 色带表示俯仰能力"}
+              </small>
             </div>
             <label className="turret-preview-controls__pitch">
               <span className="turret-preview-controls__readout">
