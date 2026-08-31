@@ -25,6 +25,11 @@ export function createWikiHybridViteConfig({
           changeOrigin: true,
           secure: false,
         },
+        "/assets/vehicle-driver-views": {
+          target: localAssetOrigin,
+          changeOrigin: true,
+          secure: false,
+        },
         "/assets": {
           target: upstreamWikiOrigin,
           changeOrigin: true,

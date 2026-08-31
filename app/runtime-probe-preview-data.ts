@@ -3,6 +3,7 @@ import type { SiteEdition } from "./site-edition";
 import {
   loadWikiRuntimeVisual,
   loadOptionalWikiVehicleGunnerSight,
+  loadWikiVehicleDriverView,
   loadWikiVehicleRuntimeSource,
   loadWikiVehicleStationGraph,
 } from "../lib/wiki-source";
@@ -23,6 +24,10 @@ import {
   type CompiledVehicleGunnerSight,
   type VehicleGunnerSightRecord,
 } from "../lib/vehicle-gunner-sight";
+import {
+  projectVehicleDriverView,
+  type VehicleDriverViewRecord,
+} from "../lib/vehicle-driver-view";
 
 export type RuntimePreviewStatus =
   | "visual-ready"
@@ -286,6 +291,7 @@ export interface RuntimeVehiclePreview {
   crewSeat: RuntimeCrewSeatBinding | null;
   stationGraph: CompiledVehicleStationGraph | null;
   gunnerSight: CompiledVehicleGunnerSight | null;
+  driverView: VehicleDriverViewRecord;
 }
 
 interface WikiRuntimeVisual {
@@ -548,6 +554,7 @@ function toRuntimePreview(
   descriptor: WikiRuntimeVisual,
   stationGraphRecord: VehicleStationGraphRecord | null,
   gunnerSightRecord: VehicleGunnerSightRecord | null,
+  driverViewRecord: VehicleDriverViewRecord,
 ): RuntimeVehiclePreview {
   if (
     descriptor.status !== "complete" ||
@@ -587,6 +594,11 @@ function toRuntimePreview(
     gunnerSightRecord,
     stationGraph,
   );
+  const driverView = projectVehicleDriverView(driverViewRecord, {
+    sourceVehicleRef: stationGraph.sourceVehicleRef,
+    rawName,
+    generatedClass: runtimeVariant.generatedClass,
+  });
   const hit = hitForRuntimeVariant(runtimeVariant);
   return {
     cardId,
@@ -635,6 +647,7 @@ function toRuntimePreview(
     crewSeat,
     stationGraph,
     gunnerSight,
+    driverView,
   };
 }
 
@@ -691,11 +704,19 @@ export async function runtimePreviewForCatalogBinding(
     ) {
       throw new Error(`SiguaWiki station graph mapping differs for ${cardId} / ${rawName}`);
     }
-    const gunnerSightRecord = stationGraphRecord
-      ? await loadOptionalWikiVehicleGunnerSight(
-          stationGraphRecord.sourceVehicleRef,
-        ) as VehicleGunnerSightRecord
-      : null;
+    const [gunnerSightRecord, driverViewRecord] = stationGraphRecord
+      ? await Promise.all([
+          loadOptionalWikiVehicleGunnerSight(
+            stationGraphRecord.sourceVehicleRef,
+          ) as Promise<VehicleGunnerSightRecord | null>,
+          loadWikiVehicleDriverView(
+            stationGraphRecord.sourceVehicleRef,
+          ) as Promise<VehicleDriverViewRecord>,
+        ])
+      : [null, null];
+    if (!driverViewRecord) {
+      throw new Error(`SiguaWiki driver view is missing for ${cardId} / ${rawName}`);
+    }
     return toRuntimePreview(
       cardId,
       rawName,
@@ -704,6 +725,7 @@ export async function runtimePreviewForCatalogBinding(
       descriptor,
       stationGraphRecord,
       gunnerSightRecord,
+      driverViewRecord,
     );
   });
   previewCache.set(expectedVisualArtifactRef, request);

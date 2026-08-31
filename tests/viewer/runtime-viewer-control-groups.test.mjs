@@ -19,14 +19,14 @@ const viewerStyles = await readFile(
   "utf8",
 );
 
-test("left 3D controls contain three scene domains and no remote panel trigger", () => {
+test("left 3D controls keep only the three render choices above feature groups", () => {
   const sectionIds = [...viewerSource.matchAll(
     /data-control-section="([^"]+)"/gu,
   )].map((match) => match[1]);
 
   assert.deepEqual(sectionIds, ["analysis", "camera", "crew"]);
-  assert.match(viewerSource, /场景与分析/u);
-  assert.match(viewerSource, /显示模式/u);
+  assert.doesNotMatch(viewerSource, /场景与分析/u);
+  assert.doesNotMatch(viewerSource, /显示模式/u);
   assert.match(viewerSource, /装甲与分析/u);
   assert.match(viewerSource, /相机与姿态/u);
   assert.match(viewerSource, /乘员显示/u);
