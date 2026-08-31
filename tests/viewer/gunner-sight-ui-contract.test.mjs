@@ -51,6 +51,21 @@ test("operation view exposes direct ring control and keyboard-only camera input"
   assert.match(controlsSource, /进入真实操作视角/u);
 });
 
+test("held WASD input runs on a lightweight animation-frame path", () => {
+  assert.match(viewerSource, /const heldOperationKeys = new Set<string>\(\)/u);
+  assert.match(viewerSource, /const stepOperationMovement = \(frameTime: number\) =>/u);
+  assert.match(viewerSource, /requestAnimationFrame\(stepOperationMovement\)/u);
+  assert.match(viewerSource, /operationViewContinuousPoseDelta/u);
+  assert.match(
+    viewerSource,
+    /updateTurretStationPose\([\s\S]*?\{ transient: true \},\s*\);/u,
+  );
+  assert.match(
+    viewerSource,
+    /const applyTurretPose = \(options:[\s\S]*?interactive[\s\S]*?if \(interactive\) \{[\s\S]*?render\(\);\s*return;/u,
+  );
+});
+
 test("gunner overlay copy preserves the presentation-only evidence boundary", () => {
   assert.match(overlaySource, /不表示光学损坏、失明或命中机制/u);
   assert.doesNotMatch(overlaySource, /摧毁炮镜|致盲敌方|损伤光学设备/u);
