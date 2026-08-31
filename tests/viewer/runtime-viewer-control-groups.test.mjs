@@ -19,17 +19,19 @@ const viewerStyles = await readFile(
   "utf8",
 );
 
-test("left 3D controls keep render choices above two non-camera feature groups", () => {
+test("left 3D controls keep render choices above one flat switch list", () => {
   const sectionIds = [...viewerSource.matchAll(
     /data-control-section="([^"]+)"/gu,
   )].map((match) => match[1]);
 
-  assert.deepEqual(sectionIds, ["analysis", "crew"]);
+  assert.deepEqual(sectionIds, []);
   assert.doesNotMatch(viewerSource, /场景与分析/u);
   assert.doesNotMatch(viewerSource, /显示模式/u);
-  assert.match(viewerSource, /装甲与分析/u);
-  assert.match(viewerSource, /乘员显示/u);
+  assert.match(viewerSource, /className="viewer-flat-control-list"/u);
+  assert.match(viewerSource, /显示附加装甲\/无敌区域/u);
+  assert.match(viewerSource, /显示乘员位置与受击判定/u);
   assert.doesNotMatch(viewerSource, /data-control-section="camera"/u);
+  assert.doesNotMatch(viewerSource, /className="viewer-control-section"/u);
   assert.doesNotMatch(viewerSource, /data-control-section="weapon"/u);
   assert.equal(
     sectionIds.every((sectionId) => viewerSource.includes(
@@ -39,21 +41,25 @@ test("left 3D controls keep render choices above two non-camera feature groups",
   );
 });
 
-test("render mode remains visible while feature groups expose collapsed status", () => {
+test("render mode stays above flat switches and protection tuning stays last", () => {
   const modeTabsIndex = viewerSource.indexOf('className="viewer-mode-tabs"');
-  const firstSectionIndex = viewerSource.indexOf(
-    'data-control-section="analysis"',
+  const flatControlsIndex = viewerSource.indexOf(
+    'className="viewer-flat-control-list"',
   );
 
-  assert.ok(modeTabsIndex >= 0 && modeTabsIndex < firstSectionIndex);
+  assert.ok(modeTabsIndex >= 0 && modeTabsIndex < flatControlsIndex);
+  assert.doesNotMatch(viewerSource, /viewer-control-section__status/u);
   assert.match(
-    viewerSource,
-    /viewer-control-section__status/u,
-    "collapsed groups should retain their live state in the summary",
+    viewerStyles,
+    /\.viewer-flat-control-list > \.viewer-spaced-armor-row\s*\{\s*order:\s*10;/u,
   );
   assert.match(
     viewerStyles,
-    /\.viewer-control-section:not\(\[open\]\)[\s\S]*?\.viewer-control-section__body[\s\S]*?display:\s*none/u,
+    /\.viewer-flat-control-list > \.viewer-crew-occupant-row\s*\{\s*order:\s*20;/u,
+  );
+  assert.match(
+    viewerStyles,
+    /\.viewer-flat-control-list > \.viewer-protection-primary\s*\{\s*order:\s*40;/u,
   );
 });
 
