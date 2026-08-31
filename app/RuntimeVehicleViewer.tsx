@@ -45,7 +45,7 @@ import type { RuntimeCrewSeatStation, RuntimeCrewSeatView, } from "../lib/vehicl
 import { buildCrewOccupantPresentationPlan, } from "../lib/vehicle-crew-occupant-presentation";
 import { crewViewBasePose, preferredCrewViewStation, transformCrewViewPose, type CrewViewPose, } from "../lib/vehicle-crew-viewpoint";
 import { driverViewPose } from "../lib/vehicle-driver-view";
-import { OPERATION_VIEW_STANDARD_ASPECT_RATIO, OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES, operationViewKeyAction, operationViewHorizontalFovForMagnification, operationViewScenePresentation, } from "../lib/operation-view-control";
+import { OPERATION_VIEW_STANDARD_ASPECT_RATIO, OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES, operationViewContinuousPoseDelta, operationViewKeyAction, operationViewHorizontalFovForMagnification, operationViewScenePresentation, } from "../lib/operation-view-control";
 import { loadRuntimeDriverMask, type RuntimeDriverMaskLayer, } from "./runtime-driver-view-mask";
 import { runtimePlanarSuspensionCoverageForGeneratedClass, runtimePlanarSuspensionPoseForVisualOccurrence, type RuntimePlanarSuspensionPoseRecord, } from "./runtime-planar-suspension-pose";
 import type { ReferenceData, ReferenceSeat, ReferenceTurret, ReferenceTurretArticulation, } from "./catalog-types";
@@ -429,6 +429,22 @@ function orderedRuntimeTurretStations(stations: RuntimeTurretPreviewStation[]) {
     return [...stations].sort((left, right) => runtimeTurretStationDepth(left, stations) -
         runtimeTurretStationDepth(right, stations) ||
         left.seat.index - right.seat.index);
+}
+function runtimeTurretPosesForStates(stations: RuntimeTurretPreviewStation[], poseStates: Record<string, RuntimeTurretPoseState>): RuntimeTurretPose[] {
+    return orderedRuntimeTurretStations(stations).map((station) => {
+        const state = poseStates[station.id] ?? {
+            yawDegrees: 0,
+            pitchDegrees: 0,
+        };
+        const yawDegrees = clampTurretYaw(station.turret, state.yawDegrees);
+        return {
+            stationId: station.id,
+            assembly: station.assembly,
+            articulation: station.turret.articulation,
+            yawDegrees,
+            pitchDegrees: clampTurretPitch(station.turret, yawDegrees, state.pitchDegrees),
+        };
+    });
 }
 interface RuntimeWeaponOption {
     value: string;
@@ -2932,7 +2948,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const exteriorOccurrencesRef = useRef<Map<string, RuntimeExteriorOccurrence>>(new Map());
     const applyChassisPoseRef = useRef<((enabled: boolean) => void) | null>(null);
     const physicalPoseEnabledRef = useRef(true);
-    const applyTurretPoseRef = useRef<(() => void) | null>(null);
+    const applyTurretPoseRef = useRef<((options?: {
+        interactive?: boolean;
+    }) => void) | null>(null);
     const applyCrewOccupantVisibilityRef = useRef<((visible: boolean) => void) | null>(null);
     const applyCrewHitProxyVisibilityRef = useRef<((visible: boolean) => void) | null>(null);
     const crewOccupantDisplayEnabledRef = useRef(false);
@@ -3135,7 +3153,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         yawDegrees: runtimeTurretWorldYaw(station, runtimeTurretStations, turretPoseStates),
         active: station.id === activeTurretStation?.id,
     })), [activeTurretStation?.id, runtimeTurretStations, turretPoseStates]);
-    const updateTurretStationPose = useCallback((station: RuntimeTurretPreviewStation, yawDegrees: number, pitchDegrees: number) => {
+    const updateTurretStationPose = useCallback((station: RuntimeTurretPreviewStation, yawDegrees: number, pitchDegrees: number, options: {
+        transient?: boolean;
+    } = {}) => {
         const clampedYaw = clampTurretYaw(station.turret, yawDegrees);
         const nextPoseStates = {
             ...turretPoseStatesRef.current,
@@ -3145,7 +3165,13 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             },
         };
         turretPoseStatesRef.current = nextPoseStates;
-        setTurretPoseStates(nextPoseStates);
+        if (options.transient) {
+            turretPosesRef.current = runtimeTurretPosesForStates(runtimeTurretStationsRef.current, nextPoseStates);
+            applyTurretPoseRef.current?.({ interactive: true });
+        }
+        else {
+            setTurretPoseStates(nextPoseStates);
+        }
         return nextPoseStates;
     }, []);
     const commitTurretNavigation = useCallback((stationId: string, poseStates = turretPoseStatesRef.current) => {
@@ -3324,10 +3350,72 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             target instanceof HTMLSelectElement ||
             target instanceof HTMLTextAreaElement ||
             (target instanceof HTMLElement && target.isContentEditable);
+        const movementCodes = new Set(["KeyW", "KeyA", "KeyS", "KeyD"]);
+        const heldOperationKeys = new Set<string>();
+        let operationMovementFrame = 0;
+        let previousOperationFrameTime = 0;
+        let operationMovementDirty = false;
+        const applyOperationMovement = (elapsedSeconds: number) => {
+            if (!station)
+                return;
+            const delta = operationViewContinuousPoseDelta([...heldOperationKeys], elapsedSeconds);
+            if (!delta)
+                return;
+            const current = turretPoseStatesRef.current[station.id] ?? {
+                yawDegrees: 0,
+                pitchDegrees: 0,
+            };
+            updateTurretStationPose(station, current.yawDegrees + delta.yawDelta, current.pitchDegrees + delta.pitchDelta, { transient: true });
+            operationMovementDirty = true;
+        };
+        const stepOperationMovement = (frameTime: number) => {
+            if (heldOperationKeys.size === 0) {
+                operationMovementFrame = 0;
+                previousOperationFrameTime = 0;
+                return;
+            }
+            const elapsedSeconds = previousOperationFrameTime > 0
+                ? (frameTime - previousOperationFrameTime) / 1000
+                : 1 / 60;
+            previousOperationFrameTime = frameTime;
+            applyOperationMovement(elapsedSeconds);
+            operationMovementFrame = requestAnimationFrame(stepOperationMovement);
+        };
+        const startOperationMovement = () => {
+            if (operationMovementFrame !== 0)
+                return;
+            previousOperationFrameTime = performance.now();
+            applyOperationMovement(1 / 60);
+            operationMovementFrame = requestAnimationFrame(stepOperationMovement);
+        };
+        const settleOperationMovement = () => {
+            if (operationMovementFrame !== 0) {
+                cancelAnimationFrame(operationMovementFrame);
+                operationMovementFrame = 0;
+            }
+            previousOperationFrameTime = 0;
+            heldOperationKeys.clear();
+            if (!operationMovementDirty || !station)
+                return;
+            operationMovementDirty = false;
+            setTurretPoseStates({ ...turretPoseStatesRef.current });
+            commitTurretNavigation(station.id);
+        };
         const onOperationKeyDown = (event: KeyboardEvent) => {
             if (event.altKey || event.ctrlKey || event.metaKey ||
                 editableTarget(event.target))
                 return;
+            if (movementCodes.has(event.code)) {
+                if (driverViewActive || !station)
+                    return;
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                const movementWasIdle = heldOperationKeys.size === 0;
+                heldOperationKeys.add(event.code);
+                if (movementWasIdle)
+                    startOperationMovement();
+                return;
+            }
             const action = operationViewKeyAction({
                 code: event.code,
                 driverView: driverViewActive,
@@ -3341,27 +3429,35 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             event.stopImmediatePropagation();
             if (action.kind === "zoom") {
                 applyCrewViewZoomRef.current?.(station.id, action.zoomIndex);
-                return;
             }
-            const current = turretPoseStatesRef.current[station.id] ?? {
-                yawDegrees: 0,
-                pitchDegrees: 0,
-            };
-            updateTurretStationPose(station, current.yawDegrees + action.yawDelta, current.pitchDegrees + action.pitchDelta);
         };
         const onOperationKeyUp = (event: KeyboardEvent) => {
             if (!station || editableTarget(event.target) ||
-                !["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code))
+                !movementCodes.has(event.code))
                 return;
             event.preventDefault();
             event.stopImmediatePropagation();
-            commitTurretNavigation(station.id);
+            heldOperationKeys.delete(event.code);
+            if (heldOperationKeys.size === 0)
+                settleOperationMovement();
+        };
+        const settleOnVisibilityLoss = () => {
+            if (document.hidden)
+                settleOperationMovement();
         };
         document.addEventListener("keydown", onOperationKeyDown, true);
         document.addEventListener("keyup", onOperationKeyUp, true);
+        document.addEventListener("visibilitychange", settleOnVisibilityLoss);
+        window.addEventListener("blur", settleOperationMovement);
         return () => {
             document.removeEventListener("keydown", onOperationKeyDown, true);
             document.removeEventListener("keyup", onOperationKeyUp, true);
+            document.removeEventListener("visibilitychange", settleOnVisibilityLoss);
+            window.removeEventListener("blur", settleOperationMovement);
+            if (operationMovementFrame !== 0) {
+                cancelAnimationFrame(operationMovementFrame);
+            }
+            heldOperationKeys.clear();
         };
     }, [
         activeCrewViewStationId,
@@ -5046,20 +5142,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         runtimeTurretStations,
     ]);
     useEffect(() => {
-        turretPosesRef.current = orderedRuntimeTurretStations(runtimeTurretStations).map((station) => {
-            const state = turretPoseStates[station.id] ?? {
-                yawDegrees: 0,
-                pitchDegrees: 0,
-            };
-            const yawDegrees = clampTurretYaw(station.turret, state.yawDegrees);
-            return {
-                stationId: station.id,
-                assembly: station.assembly,
-                articulation: station.turret.articulation,
-                yawDegrees,
-                pitchDegrees: clampTurretPitch(station.turret, yawDegrees, state.pitchDegrees),
-            };
-        });
+        turretPosesRef.current = runtimeTurretPosesForStates(runtimeTurretStations, turretPoseStates);
         const host = hostRef.current;
         if (host) {
             if (activeTurretStation) {
@@ -5976,7 +6059,10 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             driverViewpointMarker.root.visible = false;
             crewViewpointMarker.root.visible = false;
         };
-        const applyTurretPose = () => {
+        const applyTurretPose = (options: {
+            interactive?: boolean;
+        } = {}) => {
+            const interactive = options.interactive === true;
             const appliedMatrices: string[] = [];
             let appliedAnalysisOccurrenceCount = 0;
             for (const occurrence of exteriorOccurrences.values()) {
@@ -6016,7 +6102,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 }
             }
             for (const [occurrenceId, articulationTransform] of occurrenceTransforms) {
-                appliedMatrices.push(`${occurrenceId}:${Array.from(articulationTransform.elements, (value) => value.toFixed(5)).join(",")}`);
+                if (!interactive) {
+                    appliedMatrices.push(`${occurrenceId}:${Array.from(articulationTransform.elements, (value) => value.toFixed(5)).join(",")}`);
+                }
                 const exteriorOccurrence = exteriorOccurrences.get(occurrenceId);
                 if (exteriorOccurrence) {
                     exteriorOccurrence.object.matrix
@@ -6029,9 +6117,29 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                         .copy(articulationTransform)
                         .multiply(analysisOccurrence.baseMatrix);
                     analysisOccurrence.object.matrixWorldNeedsUpdate = true;
-                    appliedAnalysisOccurrenceCount += 1;
+                    if (!interactive)
+                        appliedAnalysisOccurrenceCount += 1;
                 }
             }
+            if (interactive) {
+                host.dataset.operationInputMode = "continuous-raf";
+                host.dataset.turretAppliedPose = poses.map((pose) => [
+                    pose.stationId,
+                    pose.yawDegrees.toFixed(3),
+                    pose.pitchDegrees.toFixed(3),
+                ].join(":")).join(";");
+                visualGroup.updateMatrixWorld(true);
+                analysisVisualGroup.updateMatrixWorld(true);
+                const crewViewpoint = updateCrewViewpointMarker();
+                updateDriverViewpointMarker();
+                if (crewViewpoint &&
+                    crewViewpoint.station.id === activeCrewViewStationIdRef.current) {
+                    applyCrewViewCameraPose(crewViewpoint.station, crewViewpoint.pose);
+                }
+                render();
+                return;
+            }
+            host.dataset.operationInputMode = "settled";
             const hitModel = hitModelRef.current;
             const parsedHit = parsedHitRef.current;
             const turretHitPoseKey = poses.length > 0
