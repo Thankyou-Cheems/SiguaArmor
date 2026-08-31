@@ -4547,7 +4547,7 @@ export function RuntimeVehicleViewer({
   const [activeCrewViewStationId, setActiveCrewViewStationId] =
     useState<string | null>(null);
   const [activeCrewViewZoomIndex, setActiveCrewViewZoomIndex] = useState(0);
-  const [controlPanelOpen, setControlPanelOpen] = useState(false);
+  const [controlPanelOpen, setControlPanelOpen] = useState(true);
   const [controlTargetId, setControlTargetId] = useState(
     CAMERA_CONTROL_TARGET_ID,
   );
@@ -4587,7 +4587,7 @@ export function RuntimeVehicleViewer({
   useEffect(() => {
     crewOccupantDisplayEnabledRef.current = false;
     crewHitProxyDisplayEnabledRef.current = false;
-    setControlPanelOpen(false);
+    setControlPanelOpen(true);
     setControlTargetId(CAMERA_CONTROL_TARGET_ID);
     driverViewpointMarkerEnabledRef.current = false;
     driverMaskEnabledRef.current = true;
@@ -4622,6 +4622,17 @@ export function RuntimeVehicleViewer({
         RUNTIME_VIEWER_CAMERA_VIEWS.find(({ id }) => id === activeCameraView)
           ?.label ?? "自由相机"
       );
+  const controlTargetCount = 2 + runtimeTurretStations.length;
+  const controlTargetStationIndex = runtimeTurretStations.findIndex(
+    ({ id }) => id === controlTargetId,
+  );
+  const controlTargetIndex = controlTargetId === CAMERA_CONTROL_TARGET_ID
+    ? 0
+    : controlTargetId === DRIVER_CONTROL_TARGET_ID
+      ? 1
+      : controlTargetStationIndex >= 0
+        ? controlTargetStationIndex + 2
+        : 0;
   useEffect(() => {
     if (
       controlTargetId !== CAMERA_CONTROL_TARGET_ID &&
@@ -11668,10 +11679,19 @@ export function RuntimeVehicleViewer({
               className="viewer-control-target-slider"
               role="tablist"
               aria-label="选择视角或操控位置"
+              style={{
+                "--control-target-count": controlTargetCount,
+                "--control-target-index": controlTargetIndex,
+              } as CSSProperties}
             >
+              <span
+                className="viewer-control-target-slider__thumb"
+                aria-hidden="true"
+              />
               <button
                 type="button"
                 role="tab"
+                data-target-kind="camera"
                 aria-selected={controlTargetId === CAMERA_CONTROL_TARGET_ID}
                 data-active={controlTargetId === CAMERA_CONTROL_TARGET_ID || undefined}
                 onClick={() => setControlTargetId(CAMERA_CONTROL_TARGET_ID)}
@@ -11681,29 +11701,42 @@ export function RuntimeVehicleViewer({
               <button
                 type="button"
                 role="tab"
+                data-target-kind="driver"
                 aria-selected={controlTargetId === DRIVER_CONTROL_TARGET_ID}
                 data-active={controlTargetId === DRIVER_CONTROL_TARGET_ID || undefined}
                 onClick={() => setControlTargetId(DRIVER_CONTROL_TARGET_ID)}
               >
                 驾驶 · F1
               </button>
-              {runtimeTurretStations.map((station) => (
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={controlTargetId === station.id}
-                  data-active={controlTargetId === station.id || undefined}
-                  title={`${station.label} · ${station.equipmentLabel}`}
-                  onClick={() => {
-                    setControlTargetId(station.id);
-                    setActiveTurretStationId(station.id);
-                    commitTurretNavigation(station.id);
-                  }}
-                  key={station.id}
+              {runtimeTurretStations.length > 0 ? (
+                <div
+                  className="viewer-control-target-slider__station-group"
+                  role="presentation"
+                  style={{
+                    "--control-station-count": runtimeTurretStations.length,
+                  } as CSSProperties}
                 >
-                  {station.label}
-                </button>
-              ))}
+                  <b aria-hidden="true">武器站</b>
+                  {runtimeTurretStations.map((station) => (
+                    <button
+                      type="button"
+                      role="tab"
+                      data-target-kind="station"
+                      aria-selected={controlTargetId === station.id}
+                      data-active={controlTargetId === station.id || undefined}
+                      title={`${station.label} · ${station.equipmentLabel}`}
+                      onClick={() => {
+                        setControlTargetId(station.id);
+                        setActiveTurretStationId(station.id);
+                        commitTurretNavigation(station.id);
+                      }}
+                      key={station.id}
+                    >
+                      {station.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </div>
             <button
               className="viewer-weapon-panel__collapse"
