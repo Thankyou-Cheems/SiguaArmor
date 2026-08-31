@@ -1,4 +1,7 @@
-import type { CompiledVehicleStationGraph } from "./vehicle-station-graph.ts";
+import type {
+  CompiledVehicleStationGraph,
+  StationGraphTransform,
+} from "./vehicle-station-graph.ts";
 import { wikiUrl } from "./wiki-source.ts";
 
 export interface ProjectileVector3 {
@@ -109,7 +112,19 @@ export interface VehicleProjectilePlaybackBinding {
   projectileClassPath: string;
   projectileProfileRef: string;
   launchOriginProfileRef: string;
-  anchorOccurrenceId: string;
+  launchAnchor:
+    | {
+        kind: "visual-occurrence";
+        occurrenceId: string;
+      }
+    | {
+        kind: "station-weapon-attachment";
+        stationId: string;
+        meshRole: "WeaponMesh1P";
+        componentName: string;
+        referenceFrame: StationGraphTransform;
+        motionChannels: Array<"yaw" | "pitch">;
+      };
   launchShot: LaunchOriginProfile["shots"][number];
   launchPrecision: "socket-resolved" | "component-origin-fallback";
   forwardOffsetCm: number;
@@ -246,6 +261,57 @@ function unsupported(
   detail: string,
 ): VehicleProjectilePlaybackResolution {
   return { state: "unsupported", reason, detail };
+}
+
+function stationWeaponLaunchAnchor(
+  station: CompiledVehicleStationGraph["stations"][number],
+): Extract<
+  VehicleProjectilePlaybackBinding["launchAnchor"],
+  { kind: "station-weapon-attachment" }
+> | null {
+  const attachment = station.weaponAttachments?.firstPerson;
+  const frame = attachment?.referenceFrame;
+  const value = frame?.value;
+  if (
+    attachment?.state !== "derived-seat-pawn-component" ||
+    attachment.meshRole !== "WeaponMesh1P" ||
+    attachment.attachmentRule !== "SnapToTargetIncludingScale" ||
+    attachment.sourceFunction !== "ASQVehicleWeapon::Equip@0x1808abd20" ||
+    attachment.parent.kind !== "station-component" ||
+    attachment.parent.stationId !== station.id ||
+    !attachment.parent.componentName ||
+    !["observed", "derived", "derived-with-fallback"].includes(
+      frame?.state ?? "unresolved",
+    ) ||
+    !value ||
+    ![
+      value.translationCm.x,
+      value.translationCm.y,
+      value.translationCm.z,
+      value.rotationQuaternion.x,
+      value.rotationQuaternion.y,
+      value.rotationQuaternion.z,
+      value.rotationQuaternion.w,
+      value.scale3D.x,
+      value.scale3D.y,
+      value.scale3D.z,
+    ].every(Number.isFinite) ||
+    new Set(attachment.motionChannels).size !==
+      attachment.motionChannels.length ||
+    attachment.motionChannels.some(
+      (channel) => channel !== "yaw" && channel !== "pitch",
+    )
+  ) {
+    return null;
+  }
+  return {
+    kind: "station-weapon-attachment",
+    stationId: station.id,
+    meshRole: "WeaponMesh1P",
+    componentName: attachment.parent.componentName,
+    referenceFrame: value,
+    motionChannels: [...attachment.motionChannels],
+  };
 }
 
 export function compileVehicleProjectilePlaybackBinding({
@@ -395,7 +461,14 @@ export function compileVehicleProjectilePlaybackBinding({
   const anchorOccurrenceIds = [
     ...new Set(anchorCandidates.map((candidate) => candidate.stableOccurrenceId)),
   ];
-  if (anchorOccurrenceIds.length !== 1) {
+  const launchAnchor: VehicleProjectilePlaybackBinding["launchAnchor"] | null =
+    anchorOccurrenceIds.length === 1
+      ? {
+          kind: "visual-occurrence",
+          occurrenceId: anchorOccurrenceIds[0]!,
+        }
+      : stationWeaponLaunchAnchor(graphStation);
+  if (!launchAnchor) {
     return unsupported(
       anchorOccurrenceIds.length === 0
         ? "launch-anchor-missing"
@@ -417,7 +490,7 @@ export function compileVehicleProjectilePlaybackBinding({
       projectileClassPath: assignment.projectileClassPath,
       projectileProfileRef: assignment.projectileProfileRef,
       launchOriginProfileRef: assignment.launchOriginProfileRef,
-      anchorOccurrenceId: anchorOccurrenceIds[0]!,
+      launchAnchor,
       launchShot: launchOrigin.shots[0]!,
       launchPrecision: launchOrigin.shots[0]!.socketResolved
         ? "socket-resolved"

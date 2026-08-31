@@ -13,14 +13,13 @@ const V1053_BASELINE = Object.freeze({
   stationGraphSourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
   vehicleSources: 285,
   assignments: 706,
-  ready: 615,
-  unsupported: 91,
+  ready: 629,
+  unsupported: 77,
   readyPrecision: {
     "component-origin-fallback": 12,
-    "socket-resolved": 603,
+    "socket-resolved": 617,
   },
   unsupportedReasons: {
-    "launch-anchor-missing": 14,
     "launch-route-unsupported": 8,
     "movement-mode-unresolved": 61,
     "station-binding-ambiguous": 6,
@@ -225,9 +224,20 @@ for (const indexEntry of index.vehicleSources) {
             : null,
         stationId:
           resolution.state === "ready" ? resolution.binding.stationId : null,
-        anchorOccurrenceId:
+        anchorKind:
           resolution.state === "ready"
-            ? resolution.binding.anchorOccurrenceId
+            ? resolution.binding.launchAnchor.kind
+            : null,
+        anchorOccurrenceId:
+          resolution.state === "ready" &&
+              resolution.binding.launchAnchor.kind === "visual-occurrence"
+            ? resolution.binding.launchAnchor.occurrenceId
+            : null,
+        anchorComponentName:
+          resolution.state === "ready" &&
+              resolution.binding.launchAnchor.kind ===
+                "station-weapon-attachment"
+            ? resolution.binding.launchAnchor.componentName
             : null,
         projectileProfileRef:
           resolution.state === "ready"

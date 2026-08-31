@@ -75,6 +75,29 @@ function motionChannel(channel, z) {
   };
 }
 
+function weaponAttachment(stationId, meshRole, z) {
+  return {
+    state: "derived-seat-pawn-component",
+    meshRole,
+    attachmentRule: "SnapToTargetIncludingScale",
+    parent: {
+      kind: "station-component",
+      stationId,
+      componentName: "GunAttachPoint",
+      componentClassPath: "/Script/Engine.SceneComponent",
+      socketName: null,
+    },
+    motionChannels: ["yaw", "pitch"],
+    stationLocalFrame: graphFrame(0),
+    referenceFrame: graphFrame(z),
+    source: "v10.5.3-vehicle-weapon-equip-plus-blueprint-attach-component",
+    sourceFunction: "ASQVehicleWeapon::Equip@0x1808abd20",
+    sourcePackage: "/Game/Fixture/BP_FixtureTurret",
+    inheritedDepth: 0,
+    reason: null,
+  };
+}
+
 function station(index, parentIndex = null) {
   const id = `${SOURCE}:station:${index}`;
   return {
@@ -138,6 +161,10 @@ function station(index, parentIndex = null) {
       source: "v10.5.3-get-soldier-attach-component-ancestry",
       sourcePackage: null,
       reason: null,
+    },
+    weaponAttachments: {
+      firstPerson: weaponAttachment(id, "WeaponMesh1P", 200 + index),
+      thirdPerson: weaponAttachment(id, "WeaponMesh3P", 200 + index),
     },
     views: [],
     equipmentRefs: [],

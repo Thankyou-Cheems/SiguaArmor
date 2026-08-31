@@ -7,6 +7,9 @@ import {
   presentationProjectileSpreadSample,
   sampleProjectileTrajectory,
 } from "../../lib/vehicle-projectile-playback.ts";
+import {
+  vehicleProjectileAnchorMatrixFromUnrealFrame,
+} from "../../lib/vehicle-projectile-three-runtime.ts";
 
 const SOURCE = "vehicle-0123456789abcdef01234567";
 const STATION = `${SOURCE}:station:2`;
@@ -144,8 +147,75 @@ test("joins one runtime weapon through its exact Station and WeaponMesh1P anchor
     weapon,
   });
   assert.equal(resolution.state, "ready");
-  assert.equal(resolution.binding.anchorOccurrenceId, "occurrence-test");
+  assert.deepEqual(resolution.binding.launchAnchor, {
+    kind: "visual-occurrence",
+    occurrenceId: "occurrence-test",
+  });
   assert.equal(resolution.binding.launchShot.socketName, "socket_muzzle");
+});
+
+test("uses the source-locked Get1PAttachComponent frame when no display occurrence exists", () => {
+  const graph = stationGraph();
+  graph.visualAttachment.stations[0].pitchAnchor.sourceMeshPath =
+    "/Game/Test/SK_OtherGun.SK_OtherGun";
+  const referenceFrame = {
+    translationCm: { x: 100, y: 200, z: 300 },
+    rotationQuaternion: { x: 0, y: 0, z: 0, w: 1 },
+    scale3D: { x: 1, y: 1, z: 1 },
+  };
+  graph.stations[0].weaponAttachments = {
+    firstPerson: {
+      state: "derived-seat-pawn-component",
+      meshRole: "WeaponMesh1P",
+      attachmentRule: "SnapToTargetIncludingScale",
+      parent: {
+        kind: "station-component",
+        stationId: STATION,
+        componentName: "GunAttachPoint",
+        componentClassPath: "/Script/Engine.SceneComponent",
+        socketName: null,
+      },
+      motionChannels: ["yaw", "pitch"],
+      referenceFrame: {
+        state: "derived",
+        value: referenceFrame,
+      },
+      sourceFunction: "ASQVehicleWeapon::Equip@0x1808abd20",
+    },
+  };
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: catalog(),
+    stationGraph: graph,
+    stationId: STATION,
+    weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  assert.deepEqual(resolution.binding.launchAnchor, {
+    kind: "station-weapon-attachment",
+    stationId: STATION,
+    meshRole: "WeaponMesh1P",
+    componentName: "GunAttachPoint",
+    referenceFrame,
+    motionChannels: ["yaw", "pitch"],
+  });
+});
+
+test("converts a vehicle-local Unreal anchor frame without changing its scale", () => {
+  const matrix = vehicleProjectileAnchorMatrixFromUnrealFrame({
+    translationCm: { x: 100, y: 200, z: 300 },
+    rotationQuaternion: { x: 0, y: 0, z: 0, w: 1 },
+    scale3D: { x: 2, y: 3, z: 4 },
+  });
+  const position = { x: matrix.elements[12], y: matrix.elements[13], z: matrix.elements[14] };
+  assert.deepEqual(position, { x: 1, y: 3, z: 2 });
+  assert.deepEqual(
+    [
+      Math.hypot(matrix.elements[0], matrix.elements[1], matrix.elements[2]),
+      Math.hypot(matrix.elements[4], matrix.elements[5], matrix.elements[6]),
+      Math.hypot(matrix.elements[8], matrix.elements[9], matrix.elements[10]),
+    ],
+    [2, 4, 3],
+  );
 });
 
 test("fails closed when one equipment identity belongs to two Stations", () => {
@@ -245,7 +315,10 @@ test("intersects equipment ownership with the WeaponMesh1P source before declari
     weapon,
   });
   assert.equal(resolution.state, "ready");
-  assert.equal(resolution.binding.anchorOccurrenceId, "occurrence-test");
+  assert.deepEqual(resolution.binding.launchAnchor, {
+    kind: "visual-occurrence",
+    occurrenceId: "occurrence-test",
+  });
 });
 
 test("builds native integration input in the current launch direction", () => {
