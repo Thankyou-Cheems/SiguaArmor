@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import { wikiUrl } from "../lib/wiki-source";
 import { gunnerSightLayerPlacement } from "../lib/gunner-sight-layout";
@@ -80,6 +80,8 @@ export function GunnerSightOverlay({
   magnificationLevels,
   zoomHorizontalFovDegrees,
   activeZoomIndex,
+  activeEquipmentRef,
+  onEquipmentChange,
   onZoomStageChange,
 }: {
   station: GunnerSightStation;
@@ -88,6 +90,8 @@ export function GunnerSightOverlay({
   magnificationLevels: number[];
   zoomHorizontalFovDegrees: Array<number | null>;
   activeZoomIndex: number;
+  activeEquipmentRef: string;
+  onEquipmentChange: (equipmentRef: string) => void;
   onZoomStageChange: (zoomIndex: number) => void;
 }) {
   const projectionById = useMemo(
@@ -98,9 +102,9 @@ export function GunnerSightOverlay({
     mode.zoomStages.some((stage) => stageProjection(stage, projectionById))
   );
   const defaultEquipmentRef = modes[0]?.equipmentRef ?? "";
-  const [equipmentRef, setEquipmentRef] = useState(defaultEquipmentRef);
   const activeMode: GunnerSightWeaponMode | null =
-    modes.find((mode) => mode.equipmentRef === equipmentRef) ?? modes[0] ?? null;
+    modes.find((mode) => mode.equipmentRef === activeEquipmentRef) ??
+    modes[0] ?? null;
   const stages = activeMode?.zoomStages.length
     ? activeMode.zoomStages
     : station.defaultZoomStages;
@@ -133,8 +137,13 @@ export function GunnerSightOverlay({
     });
 
   useEffect(() => {
-    setEquipmentRef(defaultEquipmentRef);
-  }, [defaultEquipmentRef, station.stationId]);
+    if (
+      defaultEquipmentRef &&
+      !modes.some((mode) => mode.equipmentRef === activeEquipmentRef)
+    ) {
+      onEquipmentChange(defaultEquipmentRef);
+    }
+  }, [activeEquipmentRef, defaultEquipmentRef, modes, onEquipmentChange]);
 
   return (
     <section
@@ -174,7 +183,7 @@ export function GunnerSightOverlay({
               value={activeMode?.equipmentRef ?? ""}
               onChange={(event) => {
                 const nextEquipmentRef = event.currentTarget.value;
-                setEquipmentRef(nextEquipmentRef);
+                onEquipmentChange(nextEquipmentRef);
                 const nextMode = modes.find(
                   (mode) => mode.equipmentRef === nextEquipmentRef,
                 );
