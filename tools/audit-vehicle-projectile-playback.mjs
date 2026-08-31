@@ -13,16 +13,15 @@ const V1053_BASELINE = Object.freeze({
   stationGraphSourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
   vehicleSources: 285,
   assignments: 706,
-  ready: 629,
-  unsupported: 77,
+  ready: 635,
+  unsupported: 71,
   readyPrecision: {
     "component-origin-fallback": 12,
-    "socket-resolved": 617,
+    "socket-resolved": 623,
   },
   unsupportedReasons: {
     "launch-route-unsupported": 8,
     "movement-mode-unresolved": 61,
-    "station-binding-ambiguous": 6,
     "station-binding-missing": 2,
   },
 });
