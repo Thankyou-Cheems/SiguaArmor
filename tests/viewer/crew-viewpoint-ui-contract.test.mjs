@@ -17,8 +17,8 @@ test("selected weapon station exposes an exact viewpoint marker and camera toggl
   assert.match(viewerSource, /transformCrewViewPose/u);
   assert.match(viewerSource, /activeCrewViewStationId/u);
   assert.match(viewerSource, /cameraViewKind = "crew-station"/u);
-  assert.match(controlsSource, /进入炮手视角/u);
-  assert.match(controlsSource, /退出炮手视角/u);
+  assert.match(controlsSource, /进入真实操作视角/u);
+  assert.match(controlsSource, /退出真实操作视角/u);
   assert.match(controlsSource, /持续命中该视点产生的火花可干扰操作手观察/u);
   assert.match(styles, /\.turret-preview-controls__viewpoint/u);
   assert.match(viewerSource, /viewer-crew-viewpoint-hud__copy/u);

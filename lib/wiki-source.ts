@@ -265,6 +265,30 @@ export async function loadOptionalWikiVehicleGunnerSight(
   }
 }
 
+export async function loadWikiVehicleDriverView(sourceVehicleRef: string) {
+  if (!/^vehicle-[a-f0-9]+$/u.test(sourceVehicleRef)) {
+    throw new Error(`Invalid vehicle driver-view source: ${sourceVehicleRef}`);
+  }
+  const recordPath = `/data/vehicles/driver-views/${sourceVehicleRef}.json`;
+  const value = await loadWikiDataset(
+    recordPath,
+    "sigua-vehicle-driver-view/v1",
+  );
+  const document = value as {
+    sourceVehicleRef?: string;
+    seatKey?: string;
+    camera?: unknown;
+    mask?: unknown;
+  };
+  if (
+    document.sourceVehicleRef !== sourceVehicleRef ||
+    document.seatKey !== `${sourceVehicleRef}:catalog-seat:1` ||
+    !document.camera ||
+    !document.mask
+  ) throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+  return value;
+}
+
 export async function loadWikiVehicleFactionMechanics(factionId: string) {
   if (!/^[a-z0-9-]+$/u.test(factionId)) {
     throw new Error(`Invalid vehicle mechanics faction id: ${factionId}`);

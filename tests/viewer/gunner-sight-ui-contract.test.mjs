@@ -26,10 +26,29 @@ test("weapon and zoom controls switch only observed Station-owned routes", () =>
   assert.match(overlaySource, /mode\.equipmentRef/u);
   assert.match(overlaySource, /切换当前站位武器分划/u);
   assert.match(overlaySource, /切换炮镜倍率/u);
-  assert.match(controlsSource, /显示炮镜遮罩与分划/u);
-  assert.match(controlsSource, /炮镜遮罩与分划/u);
-  assert.match(controlsSource, /viewer-state-switch__track/u);
+  assert.doesNotMatch(controlsSource, /显示炮镜遮罩与分划/u);
+  assert.match(viewerSource, /显示炮镜遮罩与分划/u);
+  assert.match(viewerSource, /crew-view-immersive-controls/u);
   assert.match(viewerSource, /gunnerSightOverlayEnabled/u);
+});
+
+test("operation view exposes direct ring control and keyboard-only camera input", () => {
+  assert.match(viewerSource, /operationOverlay/u);
+  assert.match(viewerSource, /crew-view-operation-panel/u);
+  assert.match(viewerSource, /operationViewKeyAction/u);
+  assert.match(viewerSource, /controls\.enabled = false/u);
+  assert.match(
+    viewerSource,
+    /const onPointerDown = \(event: PointerEvent\) => \{\s*if \(activeCrewViewStationIdRef\.current !== null\)/u,
+  );
+  assert.match(
+    viewerSource,
+    /const onExplosionWheel = \(event: WheelEvent\) => \{\s*if \(activeCrewViewStationIdRef\.current !== null\)/u,
+  );
+  assert.match(viewerSource, /WASD/u);
+  assert.match(viewerSource, /<kbd>Q<\/kbd>/u);
+  assert.match(controlsSource, /切换可操控位置/u);
+  assert.match(controlsSource, /进入真实操作视角/u);
 });
 
 test("gunner overlay copy preserves the presentation-only evidence boundary", () => {

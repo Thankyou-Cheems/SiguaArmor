@@ -178,6 +178,15 @@ import {
   transformCrewViewPose,
   type CrewViewPose,
 } from "../lib/vehicle-crew-viewpoint";
+import { driverViewPose } from "../lib/vehicle-driver-view";
+import {
+  operationViewKeyAction,
+  operationViewScenePresentation,
+} from "../lib/operation-view-control";
+import {
+  loadRuntimeDriverMask,
+  type RuntimeDriverMaskLayer,
+} from "./runtime-driver-view-mask";
 import {
   runtimePlanarSuspensionCoverageForGeneratedClass,
   runtimePlanarSuspensionPoseForVisualOccurrence,
@@ -454,6 +463,7 @@ const SHOT_EXPLOSION_FADE_DURATION_MS =
 const SHOT_EXPLOSION_DURATION_MS =
   SHOT_EXPLOSION_EXPANSION_DURATION_MS + SHOT_EXPLOSION_FADE_DURATION_MS;
 const PROTECTION_MAP_DEBOUNCE_MS = 150;
+const DRIVER_VIEWPOINT_ID = "driver-f1";
 const VIEWER_MODES: Array<[ViewerAssetMode, string]> = [
   ["armor", "装甲"],
   ["interior", "内构"],
@@ -4048,6 +4058,7 @@ export function RuntimeVehicleViewer({
   const protectionCanvasRef = useRef<HTMLCanvasElement>(null);
   const explosionOriginHudRef = useRef<HTMLDivElement>(null);
   const crewViewpointHudRef = useRef<HTMLDivElement>(null);
+  const driverViewpointHudRef = useRef<HTMLDivElement>(null);
   const resetViewRef = useRef<
     ((options?: { preserveShotVisual?: boolean }) => void) | null
   >(null);
@@ -4061,6 +4072,7 @@ export function RuntimeVehicleViewer({
   const enterCrewViewpointRef = useRef<
     ((stationId: string) => boolean) | null
   >(null);
+  const enterDriverViewpointRef = useRef<(() => boolean) | null>(null);
   const exitCrewViewpointRef = useRef<(() => void) | null>(null);
   const applyCrewViewZoomRef = useRef<
     ((stationId: string, zoomIndex: number) => boolean) | null
@@ -4068,6 +4080,11 @@ export function RuntimeVehicleViewer({
   const activeCrewViewZoomIndexRef = useRef(0);
   const activeCrewViewStationIdRef = useRef<string | null>(null);
   const crewViewpointMarkerEnabledRef = useRef(false);
+  const driverViewpointMarkerEnabledRef = useRef(false);
+  const driverMaskEnabledRef = useRef(true);
+  const applyDriverMaskVisibilityRef = useRef<((visible: boolean) => void) | null>(
+    null,
+  );
   const runtimeTurretStationsRef = useRef<RuntimeTurretPreviewStation[]>([]);
   const activeTurretStationIdRef = useRef<string | null>(null);
   const activeCameraViewRef = useRef<RuntimeViewerCameraViewId | null>(null);
@@ -4161,6 +4178,9 @@ export function RuntimeVehicleViewer({
   const radialQuery = preview.radialQuery;
   const chassisPose = preview.chassisPose;
   const gunnerSight = preview.gunnerSight;
+  const driverView = preview.driverView;
+  const driverMaskAvailable =
+    driverView.mask.state === "observed-source-viewport-geometry";
   const crewOccupantPlan = useMemo(
     () => buildCrewOccupantPresentationPlan(preview.crewSeat),
     [preview.crewSeat],
@@ -4426,7 +4446,7 @@ export function RuntimeVehicleViewer({
       })),
     [activeTurretStation?.id, runtimeTurretStations, turretPoseStates],
   );
-  const updateTurretStationPose = (
+  const updateTurretStationPose = useCallback((
     station: RuntimeTurretPreviewStation,
     yawDegrees: number,
     pitchDegrees: number,
@@ -4446,8 +4466,8 @@ export function RuntimeVehicleViewer({
     turretPoseStatesRef.current = nextPoseStates;
     setTurretPoseStates(nextPoseStates);
     return nextPoseStates;
-  };
-  const commitTurretNavigation = (
+  }, []);
+  const commitTurretNavigation = useCallback((
     stationId: string,
     poseStates = turretPoseStatesRef.current,
   ) => {
@@ -4478,7 +4498,7 @@ export function RuntimeVehicleViewer({
       .map((station) => station.id)
       .join("|")}:${token}`;
     onNavigationStateChangeRef.current(next);
-  };
+  }, [runtimeTurretStations]);
   const [viewerState, setViewerState] = useState<ViewerState>({
     kind: "loading",
     loaded: 0,
@@ -4524,9 +4544,13 @@ export function RuntimeVehicleViewer({
     useState<RuntimeViewerCameraViewId | null>(null);
   const [activeCrewViewStationId, setActiveCrewViewStationId] =
     useState<string | null>(null);
+  const [activeCrewViewZoomIndex, setActiveCrewViewZoomIndex] = useState(0);
   const [weaponPanelOpen, setWeaponPanelOpen] = useState(false);
   const [crewViewpointMarkerEnabled, setCrewViewpointMarkerEnabled] =
     useState(false);
+  const [driverViewpointMarkerEnabled, setDriverViewpointMarkerEnabled] =
+    useState(false);
+  const [driverMaskEnabled, setDriverMaskEnabled] = useState(true);
   const [crewOccupantDisplayEnabled, setCrewOccupantDisplayEnabled] =
     useState(false);
   const [crewHitProxyDisplayEnabled, setCrewHitProxyDisplayEnabled] =
@@ -4541,6 +4565,13 @@ export function RuntimeVehicleViewer({
     crewViewpointMarkerEnabledRef.current = crewViewpointMarkerEnabled;
   }, [crewViewpointMarkerEnabled]);
   useEffect(() => {
+    driverViewpointMarkerEnabledRef.current = driverViewpointMarkerEnabled;
+  }, [driverViewpointMarkerEnabled]);
+  useEffect(() => {
+    driverMaskEnabledRef.current = driverMaskEnabled;
+    applyDriverMaskVisibilityRef.current?.(driverMaskEnabled);
+  }, [driverMaskEnabled]);
+  useEffect(() => {
     crewOccupantDisplayEnabledRef.current = crewOccupantDisplayEnabled;
     applyCrewOccupantVisibilityRef.current?.(crewOccupantDisplayEnabled);
   }, [crewOccupantDisplayEnabled]);
@@ -4552,9 +4583,14 @@ export function RuntimeVehicleViewer({
     crewOccupantDisplayEnabledRef.current = false;
     crewHitProxyDisplayEnabledRef.current = false;
     setWeaponPanelOpen(false);
+    driverViewpointMarkerEnabledRef.current = false;
+    driverMaskEnabledRef.current = true;
+    setDriverViewpointMarkerEnabled(false);
+    setDriverMaskEnabled(true);
     setCrewOccupantDisplayEnabled(false);
     setCrewHitProxyDisplayEnabled(false);
   }, [preview.visualVehicleId]);
+  const driverViewActive = activeCrewViewStationId === DRIVER_VIEWPOINT_ID;
   useEffect(() => {
     if (!activeTurretStation) {
       setWeaponPanelOpen(false);
@@ -4601,6 +4637,67 @@ export function RuntimeVehicleViewer({
       activeTurretStation &&
       activeCrewViewStationId === activeTurretStation.id,
   );
+  useEffect(() => {
+    if (activeCrewViewStationId === null) return;
+    const station = runtimeTurretStations.find(
+      ({ id }) => id === activeCrewViewStationId,
+    ) ?? null;
+    const editableTarget = (target: EventTarget | null) =>
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLSelectElement ||
+      target instanceof HTMLTextAreaElement ||
+      (target instanceof HTMLElement && target.isContentEditable);
+    const onOperationKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.altKey || event.ctrlKey || event.metaKey ||
+        editableTarget(event.target)
+      ) return;
+      const action = operationViewKeyAction({
+        code: event.code,
+        driverView: driverViewActive,
+        repeat: event.repeat,
+        zoomIndex: activeCrewViewZoomIndexRef.current,
+        zoomCount: station?.view?.magnificationLevels.length ?? 0,
+      });
+      if (!action || !station) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (action.kind === "zoom") {
+        applyCrewViewZoomRef.current?.(station.id, action.zoomIndex);
+        return;
+      }
+      const current = turretPoseStatesRef.current[station.id] ?? {
+        yawDegrees: 0,
+        pitchDegrees: 0,
+      };
+      updateTurretStationPose(
+        station,
+        current.yawDegrees + action.yawDelta,
+        current.pitchDegrees + action.pitchDelta,
+      );
+    };
+    const onOperationKeyUp = (event: KeyboardEvent) => {
+      if (
+        !station || editableTarget(event.target) ||
+        !["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)
+      ) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      commitTurretNavigation(station.id);
+    };
+    document.addEventListener("keydown", onOperationKeyDown, true);
+    document.addEventListener("keyup", onOperationKeyUp, true);
+    return () => {
+      document.removeEventListener("keydown", onOperationKeyDown, true);
+      document.removeEventListener("keyup", onOperationKeyUp, true);
+    };
+  }, [
+    activeCrewViewStationId,
+    commitTurretNavigation,
+    driverViewActive,
+    runtimeTurretStations,
+    updateTurretStationPose,
+  ]);
   const [infantryPreviewDistanceM, setInfantryPreviewDistanceM] =
     useState<number | null>(null);
   const [sourceSelectorOpen, setSourceSelectorOpen] = useState(false);
@@ -6593,9 +6690,11 @@ export function RuntimeVehicleViewer({
     applyInfantryDistancePreviewRef.current = null;
     enterFreeCameraViewRef.current = null;
     enterCrewViewpointRef.current = null;
+    enterDriverViewpointRef.current = null;
     exitCrewViewpointRef.current = null;
     applyCrewViewZoomRef.current = null;
     applyCrewHitProxyVisibilityRef.current = null;
+    applyDriverMaskVisibilityRef.current = null;
     activeCrewViewZoomIndexRef.current = 0;
     activeCrewViewStationIdRef.current = null;
     activeCameraViewRef.current = null;
@@ -6922,6 +7021,17 @@ export function RuntimeVehicleViewer({
     visualGroup.visible = modeRef.current === "exterior";
     analysisVisualGroup.visible = modeRef.current !== "exterior";
     const crewViewpointMarker = createCrewViewpointMarker();
+    const driverViewpointMarker = createCrewViewpointMarker();
+    driverViewpointMarker.root.name = "driver-viewpoint-marker";
+    const driverMaskHolder = new THREE.Group();
+    driverMaskHolder.name = "runtime-driver-view-mask-holder";
+    host.dataset.driverMaskAssetState = driverMaskAvailable
+      ? "deferred"
+      : "absent";
+    let driverMaskLayer: RuntimeDriverMaskLayer | null = null;
+    let driverMaskLoadRequest: Promise<RuntimeDriverMaskLayer | null> | null =
+      null;
+    const driverPose = driverViewPose(driverView);
     const crewOccupantHolder = new THREE.Group();
     crewOccupantHolder.name = "runtime-crew-occupant-holder";
     crewOccupantHolder.visible = false;
@@ -6930,7 +7040,12 @@ export function RuntimeVehicleViewer({
     let activeCrewViewPose: CrewViewPose | null = null;
     modelGroup.add(chassisPoseGroup);
     chassisPoseGroup.add(visualGroup, analysisVisualGroup);
-    chassisPoseGroup.add(crewViewpointMarker.root, crewOccupantHolder);
+    chassisPoseGroup.add(
+      crewViewpointMarker.root,
+      driverViewpointMarker.root,
+      driverMaskHolder,
+      crewOccupantHolder,
+    );
     visualGroupRef.current = visualGroup;
     analysisVisualGroupRef.current = analysisVisualGroup;
     scene.add(modelGroup);
@@ -7103,8 +7218,9 @@ export function RuntimeVehicleViewer({
       const pose = station ? crewPoseForStation(station) : null;
       const crewViewActive =
         station?.id === activeCrewViewStationIdRef.current;
+      const operatorViewActive = activeCrewViewStationIdRef.current !== null;
       crewViewpointMarker.root.visible = Boolean(
-        crewViewpointMarkerEnabledRef.current && pose && !crewViewActive,
+        crewViewpointMarkerEnabledRef.current && pose && !operatorViewActive,
       );
       host.dataset.crewViewpointMarkerEnabled = String(
         crewViewpointMarkerEnabledRef.current,
@@ -7131,6 +7247,104 @@ export function RuntimeVehicleViewer({
         };
       }
       return { station, pose };
+    };
+
+    const setDriverSceneVisibility = (active: boolean) => {
+      if (active) {
+        visualGroup.visible = false;
+        analysisVisualGroup.visible = false;
+        if (hitGroupRef.current) hitGroupRef.current.visible = false;
+        return;
+      }
+      const hitGroup = hitGroupRef.current;
+      visualGroup.visible = modeRef.current === "exterior" || !hitGroup;
+      analysisVisualGroup.visible = modeRef.current !== "exterior" && Boolean(hitGroup);
+      if (hitGroup) {
+        hitGroup.visible = modeRef.current !== "exterior" ||
+          exteriorSpacedArmorHighlightRef.current;
+      }
+      syncAnalysisVisualPresentation();
+    };
+
+    const setOperationSceneActive = (active: boolean) => {
+      const presentation = operationViewScenePresentation(active);
+      renderer.setClearColor(
+        presentation.clearColor,
+        presentation.clearAlpha,
+      );
+      gridHelper?.scale.set(
+        presentation.groundGridScale,
+        1,
+        presentation.groundGridScale,
+      );
+      gridHelper?.updateMatrixWorld(true);
+      host.dataset.operationScene = active ? "range-reference" : "inspection";
+      host.dataset.operationInput = active
+        ? "wasd-q-and-direct-ui"
+        : "orbit-pointer";
+      host.dataset.operationGroundGridScale = String(
+        presentation.groundGridScale,
+      );
+    };
+
+    const applyDriverMaskVisibility = (requestedVisible: boolean) => {
+      const visible = Boolean(
+        driverMaskLayer &&
+          requestedVisible &&
+          activeCrewViewStationIdRef.current === DRIVER_VIEWPOINT_ID,
+      );
+      driverMaskLayer?.setVisible(visible);
+      host.dataset.driverMaskVisible = String(visible);
+      requestRenderRef.current?.();
+    };
+    applyDriverMaskVisibilityRef.current = applyDriverMaskVisibility;
+
+    const ensureDriverMaskLayer = () => {
+      if (!driverMaskAvailable) {
+        host.dataset.driverMaskAssetState = "absent";
+        return Promise.resolve(null);
+      }
+      if (driverMaskLayer) return Promise.resolve(driverMaskLayer);
+      if (driverMaskLoadRequest) return driverMaskLoadRequest;
+      host.dataset.driverMaskAssetState = "loading";
+      driverMaskLoadRequest = loadRuntimeDriverMask(driverView)
+        .then((layer) => {
+          if (cancelled) {
+            layer?.dispose();
+            return null;
+          }
+          driverMaskLayer = layer;
+          if (layer) driverMaskHolder.add(layer.root);
+          host.dataset.driverMaskAssetState = layer ? "ready" : "absent";
+          delete host.dataset.driverMaskError;
+          applyDriverMaskVisibility(driverMaskEnabledRef.current);
+          return layer;
+        })
+        .catch((error: unknown) => {
+          host.dataset.driverMaskAssetState = "error";
+          host.dataset.driverMaskError =
+            error instanceof Error ? error.message : String(error);
+          driverMaskLoadRequest = null;
+          return null;
+        });
+      return driverMaskLoadRequest;
+    };
+
+    const updateDriverViewpointMarker = () => {
+      const operatorViewActive = activeCrewViewStationIdRef.current !== null;
+      driverViewpointMarker.root.visible = Boolean(
+        driverViewpointMarkerEnabledRef.current && !operatorViewActive,
+      );
+      driverViewpointMarker.root.position.fromArray(driverPose.position);
+      driverViewpointMarker.root.updateMatrixWorld(true);
+      host.dataset.driverViewpointMarkerEnabled = String(
+        driverViewpointMarkerEnabledRef.current,
+      );
+      host.dataset.driverViewpointPosition = driverPose.position.join(",");
+      host.dataset.driverViewpointHorizontalFovDeg = String(
+        driverPose.horizontalFovDegrees,
+      );
+      return driverPose;
     };
 
     const updateCrewOccupantArticulation = () => {
@@ -7413,6 +7627,32 @@ export function RuntimeVehicleViewer({
       } else if (crewViewpointHud) {
         crewViewpointHud.hidden = true;
       }
+      const driverViewpointHud = driverViewpointHudRef.current;
+      if (
+        driverViewpointHud &&
+        driverViewpointMarker.root.visible
+      ) {
+        modelGroup.updateMatrixWorld(true);
+        const worldPosition = driverViewpointMarker.root.getWorldPosition(
+          new THREE.Vector3(),
+        );
+        const projected = worldPosition.clone().project(camera);
+        const onScreen = projected.z >= -1 && projected.z <= 1;
+        driverViewpointHud.hidden = !onScreen;
+        if (onScreen) {
+          const x = (projected.x * 0.5 + 0.5) *
+            renderer.domElement.clientWidth;
+          const y = (-projected.y * 0.5 + 0.5) *
+            renderer.domElement.clientHeight;
+          driverViewpointHud.style.setProperty("--crew-viewpoint-x", `${x}px`);
+          driverViewpointHud.style.setProperty(
+            "--crew-viewpoint-y",
+            `${y - 30}px`,
+          );
+        }
+      } else if (driverViewpointHud) {
+        driverViewpointHud.hidden = true;
+      }
       renderer.render(scene, camera);
     };
     let renderFrame = 0;
@@ -7478,6 +7718,47 @@ export function RuntimeVehicleViewer({
       host.dataset.cameraZoomHorizontalFovDeg = String(
         horizontalFovDegrees,
       );
+      crewViewpointMarker.root.visible = false;
+    };
+    const applyDriverViewCameraPose = () => {
+      activeCrewViewPose = driverPose;
+      chassisPoseGroup.updateMatrixWorld(true);
+      const worldPosition = new THREE.Vector3()
+        .fromArray(driverPose.position)
+        .applyMatrix4(chassisPoseGroup.matrixWorld);
+      const worldForward = new THREE.Vector3()
+        .fromArray(driverPose.forward)
+        .transformDirection(chassisPoseGroup.matrixWorld);
+      const worldUp = new THREE.Vector3()
+        .fromArray(driverPose.up)
+        .transformDirection(chassisPoseGroup.matrixWorld);
+      camera.position.copy(worldPosition);
+      camera.up.copy(worldUp);
+      controls.target.copy(worldPosition).addScaledVector(worldForward, 25);
+      camera.fov = verticalFovForHorizontalFov(
+        driverPose.horizontalFovDegrees,
+        camera.aspect,
+      );
+      camera.near = 0.005;
+      camera.far = Math.max(camera.far, 1000);
+      camera.updateProjectionMatrix();
+      controls.update();
+      activeCameraViewRef.current = null;
+      setActiveCameraView(null);
+      infantryPreviewDistanceRef.current = null;
+      setInfantryPreviewDistanceM(null);
+      host.dataset.cameraViewKind = "driver-seat";
+      host.dataset.cameraViewPreset = DRIVER_VIEWPOINT_ID;
+      host.dataset.cameraProjection = "driver-vehicle-local";
+      host.dataset.cameraHorizontalFovDeg = String(
+        driverPose.horizontalFovDegrees,
+      );
+      host.dataset.cameraVerticalFovDeg = String(camera.fov);
+      host.dataset.driverViewCameraSeatKey = driverView.seatKey;
+      delete host.dataset.cameraZoomIndex;
+      delete host.dataset.cameraZoomMagnification;
+      delete host.dataset.cameraZoomHorizontalFovDeg;
+      driverViewpointMarker.root.visible = false;
       crewViewpointMarker.root.visible = false;
     };
     const applyTurretPose = () => {
@@ -7767,7 +8048,10 @@ export function RuntimeVehicleViewer({
       hitGroupRef.current?.updateMatrixWorld(true);
       updateCrewOccupantArticulation();
       const crewViewpoint = updateCrewViewpointMarker();
-      if (
+      updateDriverViewpointMarker();
+      if (activeCrewViewStationIdRef.current === DRIVER_VIEWPOINT_ID) {
+        applyDriverViewCameraPose();
+      } else if (
         crewViewpoint &&
         crewViewpoint.station.id === activeCrewViewStationIdRef.current
       ) {
@@ -8181,6 +8465,10 @@ export function RuntimeVehicleViewer({
     let lastAppliedCameraNavigationKey: string | null = null;
     const applyInspectionProjection = () => {
       activeCrewViewPose = null;
+      if (activeCrewViewStationIdRef.current === DRIVER_VIEWPOINT_ID) {
+        applyDriverMaskVisibility(false);
+        setDriverSceneVisibility(false);
+      }
       if (activeCrewViewStationIdRef.current !== null) {
         activeCrewViewStationIdRef.current = null;
         setActiveCrewViewStationId(null);
@@ -8204,6 +8492,7 @@ export function RuntimeVehicleViewer({
       delete host.dataset.infantryPreviewEyeHeightM;
       delete host.dataset.crewViewCameraStationId;
       updateCrewViewpointMarker();
+      updateDriverViewpointMarker();
     };
     const cameraNavigationKey = (state: ViewerNavigationState | undefined) => {
       if (state?.camera) return `camera:${state.camera}`;
@@ -8317,6 +8606,7 @@ export function RuntimeVehicleViewer({
       requestRender();
     };
     const onControlsStart = () => {
+      if (activeCrewViewStationIdRef.current !== null) return;
       cameraFitUserLocked = true;
       initialFitStabilizationPending = false;
       window.clearTimeout(initialFitStabilizationTimer);
@@ -8730,11 +9020,15 @@ export function RuntimeVehicleViewer({
         }
       };
       const enterCrewViewpoint = (stationId: string) => {
+        setDriverSceneVisibility(false);
+        applyDriverMaskVisibility(false);
         const station = runtimeTurretStationsRef.current.find(
           ({ id }) => id === stationId,
         );
         const pose = station ? crewPoseForStation(station) : null;
         if (!station || !pose) return false;
+        controls.enabled = false;
+        setOperationSceneActive(true);
         cameraFitUserLocked = true;
         initialFitStabilizationPending = false;
         window.clearTimeout(initialFitStabilizationTimer);
@@ -8749,8 +9043,39 @@ export function RuntimeVehicleViewer({
         host.dataset.crewViewCameraStationId = station.id;
         setRealtimePointer(null);
         activeCrewViewZoomIndexRef.current = 0;
+        setActiveCrewViewZoomIndex(0);
         applyCrewViewCameraPose(station, pose, 0);
         updateCrewViewpointMarker();
+        render();
+        return true;
+      };
+      const enterDriverViewpoint = () => {
+        controls.enabled = false;
+        setOperationSceneActive(true);
+        cameraFitUserLocked = true;
+        initialFitStabilizationPending = false;
+        window.clearTimeout(initialFitStabilizationTimer);
+        initialFitStabilizationTimer = 0;
+        activeCrewViewStationIdRef.current = DRIVER_VIEWPOINT_ID;
+        setActiveCrewViewStationId(DRIVER_VIEWPOINT_ID);
+        crewOccupantHolder.visible = false;
+        crewOccupantLayer?.setVisible(false);
+        host.dataset.crewOccupantVisible = "false";
+        host.dataset.driverViewCameraSeatKey = driverView.seatKey;
+        setRealtimePointer(null);
+        activeCrewViewZoomIndexRef.current = 0;
+        setActiveCrewViewZoomIndex(0);
+        setDriverSceneVisibility(true);
+        applyDriverViewCameraPose();
+        updateCrewViewpointMarker();
+        updateDriverViewpointMarker();
+        if (driverMaskAvailable) {
+          void ensureDriverMaskLayer().then(() =>
+            applyDriverMaskVisibility(driverMaskEnabledRef.current)
+          );
+        } else {
+          applyDriverMaskVisibility(false);
+        }
         render();
         return true;
       };
@@ -8765,31 +9090,44 @@ export function RuntimeVehicleViewer({
           : null;
         if (!station || !pose || horizontalFovDegrees === null) return false;
         activeCrewViewZoomIndexRef.current = zoomIndex;
+        setActiveCrewViewZoomIndex(zoomIndex);
         applyCrewViewCameraPose(station, pose, zoomIndex);
         render();
         return true;
       };
       const exitCrewViewpoint = () => {
+        const wasDriver =
+          activeCrewViewStationIdRef.current === DRIVER_VIEWPOINT_ID;
         activeCrewViewStationIdRef.current = null;
         setActiveCrewViewStationId(null);
         activeCrewViewZoomIndexRef.current = 0;
+        setActiveCrewViewZoomIndex(0);
         activeCrewViewPose = null;
+        controls.enabled = true;
+        setOperationSceneActive(false);
         delete host.dataset.crewViewCameraStationId;
         delete host.dataset.cameraZoomIndex;
         delete host.dataset.cameraZoomMagnification;
         delete host.dataset.cameraZoomHorizontalFovDeg;
+        delete host.dataset.driverViewCameraSeatKey;
+        if (wasDriver) {
+          applyDriverMaskVisibility(false);
+          setDriverSceneVisibility(false);
+        }
         const showCrew = crewOccupantDisplayEnabledRef.current;
         crewOccupantHolder.visible = showCrew;
         crewOccupantLayer?.setVisible(showCrew);
         host.dataset.crewOccupantVisible = String(showCrew);
         resetView({ preserveShotVisual: true });
         updateCrewViewpointMarker();
+        updateDriverViewpointMarker();
       };
       resetViewRef.current = resetView;
       applyCameraViewPresetRef.current = applyInspectionView;
       applyInfantryDistancePreviewRef.current = applyInfantryDistancePreview;
       enterFreeCameraViewRef.current = enterFreeCameraView;
       enterCrewViewpointRef.current = enterCrewViewpoint;
+      enterDriverViewpointRef.current = enterDriverViewpoint;
       exitCrewViewpointRef.current = exitCrewViewpoint;
       applyCrewViewZoomRef.current = applyCrewViewZoom;
       fittedSource = source;
@@ -9109,6 +9447,12 @@ export function RuntimeVehicleViewer({
       setShotExplosionOriginRef.current(explosionDrag.shotId, origin);
     };
     const onPointerDown = (event: PointerEvent) => {
+      if (activeCrewViewStationIdRef.current !== null) {
+        pointerStart = null;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
       if (event.button === 0) {
         const pickedExplosion = pickExplosionDragHandle(event);
         if (pickedExplosion) {
@@ -9134,6 +9478,10 @@ export function RuntimeVehicleViewer({
       pointerStart = { x: event.clientX, y: event.clientY };
     };
     const onPointerMove = (event: PointerEvent) => {
+      if (activeCrewViewStationIdRef.current !== null) {
+        setRealtimePointer(null);
+        return;
+      }
       if (explosionDrag?.pointerId === event.pointerId) {
         normalizedPointerForEvent(event);
         raycaster.setFromCamera(pointer, camera);
@@ -9262,6 +9610,12 @@ export function RuntimeVehicleViewer({
       setRealtimePointer(null);
     };
     const onPointerUp = (event: PointerEvent) => {
+      if (activeCrewViewStationIdRef.current !== null) {
+        pointerStart = null;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
       if (explosionDrag?.pointerId === event.pointerId) {
         if (explosionDragFrame !== 0) {
           cancelAnimationFrame(explosionDragFrame);
@@ -9332,6 +9686,11 @@ export function RuntimeVehicleViewer({
       delete host.dataset.shotExplosionOriginDrag;
     };
     const onExplosionWheel = (event: WheelEvent) => {
+      if (activeCrewViewStationIdRef.current !== null) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
       if (!event.shiftKey) return;
       const record = shotRecordsRef.current.find(
         (candidate) => candidate.shotId === activeShotIdRef.current,
@@ -10032,10 +10391,12 @@ export function RuntimeVehicleViewer({
       applyInfantryDistancePreviewRef.current = null;
       enterFreeCameraViewRef.current = null;
       enterCrewViewpointRef.current = null;
+      enterDriverViewpointRef.current = null;
       exitCrewViewpointRef.current = null;
       applyCrewViewZoomRef.current = null;
       activeCrewViewZoomIndexRef.current = 0;
       activeCrewViewStationIdRef.current = null;
+      applyDriverMaskVisibilityRef.current = null;
       activeCameraViewRef.current = null;
       infantryPreviewDistanceRef.current = null;
       activateAssetModeRef.current = null;
@@ -10093,6 +10454,8 @@ export function RuntimeVehicleViewer({
       controls.removeEventListener("change", onControlsChange);
       controls.removeEventListener("end", onControlsEnd);
       controls.dispose();
+      driverMaskLayer?.dispose();
+      driverMaskLayer = null;
       crewOccupantLayer?.dispose();
       crewOccupantLayer = null;
       disposeScene(scene);
@@ -10103,6 +10466,8 @@ export function RuntimeVehicleViewer({
     chassisPose,
     clearShotVisual,
     crewOccupantPlan,
+    driverMaskAvailable,
+    driverView,
     hit,
     maxShotTraces,
     preview.cardId,
@@ -10398,6 +10763,8 @@ export function RuntimeVehicleViewer({
       data-gunner-sight-visible={gunnerSightOverlayVisible || undefined}
       data-weapon-panel={weaponPanelOpen ? "open" : "closed"}
       data-crew-view-active={activeCrewViewStationId !== null || undefined}
+      data-driver-view-active={driverViewActive || undefined}
+      data-driver-mask-available={driverMaskAvailable || undefined}
       data-crew-occupants={crewOccupantDisplayEnabled ? "visible" : "hidden"}
       data-crew-hit-proxies={
         crewHitProxyDisplayEnabled ? "visible" : "hidden"
@@ -10492,6 +10859,20 @@ export function RuntimeVehicleViewer({
             <span>观察点</span>
           </span>
         </div>
+        <div
+          className="viewer-crew-viewpoint-hud viewer-driver-viewpoint-hud"
+          ref={driverViewpointHudRef}
+          hidden
+          aria-label="驾驶员 F1 观察点"
+        >
+          <span className="viewer-crew-viewpoint-hud__optic" aria-hidden="true">
+            <Crosshair size={13} />
+          </span>
+          <span className="viewer-crew-viewpoint-hud__copy">
+            <b>驾驶员 · F1</b>
+            <span>观察点</span>
+          </span>
+        </div>
       </div>
 
       {gunnerSightOverlayVisible && activeGunnerSightStation && activeTurretStation && gunnerSight ? (
@@ -10510,6 +10891,7 @@ export function RuntimeVehicleViewer({
               )
             ) ?? []
           }
+          activeZoomIndex={activeCrewViewZoomIndex}
           onZoomStageChange={(zoomIndex) => {
             applyCrewViewZoomRef.current?.(
               activeTurretStation.id,
@@ -10519,12 +10901,75 @@ export function RuntimeVehicleViewer({
         />
       ) : null}
 
+      {activeCrewViewStationId !== null && !driverViewActive && activeTurretStation ? (
+        <div
+          className="crew-view-operation-panel"
+          aria-label={`${activeTurretStation.label}方位俯仰控制`}
+        >
+          <TurretPreviewControls
+            embedded
+            operationOverlay
+            stations={runtimeTurretStations}
+            orientationIndicators={turretOrientationIndicators}
+            activeStationId={activeTurretStation.id}
+            yawDegrees={clampedTurretYaw}
+            pitchDegrees={clampedTurretPitch}
+            onStationChange={(stationId) => {
+              setActiveTurretStationId(stationId);
+              enterCrewViewpointRef.current?.(stationId);
+              commitTurretNavigation(stationId);
+            }}
+            onYawChange={(yawDegrees) => {
+              updateTurretStationPose(
+                activeTurretStation,
+                yawDegrees,
+                activeTurretPose.pitchDegrees,
+              );
+            }}
+            onPitchChange={(pitchDegrees) => {
+              updateTurretStationPose(
+                activeTurretStation,
+                activeTurretPose.yawDegrees,
+                pitchDegrees,
+              );
+            }}
+            onReset={() => {
+              const nextPoseStates = updateTurretStationPose(
+                activeTurretStation,
+                0,
+                0,
+              );
+              commitTurretNavigation(activeTurretStation.id, nextPoseStates);
+            }}
+            viewpointActive
+            viewpointMarkerEnabled={false}
+            onViewpointMarkerToggle={() => undefined}
+            onViewpointToggle={() => undefined}
+            onInteractionEnd={() =>
+              commitTurretNavigation(activeTurretStation.id)}
+          />
+        </div>
+      ) : null}
+
       {activeCrewViewStationId !== null ? (
         <div
           className="crew-view-immersive-controls"
-          aria-label="炮手视角控制"
+          aria-label={driverViewActive
+            ? "驾驶员视角控制"
+            : `${activeTurretStation?.label ?? "武器站"}真实操作视角控制`}
         >
-          {gunnerSightPresentationAvailable ? (
+          {driverViewActive && driverMaskAvailable ? (
+            <button
+              type="button"
+              role="switch"
+              aria-label="显示驾驶遮罩"
+              aria-checked={driverMaskEnabled}
+              data-active={driverMaskEnabled || undefined}
+              onClick={() => setDriverMaskEnabled((enabled) => !enabled)}
+            >
+              {driverMaskEnabled ? "隐藏驾驶遮罩" : "显示驾驶遮罩"}
+            </button>
+          ) : !driverViewActive && gunnerSightPresentationAvailable ? (
             <button
               type="button"
               role="switch"
@@ -10537,13 +10982,19 @@ export function RuntimeVehicleViewer({
               {gunnerSightOverlayEnabled ? "隐藏炮镜" : "显示炮镜"}
             </button>
           ) : null}
+          {!driverViewActive ? (
+            <span className="crew-view-operation-keys" aria-label="键盘操作提示">
+              <kbd>WASD</kbd><span>方位 / 俯仰</span>
+              <kbd>Q</kbd><span>倍率</span>
+            </span>
+          ) : null}
           <button
             type="button"
-            aria-label="退出炮手视角"
+            aria-label={driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}
             aria-keyshortcuts="Escape"
             onClick={() => exitCrewViewpointRef.current?.()}
           >
-            退出炮手视角
+            {driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}
             <kbd>Esc</kbd>
           </button>
         </div>
@@ -10842,15 +11293,7 @@ export function RuntimeVehicleViewer({
                 <span aria-hidden="true">{upperOptionsRevealed ? "‹" : "›"}</span>
               </button>
             ) : null}
-            <header className="viewer-control-deck__header">
-              <span><i aria-hidden="true" />场景与分析</span>
-              <strong>3 个功能组</strong>
-            </header>
             <div className="viewer-render-row">
-              <span className="viewer-render-row__label">
-                <b>显示模式</b>
-                <small>场景层</small>
-              </span>
               <div
                 className="viewer-mode-tabs"
                 role="group"
@@ -11099,6 +11542,46 @@ export function RuntimeVehicleViewer({
                 applyInfantryDistancePreviewRef.current?.(distanceM)}
               onFree={() => enterFreeCameraViewRef.current?.()}
             />
+            <div
+              className="viewer-driver-view-controls"
+              data-mask-available={driverMaskAvailable || undefined}
+            >
+              <div className="viewer-driver-view-controls__heading">
+                <span>驾驶员视角</span>
+                <strong>
+                  {driverMaskAvailable ? "专属遮罩" : "无专属遮罩"}
+                </strong>
+              </div>
+              <button
+                className="viewer-state-switch"
+                type="button"
+                role="switch"
+                aria-label="显示驾驶员观察点"
+                aria-checked={driverViewpointMarkerEnabled}
+                data-active={driverViewpointMarkerEnabled || undefined}
+                onClick={() => {
+                  const enabled = !driverViewpointMarkerEnabledRef.current;
+                  driverViewpointMarkerEnabledRef.current = enabled;
+                  setDriverViewpointMarkerEnabled(enabled);
+                  applyTurretPoseRef.current?.();
+                }}
+              >
+                <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
+                <span>驾驶员观察点</span>
+                <strong>{driverViewpointMarkerEnabled ? "显示" : "隐藏"}</strong>
+              </button>
+              <button
+                className="viewer-driver-view-controls__enter"
+                type="button"
+                data-active={driverViewActive || undefined}
+                onClick={() => {
+                  if (driverViewActive) exitCrewViewpointRef.current?.();
+                  else enterDriverViewpointRef.current?.();
+                }}
+              >
+                {driverViewActive ? "退出驾驶员视角" : "进入真实驾驶视角"}
+              </button>
+            </div>
             <div className="viewer-physical-pose-row">
               <button
                 className="viewer-protection-switch viewer-state-switch viewer-physical-pose-switch"
@@ -11321,22 +11804,16 @@ export function RuntimeVehicleViewer({
         <aside
           className="viewer-weapon-panel"
           id="viewer-weapon-panel"
-          aria-labelledby="viewer-weapon-panel-title"
+          aria-label="武器站与真实操作视角"
         >
-          <header className="viewer-weapon-panel__header">
-            <span id="viewer-weapon-panel-title">
-              <i aria-hidden="true" />
-              火控与武器站
-            </span>
-            <strong>{activeTurretStation.label}</strong>
-            <button
-              type="button"
-              onClick={() => setWeaponPanelOpen(false)}
-              aria-label="收起武器站与炮镜面板"
-            >
-              收起 ›
-            </button>
-          </header>
+          <button
+            className="viewer-weapon-panel__collapse"
+            type="button"
+            onClick={() => setWeaponPanelOpen(false)}
+            aria-label="收起武器站与炮镜面板"
+          >
+            收起 ›
+          </button>
           <div className="viewer-weapon-panel__body">
             <TurretPreviewControls
               embedded
@@ -11381,16 +11858,12 @@ export function RuntimeVehicleViewer({
                 activeCrewViewStationId === activeTurretStation.id
               }
               viewpointMarkerEnabled={crewViewpointMarkerEnabled}
-              sightPresentationAvailable={gunnerSightPresentationAvailable}
-              sightPresentationVisible={gunnerSightOverlayEnabled}
               onViewpointMarkerToggle={() => {
                 const enabled = !crewViewpointMarkerEnabledRef.current;
                 crewViewpointMarkerEnabledRef.current = enabled;
                 setCrewViewpointMarkerEnabled(enabled);
                 applyTurretPoseRef.current?.();
               }}
-              onSightPresentationToggle={() =>
-                setGunnerSightOverlayEnabled((enabled) => !enabled)}
               onViewpointToggle={(stationId) => {
                 if (activeCrewViewStationId === stationId) {
                   exitCrewViewpointRef.current?.();

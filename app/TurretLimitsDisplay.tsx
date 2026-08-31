@@ -61,6 +61,7 @@ export interface TurretPreviewStation {
 
 interface TurretPreviewControlsProps {
   embedded?: boolean;
+  operationOverlay?: boolean;
   stations: TurretPreviewStation[];
   orientationIndicators: TurretOrientationIndicator[];
   activeStationId: string;
@@ -72,10 +73,7 @@ interface TurretPreviewControlsProps {
   onReset: () => void;
   viewpointActive: boolean;
   viewpointMarkerEnabled: boolean;
-  sightPresentationAvailable: boolean;
-  sightPresentationVisible: boolean;
   onViewpointMarkerToggle: () => void;
-  onSightPresentationToggle: () => void;
   onViewpointToggle: (stationId: string) => void;
   onInteractionEnd: () => void;
 }
@@ -766,6 +764,7 @@ export function TurretEnvelopeCard({
 
 export function TurretPreviewControls({
   embedded = false,
+  operationOverlay = false,
   stations,
   orientationIndicators,
   activeStationId,
@@ -777,21 +776,25 @@ export function TurretPreviewControls({
   onReset,
   viewpointActive,
   viewpointMarkerEnabled,
-  sightPresentationAvailable,
-  sightPresentationVisible,
   onViewpointMarkerToggle,
-  onSightPresentationToggle,
   onViewpointToggle,
   onInteractionEnd,
 }: TurretPreviewControlsProps) {
   const pitchPointerIdRef = useRef<number | null>(null);
   const activeStation = stations.find((station) => station.id === activeStationId) ?? stations[0];
   if (!activeStation) return null;
+  const activeStationIndex = Math.max(
+    0,
+    stations.findIndex((station) => station.id === activeStation.id),
+  );
   const { turret } = activeStation;
   const pitchWindow = turretPitchWindowAtYaw(turret, yawDegrees);
   if (!pitchWindow) return null;
   const pitchSpan =
     pitchWindow.maxPitchDegrees - pitchWindow.minPitchDegrees;
+  const pitchControlAvailable = activeStation.pitchAvailable || (
+    operationOverlay && activeStation.viewpointAvailable === true
+  );
   const pitchProgress = pitchSpan > 0
     ? Math.min(
         100,
@@ -874,23 +877,38 @@ export function TurretPreviewControls({
 
   const body = (
     <div className="turret-preview-controls__body">
-          {stations.length > 1 ? (
-            <label className="turret-preview-controls__station">
-              <span>武器站</span>
-              <select
-                value={activeStation.id}
-                onChange={(event) => onStationChange(event.currentTarget.value)}
-                aria-label="选择要预览的炮塔"
+          <div className="turret-preview-controls__station">
+            {stations.length > 1 ? (
+              <div
+                className="turret-preview-controls__station-slider"
+                role="tablist"
+                aria-label="切换可操控位置"
+                style={{
+                  "--station-count": stations.length,
+                  "--station-index": activeStationIndex,
+                } as CSSProperties}
               >
+                <span aria-hidden="true" />
                 {stations.map((station) => (
-                  <option value={station.id} key={station.id}>
-                    {station.label} · {station.equipmentLabel}
-                    {station.viewpointAvailable ? " · 视点已定位" : ""}
-                  </option>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={station.id === activeStation.id}
+                    data-active={station.id === activeStation.id || undefined}
+                    title={`${station.label} · ${station.equipmentLabel}`}
+                    onClick={() => onStationChange(station.id)}
+                    key={station.id}
+                  >
+                    {station.label}
+                  </button>
                 ))}
-              </select>
-            </label>
-          ) : null}
+              </div>
+            ) : null}
+            <span className="turret-preview-controls__station-identity">
+              <strong>{activeStation.label}</strong>
+              <small>{activeStation.equipmentLabel}</small>
+            </span>
+          </div>
           <div className="turret-preview-controls__main">
             <div className="turret-preview-controls__yaw">
               <span className="turret-preview-controls__readout">
@@ -927,14 +945,14 @@ export function TurretPreviewControls({
                   max={pitchWindow.maxPitchDegrees}
                   step="0.1"
                   value={pitchDegrees}
-                  disabled={!activeStation.pitchAvailable}
+                  disabled={!pitchControlAvailable}
                   aria-label="炮塔俯仰"
                   aria-orientation="vertical"
                   style={{
                     "--pitch-progress": `${pitchProgress}%`,
                   } as CSSProperties}
                   onPointerDown={(event) => {
-                    if (!activeStation.pitchAvailable) return;
+                    if (!pitchControlAvailable) return;
                     event.preventDefault();
                     event.currentTarget.focus();
                     pitchPointerIdRef.current = event.pointerId;
@@ -979,14 +997,8 @@ export function TurretPreviewControls({
               回正炮塔
             </button>
           </div>
-          {activeStation.viewpointAvailable ? (
+          {!operationOverlay && activeStation.viewpointAvailable ? (
             <div className="turret-preview-controls__viewpoint">
-              <div className="turret-preview-controls__viewpoint-heading">
-                <span>
-                  <i aria-hidden="true" />
-                  <b>观察与炮镜</b>
-                </span>
-              </div>
               <button
                 className="viewer-state-switch turret-preview-controls__viewpoint-switch"
                 type="button"
@@ -994,6 +1006,7 @@ export function TurretPreviewControls({
                 aria-label="显示炮手观察点"
                 aria-checked={viewpointMarkerEnabled}
                 data-active={viewpointMarkerEnabled || undefined}
+                title="外部视图用观察点图标定位该站位；持续命中该视点产生的火花可干扰操作手观察，但不表示游戏会损伤光学设备或施加失明状态。"
                 onClick={onViewpointMarkerToggle}
               >
                 <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
@@ -1007,50 +1020,13 @@ export function TurretPreviewControls({
                 aria-pressed={viewpointActive}
                 onClick={() => onViewpointToggle(activeStation.id)}
               >
-                {viewpointActive ? "退出炮手视角" : "进入炮手视角"}
+                {viewpointActive ? "退出真实操作视角" : "进入真实操作视角"}
               </button>
-              {sightPresentationAvailable ? (
-                <button
-                  className="viewer-state-switch turret-preview-controls__sight-switch"
-                  type="button"
-                  role="switch"
-                  aria-label="显示炮镜遮罩与分划"
-                  aria-checked={sightPresentationVisible}
-                  data-active={sightPresentationVisible || undefined}
-                  onClick={onSightPresentationToggle}
-                >
-                  <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>
-                  <span>炮镜遮罩与分划</span>
-                  <strong>{sightPresentationVisible ? "显示" : "隐藏"}</strong>
-                </button>
-              ) : null}
-              <p>
-                {viewpointMarkerEnabled
-                  ? `外部视图以炮镜图标标记 ${activeStation.label} 的观察点。`
-                  : "打开显示后，外部视图会标记所选站位的观察点。"}
-                持续命中该视点产生的火花可干扰操作手观察；这是战术参考，不代表游戏会损伤光学设备或施加视觉状态。
-              </p>
             </div>
           ) : null}
-          <ul
-            className="turret-preview-controls__orientation-legend"
-            aria-label="炮塔与武器站世界朝向"
-          >
-            {orientationIndicators.map((indicator) => (
-              <li
-                key={indicator.id}
-                data-kind={indicator.kind}
-                data-active={indicator.active || undefined}
-              >
-                <i aria-hidden="true" />
-                <span>{indicator.label}</span>
-                <output>{angleLabel(indicator.yawDegrees)}</output>
-              </li>
-            ))}
-          </ul>
-          {!activeStation.yawAvailable ? (
+          {!operationOverlay && !activeStation.yawAvailable ? (
             <p role="note">当前运行时视觉包没有可验证的炮塔 actor，暂不旋转模型。</p>
-          ) : !activeStation.pitchAvailable ? (
+          ) : !operationOverlay && !activeStation.pitchAvailable ? (
             <p role="note">炮塔可水平旋转；枪管俯仰部件仍待精确映射。</p>
           ) : null}
     </div>
@@ -1063,6 +1039,7 @@ export function TurretPreviewControls({
       data-yaw-available={activeStation.yawAvailable}
       data-pitch-available={activeStation.pitchAvailable}
       data-embedded={embedded || undefined}
+      data-operation-overlay={operationOverlay || undefined}
       style={sourceStyle}
       aria-label="炮塔姿态预览"
     >

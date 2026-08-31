@@ -79,6 +79,7 @@ export function GunnerSightOverlay({
   stationLabel,
   magnificationLevels,
   zoomHorizontalFovDegrees,
+  activeZoomIndex,
   onZoomStageChange,
 }: {
   station: GunnerSightStation;
@@ -86,6 +87,7 @@ export function GunnerSightOverlay({
   stationLabel: string;
   magnificationLevels: number[];
   zoomHorizontalFovDegrees: Array<number | null>;
+  activeZoomIndex: number;
   onZoomStageChange: (zoomIndex: number) => void;
 }) {
   const projectionById = useMemo(
@@ -95,14 +97,16 @@ export function GunnerSightOverlay({
   const modes = station.weaponModes.filter((mode) =>
     mode.zoomStages.some((stage) => stageProjection(stage, projectionById))
   );
-  const [equipmentRef, setEquipmentRef] = useState(modes[0]?.equipmentRef ?? "");
+  const defaultEquipmentRef = modes[0]?.equipmentRef ?? "";
+  const [equipmentRef, setEquipmentRef] = useState(defaultEquipmentRef);
   const activeMode: GunnerSightWeaponMode | null =
     modes.find((mode) => mode.equipmentRef === equipmentRef) ?? modes[0] ?? null;
   const stages = activeMode?.zoomStages.length
     ? activeMode.zoomStages
     : station.defaultZoomStages;
-  const [zoomIndex, setZoomIndex] = useState(stages[0]?.zoomIndex ?? 0);
-  const activeStage = stages.find((stage) => stage.zoomIndex === zoomIndex) ?? stages[0];
+  const activeStage = stages.find(
+    (stage) => stage.zoomIndex === activeZoomIndex,
+  ) ?? stages[0];
   const reticleProjection = stageProjection(activeStage, projectionById) ??
     station.layers
       .filter((layer) => layer.role === "reticle" && layer.visibility !== "Collapsed")
@@ -129,25 +133,8 @@ export function GunnerSightOverlay({
     });
 
   useEffect(() => {
-    setEquipmentRef(modes[0]?.equipmentRef ?? "");
-  }, [station.stationId]);
-  useEffect(() => {
-    const nextStages = activeMode?.zoomStages.length
-      ? activeMode.zoomStages
-      : station.defaultZoomStages;
-    setZoomIndex(nextStages[0]?.zoomIndex ?? 0);
-  }, [activeMode?.equipmentRef, station.stationId]);
-  useEffect(() => {
-    if (
-      activeStage &&
-      zoomHorizontalFovDegrees[activeStage.zoomIndex] !== null &&
-      zoomHorizontalFovDegrees[activeStage.zoomIndex] !== undefined
-    ) onZoomStageChange(activeStage.zoomIndex);
-  }, [
-    activeStage?.zoomIndex,
-    onZoomStageChange,
-    zoomHorizontalFovDegrees,
-  ]);
+    setEquipmentRef(defaultEquipmentRef);
+  }, [defaultEquipmentRef, station.stationId]);
 
   return (
     <section
@@ -157,6 +144,7 @@ export function GunnerSightOverlay({
       data-zoom-index={activeStage?.zoomIndex ?? 0}
       data-zoom-fov-authority="derived-native-formula-candidate"
       aria-label={`${stationLabel} 炮镜视野`}
+      title="静态炮镜与视口遮罩；不表示光学损坏、失明或命中机制。"
     >
       <div className="gunner-sight-overlay__layers" aria-hidden="true">
         {screenLayers.map(({ layer, projection }) => (
@@ -178,14 +166,22 @@ export function GunnerSightOverlay({
       <div className="gunner-sight-overlay__controls">
         <span className="gunner-sight-overlay__identity">
           <b>{stationLabel}</b>
-          <small>10.5.3 SOURCE-AUTHORED SIGHT</small>
         </span>
         {modes.length > 1 ? (
           <label>
             <span>武器分划</span>
             <select
               value={activeMode?.equipmentRef ?? ""}
-              onChange={(event) => setEquipmentRef(event.currentTarget.value)}
+              onChange={(event) => {
+                const nextEquipmentRef = event.currentTarget.value;
+                setEquipmentRef(nextEquipmentRef);
+                const nextMode = modes.find(
+                  (mode) => mode.equipmentRef === nextEquipmentRef,
+                );
+                const nextStage = nextMode?.zoomStages[0] ??
+                  station.defaultZoomStages[0];
+                if (nextStage) onZoomStageChange(nextStage.zoomIndex);
+              }}
               aria-label="切换当前站位武器分划"
             >
               {modes.map((mode) => (
@@ -215,7 +211,7 @@ export function GunnerSightOverlay({
                 data-horizontal-fov-degrees={
                   zoomHorizontalFovDegrees[stage.zoomIndex] ?? undefined
                 }
-                onClick={() => setZoomIndex(stage.zoomIndex)}
+                onClick={() => onZoomStageChange(stage.zoomIndex)}
                 key={`${stage.zoomIndex}:${stage.sourceObjectPath}`}
               >
                 {stageLabel(stage, magnificationLevels)}
@@ -224,12 +220,6 @@ export function GunnerSightOverlay({
           </div>
         ) : null}
       </div>
-      <p
-        className="gunner-sight-overlay__scope"
-        title="静态炮镜与视口遮罩；倍率使用源 ZoomLevels 的原生公式投影，不表示逐帧 ViewTarget；不表示光学损坏、失明或命中机制。"
-      >
-        静态炮镜 · 源倍率 · 非损伤机制
-      </p>
     </section>
   );
 }
