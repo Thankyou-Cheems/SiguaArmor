@@ -303,9 +303,74 @@
   top: 8px;
   right: 8px;
   display: flex;
+  max-width: calc(100% - 16px);
+  flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
   gap: 4px;
   pointer-events: auto;
+}
+
+.crew-view-projectile-weapon {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 5px 0 7px;
+  border: 1px solid rgba(242, 216, 141, 0.24);
+  color: rgba(242, 216, 141, 0.74);
+  background: rgba(5, 8, 7, 0.82);
+  font: 7px/1 var(--font-mono-ui);
+  backdrop-filter: blur(10px);
+}
+
+.crew-view-projectile-weapon select {
+  width: min(150px, 24vw);
+  min-width: 82px;
+  height: 20px;
+  border: 0;
+  color: #f2d88d;
+  background: rgba(242, 216, 141, 0.08);
+  font: inherit;
+}
+
+.crew-view-projectile-fire[data-state="ready"] {
+  border-color: rgba(242, 216, 141, 0.72);
+  background: rgba(65, 48, 16, 0.92);
+}
+
+.crew-view-projectile-fire:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+
+.crew-view-immersive-controls .crew-view-projectile-fire kbd {
+  display: inline-grid;
+  min-width: 34px;
+  min-height: 16px;
+  border: 1px solid rgba(242, 216, 141, 0.3);
+  background: rgba(242, 216, 141, 0.08);
+  font: 6px/1 var(--font-mono-ui);
+  place-items: center;
+}
+
+.crew-view-projectile-status {
+  order: 20;
+  width: min(360px, 100%);
+  margin-left: auto;
+  padding: 4px 7px;
+  border: 1px solid rgba(242, 216, 141, 0.2);
+  color: rgba(242, 216, 141, 0.82);
+  background: rgba(5, 8, 7, 0.84);
+  font: 7px/1.35 var(--font-mono-ui);
+  text-align: right;
+  backdrop-filter: blur(10px);
+}
+
+.crew-view-projectile-status[data-state="unsupported"],
+.crew-view-projectile-status[data-state="error"] {
+  border-color: rgba(255, 117, 96, 0.42);
+  color: #ffb6aa;
 }
 
 .crew-view-operation-keys {
