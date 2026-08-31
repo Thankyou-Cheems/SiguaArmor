@@ -142,7 +142,7 @@ export function GunnerSightOverlay({
       data-station-id={station.stationId}
       data-weapon-mode={activeMode?.weaponClassPath ?? "default"}
       data-zoom-index={activeStage?.zoomIndex ?? 0}
-      data-zoom-fov-authority="derived-native-formula-candidate"
+      data-zoom-fov-authority="standard-16:9-90-horizontal-baseline"
       aria-label={`${stationLabel} 炮镜视野`}
       title="静态炮镜与视口遮罩；不表示光学损坏、失明或命中机制。"
     >
