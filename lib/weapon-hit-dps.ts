@@ -143,6 +143,42 @@ export function selectPrimaryWeaponHitDpsTarget<T extends WeaponHitDpsTarget>(
   );
 }
 
+function selectedEstimateKillTime(estimate: WeaponHitDpsEstimate) {
+  const candidate = estimate.optimization.recommended ?? estimate.optimization.burn;
+  return candidate.result.ammoExhausted
+    ? null
+    : candidate.result.killTimeSeconds;
+}
+
+/**
+ * A damage-card headline describes the first actual vehicle loss. Hull and
+ * ammo-rack depletion are both terminal; ordinary component priority remains
+ * the fallback only when neither terminal path resolves within the simulation.
+ */
+export function selectPrimaryWeaponHitDpsEstimate(
+  estimates: readonly WeaponHitDpsEstimate[],
+  clickedSemanticKind: string | null,
+): WeaponHitDpsEstimate | null {
+  const lethalVehicleEstimate = estimates
+    .flatMap((estimate) => {
+      if (estimate.poolKind !== "hull" && estimate.poolKind !== "ammo-rack") {
+        return [];
+      }
+      const killTimeSeconds = selectedEstimateKillTime(estimate);
+      return killTimeSeconds === null ? [] : [{ estimate, killTimeSeconds }];
+    })
+    .sort(
+      (left, right) =>
+        left.killTimeSeconds - right.killTimeSeconds ||
+        (left.estimate.poolKind === right.estimate.poolKind
+          ? 0
+          : left.estimate.poolKind === "ammo-rack" ? -1 : 1) ||
+        left.estimate.key.localeCompare(right.estimate.key, "en"),
+    )[0]?.estimate;
+  return lethalVehicleEstimate ??
+    selectPrimaryWeaponHitDpsTarget(estimates, clickedSemanticKind);
+}
+
 export function singleShotWeaponHitTarget<T extends WeaponHitDpsTarget>(
   targets: readonly T[],
   clickedSemanticKind: string | null,

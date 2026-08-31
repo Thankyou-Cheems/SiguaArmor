@@ -158,6 +158,8 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   const timeline = await readFile(new URL("../../app/WeaponRhythmTimeline.tsx", import.meta.url), "utf8");
   assert.doesNotMatch(viewer, /weaponDpsHref|viewer-weapon-dps-link|\/weapon-dps\?/u);
   assert.match(viewer, /function HitDpsTimingCard/u);
+  assert.match(viewer, /selectPrimaryWeaponHitDpsEstimate/u);
+  assert.match(viewer, /击毁载具（弹药架）/u);
   assert.match(viewer, /optimization\.recommended/u);
   assert.match(viewer, /<WeaponRhythmTimeline/u);
   const outcomeDetails = viewer.slice(
