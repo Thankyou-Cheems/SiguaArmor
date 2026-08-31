@@ -142,15 +142,12 @@ test("weapon-station label uses a vertical side rail without lowering station op
   );
 });
 
-test("protection-map precision keeps its two label lines intact", () => {
+test("protection analysis keeps its two label lines intact", () => {
   assert.match(
     viewerSource,
-    /viewer-protection-precision__label">\s*<span>防护图<\/span>\s*<span>计算精度<\/span>/u,
+    /viewer-protection-precision__label">\s*<span>防护分析<\/span>\s*<span>计算精度<\/span>/u,
   );
-  assert.doesNotMatch(
-    viewerSource,
-    /viewer-protection-precision__label">防护图<br\s*\/>计算精度<\/span>/u,
-  );
+  assert.doesNotMatch(viewerSource, /防护图/u);
   assert.match(
     viewerStyles,
     /\.viewer-protection-precision__label\s*\{[^}]*white-space:\s*nowrap;/u,

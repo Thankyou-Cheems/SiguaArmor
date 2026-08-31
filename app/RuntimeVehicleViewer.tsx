@@ -173,14 +173,16 @@ import {
 } from "../lib/vehicle-crew-occupant-presentation";
 import {
   crewViewBasePose,
-  crewViewHorizontalFovForZoom,
   preferredCrewViewStation,
   transformCrewViewPose,
   type CrewViewPose,
 } from "../lib/vehicle-crew-viewpoint";
 import { driverViewPose } from "../lib/vehicle-driver-view";
 import {
+  OPERATION_VIEW_STANDARD_ASPECT_RATIO,
+  OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES,
   operationViewKeyAction,
+  operationViewHorizontalFovForMagnification,
   operationViewScenePresentation,
 } from "../lib/operation-view-control";
 import {
@@ -7747,7 +7749,9 @@ export function RuntimeVehicleViewer({
       zoomIndex = activeCrewViewZoomIndexRef.current,
     ) => {
       const zoomHorizontalFovDegrees = station.view
-        ? crewViewHorizontalFovForZoom(station.view, zoomIndex)
+        ? operationViewHorizontalFovForMagnification(
+            station.view.magnificationLevels[zoomIndex],
+          )
         : null;
       const horizontalFovDegrees = zoomHorizontalFovDegrees ??
         pose.horizontalFovDegrees;
@@ -7768,6 +7772,7 @@ export function RuntimeVehicleViewer({
       camera.position.copy(worldPosition);
       camera.up.copy(worldUp);
       controls.target.copy(worldPosition).addScaledVector(worldForward, 25);
+      camera.aspect = OPERATION_VIEW_STANDARD_ASPECT_RATIO;
       camera.fov = verticalFovForHorizontalFov(
         horizontalFovDegrees,
         camera.aspect,
@@ -7794,6 +7799,10 @@ export function RuntimeVehicleViewer({
       host.dataset.cameraZoomHorizontalFovDeg = String(
         horizontalFovDegrees,
       );
+      host.dataset.operationViewAspectRatio = "16:9";
+      host.dataset.operationViewReferenceHorizontalFovDeg = String(
+        OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES,
+      );
       crewViewpointMarker.root.visible = false;
     };
     const applyDriverViewCameraPose = () => {
@@ -7811,6 +7820,7 @@ export function RuntimeVehicleViewer({
       camera.position.copy(worldPosition);
       camera.up.copy(worldUp);
       controls.target.copy(worldPosition).addScaledVector(worldForward, 25);
+      camera.aspect = OPERATION_VIEW_STANDARD_ASPECT_RATIO;
       camera.fov = verticalFovForHorizontalFov(
         driverPose.horizontalFovDegrees,
         camera.aspect,
@@ -7831,6 +7841,10 @@ export function RuntimeVehicleViewer({
       );
       host.dataset.cameraVerticalFovDeg = String(camera.fov);
       host.dataset.driverViewCameraSeatKey = driverView.seatKey;
+      host.dataset.operationViewAspectRatio = "16:9";
+      host.dataset.operationViewReferenceHorizontalFovDeg = String(
+        OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES,
+      );
       delete host.dataset.cameraZoomIndex;
       delete host.dataset.cameraZoomMagnification;
       delete host.dataset.cameraZoomHorizontalFovDeg;
@@ -8716,7 +8730,9 @@ export function RuntimeVehicleViewer({
       rendererWidth = width;
       rendererHeight = height;
       renderer.setSize(width, height, false);
-      camera.aspect = width / height;
+      camera.aspect = activeCrewViewPose
+        ? OPERATION_VIEW_STANDARD_ASPECT_RATIO
+        : width / height;
       const horizontalFovDegrees = activeCrewViewPose
         ?.horizontalFovDegrees ?? SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG;
       camera.fov = verticalFovForHorizontalFov(
@@ -8728,6 +8744,7 @@ export function RuntimeVehicleViewer({
         horizontalFovDegrees,
       );
       host.dataset.cameraVerticalFovDeg = String(camera.fov);
+      host.dataset.cameraAspectRatio = String(camera.aspect);
       if (infantryPreviewDistanceRef.current !== null) {
         host.dataset.infantryPreviewVerticalFovDeg = String(camera.fov);
       }
@@ -9172,7 +9189,9 @@ export function RuntimeVehicleViewer({
         );
         const pose = station ? crewPoseForStation(station) : null;
         const horizontalFovDegrees = station?.view
-          ? crewViewHorizontalFovForZoom(station.view, zoomIndex)
+          ? operationViewHorizontalFovForMagnification(
+              station.view.magnificationLevels[zoomIndex],
+            )
           : null;
         if (!station || !pose || horizontalFovDegrees === null) return false;
         activeCrewViewZoomIndexRef.current = zoomIndex;
@@ -9196,6 +9215,8 @@ export function RuntimeVehicleViewer({
         delete host.dataset.cameraZoomMagnification;
         delete host.dataset.cameraZoomHorizontalFovDeg;
         delete host.dataset.driverViewCameraSeatKey;
+        delete host.dataset.operationViewAspectRatio;
+        delete host.dataset.operationViewReferenceHorizontalFovDeg;
         if (wasDriver) {
           applyDriverMaskVisibility(false);
           setDriverSceneVisibility(false);
@@ -10700,12 +10721,12 @@ export function RuntimeVehicleViewer({
   const protectionStatus = !protectionMapAvailable
     ? "当前模式不可用"
     : !protectionActive
-      ? "本机防护图已关闭"
+      ? "本机防护分析已关闭"
       : protectionSampleProgress.total <= 0
-        ? "本机防护图等待计算"
+        ? "本机防护分析等待计算"
         : protectionSampleProgress.completed >= protectionSampleProgress.total
-          ? `本机防护图 ${protectionRenderedPrecision} 档完成`
-          : `本机防护图计算中 ${protectionSampleProgress.completed}/${protectionSampleProgress.total}`;
+          ? `本机防护分析 ${protectionRenderedPrecision} 档完成`
+          : `本机防护分析计算中 ${protectionSampleProgress.completed}/${protectionSampleProgress.total}`;
   const penetrationDamageEvents = shotResult
     ? effectiveDamageEventsByKind(shotResult, "point")
     : [];
@@ -10973,9 +10994,8 @@ export function RuntimeVehicleViewer({
           }
           zoomHorizontalFovDegrees={
             activeTurretStation.view?.magnificationLevels.map((_, zoomIndex) =>
-              crewViewHorizontalFovForZoom(
-                activeTurretStation.view!,
-                zoomIndex,
+              operationViewHorizontalFovForMagnification(
+                activeTurretStation.view!.magnificationLevels[zoomIndex],
               )
             ) ?? []
           }
@@ -11420,7 +11440,7 @@ export function RuntimeVehicleViewer({
                 className="viewer-protection-switch viewer-state-switch"
                 type="button"
                 role="switch"
-                aria-label="防护图，仅在当前浏览器本机计算"
+                aria-label="防护分析，仅在当前浏览器本机计算"
                 aria-checked={protectionActive}
                 data-active={protectionActive}
                 disabled={!protectionMapAvailable}
@@ -11441,7 +11461,7 @@ export function RuntimeVehicleViewer({
                 }}
               >
                 <span className="viewer-protection-switch__track viewer-state-switch__track" aria-hidden="true"><span /></span>
-                <span>防护图</span>
+                <span>防护分析</span>
                 <strong>{protectionActive ? "开" : "关"}</strong>
               </button>
               <label className="viewer-protection-opacity" data-disabled={!protectionActive}>
@@ -11456,7 +11476,7 @@ export function RuntimeVehicleViewer({
                   style={{
                     "--range-progress": `${((protectionOpacityPercent - 10) / 90) * 100}%`,
                   } as CSSProperties}
-                  aria-label={`防护图透明度 ${protectionOpacityPercent}%`}
+                  aria-label={`防护分析透明度 ${protectionOpacityPercent}%`}
                   onChange={(event) => setProtectionOpacityPercent(Number(event.currentTarget.value))}
                 />
                 <output>{protectionOpacityPercent}%</output>
@@ -11468,7 +11488,7 @@ export function RuntimeVehicleViewer({
               data-super={protectionPrecision === RUNTIME_PROTECTION_MAP_SUPER_PRECISION}
             >
               <span className="viewer-protection-precision__label">
-                <span>防护图</span>
+                <span>防护分析</span>
                 <span>计算精度</span>
               </span>
               <span
@@ -11489,8 +11509,8 @@ export function RuntimeVehicleViewer({
                   value={protectionPrecision}
                   disabled={!protectionActive}
                   aria-label={protectionPrecision === RUNTIME_PROTECTION_MAP_SUPER_PRECISION
-                    ? "防护图计算精度 超级档，可能导致严重卡顿"
-                    : `防护图计算精度 ${protectionPrecision} 档`}
+                    ? "防护分析计算精度 超级档，可能导致严重卡顿"
+                    : `防护分析计算精度 ${protectionPrecision} 档`}
                   onInput={(event) => setProtectionPrecision(
                     clampRuntimeProtectionMapPrecision(Number(event.currentTarget.value)),
                   )}
@@ -11590,7 +11610,7 @@ export function RuntimeVehicleViewer({
               </>
             ) : null}
             {protectionActive ? (
-              <div className="viewer-protection-legend" aria-label="防护图图例">
+              <div className="viewer-protection-legend" aria-label="防护分析图例">
                 <span data-protection="damage">可造成伤害</span>
                 <span data-protection="engine">发动机</span>
                 <span data-protection="ammo">弹药架</span>

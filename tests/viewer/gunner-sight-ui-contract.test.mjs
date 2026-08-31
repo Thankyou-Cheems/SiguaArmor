@@ -71,7 +71,7 @@ test("source-authored UMG layout positions both screen and reticle layers", () =
 test("zoom stages change the crew camera FOV as well as the reticle asset", () => {
   assert.match(overlaySource, /onZoomStageChange/u);
   assert.match(viewerSource, /applyCrewViewZoomRef/u);
-  assert.match(viewerSource, /crewViewHorizontalFovForZoom/u);
+  assert.match(viewerSource, /operationViewHorizontalFovForMagnification/u);
   assert.match(viewerSource, /host\.dataset\.cameraZoomIndex/u);
 });
 
@@ -105,4 +105,29 @@ test("active crew view fills only the 3D viewport with compact corner controls",
     styles,
     /\.crew-view-immersive-controls\s*\{[\s\S]*?top:\s*8px;[\s\S]*?right:\s*8px;/u,
   );
+});
+
+test("gunner operation view preserves one 16:9 combat frame with black UI gutters", () => {
+  assert.match(
+    styles,
+    /\.runtime-vehicle-viewer\[data-crew-view-active="true"\]\s*\{[^}]*background:\s*#000\s*!important;/u,
+  );
+  assert.match(
+    styles,
+    /\.runtime-vehicle-viewer\[data-crew-view-active="true"\][\s\S]*?\.viewer-canvas\s*\{[^}]*container-type:\s*size;/u,
+  );
+  assert.match(
+    styles,
+    /\.runtime-vehicle-viewer\[data-crew-view-active="true"\][\s\S]*?\.runtime-vehicle-viewer__host\s*\{[^}]*width:\s*min\(100cqw,\s*calc\(100cqh \* 16 \/ 9\)\);[^}]*height:\s*min\(100cqh,\s*calc\(100cqw \* 9 \/ 16\)\);/u,
+  );
+  assert.match(
+    styles,
+    /\.gunner-sight-overlay__layers\s*\{[^}]*width:\s*min\(100cqw,\s*calc\(100cqh \* 16 \/ 9\)\);[^}]*height:\s*min\(100cqh,\s*calc\(100cqw \* 9 \/ 16\)\);/u,
+  );
+  assert.match(
+    styles,
+    /\.crew-view-operation-panel\s*\{[^}]*top:\s*42px;[^}]*right:\s*8px;/u,
+  );
+  assert.match(viewerSource, /camera\.aspect = OPERATION_VIEW_STANDARD_ASPECT_RATIO/u);
+  assert.match(overlaySource, /standard-16:9-90-horizontal-baseline/u);
 });
