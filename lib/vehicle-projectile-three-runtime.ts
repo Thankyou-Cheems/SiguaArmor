@@ -4,6 +4,7 @@ import {
   sampleProjectileTrajectory,
   type NativeProjectileTrajectorySample,
   type ProjectileVector3,
+  type VehicleGuidanceAimPose,
 } from "./vehicle-projectile-playback.ts";
 import type { StationGraphTransform } from "./vehicle-station-graph.ts";
 
@@ -35,6 +36,18 @@ function unrealCentimetresFromThreePoint(value: THREE.Vector3) {
 
 function unrealDirectionFromThree(value: THREE.Vector3) {
   return { x: value.x, y: value.z, z: value.y };
+}
+
+export function resolveVehicleGuidanceAimPose(
+  camera: THREE.Camera,
+): VehicleGuidanceAimPose {
+  camera.updateWorldMatrix(true, false);
+  const position = camera.getWorldPosition(new THREE.Vector3());
+  const direction = camera.getWorldDirection(new THREE.Vector3()).normalize();
+  return {
+    aimLocationCm: unrealCentimetresFromThreePoint(position),
+    aimDirection: unrealDirectionFromThree(direction),
+  };
 }
 
 export function vehicleProjectileAnchorMatrixFromUnrealFrame(

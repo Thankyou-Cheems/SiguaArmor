@@ -150,16 +150,19 @@ import {
   buildVehicleProjectileSimulationInput,
   compileVehicleProjectilePlaybackBinding,
   presentationProjectileSpreadSample,
+  selectVehicleProjectileLaunchShot,
   loadWikiNativeProjectileAlgorithm,
   type NativeProjectileAlgorithm,
   type NativeProjectileTrajectorySample,
   type ProjectileVector3,
+  type VehicleGuidanceAimPose,
   type VehicleProjectilePlaybackBinding,
   type VehicleProjectilePlaybackResolution,
   type WikiWeaponBallisticsDocument,
 } from "../lib/vehicle-projectile-playback";
 import {
   createVehicleProjectileThreeRuntime,
+  resolveVehicleGuidanceAimPose,
   resolveVehicleProjectileLaunchPose,
   vehicleProjectileAnchorMatrixFromUnrealFrame,
   VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M,
@@ -4170,11 +4173,18 @@ export function RuntimeVehicleViewer({
       forwardOffsetCm: number,
     ) => VehicleProjectileLaunchPose | null) | null
   >(null);
+  const resolveVehicleGuidanceAimPoseRef = useRef<
+    (() => VehicleGuidanceAimPose | null) | null
+  >(null);
   const spawnVehicleProjectileVisualRef = useRef<
     ((request: VehicleProjectileVisualRequest) => boolean) | null
   >(null);
   const fireVehicleProjectileRef = useRef<() => void>(() => undefined);
   const vehicleProjectileShotSequenceRef = useRef(0);
+  const vehicleProjectileMagazineStateRef = useRef<{
+    weaponAssignmentId: string | null;
+    shotsFiredInMagazine: number;
+  }>({ weaponAssignmentId: null, shotsFiredInMagazine: 0 });
   const activeCrewViewZoomIndexRef = useRef(0);
   const activeCrewViewStationIdRef = useRef<string | null>(null);
   const crewViewpointMarkerEnabledRef = useRef(false);
@@ -5317,10 +5327,22 @@ export function RuntimeVehicleViewer({
     }
     const { binding } = vehicleProjectileResolution;
     try {
+      const previousMagazineState = vehicleProjectileMagazineStateRef.current;
+      const magazineState = previousMagazineState.weaponAssignmentId ===
+          binding.weaponAssignmentId
+        ? previousMagazineState
+        : {
+            weaponAssignmentId: binding.weaponAssignmentId,
+            shotsFiredInMagazine: 0,
+          };
+      const selectedLaunch = selectVehicleProjectileLaunchShot(
+        binding,
+        magazineState,
+      );
       const launch = resolveVehicleProjectileLaunchPoseRef.current?.(
         binding.launchAnchor,
-        binding.launchShot.translationCm,
-        binding.launchShot.direction,
+        selectedLaunch.shot.translationCm,
+        selectedLaunch.shot.direction,
         binding.forwardOffsetCm,
       );
       if (!launch) throw new Error("当前炮口锚点尚未载入");
@@ -5337,12 +5359,24 @@ export function RuntimeVehicleViewer({
             .moaDiameterToHalfAngleRadians(binding.moaDiameter),
           ...spread,
         });
-      const result = vehicleProjectileResource.algorithm
-        .simulateNonGuidedProjectile(
-          buildVehicleProjectileSimulationInput(binding, launch, direction),
-        );
+      const guidanceAim = binding.guidanceInputPolicy === "none"
+        ? null
+        : resolveVehicleGuidanceAimPoseRef.current?.() ?? null;
+      const simulationInput = buildVehicleProjectileSimulationInput(
+        binding,
+        launch,
+        direction,
+        guidanceAim,
+      );
+      const result = binding.guidanceInputPolicy === "none"
+        ? vehicleProjectileResource.algorithm.simulateNonGuidedProjectile(
+            simulationInput,
+          )
+        : vehicleProjectileResource.algorithm.simulateGuidedProjectile(
+            simulationInput,
+          );
       if (result.status === "guidance-unavailable" || result.samples.length < 2) {
-        throw new Error("原生求解器没有返回可播放的非制导轨迹");
+        throw new Error("原生求解器没有返回可播放的源锁定轨迹");
       }
       const origin = result.samples[0]!.positionCm;
       const samples: NativeProjectileTrajectorySample[] = [];
@@ -5361,8 +5395,18 @@ export function RuntimeVehicleViewer({
         samples,
       }) ?? false;
       if (!spawned) throw new Error("3D 弹体渲染层尚未就绪");
+      vehicleProjectileMagazineStateRef.current = {
+        weaponAssignmentId: binding.weaponAssignmentId,
+        shotsFiredInMagazine: magazineState.shotsFiredInMagazine + 1,
+      };
+      const launchPodNotice = binding.launchSelection.kind ===
+          "runtime-indexed-launch-pod"
+        ? ` · 发射筒 ${selectedLaunch.shotIndex + 1}/${binding.launchSelection.podCount}`
+        : "";
       setVehicleProjectileNotice(
-        `${activeOperationWeapon.displayNameZh} · 已发射 · 散布为网页样本`,
+        binding.guidanceInputPolicy === "none"
+          ? `${activeOperationWeapon.displayNameZh} · 已发射${launchPodNotice} · 散布为网页样本`
+          : `${activeOperationWeapon.displayNameZh} · 已发射${launchPodNotice} · 发射时瞄准线 / 清晰视线场景`,
       );
       const host = hostRef.current;
       if (host) {
@@ -5371,9 +5415,16 @@ export function RuntimeVehicleViewer({
           binding.weaponAssignmentId;
         host.dataset.projectilePlaybackEvidence = binding.evidenceClass;
         host.dataset.projectilePlaybackLaunchPrecision =
-          binding.launchPrecision;
+          selectedLaunch.launchPrecision;
+        host.dataset.projectilePlaybackLaunchSelection =
+          binding.launchSelection.kind;
+        host.dataset.projectilePlaybackLaunchPodIndex =
+          String(selectedLaunch.shotIndex);
+        host.dataset.projectilePlaybackLaunchSocketName =
+          selectedLaunch.shot.socketName;
         host.dataset.projectilePlaybackSpread =
           "presentation-sample-native-cone";
+        host.dataset.projectilePlaybackGuidance = binding.guidanceInputPolicy;
       }
     } catch (error: unknown) {
       setVehicleProjectileNotice(
@@ -7168,6 +7219,7 @@ export function RuntimeVehicleViewer({
     enterDriverViewpointRef.current = null;
     exitCrewViewpointRef.current = null;
     applyCrewViewZoomRef.current = null;
+    resolveVehicleGuidanceAimPoseRef.current = null;
     applyCrewHitProxyVisibilityRef.current = null;
     applyDriverMaskVisibilityRef.current = null;
     activeCrewViewZoomIndexRef.current = 0;
@@ -8671,6 +8723,8 @@ export function RuntimeVehicleViewer({
         forwardOffsetCm,
       });
     };
+    resolveVehicleGuidanceAimPoseRef.current = () =>
+      resolveVehicleGuidanceAimPose(camera);
     applyTurretPose();
     host.dataset.spacedArmorAnimation = "disabled";
     const raycaster = new THREE.Raycaster();
@@ -11090,6 +11144,7 @@ export function RuntimeVehicleViewer({
       vehicleProjectileThreeRuntime.dispose();
       spawnVehicleProjectileVisualRef.current = null;
       resolveVehicleProjectileLaunchPoseRef.current = null;
+      resolveVehicleGuidanceAimPoseRef.current = null;
       shotVisualsRef.current = [];
       shotRecordsRef.current = [];
       activeShotIdRef.current = null;

@@ -2,9 +2,13 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
+import { pathToFileURL } from "node:url";
 
-import { compileVehicleProjectilePlaybackBinding } from
-  "../lib/vehicle-projectile-playback.ts";
+import {
+  buildVehicleProjectileSimulationInput,
+  compileVehicleProjectilePlaybackBinding,
+  selectVehicleProjectileLaunchShot,
+} from "../lib/vehicle-projectile-playback.ts";
 import { compileVehicleStationGraph } from
   "../lib/vehicle-station-graph.ts";
 
@@ -13,16 +17,33 @@ const V1053_BASELINE = Object.freeze({
   stationGraphSourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
   vehicleSources: 285,
   assignments: 706,
-  ready: 637,
-  unsupported: 69,
+  ready: 706,
+  unsupported: 0,
+  launchOriginCoverage: {
+    weaponAssignments: 1610,
+    bindings: 1610,
+    profiles: 621,
+    configuredMultipodBindings: 8,
+    runtimeMultipodBindings: 6,
+    nativeDisabledMultipodBindings: 2,
+    componentOriginFallbackBindings: 165,
+  },
+  readyLaunchSequences: {
+    "runtime-indexed-launch-pod:2": 5,
+    "runtime-indexed-launch-pod:4": 1,
+    "single-barrel-socket:1": 700,
+  },
+  guidedAssignments: 69,
+  guidedRouteCount: 7,
+  guidedSimulationStatuses: {
+    lifespan: 55,
+    "time-limit": 14,
+  },
   readyPrecision: {
-    "component-origin-fallback": 12,
-    "socket-resolved": 625,
+    "component-origin-fallback": 20,
+    "socket-resolved": 686,
   },
-  unsupportedReasons: {
-    "launch-route-unsupported": 8,
-    "movement-mode-unresolved": 61,
-  },
+  unsupportedReasons: {},
 });
 
 const { values } = parseArgs({
@@ -115,6 +136,10 @@ if (
 ) {
   throw new Error("Weapon ballistics catalog is not completed v1 data");
 }
+const projectileAlgorithm = await import(pathToFileURL(path.join(
+  wikiRoot,
+  catalog.algorithms.projectile.replace(/^\//u, ""),
+)).href);
 
 const rows = [];
 const stationGraphBuildIds = new Set();
@@ -207,6 +232,55 @@ for (const indexEntry of index.vehicleSources) {
           displayNameEnglish: profile.displayName,
         },
       });
+      let guidedSimulationStatus = null;
+      let guidanceRouteId = null;
+      if (
+        resolution.state === "ready" &&
+        resolution.binding.guidanceInputPolicy !== "none"
+      ) {
+        const selectedLaunch = selectVehicleProjectileLaunchShot(
+          resolution.binding,
+          { shotsFiredInMagazine: 0 },
+        );
+        const simulationInput = buildVehicleProjectileSimulationInput(
+          resolution.binding,
+          {
+            positionCm: selectedLaunch.shot.translationCm,
+            direction: selectedLaunch.shot.direction,
+          },
+          selectedLaunch.shot.direction,
+          {
+            aimLocationCm: {
+              x: selectedLaunch.shot.translationCm.x -
+                selectedLaunch.shot.direction.x * 100,
+              y: selectedLaunch.shot.translationCm.y -
+                selectedLaunch.shot.direction.y * 100,
+              z: selectedLaunch.shot.translationCm.z -
+                selectedLaunch.shot.direction.z * 100,
+            },
+            aimDirection: selectedLaunch.shot.direction,
+          },
+        );
+        const simulation = projectileAlgorithm.simulateGuidedProjectile(
+          simulationInput,
+        );
+        if (
+          simulation.status === "guidance-unavailable" ||
+          simulation.samples.length < 2
+        ) {
+          throw new Error(
+            `${indexEntry.cardId} / ${weapon.weaponAssignmentId} guided simulation failed: ${simulation.reason ?? simulation.status}`,
+          );
+        }
+        guidedSimulationStatus = simulation.status;
+        guidanceRouteId = createHash("sha256").update(JSON.stringify({
+          projectileProfileRef: resolution.binding.projectileProfileRef,
+          movementModes: resolution.binding.movementModes.map(
+            ({ assetPath }) => assetPath,
+          ),
+          guidanceController: resolution.binding.guidanceController,
+        })).digest("hex").slice(0, 24);
+      }
       rows.push({
         cardId: indexEntry.cardId,
         rawName: loadout.rawName,
@@ -221,6 +295,20 @@ for (const indexEntry of index.vehicleSources) {
           resolution.state === "ready"
             ? resolution.binding.launchPrecision
             : null,
+        launchSelection:
+          resolution.state === "ready"
+            ? resolution.binding.launchSelection.kind
+            : null,
+        launchPodCount:
+          resolution.state === "ready"
+            ? resolution.binding.launchShots.length
+            : null,
+        guidanceInputPolicy:
+          resolution.state === "ready"
+            ? resolution.binding.guidanceInputPolicy
+            : null,
+        guidanceRouteId,
+        guidedSimulationStatus,
         stationId:
           resolution.state === "ready" ? resolution.binding.stationId : null,
         anchorKind:
@@ -260,8 +348,21 @@ for (const indexEntry of index.vehicleSources) {
 const readyRows = rows.filter(({ state }) => state === "ready");
 const unsupportedRows = rows.filter(({ state }) => state === "unsupported");
 const readyPrecision = {};
+const readyLaunchSequences = {};
+const guidedSimulationStatuses = {};
 const unsupportedReasons = {};
 for (const row of readyRows) increment(readyPrecision, row.launchPrecision);
+for (const row of readyRows) {
+  increment(
+    readyLaunchSequences,
+    `${row.launchSelection}:${row.launchPodCount}`,
+  );
+}
+for (const row of readyRows) {
+  if (row.guidedSimulationStatus) {
+    increment(guidedSimulationStatuses, row.guidedSimulationStatus);
+  }
+}
 for (const row of unsupportedRows) increment(unsupportedReasons, row.reason);
 
 const examples = {};
@@ -283,6 +384,14 @@ const summary = {
   compiledAssignments: rows.length,
   ready: readyRows.length,
   unsupported: unsupportedRows.length,
+  launchOriginCoverage: catalog.launchOriginEvidence.coverage,
+  readyLaunchSequences: sortedObject(readyLaunchSequences),
+  guidedAssignments: readyRows.filter(({ guidanceRouteId }) => guidanceRouteId)
+    .length,
+  guidedRouteCount: new Set(
+    readyRows.map(({ guidanceRouteId }) => guidanceRouteId).filter(Boolean),
+  ).size,
+  guidedSimulationStatuses: sortedObject(guidedSimulationStatuses),
   readyPrecision: sortedObject(readyPrecision),
   unsupportedReasons: sortedObject(unsupportedReasons),
   examples,
@@ -312,6 +421,31 @@ if (values["require-v1053-baseline"]) {
   assertExact("assignment count", summary.compiledAssignments, V1053_BASELINE.assignments);
   assertExact("ready count", summary.ready, V1053_BASELINE.ready);
   assertExact("unsupported count", summary.unsupported, V1053_BASELINE.unsupported);
+  assertExact(
+    "launch-origin coverage",
+    summary.launchOriginCoverage,
+    V1053_BASELINE.launchOriginCoverage,
+  );
+  assertExact(
+    "ready launch sequences",
+    summary.readyLaunchSequences,
+    V1053_BASELINE.readyLaunchSequences,
+  );
+  assertExact(
+    "guided assignment count",
+    summary.guidedAssignments,
+    V1053_BASELINE.guidedAssignments,
+  );
+  assertExact(
+    "guided route count",
+    summary.guidedRouteCount,
+    V1053_BASELINE.guidedRouteCount,
+  );
+  assertExact(
+    "guided simulation statuses",
+    summary.guidedSimulationStatuses,
+    V1053_BASELINE.guidedSimulationStatuses,
+  );
   assertExact("ready precision", summary.readyPrecision, V1053_BASELINE.readyPrecision);
   assertExact(
     "unsupported reasons",

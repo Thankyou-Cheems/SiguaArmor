@@ -7,8 +7,10 @@ import {
   compileVehicleProjectilePlaybackBinding,
   presentationProjectileSpreadSample,
   sampleProjectileTrajectory,
+  selectVehicleProjectileLaunchShot,
 } from "../../lib/vehicle-projectile-playback.ts";
 import {
+  resolveVehicleGuidanceAimPose,
   resolveVehicleProjectileLaunchPose,
   vehicleProjectileAnchorMatrixFromUnrealFrame,
 } from "../../lib/vehicle-projectile-three-runtime.ts";
@@ -78,6 +80,11 @@ function catalog() {
       shots: [{
         socketName: "socket_muzzle",
         socketResolved: true,
+        socketTransformComponentSpace: {
+          translation: { x: 200, y: 0, z: 0 },
+          rotation: { x: 0, y: 0, z: 0, w: 1 },
+          scale3d: { x: 1, y: 1, z: 1 },
+        },
         translationCm: { x: 200, y: 0, z: 0 },
         direction: { x: 1, y: 0, z: 0 },
       }],
@@ -157,7 +164,135 @@ test("joins one runtime weapon through its exact Station and WeaponMesh1P anchor
     kind: "visual-occurrence",
     occurrenceId: "occurrence-test",
   });
-  assert.equal(resolution.binding.launchShot.socketName, "socket_muzzle");
+  assert.equal(
+    selectVehicleProjectileLaunchShot(resolution.binding, {
+      shotsFiredInMagazine: 0,
+    }).shot.socketName,
+    "socket_muzzle",
+  );
+});
+
+test("selects HJ-73 launch pods from explicit magazine state", () => {
+  const data = catalog();
+  data.launchOriginProfiles[0].kind = "multipod-socket-forward-offset";
+  data.launchOriginProfiles[0].shotSelection = "runtime-indexed-launch-pod";
+  data.launchOriginProfiles[0].forwardOffsetCm = 150;
+  data.launchOriginProfiles[0].shots = [
+    {
+      socketName: "missile_LSocket",
+      socketResolved: true,
+      socketTransformComponentSpace: {
+        translation: { x: 10, y: -20, z: 0 },
+        rotation: { x: 0, y: 0, z: 0, w: 1 },
+        scale3d: { x: 1, y: 1, z: 1 },
+      },
+      translationCm: { x: 10, y: -20, z: 0 },
+      direction: { x: 1, y: 0, z: 0 },
+    },
+    {
+      socketName: "missle_RSocket",
+      socketResolved: true,
+      socketTransformComponentSpace: {
+        translation: { x: 10, y: 20, z: 0 },
+        rotation: { x: 0, y: 0, z: 0, w: 1 },
+        scale3d: { x: 1, y: 1, z: 1 },
+      },
+      translationCm: { x: 10, y: 20, z: 0 },
+      direction: { x: 1, y: 0, z: 0 },
+    },
+  ];
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: data,
+    stationGraph: stationGraph(),
+    stationId: STATION,
+    weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  assert.deepEqual(
+    [0, 1, 2].map((shotsFiredInMagazine) =>
+      selectVehicleProjectileLaunchShot(resolution.binding, {
+        shotsFiredInMagazine,
+      }).shot.socketName
+    ),
+    ["missile_LSocket", "missle_RSocket", "missile_LSocket"],
+  );
+});
+
+test("selects BMP-2M Kornet pods in native configured order and resets on reload", () => {
+  const data = catalog();
+  data.launchOriginProfiles[0].kind = "multipod-socket-forward-offset";
+  data.launchOriginProfiles[0].shotSelection = "runtime-indexed-launch-pod";
+  data.launchOriginProfiles[0].shots = [1, 4, 2, 3].map((index) => ({
+    socketName: `kornet_${index}Socket`,
+    socketResolved: true,
+    socketTransformComponentSpace: {
+      translation: { x: 10, y: index * 10, z: 0 },
+      rotation: { x: 0, y: 0, z: 0, w: 1 },
+      scale3d: { x: 1, y: 1, z: 1 },
+    },
+    translationCm: { x: 10, y: index * 10, z: 0 },
+    direction: { x: 1, y: 0, z: 0 },
+  }));
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: data,
+    stationGraph: stationGraph(),
+    stationId: STATION,
+    weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  assert.deepEqual(
+    [0, 1, 2, 3].map((shotsFiredInMagazine) =>
+      selectVehicleProjectileLaunchShot(resolution.binding, {
+        shotsFiredInMagazine,
+      }).shot.socketName
+    ),
+    [
+      "kornet_1Socket",
+      "kornet_4Socket",
+      "kornet_2Socket",
+      "kornet_3Socket",
+    ],
+  );
+  assert.equal(
+    selectVehicleProjectileLaunchShot(resolution.binding, {
+      shotsFiredInMagazine: 0,
+    }).shot.socketName,
+    "kornet_1Socket",
+  );
+});
+
+test("uses the component-space socket frame and applies missile forward offset once", () => {
+  const data = catalog();
+  data.launchOriginProfiles[0].componentRelativeTransform.translation.y = -102.5;
+  data.launchOriginProfiles[0].forwardOffsetCm = 150;
+  data.launchOriginProfiles[0].shots[0].translationCm = {
+    x: 10,
+    y: -102.5,
+    z: 0,
+  };
+  data.launchOriginProfiles[0].shots[0].socketTransformComponentSpace = {
+    translation: { x: 10, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0, w: 1 },
+    scale3d: { x: 1, y: 1, z: 1 },
+  };
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: data,
+    stationGraph: stationGraph(),
+    stationId: STATION,
+    weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  const selected = selectVehicleProjectileLaunchShot(resolution.binding, {
+    shotsFiredInMagazine: 0,
+  });
+  assert.deepEqual(selected.shot.translationCm, { x: 10, y: 0, z: 0 });
+  const launch = resolveVehicleProjectileLaunchPose({
+    anchor: new THREE.Object3D(),
+    socketTranslationCm: selected.shot.translationCm,
+    socketDirection: selected.shot.direction,
+    forwardOffsetCm: resolution.binding.forwardOffsetCm,
+  });
+  assert.deepEqual(launch.positionCm, { x: 160, y: 0, z: 0 });
 });
 
 test("uses the source-locked Get1PAttachComponent frame when no display occurrence exists", () => {
@@ -256,6 +391,88 @@ test("keeps guided weapons unavailable until live guidance inputs are supplied",
     { state: resolution.state, reason: resolution.reason },
     { state: "unsupported", reason: "guidance-live-input-required" },
   );
+});
+
+test("compiles a complete guided profile and freezes the launch-time operation aim", () => {
+  const data = catalog();
+  const modePaths = ["tow", "crash", "jammed"].map(
+    (name) => `/Game/Test/MovementMode_${name}.MovementMode_${name}`,
+  );
+  data.projectileProfiles[0].movement.MovementModes = modePaths.map(
+    (path) => `uobject:${path}`,
+  );
+  data.projectileProfiles[0].guided = {
+    aimMaxDistanceCm: 200000,
+    guidanceDelaySeconds: 0,
+    guidanceLossBehaviours: [
+      { Key: "AnyReason", Value: {
+        Behaviour: "ChangeMovementMode",
+        NewMovementModeIndex: 1,
+        TimeBeforeDetonationAfterGuidanceLoss: 0,
+      } },
+      { Key: "BlockedByCountermeasures", Value: {
+        Behaviour: "ChangeMovementMode",
+        NewMovementModeIndex: 2,
+        TimeBeforeDetonationAfterGuidanceLoss: 0,
+      } },
+    ],
+    fovChangeDistanceCm: 10000,
+    smallTrackedFovDegrees: 90,
+    largeTrackedFovDegrees: 90,
+    trackedFovByDistanceCurve: null,
+  };
+  data.movementModes = modePaths.map((assetPath, index) => ({
+    assetPath,
+    fields: { bIsHoming: index === 0 },
+  }));
+  data.weaponAssignments[0].guidanceController.jitterSeed = 1;
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: data,
+    stationGraph: stationGraph(),
+    stationId: STATION,
+    weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  assert.equal(
+    resolution.binding.guidanceInputPolicy,
+    "launch-time-operation-camera-clear-los",
+  );
+  assert.equal(resolution.binding.movementModes.length, 3);
+  const input = buildVehicleProjectileSimulationInput(
+    resolution.binding,
+    {
+      positionCm: { x: 100, y: 0, z: 0 },
+      direction: { x: 1, y: 0, z: 0 },
+    },
+    { x: 1, y: 0, z: 0 },
+    {
+      aimLocationCm: { x: -100, y: 0, z: 0 },
+      aimDirection: { x: 10, y: 0, z: 0 },
+    },
+  );
+  assert.equal(input.guidanceScenario, "controlled-clear-los-launch-time-aim");
+  assert.deepEqual(input.guidanceInputAt(), {
+    aimLocationCm: { x: -100, y: 0, z: 0 },
+    aimDirection: { x: 1, y: 0, z: 0 },
+    fireOriginDisplacementCm: 0,
+    connectionBlockReason: null,
+    guidanceBlockReason: null,
+  });
+});
+
+test("operation-camera aim conversion is independent of display zoom", () => {
+  const camera = new THREE.PerspectiveCamera(90, 16 / 9, 0.05, 200);
+  camera.position.set(1, 2, 3);
+  camera.lookAt(2, 2, 3);
+  const wide = resolveVehicleGuidanceAimPose(camera);
+  camera.fov = 10;
+  camera.updateProjectionMatrix();
+  const zoomed = resolveVehicleGuidanceAimPose(camera);
+  assert.deepEqual(zoomed, wide);
+  assert.deepEqual(wide.aimLocationCm, { x: 100, y: 300, z: 200 });
+  assert.ok(Math.abs(wide.aimDirection.x - 1) < 1e-12);
+  assert.ok(Math.abs(wide.aimDirection.y) < 1e-12);
+  assert.ok(Math.abs(wide.aimDirection.z) < 1e-12);
 });
 
 test("binds a vehicle-attitude weapon to the unique same-vehicle visual occurrence", () => {
@@ -380,7 +597,12 @@ test("retains the native component-origin fallback when the requested socket is 
     weapon,
   });
   assert.equal(resolution.state, "ready");
-  assert.equal(resolution.binding.launchPrecision, "component-origin-fallback");
+  assert.equal(
+    selectVehicleProjectileLaunchShot(resolution.binding, {
+      shotsFiredInMagazine: 0,
+    }).launchPrecision,
+    "component-origin-fallback",
+  );
 });
 
 test("reports a stable reason when the Station has no matching launch anchor", () => {
