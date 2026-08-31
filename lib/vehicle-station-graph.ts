@@ -36,6 +36,32 @@ interface StationGraphMotionChannel {
     referenceFrame: StationGraphFrame;
     sourceFunction: string | null;
 }
+export interface StationGraphWeaponAttachment {
+    state: "derived-seat-pawn-component" | "native-weapon-actor-root";
+    meshRole: "WeaponMesh1P" | "WeaponMesh3P";
+    attachmentRule: "SnapToTargetIncludingScale";
+    parent: {
+        kind: "station-component";
+        stationId: string;
+        componentName: string;
+        componentClassPath: string;
+        socketName: string | null;
+    } | {
+        kind: "station-actor";
+        stationId: string;
+        componentName: null;
+        componentClassPath: null;
+        socketName: null;
+    };
+    motionChannels: Array<"yaw" | "pitch">;
+    stationLocalFrame: StationGraphFrame;
+    referenceFrame: StationGraphFrame;
+    source: "v10.5.3-vehicle-weapon-equip-plus-blueprint-attach-component";
+    sourceFunction: "runtime";
+    sourcePackage: string;
+    inheritedDepth: number;
+    reason: string | null;
+}
 export interface StationGraphStation {
     id: string;
     seatKey: string;
@@ -104,6 +130,10 @@ export interface StationGraphStation {
         source: string;
         sourcePackage: string | null;
         reason: string | null;
+    };
+    weaponAttachments: {
+        firstPerson: StationGraphWeaponAttachment;
+        thirdPerson: StationGraphWeaponAttachment;
     };
     views: Array<{
         viewId: string;
@@ -226,6 +256,35 @@ function frameClosed(frame: StationGraphFrame) {
         ].every(Number.isFinite) &&
         Math.hypot(value.rotationQuaternion.x, value.rotationQuaternion.y, value.rotationQuaternion.z, value.rotationQuaternion.w) > Number.EPSILON &&
         [value.scale3D.x, value.scale3D.y, value.scale3D.z].every(Number.isFinite));
+}
+function weaponAttachmentClosed(attachment: StationGraphWeaponAttachment | null | undefined, stationId: string, meshRole: StationGraphWeaponAttachment["meshRole"]) {
+    if (!attachment ||
+        attachment.meshRole !== meshRole ||
+        attachment.attachmentRule !== "SnapToTargetIncludingScale" ||
+        attachment.source !==
+            "v10.5.3-vehicle-weapon-equip-plus-blueprint-attach-component" ||
+        attachment.sourceFunction !== "runtime" ||
+        attachment.parent?.stationId !== stationId ||
+        !frameClosed(attachment.stationLocalFrame) ||
+        !frameClosed(attachment.referenceFrame) ||
+        !Number.isSafeInteger(attachment.inheritedDepth) ||
+        attachment.inheritedDepth < 0 ||
+        new Set(attachment.motionChannels).size !==
+            attachment.motionChannels.length ||
+        attachment.motionChannels.some((channel) => channel !== "yaw" && channel !== "pitch")) {
+        return false;
+    }
+    if (attachment.state === "derived-seat-pawn-component") {
+        return attachment.parent.kind === "station-component" &&
+            Boolean(attachment.parent.componentName &&
+                attachment.parent.componentClassPath);
+    }
+    return attachment.state === "native-weapon-actor-root" &&
+        attachment.parent.kind === "station-actor" &&
+        attachment.parent.componentName === null &&
+        attachment.parent.componentClassPath === null &&
+        attachment.parent.socketName === null &&
+        attachment.motionChannels.length === 0;
 }
 function runtimeActorClass(value: string) {
     return (value.split(/[/.]/u).at(-1) ?? value).replace(/_\d+$/u, "");
@@ -393,6 +452,10 @@ export function compileVehicleStationGraph(record: VehicleStationGraphRecord | n
             if (!frameClosed(channel.stationLocalFrame) ||
                 !frameClosed(channel.referenceFrame))
                 throw new Error(`SiguaWiki station ${station.id} motion is invalid`);
+        }
+        if (!weaponAttachmentClosed(station.weaponAttachments?.firstPerson, station.id, "WeaponMesh1P") ||
+            !weaponAttachmentClosed(station.weaponAttachments?.thirdPerson, station.id, "WeaponMesh3P")) {
+            throw new Error(`SiguaWiki station ${station.id} weapon attachment is invalid`);
         }
         if (![
             "derived-static-component-ancestry",

@@ -37,8 +37,8 @@ import { clearHitSceneThreeModelDamageHighlight, createHitSceneThreeModel, setHi
 import { loadRuntimeHitScene, observedValue, type ParsedRuntimeHitScene, } from "../lib/runtime-hit-scene";
 import { runtimeAnalysisVisualUrl, runtimeAnalysisVisualTexturePolicy, runtimeExteriorVisualAssetUrl, runtimeWikiAssetUrl, runtimeViewerPresentation, } from "../lib/runtime-visual-lazy-load";
 import { loadWikiWeaponBallistics, loadWikiVehicleWeaponRuntimeIndex, loadWikiWeaponCatalog, loadWikiVehicleWeaponRuntimeSource, } from "../lib/wiki-source";
-import { buildVehicleProjectileSimulationInput, compileVehicleProjectilePlaybackBinding, presentationProjectileSpreadSample, loadWikiNativeProjectileAlgorithm, type NativeProjectileAlgorithm, type NativeProjectileTrajectorySample, type ProjectileVector3, type VehicleProjectilePlaybackResolution, type WikiWeaponBallisticsDocument, } from "../lib/vehicle-projectile-playback";
-import { createVehicleProjectileThreeRuntime, resolveVehicleProjectileLaunchPose, VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M, type VehicleProjectileLaunchPose, type VehicleProjectileVisualRequest, } from "../lib/vehicle-projectile-three-runtime";
+import { buildVehicleProjectileSimulationInput, compileVehicleProjectilePlaybackBinding, presentationProjectileSpreadSample, loadWikiNativeProjectileAlgorithm, type NativeProjectileAlgorithm, type NativeProjectileTrajectorySample, type ProjectileVector3, type VehicleProjectilePlaybackBinding, type VehicleProjectilePlaybackResolution, type WikiWeaponBallisticsDocument, } from "../lib/vehicle-projectile-playback";
+import { createVehicleProjectileThreeRuntime, resolveVehicleProjectileLaunchPose, vehicleProjectileAnchorMatrixFromUnrealFrame, VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M, type VehicleProjectileLaunchPose, type VehicleProjectileVisualRequest, } from "../lib/vehicle-projectile-three-runtime";
 import { GunnerSightOverlay } from "./GunnerSightOverlay";
 import { estimateWeaponHitDps, selectPrimaryWeaponHitDpsEstimate, singleShotWeaponHitTarget, targetPoolsForShot, vehicleTargetBurningProfile, type WeaponHitDpsEstimate, type WeaponHitDpsTarget, } from "../lib/weapon-hit-dps";
 import { resolveWeaponDpsWeaponForRuntimeAssignment, weaponDpsWeaponsFromWikiDocument, } from "../lib/weapon-dps-source";
@@ -2897,7 +2897,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const enterDriverViewpointRef = useRef<(() => boolean) | null>(null);
     const exitCrewViewpointRef = useRef<(() => void) | null>(null);
     const applyCrewViewZoomRef = useRef<((stationId: string, zoomIndex: number) => boolean) | null>(null);
-    const resolveVehicleProjectileLaunchPoseRef = useRef<((anchorOccurrenceId: string, socketTranslationCm: ProjectileVector3, socketDirection: ProjectileVector3, forwardOffsetCm: number) => VehicleProjectileLaunchPose | null) | null>(null);
+    const resolveVehicleProjectileLaunchPoseRef = useRef<((launchAnchor: VehicleProjectilePlaybackBinding["launchAnchor"], socketTranslationCm: ProjectileVector3, socketDirection: ProjectileVector3, forwardOffsetCm: number) => VehicleProjectileLaunchPose | null) | null>(null);
     const spawnVehicleProjectileVisualRef = useRef<((request: VehicleProjectileVisualRequest) => boolean) | null>(null);
     const fireVehicleProjectileRef = useRef<() => void>(() => undefined);
     const vehicleProjectileShotSequenceRef = useRef(0);
@@ -3803,7 +3803,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         }
         const { binding } = vehicleProjectileResolution;
         try {
-            const launch = resolveVehicleProjectileLaunchPoseRef.current?.(binding.anchorOccurrenceId, binding.launchShot.translationCm, binding.launchShot.direction, binding.forwardOffsetCm);
+            const launch = resolveVehicleProjectileLaunchPoseRef.current?.(binding.launchAnchor, binding.launchShot.translationCm, binding.launchShot.direction, binding.forwardOffsetCm);
             if (!launch)
                 throw new Error("当前炮口锚点尚未载入");
             const shotSequence = vehicleProjectileShotSequenceRef.current + 1;
@@ -6549,14 +6549,43 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             render();
         };
         applyTurretPoseRef.current = applyTurretPose;
-        resolveVehicleProjectileLaunchPoseRef.current = (anchorOccurrenceId, socketTranslationCm, socketDirection, forwardOffsetCm) => {
+        resolveVehicleProjectileLaunchPoseRef.current = (launchAnchor, socketTranslationCm, socketDirection, forwardOffsetCm) => {
             applyTurretPose({ interactive: true });
-            const occurrence = exteriorOccurrences.get(anchorOccurrenceId) ??
-                analysisOccurrences.get(anchorOccurrenceId)?.[0] ?? null;
+            chassisPoseGroup.updateMatrixWorld(true);
+            if (launchAnchor.kind === "station-weapon-attachment") {
+                const station = runtimeTurretStationsRef.current.find((candidate) => candidate.id === launchAnchor.stationId);
+                if (!station)
+                    return null;
+                const anchorMatrix = vehicleProjectileAnchorMatrixFromUnrealFrame(launchAnchor.referenceFrame);
+                for (const matrix of stationArticulationMatrixChainForChannels(station, launchAnchor.motionChannels)) {
+                    anchorMatrix.premultiply(new THREE.Matrix4().fromArray(matrix));
+                }
+                anchorMatrix.premultiply(chassisPoseGroup.matrixWorld);
+                const anchor = new THREE.Object3D();
+                anchor.matrixAutoUpdate = false;
+                anchor.matrix.copy(anchorMatrix);
+                anchor.matrixWorldNeedsUpdate = true;
+                host.dataset.projectilePlaybackAnchorKind = launchAnchor.kind;
+                host.dataset.projectilePlaybackAnchorStationId = launchAnchor.stationId;
+                host.dataset.projectilePlaybackAnchorComponentName =
+                    launchAnchor.componentName;
+                delete host.dataset.projectilePlaybackAnchorOccurrenceId;
+                return resolveVehicleProjectileLaunchPose({
+                    anchor,
+                    socketTranslationCm,
+                    socketDirection,
+                    forwardOffsetCm,
+                });
+            }
+            const occurrence = exteriorOccurrences.get(launchAnchor.occurrenceId) ??
+                analysisOccurrences.get(launchAnchor.occurrenceId)?.[0] ?? null;
             if (!occurrence)
                 return null;
-            chassisPoseGroup.updateMatrixWorld(true);
-            host.dataset.projectilePlaybackAnchorOccurrenceId = anchorOccurrenceId;
+            host.dataset.projectilePlaybackAnchorKind = launchAnchor.kind;
+            host.dataset.projectilePlaybackAnchorOccurrenceId =
+                launchAnchor.occurrenceId;
+            delete host.dataset.projectilePlaybackAnchorStationId;
+            delete host.dataset.projectilePlaybackAnchorComponentName;
             return resolveVehicleProjectileLaunchPose({
                 anchor: occurrence.object,
                 socketTranslationCm,

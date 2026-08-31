@@ -4,7 +4,8 @@ import {
   sampleProjectileTrajectory,
   type NativeProjectileTrajectorySample,
   type ProjectileVector3,
-} from "./vehicle-projectile-playback";
+} from "./vehicle-projectile-playback.ts";
+import type { StationGraphTransform } from "./vehicle-station-graph.ts";
 
 export const VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M = 3_000;
 const DEFAULT_MAX_ACTIVE_PROJECTILES = 32;
@@ -34,6 +35,37 @@ function unrealCentimetresFromThreePoint(value: THREE.Vector3) {
 
 function unrealDirectionFromThree(value: THREE.Vector3) {
   return { x: value.x, y: value.z, z: value.y };
+}
+
+export function vehicleProjectileAnchorMatrixFromUnrealFrame(
+  frame: StationGraphTransform,
+) {
+  const unrealToGltf = new THREE.Matrix4().set(
+    1, 0, 0, 0,
+    0, 0, 1, 0,
+    0, 1, 0, 0,
+    0, 0, 0, 1,
+  );
+  const quaternion = new THREE.Quaternion(
+    frame.rotationQuaternion.x,
+    frame.rotationQuaternion.y,
+    frame.rotationQuaternion.z,
+    frame.rotationQuaternion.w,
+  ).normalize();
+  const unrealFrame = new THREE.Matrix4().compose(
+    new THREE.Vector3(
+      frame.translationCm.x / 100,
+      frame.translationCm.y / 100,
+      frame.translationCm.z / 100,
+    ),
+    quaternion,
+    new THREE.Vector3(
+      frame.scale3D.x,
+      frame.scale3D.y,
+      frame.scale3D.z,
+    ),
+  );
+  return unrealToGltf.clone().multiply(unrealFrame).multiply(unrealToGltf);
 }
 
 export function resolveVehicleProjectileLaunchPose({
