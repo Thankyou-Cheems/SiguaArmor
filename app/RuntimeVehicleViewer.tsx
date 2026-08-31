@@ -4877,7 +4877,7 @@ export function RuntimeVehicleViewer({
         event.altKey || event.ctrlKey || event.metaKey ||
         editableTarget(event.target)
       ) return;
-      if (event.code === "Space" && !driverViewActive && station) {
+      if (event.code === "Space" && (driverViewActive || station)) {
         event.preventDefault();
         event.stopImmediatePropagation();
         if (!event.repeat) fireVehicleProjectileRef.current();
@@ -5163,18 +5163,21 @@ export function RuntimeVehicleViewer({
   const activeOperationGraphStation = preview.stationGraph?.stations.find(
     (station) => station.id === activeTurretStation?.crewSeat.stationId,
   ) ?? null;
+  const activeOperationEquipmentRefs = driverViewActive
+    ? preview.stationGraph?.vehicleEquipmentRefs ?? []
+    : activeOperationGraphStation?.equipmentRefs ?? [];
   const vehicleOperationWeapons = useMemo<RuntimeAttackSourceWeapon[]>(
     () =>
-      activeOperationGraphStation && vehicleOperationSource
+      vehicleOperationSource
         ? vehicleOperationSource.weapons.filter(
             (weapon) =>
               typeof weapon.stationEquipmentId === "string" &&
-              activeOperationGraphStation.equipmentRefs.includes(
+              activeOperationEquipmentRefs.includes(
                 weapon.stationEquipmentId,
               ),
           )
         : [],
-    [activeOperationGraphStation, vehicleOperationSource],
+    [activeOperationEquipmentRefs, vehicleOperationSource],
   );
   useEffect(() => {
     const sightEquipmentRefs =
@@ -5211,7 +5214,7 @@ export function RuntimeVehicleViewer({
     }
   }, [activeGunnerSightStation, vehicleOperationWeapons]);
   useEffect(() => {
-    if (activeCrewViewStationId === null || driverViewActive) return;
+    if (activeCrewViewStationId === null) return;
     if (vehicleProjectileResource) {
       setVehicleProjectileResourceState("ready");
       return;
@@ -5243,30 +5246,33 @@ export function RuntimeVehicleViewer({
     };
   }, [
     activeCrewViewStationId,
-    driverViewActive,
     vehicleProjectileResource,
   ]);
   const vehicleProjectileResolution = useMemo<
     VehicleProjectilePlaybackResolution | null
   >(() => {
-    const stationId = activeTurretStation?.crewSeat.stationId;
+    const stationId = driverViewActive
+      ? null
+      : activeTurretStation?.crewSeat.stationId ?? null;
     if (
       !vehicleProjectileResource ||
       !preview.stationGraph ||
-      !stationId ||
       !activeOperationWeapon
     ) return null;
     return compileVehicleProjectilePlaybackBinding({
       catalog: vehicleProjectileResource.catalog,
       stationGraph: preview.stationGraph,
       stationId,
+      visualPlacements: visual?.placements ?? [],
       weapon: activeOperationWeapon,
     });
   }, [
     activeOperationWeapon,
     activeTurretStation?.crewSeat.stationId,
+    driverViewActive,
     preview.stationGraph,
     vehicleProjectileResource,
+    visual?.placements,
   ]);
   useEffect(() => {
     if (vehicleProjectileResourceState === "loading") {
@@ -11660,8 +11666,7 @@ export function RuntimeVehicleViewer({
               {gunnerSightOverlayEnabled ? "隐藏炮镜" : "显示炮镜"}
             </button>
           ) : null}
-          {!driverViewActive &&
-              !gunnerSightPresentationAvailable &&
+          {(driverViewActive || !gunnerSightPresentationAvailable) &&
               vehicleOperationWeapons.length > 1 ? (
             <label className="crew-view-projectile-weapon">
               <span>弹种</span>
@@ -11682,7 +11687,7 @@ export function RuntimeVehicleViewer({
               </select>
             </label>
           ) : null}
-          {!driverViewActive ? (
+          {activeOperationWeapon ? (
             <button
               type="button"
               className="crew-view-projectile-fire"
@@ -11724,7 +11729,7 @@ export function RuntimeVehicleViewer({
             {driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}
             <kbd>Esc</kbd>
           </button>
-          {!driverViewActive && vehicleProjectileNotice ? (
+          {vehicleProjectileNotice ? (
             <output
               className="crew-view-projectile-status"
               data-state={vehicleProjectileResolution?.state ??

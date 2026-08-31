@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as THREE from "three";
 
 import {
   buildVehicleProjectileSimulationInput,
@@ -8,6 +9,7 @@ import {
   sampleProjectileTrajectory,
 } from "../../lib/vehicle-projectile-playback.ts";
 import {
+  resolveVehicleProjectileLaunchPose,
   vehicleProjectileAnchorMatrixFromUnrealFrame,
 } from "../../lib/vehicle-projectile-three-runtime.ts";
 
@@ -25,6 +27,10 @@ function stationGraph() {
     schemaVersion: "sigua-vehicle-station-graph/v1",
     sourceVehicleRef: SOURCE,
     sourceDataRevision: "a".repeat(64),
+    vehicleEquipmentRefs: [],
+    crewSeat: {
+      generatedClass: "/Game/Test/BP_TestVehicle.BP_TestVehicle_C",
+    },
     stations: [{
       id: STATION,
       catalogSeatIndex: 2,
@@ -250,6 +256,117 @@ test("keeps guided weapons unavailable until live guidance inputs are supplied",
     { state: resolution.state, reason: resolution.reason },
     { state: "unsupported", reason: "guidance-live-input-required" },
   );
+});
+
+test("binds a vehicle-attitude weapon to the unique same-vehicle visual occurrence", () => {
+  const graph = stationGraph();
+  graph.stations = [];
+  graph.visualAttachment.stations = [];
+  graph.vehicleEquipmentRefs = [EQUIPMENT];
+  const data = catalog();
+  data.vehicleMountBindings[0].launchConstraintKind = "vehicle-attitude";
+  data.vehicleMountBindings[0].mountProfileRef = null;
+  data.vehicleMountBindings[0].turretClassPath = null;
+  data.projectileProfiles[0].movement.MovementModes =
+    "uobject:/Game/Test/MovementMode_Hydra.MovementMode_Hydra";
+  data.movementModes.push({
+    assetPath: "/Game/Test/MovementMode_Hydra.MovementMode_Hydra",
+    fields: { bIsHoming: false, bApplyJitter: true },
+  });
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: data,
+    stationGraph: graph,
+    stationId: null,
+    visualPlacements: [{
+      stableOccurrenceId: "occurrence-vehicle-attitude",
+      actor: "/Game/Test/BP_TestVehicle.BP_TestVehicle_C_0",
+      name: "CAS",
+      componentClassPath: "/Script/Engine.SkeletalMeshComponent",
+      sourceMeshPath: SOURCE_MESH,
+      assetUrl: "/assets/test.gltf",
+      matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+    }],
+    weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  assert.deepEqual(resolution.binding.operationOwner, {
+    kind: "vehicle-attitude",
+    sourceVehicleRef: SOURCE,
+  });
+  assert.equal(resolution.binding.stationId, null);
+  assert.deepEqual(resolution.binding.launchAnchor, {
+    kind: "vehicle-attitude-occurrence",
+    occurrenceId: "occurrence-vehicle-attitude",
+    componentName: "CAS",
+  });
+  assert.equal(
+    resolution.binding.movementMode.assetPath,
+    "/Game/Test/MovementMode_Hydra.MovementMode_Hydra",
+  );
+});
+
+test("fails closed when a vehicle-attitude source mesh is duplicated", () => {
+  const graph = stationGraph();
+  graph.stations = [];
+  graph.visualAttachment.stations = [];
+  graph.vehicleEquipmentRefs = [EQUIPMENT];
+  const data = catalog();
+  data.vehicleMountBindings[0].launchConstraintKind = "vehicle-attitude";
+  const placement = {
+    stableOccurrenceId: "occurrence-a",
+    actor: "/Game/Test/BP_TestVehicle.BP_TestVehicle_C_0",
+    name: "CAS",
+    componentClassPath: "/Script/Engine.SkeletalMeshComponent",
+    sourceMeshPath: SOURCE_MESH,
+    assetUrl: "/assets/test.gltf",
+    matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+  };
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: data,
+    stationGraph: graph,
+    stationId: null,
+    visualPlacements: [
+      placement,
+      { ...placement, stableOccurrenceId: "occurrence-b", name: "CASDuplicate" },
+    ],
+    weapon,
+  });
+  assert.deepEqual(
+    { state: resolution.state, reason: resolution.reason },
+    { state: "unsupported", reason: "launch-anchor-ambiguous" },
+  );
+});
+
+test("vehicle-attitude launch pose inherits yaw, pitch, and roll", () => {
+  const launch = (rotation, socketTranslationCm = { x: 100, y: 0, z: 0 }) => {
+    const chassis = new THREE.Group();
+    chassis.rotation.set(rotation.x, rotation.y, rotation.z);
+    const anchor = new THREE.Object3D();
+    chassis.add(anchor);
+    return resolveVehicleProjectileLaunchPose({
+      anchor,
+      socketTranslationCm,
+      socketDirection: { x: 1, y: 0, z: 0 },
+      forwardOffsetCm: 0,
+    });
+  };
+  const near = (actual, expected) =>
+    assert.ok(Math.abs(actual - expected) < 1e-9, `${actual} != ${expected}`);
+  const yaw = launch({ x: 0, y: Math.PI / 2, z: 0 });
+  near(yaw.direction.x, 0);
+  near(yaw.direction.y, -1);
+  near(yaw.direction.z, 0);
+  const pitch = launch({ x: 0, y: 0, z: Math.PI / 2 });
+  near(pitch.direction.x, 0);
+  near(pitch.direction.y, 0);
+  near(pitch.direction.z, 1);
+  const roll = launch(
+    { x: Math.PI / 2, y: 0, z: 0 },
+    { x: 0, y: 100, z: 0 },
+  );
+  near(roll.positionCm.x, 0);
+  near(roll.positionCm.y, 0);
+  near(roll.positionCm.z, -100);
 });
 
 test("retains the native component-origin fallback when the requested socket is absent", () => {

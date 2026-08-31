@@ -13,16 +13,15 @@ const V1053_BASELINE = Object.freeze({
   stationGraphSourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
   vehicleSources: 285,
   assignments: 706,
-  ready: 635,
-  unsupported: 71,
+  ready: 637,
+  unsupported: 69,
   readyPrecision: {
     "component-origin-fallback": 12,
-    "socket-resolved": 623,
+    "socket-resolved": 625,
   },
   unsupportedReasons: {
     "launch-route-unsupported": 8,
     "movement-mode-unresolved": 61,
-    "station-binding-missing": 2,
   },
 });
 
@@ -197,7 +196,8 @@ for (const indexEntry of index.vehicleSources) {
       const resolution = compileVehicleProjectilePlaybackBinding({
         catalog,
         stationGraph,
-        stationId: stationIds.length === 1 ? stationIds[0] : "",
+        stationId: stationIds.length === 1 ? stationIds[0] : null,
+        visualPlacements: visualDescriptor.placements,
         weapon: {
           weaponAssignmentId: weapon.weaponAssignmentId,
           stationEquipmentId: weapon.stationEquipmentId,
@@ -229,7 +229,9 @@ for (const indexEntry of index.vehicleSources) {
             : null,
         anchorOccurrenceId:
           resolution.state === "ready" &&
-              resolution.binding.launchAnchor.kind === "visual-occurrence"
+              ["visual-occurrence", "vehicle-attitude-occurrence"].includes(
+                resolution.binding.launchAnchor.kind,
+              )
             ? resolution.binding.launchAnchor.occurrenceId
             : null,
         anchorComponentName:
@@ -237,6 +239,10 @@ for (const indexEntry of index.vehicleSources) {
               resolution.binding.launchAnchor.kind ===
                 "station-weapon-attachment"
             ? resolution.binding.launchAnchor.componentName
+            : resolution.state === "ready" &&
+                resolution.binding.launchAnchor.kind ===
+                  "vehicle-attitude-occurrence"
+              ? resolution.binding.launchAnchor.componentName
             : null,
         projectileProfileRef:
           resolution.state === "ready"
