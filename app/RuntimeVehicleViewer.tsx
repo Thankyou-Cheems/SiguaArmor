@@ -12,6 +12,7 @@ import { ANALYSIS_VISUAL_DEPTH_BIAS_FACTOR, ANALYSIS_VISUAL_DEPTH_BIAS_UNITS, an
 import { dedupeIdenticalVisualPlacements } from "../lib/runtime-visual-occurrence-dedupe";
 import { createAnalysisProjectedMarkMaterial } from "../lib/runtime-projected-mark-material";
 import { dedupeRuntimeSceneTextures } from "../lib/runtime-texture-dedupe";
+import { buildRuntimeVehicleTopDownProjection, type RuntimeVehicleTopDownProjection, } from "../lib/runtime-vehicle-topdown-projection";
 import { resolveRuntimeRunningGearHitComponentPoses } from "../lib/runtime-running-gear-hit-pose";
 import { createRuntimeSkeletalPoseController, runtimeSkeletalPoseEvidence, type RuntimeSkeletalPoseController, } from "../lib/runtime-skeletal-pose";
 import { carryNestedRuntimeTurretAssemblies, clampTurretPitch, clampTurretYaw, normalizeTurretYaw, resolveRuntimeTurretAssembly, resolveRuntimeTurretHitComponentAssembly, resolveRuntimeTurretMotionFrame, runtimeTurretFallbackSpec, turretArticulationMatrices, type RuntimeTurretAssembly, } from "../lib/turret-articulation";
@@ -3129,6 +3130,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         runtimeTurretStations[0] ?? null;
     const [activeTurretStationId, setActiveTurretStationId] = useState("");
     const [turretPoseStates, setTurretPoseStates] = useState<Record<string, RuntimeTurretPoseState>>({});
+    const [turretTopDownProjection, setTurretTopDownProjection] = useState<RuntimeVehicleTopDownProjection | null>(null);
     const activeTurretStation = runtimeTurretStations.find((station) => station.id === activeTurretStationId) ?? defaultTurretStation;
     const activeTurretPose = activeTurretStation
         ? turretPoseStates[activeTurretStation.id] ?? {
@@ -3146,13 +3148,17 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const clampedTurretPitch = activeTurretStation
         ? clampTurretPitch(activeTurretStation.turret, clampedTurretYaw, activeTurretPose.pitchDegrees)
         : 0;
-    const turretOrientationIndicators = useMemo<TurretOrientationIndicator[]>(() => runtimeTurretStations.map((station) => ({
-        id: station.id,
-        label: station.label,
-        kind: station.indicatorKind,
-        yawDegrees: runtimeTurretWorldYaw(station, runtimeTurretStations, turretPoseStates),
-        active: station.id === activeTurretStation?.id,
-    })), [activeTurretStation?.id, runtimeTurretStations, turretPoseStates]);
+    const turretOrientationIndicators = useMemo<TurretOrientationIndicator[]>(() => runtimeTurretStations.map((station) => {
+        const relativeYawDegrees = clampTurretYaw(station.turret, turretPoseStates[station.id]?.yawDegrees ?? 0);
+        return {
+            id: station.id,
+            label: station.label,
+            kind: station.indicatorKind,
+            yawDegrees: runtimeTurretWorldYaw(station, runtimeTurretStations, turretPoseStates),
+            relativeYawDegrees,
+            active: station.id === activeTurretStation?.id,
+        };
+    }), [activeTurretStation?.id, runtimeTurretStations, turretPoseStates]);
     const updateTurretStationPose = useCallback((station: RuntimeTurretPreviewStation, yawDegrees: number, pitchDegrees: number, options: {
         transient?: boolean;
     } = {}) => {
@@ -5198,6 +5204,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         setActiveCrewViewStationId(null);
         setInfantryPreviewDistanceM(null);
         setArmorThicknessRange(null);
+        setTurretTopDownProjection(null);
         setInitialCameraFitReady(false);
         setExteriorPlaceholderReady(false);
         host.dataset.armorThicknessScale = "absolute";
@@ -6128,6 +6135,18 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     pose.yawDegrees.toFixed(3),
                     pose.pitchDegrees.toFixed(3),
                 ].join(":")).join(";");
+                const poseByStationId = new Map(poses.map((pose) => [pose.stationId, pose]));
+                host.closest(".runtime-vehicle-viewer")
+                    ?.querySelectorAll<SVGGElement>("[data-topdown-station-id]")
+                    .forEach((element) => {
+                    const pose = poseByStationId.get(element.dataset.topdownStationId ?? "");
+                    const pivotX = Number(element.dataset.yawPivotX);
+                    const pivotY = Number(element.dataset.yawPivotY);
+                    if (!pose || !Number.isFinite(pivotX) || !Number.isFinite(pivotY)) {
+                        return;
+                    }
+                    element.setAttribute("transform", `rotate(${pose.yawDegrees.toFixed(3)} ${pivotX} ${pivotY})`);
+                });
                 visualGroup.updateMatrixWorld(true);
                 analysisVisualGroup.updateMatrixWorld(true);
                 const crewViewpoint = updateCrewViewpointMarker();
@@ -7786,6 +7805,45 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     });
                 }
             });
+            const projectionStations = runtimeTurretStationsRef.current.flatMap((station) => {
+                if (!station.assembly)
+                    return [];
+                const parent = runtimeTurretParentStation(station, runtimeTurretStationsRef.current);
+                return [{
+                        id: station.id,
+                        parentId: parent?.id ?? null,
+                        depth: runtimeTurretStationDepth(station, runtimeTurretStationsRef.current),
+                        placementIds: station.assembly.yawPlacementIds,
+                        barrelPlacementIds: station.assembly.pitchPlacementIds.length > 0
+                            ? station.assembly.pitchPlacementIds
+                            : station.assembly.yawPlacementIds,
+                        yawPivot: station.assembly.yawPivot,
+                    }];
+            });
+            const topDownProjectionStartedAt = performance.now();
+            const topDownProjection = buildRuntimeVehicleTopDownProjection({
+                occurrences: renderPlacements.flatMap((placement) => {
+                    const source = sources.get(placement.assetUrl);
+                    return source ? [{
+                            stableOccurrenceId: placement.stableOccurrenceId,
+                            source,
+                            matrix: placement.matrix,
+                        }] : [];
+                }),
+                stations: projectionStations,
+            });
+            if (!cancelled) {
+                setTurretTopDownProjection(topDownProjection);
+                host.dataset.turretTopDownProjection = topDownProjection
+                    ? "runtime-geometry"
+                    : "fallback";
+                host.dataset.turretTopDownSampledVertexCount = String(topDownProjection?.sampledVertexCount ?? 0);
+                host.dataset.turretTopDownOutputPointCount = String(topDownProjection?.outputPointCount ?? 0);
+                host.dataset.turretTopDownPayloadBytes = String(topDownProjection
+                    ? new TextEncoder().encode(JSON.stringify(topDownProjection)).length
+                    : 0);
+                host.dataset.turretTopDownBuildDurationMs = (performance.now() - topDownProjectionStartedAt).toFixed(2);
+            }
             renderPlacements.forEach((placement) => {
                 const source = sources.get(placement.assetUrl);
                 if (!source)
@@ -8623,7 +8681,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }}/>) : null}
 
       {activeCrewViewStationId !== null && !driverViewActive && activeTurretStation ? (<div className="crew-view-operation-panel" aria-label={`${activeTurretStation.label}方位俯仰控制`}>
-          <TurretPreviewControls embedded operationOverlay stations={runtimeTurretStations} orientationIndicators={turretOrientationIndicators} activeStationId={activeTurretStation.id} yawDegrees={clampedTurretYaw} pitchDegrees={clampedTurretPitch} onStationChange={(stationId) => {
+          <TurretPreviewControls embedded operationOverlay stations={runtimeTurretStations} orientationIndicators={turretOrientationIndicators} topDownProjection={turretTopDownProjection} activeStationId={activeTurretStation.id} yawDegrees={clampedTurretYaw} pitchDegrees={clampedTurretPitch} onStationChange={(stationId) => {
                 setActiveTurretStationId(stationId);
                 enterCrewViewpointRef.current?.(stationId);
                 commitTurretNavigation(stationId);
@@ -9081,7 +9139,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 }}>
                   {driverViewActive ? "退出驾驶员视角" : "进入真实驾驶视角"}
                 </button>
-              </div>) : controlTargetStation ? (<TurretPreviewControls embedded showStationSelector={false} stations={runtimeTurretStations} orientationIndicators={turretOrientationIndicators} activeStationId={controlTargetStation.id} yawDegrees={controlTargetYaw} pitchDegrees={controlTargetPitch} onStationChange={() => undefined} onYawChange={(yawDegrees) => {
+              </div>) : controlTargetStation ? (<TurretPreviewControls embedded showStationSelector={false} stations={runtimeTurretStations} orientationIndicators={turretOrientationIndicators} topDownProjection={turretTopDownProjection} activeStationId={controlTargetStation.id} yawDegrees={controlTargetYaw} pitchDegrees={controlTargetPitch} onStationChange={() => undefined} onYawChange={(yawDegrees) => {
                     updateTurretStationPose(controlTargetStation, yawDegrees, controlTargetPose.pitchDegrees);
                 }} onPitchChange={(pitchDegrees) => {
                     updateTurretStationPose(controlTargetStation, controlTargetPose.yawDegrees, pitchDegrees);
