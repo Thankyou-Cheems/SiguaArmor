@@ -11360,20 +11360,7 @@ export function RuntimeVehicleViewer({
                 ))}
               </div>
             </div>
-            <details
-              className="viewer-control-section"
-              data-control-section="analysis"
-            >
-              <summary>
-                <span><i aria-hidden="true" />装甲与分析</span>
-                <strong
-                  className="viewer-control-section__status"
-                  data-active={protectionActive || undefined}
-                >
-                  {protectionActive ? "已开启" : "关闭"}
-                </strong>
-              </summary>
-              <div className="viewer-control-section__body">
+            <div className="viewer-flat-control-list">
             <div className="viewer-protection-primary" data-enabled={protectionMapAvailable}>
               <button
                 className="viewer-protection-switch viewer-state-switch"
@@ -11552,28 +11539,6 @@ export function RuntimeVehicleViewer({
                 <span data-protection="ammo">弹药架</span>
               </div>
             ) : null}
-              </div>
-            </details>
-            <details
-              className="viewer-control-section"
-              data-control-section="crew"
-            >
-              <summary>
-                <span><i aria-hidden="true" />乘员显示</span>
-                <strong
-                  className="viewer-control-section__status"
-                  data-active={crewOccupantDisplayEnabled || undefined}
-                >
-                  {crewOccupantCounts.total > 0
-                    ? crewOccupantDisplayEnabled
-                      ? crewOccupantCounts.nonSpatial > 0
-                        ? `${crewOccupantCounts.rendered} 人 · ${crewOccupantCounts.nonSpatial} 席说明`
-                        : `${crewOccupantCounts.rendered} 人显示`
-                      : `${crewOccupantCounts.total} 席`
-                    : "无数据"}
-                </strong>
-              </summary>
-              <div className="viewer-control-section__body">
             <div className="viewer-crew-occupant-row">
               <button
                 className="viewer-protection-switch viewer-state-switch viewer-crew-occupant-switch"
@@ -11642,39 +11607,20 @@ export function RuntimeVehicleViewer({
                     <b>{crewOccupantCounts.protected}</b>
                   </span>
                   {crewOccupantCounts.nonSpatial > 0 ? (
-                    <span data-kind="nonspatial">
+                    <span
+                      data-kind="nonspatial"
+                      title={`无人物 socket 的 Hidden：${nonSpatialCrewOccupants.map(
+                        (occupant) =>
+                          `F${occupant.catalogSeatIndex} ${occupant.requestedSocketName ?? "未命名人物 socket"}${
+                            occupant.directRadialDamageEligibility === "enabled"
+                              ? "；直接爆炸伤害仍启用"
+                              : ""
+                          }`,
+                      ).join("；")}`}
+                    >
                       <i />隐藏且无空间人物
                       <b>{crewOccupantCounts.nonSpatial}</b>
                     </span>
-                  ) : null}
-                  {nonSpatialCrewOccupants.length > 0 ? (
-                    <details className="viewer-crew-nonspatial-seats">
-                      <summary>
-                        <span>查看未绘制席位</span>
-                        <b>{nonSpatialCrewOccupants.length}</b>
-                      </summary>
-                      <ul>
-                        {nonSpatialCrewOccupants.map((occupant) => (
-                          <li key={occupant.seatKey}>
-                            <strong>
-                              F{occupant.catalogSeatIndex} · {turretStationRoleLabel(
-                                occupant.role as ReferenceSeat["role"],
-                              )}
-                            </strong>
-                            <span>
-                              {occupant.requestedSocketName ?? "未命名人物 socket"}
-                              {occupant.attachmentComponentName
-                                ? ` @ ${occupant.attachmentComponentName}`
-                                : ""}
-                              {" 不存在；原生 Hidden，Actor fallback 不作为人体位置"}
-                              {occupant.directRadialDamageEligibility === "enabled"
-                                ? "；直接爆炸伤害仍启用"
-                                : ""}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
                   ) : null}
                   {crewOccupantCounts.unresolved > 0 ? (
                     <span data-kind="unresolved">
@@ -11682,18 +11628,12 @@ export function RuntimeVehicleViewer({
                       <b>{crewOccupantCounts.unresolved}</b>
                     </span>
                   ) : null}
-                  <small>
-                    位置：construction frame · 骨姿态：Editor BaseAnimation 首帧 ·
-                    判定体：原生 PhysicsAsset 参考形状、默认隐藏 · 无人物 socket 的 Hidden
-                    状态不绘制误导性 3D 轮廓
-                  </small>
                 </div>
               ) : null}
             </div>
-              </div>
-            </details>
             <div className="viewer-interaction-hint viewer-interaction-hint--protection" aria-label="3D 操作提示">
               <span>左键旋转</span><span>右键拖动</span><span>滚轮缩放</span>
+            </div>
             </div>
           </div>
         </div>

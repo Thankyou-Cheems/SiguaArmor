@@ -72,10 +72,8 @@ test("protected occupants use exact-pose wireframes with sprites only as fail-cl
   assert.match(styles, /\.viewer-crew-occupant-legend/u);
   assert.match(runtimeSource, /plan\.renderKind !== "protected-nonspatial"/u);
   assert.match(viewerSource, /无人物 socket 的 Hidden/u);
-  assert.match(viewerSource, /viewer-crew-nonspatial-seats/u);
-  assert.match(viewerSource, /查看未绘制席位/u);
-  assert.match(viewerSource, /crewOccupantCounts\.rendered/u);
-  assert.match(viewerSource, /席说明/u);
+  assert.doesNotMatch(viewerSource, /viewer-crew-nonspatial-seats/u);
+  assert.doesNotMatch(viewerSource, /查看未绘制席位/u);
   assert.match(viewerSource, /occupant\.requestedSocketName/u);
   assert.match(viewerSource, /直接爆炸伤害仍启用/u);
 });
