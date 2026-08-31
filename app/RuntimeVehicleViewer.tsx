@@ -11682,22 +11682,12 @@ export function RuntimeVehicleViewer({
               style={{
                 "--control-target-count": controlTargetCount,
                 "--control-target-index": controlTargetIndex,
-                "--control-station-left": `${(2 / controlTargetCount) * 100}%`,
-                "--control-station-width": `${(runtimeTurretStations.length / controlTargetCount) * 100}%`,
               } as CSSProperties}
             >
               <span
                 className="viewer-control-target-slider__thumb"
                 aria-hidden="true"
               />
-              {runtimeTurretStations.length > 0 ? (
-                <span
-                  className="viewer-control-target-slider__station-zone"
-                  aria-hidden="true"
-                >
-                  <b>武器站</b>
-                </span>
-              ) : null}
               <button
                 type="button"
                 role="tab"
@@ -11718,24 +11708,35 @@ export function RuntimeVehicleViewer({
               >
                 驾驶 · F1
               </button>
-              {runtimeTurretStations.map((station) => (
-                <button
-                  type="button"
-                  role="tab"
-                  data-target-kind="station"
-                  aria-selected={controlTargetId === station.id}
-                  data-active={controlTargetId === station.id || undefined}
-                  title={`${station.label} · ${station.equipmentLabel}`}
-                  onClick={() => {
-                    setControlTargetId(station.id);
-                    setActiveTurretStationId(station.id);
-                    commitTurretNavigation(station.id);
-                  }}
-                  key={station.id}
+              {runtimeTurretStations.length > 0 ? (
+                <div
+                  className="viewer-control-target-slider__station-group"
+                  role="presentation"
+                  style={{
+                    "--control-station-count": runtimeTurretStations.length,
+                  } as CSSProperties}
                 >
-                  {station.label}
-                </button>
-              ))}
+                  <b aria-hidden="true">武器站</b>
+                  {runtimeTurretStations.map((station) => (
+                    <button
+                      type="button"
+                      role="tab"
+                      data-target-kind="station"
+                      aria-selected={controlTargetId === station.id}
+                      data-active={controlTargetId === station.id || undefined}
+                      title={`${station.label} · ${station.equipmentLabel}`}
+                      onClick={() => {
+                        setControlTargetId(station.id);
+                        setActiveTurretStationId(station.id);
+                        commitTurretNavigation(station.id);
+                      }}
+                      key={station.id}
+                    >
+                      {station.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </div>
             <button
               className="viewer-weapon-panel__collapse"
