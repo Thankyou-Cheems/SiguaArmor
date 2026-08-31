@@ -7,6 +7,7 @@ const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-radial-v3";
 const WIKI_VEHICLE_RUNTIME_QUERY = "?projection=vehicle-station-graph-v1";
 const WIKI_WEAPON_CATALOG_QUERY = "?mechanics=overheat-v1";
 const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-radial-v4";
+const WIKI_WEAPON_PROJECTILE_QUERY = "?mechanics=projectile-playback-v1";
 
 const requests = new Map<
   string,
@@ -75,6 +76,51 @@ export async function loadWikiWeaponCatalog() {
     !Array.isArray(catalog.mechanics?.directDamageModels)
   ) {
     throw new Error("SiguaWiki weapon catalog has an unsupported shape");
+  }
+  return value;
+}
+
+export async function loadWikiWeaponBallistics() {
+  const pathname = `/data/weapons/ballistics.json${WIKI_WEAPON_PROJECTILE_QUERY}`;
+  const value = await loadWikiDataset(
+    pathname,
+    "sigua-weapon-ballistics/v1",
+  );
+  const document = value as {
+    status?: string;
+    sourceBuildId?: string;
+    algorithms?: { projectile?: string };
+    physics?: {
+      worldGravityZCentimetresPerSecondSquared?: number;
+      serverFrameDeltaSeconds?: number;
+    };
+    launchOriginProfiles?: unknown[];
+    projectileProfiles?: unknown[];
+    weaponAssignments?: unknown[];
+    movementModes?: unknown[];
+    curveAssets?: unknown[];
+    vehicleMountBindings?: unknown[];
+  };
+  if (
+    document.status !== "completed" ||
+    typeof document.sourceBuildId !== "string" ||
+    !/^\/algorithms\/ballistics\/[a-z0-9-]+\.js$/u.test(
+      document.algorithms?.projectile ?? "",
+    ) ||
+    typeof document.physics?.worldGravityZCentimetresPerSecondSquared !==
+      "number" ||
+    typeof document.physics?.serverFrameDeltaSeconds !== "number" ||
+    !Array.isArray(document.launchOriginProfiles) ||
+    document.launchOriginProfiles.length === 0 ||
+    !Array.isArray(document.projectileProfiles) ||
+    !Array.isArray(document.weaponAssignments) ||
+    !Array.isArray(document.movementModes) ||
+    !Array.isArray(document.curveAssets) ||
+    !Array.isArray(document.vehicleMountBindings)
+  ) {
+    throw new Error(
+      `SiguaWiki ${pathname} does not contain the source-locked launch contract`,
+    );
   }
   return value;
 }
