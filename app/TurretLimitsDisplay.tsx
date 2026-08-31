@@ -62,6 +62,7 @@ export interface TurretPreviewStation {
 interface TurretPreviewControlsProps {
   embedded?: boolean;
   operationOverlay?: boolean;
+  showStationSelector?: boolean;
   stations: TurretPreviewStation[];
   orientationIndicators: TurretOrientationIndicator[];
   activeStationId: string;
@@ -765,6 +766,7 @@ export function TurretEnvelopeCard({
 export function TurretPreviewControls({
   embedded = false,
   operationOverlay = false,
+  showStationSelector = true,
   stations,
   orientationIndicators,
   activeStationId,
@@ -878,7 +880,7 @@ export function TurretPreviewControls({
   const body = (
     <div className="turret-preview-controls__body">
           <div className="turret-preview-controls__station">
-            {stations.length > 1 ? (
+            {showStationSelector && stations.length > 1 ? (
               <div
                 className="turret-preview-controls__station-slider"
                 role="tablist"
@@ -1032,8 +1034,9 @@ export function TurretPreviewControls({
     </div>
   );
 
+  const Container = embedded ? "div" : "aside";
   return (
-    <aside
+    <Container
       className="turret-preview-controls"
       data-authority={turret.limits?.authority ?? "reference"}
       data-yaw-available={activeStation.yawAvailable}
@@ -1055,6 +1058,6 @@ export function TurretPreviewControls({
           {body}
         </details>
       )}
-    </aside>
+    </Container>
   );
 }
