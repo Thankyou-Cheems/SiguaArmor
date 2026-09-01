@@ -82,6 +82,8 @@ export interface RuntimeTurretAssembly {
   pitchPlacementIds: string[];
   hitYawPlacementIds?: string[];
   hitActorClassNames?: string[];
+  hitPitchActorClassNames?: string[];
+  hitOwnerSeatIndices?: number[];
   yawPivot: [number, number, number];
   pitchPivot: [number, number, number];
   yawAxis?: [number, number, number];
@@ -159,6 +161,12 @@ export function carryNestedRuntimeTurretAssemblies(
           hitActorClassNames: assembly.hitActorClassNames
             ? [...assembly.hitActorClassNames]
             : undefined,
+          hitPitchActorClassNames: assembly.hitPitchActorClassNames
+            ? [...assembly.hitPitchActorClassNames]
+            : undefined,
+          hitOwnerSeatIndices: assembly.hitOwnerSeatIndices
+            ? [...assembly.hitOwnerSeatIndices]
+            : undefined,
         }
       : null
   );
@@ -230,6 +238,30 @@ export function carryNestedRuntimeTurretAssemblies(
               child.hitActorClassNames,
             ) || changed;
         }
+        if (
+          explicitRelation?.inheritedMotionChannels.includes("pitch") &&
+          child.hitPitchActorClassNames
+        ) {
+          parent.hitPitchActorClassNames ??= [];
+          changed =
+            appendUnique(
+              parent.hitPitchActorClassNames,
+              child.hitPitchActorClassNames,
+            ) || changed;
+        }
+        if (child.hitOwnerSeatIndices) {
+          parent.hitOwnerSeatIndices ??= [];
+          const previousOwnerSeatCount = parent.hitOwnerSeatIndices.length;
+          parent.hitOwnerSeatIndices = [
+            ...new Set([
+              ...parent.hitOwnerSeatIndices,
+              ...child.hitOwnerSeatIndices,
+            ]),
+          ];
+          changed =
+            parent.hitOwnerSeatIndices.length !== previousOwnerSeatCount ||
+            changed;
+        }
       }
     }
   }
@@ -250,6 +282,11 @@ export interface RuntimeTurretHitComponentAssembly {
 
 interface RuntimeTurretHitComponent {
   componentPath: string;
+  ownerIndex?: number | null;
+}
+
+interface RuntimeTurretHitOwner {
+  seatIndex?: number | null;
 }
 
 const FULL_TURN_DEGREES = 360;
@@ -828,6 +865,7 @@ export function resolveRuntimeTurretAssembly({
   fallbackPitchUsesYawAnchor = false,
   fallbackHitActorClassNames = [],
   carriedHitActorClassNames = [],
+  hitOwnerSeatIndex = null,
   siblingFallbackYawAnchorComponentNames = [],
   visualAttachment,
 }: {
@@ -849,6 +887,7 @@ export function resolveRuntimeTurretAssembly({
   fallbackPitchUsesYawAnchor?: boolean;
   fallbackHitActorClassNames?: string[];
   carriedHitActorClassNames?: string[];
+  hitOwnerSeatIndex?: number | null;
   siblingFallbackYawAnchorComponentNames?: string[];
   visualAttachment?: RuntimeTurretVisualAttachment | null;
 }): RuntimeTurretAssembly | null {
@@ -920,10 +959,24 @@ export function resolveRuntimeTurretAssembly({
     const pitchAnchorPlacement = visualAttachment.pitchAnchor
       ? resolveMember(visualAttachment.pitchAnchor, "pitch anchor")
       : pitchPlacements[0] ?? yawAnchorPlacement;
+    const hitActorClassNames = [
+      ...new Set([
+        turretName,
+        ...fallbackHitActorClassNames,
+        ...carriedHitActorClassNames,
+      ]),
+    ];
     return {
       yawPlacementIds: yawPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId),
       pitchPlacementIds: pitchPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId),
       hitYawPlacementIds: yawPlacements.map(({ stableOccurrenceId }) => stableOccurrenceId),
+      hitActorClassNames,
+      ...(visualAttachment.motion.driverMode === "combined-updated-component"
+        ? { hitPitchActorClassNames: [turretName] }
+        : {}),
+      ...(hitOwnerSeatIndex !== null
+        ? { hitOwnerSeatIndices: [hitOwnerSeatIndex] }
+        : {}),
       // Current-build driver frames are direct pivot authority. Never apply an
       // old anchor-relative offset to a new sidecar anchor.
       yawPivot: motionFrame.yawPivot,
@@ -1104,6 +1157,9 @@ export function resolveRuntimeTurretAssembly({
     ),
     hitYawPlacementIds,
     ...(hitActorClassNames.length > 0 ? { hitActorClassNames } : {}),
+    ...(hitOwnerSeatIndex !== null
+      ? { hitOwnerSeatIndices: [hitOwnerSeatIndex] }
+      : {}),
     yawPivot,
     pitchPivot,
     yawComponentPlacementId: yawComponentPlacement.stableOccurrenceId,
@@ -1142,11 +1198,13 @@ export function resolveRuntimeTurretHitComponentAssembly({
   assembly,
   articulation,
   components,
+  owners = [],
 }: {
   placements: RuntimeTurretPlacement[];
   assembly: RuntimeTurretAssembly;
   articulation?: ReferenceTurretArticulation;
   components: RuntimeTurretHitComponent[];
+  owners?: RuntimeTurretHitOwner[];
 }): RuntimeTurretHitComponentAssembly {
   const placementById = new Map(
     placements.map((placement) => [placement.stableOccurrenceId, placement]),
@@ -1171,6 +1229,10 @@ export function resolveRuntimeTurretHitComponentAssembly({
       articulation?.pitchAnchorMeshComponentName,
     ].filter((name): name is string => Boolean(name)),
   );
+  const pitchActors = new Set(
+    (assembly.hitPitchActorClassNames ?? []).map(runtimeActorClassIdentity),
+  );
+  const ownerSeatIndices = new Set(assembly.hitOwnerSeatIndices ?? []);
   const yawComponentIndices: number[] = [];
   const pitchComponentIndices: number[] = [];
 
@@ -1182,11 +1244,25 @@ export function resolveRuntimeTurretHitComponentAssembly({
     ) {
       return;
     }
+    const ownerSeatIndex = component.ownerIndex === null ||
+        component.ownerIndex === undefined
+      ? null
+      : owners[component.ownerIndex]?.seatIndex ?? null;
+    if (
+      ownerSeatIndex !== null &&
+      ownerSeatIndices.size > 0 &&
+      !ownerSeatIndices.has(ownerSeatIndex)
+    ) {
+      return;
+    }
     yawComponentIndices.push(componentIndex);
     // Collision meshes for a separately captured gun actor can be attached to
     // the parent turret actor. Exact local component inventory is authoritative
     // for pitch membership once the actor is already in this yaw assembly.
-    if (pitchComponentNames.has(identity.componentName)) {
+    if (
+      pitchActors.has(runtimeActorClassIdentity(identity.actor)) ||
+      pitchComponentNames.has(identity.componentName)
+    ) {
       pitchComponentIndices.push(componentIndex);
     }
   });
