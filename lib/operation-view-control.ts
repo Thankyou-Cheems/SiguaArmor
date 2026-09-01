@@ -15,6 +15,56 @@ export interface OperationViewMotionRates {
   pitchDegreesPerSecond: number | null | undefined;
 }
 
+export interface OperationViewPoseCommitScheduler {
+  schedule: (commit: () => void) => void;
+  cancel: () => void;
+  flush: () => void;
+}
+
+export interface OperationViewPoseCommitSchedulerOptions {
+  delayMs?: number;
+  setTimer?: (callback: () => void, delayMs: number) => unknown;
+  clearTimer?: (handle: unknown) => void;
+}
+
+export const OPERATION_VIEW_POSE_COMMIT_DELAY_MS = 250;
+
+export function createOperationViewPoseCommitScheduler({
+  delayMs = OPERATION_VIEW_POSE_COMMIT_DELAY_MS,
+  setTimer = (callback, delay) => setTimeout(callback, delay),
+  clearTimer = (handle) =>
+    clearTimeout(handle as ReturnType<typeof setTimeout>),
+}: OperationViewPoseCommitSchedulerOptions = {}): OperationViewPoseCommitScheduler {
+  let timerHandle: unknown = null;
+  let pendingCommit: (() => void) | null = null;
+
+  const cancelTimer = () => {
+    if (timerHandle === null) return;
+    clearTimer(timerHandle);
+    timerHandle = null;
+  };
+  const cancel = () => {
+    cancelTimer();
+    pendingCommit = null;
+  };
+  const flush = () => {
+    cancelTimer();
+    const commit = pendingCommit;
+    pendingCommit = null;
+    commit?.();
+  };
+  const schedule = (commit: () => void) => {
+    cancelTimer();
+    pendingCommit = commit;
+    timerHandle = setTimer(() => {
+      timerHandle = null;
+      flush();
+    }, Math.max(0, delayMs));
+  };
+
+  return { schedule, cancel, flush };
+}
+
 export function operationViewHorizontalFovForMagnification(
   magnification: number | null | undefined,
 ) {
