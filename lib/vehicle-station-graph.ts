@@ -31,6 +31,21 @@ interface StationGraphMotionChannel {
   sourceFunction: string | null;
 }
 
+export interface VehicleStationInputDynamics {
+  state: "observed-static-cdo";
+  sourceFunction: "USQTurretMovementComponent::CalcInputVelocity@0x180417750";
+  hasAcceleration: boolean;
+  maxYawSpeedDegreesPerSecond: number;
+  maxPitchSpeedDegreesPerSecond: number;
+  inputAccelerationDegreesPerSecondSquared: {
+    yaw: number;
+    pitch: number;
+  } | null;
+  noInputDecelerationDegreesPerSecondSquared: number | null;
+  oppositeDirectionDecelerationDegreesPerSecondSquared: number | null;
+  maxMoveDeltaTimeSeconds: number | null;
+}
+
 export interface StationGraphWeaponAttachment {
   state: "derived-seat-pawn-component" | "native-weapon-actor-root";
   meshRole: "WeaponMesh1P" | "WeaponMesh3P";
@@ -107,6 +122,7 @@ export interface StationGraphStation {
     control: unknown;
     yaw: StationGraphMotionChannel;
     pitch: StationGraphMotionChannel;
+    inputDynamics: VehicleStationInputDynamics | null;
   };
   occupantMotion: {
     state:
@@ -375,6 +391,7 @@ export interface RuntimeStationGraphVisualStation {
         reason: string | null;
       };
     } | null;
+    inputDynamics: VehicleStationInputDynamics | null;
     reason: string | null;
   };
   control: unknown;
@@ -690,6 +707,7 @@ export function compileVehicleStationGraph(
             | "USQRotatingMovementComponent::SetCurrentRotation@0x1803f03f0",
           yawDriver: motionDriver(station.motion.yaw),
           pitchDriver: motionDriver(station.motion.pitch),
+          inputDynamics: station.motion.inputDynamics,
           reason: station.closure.motion === "closed"
             ? null
             : station.closure.reasons.join("; "),

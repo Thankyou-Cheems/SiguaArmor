@@ -70,7 +70,11 @@ test("held WASD input stays frame-based while synchronizing every rendered layer
   assert.match(viewerSource, /const heldOperationKeys = new Set<string>\(\)/u);
   assert.match(viewerSource, /const stepOperationMovement = \(frameTime: number\) =>/u);
   assert.match(viewerSource, /requestAnimationFrame\(stepOperationMovement\)/u);
-  assert.match(viewerSource, /operationViewContinuousPoseDelta/u);
+  assert.match(viewerSource, /operationViewMotionStep/u);
+  assert.match(
+    viewerSource,
+    /visualAttachment\?\.motion\.inputDynamics/u,
+  );
   assert.match(
     viewerSource,
     /updateTurretStationPose\([\s\S]*?\{ transient: true \},\s*\);/u,
@@ -225,11 +229,11 @@ test("dynamic sight instruments consume live operation and Wiki station motion",
   assert.match(overlaySource, /resolveGunnerSightDynamicBinding/u);
   assert.match(
     viewerSource,
-    /yawDegreesPerSecond:\s*station\.turret\.maxYawSpeed/u,
+    /maxYawSpeedDegreesPerSecond:\s*station\?\.turret\.maxYawSpeed/u,
   );
   assert.match(
     viewerSource,
-    /pitchDegreesPerSecond:\s*station\.turret\.maxPitchSpeed/u,
+    /maxPitchSpeedDegreesPerSecond:\s*station\?\.turret\.maxPitchSpeed/u,
   );
   assert.doesNotMatch(viewerSource, /OPERATION_VIEW_YAW_SPEED/u);
   assert.doesNotMatch(viewerSource, /OPERATION_VIEW_PITCH_SPEED/u);

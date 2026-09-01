@@ -7,6 +7,7 @@ import {
   fireVehicleWeaponOperation,
   nextVehicleWeaponFireAtMs,
   presentVehicleWeaponOperation,
+  releaseVehicleWeaponTrigger,
   reloadVehicleWeaponOperation,
 } from "../../lib/vehicle-weapon-operation-state.ts";
 
@@ -93,6 +94,53 @@ test("held-fire scheduling waits for dry reload and stops without reserve", () =
     ),
     null,
   );
+});
+
+test("holding a single-fire trigger never schedules another round after reload", () => {
+  const single = {
+    ...t72Round,
+    fireControl: {
+      defaultModeIndex: 0,
+      modes: [{ sourceValue: 1, kind: "single", roundsPerTrigger: 1 }],
+      resetBurstOnTriggerRelease: false,
+    },
+  };
+  const initial = createVehicleWeaponOperation(single, 0);
+  const first = fireVehicleWeaponOperation(initial, single, 0);
+  assert.equal(first.fired, true);
+  assert.equal(nextVehicleWeaponFireAtMs(first.state, single, 0), null);
+  const released = releaseVehicleWeaponTrigger(first.state, single, 100);
+  const second = fireVehicleWeaponOperation(released, single, 8_000);
+  assert.equal(second.fired, true);
+});
+
+test("a fixed burst stops at the authored round count until trigger release", () => {
+  const burst = {
+    numberOfMags: 2,
+    magazineSize: 10,
+    tacticalReloadSeconds: 4,
+    dryReloadSeconds: 5,
+    roundsPerMinute: 600,
+    timeBetweenShotsSeconds: 0.1,
+    fireControl: {
+      defaultModeIndex: 0,
+      modes: [{ sourceValue: 4, kind: "burst", roundsPerTrigger: 4 }],
+      resetBurstOnTriggerRelease: false,
+    },
+  };
+  let state = createVehicleWeaponOperation(burst, 0);
+  for (let shotIndex = 0; shotIndex < 4; shotIndex += 1) {
+    const shot = fireVehicleWeaponOperation(state, burst, shotIndex * 100);
+    assert.equal(shot.fired, true);
+    state = shot.state;
+  }
+  assert.equal(nextVehicleWeaponFireAtMs(state, burst, 300), null);
+  assert.equal(
+    fireVehicleWeaponOperation(state, burst, 400).reason,
+    "trigger-cycle-complete",
+  );
+  const released = releaseVehicleWeaponTrigger(state, burst, 400);
+  assert.equal(fireVehicleWeaponOperation(released, burst, 400).fired, true);
 });
 
 test("held fire fails closed when neither Wiki cadence field is available", () => {

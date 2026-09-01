@@ -15,6 +15,30 @@ export interface OperationViewMotionRates {
   pitchDegreesPerSecond: number | null | undefined;
 }
 
+export interface OperationViewInputDynamics {
+  hasAcceleration: boolean;
+  maxYawSpeedDegreesPerSecond: number;
+  maxPitchSpeedDegreesPerSecond: number;
+  inputAccelerationDegreesPerSecondSquared: {
+    yaw: number;
+    pitch: number;
+  } | null;
+  noInputDecelerationDegreesPerSecondSquared: number | null;
+  oppositeDirectionDecelerationDegreesPerSecondSquared: number | null;
+  maxMoveDeltaTimeSeconds: number | null;
+}
+
+export interface OperationViewMotionState {
+  yawVelocityDegreesPerSecond: number;
+  pitchVelocityDegreesPerSecond: number;
+}
+
+export interface OperationViewMotionStepResult extends OperationViewMotionState {
+  yawDelta: number;
+  pitchDelta: number;
+  settled: boolean;
+}
+
 export interface OperationViewPoseCommitScheduler {
   schedule: (commit: () => void) => void;
   cancel: () => void;
@@ -105,6 +129,130 @@ export function operationViewContinuousPoseDelta(
   return {
     yawDelta: yawDirection * (yawRate ?? 0) * frameSeconds,
     pitchDelta: pitchDirection * (pitchRate ?? 0) * frameSeconds,
+  };
+}
+
+function finiteOrZero(value: number) {
+  return Number.isFinite(value) ? value : 0;
+}
+
+function moveVelocityTowardZero(velocity: number, maximumDelta: number) {
+  const current = finiteOrZero(velocity);
+  const delta = Math.max(0, finiteOrZero(maximumDelta));
+  if (Math.abs(current) <= delta) return 0;
+  return current - Math.sign(current) * delta;
+}
+
+function operationViewAxisVelocity({
+  direction,
+  currentVelocity,
+  maximumSpeed,
+  acceleration,
+  noInputDeceleration,
+  oppositeDirectionDeceleration,
+  elapsedSeconds,
+  accelerated,
+}: {
+  direction: number;
+  currentVelocity: number;
+  maximumSpeed: number;
+  acceleration: number;
+  noInputDeceleration: number;
+  oppositeDirectionDeceleration: number;
+  elapsedSeconds: number;
+  accelerated: boolean;
+}) {
+  const speedLimit = Math.max(0, finiteOrZero(maximumSpeed));
+  if (!accelerated) return direction * speedLimit;
+  if (direction === 0) {
+    return moveVelocityTowardZero(
+      currentVelocity,
+      Math.abs(noInputDeceleration) * elapsedSeconds,
+    );
+  }
+  const signedAcceleration = direction * finiteOrZero(acceleration);
+  if (
+    currentVelocity !== 0 &&
+    signedAcceleration !== 0 &&
+    Math.sign(currentVelocity) !== Math.sign(signedAcceleration)
+  ) {
+    return moveVelocityTowardZero(
+      currentVelocity,
+      Math.abs(oppositeDirectionDeceleration) * elapsedSeconds,
+    );
+  }
+  return Math.max(
+    -speedLimit,
+    Math.min(
+      speedLimit,
+      finiteOrZero(currentVelocity) + signedAcceleration * elapsedSeconds,
+    ),
+  );
+}
+
+export function operationViewMotionStep(
+  heldCodes: readonly string[],
+  elapsedSeconds: number,
+  dynamics: OperationViewInputDynamics,
+  state: OperationViewMotionState,
+): OperationViewMotionStepResult {
+  const currentYaw = finiteOrZero(state.yawVelocityDegreesPerSecond);
+  const currentPitch = finiteOrZero(state.pitchVelocityDegreesPerSecond);
+  if (!Number.isFinite(elapsedSeconds) || elapsedSeconds <= 0) {
+    return {
+      yawDelta: 0,
+      pitchDelta: 0,
+      yawVelocityDegreesPerSecond: currentYaw,
+      pitchVelocityDegreesPerSecond: currentPitch,
+      settled: currentYaw === 0 && currentPitch === 0,
+    };
+  }
+  const authoredMaximumDelta = dynamics.maxMoveDeltaTimeSeconds;
+  const maximumDelta =
+    typeof authoredMaximumDelta === "number" &&
+      Number.isFinite(authoredMaximumDelta) &&
+      authoredMaximumDelta > 0
+      ? authoredMaximumDelta
+      : OPERATION_VIEW_MAX_FRAME_SECONDS;
+  const frameSeconds = Math.min(elapsedSeconds, maximumDelta);
+  const held = new Set(heldCodes);
+  const yawDirection = Number(held.has("KeyD")) - Number(held.has("KeyA"));
+  const pitchDirection = Number(held.has("KeyW")) - Number(held.has("KeyS"));
+  const acceleration = dynamics.inputAccelerationDegreesPerSecondSquared;
+  const yawVelocity = operationViewAxisVelocity({
+    direction: yawDirection,
+    currentVelocity: currentYaw,
+    maximumSpeed: dynamics.maxYawSpeedDegreesPerSecond,
+    acceleration: acceleration?.yaw ?? 0,
+    noInputDeceleration:
+      dynamics.noInputDecelerationDegreesPerSecondSquared ?? 0,
+    oppositeDirectionDeceleration:
+      dynamics.oppositeDirectionDecelerationDegreesPerSecondSquared ?? 0,
+    elapsedSeconds: frameSeconds,
+    accelerated: dynamics.hasAcceleration && acceleration !== null,
+  });
+  const pitchVelocity = operationViewAxisVelocity({
+    direction: pitchDirection,
+    currentVelocity: currentPitch,
+    maximumSpeed: dynamics.maxPitchSpeedDegreesPerSecond,
+    acceleration: acceleration?.pitch ?? 0,
+    noInputDeceleration:
+      dynamics.noInputDecelerationDegreesPerSecondSquared ?? 0,
+    oppositeDirectionDeceleration:
+      dynamics.oppositeDirectionDecelerationDegreesPerSecondSquared ?? 0,
+    elapsedSeconds: frameSeconds,
+    accelerated: dynamics.hasAcceleration && acceleration !== null,
+  });
+  return {
+    yawDelta: yawVelocity * frameSeconds,
+    pitchDelta: pitchVelocity * frameSeconds,
+    yawVelocityDegreesPerSecond: yawVelocity,
+    pitchVelocityDegreesPerSecond: pitchVelocity,
+    settled:
+      yawDirection === 0 &&
+      pitchDirection === 0 &&
+      yawVelocity === 0 &&
+      pitchVelocity === 0,
   };
 }
 
