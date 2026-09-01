@@ -26,6 +26,7 @@ function fixture() {
     sourceDataRevision: "d".repeat(64),
     stationGraphDataRevision: graph.sourceDataRevision,
     evidence: {
+      state: "sdk-blueprint-static-projection-and-local-dynamic-binding",
       network: "out-of-scope",
       hitMechanics: "not-applicable-presentation-only",
       damageBlindnessMechanic: "not-claimed",
@@ -46,17 +47,21 @@ function fixture() {
       overlayClassPath: "/Game/Test/W_Reticle.W_Reticle_C",
       widgetPackage: "/Game/Test/W_Reticle",
       layers: [{
+        widgetName: "Tunnel",
         role: "viewport-screen",
         state: "observed-static-brush-resource",
         visibility: "Visible",
         projectionRef: projectionId,
       }],
+      textLayers: [],
       defaultZoomStages: [{ zoomIndex: 0, projectionRef: projectionId }],
       weaponModes: [{
         equipmentRef: "vehicle-equipment-test",
         source: { routeKind: "EqualEqual_ClassClass-to-K2Node_Select" },
         zoomStages: [{ zoomIndex: 0, projectionRef: projectionId }],
       }],
+      dynamicChannels: ["weapon-change", "zoom-change"],
+      dynamicBindings: [],
     }],
   };
 }
@@ -95,16 +100,36 @@ test("accepts a source-proven dynamic widget with no static image layer", () => 
   record.projectionRefs = [];
   record.projections = [];
   Object.assign(record.stations[0], {
-    state: "absent-dynamic-widget-no-static-image",
-    absenceReason: "observed-widget-has-no-image-layer",
+    state: "observed-dynamic-presentation",
+    absenceReason: null,
     layers: [],
+    textLayers: [{ widgetName: "RotationText" }],
     defaultZoomStages: [],
     weaponModes: [],
-    dynamicChannels: ["weapon-rotation-elevation"],
+    dynamicChannels: ["station-relative-yaw-degrees"],
+    dynamicBindings: [{
+      id: "text:RotationText:station-relative-yaw-degrees:K2Node_CallFunction_1",
+      state: "observed-blueprint-property-route",
+      semantic: "station-relative-yaw-degrees",
+      targetWidgetName: "RotationText",
+      property: "text",
+      relatedSeatPawnClassPaths: [],
+      valueModel: { kind: "station-angle-degrees" },
+      source: {
+        declaringClassPath: "/Game/Test/W_Reticle.W_Reticle_C",
+        graphPath: "/Game/Test/W_Reticle.W_Reticle:EventGraph",
+        setterNode: "K2Node_CallFunction_1",
+        setterFunction: "SetText",
+        contextFunctions: ["SetText"],
+        contextVariables: ["RotationText"],
+        inheritedDepth: 0,
+        aliasNode: null,
+      },
+    }],
   });
   const compiled = compileVehicleGunnerSight(record, graph);
   assert.equal(
     compiled.stations[0].state,
-    "absent-dynamic-widget-no-static-image",
+    "observed-dynamic-presentation",
   );
 });

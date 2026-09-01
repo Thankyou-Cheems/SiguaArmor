@@ -29,6 +29,22 @@ function visible(layer: { visibility: string | null; renderOpacity: number | nul
     layer.renderOpacity !== 0;
 }
 
+function layerTargetsDynamicBinding(
+  layer: GunnerSightLayer | GunnerSightTextLayer,
+  station: GunnerSightStation,
+) {
+  const names = new Set([
+    layer.widgetName,
+    ...(layer.layout?.steps.flatMap(({ widgetName, parentWidgetName }) =>
+      [widgetName, parentWidgetName].filter((value): value is string => Boolean(value))
+    ) ?? []),
+  ]);
+  return (station.dynamicBindings ?? []).some((binding) =>
+    binding.semantic !== "excluded-damage-state-indicator" &&
+    names.has(binding.targetWidgetName)
+  );
+}
+
 function comparePaintOrder(left: GunnerSightRenderLayer, right: GunnerSightRenderLayer) {
   const difference = (left.layer.paintOrder ?? 0) -
     (right.layer.paintOrder ?? 0);
@@ -66,7 +82,10 @@ export function compileGunnerSightRenderLayers(
   const targetWidgetName = activeReticleTarget(station, activeStage);
   const result: GunnerSightRenderLayer[] = [];
   for (const layer of station.layers) {
-    if (!visible(layer) || layer.role === "damage-overlay") continue;
+    if (
+      (!visible(layer) && !layerTargetsDynamicBinding(layer, station)) ||
+      layer.role === "damage-overlay"
+    ) continue;
     if (layer.state === "observed-solid-brush") {
       result.push({ kind: "solid", widgetName: layer.widgetName, layer });
       continue;
@@ -81,7 +100,11 @@ export function compileGunnerSightRenderLayers(
     }
   }
   for (const layer of station.textLayers ?? []) {
-    if (!visible(layer) || !layer.text || !Number.isFinite(layer.font?.size)) continue;
+    if (
+      (!visible(layer) && !layerTargetsDynamicBinding(layer, station)) ||
+      (!layer.text && !layerTargetsDynamicBinding(layer, station)) ||
+      !Number.isFinite(layer.font?.size)
+    ) continue;
     result.push({ kind: "text", widgetName: layer.widgetName, layer });
   }
   return result.sort(comparePaintOrder);

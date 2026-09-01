@@ -11,19 +11,40 @@ import {
 } from "../../lib/operation-view-control.ts";
 
 test("held operation keys produce frame-rate-independent continuous motion", () => {
+  const t72Rates = {
+    yawDegreesPerSecond: 30,
+    pitchDegreesPerSecond: 40,
+  };
   assert.deepEqual(
-    operationViewContinuousPoseDelta(["KeyW"], 1 / 60),
-    { yawDelta: 0, pitchDelta: 0.25 },
+    operationViewContinuousPoseDelta(["KeyW"], 1 / 60, t72Rates),
+    { yawDelta: 0, pitchDelta: 2 / 3 },
   );
   assert.deepEqual(
-    operationViewContinuousPoseDelta(["KeyA", "KeyW"], 1 / 60),
-    { yawDelta: -0.5, pitchDelta: 0.25 },
+    operationViewContinuousPoseDelta(["KeyA", "KeyW"], 1 / 60, t72Rates),
+    { yawDelta: -0.5, pitchDelta: 2 / 3 },
   );
   assert.equal(
-    operationViewContinuousPoseDelta(["KeyA", "KeyD"], 1 / 60),
+    operationViewContinuousPoseDelta(["KeyA", "KeyD"], 1 / 60, t72Rates),
     null,
   );
-  assert.equal(operationViewContinuousPoseDelta(["KeyW"], 0), null);
+  assert.equal(operationViewContinuousPoseDelta(["KeyW"], 0, t72Rates), null);
+});
+
+test("continuous operation motion consumes each station's published motion limits", () => {
+  assert.deepEqual(
+    operationViewContinuousPoseDelta(["KeyD", "KeyS"], 0.05, {
+      yawDegreesPerSecond: 90,
+      pitchDegreesPerSecond: 60,
+    }),
+    { yawDelta: 4.5, pitchDelta: -3 },
+  );
+  assert.equal(
+    operationViewContinuousPoseDelta(["KeyD"], 1 / 60, {
+      yawDegreesPerSecond: null,
+      pitchDegreesPerSecond: 40,
+    }),
+    null,
+  );
 });
 
 test("operation view uses a 16:9 90-degree horizontal-FOV reference", () => {
@@ -51,35 +72,16 @@ test("operation view uses a visible world reference instead of a transparent bla
   assert.ok(active.clearColor > 0x121212);
 });
 
-test("WASD adjusts a weapon station and Q cycles magnification", () => {
-  assert.deepEqual(operationViewKeyAction({
-    code: "KeyW",
-    driverView: false,
-    repeat: true,
-    zoomIndex: 0,
-    zoomCount: 2,
-  }), { kind: "pose", yawDelta: 0, pitchDelta: 0.5 });
-  assert.deepEqual(operationViewKeyAction({
-    code: "KeyS",
-    driverView: false,
-    repeat: true,
-    zoomIndex: 0,
-    zoomCount: 2,
-  }), { kind: "pose", yawDelta: 0, pitchDelta: -0.5 });
-  assert.deepEqual(operationViewKeyAction({
-    code: "KeyA",
-    driverView: false,
-    repeat: true,
-    zoomIndex: 0,
-    zoomCount: 2,
-  }), { kind: "pose", yawDelta: -1, pitchDelta: 0 });
-  assert.deepEqual(operationViewKeyAction({
-    code: "KeyD",
-    driverView: false,
-    repeat: true,
-    zoomIndex: 0,
-    zoomCount: 2,
-  }), { kind: "pose", yawDelta: 1, pitchDelta: 0 });
+test("continuous motion owns WASD and discrete input only cycles magnification", () => {
+  for (const code of ["KeyW", "KeyA", "KeyS", "KeyD"]) {
+    assert.equal(operationViewKeyAction({
+      code,
+      driverView: false,
+      repeat: true,
+      zoomIndex: 0,
+      zoomCount: 2,
+    }), null);
+  }
   assert.deepEqual(operationViewKeyAction({
     code: "KeyQ",
     driverView: false,

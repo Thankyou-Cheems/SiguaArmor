@@ -200,10 +200,30 @@ test("operation fire shares one equipment identity and uses a pooled projectile 
   assert.match(viewerSource, /presentation-sample-native-cone/u);
   assert.match(viewerSource, /散布为网页样本/u);
   assert.match(viewerSource, /event\.code === "Space"/u);
+  assert.match(viewerSource, /event\.code === "KeyR"/u);
+  assert.match(viewerSource, /reloadVehicleWeaponOperation/u);
   assert.match(viewerSource, /buildVehicleProjectileSimulationInput/u);
   assert.match(projectileThreeRuntimeSource, /new THREE\.InstancedMesh/u);
   assert.match(projectileThreeRuntimeSource, /DEFAULT_MAX_ACTIVE_PROJECTILES/u);
   assert.match(viewerSource, /spawnVehicleProjectileVisualRef/u);
   assert.match(wikiSource, /loadWikiWeaponBallistics/u);
   assert.match(wikiSource, /launchOriginProfiles\.length === 0/u);
+});
+
+test("dynamic sight instruments consume live operation and Wiki station motion", () => {
+  assert.match(overlaySource, /data-dynamic-range-meters/u);
+  assert.match(overlaySource, /data-dynamic-rounds-remaining/u);
+  assert.match(overlaySource, /data-dynamic-yaw-degrees/u);
+  assert.match(overlaySource, /data-dynamic-pitch-degrees/u);
+  assert.match(overlaySource, /resolveGunnerSightDynamicBinding/u);
+  assert.match(
+    viewerSource,
+    /yawDegreesPerSecond:\s*station\.turret\.maxYawSpeed/u,
+  );
+  assert.match(
+    viewerSource,
+    /pitchDegreesPerSecond:\s*station\.turret\.maxPitchSpeed/u,
+  );
+  assert.doesNotMatch(viewerSource, /OPERATION_VIEW_YAW_SPEED/u);
+  assert.doesNotMatch(viewerSource, /OPERATION_VIEW_PITCH_SPEED/u);
 });

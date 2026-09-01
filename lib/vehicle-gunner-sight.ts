@@ -115,6 +115,77 @@ export interface GunnerSightTextLayer {
   layout?: GunnerSightLayerLayout | null;
 }
 
+export type GunnerSightDynamicSemantic =
+  | "commander-override-indicator"
+  | "current-weapon-label"
+  | "current-weapon-selection-indicator"
+  | "excluded-damage-state-indicator"
+  | "guidance-indicator"
+  | "local-clock-text"
+  | "magazine-rounds-dial-angle"
+  | "magazine-rounds-display-color"
+  | "magazine-rounds-remaining"
+  | "optic-tunnel-parallax"
+  | "rangefinder-distance-meters"
+  | "rangefinder-indicator"
+  | "related-station-relative-yaw-degrees"
+  | "render-quality-text"
+  | "stabilization-indicator"
+  | "stabilization-status"
+  | "station-pitch-degrees"
+  | "station-pitch-translation"
+  | "station-relative-yaw-degrees"
+  | "weapon-empty-indicator"
+  | "weapon-not-ready-indicator"
+  | "weapon-overheat-indicator"
+  | "weapon-and-ammo-label"
+  | "weapon-fire-mode-label"
+  | "weapon-ready-indicator"
+  | "weapon-ready-status"
+  | "weapon-reloading-indicator"
+  | "weapon-reticle-offset"
+  | "zoom-stage-label"
+  | "zoom-label-layout"
+  | "zoom-stage-visibility";
+
+export interface GunnerSightDynamicBinding {
+  id: string;
+  state: "observed-blueprint-property-route";
+  semantic: GunnerSightDynamicSemantic;
+  targetWidgetName: string;
+  property:
+    | "text"
+    | "render-angle-degrees"
+    | "render-translation"
+    | "color-and-opacity"
+    | "visibility"
+    | "render-opacity";
+  relatedSeatPawnClassPaths: string[];
+  valueModel: {
+    kind?: string;
+    minimum?: number;
+    maximum?: number;
+    emptyWhenNegative?: boolean;
+    color?: { R: number; G: number; B: number; A: number };
+    falseColor?: { R: number; G: number; B: number; A: number };
+    trueColor?: { R: number; G: number; B: number; A: number };
+    interpolationSpeedPerSecond?: number | null;
+    anglesDegrees?: number[];
+    sourceCdoProperty?: string;
+  } | null;
+  source: {
+    declaringClassPath: string;
+    graphPath: string;
+    setterNode: string;
+    setterFunction: string;
+    contextFunctions: string[];
+    contextVariables: string[];
+    contextPins?: string[];
+    inheritedDepth: number;
+    aliasNode: string | null;
+  };
+}
+
 export interface GunnerSightLayerLayoutStep {
   parentWidgetName: string | null;
   widgetName: string;
@@ -162,6 +233,7 @@ export interface GunnerSightStation {
   equipmentRefs: string[];
   state:
     | "observed-static-presentation"
+    | "observed-dynamic-presentation"
     | "absent-no-turret-overlay"
     | "absent-dynamic-widget-no-static-image"
     | "unresolved-no-web-projection";
@@ -180,6 +252,7 @@ export interface GunnerSightStation {
   unmatchedEquipmentRefs: string[];
   orphanWidgetWeaponClassPaths: string[];
   dynamicChannels: string[];
+  dynamicBindings: GunnerSightDynamicBinding[];
   projectionRefs?: string[];
 }
 
@@ -195,7 +268,7 @@ export interface VehicleGunnerSightRecord {
   targetPackage: string;
   generatedClass: string;
   evidence: {
-    state: "static-sdk-blueprint-and-material-projection";
+    state: "sdk-blueprint-static-projection-and-local-dynamic-binding";
     blueprintSourceBuildId: string;
     network: "out-of-scope";
     hitMechanics: "not-applicable-presentation-only";
@@ -218,6 +291,53 @@ function sameValues(left: string[], right: string[]) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+const dynamicSemantics = new Set<GunnerSightDynamicSemantic>([
+  "commander-override-indicator",
+  "current-weapon-label",
+  "current-weapon-selection-indicator",
+  "excluded-damage-state-indicator",
+  "guidance-indicator",
+  "local-clock-text",
+  "magazine-rounds-dial-angle",
+  "magazine-rounds-remaining",
+  "optic-tunnel-parallax",
+  "rangefinder-distance-meters",
+  "rangefinder-indicator",
+  "related-station-relative-yaw-degrees",
+  "render-quality-text",
+  "stabilization-indicator",
+  "stabilization-status",
+  "station-pitch-degrees",
+  "station-pitch-translation",
+  "station-relative-yaw-degrees",
+  "weapon-empty-indicator",
+  "weapon-not-ready-indicator",
+  "weapon-overheat-indicator",
+  "weapon-ready-indicator",
+  "weapon-ready-status",
+  "weapon-reloading-indicator",
+  "weapon-reticle-offset",
+  "zoom-label-layout",
+  "zoom-stage-visibility",
+]);
+
+function presentationTargetNames(sight: GunnerSightStation) {
+  return new Set([
+    ...sight.layers.map(({ widgetName }) => widgetName),
+    ...sight.textLayers.map(({ widgetName }) => widgetName),
+    ...sight.layers.flatMap(({ layout }) =>
+      layout?.steps.flatMap(({ widgetName, parentWidgetName }) =>
+        [widgetName, parentWidgetName].filter((value): value is string => Boolean(value))
+      ) ?? []
+    ),
+    ...sight.textLayers.flatMap(({ layout }) =>
+      layout?.steps.flatMap(({ widgetName, parentWidgetName }) =>
+        [widgetName, parentWidgetName].filter((value): value is string => Boolean(value))
+      ) ?? []
+    ),
+  ]);
+}
+
 function validateStation(
   sight: GunnerSightStation,
   graph: StationGraphStation,
@@ -233,7 +353,8 @@ function validateStation(
     if (
       sight.overlayClassPath !== null ||
       sight.layers.length !== 0 ||
-      sight.weaponModes.length !== 0
+      sight.weaponModes.length !== 0 ||
+      sight.dynamicBindings.length !== 0
     ) throw new Error(`SiguaWiki gunner sight inferred an absent overlay for ${graph.id}`);
     return;
   }
@@ -245,9 +366,8 @@ function validateStation(
       sight.layers.length !== 0 ||
       sight.defaultZoomStages.length !== 0 ||
       sight.weaponModes.length !== 0 ||
-      !sameValues(sight.dynamicChannels, ["weapon-rotation-elevation"])
+      sight.dynamicBindings.length === 0
     ) throw new Error(`SiguaWiki gunner sight dynamic-only absence differs for ${graph.id}`);
-    return;
   }
   if (!sight.overlayClassPath?.startsWith("/Game/") || !sight.widgetPackage?.startsWith("/Game/")) {
     throw new Error(`SiguaWiki gunner sight overlay is invalid for ${graph.id}`);
@@ -276,6 +396,32 @@ function validateStation(
         layer.projectionRef !== null)
     ) throw new Error(`SiguaWiki gunner sight enabled a damage overlay for ${graph.id}`);
   }
+  const targets = presentationTargetNames(sight);
+  const bindingIds = new Set<string>();
+  for (const binding of sight.dynamicBindings) {
+    if (
+      bindingIds.has(binding.id) ||
+      binding.state !== "observed-blueprint-property-route" ||
+      !dynamicSemantics.has(binding.semantic) ||
+      !targets.has(binding.targetWidgetName) ||
+      !binding.source.declaringClassPath.startsWith("/Game/") ||
+      !binding.source.graphPath.startsWith("/Game/") ||
+      !Number.isSafeInteger(binding.source.inheritedDepth) ||
+      binding.relatedSeatPawnClassPaths.some((classPath) =>
+        !classPath.startsWith("/Game/") || !classPath.endsWith("_C")
+      )
+    ) throw new Error(`SiguaWiki gunner sight dynamic binding differs for ${graph.id}`);
+    bindingIds.add(binding.id);
+  }
+  const expectedDynamicChannels = [...new Set([
+    ...(sight.state === "observed-static-presentation"
+      ? ["zoom-change", "weapon-change"]
+      : []),
+    ...sight.dynamicBindings.map(({ semantic }) => semantic),
+  ])].sort();
+  if (!sameValues(sight.dynamicChannels, expectedDynamicChannels)) {
+    throw new Error(`SiguaWiki gunner sight dynamic channels differ for ${graph.id}`);
+  }
 }
 
 export function compileVehicleGunnerSight(
@@ -289,6 +435,8 @@ export function compileVehicleGunnerSight(
     record.sourceVehicleRef !== stationGraph.sourceVehicleRef ||
     record.stationGraphDataRevision !== stationGraph.sourceDataRevision ||
     !/^[a-f0-9]{64}$/u.test(record.sourceDataRevision) ||
+    record.evidence?.state !==
+      "sdk-blueprint-static-projection-and-local-dynamic-binding" ||
     record.evidence?.network !== "out-of-scope" ||
     record.evidence?.hitMechanics !== "not-applicable-presentation-only" ||
     record.evidence?.damageBlindnessMechanic !== "not-claimed" ||
