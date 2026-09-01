@@ -842,11 +842,18 @@ function runtimeTurretPosesForStates(
   });
 }
 
+function operationAngleLabel(value: number) {
+  const stableValue = Math.abs(value) < 0.05 ? 0 : value;
+  return `${stableValue > 0 ? "+" : ""}${stableValue.toFixed(1)}°`;
+}
+
 interface LiveOperationTurretControlsProps {
   poseStore: RuntimeTurretPoseStore;
   stations: RuntimeTurretPreviewStation[];
   topDownProjection: RuntimeVehicleTopDownProjection | null;
   activeStationId: string;
+  expanded: boolean;
+  onExpandedChange: (expanded: boolean) => void;
   onStationChange: (stationId: string) => void;
   onPoseChange: (
     station: RuntimeTurretPreviewStation,
@@ -862,6 +869,8 @@ function LiveOperationTurretControls({
   stations,
   topDownProjection,
   activeStationId,
+  expanded,
+  onExpandedChange,
   onStationChange,
   onPoseChange,
   onReset,
@@ -910,29 +919,46 @@ function LiveOperationTurretControls({
   );
 
   return (
-    <TurretPreviewControls
-      embedded
-      operationOverlay
-      stations={stations}
-      orientationIndicators={orientationIndicators}
-      topDownProjection={topDownProjection}
-      activeStationId={activeStation.id}
-      yawDegrees={yawDegrees}
-      pitchDegrees={pitchDegrees}
-      onStationChange={onStationChange}
-      onYawChange={(nextYawDegrees) => {
-        onPoseChange(activeStation, nextYawDegrees, pitchDegrees);
-      }}
-      onPitchChange={(nextPitchDegrees) => {
-        onPoseChange(activeStation, yawDegrees, nextPitchDegrees);
-      }}
-      onReset={() => onReset(activeStation)}
-      viewpointActive
-      viewpointMarkerEnabled={false}
-      onViewpointMarkerToggle={() => undefined}
-      onViewpointToggle={() => undefined}
-      onInteractionEnd={() => onInteractionEnd(activeStation)}
-    />
+    <>
+      <button
+        className="crew-view-operation-panel__toggle"
+        type="button"
+        aria-expanded={expanded}
+        aria-label={expanded ? "收起方位俯仰控制" : "展开方位俯仰控制"}
+        onClick={() => onExpandedChange(!expanded)}
+      >
+        <span>姿态</span>
+        <output>
+          {operationAngleLabel(yawDegrees)} / {operationAngleLabel(pitchDegrees)}
+        </output>
+        <ChevronRight size={13} aria-hidden="true" />
+      </button>
+      {expanded ? (
+        <TurretPreviewControls
+          embedded
+          operationOverlay
+          stations={stations}
+          orientationIndicators={orientationIndicators}
+          topDownProjection={topDownProjection}
+          activeStationId={activeStation.id}
+          yawDegrees={yawDegrees}
+          pitchDegrees={pitchDegrees}
+          onStationChange={onStationChange}
+          onYawChange={(nextYawDegrees) => {
+            onPoseChange(activeStation, nextYawDegrees, pitchDegrees);
+          }}
+          onPitchChange={(nextPitchDegrees) => {
+            onPoseChange(activeStation, yawDegrees, nextPitchDegrees);
+          }}
+          onReset={() => onReset(activeStation)}
+          viewpointActive
+          viewpointMarkerEnabled={false}
+          onViewpointMarkerToggle={() => undefined}
+          onViewpointToggle={() => undefined}
+          onInteractionEnd={() => onInteractionEnd(activeStation)}
+        />
+      ) : null}
+    </>
   );
 }
 
@@ -4787,6 +4813,7 @@ export function RuntimeVehicleViewer({
     useState<"idle" | "loading" | "ready" | "error">("idle");
   const [vehicleProjectileNotice, setVehicleProjectileNotice] = useState("");
   const [controlPanelOpen, setControlPanelOpen] = useState(true);
+  const [operationPanelExpanded, setOperationPanelExpanded] = useState(false);
   const [controlTargetId, setControlTargetId] = useState(
     CAMERA_CONTROL_TARGET_ID,
   );
@@ -4803,7 +4830,10 @@ export function RuntimeVehicleViewer({
     useState(true);
   useEffect(() => {
     activeCrewViewStationIdRef.current = activeCrewViewStationId;
-    if (activeCrewViewStationId !== null) setControlPanelOpen(false);
+    if (activeCrewViewStationId !== null) {
+      setControlPanelOpen(false);
+      setOperationPanelExpanded(false);
+    }
   }, [activeCrewViewStationId]);
   useEffect(() => {
     crewViewpointMarkerEnabledRef.current = crewViewpointMarkerEnabled;
@@ -11755,6 +11785,7 @@ export function RuntimeVehicleViewer({
       {activeCrewViewStationId !== null && !driverViewActive && activeTurretStation ? (
         <div
           className="crew-view-operation-panel"
+          data-expanded={operationPanelExpanded}
           aria-label={`${activeTurretStation.label}方位俯仰控制`}
         >
           <LiveOperationTurretControls
@@ -11762,6 +11793,8 @@ export function RuntimeVehicleViewer({
             stations={runtimeTurretStations}
             topDownProjection={turretTopDownProjection}
             activeStationId={activeTurretStation.id}
+            expanded={operationPanelExpanded}
+            onExpandedChange={setOperationPanelExpanded}
             onStationChange={(stationId) => {
               setActiveTurretStationId(stationId);
               enterCrewViewpointRef.current?.(stationId);

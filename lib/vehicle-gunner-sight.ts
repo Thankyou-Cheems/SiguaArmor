@@ -6,6 +6,7 @@ import type {
 export interface GunnerSightProjection {
   id: string;
   sourceObjectPath: string;
+  materialTemplateObjectPath: string | null;
   kind: "lossless-rgba-webp" | "lossless-ui-material-projection-webp";
   assetUrl: string;
   bytes: number;
@@ -18,6 +19,16 @@ export interface GunnerSightProjection {
 export interface GunnerSightStage {
   zoomIndex: number;
   sourceObjectPath: string;
+  projectionBindingKey: string;
+  presentation:
+    | { kind: "direct-resource" }
+    | {
+        kind: "material-texture-parameter";
+        targetWidgetName: string;
+        materialTemplateRef: string;
+        parameterName: "Texture";
+        setterNodes: string[];
+      };
   projectionRef: string | null;
 }
 
@@ -43,6 +54,7 @@ export interface GunnerSightLayer {
   resourceRef: string | null;
   projectionRef: string | null;
   imageSize: { X: number; Y: number } | null;
+  brushDrawAs: "Image" | "Box" | "Border" | string | null;
   tintColor: { R: number; G: number; B: number; A: number } | null;
   colorAndOpacity: { R: number; G: number; B: number; A: number } | null;
   visibility: string | null;
@@ -66,6 +78,40 @@ export interface GunnerSightLayer {
     Angle: number;
   } | null;
   renderTransformPivot: { X: number; Y: number } | null;
+  paintOrder: number | null;
+  layout?: GunnerSightLayerLayout | null;
+}
+
+export interface GunnerSightTextLayer {
+  widgetName: string;
+  role: "instrument-text";
+  state: "observed-default-text";
+  text: string;
+  sourceText: string | null;
+  font: {
+    objectRef: string | null;
+    materialRef: string | null;
+    typeface: string | null;
+    size: number | null;
+    letterSpacing: number | null;
+    skewAmount: number | null;
+    forceMonospaced: boolean | null;
+    monospacedWidth: number | null;
+    outline: {
+      OutlineSize?: number;
+      OutlineColor?: { R: number; G: number; B: number; A: number };
+    } | null;
+  };
+  colorAndOpacity: { R: number; G: number; B: number; A: number } | null;
+  shadowColorAndOpacity: { R: number; G: number; B: number; A: number } | null;
+  shadowOffset: { X: number; Y: number } | null;
+  justification: "Left" | "Center" | "Right" | string | null;
+  visibility: string | null;
+  renderOpacity: number | null;
+  paintOrder: number | null;
+  slot: GunnerSightLayer["slot"];
+  renderTransform: GunnerSightLayer["renderTransform"];
+  renderTransformPivot: GunnerSightLayer["renderTransformPivot"];
   layout?: GunnerSightLayerLayout | null;
 }
 
@@ -128,6 +174,7 @@ export interface GunnerSightStation {
   widgetParentClassPath: string | null;
   selectionState?: string;
   layers: GunnerSightLayer[];
+  textLayers: GunnerSightTextLayer[];
   defaultZoomStages: GunnerSightStage[];
   weaponModes: GunnerSightWeaponMode[];
   unmatchedEquipmentRefs: string[];

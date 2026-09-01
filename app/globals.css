@@ -415,6 +415,56 @@
   scrollbar-width: thin;
 }
 
+.crew-view-operation-panel[data-expanded="false"] {
+  width: max-content;
+  max-width: calc(100% - 16px);
+  max-height: none;
+  overflow: visible;
+  background: rgba(5, 8, 7, 0.88);
+}
+
+.crew-view-operation-panel__toggle {
+  display: grid;
+  width: 100%;
+  min-width: 150px;
+  min-height: 28px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 0 7px;
+  border: 0;
+  color: rgba(242, 216, 141, 0.72);
+  background: transparent;
+  cursor: pointer;
+  font: 7px/1 var(--font-mono-ui);
+  letter-spacing: 0.04em;
+  text-align: left;
+}
+
+.crew-view-operation-panel__toggle output {
+  color: #f2d88d;
+  font: 8px/1 var(--font-mono-ui);
+  text-align: right;
+}
+
+.crew-view-operation-panel__toggle svg {
+  transition: transform 150ms ease;
+}
+
+.crew-view-operation-panel__toggle[aria-expanded="true"] {
+  border-bottom: 1px solid rgba(242, 216, 141, 0.18);
+}
+
+.crew-view-operation-panel__toggle[aria-expanded="true"] svg {
+  transform: rotate(90deg);
+}
+
+.crew-view-operation-panel__toggle:hover,
+.crew-view-operation-panel__toggle:focus-visible {
+  color: #f2d88d;
+  background: rgba(242, 216, 141, 0.08);
+}
+
 .crew-view-immersive-controls button {
   display: inline-flex;
   min-height: 26px;
