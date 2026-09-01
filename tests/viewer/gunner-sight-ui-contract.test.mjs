@@ -25,8 +25,11 @@ test("gunner view renders the exact Station sidecar as screen and reticle layers
   assert.match(viewerSource, /activeGunnerSightStation/u);
   assert.match(viewerSource, /activeCrewViewStationId === activeTurretStation\.id/u);
   assert.match(viewerSource, /<GunnerSightOverlay/u);
-  assert.match(overlaySource, /layer\.role === "viewport-screen"/u);
   assert.match(overlaySource, /layer\.role === "reticle"/u);
+  assert.match(overlaySource, /compileGunnerSightRenderLayers/u);
+  assert.match(overlaySource, /station\.textLayers/u);
+  assert.match(overlaySource, /instrument-text/u);
+  assert.match(overlaySource, /observed-solid-brush/u);
   assert.match(overlaySource, /wikiUrl\(projection\.assetUrl\)/u);
   assert.doesNotMatch(overlaySource, /damage-overlay.*<img/su);
   assert.match(styles, /\.gunner-sight-overlay__screen/u);
@@ -96,6 +99,12 @@ test("operation indicators subscribe to transient turret poses", () => {
     /liveTurretPoseStore\.publish\(nextPoseStates\)/u,
   );
   assert.match(viewerSource, /<LiveOperationTurretControls/u);
+  assert.match(viewerSource, /crew-view-operation-panel__toggle/u);
+  assert.match(viewerSource, /aria-expanded=\{expanded\}/u);
+  assert.match(
+    viewerSource,
+    /operationAngleLabel\(yawDegrees\)[\s\S]*operationAngleLabel\(pitchDegrees\)/u,
+  );
 });
 
 test("gunner overlay copy preserves the presentation-only evidence boundary", () => {
@@ -108,7 +117,7 @@ test("source-authored UMG layout positions both screen and reticle layers", () =
   assert.match(overlaySource, /transform=\{placement\.transform\}/u);
   assert.match(overlaySource, /viewBox=\{placement\.viewBox\.join/u);
   assert.match(overlaySource, /data-layout-role=\{role\}/u);
-  assert.match(overlaySource, /role="reticle"/u);
+  assert.match(overlaySource, /role === "reticle"/u);
   assert.doesNotMatch(
     styles,
     /\.gunner-sight-overlay__screen\s*\{[^}]*inset:\s*0[^}]*width:\s*100%/u,
@@ -174,6 +183,10 @@ test("gunner operation view preserves one 16:9 combat frame with black UI gutter
   assert.match(
     styles,
     /\.crew-view-operation-panel\s*\{[^}]*top:\s*42px;[^}]*right:\s*8px;/u,
+  );
+  assert.match(
+    styles,
+    /\.crew-view-operation-panel\[data-expanded="false"\]\s*\{[^}]*width:\s*max-content;/u,
   );
   assert.match(viewerSource, /camera\.aspect = OPERATION_VIEW_STANDARD_ASPECT_RATIO/u);
   assert.match(overlaySource, /standard-16:9-90-horizontal-baseline/u);
