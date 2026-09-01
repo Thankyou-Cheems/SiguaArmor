@@ -42,7 +42,9 @@ import { buildVehicleProjectileSimulationInput, compileVehicleProjectilePlayback
 import { createVehicleProjectileThreeRuntime, resolveVehicleGuidanceAimPose, resolveVehicleProjectileLaunchPose, vehicleProjectileAnchorMatrixFromUnrealFrame, VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M, type VehicleProjectileLaunchPose, type VehicleProjectileVisualRequest, } from "../lib/vehicle-projectile-three-runtime";
 import { GunnerSightOverlay } from "./GunnerSightOverlay";
 import type { GunnerSightOperationState, GunnerSightStationPoseBinding, } from "./GunnerSightOverlay";
-import { advanceVehicleWeaponOperation, createVehicleWeaponOperation, fireVehicleWeaponOperation, reloadVehicleWeaponOperation, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
+import { createHeldOperationFireController, type HeldOperationFireAttempt, } from "../lib/held-operation-fire-control";
+import { createRuntimeVehicleWeaponOperationStore, type RuntimeVehicleWeaponOperationStore, } from "../lib/runtime-vehicle-weapon-operation-store";
+import { advanceVehicleWeaponOperation, createVehicleWeaponOperation, fireVehicleWeaponOperation, nextVehicleWeaponFireAtMs, presentVehicleWeaponOperation, reloadVehicleWeaponOperation, vehicleWeaponShotIntervalMs, type VehicleWeaponOperationSpec, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
 import { estimateWeaponHitDps, selectPrimaryWeaponHitDpsEstimate, singleShotWeaponHitTarget, targetPoolsForShot, vehicleTargetBurningProfile, type WeaponHitDpsEstimate, type WeaponHitDpsTarget, } from "../lib/weapon-hit-dps";
 import { resolveWeaponDpsWeaponForRuntimeAssignment, weaponDpsWeaponsFromWikiDocument, } from "../lib/weapon-dps-source";
 import type { WeaponDpsSimulation, WeaponDpsWeapon, } from "../lib/weapon-dps-model";
@@ -83,6 +85,84 @@ const RUNTIME_GROUND_REFERENCE_MAX_CLEARANCE_M = 4;
 const RUNTIME_GROUND_SCALE_RENDER_ORDER = 7;
 function operationClockMs() {
     return typeof performance === "undefined" ? Date.now() : performance.now();
+}
+function LiveVehicleWeaponStatus({ store, equipmentRef, spec, weaponLabel, }: {
+    store: RuntimeVehicleWeaponOperationStore;
+    equipmentRef: string;
+    spec: VehicleWeaponOperationSpec | null;
+    weaponLabel: string;
+}) {
+    const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
+    const operationState = useMemo(() => spec && equipmentRef
+        ? snapshot.states.get(equipmentRef) ?? createVehicleWeaponOperation(spec, 0)
+        : null, [equipmentRef, snapshot, spec]);
+    const [clockMs, setClockMs] = useState(operationClockMs);
+    const operationEndsAtMs = Math.max(operationState?.nextShotAtMs ?? 0, operationState?.reloadEndsAtMs ?? 0);
+    useEffect(() => {
+        setClockMs(operationClockMs());
+    }, [equipmentRef, operationState, spec]);
+    useEffect(() => {
+        if (operationClockMs() >= operationEndsAtMs)
+            return;
+        const timer = window.setInterval(() => {
+            const nextClockMs = operationClockMs();
+            setClockMs(nextClockMs);
+            if (nextClockMs >= operationEndsAtMs)
+                window.clearInterval(timer);
+        }, 50);
+        return () => window.clearInterval(timer);
+    }, [operationEndsAtMs]);
+    if (!operationState || !spec)
+        return null;
+    const presentation = presentVehicleWeaponOperation(operationState, spec, clockMs);
+    const reloadRemainingMs = presentation.weaponReloading
+        ? Math.max(0, (operationState.reloadEndsAtMs ?? clockMs) - clockMs)
+        : 0;
+    const cooldownRemainingMs = !presentation.weaponReloading &&
+        !presentation.weaponReady &&
+        presentation.roundsRemaining > 0
+        ? Math.max(0, operationState.nextShotAtMs - clockMs)
+        : 0;
+    const shotIntervalMs = Math.max(1, vehicleWeaponShotIntervalMs(spec));
+    const progress = presentation.weaponReloading
+        ? presentation.reloadProgress
+        : presentation.weaponReady
+            ? 1
+            : presentation.roundsRemaining <= 0
+                ? 0
+                : Math.max(0, Math.min(1, 1 - cooldownRemainingMs / shotIntervalMs));
+    const status = presentation.weaponReloading
+        ? "reloading"
+        : presentation.roundsRemaining <= 0
+            ? "empty"
+            : presentation.weaponReady
+                ? "ready"
+                : "cooldown";
+    const statusLabel = status === "reloading"
+        ? `装填 ${Math.ceil(reloadRemainingMs / 100) / 10} s`
+        : status === "empty"
+            ? "弹药耗尽"
+            : status === "ready"
+                ? "可击发"
+                : `射击间隔 ${Math.ceil(cooldownRemainingMs / 100) / 10} s`;
+    return (<aside className="crew-view-weapon-status" data-state={status} data-rounds-remaining={presentation.roundsRemaining} data-magazine-capacity={presentation.magazineCapacity} data-reserve-magazines={presentation.magazinesRemaining} data-progress={progress.toFixed(3)} aria-label={`${weaponLabel}：${statusLabel}，弹匣 ${presentation.roundsRemaining}/${presentation.magazineCapacity}，备用 ${presentation.magazinesRemaining}`}>
+      <div className="crew-view-weapon-status__heading">
+        <span>{weaponLabel}</span>
+        <strong>
+          <b>{presentation.roundsRemaining}</b>
+          <i>/</i>
+          {presentation.magazineCapacity}
+          <small>备 {presentation.magazinesRemaining}</small>
+        </strong>
+      </div>
+      <div className="crew-view-weapon-status__track" aria-hidden="true">
+        <span style={{ width: `${(progress * 100).toFixed(1)}%` }}/>
+      </div>
+      <div className="crew-view-weapon-status__state">
+        <span>{statusLabel}</span>
+        <span>左键按住开火</span>
+      </div>
+    </aside>);
 }
 async function mapWithConcurrency<T>(values: readonly T[], concurrency: number, task: (value: T) => Promise<void>) {
     let cursor = 0;
@@ -2959,7 +3039,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const resolveVehicleProjectileLaunchPoseRef = useRef<((launchAnchor: VehicleProjectilePlaybackBinding["launchAnchor"], socketTranslationCm: ProjectileVector3, socketDirection: ProjectileVector3, forwardOffsetCm: number) => VehicleProjectileLaunchPose | null) | null>(null);
     const resolveVehicleGuidanceAimPoseRef = useRef<(() => VehicleGuidanceAimPose | null) | null>(null);
     const spawnVehicleProjectileVisualRef = useRef<((request: VehicleProjectileVisualRequest) => boolean) | null>(null);
-    const fireVehicleProjectileRef = useRef<() => void>(() => undefined);
+    const fireVehicleProjectileRef = useRef<() => HeldOperationFireAttempt>(() => ({ nextAttemptAtMs: null }));
+    const stopVehicleProjectileFireRef = useRef<() => void>(() => undefined);
     const reloadVehicleWeaponRef = useRef<() => void>(() => undefined);
     const vehicleProjectileShotSequenceRef = useRef(0);
     const vehicleProjectileMagazineStateRef = useRef<{
@@ -3329,15 +3410,15 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const [vehicleProjectileResource, setVehicleProjectileResource] = useState<RuntimeVehicleProjectileResource | null>(null);
     const [vehicleProjectileResourceState, setVehicleProjectileResourceState] = useState<"idle" | "loading" | "ready" | "error">("idle");
     const [vehicleProjectileNotice, setVehicleProjectileNotice] = useState("");
-    const [vehicleWeaponOperationStates, setVehicleWeaponOperationStates] = useState<Map<string, VehicleWeaponOperationState>>(() => new Map());
+    const [vehicleWeaponOperationStore] = useState(createRuntimeVehicleWeaponOperationStore);
     const [guidanceActiveUntilMs, setGuidanceActiveUntilMs] = useState(0);
     const [controlPanelOpen, setControlPanelOpen] = useState(true);
     const [operationPanelExpanded, setOperationPanelExpanded] = useState(false);
     const [controlTargetId, setControlTargetId] = useState(CAMERA_CONTROL_TARGET_ID);
     const publishVehicleWeaponOperationState = useCallback((equipmentRef: string, operationState: VehicleWeaponOperationState) => {
         vehicleWeaponOperationStatesRef.current.set(equipmentRef, operationState);
-        setVehicleWeaponOperationStates(new Map(vehicleWeaponOperationStatesRef.current));
-    }, []);
+        vehicleWeaponOperationStore.publish(equipmentRef, operationState);
+    }, [vehicleWeaponOperationStore]);
     const [crewViewpointMarkerEnabled, setCrewViewpointMarkerEnabled] = useState(false);
     const [driverViewpointMarkerEnabled, setDriverViewpointMarkerEnabled] = useState(false);
     const [driverMaskEnabled, setDriverMaskEnabled] = useState(true);
@@ -3346,6 +3427,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const [gunnerSightOverlayEnabled, setGunnerSightOverlayEnabled] = useState(true);
     useEffect(() => {
         activeCrewViewStationIdRef.current = activeCrewViewStationId;
+        if (activeCrewViewStationId === null)
+            stopVehicleProjectileFireRef.current();
         if (activeCrewViewStationId !== null) {
             setControlPanelOpen(false);
             setOperationPanelExpanded(false);
@@ -3371,7 +3454,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     }, [crewHitProxyDisplayEnabled]);
     useEffect(() => {
         vehicleWeaponOperationStatesRef.current.clear();
-        setVehicleWeaponOperationStates(new Map());
+        vehicleWeaponOperationStore.clear();
+        stopVehicleProjectileFireRef.current();
         setGuidanceActiveUntilMs(0);
         crewOccupantDisplayEnabledRef.current = false;
         crewHitProxyDisplayEnabledRef.current = false;
@@ -3383,7 +3467,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         setDriverMaskEnabled(true);
         setCrewOccupantDisplayEnabled(false);
         setCrewHitProxyDisplayEnabled(false);
-    }, [preview.visualVehicleId]);
+    }, [preview.visualVehicleId, vehicleWeaponOperationStore]);
     const driverViewActive = activeCrewViewStationId === DRIVER_VIEWPOINT_ID;
     const controlTargetStation = runtimeTurretStations.find(({ id }) => id === controlTargetId) ?? null;
     const controlTargetPose = controlTargetStation
@@ -3520,13 +3604,6 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             if (event.altKey || event.ctrlKey || event.metaKey ||
                 editableTarget(event.target))
                 return;
-            if (event.code === "Space" && (driverViewActive || station)) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                if (!event.repeat)
-                    fireVehicleProjectileRef.current();
-                return;
-            }
             if (event.code === "KeyR" && station) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
@@ -3829,14 +3906,6 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         ? equipmentResolver?.(activeOperationEquipmentRef) ?? null
         : null;
     const activeOperationSpec = activeOperationEquipment?.operation ?? null;
-    const activeWeaponOperationState = useMemo(() => activeOperationSpec && activeOperationEquipmentRef
-        ? vehicleWeaponOperationStates.get(activeOperationEquipmentRef) ??
-            createVehicleWeaponOperation(activeOperationSpec, 0)
-        : null, [
-        activeOperationEquipmentRef,
-        activeOperationSpec,
-        vehicleWeaponOperationStates,
-    ]);
     const gunnerSightOperationState: GunnerSightOperationState = {
         rangeMeters: targetDistanceM,
         roundsRemaining: null,
@@ -3953,7 +4022,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         vehicleProjectileResolution,
         vehicleProjectileResourceState,
     ]);
-    const fireVehicleProjectile = useCallback(() => {
+    const fireVehicleProjectile = useCallback((): HeldOperationFireAttempt => {
         if (!activeOperationWeapon ||
             !vehicleProjectileResource ||
             vehicleProjectileResolution?.state !== "ready") {
@@ -3962,7 +4031,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 : vehicleProjectileResourceState === "loading"
                     ? "源锁定弹道仍在载入"
                     : "当前武器暂不能播放真实弹体");
-            return;
+            return { nextAttemptAtMs: null };
         }
         const { binding } = vehicleProjectileResolution;
         try {
@@ -3975,11 +4044,14 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             const operationShot = fireVehicleWeaponOperation(currentOperationState, activeOperationSpec, nowMs);
             if (!operationShot.fired) {
                 publishVehicleWeaponOperationState(activeOperationEquipmentRef, operationShot.state);
-                throw new Error(operationShot.reason === "weapon-reloading"
+                setVehicleProjectileNotice(operationShot.reason === "weapon-reloading"
                     ? "武器正在装填"
                     : operationShot.reason === "weapon-cooldown"
                         ? "武器尚未达到 Wiki 射击间隔"
                         : "当前弹匣已空");
+                return {
+                    nextAttemptAtMs: nextVehicleWeaponFireAtMs(operationShot.state, activeOperationSpec, nowMs),
+                };
             }
             const previousMagazineState = vehicleProjectileMagazineStateRef.current;
             const magazineState = previousMagazineState.weaponAssignmentId === binding.weaponAssignmentId &&
@@ -4037,13 +4109,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             if (binding.guidanceInputPolicy !== "none") {
                 setGuidanceActiveUntilMs(nowMs + Math.max(250, (samples.at(-1)?.timeSeconds ?? 0) * 1000));
             }
-            const launchPodNotice = binding.launchSelection.kind ===
-                "runtime-indexed-launch-pod"
-                ? ` · 发射筒 ${selectedLaunch.shotIndex + 1}/${binding.launchSelection.podCount}`
-                : "";
-            setVehicleProjectileNotice(binding.guidanceInputPolicy === "none"
-                ? `${activeOperationWeapon.displayNameZh} · 已发射${launchPodNotice} · 散布为网页样本`
-                : `${activeOperationWeapon.displayNameZh} · 已发射${launchPodNotice} · 发射时瞄准线 / 清晰视线场景`);
+            setVehicleProjectileNotice("");
             const host = hostRef.current;
             if (host) {
                 host.dataset.projectilePlaybackState = "playing";
@@ -4062,12 +4128,16 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     "presentation-sample-native-cone";
                 host.dataset.projectilePlaybackGuidance = binding.guidanceInputPolicy;
             }
+            return {
+                nextAttemptAtMs: nextVehicleWeaponFireAtMs(operationShot.state, activeOperationSpec, nowMs),
+            };
         }
         catch (error: unknown) {
             setVehicleProjectileNotice(error instanceof Error ? error.message : String(error));
             const host = hostRef.current;
             if (host)
                 host.dataset.projectilePlaybackState = "error";
+            return { nextAttemptAtMs: null };
         }
     }, [
         activeOperationEquipmentRef,
@@ -4103,7 +4173,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         fireVehicleProjectileRef.current = fireVehicleProjectile;
         return () => {
             if (fireVehicleProjectileRef.current === fireVehicleProjectile) {
-                fireVehicleProjectileRef.current = () => undefined;
+                fireVehicleProjectileRef.current = () => ({ nextAttemptAtMs: null });
             }
         };
     }, [fireVehicleProjectile]);
@@ -7999,9 +8069,38 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             explosionDrag.pendingOrigin = null;
             setShotExplosionOriginRef.current(explosionDrag.shotId, origin);
         };
+        let heldOperationFirePointerId: number | null = null;
+        const heldOperationFireController = createHeldOperationFireController({
+            attempt: () => activeCrewViewStationIdRef.current === null
+                ? { nextAttemptAtMs: null }
+                : fireVehicleProjectileRef.current(),
+            nowMs: operationClockMs,
+            setTimer: (callback, delayMs) => window.setTimeout(callback, delayMs),
+            clearTimer: (timerId) => window.clearTimeout(timerId),
+        });
+        const stopHeldOperationFire = () => {
+            heldOperationFireController.stop();
+            if (heldOperationFirePointerId !== null &&
+                renderer.domElement.hasPointerCapture(heldOperationFirePointerId)) {
+                renderer.domElement.releasePointerCapture(heldOperationFirePointerId);
+            }
+            heldOperationFirePointerId = null;
+            host.dataset.operationFireHeld = "false";
+        };
+        const onOperationVisibilityChange = () => {
+            if (document.visibilityState !== "visible")
+                stopHeldOperationFire();
+        };
+        stopVehicleProjectileFireRef.current = stopHeldOperationFire;
         const onPointerDown = (event: PointerEvent) => {
             if (activeCrewViewStationIdRef.current !== null) {
                 pointerStart = null;
+                if (event.button === 0) {
+                    heldOperationFirePointerId = event.pointerId;
+                    renderer.domElement.setPointerCapture(event.pointerId);
+                    host.dataset.operationFireHeld = "true";
+                    heldOperationFireController.start();
+                }
                 event.preventDefault();
                 event.stopImmediatePropagation();
                 return;
@@ -8151,7 +8250,10 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 });
             });
         };
-        const onPointerLeave = () => {
+        const onPointerLeave = (event: PointerEvent) => {
+            if (heldOperationFirePointerId === event.pointerId) {
+                stopHeldOperationFire();
+            }
             if (explosionDrag)
                 return;
             pendingHover = null;
@@ -8162,6 +8264,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             setRealtimePointer(null);
         };
         const onPointerUp = (event: PointerEvent) => {
+            if (heldOperationFirePointerId === event.pointerId) {
+                stopHeldOperationFire();
+            }
             if (activeCrewViewStationIdRef.current !== null) {
                 pointerStart = null;
                 event.preventDefault();
@@ -8238,6 +8343,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             });
         };
         const onPointerCancel = (event: PointerEvent) => {
+            if (heldOperationFirePointerId === event.pointerId) {
+                stopHeldOperationFire();
+            }
             if (explosionDrag?.pointerId !== event.pointerId)
                 return;
             explosionDrag = null;
@@ -8276,6 +8384,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             capture: true,
             passive: false,
         });
+        window.addEventListener("blur", stopHeldOperationFire);
+        document.addEventListener("visibilitychange", onOperationVisibilityChange);
         const urls = [...new Set(renderPlacements.map(({ assetUrl }) => assetUrl))];
         const sourceAlphaAssetUrls = new Set(renderPlacements
             .filter((placement) => runtimeAnalysisVisualTexturePolicy(placement) === "source-alpha")
@@ -8946,6 +9056,12 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             renderer.domElement.removeEventListener("pointerup", onPointerUp);
             renderer.domElement.removeEventListener("pointercancel", onPointerCancel);
             renderer.domElement.removeEventListener("wheel", onExplosionWheel, true);
+            window.removeEventListener("blur", stopHeldOperationFire);
+            document.removeEventListener("visibilitychange", onOperationVisibilityChange);
+            stopHeldOperationFire();
+            if (stopVehicleProjectileFireRef.current === stopHeldOperationFire) {
+                stopVehicleProjectileFireRef.current = () => undefined;
+            }
             if (viewerRoot?.dataset.renderQuality === renderQuality.tier) {
                 delete viewerRoot.dataset.renderQuality;
             }
@@ -9214,12 +9330,15 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
       </div>
 
       {gunnerSightOverlayVisible && activeGunnerSightStation && activeTurretStation && gunnerSight ? (<GunnerSightOverlay station={activeGunnerSightStation} projections={gunnerSight.projections} stationLabel={activeTurretStation.label} magnificationLevels={activeTurretStation.view?.magnificationLevels ?? []} zoomHorizontalFovDegrees={activeTurretStation.view?.magnificationLevels.map((_, zoomIndex) => operationViewHorizontalFovForMagnification(activeTurretStation.view!.magnificationLevels[zoomIndex])) ?? []} activeZoomIndex={activeCrewViewZoomIndex} activeEquipmentRef={activeOperationEquipmentRef} activeStationId={activeTurretStation.id} poseStore={liveTurretPoseStore} stationPoseBindings={gunnerSightStationPoseBindings} operationState={gunnerSightOperationState} weaponOperation={{
-                state: activeWeaponOperationState,
+                store: vehicleWeaponOperationStore,
+                equipmentRef: activeOperationEquipmentRef,
                 spec: activeOperationSpec,
                 guidanceActiveUntilMs,
             }} onEquipmentChange={selectOperationEquipment} onZoomStageChange={(zoomIndex) => {
                 applyCrewViewZoomRef.current?.(activeTurretStation.id, zoomIndex);
             }}/>) : null}
+
+      {activeCrewViewStationId !== null && activeOperationWeapon && activeOperationSpec ? (<LiveVehicleWeaponStatus store={vehicleWeaponOperationStore} equipmentRef={activeOperationEquipmentRef} spec={activeOperationSpec} weaponLabel={activeOperationWeapon.displayNameZh}/>) : null}
 
       {activeCrewViewStationId !== null && !driverViewActive && activeTurretStation ? (<div className="crew-view-operation-panel" data-expanded={operationPanelExpanded} aria-label={`${activeTurretStation.label}方位俯仰控制`}>
           <LiveOperationTurretControls poseStore={liveTurretPoseStore} stations={runtimeTurretStations} topDownProjection={turretTopDownProjection} activeStationId={activeTurretStation.id} expanded={operationPanelExpanded} onExpandedChange={setOperationPanelExpanded} onStationChange={(stationId) => {
@@ -9251,22 +9370,13 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                   </option>))}
               </select>
             </label>) : null}
-          {activeOperationWeapon ? (<button type="button" className="crew-view-projectile-fire" aria-label="按当前载具武器发射源锁定弹体" aria-keyshortcuts="Space" data-state={vehicleProjectileResolution?.state === "ready"
-                    ? "ready"
-                    : vehicleProjectileResourceState} disabled={vehicleProjectileResolution?.state !== "ready"} title={vehicleProjectileResolution?.state === "unsupported"
-                    ? vehicleProjectileResolution.detail
-                    : "Space 发射；仅播放源锁定弹道，不结算碰撞与伤害"} onClick={fireVehicleProjectile}>
-              {vehicleProjectileResourceState === "loading"
-                    ? "载入弹道"
-                    : vehicleProjectileResolution?.state === "ready"
-                        ? "发射弹体"
-                        : "弹道不可用"}
-              <kbd>Space</kbd>
-            </button>) : null}
-          {!driverViewActive ? (<span className="crew-view-operation-keys" aria-label="键盘操作提示">
-              <kbd>WASD</kbd><span>方位 / 俯仰</span>
-              <kbd>Q</kbd><span>倍率</span>
-              <kbd>R</kbd><span>装填</span>
+          {activeOperationWeapon || !driverViewActive ? (<span className="crew-view-operation-keys" aria-label="键盘操作提示">
+              {activeOperationWeapon ? (<><kbd>左键</kbd><span>按住开火</span></>) : null}
+              {!driverViewActive ? (<>
+                  <kbd>WASD</kbd><span>方位 / 俯仰</span>
+                  <kbd>Q</kbd><span>倍率</span>
+                  <kbd>R</kbd><span>装填</span>
+                </>) : null}
             </span>) : null}
           <button type="button" aria-label={driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"} aria-keyshortcuts="Escape" onClick={() => exitCrewViewpointRef.current?.()}>
             {driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}

@@ -288,7 +288,7 @@
 }
 
 .runtime-vehicle-viewer[data-crew-view-active="true"]
-  > :not(.viewer-canvas):not(.gunner-sight-overlay):not(.crew-view-immersive-controls):not(.crew-view-operation-panel) {
+  > :not(.viewer-canvas):not(.gunner-sight-overlay):not(.crew-view-immersive-controls):not(.crew-view-operation-panel):not(.crew-view-weapon-status) {
   display: none !important;
 }
 
@@ -334,26 +334,6 @@
   font: inherit;
 }
 
-.crew-view-projectile-fire[data-state="ready"] {
-  border-color: rgba(242, 216, 141, 0.72);
-  background: rgba(65, 48, 16, 0.92);
-}
-
-.crew-view-projectile-fire:disabled {
-  cursor: not-allowed;
-  opacity: 0.46;
-}
-
-.crew-view-immersive-controls .crew-view-projectile-fire kbd {
-  display: inline-grid;
-  min-width: 34px;
-  min-height: 16px;
-  border: 1px solid rgba(242, 216, 141, 0.3);
-  background: rgba(242, 216, 141, 0.08);
-  font: 6px/1 var(--font-mono-ui);
-  place-items: center;
-}
-
 .crew-view-projectile-status {
   order: 20;
   width: min(360px, 100%);
@@ -365,6 +345,101 @@
   font: 7px/1.35 var(--font-mono-ui);
   text-align: right;
   backdrop-filter: blur(10px);
+}
+
+.crew-view-weapon-status {
+  position: absolute;
+  z-index: 14;
+  right: 10px;
+  bottom: 10px;
+  width: min(230px, calc(100% - 20px));
+  padding: 8px 9px 7px;
+  border: 1px solid rgba(242, 216, 141, 0.34);
+  color: rgba(242, 216, 141, 0.82);
+  background: rgba(4, 7, 6, 0.9);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.48);
+  font: 7px/1.15 var(--font-mono-ui);
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.crew-view-weapon-status__heading,
+.crew-view-weapon-status__state {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.crew-view-weapon-status__heading > span {
+  overflow: hidden;
+  color: rgba(242, 216, 141, 0.68);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crew-view-weapon-status__heading strong {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: baseline;
+  gap: 2px;
+  color: rgba(242, 216, 141, 0.76);
+  font: 8px/1 var(--font-mono-ui);
+}
+
+.crew-view-weapon-status__heading strong b {
+  color: #fff0bd;
+  font-size: 14px;
+}
+
+.crew-view-weapon-status__heading strong i {
+  opacity: 0.5;
+  font-style: normal;
+}
+
+.crew-view-weapon-status__heading strong small {
+  margin-left: 5px;
+  color: rgba(242, 216, 141, 0.5);
+  font: 6px/1 var(--font-mono-ui);
+}
+
+.crew-view-weapon-status__track {
+  height: 4px;
+  margin: 7px 0 6px;
+  overflow: hidden;
+  border: 1px solid rgba(242, 216, 141, 0.2);
+  background: rgba(242, 216, 141, 0.06);
+}
+
+.crew-view-weapon-status__track span {
+  display: block;
+  height: 100%;
+  background: #f2d88d;
+  box-shadow: 0 0 10px rgba(242, 216, 141, 0.46);
+  transition: width 45ms linear;
+}
+
+.crew-view-weapon-status__state {
+  color: rgba(242, 216, 141, 0.52);
+  font-size: 6px;
+}
+
+.crew-view-weapon-status__state > :first-child {
+  color: #f2d88d;
+}
+
+.crew-view-weapon-status[data-state="reloading"] {
+  border-color: rgba(225, 175, 86, 0.72);
+}
+
+.crew-view-weapon-status[data-state="empty"] {
+  border-color: rgba(255, 117, 96, 0.55);
+}
+
+.crew-view-weapon-status[data-state="empty"]
+  .crew-view-weapon-status__state > :first-child {
+  color: #ffb6aa;
 }
 
 .crew-view-projectile-status[data-state="unsupported"],

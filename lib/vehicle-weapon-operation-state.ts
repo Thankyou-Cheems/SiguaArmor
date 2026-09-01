@@ -38,7 +38,7 @@ function magazineCapacity(spec: VehicleWeaponOperationSpec) {
   return positiveInteger(spec.magazineSize, 1);
 }
 
-function shotIntervalMs(spec: VehicleWeaponOperationSpec) {
+export function vehicleWeaponShotIntervalMs(spec: VehicleWeaponOperationSpec) {
   const authored = nonNegativeSeconds(spec.timeBetweenShotsSeconds);
   const rate = Number.isFinite(spec.roundsPerMinute) && spec.roundsPerMinute > 0
     ? 60 / spec.roundsPerMinute
@@ -103,7 +103,7 @@ export function fireVehicleWeaponOperation(
     return { fired: false, state: current, reason: "weapon-cooldown" };
   }
   const roundsRemaining = current.roundsRemaining - 1;
-  const nextShotAtMs = nowMs + shotIntervalMs(spec);
+  const nextShotAtMs = nowMs + vehicleWeaponShotIntervalMs(spec);
   if (roundsRemaining > 0 || current.reserveMagazines <= 0) {
     return {
       fired: true,
@@ -127,6 +127,21 @@ export function fireVehicleWeaponOperation(
       reloadEndsAtMs: nowMs + reloadDurationMs,
     },
   };
+}
+
+export function nextVehicleWeaponFireAtMs(
+  state: VehicleWeaponOperationState,
+  spec: VehicleWeaponOperationSpec,
+  nowMs: number,
+): number | null {
+  const current = advanceVehicleWeaponOperation(state, spec, nowMs);
+  if (current.reloadEndsAtMs !== null) return current.reloadEndsAtMs;
+  if (current.roundsRemaining <= 0) return null;
+  if (
+    current.nextShotAtMs <= nowMs &&
+    vehicleWeaponShotIntervalMs(spec) <= 0
+  ) return null;
+  return Math.max(nowMs, current.nextShotAtMs);
 }
 
 export function reloadVehicleWeaponOperation(
