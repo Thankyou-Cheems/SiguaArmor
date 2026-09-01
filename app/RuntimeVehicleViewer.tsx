@@ -8169,6 +8169,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                         id: station.id,
                         parentId: parent?.id ?? null,
                         depth: runtimeTurretStationDepth(station, runtimeTurretStationsRef.current),
+                        centerPriority: station.indicatorKind === "main-turret"
+                            ? 0
+                            : station.seat.index,
                         placementIds: station.assembly.yawPlacementIds,
                         barrelPlacementIds: station.assembly.pitchPlacementIds.length > 0
                             ? station.assembly.pitchPlacementIds
