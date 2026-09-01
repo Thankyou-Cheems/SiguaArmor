@@ -202,10 +202,13 @@ test("operation fire shares one equipment identity and uses a pooled projectile 
   assert.doesNotMatch(overlaySource, /useState\(defaultEquipmentRef\)/u);
   assert.match(viewerSource, /compileVehicleProjectilePlaybackBinding/u);
   assert.match(viewerSource, /presentation-sample-native-cone/u);
-  assert.match(viewerSource, /散布为网页样本/u);
-  assert.match(viewerSource, /event\.code === "Space"/u);
+  assert.doesNotMatch(viewerSource, /event\.code === "Space"/u);
+  assert.match(viewerSource, /event\.button === 0/u);
+  assert.match(viewerSource, /createHeldOperationFireController/u);
+  assert.match(viewerSource, /左键按住开火/u);
   assert.match(viewerSource, /event\.code === "KeyR"/u);
   assert.match(viewerSource, /reloadVehicleWeaponOperation/u);
+  assert.match(viewerSource, /crew-view-weapon-status/u);
   assert.match(viewerSource, /buildVehicleProjectileSimulationInput/u);
   assert.match(projectileThreeRuntimeSource, /new THREE\.InstancedMesh/u);
   assert.match(projectileThreeRuntimeSource, /DEFAULT_MAX_ACTIVE_PROJECTILES/u);

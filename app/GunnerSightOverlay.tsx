@@ -24,10 +24,13 @@ import type {
   RuntimeTurretPoseStore,
 } from "../lib/runtime-turret-pose-store";
 import {
+  createVehicleWeaponOperation,
   presentVehicleWeaponOperation,
   type VehicleWeaponOperationSpec,
-  type VehicleWeaponOperationState,
 } from "../lib/vehicle-weapon-operation-state";
+import type {
+  RuntimeVehicleWeaponOperationStore,
+} from "../lib/runtime-vehicle-weapon-operation-store";
 import type {
   GunnerSightDynamicBinding,
   GunnerSightLayer,
@@ -62,7 +65,8 @@ export interface GunnerSightOperationState {
 }
 
 export interface GunnerSightWeaponOperationRuntime {
-  state: VehicleWeaponOperationState | null;
+  store: RuntimeVehicleWeaponOperationStore;
+  equipmentRef: string;
   spec: VehicleWeaponOperationSpec | null;
   guidanceActiveUntilMs: number;
 }
@@ -75,10 +79,26 @@ function useLiveGunnerSightOperationState(
   baseState: GunnerSightOperationState,
   weaponOperation: GunnerSightWeaponOperationRuntime,
 ) {
+  const operationSnapshot = useSyncExternalStore(
+    weaponOperation.store.subscribe,
+    weaponOperation.store.getSnapshot,
+    weaponOperation.store.getSnapshot,
+  );
+  const operationState = useMemo(
+    () => weaponOperation.spec && weaponOperation.equipmentRef
+      ? operationSnapshot.states.get(weaponOperation.equipmentRef) ??
+        createVehicleWeaponOperation(weaponOperation.spec, 0)
+      : null,
+    [
+      operationSnapshot,
+      weaponOperation.equipmentRef,
+      weaponOperation.spec,
+    ],
+  );
   const [clockMs, setClockMs] = useState(operationClockMs);
   const operationEndsAtMs = Math.max(
-    weaponOperation.state?.nextShotAtMs ?? 0,
-    weaponOperation.state?.reloadEndsAtMs ?? 0,
+    operationState?.nextShotAtMs ?? 0,
+    operationState?.reloadEndsAtMs ?? 0,
     weaponOperation.guidanceActiveUntilMs,
   );
 
@@ -86,8 +106,9 @@ function useLiveGunnerSightOperationState(
     setClockMs(operationClockMs());
   }, [
     weaponOperation.guidanceActiveUntilMs,
+    weaponOperation.equipmentRef,
     weaponOperation.spec,
-    weaponOperation.state,
+    operationState,
   ]);
   useEffect(() => {
     if (operationClockMs() >= operationEndsAtMs) return;
@@ -100,14 +121,14 @@ function useLiveGunnerSightOperationState(
   }, [operationEndsAtMs]);
 
   const presentation = useMemo(
-    () => weaponOperation.state && weaponOperation.spec
+    () => operationState && weaponOperation.spec
       ? presentVehicleWeaponOperation(
-          weaponOperation.state,
+          operationState,
           weaponOperation.spec,
           clockMs,
         )
       : null,
-    [clockMs, weaponOperation.spec, weaponOperation.state],
+    [clockMs, operationState, weaponOperation.spec],
   );
   return useMemo<GunnerSightOperationState>(() => presentation
     ? {
