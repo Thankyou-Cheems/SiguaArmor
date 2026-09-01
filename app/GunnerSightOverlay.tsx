@@ -660,23 +660,44 @@ export function GunnerSightOverlay({
     station,
     dynamicRuntimeState,
   );
-  const projectionById = useMemo(
-    () => new Map(projections.map((projection) => [projection.id, projection])),
-    [projections],
-  );
-  const modes = station.weaponModes.filter((mode) =>
-    mode.zoomStages.some((stage) => stageProjection(stage, projectionById))
-  );
-  const defaultEquipmentRef = modes[0]?.equipmentRef ?? "";
-  const activeMode: GunnerSightWeaponMode | null =
-    modes.find((mode) => mode.equipmentRef === activeEquipmentRef) ??
-    modes[0] ?? null;
-  const stages = activeMode?.zoomStages.length
-    ? activeMode.zoomStages
-    : station.defaultZoomStages;
-  const activeStage = stages.find(
-    (stage) => stage.zoomIndex === activeZoomIndex,
-  ) ?? stages[0];
+  const {
+    projectionById,
+    modes,
+    activeMode,
+    stages,
+    activeStage,
+    renderLayers,
+  } = useMemo(() => {
+    const nextProjectionById = new Map(
+      projections.map((projection) => [projection.id, projection]),
+    );
+    const nextModes = station.weaponModes.filter((mode) =>
+      mode.zoomStages.some((stage) =>
+        stageProjection(stage, nextProjectionById)
+      )
+    );
+    const nextActiveMode: GunnerSightWeaponMode | null =
+      nextModes.find((mode) => mode.equipmentRef === activeEquipmentRef) ??
+      (activeEquipmentRef ? null : nextModes[0] ?? null);
+    const nextStages = nextActiveMode?.zoomStages.length
+      ? nextActiveMode.zoomStages
+      : station.defaultZoomStages;
+    const nextActiveStage = nextStages.find(
+      (stage) => stage.zoomIndex === activeZoomIndex,
+    ) ?? nextStages[0];
+    return {
+      projectionById: nextProjectionById,
+      modes: nextModes,
+      activeMode: nextActiveMode,
+      stages: nextStages,
+      activeStage: nextActiveStage,
+      renderLayers: compileGunnerSightRenderLayers(
+        station,
+        nextActiveStage,
+        projections,
+      ),
+    };
+  }, [activeEquipmentRef, activeZoomIndex, projections, station]);
   const reticleProjection = stageProjection(activeStage, projectionById) ??
     station.layers
       .filter((layer) => layer.role === "reticle" && layer.visibility !== "Collapsed")
@@ -691,24 +712,11 @@ export function GunnerSightOverlay({
   ) ?? station.layers.find((layer) =>
     layer.role === "reticle" && gunnerSightLayerPlacement(layer)
   ) ?? null;
-  const renderLayers = useMemo(
-    () => compileGunnerSightRenderLayers(station, activeStage, projections),
-    [activeStage, projections, station],
-  );
   const activeProjectionRendered = reticleProjection
     ? renderLayers.some((layer) =>
         layer.kind === "image" && layer.projection.id === reticleProjection.id
       )
     : true;
-
-  useEffect(() => {
-    if (
-      defaultEquipmentRef &&
-      !modes.some((mode) => mode.equipmentRef === activeEquipmentRef)
-    ) {
-      onEquipmentChange(defaultEquipmentRef);
-    }
-  }, [activeEquipmentRef, defaultEquipmentRef, modes, onEquipmentChange]);
 
   return (
     <section
@@ -777,7 +785,7 @@ export function GunnerSightOverlay({
         <span className="gunner-sight-overlay__identity">
           <b>{stationLabel}</b>
         </span>
-        {modes.length > 1 ? (
+        {modes.length > 1 && activeMode ? (
           <label>
             <span>武器分划</span>
             <select
@@ -791,6 +799,7 @@ export function GunnerSightOverlay({
                 const nextStage = nextMode?.zoomStages[0] ??
                   station.defaultZoomStages[0];
                 if (nextStage) onZoomStageChange(nextStage.zoomIndex);
+                event.currentTarget.blur();
               }}
               aria-label="切换当前站位武器分划"
             >
@@ -803,7 +812,9 @@ export function GunnerSightOverlay({
           </label>
         ) : (
           <span className="gunner-sight-overlay__weapon">
-            {activeMode?.displayName ?? "固定炮镜分划"}
+            {activeMode?.displayName ??
+              dynamicRuntimeState.currentWeaponLabel ??
+              "固定炮镜分划"}
           </span>
         )}
         {stages.length > 1 ? (

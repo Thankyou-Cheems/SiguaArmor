@@ -45,6 +45,11 @@ test("weapon and zoom controls switch only observed Station-owned routes", () =>
   assert.match(viewerSource, /显示炮镜遮罩与分划/u);
   assert.match(viewerSource, /crew-view-immersive-controls/u);
   assert.match(viewerSource, /gunnerSightOverlayEnabled/u);
+  assert.doesNotMatch(
+    overlaySource,
+    /onEquipmentChange\(defaultEquipmentRef\)/u,
+    "a reticle fallback must not switch the active weapon back after a number-key selection",
+  );
 });
 
 test("operation view exposes direct ring control and keyboard-only camera input", () => {
@@ -219,6 +224,16 @@ test("operation fire shares one equipment identity and uses a pooled projectile 
   assert.match(viewerSource, /spawnVehicleProjectileVisualRef/u);
   assert.match(wikiSource, /loadWikiWeaponBallistics/u);
   assert.match(wikiSource, /launchOriginProfiles\.length === 0/u);
+});
+
+test("operation input separates canvas fire from UI weapon selection", () => {
+  assert.match(
+    viewerSource,
+    /event\.isPrimary\s*&&\s*event\.target === renderer\.domElement/u,
+  );
+  assert.match(viewerSource, /event\.currentTarget\.blur\(\)/u);
+  assert.match(viewerSource, /action\.kind === "weapon"/u);
+  assert.match(viewerSource, /selectOperationEquipmentRef\.current/u);
 });
 
 test("dynamic sight instruments consume live operation and Wiki station motion", () => {

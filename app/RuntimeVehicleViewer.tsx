@@ -238,6 +238,7 @@ import {
   OPERATION_VIEW_STANDARD_ASPECT_RATIO,
   OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES,
   createOperationViewPoseCommitScheduler,
+  operationViewEquipmentRefs,
   operationViewKeyAction,
   operationViewHorizontalFovForMagnification,
   operationViewMotionStep,
@@ -664,7 +665,7 @@ function RuntimeViewerCameraControls({
   return (
     <div className="viewer-camera-presets" aria-label="载具相机快捷预览">
       <div className="viewer-camera-presets__row">
-        <span><b>五向视角</b><small>数字键 1–5</small></span>
+        <span><b>五向视角</b><small>点击切换</small></span>
         <div role="group" aria-label="切换载具五向视角，不含底部视角">
           {RUNTIME_VIEWER_CAMERA_VIEWS.map((view) => (
             <button
@@ -672,14 +673,13 @@ function RuntimeViewerCameraControls({
               key={view.id}
               data-active={activeView === view.id}
               aria-pressed={activeView === view.id}
-              aria-keyshortcuts={view.shortcut}
               disabled={disabled}
               title={view.kind === "soldier-ground"
-                ? `${view.label}视图 · 标准步兵站姿眼高 · 快捷键 ${view.shortcut}`
-                : `${view.label}视图 · 快捷键 ${view.shortcut}`}
+                ? `${view.label}视图 · 标准步兵站姿眼高`
+                : `${view.label}视图`}
               onClick={() => onView(view.id)}
             >
-              <span>{view.label}</span><kbd>{view.shortcut}</kbd>
+              <span>{view.label}</span>
             </button>
           ))}
         </div>
@@ -4447,6 +4447,10 @@ export function RuntimeVehicleViewer({
   const stopVehicleProjectileFireRef = useRef<() => void>(() => undefined);
   const releaseVehicleWeaponTriggerRef = useRef<() => void>(() => undefined);
   const reloadVehicleWeaponRef = useRef<() => void>(() => undefined);
+  const operationEquipmentRefsRef = useRef<readonly string[]>([]);
+  const selectOperationEquipmentRef = useRef<(equipmentRef: string) => void>(
+    () => undefined,
+  );
   const vehicleProjectileShotSequenceRef = useRef(0);
   const vehicleProjectileMagazineStateRef = useRef<{
     weaponAssignmentId: string | null;
@@ -5245,12 +5249,15 @@ export function RuntimeVehicleViewer({
         repeat: event.repeat,
         zoomIndex: activeCrewViewZoomIndexRef.current,
         zoomCount: station?.view?.magnificationLevels.length ?? 0,
+        equipmentRefs: operationEquipmentRefsRef.current,
       });
-      if (!action || !station) return;
+      if (!action || (action.kind === "zoom" && !station)) return;
       event.preventDefault();
       event.stopImmediatePropagation();
       if (action.kind === "zoom") {
-        applyCrewViewZoomRef.current?.(station.id, action.zoomIndex);
+        applyCrewViewZoomRef.current?.(station!.id, action.zoomIndex);
+      } else if (action.kind === "weapon") {
+        selectOperationEquipmentRef.current(action.equipmentRef);
       }
     };
     const onOperationKeyUp = (event: KeyboardEvent) => {
@@ -5343,27 +5350,6 @@ export function RuntimeVehicleViewer({
     completed: 0,
     total: 0,
   });
-  useEffect(() => {
-    if (duelTarget) return;
-    const applyNumberedCameraView = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) return;
-      const target = event.target as HTMLElement | null;
-      if (
-        target instanceof HTMLInputElement ||
-        target instanceof HTMLSelectElement ||
-        target instanceof HTMLTextAreaElement ||
-        target?.isContentEditable
-      ) return;
-      const preset = RUNTIME_VIEWER_CAMERA_VIEWS.find(
-        ({ shortcut }) => shortcut === event.key,
-      );
-      if (!preset || !applyCameraViewPresetRef.current) return;
-      event.preventDefault();
-      applyCameraViewPresetRef.current(preset.id);
-    };
-    document.addEventListener("keydown", applyNumberedCameraView, true);
-    return () => document.removeEventListener("keydown", applyNumberedCameraView, true);
-  }, [duelTarget]);
   const requestGlobalAttackLibrary = useCallback(() => {
     if (!allowGlobalAttackSources) return;
     setGlobalAttackLibraryState("loading");
@@ -5541,28 +5527,56 @@ export function RuntimeVehicleViewer({
       vehicleOperationSource,
     ],
   );
+  const graphOperationEquipmentRefs = useMemo(
+    () => driverViewActive
+      ? preview.stationGraph?.vehicleEquipmentRefs ?? []
+      : activeOperationGraphStation?.equipmentRefs ?? [],
+    [
+      activeOperationGraphStation?.equipmentRefs,
+      driverViewActive,
+      preview.stationGraph?.vehicleEquipmentRefs,
+    ],
+  );
+  const sightOperationEquipmentRefs = useMemo(
+    () => activeGunnerSightStation?.weaponModes.map(
+      (mode) => mode.equipmentRef,
+    ) ?? [],
+    [activeGunnerSightStation],
+  );
+  const playableOperationEquipmentRefs = useMemo(
+    () => vehicleOperationWeapons.flatMap(
+      (weapon) => weapon.stationEquipmentId ? [weapon.stationEquipmentId] : [],
+    ),
+    [vehicleOperationWeapons],
+  );
+  const operationEquipmentRefs = useMemo(
+    () => operationViewEquipmentRefs({
+      stationEquipmentRefs: graphOperationEquipmentRefs,
+      sightEquipmentRefs: sightOperationEquipmentRefs,
+      playableEquipmentRefs: playableOperationEquipmentRefs,
+    }),
+    [
+      graphOperationEquipmentRefs,
+      playableOperationEquipmentRefs,
+      sightOperationEquipmentRefs,
+    ],
+  );
   useEffect(() => {
-    const sightEquipmentRefs =
-      activeGunnerSightStation?.weaponModes.map((mode) => mode.equipmentRef) ??
-      [];
-    const equipmentRefs = [
-      ...new Set([
-        ...sightEquipmentRefs,
-        ...vehicleOperationWeapons.flatMap((weapon) =>
-          weapon.stationEquipmentId ? [weapon.stationEquipmentId] : []
-        ),
-      ]),
-    ];
-    const sightDefault = sightEquipmentRefs[0];
+    const sightDefault = sightOperationEquipmentRefs[0];
     setActiveOperationEquipmentRef((current) =>
-      equipmentRefs.includes(current)
+      operationEquipmentRefs.includes(current)
         ? current
-        : sightDefault ?? equipmentRefs[0] ?? ""
+        : sightDefault ?? operationEquipmentRefs[0] ?? ""
     );
-  }, [activeGunnerSightStation, vehicleOperationWeapons]);
-  const activeOperationWeapon = vehicleOperationWeapons.find(
-    (weapon) => weapon.stationEquipmentId === activeOperationEquipmentRef,
-  ) ?? vehicleOperationWeapons[0] ?? null;
+  }, [
+    operationEquipmentRefs,
+    sightOperationEquipmentRefs,
+  ]);
+  const activeOperationWeapon = activeOperationEquipmentRef
+    ? vehicleOperationWeapons.find(
+        (weapon) => weapon.stationEquipmentId === activeOperationEquipmentRef,
+      ) ?? null
+    : vehicleOperationWeapons[0] ?? null;
   const activeOperationEquipment = activeOperationEquipmentRef
     ? equipmentResolver?.(activeOperationEquipmentRef) ?? null
     : null;
@@ -5606,16 +5620,21 @@ export function RuntimeVehicleViewer({
   }), [runtimeTurretStations]);
   const selectOperationEquipment = useCallback((equipmentRef: string) => {
     if (
-      vehicleOperationWeapons.some(
-        (weapon) => weapon.stationEquipmentId === equipmentRef,
-      ) ||
-      activeGunnerSightStation?.weaponModes.some(
-        (mode) => mode.equipmentRef === equipmentRef,
-      )
-    ) {
-      setActiveOperationEquipmentRef(equipmentRef);
-    }
-  }, [activeGunnerSightStation, vehicleOperationWeapons]);
+      !operationEquipmentRefs.includes(equipmentRef) ||
+      equipmentRef === activeOperationEquipmentRef
+    ) return;
+    stopVehicleProjectileFireRef.current();
+    setActiveOperationEquipmentRef(equipmentRef);
+  }, [activeOperationEquipmentRef, operationEquipmentRefs]);
+  useEffect(() => {
+    operationEquipmentRefsRef.current = operationEquipmentRefs;
+    selectOperationEquipmentRef.current = selectOperationEquipment;
+    return () => {
+      if (selectOperationEquipmentRef.current === selectOperationEquipment) {
+        selectOperationEquipmentRef.current = () => undefined;
+      }
+    };
+  }, [operationEquipmentRefs, selectOperationEquipment]);
   useEffect(() => {
     if (activeCrewViewStationId === null) return;
     if (vehicleProjectileResource) {
@@ -10665,7 +10684,11 @@ export function RuntimeVehicleViewer({
     const onPointerDown = (event: PointerEvent) => {
       if (activeCrewViewStationIdRef.current !== null) {
         pointerStart = null;
-        if (event.button === 0) {
+        if (
+          event.isPrimary &&
+          event.target === renderer.domElement &&
+          event.button === 0
+        ) {
           heldOperationFirePointerId = event.pointerId;
           renderer.domElement.setPointerCapture(event.pointerId);
           host.dataset.operationFireHeld = "true";
@@ -12308,11 +12331,13 @@ export function RuntimeVehicleViewer({
           {(driverViewActive || !gunnerSightPresentationAvailable) &&
               vehicleOperationWeapons.length > 1 ? (
             <label className="crew-view-projectile-weapon">
-              <span>弹种</span>
+              <span>武器</span>
               <select
                 value={activeOperationWeapon?.stationEquipmentId ?? ""}
-                onChange={(event) =>
-                  selectOperationEquipment(event.currentTarget.value)}
+                onChange={(event) => {
+                  selectOperationEquipment(event.currentTarget.value);
+                  event.currentTarget.blur();
+                }}
                 aria-label="选择真实操作视角武器"
               >
                 {vehicleOperationWeapons.map((weapon) => (
@@ -12336,6 +12361,9 @@ export function RuntimeVehicleViewer({
                   <kbd>WASD</kbd><span>方位 / 俯仰</span>
                   <kbd>Q</kbd><span>倍率</span>
                   <kbd>R</kbd><span>装填</span>
+                  {operationEquipmentRefs.length > 1 ? (
+                    <><kbd>1–9</kbd><span>切换武器</span></>
+                  ) : null}
                 </>
               ) : null}
             </span>
