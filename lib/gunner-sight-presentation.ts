@@ -29,21 +29,10 @@ function visible(layer: { visibility: string | null; renderOpacity: number | nul
     layer.renderOpacity !== 0;
 }
 
-function paintPath(layer: GunnerSightLayer | GunnerSightTextLayer) {
-  return [
-    ...(layer.layout?.steps ?? []).map(({ zOrder }) => zOrder ?? 0),
-    layer.paintOrder ?? 0,
-  ];
-}
-
 function comparePaintOrder(left: GunnerSightRenderLayer, right: GunnerSightRenderLayer) {
-  const a = paintPath(left.layer);
-  const b = paintPath(right.layer);
-  const length = Math.max(a.length, b.length);
-  for (let index = 0; index < length; index += 1) {
-    const difference = (a[index] ?? 0) - (b[index] ?? 0);
-    if (difference !== 0) return difference;
-  }
+  const difference = (left.layer.paintOrder ?? 0) -
+    (right.layer.paintOrder ?? 0);
+  if (difference !== 0) return difference;
   return left.widgetName.localeCompare(right.widgetName, "en");
 }
 
