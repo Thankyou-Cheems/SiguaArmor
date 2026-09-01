@@ -155,8 +155,14 @@ function useInterpolatedDynamicPresentations(
   }, [state, station.dynamicBindings]);
   const targetRef = useRef(targets);
   const interpolatedRef = useRef(new Map<string, GunnerSightDynamicPresentation>());
-  const [, setInterpolationRevision] = useState(0);
-  targetRef.current = targets;
+  const [interpolatedSnapshot, setInterpolatedSnapshot] = useState<{
+    stationId: string;
+    values: Map<string, GunnerSightDynamicPresentation>;
+  }>(() => ({ stationId: station.stationId, values: new Map() }));
+
+  useEffect(() => {
+    targetRef.current = targets;
+  }, [targets]);
 
   useEffect(() => {
     interpolatedRef.current.clear();
@@ -172,7 +178,10 @@ function useInterpolatedDynamicPresentations(
           continue;
         }
         const target = targetRef.current.get(binding.id);
-        if (!target) continue;
+        if (!target) {
+          if (interpolatedRef.current.delete(binding.id)) changed = true;
+          continue;
+        }
         const current = interpolatedRef.current.get(binding.id);
         if (!current) {
           interpolatedRef.current.set(binding.id, target);
@@ -189,7 +198,12 @@ function useInterpolatedDynamicPresentations(
           changed = true;
         }
       }
-      if (changed) setInterpolationRevision((revision) => revision + 1);
+      if (changed) {
+        setInterpolatedSnapshot({
+          stationId: station.stationId,
+          values: new Map(interpolatedRef.current),
+        });
+      }
       frame = requestAnimationFrame(update);
     };
     frame = requestAnimationFrame(update);
@@ -199,7 +213,9 @@ function useInterpolatedDynamicPresentations(
   const rendered = new Map(targets);
   for (const binding of station.dynamicBindings) {
     const speed = binding.valueModel?.interpolationSpeedPerSecond;
-    const interpolated = interpolatedRef.current.get(binding.id);
+    const interpolated = interpolatedSnapshot.stationId === station.stationId
+      ? interpolatedSnapshot.values.get(binding.id)
+      : undefined;
     if (
       typeof speed === "number" && speed > 0 && interpolated
     ) rendered.set(binding.id, interpolated);
