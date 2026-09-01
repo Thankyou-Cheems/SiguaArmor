@@ -113,6 +113,14 @@ const document = {
       gunName: "M256",
       displayName: "炮塔/武器站",
       turretName: "Turret",
+      operation: {
+        numberOfMags: 12,
+        magazineSize: 1,
+        tacticalReloadSeconds: 8,
+        dryReloadSeconds: 8,
+        roundsPerMinute: 7.5,
+        timeBetweenShotsSeconds: 0,
+      },
     }],
     weapons: [{
       weaponAssignmentId: "equipment-test:weapon-variant-test",
@@ -153,6 +161,14 @@ test("the same source resolves turret labels without the full catalog", () => {
       gunName: "M256",
       displayName: "炮塔/武器站",
       turretName: "Turret",
+    },
+    operation: {
+      numberOfMags: 12,
+      magazineSize: 1,
+      tacticalReloadSeconds: 8,
+      dryReloadSeconds: 8,
+      roundsPerMinute: 7.5,
+      timeBetweenShotsSeconds: 0,
     },
   });
   assert.equal(resolveEquipment("missing"), null);
