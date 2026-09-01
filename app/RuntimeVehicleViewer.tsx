@@ -44,7 +44,7 @@ import { GunnerSightOverlay } from "./GunnerSightOverlay";
 import type { GunnerSightOperationState, GunnerSightStationPoseBinding, } from "./GunnerSightOverlay";
 import { createHeldOperationFireController, type HeldOperationFireAttempt, } from "../lib/held-operation-fire-control";
 import { createRuntimeVehicleWeaponOperationStore, type RuntimeVehicleWeaponOperationStore, } from "../lib/runtime-vehicle-weapon-operation-store";
-import { advanceVehicleWeaponOperation, createVehicleWeaponOperation, fireVehicleWeaponOperation, nextVehicleWeaponFireAtMs, presentVehicleWeaponOperation, reloadVehicleWeaponOperation, vehicleWeaponShotIntervalMs, type VehicleWeaponOperationSpec, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
+import { advanceVehicleWeaponOperation, createVehicleWeaponOperation, fireVehicleWeaponOperation, nextVehicleWeaponFireAtMs, presentVehicleWeaponOperation, releaseVehicleWeaponTrigger, reloadVehicleWeaponOperation, vehicleWeaponShotIntervalMs, type VehicleWeaponOperationSpec, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
 import { estimateWeaponHitDps, selectPrimaryWeaponHitDpsEstimate, singleShotWeaponHitTarget, targetPoolsForShot, vehicleTargetBurningProfile, type WeaponHitDpsEstimate, type WeaponHitDpsTarget, } from "../lib/weapon-hit-dps";
 import { resolveWeaponDpsWeaponForRuntimeAssignment, weaponDpsWeaponsFromWikiDocument, } from "../lib/weapon-dps-source";
 import type { WeaponDpsSimulation, WeaponDpsWeapon, } from "../lib/weapon-dps-model";
@@ -53,7 +53,7 @@ import type { RuntimeCrewSeatStation, RuntimeCrewSeatView, } from "../lib/vehicl
 import { buildCrewOccupantPresentationPlan, } from "../lib/vehicle-crew-occupant-presentation";
 import { crewViewBasePose, preferredCrewViewStation, transformCrewViewPose, type CrewViewPose, } from "../lib/vehicle-crew-viewpoint";
 import { driverViewPose } from "../lib/vehicle-driver-view";
-import { OPERATION_VIEW_STANDARD_ASPECT_RATIO, OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES, createOperationViewPoseCommitScheduler, operationViewContinuousPoseDelta, operationViewKeyAction, operationViewHorizontalFovForMagnification, operationViewScenePresentation, } from "../lib/operation-view-control";
+import { OPERATION_VIEW_STANDARD_ASPECT_RATIO, OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES, createOperationViewPoseCommitScheduler, operationViewKeyAction, operationViewHorizontalFovForMagnification, operationViewMotionStep, operationViewScenePresentation, type OperationViewMotionState, } from "../lib/operation-view-control";
 import { loadRuntimeDriverMask, type RuntimeDriverMaskLayer, } from "./runtime-driver-view-mask";
 import { runtimePlanarSuspensionCoverageForGeneratedClass, runtimePlanarSuspensionPoseForVisualOccurrence, type RuntimePlanarSuspensionPoseRecord, } from "./runtime-planar-suspension-pose";
 import type { ReferenceData, ReferenceSeat, ReferenceTurret, ReferenceTurretArticulation, } from "./catalog-types";
@@ -3041,6 +3041,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const spawnVehicleProjectileVisualRef = useRef<((request: VehicleProjectileVisualRequest) => boolean) | null>(null);
     const fireVehicleProjectileRef = useRef<() => HeldOperationFireAttempt>(() => ({ nextAttemptAtMs: null }));
     const stopVehicleProjectileFireRef = useRef<() => void>(() => undefined);
+    const releaseVehicleWeaponTriggerRef = useRef<() => void>(() => undefined);
     const reloadVehicleWeaponRef = useRef<() => void>(() => undefined);
     const vehicleProjectileShotSequenceRef = useRef(0);
     const vehicleProjectileMagazineStateRef = useRef<{
@@ -3546,33 +3547,61 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         let operationMovementFrame = 0;
         let previousOperationFrameTime = 0;
         let operationMovementDirty = false;
+        let operationMotionState: OperationViewMotionState = {
+            yawVelocityDegreesPerSecond: 0,
+            pitchVelocityDegreesPerSecond: 0,
+        };
+        const inputDynamics = station?.visualAttachment?.motion.inputDynamics ?? {
+            hasAcceleration: false,
+            maxYawSpeedDegreesPerSecond: station?.turret.maxYawSpeed ?? 0,
+            maxPitchSpeedDegreesPerSecond: station?.turret.maxPitchSpeed ?? 0,
+            inputAccelerationDegreesPerSecondSquared: null,
+            noInputDecelerationDegreesPerSecondSquared: null,
+            oppositeDirectionDecelerationDegreesPerSecondSquared: null,
+            maxMoveDeltaTimeSeconds: null,
+        };
         const applyOperationMovement = (elapsedSeconds: number) => {
             if (!station)
-                return;
-            const delta = operationViewContinuousPoseDelta([...heldOperationKeys], elapsedSeconds, {
-                yawDegreesPerSecond: station.turret.maxYawSpeed,
-                pitchDegreesPerSecond: station.turret.maxPitchSpeed,
-            });
-            if (!delta)
-                return;
+                return null;
+            const step = operationViewMotionStep([...heldOperationKeys], elapsedSeconds, inputDynamics, operationMotionState);
+            operationMotionState = {
+                yawVelocityDegreesPerSecond: step.yawVelocityDegreesPerSecond,
+                pitchVelocityDegreesPerSecond: step.pitchVelocityDegreesPerSecond,
+            };
+            if (step.yawDelta === 0 && step.pitchDelta === 0)
+                return step;
             const current = turretPoseStatesRef.current[station.id] ?? {
                 yawDegrees: 0,
                 pitchDegrees: 0,
             };
-            updateTurretStationPose(station, current.yawDegrees + delta.yawDelta, current.pitchDegrees + delta.pitchDelta, { transient: true });
+            updateTurretStationPose(station, current.yawDegrees + step.yawDelta, current.pitchDegrees + step.pitchDelta, { transient: true });
             operationMovementDirty = true;
+            return step;
+        };
+        const scheduleOperationPoseCommit = (commitImmediately = false) => {
+            if (operationMovementDirty && station) {
+                operationMovementDirty = false;
+                operationPoseCommitScheduler.schedule(() => {
+                    const nextPoseStates = { ...turretPoseStatesRef.current };
+                    setTurretPoseStates(nextPoseStates);
+                    commitTurretNavigation(station.id, nextPoseStates);
+                });
+            }
+            if (commitImmediately)
+                operationPoseCommitScheduler.flush();
         };
         const stepOperationMovement = (frameTime: number) => {
-            if (heldOperationKeys.size === 0) {
-                operationMovementFrame = 0;
-                previousOperationFrameTime = 0;
-                return;
-            }
             const elapsedSeconds = previousOperationFrameTime > 0
                 ? (frameTime - previousOperationFrameTime) / 1000
                 : 1 / 60;
             previousOperationFrameTime = frameTime;
-            applyOperationMovement(elapsedSeconds);
+            const step = applyOperationMovement(elapsedSeconds);
+            if (heldOperationKeys.size === 0 && (step?.settled ?? true)) {
+                operationMovementFrame = 0;
+                previousOperationFrameTime = 0;
+                scheduleOperationPoseCommit();
+                return;
+            }
             operationMovementFrame = requestAnimationFrame(stepOperationMovement);
         };
         const startOperationMovement = () => {
@@ -3589,16 +3618,11 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }
             previousOperationFrameTime = 0;
             heldOperationKeys.clear();
-            if (operationMovementDirty && station) {
-                operationMovementDirty = false;
-                operationPoseCommitScheduler.schedule(() => {
-                    const nextPoseStates = { ...turretPoseStatesRef.current };
-                    setTurretPoseStates(nextPoseStates);
-                    commitTurretNavigation(station.id, nextPoseStates);
-                });
-            }
-            if (commitImmediately)
-                operationPoseCommitScheduler.flush();
+            operationMotionState = {
+                yawVelocityDegreesPerSecond: 0,
+                pitchVelocityDegreesPerSecond: 0,
+            };
+            scheduleOperationPoseCommit(commitImmediately);
         };
         const onOperationKeyDown = (event: KeyboardEvent) => {
             if (event.altKey || event.ctrlKey || event.metaKey ||
@@ -3645,8 +3669,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             event.preventDefault();
             event.stopImmediatePropagation();
             heldOperationKeys.delete(event.code);
-            if (heldOperationKeys.size === 0)
-                settleOperationMovement();
+            if (operationMovementFrame === 0)
+                startOperationMovement();
         };
         const settleOnVisibilityLoss = () => {
             if (document.hidden)
@@ -4048,7 +4072,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     ? "武器正在装填"
                     : operationShot.reason === "weapon-cooldown"
                         ? "武器尚未达到 Wiki 射击间隔"
-                        : "当前弹匣已空");
+                        : operationShot.reason === "trigger-cycle-complete"
+                            ? "松开后再次扣动扳机"
+                            : "当前弹匣已空");
                 return {
                     nextAttemptAtMs: nextVehicleWeaponFireAtMs(operationShot.state, activeOperationSpec, nowMs),
                 };
@@ -4169,6 +4195,18 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         activeOperationSpec,
         publishVehicleWeaponOperationState,
     ]);
+    const releaseActiveVehicleWeaponTrigger = useCallback(() => {
+        if (!activeOperationSpec || !activeOperationEquipmentRef)
+            return;
+        const storedOperationState = vehicleWeaponOperationStatesRef.current.get(activeOperationEquipmentRef);
+        if (!storedOperationState)
+            return;
+        publishVehicleWeaponOperationState(activeOperationEquipmentRef, releaseVehicleWeaponTrigger(storedOperationState, activeOperationSpec, operationClockMs()));
+    }, [
+        activeOperationEquipmentRef,
+        activeOperationSpec,
+        publishVehicleWeaponOperationState,
+    ]);
     useEffect(() => {
         fireVehicleProjectileRef.current = fireVehicleProjectile;
         return () => {
@@ -4185,6 +4223,14 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }
         };
     }, [reloadVehicleWeapon]);
+    useEffect(() => {
+        releaseVehicleWeaponTriggerRef.current = releaseActiveVehicleWeaponTrigger;
+        return () => {
+            if (releaseVehicleWeaponTriggerRef.current ===
+                releaseActiveVehicleWeaponTrigger)
+                releaseVehicleWeaponTriggerRef.current = () => undefined;
+        };
+    }, [releaseActiveVehicleWeaponTrigger]);
     const weaponOptions = useMemo(() => attackSource?.weapons.map((_, optionIndex) => optionIndex) ?? [], [attackSource]);
     const displayedWeaponOptionIndex = attackSource &&
         pendingAttackWeaponSelection?.sourceCardId === attackSource.cardId &&
@@ -8080,6 +8126,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         });
         const stopHeldOperationFire = () => {
             heldOperationFireController.stop();
+            releaseVehicleWeaponTriggerRef.current();
             if (heldOperationFirePointerId !== null &&
                 renderer.domElement.hasPointerCapture(heldOperationFirePointerId)) {
                 renderer.domElement.releasePointerCapture(heldOperationFirePointerId);

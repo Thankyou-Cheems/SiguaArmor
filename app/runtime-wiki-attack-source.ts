@@ -7,6 +7,7 @@ import type {
   RuntimeAttackSource,
   RuntimeAttackSourceWeapon,
 } from "./runtime-probe-weapon-labels.ts";
+import type { VehicleWeaponFireControl } from "../lib/vehicle-weapon-operation-state.ts";
 
 export interface WikiWeaponRuntimeSourceDocument {
   schemaVersion: "sigua-weapon-runtime-source/v2";
@@ -55,6 +56,8 @@ export interface WikiWeaponRuntimeSourceDocument {
         dryReloadSeconds: number;
         roundsPerMinute: number;
         timeBetweenShotsSeconds: number;
+        timeBetweenSingleShotsSeconds?: number;
+        fireControl?: VehicleWeaponFireControl;
       };
     }>;
     weapons: Array<{
@@ -114,6 +117,8 @@ export interface RuntimeStationEquipmentBinding {
     dryReloadSeconds: number;
     roundsPerMinute: number;
     timeBetweenShotsSeconds: number;
+    timeBetweenSingleShotsSeconds?: number;
+    fireControl?: VehicleWeaponFireControl;
   };
 }
 

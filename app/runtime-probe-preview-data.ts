@@ -4,7 +4,7 @@ import { loadWikiRuntimeVisual, loadOptionalWikiVehicleGunnerSight, loadWikiVehi
 import type { RuntimePlanarSuspensionCoverageResult, RuntimePlanarSuspensionPoseRecord, } from "./runtime-planar-suspension-pose";
 import type { RuntimeHitBufferRef } from "../lib/runtime-hit-buffer";
 import type { RuntimeCrewSeatBinding } from "../lib/vehicle-crew-seat-runtime";
-import { compileVehicleStationGraph, type CompiledVehicleStationGraph, type VehicleStationGraphRecord, type VehicleStationGraphPointer, } from "../lib/vehicle-station-graph";
+import { compileVehicleStationGraph, type CompiledVehicleStationGraph, type VehicleStationInputDynamics, type VehicleStationGraphRecord, type VehicleStationGraphPointer, } from "../lib/vehicle-station-graph";
 import { compileVehicleGunnerSight, type CompiledVehicleGunnerSight, type VehicleGunnerSightRecord, } from "../lib/vehicle-gunner-sight";
 import { projectVehicleDriverView, type VehicleDriverViewRecord, } from "../lib/vehicle-driver-view";
 export type RuntimePreviewStatus = "visual-ready" | "runtime-only" | "blocked";
@@ -104,6 +104,7 @@ interface RuntimeStationMotion {
     sourceFunction: "runtime" | "runtime";
     yawDriver: RuntimeMotionDriver | null;
     pitchDriver: RuntimeMotionDriver | null;
+    inputDynamics: VehicleStationInputDynamics | null;
     reason: string | null;
 }
 export interface RuntimeStationControl {
