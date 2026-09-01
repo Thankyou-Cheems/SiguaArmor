@@ -23,6 +23,11 @@ import type {
   RuntimeTurretPoseSnapshot,
   RuntimeTurretPoseStore,
 } from "../lib/runtime-turret-pose-store";
+import {
+  presentVehicleWeaponOperation,
+  type VehicleWeaponOperationSpec,
+  type VehicleWeaponOperationState,
+} from "../lib/vehicle-weapon-operation-state";
 import type {
   GunnerSightDynamicBinding,
   GunnerSightLayer,
@@ -54,6 +59,76 @@ export interface GunnerSightOperationState {
   currentWeaponClassPath: string;
   commanderOverride: boolean;
   weaponOverheated: boolean;
+}
+
+export interface GunnerSightWeaponOperationRuntime {
+  state: VehicleWeaponOperationState | null;
+  spec: VehicleWeaponOperationSpec | null;
+  guidanceActiveUntilMs: number;
+}
+
+function operationClockMs() {
+  return typeof performance === "undefined" ? Date.now() : performance.now();
+}
+
+function useLiveGunnerSightOperationState(
+  baseState: GunnerSightOperationState,
+  weaponOperation: GunnerSightWeaponOperationRuntime,
+) {
+  const [clockMs, setClockMs] = useState(operationClockMs);
+  const operationEndsAtMs = Math.max(
+    weaponOperation.state?.nextShotAtMs ?? 0,
+    weaponOperation.state?.reloadEndsAtMs ?? 0,
+    weaponOperation.guidanceActiveUntilMs,
+  );
+
+  useEffect(() => {
+    setClockMs(operationClockMs());
+  }, [
+    weaponOperation.guidanceActiveUntilMs,
+    weaponOperation.spec,
+    weaponOperation.state,
+  ]);
+  useEffect(() => {
+    if (operationClockMs() >= operationEndsAtMs) return;
+    const timer = window.setInterval(() => {
+      const nextClockMs = operationClockMs();
+      setClockMs(nextClockMs);
+      if (nextClockMs >= operationEndsAtMs) window.clearInterval(timer);
+    }, 50);
+    return () => window.clearInterval(timer);
+  }, [operationEndsAtMs]);
+
+  const presentation = useMemo(
+    () => weaponOperation.state && weaponOperation.spec
+      ? presentVehicleWeaponOperation(
+          weaponOperation.state,
+          weaponOperation.spec,
+          clockMs,
+        )
+      : null,
+    [clockMs, weaponOperation.spec, weaponOperation.state],
+  );
+  return useMemo<GunnerSightOperationState>(() => presentation
+    ? {
+        ...baseState,
+        roundsRemaining: presentation.roundsRemaining,
+        magazineCapacity: presentation.magazineCapacity,
+        magazinesRemaining: presentation.magazinesRemaining,
+        reloadProgress: presentation.reloadProgress,
+        weaponReady: presentation.weaponReady,
+        weaponReloading: presentation.weaponReloading,
+        guidanceActive: weaponOperation.guidanceActiveUntilMs > clockMs,
+      }
+    : {
+        ...baseState,
+        guidanceActive: weaponOperation.guidanceActiveUntilMs > clockMs,
+      }, [
+    baseState,
+    clockMs,
+    presentation,
+    weaponOperation.guidanceActiveUntilMs,
+  ]);
 }
 
 function classNameFromPath(value: string) {
@@ -488,6 +563,7 @@ export function GunnerSightOverlay({
   poseStore,
   stationPoseBindings,
   operationState,
+  weaponOperation,
   onEquipmentChange,
   onZoomStageChange,
 }: {
@@ -502,6 +578,7 @@ export function GunnerSightOverlay({
   poseStore: RuntimeTurretPoseStore;
   stationPoseBindings: GunnerSightStationPoseBinding[];
   operationState: GunnerSightOperationState;
+  weaponOperation: GunnerSightWeaponOperationRuntime;
   onEquipmentChange: (equipmentRef: string) => void;
   onZoomStageChange: (zoomIndex: number) => void;
 }) {
@@ -509,6 +586,10 @@ export function GunnerSightOverlay({
     poseStore.subscribe,
     poseStore.getSnapshot,
     poseStore.getSnapshot,
+  );
+  const liveOperationState = useLiveGunnerSightOperationState(
+    operationState,
+    weaponOperation,
   );
   const dynamicRuntimeState = useMemo<GunnerSightRuntimeState>(() => {
     const stationById = new Map(
@@ -535,7 +616,7 @@ export function GunnerSightOverlay({
       pitchDegrees: 0,
     };
     return {
-      ...operationState,
+      ...liveOperationState,
       stationRelativeYawDegrees: stationWorldYaw(
         activeStationId,
         poseSnapshot,
@@ -549,7 +630,7 @@ export function GunnerSightOverlay({
   }, [
     activeStationId,
     activeZoomIndex,
-    operationState,
+    liveOperationState,
     poseSnapshot,
     station.seatPawnClassPath,
     stationPoseBindings,
