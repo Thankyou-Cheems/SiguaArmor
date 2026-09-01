@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   carryNestedRuntimeTurretAssemblies,
   resolveRuntimeTurretAssembly,
+  resolveRuntimeTurretHitComponentAssembly,
   resolveRuntimeTurretMotionFrame,
   turretArticulationMatrices,
 } from "../../lib/turret-articulation.ts";
@@ -107,6 +108,7 @@ test("explicit parent carry rejects a relation cycle", () => {
 function driverMotion({
   state = "derived",
   frameState = state,
+  driverMode = "split-yaw-pitch-components",
   yawTranslationCm = [100, 200, 300],
   pitchTranslationCm = [400, 500, 600],
   yawQuaternion = { x: 0, y: 0, z: 0, w: 1 },
@@ -133,7 +135,7 @@ function driverMotion({
   });
   return {
     state,
-    driverMode: "split-yaw-pitch-components",
+    driverMode,
     yawDriver: driver("YawDriver", yawTranslationCm, yawQuaternion),
     pitchDriver: driver("PitchDriver", pitchTranslationCm, pitchQuaternion),
   };
@@ -333,6 +335,107 @@ test("closed attachment evidence fails when an occurrence identity drifts", () =
     }),
     /Exact visual attachment yaw member drifted/u,
   );
+});
+
+test("identical UH-60 door-gun stations bind only their exact seat-owned hit component", () => {
+  const doorGunPlacement = (id, actor, translation) => placement({
+    id,
+    name: "WeaponMesh3P",
+    actor,
+    sourceMeshPath:
+      "/Game/Vehicles/UH60M/Weapons/M240H_Doorgun/M240H_Doorgun.M240H_Doorgun",
+    translation,
+  });
+  const leftPlacement = doorGunPlacement(
+    "uh60-door-left",
+    "BP_M240H_DoorGun_C_0",
+    [1.895, 1.493, -1.456],
+  );
+  const rightPlacement = doorGunPlacement(
+    "uh60-door-right",
+    "BP_M240H_DoorGun_C_1",
+    [1.863, 1.493, 1.457],
+  );
+  const attachment = (member, pivotCm) => ({
+    state: "closed",
+    closureMode: "visual-occurrence-membership",
+    movementState: "observed",
+    motion: driverMotion({
+      driverMode: "combined-updated-component",
+      yawTranslationCm: pivotCm,
+      pitchTranslationCm: pivotCm,
+    }),
+    yawMembers: [{
+      stableOccurrenceId: member.stableOccurrenceId,
+      actorClassName: member.actor,
+      componentName: member.name,
+      componentClassPath: member.componentClassPath,
+      sourceMeshPath: member.sourceMeshPath,
+    }],
+    pitchMembers: [{
+      stableOccurrenceId: member.stableOccurrenceId,
+      actorClassName: member.actor,
+      componentName: member.name,
+      componentClassPath: member.componentClassPath,
+      sourceMeshPath: member.sourceMeshPath,
+    }],
+    yawAnchor: null,
+    pitchAnchor: null,
+  });
+  const resolveDoorGun = (member, hitOwnerSeatIndex, pivotCm) =>
+    resolveRuntimeTurretAssembly({
+      placements: [leftPlacement, rightPlacement],
+      vehicleGeneratedClass: "/Game/Vehicles/UH60M/BP_UH60.BP_UH60_C",
+      turretName: "BP_M240H_Doorgun_Turret_C",
+      stationWeaponNames: ["BP_M240H_DoorGun"],
+      primary: false,
+      absorbsSiblingStations: false,
+      hitOwnerSeatIndex,
+      visualAttachment: attachment(member, pivotCm),
+    });
+  const leftAssembly = resolveDoorGun(leftPlacement, 1, [189.49, -145.57, 149.28]);
+  const rightAssembly = resolveDoorGun(rightPlacement, 2, [186.30, 145.70, 149.28]);
+  assert.ok(leftAssembly);
+  assert.ok(rightAssembly);
+
+  const components = [
+    {
+      componentPath:
+        "/Game/RuntimeProbe/RuntimeProbeMap.RuntimeProbeMap:PersistentLevel.BP_UH60_C_0.CollisionArmorMesh",
+      ownerIndex: 0,
+    },
+    {
+      componentPath:
+        "/Game/RuntimeProbe/RuntimeProbeMap.RuntimeProbeMap:PersistentLevel.BP_M240H_Doorgun_Turret_C_0.SQArmorMesh",
+      ownerIndex: 1,
+    },
+    {
+      componentPath:
+        "/Game/RuntimeProbe/RuntimeProbeMap.RuntimeProbeMap:PersistentLevel.BP_M240H_Doorgun_Turret_C_1.SQArmorMesh",
+      ownerIndex: 2,
+    },
+  ];
+  const owners = [
+    { seatIndex: null },
+    { seatIndex: 1 },
+    { seatIndex: 2 },
+  ];
+  const leftHitAssembly = resolveRuntimeTurretHitComponentAssembly({
+    placements: [leftPlacement, rightPlacement],
+    assembly: leftAssembly,
+    components,
+    owners,
+  });
+  const rightHitAssembly = resolveRuntimeTurretHitComponentAssembly({
+    placements: [leftPlacement, rightPlacement],
+    assembly: rightAssembly,
+    components,
+    owners,
+  });
+  assert.deepEqual(leftHitAssembly.yawComponentIndices, [1]);
+  assert.deepEqual(leftHitAssembly.pitchComponentIndices, [1]);
+  assert.deepEqual(rightHitAssembly.yawComponentIndices, [2]);
+  assert.deepEqual(rightHitAssembly.pitchComponentIndices, [2]);
 });
 
 test("closed view-component rotation never invents a rendered turret assembly", () => {

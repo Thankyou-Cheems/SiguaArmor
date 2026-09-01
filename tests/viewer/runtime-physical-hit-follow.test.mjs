@@ -113,6 +113,31 @@ test("viewer parents visual and hit groups under the same chassis pose", () => {
   assert.match(source, /setHitSceneThreeModelComponentPoses\(/u);
 });
 
+test("interactive turret frames cannot return before the armor hit layer is posed", () => {
+  const source = fs.readFileSync(
+    new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url),
+    "utf8",
+  );
+  const start = source.indexOf("const applyTurretPose = (");
+  const end = source.indexOf(
+    "applyTurretPoseRef.current = applyTurretPose",
+    start,
+  );
+  assert.ok(start >= 0 && end > start, "applyTurretPose implementation is present");
+  const applySource = source.slice(start, end);
+  const interactiveStart = applySource.indexOf("if (interactive)");
+  const hitPoseStart = applySource.indexOf(
+    "setHitSceneThreeModelComponentPoses(",
+  );
+  assert.ok(interactiveStart >= 0, "interactive turret path is present");
+  assert.ok(hitPoseStart > interactiveStart, "hit pose path is present");
+  assert.doesNotMatch(
+    applySource.slice(interactiveStart, hitPoseStart),
+    /\brender\(\);\s*return;/u,
+    "continuous WASD/slider frames must update green armor and hit geometry before rendering",
+  );
+});
+
 test("radial damage highlight never lights translucent overlay volumes", () => {
   const pack = physicalHitPack();
   const model = createHitSceneThreeModel(pack);
