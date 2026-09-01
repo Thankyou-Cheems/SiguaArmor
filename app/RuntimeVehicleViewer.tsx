@@ -42,7 +42,7 @@ import { buildVehicleProjectileSimulationInput, compileVehicleProjectilePlayback
 import { createVehicleProjectileThreeRuntime, resolveVehicleGuidanceAimPose, resolveVehicleProjectileLaunchPose, vehicleProjectileAnchorMatrixFromUnrealFrame, VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M, type VehicleProjectileLaunchPose, type VehicleProjectileVisualRequest, } from "../lib/vehicle-projectile-three-runtime";
 import { GunnerSightOverlay } from "./GunnerSightOverlay";
 import type { GunnerSightOperationState, GunnerSightStationPoseBinding, } from "./GunnerSightOverlay";
-import { advanceVehicleWeaponOperation, createVehicleWeaponOperation, fireVehicleWeaponOperation, presentVehicleWeaponOperation, reloadVehicleWeaponOperation, type VehicleWeaponOperationSpec, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
+import { advanceVehicleWeaponOperation, createVehicleWeaponOperation, fireVehicleWeaponOperation, presentVehicleWeaponOperation, reloadVehicleWeaponOperation, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
 import { estimateWeaponHitDps, selectPrimaryWeaponHitDpsEstimate, singleShotWeaponHitTarget, targetPoolsForShot, vehicleTargetBurningProfile, type WeaponHitDpsEstimate, type WeaponHitDpsTarget, } from "../lib/weapon-hit-dps";
 import { resolveWeaponDpsWeaponForRuntimeAssignment, weaponDpsWeaponsFromWikiDocument, } from "../lib/weapon-dps-source";
 import type { WeaponDpsSimulation, WeaponDpsWeapon, } from "../lib/weapon-dps-model";
@@ -3328,12 +3328,16 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const [vehicleProjectileResource, setVehicleProjectileResource] = useState<RuntimeVehicleProjectileResource | null>(null);
     const [vehicleProjectileResourceState, setVehicleProjectileResourceState] = useState<"idle" | "loading" | "ready" | "error">("idle");
     const [vehicleProjectileNotice, setVehicleProjectileNotice] = useState("");
-    const [vehicleWeaponOperationRevision, setVehicleWeaponOperationRevision] = useState(0);
+    const [vehicleWeaponOperationStates, setVehicleWeaponOperationStates] = useState<Map<string, VehicleWeaponOperationState>>(() => new Map());
     const [vehicleWeaponOperationClockMs, setVehicleWeaponOperationClockMs] = useState(operationClockMs);
     const [guidanceActiveUntilMs, setGuidanceActiveUntilMs] = useState(0);
     const [controlPanelOpen, setControlPanelOpen] = useState(true);
     const [operationPanelExpanded, setOperationPanelExpanded] = useState(false);
     const [controlTargetId, setControlTargetId] = useState(CAMERA_CONTROL_TARGET_ID);
+    const publishVehicleWeaponOperationState = useCallback((equipmentRef: string, operationState: VehicleWeaponOperationState) => {
+        vehicleWeaponOperationStatesRef.current.set(equipmentRef, operationState);
+        setVehicleWeaponOperationStates(new Map(vehicleWeaponOperationStatesRef.current));
+    }, []);
     const [crewViewpointMarkerEnabled, setCrewViewpointMarkerEnabled] = useState(false);
     const [driverViewpointMarkerEnabled, setDriverViewpointMarkerEnabled] = useState(false);
     const [driverMaskEnabled, setDriverMaskEnabled] = useState(true);
@@ -3367,7 +3371,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     }, [crewHitProxyDisplayEnabled]);
     useEffect(() => {
         vehicleWeaponOperationStatesRef.current.clear();
-        setVehicleWeaponOperationRevision((revision) => revision + 1);
+        setVehicleWeaponOperationStates(new Map());
         setGuidanceActiveUntilMs(0);
         crewOccupantDisplayEnabledRef.current = false;
         crewHitProxyDisplayEnabledRef.current = false;
@@ -3778,13 +3782,20 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const vehicleOperationSource = vehicleOperationLibrary?.runtimeAttackSourceForId(preview.cardId) ??
         vehicleOperationLibrary?.runtimeAttackSources[0] ?? null;
     const activeOperationGraphStation = preview.stationGraph?.stations.find((station) => station.id === activeTurretStation?.crewSeat.stationId) ?? null;
-    const activeOperationEquipmentRefs = driverViewActive
-        ? preview.stationGraph?.vehicleEquipmentRefs ?? []
-        : activeOperationGraphStation?.equipmentRefs ?? [];
-    const vehicleOperationWeapons = useMemo<RuntimeAttackSourceWeapon[]>(() => vehicleOperationSource
-        ? vehicleOperationSource.weapons.filter((weapon) => typeof weapon.stationEquipmentId === "string" &&
-            activeOperationEquipmentRefs.includes(weapon.stationEquipmentId))
-        : [], [activeOperationEquipmentRefs, vehicleOperationSource]);
+    const vehicleOperationWeapons = useMemo<RuntimeAttackSourceWeapon[]>(() => {
+        const activeOperationEquipmentRefs = driverViewActive
+            ? preview.stationGraph?.vehicleEquipmentRefs ?? []
+            : activeOperationGraphStation?.equipmentRefs ?? [];
+        return vehicleOperationSource
+            ? vehicleOperationSource.weapons.filter((weapon) => typeof weapon.stationEquipmentId === "string" &&
+                activeOperationEquipmentRefs.includes(weapon.stationEquipmentId))
+            : [];
+    }, [
+        activeOperationGraphStation?.equipmentRefs,
+        driverViewActive,
+        preview.stationGraph?.vehicleEquipmentRefs,
+        vehicleOperationSource,
+    ]);
     useEffect(() => {
         const sightEquipmentRefs = activeGunnerSightStation?.weaponModes.map((mode) => mode.equipmentRef) ??
             [];
@@ -3806,13 +3817,11 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const activeOperationSpec = activeOperationEquipment?.operation ?? null;
     const activeWeaponOperationState = activeOperationSpec && activeOperationEquipmentRef
         ? (() => {
-            const existing = vehicleWeaponOperationStatesRef.current.get(activeOperationEquipmentRef) ?? createVehicleWeaponOperation(activeOperationSpec, vehicleWeaponOperationClockMs);
+            const existing = vehicleWeaponOperationStates.get(activeOperationEquipmentRef) ?? createVehicleWeaponOperation(activeOperationSpec, vehicleWeaponOperationClockMs);
             const advanced = advanceVehicleWeaponOperation(existing, activeOperationSpec, vehicleWeaponOperationClockMs);
-            vehicleWeaponOperationStatesRef.current.set(activeOperationEquipmentRef, advanced);
             return advanced;
         })()
         : null;
-    void vehicleWeaponOperationRevision;
     const activeWeaponOperationPresentation = activeWeaponOperationState && activeOperationSpec
         ? presentVehicleWeaponOperation(activeWeaponOperationState, activeOperationSpec, vehicleWeaponOperationClockMs)
         : null;
@@ -3970,9 +3979,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             const currentOperationState = advanceVehicleWeaponOperation(storedOperationState, activeOperationSpec, nowMs);
             const operationShot = fireVehicleWeaponOperation(currentOperationState, activeOperationSpec, nowMs);
             if (!operationShot.fired) {
-                vehicleWeaponOperationStatesRef.current.set(activeOperationEquipmentRef, operationShot.state);
+                publishVehicleWeaponOperationState(activeOperationEquipmentRef, operationShot.state);
                 setVehicleWeaponOperationClockMs(nowMs);
-                setVehicleWeaponOperationRevision((revision) => revision + 1);
                 throw new Error(operationShot.reason === "weapon-reloading"
                     ? "武器正在装填"
                     : operationShot.reason === "weapon-cooldown"
@@ -4027,9 +4035,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }) ?? false;
             if (!spawned)
                 throw new Error("3D 弹体渲染层尚未就绪");
-            vehicleWeaponOperationStatesRef.current.set(activeOperationEquipmentRef, operationShot.state);
+            publishVehicleWeaponOperationState(activeOperationEquipmentRef, operationShot.state);
             setVehicleWeaponOperationClockMs(nowMs);
-            setVehicleWeaponOperationRevision((revision) => revision + 1);
             vehicleProjectileMagazineStateRef.current = {
                 weaponAssignmentId: binding.weaponAssignmentId,
                 shotsFiredInMagazine: magazineState.shotsFiredInMagazine + 1,
@@ -4076,6 +4083,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         vehicleProjectileResolution,
         vehicleProjectileResource,
         vehicleProjectileResourceState,
+        publishVehicleWeaponOperationState,
     ]);
     const reloadVehicleWeapon = useCallback(() => {
         if (!activeOperationSpec || !activeOperationEquipmentRef) {
@@ -4085,9 +4093,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         const nowMs = operationClockMs();
         const storedOperationState = vehicleWeaponOperationStatesRef.current.get(activeOperationEquipmentRef) ?? createVehicleWeaponOperation(activeOperationSpec, nowMs);
         const result = reloadVehicleWeaponOperation(storedOperationState, activeOperationSpec, nowMs);
-        vehicleWeaponOperationStatesRef.current.set(activeOperationEquipmentRef, result.state);
+        publishVehicleWeaponOperationState(activeOperationEquipmentRef, result.state);
         setVehicleWeaponOperationClockMs(nowMs);
-        setVehicleWeaponOperationRevision((revision) => revision + 1);
         setVehicleProjectileNotice(result.started
             ? "已按 Wiki 装填时间开始换弹"
             : result.reason === "weapon-reloading"
@@ -4095,7 +4102,11 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 : result.reason === "magazine-full"
                     ? "当前弹匣已满"
                     : "没有可用的备用弹匣");
-    }, [activeOperationEquipmentRef, activeOperationSpec]);
+    }, [
+        activeOperationEquipmentRef,
+        activeOperationSpec,
+        publishVehicleWeaponOperationState,
+    ]);
     useEffect(() => {
         fireVehicleProjectileRef.current = fireVehicleProjectile;
         return () => {
