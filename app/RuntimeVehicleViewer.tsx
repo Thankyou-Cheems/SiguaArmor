@@ -8131,6 +8131,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                         yawPivot: station.assembly.yawPivot,
                     }];
             });
+            const vehicleGeneratedClassName = preview.generatedClass
+                ?.split(".")
+                .at(-1) ?? null;
             const topDownProjectionStartedAt = performance.now();
             const topDownProjection = buildRuntimeVehicleTopDownProjection({
                 occurrences: renderPlacements.flatMap((placement) => {
@@ -8139,6 +8142,9 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                             stableOccurrenceId: placement.stableOccurrenceId,
                             source,
                             matrix: placement.matrix,
+                            bodyCandidate: vehicleGeneratedClassName !== null &&
+                                placement.actor.replace(/_\d+$/u, "") ===
+                                    vehicleGeneratedClassName,
                         }] : [];
                 }),
                 stations: projectionStations,
@@ -8149,6 +8155,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     ? "runtime-geometry"
                     : "fallback";
                 host.dataset.turretTopDownSampledVertexCount = String(topDownProjection?.sampledVertexCount ?? 0);
+                host.dataset.turretTopDownSampledTriangleCount = String(topDownProjection?.sampledTriangleCount ?? 0);
                 host.dataset.turretTopDownOutputPointCount = String(topDownProjection?.outputPointCount ?? 0);
                 host.dataset.turretTopDownPayloadBytes = String(topDownProjection
                     ? new TextEncoder().encode(JSON.stringify(topDownProjection)).length
