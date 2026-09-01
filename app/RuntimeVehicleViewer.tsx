@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -28,6 +28,10 @@ import {
   buildRuntimeVehicleTopDownProjection,
   type RuntimeVehicleTopDownProjection,
 } from "../lib/runtime-vehicle-topdown-projection";
+import {
+  createRuntimeTurretPoseStore,
+  type RuntimeTurretPoseStore,
+} from "../lib/runtime-turret-pose-store";
 import { resolveRuntimeRunningGearHitComponentPoses } from "../lib/runtime-running-gear-hit-pose";
 import {
   createRuntimeSkeletalPoseController,
@@ -784,7 +788,7 @@ function runtimeTurretStationDepth(
 function runtimeTurretWorldYaw(
   station: RuntimeTurretPreviewStation,
   stations: RuntimeTurretPreviewStation[],
-  poseStates: Record<string, RuntimeTurretPoseState>,
+  poseStates: Readonly<Record<string, RuntimeTurretPoseState>>,
   visiting = new Set<string>(),
 ): number {
   const ownYaw = poseStates[station.id]?.yawDegrees ?? 0;
@@ -816,7 +820,7 @@ function orderedRuntimeTurretStations(
 
 function runtimeTurretPosesForStates(
   stations: RuntimeTurretPreviewStation[],
-  poseStates: Record<string, RuntimeTurretPoseState>,
+  poseStates: Readonly<Record<string, RuntimeTurretPoseState>>,
 ): RuntimeTurretPose[] {
   return orderedRuntimeTurretStations(stations).map((station) => {
     const state = poseStates[station.id] ?? {
@@ -836,6 +840,100 @@ function runtimeTurretPosesForStates(
       ),
     };
   });
+}
+
+interface LiveOperationTurretControlsProps {
+  poseStore: RuntimeTurretPoseStore;
+  stations: RuntimeTurretPreviewStation[];
+  topDownProjection: RuntimeVehicleTopDownProjection | null;
+  activeStationId: string;
+  onStationChange: (stationId: string) => void;
+  onPoseChange: (
+    station: RuntimeTurretPreviewStation,
+    yawDegrees: number,
+    pitchDegrees: number,
+  ) => void;
+  onReset: (station: RuntimeTurretPreviewStation) => void;
+  onInteractionEnd: (station: RuntimeTurretPreviewStation) => void;
+}
+
+function LiveOperationTurretControls({
+  poseStore,
+  stations,
+  topDownProjection,
+  activeStationId,
+  onStationChange,
+  onPoseChange,
+  onReset,
+  onInteractionEnd,
+}: LiveOperationTurretControlsProps) {
+  const poseStates = useSyncExternalStore(
+    poseStore.subscribe,
+    poseStore.getSnapshot,
+    poseStore.getSnapshot,
+  );
+  const activeStation = stations.find(
+    (station) => station.id === activeStationId,
+  ) ?? stations[0];
+  const orientationIndicators = useMemo<TurretOrientationIndicator[]>(
+    () =>
+      stations.map((station) => {
+        const relativeYawDegrees = clampTurretYaw(
+          station.turret,
+          poseStates[station.id]?.yawDegrees ?? 0,
+        );
+        return {
+          id: station.id,
+          label: station.label,
+          kind: station.indicatorKind,
+          yawDegrees: runtimeTurretWorldYaw(station, stations, poseStates),
+          relativeYawDegrees,
+          active: station.id === activeStation?.id,
+        };
+      }),
+    [activeStation?.id, poseStates, stations],
+  );
+  if (!activeStation) return null;
+
+  const activePose = poseStates[activeStation.id] ?? {
+    yawDegrees: 0,
+    pitchDegrees: 0,
+  };
+  const yawDegrees = clampTurretYaw(
+    activeStation.turret,
+    activePose.yawDegrees,
+  );
+  const pitchDegrees = clampTurretPitch(
+    activeStation.turret,
+    yawDegrees,
+    activePose.pitchDegrees,
+  );
+
+  return (
+    <TurretPreviewControls
+      embedded
+      operationOverlay
+      stations={stations}
+      orientationIndicators={orientationIndicators}
+      topDownProjection={topDownProjection}
+      activeStationId={activeStation.id}
+      yawDegrees={yawDegrees}
+      pitchDegrees={pitchDegrees}
+      onStationChange={onStationChange}
+      onYawChange={(nextYawDegrees) => {
+        onPoseChange(activeStation, nextYawDegrees, pitchDegrees);
+      }}
+      onPitchChange={(nextPitchDegrees) => {
+        onPoseChange(activeStation, yawDegrees, nextPitchDegrees);
+      }}
+      onReset={() => onReset(activeStation)}
+      viewpointActive
+      viewpointMarkerEnabled={false}
+      onViewpointMarkerToggle={() => undefined}
+      onViewpointToggle={() => undefined}
+      onInteractionEnd={() => onInteractionEnd(activeStation)}
+    />
+  );
 }
 
 interface RuntimeWeaponOption {
@@ -4259,6 +4357,9 @@ export function RuntimeVehicleViewer({
   const crewHitProxyDisplayEnabledRef = useRef(false);
   const turretPosesRef = useRef<RuntimeTurretPose[]>([]);
   const turretPoseStatesRef = useRef<Record<string, RuntimeTurretPoseState>>({});
+  const [liveTurretPoseStore] = useState<RuntimeTurretPoseStore>(
+    createRuntimeTurretPoseStore,
+  );
   const appliedTurretNavigationKeyRef = useRef("");
   const modeRef = useRef(mode);
   const groundScaleRef = useRef<THREE.Group | null>(null);
@@ -4586,6 +4687,7 @@ export function RuntimeVehicleViewer({
       },
     };
     turretPoseStatesRef.current = nextPoseStates;
+    liveTurretPoseStore.publish(nextPoseStates);
     if (options.transient) {
       turretPosesRef.current = runtimeTurretPosesForStates(
         runtimeTurretStationsRef.current,
@@ -4596,7 +4698,7 @@ export function RuntimeVehicleViewer({
       setTurretPoseStates(nextPoseStates);
     }
     return nextPoseStates;
-  }, []);
+  }, [liveTurretPoseStore]);
   const commitTurretNavigation = useCallback((
     stationId: string,
     poseStates = turretPoseStatesRef.current,
@@ -7157,11 +7259,13 @@ export function RuntimeVehicleViewer({
       };
     }
     turretPoseStatesRef.current = nextPoseStates;
+    liveTurretPoseStore.publish(nextPoseStates);
     setTurretPoseStates(nextPoseStates);
     setActiveTurretStationId(requestedActiveStation?.id ?? "");
     appliedTurretNavigationKeyRef.current = navigationKey;
   }, [
     defaultTurretStation,
+    liveTurretPoseStore,
     navigationState?.turrets,
     runtimeTurretStations,
   ]);
@@ -11649,48 +11753,33 @@ export function RuntimeVehicleViewer({
           className="crew-view-operation-panel"
           aria-label={`${activeTurretStation.label}方位俯仰控制`}
         >
-          <TurretPreviewControls
-            embedded
-            operationOverlay
+          <LiveOperationTurretControls
+            poseStore={liveTurretPoseStore}
             stations={runtimeTurretStations}
-            orientationIndicators={turretOrientationIndicators}
             topDownProjection={turretTopDownProjection}
             activeStationId={activeTurretStation.id}
-            yawDegrees={clampedTurretYaw}
-            pitchDegrees={clampedTurretPitch}
             onStationChange={(stationId) => {
               setActiveTurretStationId(stationId);
               enterCrewViewpointRef.current?.(stationId);
               commitTurretNavigation(stationId);
             }}
-            onYawChange={(yawDegrees) => {
+            onPoseChange={(station, yawDegrees, pitchDegrees) => {
               updateTurretStationPose(
-                activeTurretStation,
+                station,
                 yawDegrees,
-                activeTurretPose.pitchDegrees,
-              );
-            }}
-            onPitchChange={(pitchDegrees) => {
-              updateTurretStationPose(
-                activeTurretStation,
-                activeTurretPose.yawDegrees,
                 pitchDegrees,
               );
             }}
-            onReset={() => {
+            onReset={(station) => {
               const nextPoseStates = updateTurretStationPose(
-                activeTurretStation,
+                station,
                 0,
                 0,
               );
-              commitTurretNavigation(activeTurretStation.id, nextPoseStates);
+              commitTurretNavigation(station.id, nextPoseStates);
             }}
-            viewpointActive
-            viewpointMarkerEnabled={false}
-            onViewpointMarkerToggle={() => undefined}
-            onViewpointToggle={() => undefined}
-            onInteractionEnd={() =>
-              commitTurretNavigation(activeTurretStation.id)}
+            onInteractionEnd={(station) =>
+              commitTurretNavigation(station.id)}
           />
         </div>
       ) : null}

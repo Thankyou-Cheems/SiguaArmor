@@ -89,6 +89,15 @@ test("held WASD input stays frame-based while synchronizing every rendered layer
   );
 });
 
+test("operation indicators subscribe to transient turret poses", () => {
+  assert.match(viewerSource, /useSyncExternalStore/u);
+  assert.match(
+    viewerSource,
+    /liveTurretPoseStore\.publish\(nextPoseStates\)/u,
+  );
+  assert.match(viewerSource, /<LiveOperationTurretControls/u);
+});
+
 test("gunner overlay copy preserves the presentation-only evidence boundary", () => {
   assert.match(overlaySource, /不表示光学损坏、失明或命中机制/u);
   assert.doesNotMatch(overlaySource, /摧毁炮镜|致盲敌方|损伤光学设备/u);
