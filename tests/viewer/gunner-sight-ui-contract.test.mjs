@@ -90,6 +90,10 @@ test("held WASD input stays frame-based while synchronizing every rendered layer
     ),
     /render\(\);\s*return;/u,
   );
+  assert.match(viewerSource, /operationPoseCommitScheduler\.schedule/u);
+  assert.match(viewerSource, /flushOperationPoseCommitRef/u);
+  assert.doesNotMatch(viewerSource, /setVehicleWeaponOperationClockMs/u);
+  assert.match(overlaySource, /useLiveGunnerSightOperationState/u);
 });
 
 test("operation indicators subscribe to transient turret poses", () => {

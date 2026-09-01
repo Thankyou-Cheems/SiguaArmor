@@ -4,11 +4,73 @@ import test from "node:test";
 import {
   OPERATION_VIEW_STANDARD_ASPECT_RATIO,
   OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES,
+  createOperationViewPoseCommitScheduler,
   operationViewContinuousPoseDelta,
   operationViewKeyAction,
   operationViewHorizontalFovForMagnification,
   operationViewScenePresentation,
 } from "../../lib/operation-view-control.ts";
+
+function fakeCommitTimer() {
+  let nextHandle = 0;
+  const callbacks = new Map();
+  return {
+    setTimer(callback) {
+      const handle = ++nextHandle;
+      callbacks.set(handle, callback);
+      return handle;
+    },
+    clearTimer(handle) {
+      callbacks.delete(handle);
+    },
+    runAll() {
+      const pending = [...callbacks.values()];
+      callbacks.clear();
+      for (const callback of pending) callback();
+    },
+    get pendingCount() {
+      return callbacks.size;
+    },
+  };
+}
+
+test("operation pose commits coalesce while WASD input is still arriving", () => {
+  const timer = fakeCommitTimer();
+  const commits = [];
+  const scheduler = createOperationViewPoseCommitScheduler({
+    delayMs: 250,
+    setTimer: timer.setTimer,
+    clearTimer: timer.clearTimer,
+  });
+
+  scheduler.schedule(() => commits.push("first"));
+  scheduler.schedule(() => commits.push("latest"));
+  assert.equal(timer.pendingCount, 1);
+  assert.deepEqual(commits, []);
+
+  timer.runAll();
+  assert.deepEqual(commits, ["latest"]);
+});
+
+test("operation pose commit can be cancelled or flushed before leaving the view", () => {
+  const timer = fakeCommitTimer();
+  const commits = [];
+  const scheduler = createOperationViewPoseCommitScheduler({
+    delayMs: 250,
+    setTimer: timer.setTimer,
+    clearTimer: timer.clearTimer,
+  });
+
+  scheduler.schedule(() => commits.push("cancelled"));
+  scheduler.cancel();
+  timer.runAll();
+  assert.deepEqual(commits, []);
+
+  scheduler.schedule(() => commits.push("flushed"));
+  scheduler.flush();
+  assert.equal(timer.pendingCount, 0);
+  assert.deepEqual(commits, ["flushed"]);
+});
 
 test("held operation keys produce frame-rate-independent continuous motion", () => {
   const t72Rates = {
