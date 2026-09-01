@@ -216,6 +216,15 @@ function projectionPoints(points: readonly (readonly [number, number])[]) {
   return points.map(([x, y]) => `${x},${y}`).join(" ");
 }
 
+function projectionPath(
+  outlines: readonly (readonly (readonly [number, number])[])[],
+) {
+  return outlines
+    .filter((outline) => outline.length >= 3)
+    .map((outline) => `M ${projectionPoints(outline)} Z`)
+    .join(" ");
+}
+
 function rotateProjectionPoint(
   point: readonly [number, number],
   pivot: readonly [number, number],
@@ -287,16 +296,22 @@ function TurretTopDownProjection({
           data-kind={indicator?.kind ?? "weapon-station"}
           data-active={indicator?.active || undefined}
         >
-          {station.outline.length >= 3 ? (
-            <polygon points={projectionPoints(station.outline)} />
+          {station.outlines.length > 0 ? (
+            <path
+              d={projectionPath(station.outlines)}
+              fillRule="evenodd"
+            />
           ) : null}
-          <line
-            className="turret-limit-compass__projected-barrel"
-            x1={station.pivot[0]}
-            y1={station.pivot[1]}
-            x2={station.barrelEnd[0]}
-            y2={station.barrelEnd[1]}
-          />
+          {station.barrels.map((barrel) => (
+            <line
+              className="turret-limit-compass__projected-barrel"
+              x1={barrel.start[0]}
+              y1={barrel.start[1]}
+              x2={barrel.end[0]}
+              y2={barrel.end[1]}
+              key={barrel.placementId}
+            />
+          ))}
           <circle
             className="turret-limit-compass__projected-pivot"
             cx={station.pivot[0]}
@@ -321,9 +336,10 @@ function TurretTopDownProjection({
   );
   return (
     <g className="turret-limit-compass__topdown" aria-hidden="true">
-      <polygon
+      <path
         className="turret-limit-compass__projected-hull"
-        points={projectionPoints(projection.hull)}
+        d={projectionPath(projection.hullOutlines)}
+        fillRule="evenodd"
       />
       {roots.map((station) => renderStation(station, new Set()))}
       <g className="turret-limit-compass__vehicle-reference">
