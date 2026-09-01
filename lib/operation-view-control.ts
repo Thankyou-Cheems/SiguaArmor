@@ -4,6 +4,13 @@ export interface OperationViewKeyInput {
   repeat: boolean;
   zoomIndex: number;
   zoomCount: number;
+  equipmentRefs?: readonly string[];
+}
+
+export interface OperationViewEquipmentRefsInput {
+  stationEquipmentRefs: readonly string[];
+  sightEquipmentRefs: readonly string[];
+  playableEquipmentRefs: readonly string[];
 }
 
 export const OPERATION_VIEW_STANDARD_ASPECT_RATIO = 16 / 9;
@@ -256,7 +263,38 @@ export function operationViewMotionStep(
   };
 }
 
-export type OperationViewKeyAction = { kind: "zoom"; zoomIndex: number };
+export type OperationViewKeyAction =
+  | { kind: "zoom"; zoomIndex: number }
+  | { kind: "weapon"; equipmentRef: string; slotNumber: number };
+
+export function operationViewEquipmentRefs({
+  stationEquipmentRefs,
+  sightEquipmentRefs,
+  playableEquipmentRefs,
+}: OperationViewEquipmentRefsInput): string[] {
+  const available = new Set([
+    ...sightEquipmentRefs,
+    ...playableEquipmentRefs,
+  ]);
+  const ordered: string[] = [];
+  const append = (equipmentRef: string) => {
+    if (!equipmentRef || ordered.includes(equipmentRef)) return;
+    ordered.push(equipmentRef);
+  };
+  for (const equipmentRef of stationEquipmentRefs) {
+    if (available.has(equipmentRef)) append(equipmentRef);
+  }
+  for (const equipmentRef of sightEquipmentRefs) append(equipmentRef);
+  for (const equipmentRef of playableEquipmentRefs) append(equipmentRef);
+  return ordered;
+}
+
+function operationViewWeaponSlotForCode(code: string): number | null {
+  const match = /^(?:Digit|Numpad)([0-9])$/.exec(code);
+  if (!match) return null;
+  const digit = Number(match[1]);
+  return digit === 0 ? 10 : digit;
+}
 
 export function operationViewScenePresentation(active: boolean) {
   return active
@@ -278,7 +316,16 @@ export function operationViewKeyAction({
   repeat,
   zoomIndex,
   zoomCount,
+  equipmentRefs = [],
 }: OperationViewKeyInput): OperationViewKeyAction | null {
+  const slotNumber = operationViewWeaponSlotForCode(code);
+  if (slotNumber !== null) {
+    if (repeat) return null;
+    const equipmentRef = equipmentRefs[slotNumber - 1];
+    return equipmentRef
+      ? { kind: "weapon", equipmentRef, slotNumber }
+      : null;
+  }
   if (driverView) return null;
   switch (code) {
     case "KeyQ":

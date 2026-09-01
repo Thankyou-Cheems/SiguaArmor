@@ -8,7 +8,6 @@ export type RuntimeViewerCameraViewId =
 export interface RuntimeViewerCameraView {
   id: RuntimeViewerCameraViewId;
   label: string;
-  shortcut: "1" | "2" | "3" | "4" | "5";
   yawDegrees: number;
   pitchDegrees: number;
   kind: "soldier-ground" | "overhead";
@@ -26,11 +25,11 @@ export const SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG = 90;
 export const SQUAD_INFANTRY_STANDING_EYE_HEIGHT_M = 1.6;
 
 export const RUNTIME_VIEWER_CAMERA_VIEWS: readonly RuntimeViewerCameraView[] = [
-  { id: "front", label: "前", shortcut: "1", yawDegrees: 90, pitchDegrees: 0, kind: "soldier-ground" },
-  { id: "left", label: "左", shortcut: "2", yawDegrees: 0, pitchDegrees: 0, kind: "soldier-ground" },
-  { id: "rear", label: "后", shortcut: "3", yawDegrees: -90, pitchDegrees: 0, kind: "soldier-ground" },
-  { id: "right", label: "右", shortcut: "4", yawDegrees: 180, pitchDegrees: 0, kind: "soldier-ground" },
-  { id: "top", label: "顶", shortcut: "5", yawDegrees: 90, pitchDegrees: 89.5, kind: "overhead" },
+  { id: "front", label: "前", yawDegrees: 90, pitchDegrees: 0, kind: "soldier-ground" },
+  { id: "left", label: "左", yawDegrees: 0, pitchDegrees: 0, kind: "soldier-ground" },
+  { id: "rear", label: "后", yawDegrees: -90, pitchDegrees: 0, kind: "soldier-ground" },
+  { id: "right", label: "右", yawDegrees: 180, pitchDegrees: 0, kind: "soldier-ground" },
+  { id: "top", label: "顶", yawDegrees: 90, pitchDegrees: 89.5, kind: "overhead" },
 ] as const;
 
 /** 8 m matches the SQVehicle third-person spring arm; later values are scale checkpoints. */
