@@ -264,9 +264,11 @@ function displayedProjectionPivot(
 function TurretTopDownProjection({
   projection,
   orientationIndicators,
+  clipId,
 }: {
   projection: RuntimeVehicleTopDownProjection;
   orientationIndicators: readonly TurretOrientationIndicator[];
+  clipId: string;
 }) {
   const stationById = new Map(
     projection.stations.map((station) => [station.id, station]),
@@ -282,6 +284,33 @@ function TurretTopDownProjection({
     const children = projection.stations.filter(
       ({ parentId }) => parentId === station.id,
     );
+    const directionBarrel = indicator?.active
+      ? station.barrels.reduce((longest, barrel) => {
+          if (!longest) return barrel;
+          const lengthSquared = (barrel.end[0] - barrel.start[0]) ** 2 +
+            (barrel.end[1] - barrel.start[1]) ** 2;
+          const longestLengthSquared =
+            (longest.end[0] - longest.start[0]) ** 2 +
+            (longest.end[1] - longest.start[1]) ** 2;
+          return lengthSquared > longestLengthSquared ? barrel : longest;
+        }, station.barrels[0] ?? null)
+      : null;
+    const directionLength = directionBarrel
+      ? Math.hypot(
+          directionBarrel.end[0] - directionBarrel.start[0],
+          directionBarrel.end[1] - directionBarrel.start[1],
+        )
+      : 0;
+    const directionEnd = directionBarrel && directionLength > 1e-6
+      ? [
+          directionBarrel.end[0] +
+            (directionBarrel.end[0] - directionBarrel.start[0]) /
+              directionLength * 100,
+          directionBarrel.end[1] +
+            (directionBarrel.end[1] - directionBarrel.start[1]) /
+              directionLength * 100,
+        ] as const
+      : null;
     return (
       <g
         className="turret-limit-compass__projected-station-transform"
@@ -300,6 +329,15 @@ function TurretTopDownProjection({
             <path
               d={projectionPath(station.outlines)}
               fillRule="evenodd"
+            />
+          ) : null}
+          {directionBarrel && directionEnd ? (
+            <line
+              className="turret-limit-compass__projected-direction-guide"
+              x1={directionBarrel.end[0]}
+              y1={directionBarrel.end[1]}
+              x2={directionEnd[0]}
+              y2={directionEnd[1]}
             />
           ) : null}
           {station.barrels.map((barrel) => (
@@ -336,12 +374,14 @@ function TurretTopDownProjection({
   );
   return (
     <g className="turret-limit-compass__topdown" aria-hidden="true">
-      <path
-        className="turret-limit-compass__projected-hull"
-        d={projectionPath(projection.hullOutlines)}
-        fillRule="evenodd"
-      />
-      {roots.map((station) => renderStation(station, new Set()))}
+      <g clipPath={`url(#${clipId})`}>
+        <path
+          className="turret-limit-compass__projected-hull"
+          d={projectionPath(projection.hullOutlines)}
+          fillRule="evenodd"
+        />
+        {roots.map((station) => renderStation(station, new Set()))}
+      </g>
       <g className="turret-limit-compass__vehicle-reference">
         <path d="M50 8 47.8 12h4.4Z" />
         <text x="50" y="6.2">车头</text>
@@ -553,6 +593,9 @@ export function TurretLimitCompass({
       onPointerCancel={finishPointerInteraction}
     >
       <defs>
+        <clipPath id={`${patternIdPrefix}-topdown-field`}>
+          <circle cx="50" cy="50" r="38.4" />
+        </clipPath>
         <pattern
           id={`${patternIdPrefix}-yaw-locked`}
           width="4"
@@ -726,6 +769,7 @@ export function TurretLimitCompass({
         <TurretTopDownProjection
           projection={topDownProjection}
           orientationIndicators={orientationIndicators}
+          clipId={`${patternIdPrefix}-topdown-field`}
         />
       ) : (
         <>
