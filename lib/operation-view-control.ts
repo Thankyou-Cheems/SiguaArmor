@@ -8,9 +8,12 @@ export interface OperationViewKeyInput {
 
 export const OPERATION_VIEW_STANDARD_ASPECT_RATIO = 16 / 9;
 export const OPERATION_VIEW_STANDARD_HORIZONTAL_FOV_DEGREES = 90;
-const OPERATION_VIEW_YAW_SPEED_DEGREES_PER_SECOND = 30;
-const OPERATION_VIEW_PITCH_SPEED_DEGREES_PER_SECOND = 15;
 const OPERATION_VIEW_MAX_FRAME_SECONDS = 0.05;
+
+export interface OperationViewMotionRates {
+  yawDegreesPerSecond: number | null | undefined;
+  pitchDegreesPerSecond: number | null | undefined;
+}
 
 export function operationViewHorizontalFovForMagnification(
   magnification: number | null | undefined,
@@ -30,27 +33,32 @@ export function operationViewHorizontalFovForMagnification(
 export function operationViewContinuousPoseDelta(
   heldCodes: readonly string[],
   elapsedSeconds: number,
+  motionRates: OperationViewMotionRates,
 ): { yawDelta: number; pitchDelta: number } | null {
   if (!Number.isFinite(elapsedSeconds) || elapsedSeconds <= 0) return null;
   const held = new Set(heldCodes);
   const yawDirection = Number(held.has("KeyD")) - Number(held.has("KeyA"));
   const pitchDirection = Number(held.has("KeyW")) - Number(held.has("KeyS"));
   if (yawDirection === 0 && pitchDirection === 0) return null;
+  const yawRate = motionRates.yawDegreesPerSecond;
+  const pitchRate = motionRates.pitchDegreesPerSecond;
+  if (
+    (yawDirection !== 0 &&
+      (typeof yawRate !== "number" || !Number.isFinite(yawRate) || yawRate < 0)) ||
+    (pitchDirection !== 0 &&
+      (typeof pitchRate !== "number" || !Number.isFinite(pitchRate) || pitchRate < 0))
+  ) return null;
   const frameSeconds = Math.min(
     elapsedSeconds,
     OPERATION_VIEW_MAX_FRAME_SECONDS,
   );
   return {
-    yawDelta:
-      yawDirection * OPERATION_VIEW_YAW_SPEED_DEGREES_PER_SECOND * frameSeconds,
-    pitchDelta:
-      pitchDirection * OPERATION_VIEW_PITCH_SPEED_DEGREES_PER_SECOND * frameSeconds,
+    yawDelta: yawDirection * (yawRate ?? 0) * frameSeconds,
+    pitchDelta: pitchDirection * (pitchRate ?? 0) * frameSeconds,
   };
 }
 
-export type OperationViewKeyAction =
-  | { kind: "pose"; yawDelta: number; pitchDelta: number }
-  | { kind: "zoom"; zoomIndex: number };
+export type OperationViewKeyAction = { kind: "zoom"; zoomIndex: number };
 
 export function operationViewScenePresentation(active: boolean) {
   return active
@@ -75,14 +83,6 @@ export function operationViewKeyAction({
 }: OperationViewKeyInput): OperationViewKeyAction | null {
   if (driverView) return null;
   switch (code) {
-    case "KeyW":
-      return { kind: "pose", yawDelta: 0, pitchDelta: 0.5 };
-    case "KeyS":
-      return { kind: "pose", yawDelta: 0, pitchDelta: -0.5 };
-    case "KeyA":
-      return { kind: "pose", yawDelta: -1, pitchDelta: 0 };
-    case "KeyD":
-      return { kind: "pose", yawDelta: 1, pitchDelta: 0 };
     case "KeyQ":
       if (repeat || zoomCount <= 1) return null;
       return {

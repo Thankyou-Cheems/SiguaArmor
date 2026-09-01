@@ -48,6 +48,14 @@ export interface WikiWeaponRuntimeSourceDocument {
       gunName: string;
       displayName: string;
       turretName: string | null;
+      operation: {
+        numberOfMags: number;
+        magazineSize: number;
+        tacticalReloadSeconds: number;
+        dryReloadSeconds: number;
+        roundsPerMinute: number;
+        timeBetweenShotsSeconds: number;
+      };
     }>;
     weapons: Array<{
       weaponAssignmentId: string;
@@ -98,6 +106,14 @@ export interface RuntimeStationEquipmentBinding {
     gunName: string;
     displayName: string;
     turretName: string | null;
+  };
+  operation: {
+    numberOfMags: number;
+    magazineSize: number;
+    tacticalReloadSeconds: number;
+    dryReloadSeconds: number;
+    roundsPerMinute: number;
+    timeBetweenShotsSeconds: number;
   };
 }
 
@@ -281,6 +297,7 @@ export function createRuntimeStationEquipmentResolver(
           displayName: equipment.displayName,
           turretName: equipment.turretName,
         },
+        operation: equipment.operation,
       },
     ]),
   );
