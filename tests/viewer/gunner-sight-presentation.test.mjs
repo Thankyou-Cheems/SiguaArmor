@@ -124,3 +124,42 @@ test("renders the complete authored stack and replaces only the selected reticle
   );
   assert.equal(layers.some(({ widgetName }) => widgetName === "Cracked_Screen"), false);
 });
+
+test("keeps source global paint order across root and nested panel layers", () => {
+  const projections = ["dial"].map(projection);
+  const station = {
+    layers: [{
+      widgetName: "Dial",
+      role: "auxiliary-static",
+      state: "observed-static-brush-resource",
+      visibility: "Visible",
+      projectionRef: "dial",
+      paintOrder: 2,
+      layout: {
+        state: "observed-canvas-panel-path",
+        referenceCanvas: { width: 1920, height: 1080 },
+        steps: [
+          ...layout("Instruments", 0).steps,
+          ...layout("Dial", 0).steps,
+        ],
+      },
+    }, {
+      widgetName: "SideMask",
+      role: "auxiliary-static",
+      state: "observed-solid-brush",
+      visibility: "Visible",
+      projectionRef: null,
+      brushDrawAs: "Image",
+      colorAndOpacity: { R: 0, G: 0, B: 0, A: 1 },
+      paintOrder: 1,
+      layout: layout("SideMask", 0),
+    }],
+    textLayers: [],
+  };
+
+  const layers = compileGunnerSightRenderLayers(station, undefined, projections);
+  assert.deepEqual(
+    layers.map(({ kind, widgetName }) => `${kind}:${widgetName}`),
+    ["solid:SideMask", "image:Dial"],
+  );
+});
