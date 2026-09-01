@@ -63,7 +63,7 @@ test("operation view exposes direct ring control and keyboard-only camera input"
   assert.match(controlsSource, /进入真实操作视角/u);
 });
 
-test("held WASD input runs on a lightweight animation-frame path", () => {
+test("held WASD input stays frame-based while synchronizing every rendered layer", () => {
   assert.match(viewerSource, /const heldOperationKeys = new Set<string>\(\)/u);
   assert.match(viewerSource, /const stepOperationMovement = \(frameTime: number\) =>/u);
   assert.match(viewerSource, /requestAnimationFrame\(stepOperationMovement\)/u);
@@ -72,9 +72,20 @@ test("held WASD input runs on a lightweight animation-frame path", () => {
     viewerSource,
     /updateTurretStationPose\([\s\S]*?\{ transient: true \},\s*\);/u,
   );
-  assert.match(
-    viewerSource,
-    /const applyTurretPose = \(options:[\s\S]*?interactive[\s\S]*?if \(interactive\) \{[\s\S]*?render\(\);\s*return;/u,
+  const applyStart = viewerSource.indexOf("const applyTurretPose = (");
+  const applyEnd = viewerSource.indexOf(
+    "applyTurretPoseRef.current = applyTurretPose",
+    applyStart,
+  );
+  const applySource = viewerSource.slice(applyStart, applyEnd);
+  assert.match(applySource, /operationInputMode = "continuous-raf"/u);
+  assert.match(applySource, /setHitSceneThreeModelComponentPoses\(/u);
+  assert.doesNotMatch(
+    applySource.slice(
+      applySource.indexOf("if (interactive)"),
+      applySource.indexOf("setHitSceneThreeModelComponentPoses("),
+    ),
+    /render\(\);\s*return;/u,
   );
 });
 

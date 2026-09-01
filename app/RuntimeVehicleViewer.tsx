@@ -4438,6 +4438,7 @@ export function RuntimeVehicleViewer({
               fallbackSpecs.get(turretName)?.hitActorClassNames ?? []
             )
           : [],
+        hitOwnerSeatIndex: crewSeat.additionalSeatConfigIndex,
         siblingFallbackYawAnchorComponentNames: allTurretNames
           .filter((turretName) => turretName !== seat.turretName)
           .map((turretName) =>
@@ -7292,6 +7293,7 @@ export function RuntimeVehicleViewer({
     >();
     let lastAppliedHitModel: HitSceneThreeModel | null = null;
     let lastAppliedHitPoseKey: string | null = null;
+    let protectionMapHitPoseDirty = false;
     exteriorOccurrencesRef.current = exteriorOccurrences;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -8422,23 +8424,9 @@ export function RuntimeVehicleViewer({
               `rotate(${pose.yawDegrees.toFixed(3)} ${pivotX} ${pivotY})`,
             );
           });
-        visualGroup.updateMatrixWorld(true);
-        analysisVisualGroup.updateMatrixWorld(true);
-        const crewViewpoint = updateCrewViewpointMarker();
-        updateDriverViewpointMarker();
-        if (
-          crewViewpoint &&
-          crewViewpoint.station.id === activeCrewViewStationIdRef.current
-        ) {
-          applyCrewViewCameraPose(
-            crewViewpoint.station,
-            crewViewpoint.pose,
-          );
-        }
-        render();
-        return;
+      } else {
+        host.dataset.operationInputMode = "settled";
       }
-      host.dataset.operationInputMode = "settled";
       const hitModel = hitModelRef.current;
       const parsedHit = parsedHitRef.current;
       const turretHitPoseKey = poses.length > 0
@@ -8542,6 +8530,7 @@ export function RuntimeVehicleViewer({
               assembly: pose.assembly,
               articulation: pose.articulation,
               components: parsedHit.header.components,
+              owners: parsedHit.header.owners,
             });
           const pitchComponents = new Set(
             componentAssembly.pitchComponentIndices,
@@ -8618,33 +8607,35 @@ export function RuntimeVehicleViewer({
         lastAppliedHitPoseKey = hitPoseKey;
         hitPoseChanged = true;
       }
-      if (poses.length > 0) {
-        let matrixChecksum = 2166136261;
-        for (const character of appliedMatrices.join("|")) {
-          matrixChecksum ^= character.charCodeAt(0);
-          matrixChecksum = Math.imul(matrixChecksum, 16777619);
+      if (!interactive) {
+        if (poses.length > 0) {
+          let matrixChecksum = 2166136261;
+          for (const character of appliedMatrices.join("|")) {
+            matrixChecksum ^= character.charCodeAt(0);
+            matrixChecksum = Math.imul(matrixChecksum, 16777619);
+          }
+          host.dataset.turretAppliedOccurrenceCount = String(
+            appliedMatrices.length,
+          );
+          host.dataset.turretAppliedPose = [
+            ...poses.map((pose) => [
+              pose.stationId,
+              pose.yawDegrees.toFixed(3),
+              pose.pitchDegrees.toFixed(3),
+            ].join(":")),
+          ].join(";");
+          host.dataset.turretAppliedMatrixChecksum = (
+            matrixChecksum >>> 0
+          ).toString(16);
+          host.dataset.turretAppliedAnalysisOccurrenceCount = String(
+            appliedAnalysisOccurrenceCount,
+          );
+        } else {
+          delete host.dataset.turretAppliedOccurrenceCount;
+          delete host.dataset.turretAppliedPose;
+          delete host.dataset.turretAppliedMatrixChecksum;
+          delete host.dataset.turretAppliedAnalysisOccurrenceCount;
         }
-        host.dataset.turretAppliedOccurrenceCount = String(
-          appliedMatrices.length,
-        );
-        host.dataset.turretAppliedPose = [
-          ...poses.map((pose) => [
-            pose.stationId,
-            pose.yawDegrees.toFixed(3),
-            pose.pitchDegrees.toFixed(3),
-          ].join(":")),
-        ].join(";");
-        host.dataset.turretAppliedMatrixChecksum = (
-          matrixChecksum >>> 0
-        ).toString(16);
-        host.dataset.turretAppliedAnalysisOccurrenceCount = String(
-          appliedAnalysisOccurrenceCount,
-        );
-      } else {
-        delete host.dataset.turretAppliedOccurrenceCount;
-        delete host.dataset.turretAppliedPose;
-        delete host.dataset.turretAppliedMatrixChecksum;
-        delete host.dataset.turretAppliedAnalysisOccurrenceCount;
       }
       visualGroup.updateMatrixWorld(true);
       analysisVisualGroup.updateMatrixWorld(true);
@@ -8663,8 +8654,12 @@ export function RuntimeVehicleViewer({
           crewViewpoint.pose,
         );
       }
-      if (hitPoseChanged && protectionEnabledRef.current) {
-        scheduleProtectionMapRef.current?.({ invalidate: true });
+      if (interactive && hitPoseChanged) protectionMapHitPoseDirty = true;
+      if (!interactive && (hitPoseChanged || protectionMapHitPoseDirty)) {
+        if (protectionEnabledRef.current) {
+          scheduleProtectionMapRef.current?.({ invalidate: true });
+        }
+        protectionMapHitPoseDirty = false;
       }
       render();
     };
