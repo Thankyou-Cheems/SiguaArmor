@@ -10483,6 +10483,9 @@ export function RuntimeVehicleViewer({
           }];
         },
       );
+      const vehicleGeneratedClassName = preview.generatedClass
+        ?.split(".")
+        .at(-1) ?? null;
       const topDownProjectionStartedAt = performance.now();
       const topDownProjection = buildRuntimeVehicleTopDownProjection({
         occurrences: renderPlacements.flatMap((placement) => {
@@ -10491,6 +10494,10 @@ export function RuntimeVehicleViewer({
             stableOccurrenceId: placement.stableOccurrenceId,
             source,
             matrix: placement.matrix,
+            bodyCandidate:
+              vehicleGeneratedClassName !== null &&
+              placement.actor.replace(/_\d+$/u, "") ===
+                vehicleGeneratedClassName,
           }] : [];
         }),
         stations: projectionStations,
@@ -10502,6 +10509,9 @@ export function RuntimeVehicleViewer({
           : "fallback";
         host.dataset.turretTopDownSampledVertexCount = String(
           topDownProjection?.sampledVertexCount ?? 0,
+        );
+        host.dataset.turretTopDownSampledTriangleCount = String(
+          topDownProjection?.sampledTriangleCount ?? 0,
         );
         host.dataset.turretTopDownOutputPointCount = String(
           topDownProjection?.outputPointCount ?? 0,

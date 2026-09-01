@@ -16133,6 +16133,10 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   opacity: 0.68;
 }
 
+.turret-limit-compass__projected-station > path {
+  fill-opacity: 0.28;
+}
+
 .turret-limit-compass__projected-station[data-kind="weapon-station"] {
   --turret-projection-tone: #63d7e9;
 }
@@ -16147,10 +16151,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   filter: drop-shadow(0 0 2px color-mix(in srgb, var(--turret-projection-tone) 78%, transparent));
 }
 
+.turret-limit-compass__projected-station[data-active="true"] > path {
+  fill-opacity: 0.36;
+}
+
 .turret-limit-compass__projected-barrel {
   fill: none;
-  stroke: currentcolor;
-  stroke-width: 1.35;
+  stroke: color-mix(in srgb, currentcolor 82%, #fff);
+  stroke-width: 1.45;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 1px rgba(5, 8, 7, 0.9));
 }
 
 .turret-limit-compass__projected-pivot {
