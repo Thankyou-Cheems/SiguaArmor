@@ -10573,6 +10573,10 @@ export function RuntimeVehicleViewer({
               station,
               runtimeTurretStationsRef.current,
             ),
+            centerPriority:
+              station.indicatorKind === "main-turret"
+                ? 0
+                : station.seat.index,
             placementIds: station.assembly.yawPlacementIds,
             barrelPlacementIds:
               station.assembly.pitchPlacementIds.length > 0

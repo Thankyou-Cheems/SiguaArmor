@@ -250,6 +250,125 @@ test("skinned vehicle bodies use posed vertices instead of collapsed bind geomet
   );
 });
 
+test("one primary weapon keeps its yaw pivot at the compass center without distorting the hull", () => {
+  const projection = buildRuntimeVehicleTopDownProjection({
+    occurrences: [
+      occurrence("hull", boxSource([8, 1.5, 4]), [0, 0, 0], true),
+      occurrence("turret", boxSource([1.8, 0.8, 1.6]), [1, 1.2, 0.5]),
+      occurrence("gun", boxSource([4, 0.16, 0.16], [2, 0, 0]), [1, 1.2, 0.5]),
+    ],
+    stations: [{
+      id: "f2-main",
+      parentId: null,
+      depth: 0,
+      placementIds: ["turret", "gun"],
+      barrelPlacementIds: ["gun"],
+      yawPivot: [1, 1.2, 0.5],
+    }],
+  });
+
+  assert.ok(projection);
+  assert.deepEqual(projection.stations[0].pivot, [50, 50]);
+  const hullBounds = outlinesBounds(projection.hullOutlines);
+  const width = hullBounds.maximumX - hullBounds.minimumX;
+  const height = hullBounds.maximumY - hullBounds.minimumY;
+  assert.ok(
+    Math.abs(width / height - 0.5) < 0.08,
+    "centering on the main weapon must retain one uniform vehicle scale",
+  );
+});
+
+test("mirrored independent weapon stations keep the helicopter hull centered", () => {
+  const projection = buildRuntimeVehicleTopDownProjection({
+    occurrences: [
+      occurrence("airframe", boxSource([8, 1.8, 10]), [0, 0, 0], true),
+      occurrence("left-gun", boxSource([2.4, 0.14, 0.14], [1.2, 0, 0]), [0, 1, -0.8]),
+      occurrence("right-gun", boxSource([2.4, 0.14, 0.14], [1.2, 0, 0]), [0, 1, 0.8]),
+    ],
+    stations: [{
+      id: "left-door-gun",
+      parentId: null,
+      depth: 0,
+      placementIds: ["left-gun"],
+      barrelPlacementIds: ["left-gun"],
+      yawPivot: [0, 1, -0.8],
+    }, {
+      id: "right-door-gun",
+      parentId: null,
+      depth: 0,
+      placementIds: ["right-gun"],
+      barrelPlacementIds: ["right-gun"],
+      yawPivot: [0, 1, 0.8],
+    }],
+  });
+
+  assert.ok(projection);
+  const hullBounds = outlinesBounds(projection.hullOutlines);
+  const rasterCell = 100 / 192;
+  assert.ok(
+    Math.abs((hullBounds.minimumX + hullBounds.maximumX) / 2 - 50) <= rasterCell,
+  );
+  assert.ok(
+    Math.abs((hullBounds.minimumY + hullBounds.maximumY) / 2 - 50) <= rasterCell,
+  );
+  assert.notDeepEqual(projection.stations[0].pivot, [50, 50]);
+  assert.notDeepEqual(projection.stations[1].pivot, [50, 50]);
+});
+
+test("upper projected stations render after lower assemblies with an opaque fill", () => {
+  const projection = buildRuntimeVehicleTopDownProjection({
+    occurrences: [
+      occurrence("hull", boxSource([7, 1.5, 3.4]), [0, 0, 0], true),
+      occurrence("lower-turret", boxSource([2, 0.8, 1.8]), [0, 1, 0]),
+      occurrence("upper-rws", boxSource([1, 0.7, 0.8]), [0.2, 1.7, 0]),
+    ],
+    stations: [{
+      id: "upper-rws",
+      parentId: "lower-turret",
+      depth: 1,
+      placementIds: ["upper-rws"],
+      barrelPlacementIds: [],
+      yawPivot: [0.2, 1.7, 0],
+    }, {
+      id: "lower-turret",
+      parentId: null,
+      depth: 0,
+      placementIds: ["lower-turret"],
+      barrelPlacementIds: [],
+      yawPivot: [0, 1, 0],
+    }],
+  });
+
+  assert.ok(projection);
+  assert.deepEqual(
+    projection.stations.map(({ id }) => id),
+    ["lower-turret", "upper-rws"],
+  );
+  assert.match(
+    styles,
+    /\.turret-limit-compass__projected-station\s*\{[^}]*fill-opacity:\s*1[^}]*opacity:\s*1/u,
+  );
+  assert.match(
+    styles,
+    /\.turret-limit-compass__projected-station\s*>\s*path\s*\{[^}]*fill-opacity:\s*1/u,
+  );
+  assert.match(
+    styles,
+    /\.turret-limit-compass__projected-hull\s*\{[^}]*fill:\s*rgb\(/u,
+  );
+});
+
+test("the projected barrel front continues into a low-visibility direction guide", () => {
+  assert.match(
+    controlsSource,
+    /turret-limit-compass__projected-direction-guide/u,
+  );
+  assert.match(
+    styles,
+    /\.turret-limit-compass__projected-direction-guide\s*\{[^}]*stroke-opacity:/u,
+  );
+});
+
 test("viewer reuses loaded geometry and rotates nested projected station groups", () => {
   assert.match(viewerSource, /buildRuntimeVehicleTopDownProjection/u);
   assert.match(viewerSource, /source:\s*sources\.get|const source = sources\.get/u);

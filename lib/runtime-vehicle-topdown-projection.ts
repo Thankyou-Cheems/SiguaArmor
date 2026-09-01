@@ -13,6 +13,8 @@ export interface RuntimeVehicleTopDownStationInput {
   id: string;
   parentId: string | null;
   depth: number;
+  /** Lower values win when one independent station should anchor the compass. */
+  centerPriority?: number;
   placementIds: readonly string[];
   barrelPlacementIds: readonly string[];
   yawPivot: readonly [number, number, number];
@@ -75,7 +77,7 @@ interface OccurrenceProjectionGeometry {
 
 const MAX_POINTS_PER_MESH = 2_048;
 const MAX_TRIANGLES_PER_MESH = 8_192;
-const PROJECTION_EXTENT = 62;
+const PROJECTION_RADIUS = 36.5;
 const PROJECTION_GRID_SIZE = 192;
 const PROJECTION_SIMPLIFY_TOLERANCE = 0.32;
 const MINIMUM_CONTOUR_AREA = 0.08;
@@ -521,6 +523,70 @@ function geometryFootprintArea(geometry: OccurrenceProjectionGeometry) {
   return (maximumX - minimumX) * (maximumY - minimumY);
 }
 
+function pointBounds(points: readonly RuntimeVehicleTopDownPoint[]) {
+  const minimumX = Math.min(...points.map((point) => point[0]));
+  const maximumX = Math.max(...points.map((point) => point[0]));
+  const minimumY = Math.min(...points.map((point) => point[1]));
+  const maximumY = Math.max(...points.map((point) => point[1]));
+  return {
+    minimumX,
+    maximumX,
+    minimumY,
+    maximumY,
+    center: [
+      (minimumX + maximumX) / 2,
+      (minimumY + maximumY) / 2,
+    ] as RuntimeVehicleTopDownPoint,
+  };
+}
+
+function hasMirroredIndependentStations(
+  stations: readonly {
+    pivot: RuntimeVehicleTopDownPoint;
+    parentId: string | null;
+  }[],
+  hullBounds: ReturnType<typeof pointBounds>,
+) {
+  const roots = stations.filter(({ parentId }) => parentId === null);
+  if (roots.length < 2 || roots.length % 2 !== 0) return false;
+  const hullWidth = hullBounds.maximumX - hullBounds.minimumX;
+  const hullLength = hullBounds.maximumY - hullBounds.minimumY;
+  // Rotor discs and other wide airframe geometry can dwarf the actual
+  // left/right door-gun separation, so only reject stations effectively on
+  // the hull centerline here. Pair separation is still checked below.
+  const minimumLateralOffset = Math.max(hullWidth * 0.04, 0.1);
+  const lateralTolerance = Math.max(hullWidth * 0.16, 0.2);
+  const longitudinalTolerance = Math.max(hullLength * 0.15, 0.25);
+  const unmatched = new Set(roots.map((_, index) => index));
+  for (let leftIndex = 0; leftIndex < roots.length; leftIndex += 1) {
+    if (!unmatched.has(leftIndex)) continue;
+    const left = roots[leftIndex].pivot;
+    const leftOffset = left[0] - hullBounds.center[0];
+    if (Math.abs(leftOffset) < minimumLateralOffset) return false;
+    let bestMatch: { index: number; score: number } | null = null;
+    for (let rightIndex = leftIndex + 1; rightIndex < roots.length; rightIndex += 1) {
+      if (!unmatched.has(rightIndex)) continue;
+      const right = roots[rightIndex].pivot;
+      const rightOffset = right[0] - hullBounds.center[0];
+      if (leftOffset * rightOffset >= 0) continue;
+      const lateralError = Math.abs(leftOffset + rightOffset);
+      const longitudinalError = Math.abs(left[1] - right[1]);
+      if (
+        lateralError > lateralTolerance ||
+        longitudinalError > longitudinalTolerance
+      ) continue;
+      const score = lateralError + longitudinalError;
+      if (!bestMatch || score < bestMatch.score) {
+        bestMatch = { index: rightIndex, score };
+      }
+    }
+    if (!bestMatch) return false;
+    unmatched.delete(leftIndex);
+    unmatched.delete(bestMatch.index);
+  }
+  return unmatched.size === 0;
+}
+
 export function buildRuntimeVehicleTopDownProjection({
   occurrences,
   stations,
@@ -556,7 +622,11 @@ export function buildRuntimeVehicleTopDownProjection({
   }
   if (occurrenceGeometry.size === 0) return null;
 
-  const stationInputs = [...stations].sort(
+  const indexedStations = stations.map((station, sourceIndex) => ({
+    ...station,
+    sourceIndex,
+  }));
+  const stationInputs = [...indexedStations].sort(
     (left, right) => right.depth - left.depth || left.id.localeCompare(right.id),
   );
   const largestFootprintOccurrenceId = [...occurrenceGeometry]
@@ -604,61 +674,71 @@ export function buildRuntimeVehicleTopDownProjection({
   const hullPointsRaw = hullGeometry.flatMap(({ points }) => points);
   if (convexHull(hullPointsRaw).length < 3) return null;
 
-  const stationRaw = stations.map((station) => {
-    const ownedGeometry = station.placementIds.flatMap((placementId) =>
-      ownerByOccurrence.get(placementId) === station.id
-        ? [occurrenceGeometry.get(placementId)].filter(
-            (geometry): geometry is OccurrenceProjectionGeometry =>
-              geometry !== undefined,
-          )
-        : []
-    );
-    const fallbackGeometry = station.placementIds.flatMap(
-      (placementId) => chassisOccurrenceIds.has(placementId)
-        ? []
-        : [occurrenceGeometry.get(placementId)].filter(
-            (geometry): geometry is OccurrenceProjectionGeometry =>
-              geometry !== undefined,
-          ),
-    );
-    const geometry = ownedGeometry.length > 0
-      ? ownedGeometry
-      : fallbackGeometry;
-    const points = geometry.flatMap((entry) => entry.points);
-    const triangles = geometry.flatMap((entry) => entry.triangles);
-    const pivot = topDownPoint(new THREE.Vector3(...station.yawPivot));
-    const barrels = [...new Set(station.barrelPlacementIds)].flatMap(
-      (placementId) => {
-        const barrelPoints = occurrenceGeometry.get(placementId)?.points ?? [];
-        if (barrelPoints.length === 0) return [];
-        return [{
-          placementId,
+  const stationRaw = [...indexedStations]
+    .sort((left, right) =>
+      left.depth - right.depth ||
+      (left.centerPriority ?? left.sourceIndex) -
+        (right.centerPriority ?? right.sourceIndex) ||
+      left.sourceIndex - right.sourceIndex ||
+      left.id.localeCompare(right.id)
+    )
+    .map((station) => {
+      const ownedGeometry = station.placementIds.flatMap((placementId) =>
+        ownerByOccurrence.get(placementId) === station.id
+          ? [occurrenceGeometry.get(placementId)].filter(
+              (geometry): geometry is OccurrenceProjectionGeometry =>
+                geometry !== undefined,
+            )
+          : []
+      );
+      const fallbackGeometry = station.placementIds.flatMap(
+        (placementId) => chassisOccurrenceIds.has(placementId)
+          ? []
+          : [occurrenceGeometry.get(placementId)].filter(
+              (geometry): geometry is OccurrenceProjectionGeometry =>
+                geometry !== undefined,
+            ),
+      );
+      const geometry = ownedGeometry.length > 0
+        ? ownedGeometry
+        : fallbackGeometry;
+      const points = geometry.flatMap((entry) => entry.points);
+      const triangles = geometry.flatMap((entry) => entry.triangles);
+      const pivot = topDownPoint(new THREE.Vector3(...station.yawPivot));
+      const barrels = [...new Set(station.barrelPlacementIds)].flatMap(
+        (placementId) => {
+          const barrelPoints = occurrenceGeometry.get(placementId)?.points ?? [];
+          if (barrelPoints.length === 0) return [];
+          return [{
+            placementId,
+            start: pivot,
+            end: farthestPoint(barrelPoints, pivot),
+          }];
+        },
+      );
+      if (barrels.length === 0 && points.length > 0) {
+        barrels.push({
+          placementId: `${station.id}:fallback`,
           start: pivot,
-          end: farthestPoint(barrelPoints, pivot),
-        }];
-      },
-    );
-    if (barrels.length === 0 && points.length > 0) {
-      barrels.push({
-        placementId: `${station.id}:fallback`,
-        start: pivot,
-        end: farthestPoint(points, pivot),
-      });
-    }
-    const barrelEnd = farthestPoint(
-      barrels.map(({ end }) => end),
-      pivot,
-    );
-    return {
-      id: station.id,
-      parentId: station.parentId,
-      points,
-      triangles,
-      pivot,
-      barrelEnd,
-      barrels,
-    };
-  });
+          end: farthestPoint(points, pivot),
+        });
+      }
+      const barrelEnd = farthestPoint(
+        barrels.map(({ end }) => end),
+        pivot,
+      );
+      return {
+        id: station.id,
+        parentId: station.parentId,
+        depth: station.depth,
+        centerPriority: station.centerPriority ?? station.sourceIndex,
+        points,
+        triangles,
+        pivot,
+        barrelEnd,
+        barrels,
+      };
+    });
 
   const boundsPoints = [
     ...allPoints,
@@ -667,18 +747,29 @@ export function buildRuntimeVehicleTopDownProjection({
       barrelEnd,
     ]),
   ];
-  const minimumX = Math.min(...boundsPoints.map((point) => point[0]));
-  const maximumX = Math.max(...boundsPoints.map((point) => point[0]));
-  const minimumY = Math.min(...boundsPoints.map((point) => point[1]));
-  const maximumY = Math.max(...boundsPoints.map((point) => point[1]));
-  const span = Math.max(maximumX - minimumX, maximumY - minimumY);
-  if (!Number.isFinite(span) || span <= 1e-6) return null;
-  const centerX = (minimumX + maximumX) / 2;
-  const centerY = (minimumY + maximumY) / 2;
-  const scale = PROJECTION_EXTENT / span;
+  const hullBounds = pointBounds(hullPointsRaw);
+  const primaryRootStation = stationRaw
+    .filter(({ parentId }) => parentId === null)
+    .sort((left, right) =>
+      left.centerPriority - right.centerPriority ||
+      left.depth - right.depth ||
+      left.id.localeCompare(right.id)
+    )[0] ?? null;
+  const projectionCenter = hasMirroredIndependentStations(
+      stationRaw,
+      hullBounds,
+    )
+    ? hullBounds.center
+    : primaryRootStation?.pivot ?? hullBounds.center;
+  const maximumRadius = Math.max(...boundsPoints.map((point) => Math.hypot(
+    point[0] - projectionCenter[0],
+    point[1] - projectionCenter[1],
+  )));
+  if (!Number.isFinite(maximumRadius) || maximumRadius <= 1e-6) return null;
+  const scale = PROJECTION_RADIUS / maximumRadius;
   const normalize = (point: RuntimeVehicleTopDownPoint) => [
-    rounded(50 + (point[0] - centerX) * scale),
-    rounded(50 + (point[1] - centerY) * scale),
+    rounded(50 + (point[0] - projectionCenter[0]) * scale),
+    rounded(50 + (point[1] - projectionCenter[1]) * scale),
   ] as RuntimeVehicleTopDownPoint;
   const normalizeTriangle = (
     triangle: RuntimeVehicleTopDownTriangle,
