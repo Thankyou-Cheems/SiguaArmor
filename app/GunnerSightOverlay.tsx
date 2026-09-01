@@ -4,11 +4,13 @@ import { useEffect, useMemo } from "react";
 
 import { wikiUrl } from "../lib/wiki-source";
 import { gunnerSightLayerPlacement } from "../lib/gunner-sight-layout";
+import { compileGunnerSightRenderLayers } from "../lib/gunner-sight-presentation";
 import type {
   GunnerSightLayer,
   GunnerSightProjection,
   GunnerSightStage,
   GunnerSightStation,
+  GunnerSightTextLayer,
   GunnerSightWeaponMode,
 } from "../lib/vehicle-gunner-sight";
 
@@ -29,14 +31,13 @@ function stageLabel(stage: GunnerSightStage, magnificationLevels: number[]) {
 function GunnerSightLayerImage({
   layer,
   projection,
-  role,
 }: {
   layer: GunnerSightLayer | null;
   projection: GunnerSightProjection;
-  role: "viewport-screen" | "reticle";
 }) {
   const placement = layer ? gunnerSightLayerPlacement(layer) : null;
   const source = wikiUrl(projection.assetUrl);
+  const role = layer?.role ?? "reticle";
   if (!placement) {
     return (
       <img
@@ -69,6 +70,112 @@ function GunnerSightLayerImage({
         transform={placement.transform}
         preserveAspectRatio="none"
       />
+    </svg>
+  );
+}
+
+function linearChannelToSrgbByte(value: number) {
+  const linear = Math.min(1, Math.max(0, value));
+  const srgb = linear <= 0.0031308
+    ? 12.92 * linear
+    : 1.055 * linear ** (1 / 2.4) - 0.055;
+  return Math.round(srgb * 255);
+}
+
+function linearColorCss(
+  color: { R: number; G: number; B: number; A: number } | null | undefined,
+  opacity = 1,
+) {
+  if (!color) return `rgba(255, 255, 255, ${opacity})`;
+  return `rgba(${linearChannelToSrgbByte(color.R)}, ${linearChannelToSrgbByte(color.G)}, ${linearChannelToSrgbByte(color.B)}, ${Math.min(1, Math.max(0, color.A * opacity))})`;
+}
+
+function GunnerSightSolidLayer({ layer }: { layer: GunnerSightLayer }) {
+  const placement = gunnerSightLayerPlacement(layer);
+  if (!placement) return null;
+  return (
+    <svg
+      className="gunner-sight-overlay__layout"
+      data-layout-role="auxiliary-static"
+      data-layer-kind="observed-solid-brush"
+      data-layout-state={layer.layout?.state}
+      data-widget-name={layer.widgetName}
+      viewBox={placement.viewBox.join(" ")}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <rect
+        width={placement.width}
+        height={placement.height}
+        transform={placement.transform}
+        fill={linearColorCss(layer.colorAndOpacity, layer.renderOpacity ?? 1)}
+      />
+    </svg>
+  );
+}
+
+function textAnchor(justification: GunnerSightTextLayer["justification"]) {
+  if (justification === "Center") return "middle";
+  if (justification === "Right") return "end";
+  return "start";
+}
+
+function GunnerSightTextLayerVisual({ layer }: { layer: GunnerSightTextLayer }) {
+  const placement = gunnerSightLayerPlacement(layer);
+  const fontSize = layer.font.size;
+  if (!placement || !Number.isFinite(fontSize) || !fontSize) return null;
+  const anchor = textAnchor(layer.justification);
+  const x = anchor === "middle" ? placement.width / 2 : anchor === "end" ? placement.width : 0;
+  const lines = layer.text.split(/\r?\n/u);
+  const lineHeight = fontSize * 1.08;
+  const firstY = placement.height / 2 - ((lines.length - 1) * lineHeight) / 2;
+  const outlineSize = layer.font.outline?.OutlineSize ?? 0;
+  const mono = /Mono|Digital/iu.test(
+    `${layer.font.objectRef ?? ""} ${layer.font.materialRef ?? ""}`,
+  );
+  const shadow = layer.shadowColorAndOpacity && layer.shadowColorAndOpacity.A > 0
+    ? `drop-shadow(${layer.shadowOffset?.X ?? 1}px ${layer.shadowOffset?.Y ?? 1}px 0 ${linearColorCss(layer.shadowColorAndOpacity)})`
+    : undefined;
+  return (
+    <svg
+      className="gunner-sight-overlay__layout"
+      data-layout-role="instrument-text"
+      data-layer-kind="instrument-text"
+      data-layout-state={layer.layout?.state}
+      data-widget-name={layer.widgetName}
+      viewBox={placement.viewBox.join(" ")}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <g transform={placement.transform}>
+        <text
+          x={x}
+          y={firstY}
+          textAnchor={anchor}
+          dominantBaseline="middle"
+          fill={linearColorCss(layer.colorAndOpacity, layer.renderOpacity ?? 1)}
+          stroke={outlineSize > 0
+            ? linearColorCss(layer.font.outline?.OutlineColor)
+            : "none"}
+          strokeWidth={outlineSize}
+          style={{
+            fontFamily: mono
+              ? "ui-monospace, Consolas, monospace"
+              : "Arial, sans-serif",
+            fontSize,
+            fontWeight: 600,
+            letterSpacing: `${(layer.font.letterSpacing ?? 0) / 1000}em`,
+            paintOrder: "stroke fill",
+            filter: shadow,
+          }}
+        >
+          {lines.map((line, index) => (
+            <tspan x={x} dy={index === 0 ? 0 : lineHeight} key={`${index}:${line}`}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </g>
     </svg>
   );
 }
@@ -125,16 +232,15 @@ export function GunnerSightOverlay({
   ) ?? station.layers.find((layer) =>
     layer.role === "reticle" && gunnerSightLayerPlacement(layer)
   ) ?? null;
-  const screenLayers = station.layers
-    .filter((layer) =>
-      layer.role === "viewport-screen" &&
-      layer.visibility !== "Collapsed" &&
-      layer.projectionRef !== null
-    )
-    .flatMap((layer) => {
-      const projection = projectionById.get(layer.projectionRef!);
-      return projection ? [{ layer, projection }] : [];
-    });
+  const renderLayers = useMemo(
+    () => compileGunnerSightRenderLayers(station, activeStage, projections),
+    [activeStage, projections, station],
+  );
+  const activeProjectionRendered = reticleProjection
+    ? renderLayers.some((layer) =>
+        layer.kind === "image" && layer.projection.id === reticleProjection.id
+      )
+    : true;
 
   useEffect(() => {
     if (
@@ -151,24 +257,41 @@ export function GunnerSightOverlay({
       data-station-id={station.stationId}
       data-weapon-mode={activeMode?.weaponClassPath ?? "default"}
       data-zoom-index={activeStage?.zoomIndex ?? 0}
+      data-instrument-layer-count={station.textLayers?.length ?? 0}
       data-zoom-fov-authority="standard-16:9-90-horizontal-baseline"
       aria-label={`${stationLabel} 炮镜视野`}
       title="静态炮镜与视口遮罩；不表示光学损坏、失明或命中机制。"
     >
       <div className="gunner-sight-overlay__layers" aria-hidden="true">
-        {screenLayers.map(({ layer, projection }) => (
-          <GunnerSightLayerImage
-            layer={layer}
-            projection={projection}
-            role="viewport-screen"
-            key={`${layer.widgetName}:${projection.id}`}
-          />
-        ))}
-        {reticleProjection ? (
+        {renderLayers.map((renderLayer) => {
+          if (renderLayer.kind === "image") {
+            return (
+              <GunnerSightLayerImage
+                layer={renderLayer.layer}
+                projection={renderLayer.projection}
+                key={`image:${renderLayer.widgetName}:${renderLayer.projection.id}`}
+              />
+            );
+          }
+          if (renderLayer.kind === "solid") {
+            return (
+              <GunnerSightSolidLayer
+                layer={renderLayer.layer}
+                key={`solid:${renderLayer.widgetName}`}
+              />
+            );
+          }
+          return (
+            <GunnerSightTextLayerVisual
+              layer={renderLayer.layer}
+              key={`text:${renderLayer.widgetName}:${renderLayer.layer.paintOrder}`}
+            />
+          );
+        })}
+        {reticleProjection && !activeProjectionRendered ? (
           <GunnerSightLayerImage
             layer={reticleLayoutLayer}
             projection={reticleProjection}
-            role="reticle"
           />
         ) : null}
       </div>
