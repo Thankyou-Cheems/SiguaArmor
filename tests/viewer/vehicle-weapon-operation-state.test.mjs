@@ -5,6 +5,7 @@ import {
   advanceVehicleWeaponOperation,
   createVehicleWeaponOperation,
   fireVehicleWeaponOperation,
+  nextVehicleWeaponFireAtMs,
   presentVehicleWeaponOperation,
   reloadVehicleWeaponOperation,
 } from "../../lib/vehicle-weapon-operation-state.ts";
@@ -64,8 +65,49 @@ test("automatic weapons enforce Wiki cadence without inventing a reload", () => 
   const first = fireVehicleWeaponOperation(initial, spec, 0);
   assert.equal(first.fired, true);
   assert.equal(first.state.roundsRemaining, 99);
+  assert.equal(nextVehicleWeaponFireAtMs(first.state, spec, 0), 100);
   assert.equal(fireVehicleWeaponOperation(first.state, spec, 50).fired, false);
   assert.equal(fireVehicleWeaponOperation(first.state, spec, 100).fired, true);
+});
+
+test("held-fire scheduling waits for dry reload and stops without reserve", () => {
+  const oneReserve = { ...t72Round, numberOfMags: 2 };
+  const initial = createVehicleWeaponOperation(oneReserve, 0);
+  const first = fireVehicleWeaponOperation(initial, oneReserve, 0);
+  assert.equal(nextVehicleWeaponFireAtMs(first.state, oneReserve, 0), 8_000);
+
+  const lastRound = createVehicleWeaponOperation(
+    { ...oneReserve, numberOfMags: 1 },
+    0,
+  );
+  const exhausted = fireVehicleWeaponOperation(
+    lastRound,
+    { ...oneReserve, numberOfMags: 1 },
+    0,
+  );
+  assert.equal(
+    nextVehicleWeaponFireAtMs(
+      exhausted.state,
+      { ...oneReserve, numberOfMags: 1 },
+      0,
+    ),
+    null,
+  );
+});
+
+test("held fire fails closed when neither Wiki cadence field is available", () => {
+  const unknownCadence = {
+    numberOfMags: 2,
+    magazineSize: 10,
+    tacticalReloadSeconds: 4,
+    dryReloadSeconds: 5,
+    roundsPerMinute: 0,
+    timeBetweenShotsSeconds: 0,
+  };
+  const initial = createVehicleWeaponOperation(unknownCadence, 0);
+  const first = fireVehicleWeaponOperation(initial, unknownCadence, 0);
+  assert.equal(first.fired, true);
+  assert.equal(nextVehicleWeaponFireAtMs(first.state, unknownCadence, 0), null);
 });
 
 test("manual reload uses the Wiki tactical duration and dry reload keeps the dry duration", () => {
