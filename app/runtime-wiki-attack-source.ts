@@ -109,6 +109,10 @@ export interface RuntimeAttackSourceLibrary {
   runtimeAttackWeaponSupportsHitAnalysis(weapon: RuntimeAttackSourceWeapon): boolean;
 }
 
+export interface RuntimeAttackSourceSelection {
+  variantRawName?: string;
+}
+
 export interface RuntimeStationEquipmentBinding {
   equipment: {
     gunName: string;
@@ -198,6 +202,7 @@ export function resolveRuntimeAttackSourceIndexEntry(
 export function createRuntimeAttackSourceLibrary(
   document: WikiWeaponRuntimeSourceDocument,
   presentation: RuntimeAttackSourcePresentation,
+  selection?: RuntimeAttackSourceSelection,
 ): RuntimeAttackSourceLibrary {
   if (
     document.schemaVersion !== "sigua-weapon-runtime-source/v2" ||
@@ -207,9 +212,19 @@ export function createRuntimeAttackSourceLibrary(
   ) {
     throw new Error(`载具武器分片与 ${presentation.cardId} 不匹配`);
   }
-  const canonicalRawName = presentation.canonicalRawName;
-  const loadout = document.loadouts.find(({ rawName }) => rawName === canonicalRawName);
-  if (!loadout) throw new Error(`载具武器分片 ${presentation.cardId} 缺少精确配置 ${canonicalRawName}`);
+  const requestedRawNames = [...new Set([
+    selection?.variantRawName,
+    presentation.canonicalRawName,
+  ].filter((rawName): rawName is string => Boolean(rawName)))];
+  const loadout = requestedRawNames
+    .map((rawName) => document.loadouts.find((candidate) => candidate.rawName === rawName))
+    .find((candidate) => candidate !== undefined);
+  if (!loadout) {
+    throw new Error(
+      `载具武器分片 ${presentation.cardId} 缺少精确配置 ${requestedRawNames.join(" / ")}`,
+    );
+  }
+  const canonicalRawName = loadout.rawName;
   const profiles = new Map(document.weaponProfiles.map((profile) => [profile.weaponProfileId, profile]));
   const shareSlug = buildRuntimeAttackSourceShareSlug({
     groupId: presentation.groupId,
