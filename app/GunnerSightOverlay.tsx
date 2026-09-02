@@ -9,8 +9,14 @@ import {
 } from "react";
 
 import { wikiUrl } from "../lib/wiki-source";
-import { gunnerSightLayerPlacement } from "../lib/gunner-sight-layout";
-import { compileGunnerSightRenderLayers } from "../lib/gunner-sight-presentation";
+import {
+  gunnerSightLayerFallbackKind,
+  gunnerSightLayerPlacement,
+} from "../lib/gunner-sight-layout";
+import {
+  compileGunnerSightRenderLayers,
+  gunnerSightProjectionIsVisible,
+} from "../lib/gunner-sight-presentation";
 import {
   gunnerSightDynamicPresentationSettled,
   interpolateGunnerSightDynamicPresentation,
@@ -364,9 +370,11 @@ function GunnerSightLayerImage({
   const role = layer?.role ?? "reticle";
   if (dynamic.visible === false) return null;
   if (!placement) {
+    const fallbackKind = gunnerSightLayerFallbackKind(layer);
+    if (!fallbackKind) return null;
     return (
       <img
-        className={`gunner-sight-overlay__fallback gunner-sight-overlay__${role === "reticle" ? "reticle" : "screen"}`}
+        className={`gunner-sight-overlay__fallback gunner-sight-overlay__${fallbackKind}`}
         data-layout-role={role}
         data-layout-state="fallback-no-source-layout"
         data-widget-name={layer?.widgetName}
@@ -713,9 +721,26 @@ export function GunnerSightOverlay({
   ) ?? station.layers.find((layer) =>
     layer.role === "reticle" && gunnerSightLayerPlacement(layer)
   ) ?? null;
+  const renderLayerPresentations = new Map(
+    renderLayers.map((renderLayer) => [
+      renderLayer.widgetName,
+      resolveLayerDynamicPresentation(
+        station,
+        renderLayer.layer,
+        dynamicBindingPresentations,
+      ),
+    ]),
+  );
   const activeProjectionRendered = reticleProjection
-    ? renderLayers.some((layer) =>
-        layer.kind === "image" && layer.projection.id === reticleProjection.id
+    ? gunnerSightProjectionIsVisible(
+        renderLayers,
+        reticleProjection.id,
+        new Map(
+          [...renderLayerPresentations].map(([widgetName, presentation]) => [
+            widgetName,
+            presentation.visible !== false,
+          ]),
+        ),
       )
     : true;
 
@@ -742,11 +767,9 @@ export function GunnerSightOverlay({
     >
       <div className="gunner-sight-overlay__layers" aria-hidden="true">
         {renderLayers.map((renderLayer) => {
-          const dynamic = resolveLayerDynamicPresentation(
-            station,
-            renderLayer.layer,
-            dynamicBindingPresentations,
-          );
+          const dynamic = renderLayerPresentations.get(
+            renderLayer.widgetName,
+          ) ?? { visible: true };
           if (renderLayer.kind === "image") {
             return (
               <GunnerSightLayerImage
