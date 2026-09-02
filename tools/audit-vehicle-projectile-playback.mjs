@@ -15,9 +15,9 @@ import { compileVehicleStationGraph } from
 const V1053_BASELINE = Object.freeze({
   ballisticsSourceBuildId: "squad-sdk-v10.5.3-d341d671c7d80407",
   stationGraphSourceBuildId: "squad-sdk-v10.5.3-17c100ea5182370e",
-  vehicleSources: 285,
-  assignments: 706,
-  ready: 706,
+  vehicleSources: 295,
+  assignments: 881,
+  ready: 881,
   unsupported: 0,
   launchOriginCoverage: {
     weaponAssignments: 1610,
@@ -29,19 +29,19 @@ const V1053_BASELINE = Object.freeze({
     componentOriginFallbackBindings: 165,
   },
   readyLaunchSequences: {
-    "runtime-indexed-launch-pod:2": 5,
-    "runtime-indexed-launch-pod:4": 1,
-    "single-barrel-socket:1": 700,
+    "runtime-indexed-launch-pod:2": 7,
+    "runtime-indexed-launch-pod:4": 2,
+    "single-barrel-socket:1": 872,
   },
-  guidedAssignments: 69,
+  guidedAssignments: 75,
   guidedRouteCount: 7,
   guidedSimulationStatuses: {
-    lifespan: 55,
-    "time-limit": 14,
+    lifespan: 57,
+    "time-limit": 18,
   },
   readyPrecision: {
-    "component-origin-fallback": 20,
-    "socket-resolved": 686,
+    "component-origin-fallback": 24,
+    "socket-resolved": 857,
   },
   unsupportedReasons: {},
 });
