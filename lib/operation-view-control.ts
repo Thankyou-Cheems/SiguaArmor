@@ -4,6 +4,13 @@ export interface OperationViewKeyInput {
   repeat: boolean;
   zoomIndex: number;
   zoomCount: number;
+  equipmentRefs?: readonly string[];
+}
+
+export interface OperationViewEquipmentRefsInput {
+  stationEquipmentRefs: readonly string[];
+  sightEquipmentRefs: readonly string[];
+  playableEquipmentRefs: readonly string[];
 }
 
 export const OPERATION_VIEW_STANDARD_ASPECT_RATIO = 16 / 9;
@@ -13,6 +20,30 @@ const OPERATION_VIEW_MAX_FRAME_SECONDS = 0.05;
 export interface OperationViewMotionRates {
   yawDegreesPerSecond: number | null | undefined;
   pitchDegreesPerSecond: number | null | undefined;
+}
+
+export interface OperationViewInputDynamics {
+  hasAcceleration: boolean;
+  maxYawSpeedDegreesPerSecond: number;
+  maxPitchSpeedDegreesPerSecond: number;
+  inputAccelerationDegreesPerSecondSquared: {
+    yaw: number;
+    pitch: number;
+  } | null;
+  noInputDecelerationDegreesPerSecondSquared: number | null;
+  oppositeDirectionDecelerationDegreesPerSecondSquared: number | null;
+  maxMoveDeltaTimeSeconds: number | null;
+}
+
+export interface OperationViewMotionState {
+  yawVelocityDegreesPerSecond: number;
+  pitchVelocityDegreesPerSecond: number;
+}
+
+export interface OperationViewMotionStepResult extends OperationViewMotionState {
+  yawDelta: number;
+  pitchDelta: number;
+  settled: boolean;
 }
 
 export interface OperationViewPoseCommitScheduler {
@@ -108,7 +139,162 @@ export function operationViewContinuousPoseDelta(
   };
 }
 
-export type OperationViewKeyAction = { kind: "zoom"; zoomIndex: number };
+function finiteOrZero(value: number) {
+  return Number.isFinite(value) ? value : 0;
+}
+
+function moveVelocityTowardZero(velocity: number, maximumDelta: number) {
+  const current = finiteOrZero(velocity);
+  const delta = Math.max(0, finiteOrZero(maximumDelta));
+  if (Math.abs(current) <= delta) return 0;
+  return current - Math.sign(current) * delta;
+}
+
+function operationViewAxisVelocity({
+  direction,
+  currentVelocity,
+  maximumSpeed,
+  acceleration,
+  noInputDeceleration,
+  oppositeDirectionDeceleration,
+  elapsedSeconds,
+  accelerated,
+}: {
+  direction: number;
+  currentVelocity: number;
+  maximumSpeed: number;
+  acceleration: number;
+  noInputDeceleration: number;
+  oppositeDirectionDeceleration: number;
+  elapsedSeconds: number;
+  accelerated: boolean;
+}) {
+  const speedLimit = Math.max(0, finiteOrZero(maximumSpeed));
+  if (!accelerated) return direction * speedLimit;
+  if (direction === 0) {
+    return moveVelocityTowardZero(
+      currentVelocity,
+      Math.abs(noInputDeceleration) * elapsedSeconds,
+    );
+  }
+  const signedAcceleration = direction * finiteOrZero(acceleration);
+  if (
+    currentVelocity !== 0 &&
+    signedAcceleration !== 0 &&
+    Math.sign(currentVelocity) !== Math.sign(signedAcceleration)
+  ) {
+    return moveVelocityTowardZero(
+      currentVelocity,
+      Math.abs(oppositeDirectionDeceleration) * elapsedSeconds,
+    );
+  }
+  return Math.max(
+    -speedLimit,
+    Math.min(
+      speedLimit,
+      finiteOrZero(currentVelocity) + signedAcceleration * elapsedSeconds,
+    ),
+  );
+}
+
+export function operationViewMotionStep(
+  heldCodes: readonly string[],
+  elapsedSeconds: number,
+  dynamics: OperationViewInputDynamics,
+  state: OperationViewMotionState,
+): OperationViewMotionStepResult {
+  const currentYaw = finiteOrZero(state.yawVelocityDegreesPerSecond);
+  const currentPitch = finiteOrZero(state.pitchVelocityDegreesPerSecond);
+  if (!Number.isFinite(elapsedSeconds) || elapsedSeconds <= 0) {
+    return {
+      yawDelta: 0,
+      pitchDelta: 0,
+      yawVelocityDegreesPerSecond: currentYaw,
+      pitchVelocityDegreesPerSecond: currentPitch,
+      settled: currentYaw === 0 && currentPitch === 0,
+    };
+  }
+  const authoredMaximumDelta = dynamics.maxMoveDeltaTimeSeconds;
+  const maximumDelta =
+    typeof authoredMaximumDelta === "number" &&
+      Number.isFinite(authoredMaximumDelta) &&
+      authoredMaximumDelta > 0
+      ? authoredMaximumDelta
+      : OPERATION_VIEW_MAX_FRAME_SECONDS;
+  const frameSeconds = Math.min(elapsedSeconds, maximumDelta);
+  const held = new Set(heldCodes);
+  const yawDirection = Number(held.has("KeyD")) - Number(held.has("KeyA"));
+  const pitchDirection = Number(held.has("KeyW")) - Number(held.has("KeyS"));
+  const acceleration = dynamics.inputAccelerationDegreesPerSecondSquared;
+  const yawVelocity = operationViewAxisVelocity({
+    direction: yawDirection,
+    currentVelocity: currentYaw,
+    maximumSpeed: dynamics.maxYawSpeedDegreesPerSecond,
+    acceleration: acceleration?.yaw ?? 0,
+    noInputDeceleration:
+      dynamics.noInputDecelerationDegreesPerSecondSquared ?? 0,
+    oppositeDirectionDeceleration:
+      dynamics.oppositeDirectionDecelerationDegreesPerSecondSquared ?? 0,
+    elapsedSeconds: frameSeconds,
+    accelerated: dynamics.hasAcceleration && acceleration !== null,
+  });
+  const pitchVelocity = operationViewAxisVelocity({
+    direction: pitchDirection,
+    currentVelocity: currentPitch,
+    maximumSpeed: dynamics.maxPitchSpeedDegreesPerSecond,
+    acceleration: acceleration?.pitch ?? 0,
+    noInputDeceleration:
+      dynamics.noInputDecelerationDegreesPerSecondSquared ?? 0,
+    oppositeDirectionDeceleration:
+      dynamics.oppositeDirectionDecelerationDegreesPerSecondSquared ?? 0,
+    elapsedSeconds: frameSeconds,
+    accelerated: dynamics.hasAcceleration && acceleration !== null,
+  });
+  return {
+    yawDelta: yawVelocity * frameSeconds,
+    pitchDelta: pitchVelocity * frameSeconds,
+    yawVelocityDegreesPerSecond: yawVelocity,
+    pitchVelocityDegreesPerSecond: pitchVelocity,
+    settled:
+      yawDirection === 0 &&
+      pitchDirection === 0 &&
+      yawVelocity === 0 &&
+      pitchVelocity === 0,
+  };
+}
+
+export type OperationViewKeyAction =
+  | { kind: "zoom"; zoomIndex: number }
+  | { kind: "weapon"; equipmentRef: string; slotNumber: number };
+
+export function operationViewEquipmentRefs({
+  stationEquipmentRefs,
+  sightEquipmentRefs,
+  playableEquipmentRefs,
+}: OperationViewEquipmentRefsInput): string[] {
+  const available = new Set([
+    ...sightEquipmentRefs,
+    ...playableEquipmentRefs,
+  ]);
+  const ordered: string[] = [];
+  const append = (equipmentRef: string) => {
+    if (!equipmentRef || ordered.includes(equipmentRef)) return;
+    ordered.push(equipmentRef);
+  };
+  for (const equipmentRef of stationEquipmentRefs) {
+    if (available.has(equipmentRef)) append(equipmentRef);
+  }
+  for (const equipmentRef of sightEquipmentRefs) append(equipmentRef);
+  for (const equipmentRef of playableEquipmentRefs) append(equipmentRef);
+  return ordered;
+}
+
+function operationViewWeaponSlotForCode(code: string): number | null {
+  const match = /^(?:Digit|Numpad)([0-9])$/.exec(code);
+  if (!match) return null;
+  const digit = Number(match[1]);
+  return digit === 0 ? 10 : digit;
+}
 
 export function operationViewScenePresentation(active: boolean) {
   return active
@@ -130,7 +316,16 @@ export function operationViewKeyAction({
   repeat,
   zoomIndex,
   zoomCount,
+  equipmentRefs = [],
 }: OperationViewKeyInput): OperationViewKeyAction | null {
+  const slotNumber = operationViewWeaponSlotForCode(code);
+  if (slotNumber !== null) {
+    if (repeat) return null;
+    const equipmentRef = equipmentRefs[slotNumber - 1];
+    return equipmentRef
+      ? { kind: "weapon", equipmentRef, slotNumber }
+      : null;
+  }
   if (driverView) return null;
   switch (code) {
     case "KeyQ":
