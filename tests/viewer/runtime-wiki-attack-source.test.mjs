@@ -158,6 +158,43 @@ test("one Wiki vehicle source is a complete default hit-analysis library", () =>
   );
 });
 
+test("the visible vehicle variant wins when it has an exact runtime loadout", () => {
+  const variantDocument = structuredClone(document);
+  variantDocument.source.rawNames.push("BP_AUS_M1A1_Woodland");
+  variantDocument.loadouts.push({
+    ...structuredClone(document.loadouts[0]),
+    loadoutId: "loadout-woodland",
+    rawName: "BP_AUS_M1A1_Woodland",
+    runtimeVehicleRef: "vehicle-woodland",
+    stationEquipment: [{
+      ...structuredClone(document.loadouts[0].stationEquipment[0]),
+      id: "equipment-woodland",
+      rawName: "BP_AUS_M1A1_Woodland",
+    }],
+    weapons: [{
+      ...structuredClone(document.loadouts[0].weapons[0]),
+      weaponAssignmentId: "equipment-woodland:weapon-variant-test",
+      stationEquipmentId: "equipment-woodland",
+    }],
+  });
+
+  const library = createRuntimeAttackSourceLibrary(variantDocument, {
+    cardId: "adf--m1a1--mbt",
+    displayName: "M1A1 主战坦克",
+    groupId: "adf",
+    groupName: "澳大利亚国防军",
+    groupOrder: 0,
+    type: "MBT",
+    canonicalRawName: "BP_AUS_M1A1",
+  }, {
+    variantRawName: "BP_AUS_M1A1_Woodland",
+  });
+
+  const source = library.runtimeAttackSourceForId("adf--m1a1--mbt");
+  assert.equal(source?.canonicalRawName, "BP_AUS_M1A1_Woodland");
+  assert.equal(source?.weapons[0].stationEquipmentId, "equipment-woodland");
+});
+
 test("the same source resolves turret labels without the full catalog", () => {
   const resolveEquipment = createRuntimeStationEquipmentResolver(document);
   assert.deepEqual(resolveEquipment("equipment-test"), {

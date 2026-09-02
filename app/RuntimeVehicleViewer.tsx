@@ -5417,6 +5417,7 @@ export function RuntimeVehicleViewer({
         const library = createRuntimeAttackSourceLibrary(
           document,
           presentation,
+          { variantRawName: preview.variantRawName },
         );
         setAttackLibrary(library);
         setVehicleOperationLibrary(library);
