@@ -27,6 +27,20 @@ test("accelerated station ramps from rest instead of jumping to maximum speed", 
   assert.equal(result.pitchDelta, 0);
 });
 
+test("screen-relative D remains rightward for a native station with an inverted source yaw axis", () => {
+  const result = operationViewMotionStep(
+    ["KeyD"],
+    1 / 60,
+    {
+      ...accelerated,
+      inputAccelerationDegreesPerSecondSquared: { yaw: -70, pitch: 70 },
+    },
+    { yawVelocityDegreesPerSecond: 0, pitchVelocityDegreesPerSecond: 0 },
+  );
+  assert.ok(result.yawVelocityDegreesPerSecond > 0);
+  assert.ok(result.yawDelta > 0);
+});
+
 test("released accelerated station decelerates across frames before settling", () => {
   const result = operationViewMotionStep(
     [],

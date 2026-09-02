@@ -136,11 +136,15 @@ test("operation view uses a visible world reference instead of a transparent bla
     clearColor: 0x000000,
     clearAlpha: 0,
     groundGridScale: 1,
+    analysisDepthOccludersVisible: true,
+    suppressHitAnalysis: false,
   });
   const active = operationViewScenePresentation(true);
   assert.equal(active.clearAlpha, 1);
   assert.equal(active.groundGridScale, 20);
   assert.ok(active.clearColor > 0x121212);
+  assert.equal(active.analysisDepthOccludersVisible, false);
+  assert.equal(active.suppressHitAnalysis, true);
 });
 
 test("continuous motion owns WASD and discrete input only cycles magnification", () => {
