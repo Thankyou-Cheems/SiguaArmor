@@ -177,7 +177,10 @@ function operationViewAxisVelocity({
       Math.abs(noInputDeceleration) * elapsedSeconds,
     );
   }
-  const signedAcceleration = direction * finiteOrZero(acceleration);
+  // Wiki retains the native input-axis sign. Keyboard controls are
+  // screen-relative, so D/W must still mean right/up even when a Blueprint
+  // authored a negative source multiplier (for example M1151 TOW yaw).
+  const signedAcceleration = direction * Math.abs(finiteOrZero(acceleration));
   if (
     currentVelocity !== 0 &&
     signedAcceleration !== 0 &&
@@ -302,11 +305,15 @@ export function operationViewScenePresentation(active: boolean) {
         clearColor: 0x27312b,
         clearAlpha: 1,
         groundGridScale: 20,
+        analysisDepthOccludersVisible: false,
+        suppressHitAnalysis: true,
       }
     : {
         clearColor: 0x000000,
         clearAlpha: 0,
         groundGridScale: 1,
+        analysisDepthOccludersVisible: true,
+        suppressHitAnalysis: false,
       };
 }
 
