@@ -3802,7 +3802,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 type: document.source.types[0] ?? "载具",
                 canonicalRawName: preview.variantRawName,
             };
-            const library = createRuntimeAttackSourceLibrary(document, presentation);
+            const library = createRuntimeAttackSourceLibrary(document, presentation, { variantRawName: preview.variantRawName });
             setAttackLibrary(library);
             setVehicleOperationLibrary(library);
             setEquipmentResolver(() => createRuntimeStationEquipmentResolver(document));
