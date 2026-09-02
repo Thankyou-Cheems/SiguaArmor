@@ -68,19 +68,53 @@ test("both edition logs lead with the current release and omit superseded claims
     }),
   );
   const currentEntry = documents[0].entries[0];
+  const dailyReleaseOrder = [
+    ["2026-09-02-operation-cache-release", "2026-09-02"],
+    ["2026-09-01-sights-projectiles-articulation", "2026-09-01"],
+    ["2026-08-31-driver-crew-controls", "2026-08-31"],
+    ["2026-08-30-station-graph-closure", "2026-08-30"],
+  ];
 
-  assert.equal(currentEntry.id, "2026-08-22-draggable-explosion-origin");
+  assert.equal(currentEntry.id, "2026-09-02-operation-cache-release");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-08-22");
+    assert.equal(document.siteUpdatedOn, "2026-09-02");
     assert.deepEqual(document.entries[0], currentEntry);
+    assert.deepEqual(
+      document.entries.slice(0, dailyReleaseOrder.length).map(({ id, date }) => [id, date]),
+      dailyReleaseOrder,
+    );
     assert.ok(
       !document.entries.some(({ id }) => id === "2026-07-24-hit-path-footer-selector"),
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(document.entries[0]), /纯径向间接伤害/u);
-    assert.match(JSON.stringify(document.entries[0]), /0 伤害/u);
-    assert.match(JSON.stringify(document.entries[0]), /Shift \+ 滚轮/u);
+    assert.match(JSON.stringify(document.entries[0]), /数字键 1–4/u);
+    assert.match(JSON.stringify(document.entries[0]), /99\.92%/u);
+    const sightEntry = document.entries.find(
+      ({ id }) => id === "2026-09-01-sights-projectiles-articulation",
+    );
+    assert.ok(sightEntry, "authentic sight and projectile release entry must be retained");
+    assert.match(JSON.stringify(sightEntry), /双侧舱门机枪/u);
+    assert.match(JSON.stringify(sightEntry), /测距数字、装弹提示、弹种灯与方位仪表/u);
+    const crewEntry = document.entries.find(
+      ({ id }) => id === "2026-08-31-driver-crew-controls",
+    );
+    assert.ok(crewEntry, "driver and crew release entry must be retained");
+    assert.match(JSON.stringify(crewEntry), /471 份驾驶员视角记录/u);
+    assert.match(JSON.stringify(crewEntry), /16:9/u);
+    const stationEntry = document.entries.find(
+      ({ id }) => id === "2026-08-30-station-graph-closure",
+    );
+    assert.ok(stationEntry, "station graph release entry must be retained");
+    assert.match(JSON.stringify(stationEntry), /10\.5\.3 Station Graph/u);
+    assert.match(JSON.stringify(stationEntry), /M1A2、M2A3、M1128/u);
+    const explosionEntry = document.entries.find(
+      ({ id }) => id === "2026-08-22-draggable-explosion-origin",
+    );
+    assert.ok(explosionEntry, "draggable explosion release entry must be retained");
+    assert.match(JSON.stringify(explosionEntry), /纯径向间接伤害/u);
+    assert.match(JSON.stringify(explosionEntry), /0 伤害/u);
+    assert.match(JSON.stringify(explosionEntry), /Shift \+ 滚轮/u);
     const radialEntry = document.entries.find(
       ({ id }) => id === "2026-08-21-radial-damage-viewer-controls",
     );
