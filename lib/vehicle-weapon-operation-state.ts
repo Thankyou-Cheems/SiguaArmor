@@ -5,6 +5,20 @@ export interface VehicleWeaponOperationSpec {
   dryReloadSeconds: number;
   roundsPerMinute: number;
   timeBetweenShotsSeconds: number;
+  timeBetweenSingleShotsSeconds?: number;
+  fireControl?: VehicleWeaponFireControl;
+}
+
+export interface VehicleWeaponFireMode {
+  sourceValue: number;
+  kind: "continuous" | "single" | "burst";
+  roundsPerTrigger: number | null;
+}
+
+export interface VehicleWeaponFireControl {
+  defaultModeIndex: number;
+  modes: VehicleWeaponFireMode[];
+  resetBurstOnTriggerRelease: boolean;
 }
 
 export interface VehicleWeaponOperationState {
@@ -13,6 +27,8 @@ export interface VehicleWeaponOperationState {
   nextShotAtMs: number;
   reloadStartedAtMs: number | null;
   reloadEndsAtMs: number | null;
+  triggerActive: boolean;
+  roundsFiredThisTrigger: number;
 }
 
 export interface VehicleWeaponOperationPresentation {
@@ -40,10 +56,37 @@ function magazineCapacity(spec: VehicleWeaponOperationSpec) {
 
 export function vehicleWeaponShotIntervalMs(spec: VehicleWeaponOperationSpec) {
   const authored = nonNegativeSeconds(spec.timeBetweenShotsSeconds);
+  const singleShotMinimum = defaultFireMode(spec).kind === "single"
+    ? nonNegativeSeconds(spec.timeBetweenSingleShotsSeconds ?? 0)
+    : 0;
   const rate = Number.isFinite(spec.roundsPerMinute) && spec.roundsPerMinute > 0
     ? 60 / spec.roundsPerMinute
     : 0;
-  return Math.max(authored, rate) * 1_000;
+  return Math.max(authored, singleShotMinimum, rate) * 1_000;
+}
+
+function defaultFireMode(spec: VehicleWeaponOperationSpec): VehicleWeaponFireMode {
+  const modes = spec.fireControl?.modes;
+  const authored = modes?.[spec.fireControl?.defaultModeIndex ?? 0];
+  return authored ?? {
+    sourceValue: 0,
+    kind: "continuous",
+    roundsPerTrigger: null,
+  };
+}
+
+function roundsPerTrigger(spec: VehicleWeaponOperationSpec) {
+  const mode = defaultFireMode(spec);
+  if (mode.kind === "continuous") return null;
+  return positiveInteger(mode.roundsPerTrigger ?? 1, 1);
+}
+
+function triggerCycleComplete(
+  state: VehicleWeaponOperationState,
+  spec: VehicleWeaponOperationSpec,
+) {
+  const limit = roundsPerTrigger(spec);
+  return limit !== null && state.roundsFiredThisTrigger >= limit;
 }
 
 function dryReloadMs(spec: VehicleWeaponOperationSpec) {
@@ -67,6 +110,8 @@ export function createVehicleWeaponOperation(
     nextShotAtMs: nowMs,
     reloadStartedAtMs: null,
     reloadEndsAtMs: null,
+    triggerActive: false,
+    roundsFiredThisTrigger: 0,
   };
 }
 
@@ -79,6 +124,7 @@ export function advanceVehicleWeaponOperation(
     return state;
   }
   return {
+    ...state,
     roundsRemaining: magazineCapacity(spec),
     reserveMagazines: Math.max(0, state.reserveMagazines - 1),
     nextShotAtMs: Math.max(state.nextShotAtMs, state.reloadEndsAtMs),
@@ -92,7 +138,22 @@ export function fireVehicleWeaponOperation(
   spec: VehicleWeaponOperationSpec,
   nowMs: number,
 ): { fired: boolean; state: VehicleWeaponOperationState; reason: string | null } {
-  const current = advanceVehicleWeaponOperation(state, spec, nowMs);
+  const advanced = advanceVehicleWeaponOperation(state, spec, nowMs);
+  const mode = defaultFireMode(spec);
+  const current = advanced.triggerActive
+    ? advanced
+    : {
+        ...advanced,
+        triggerActive: true,
+        roundsFiredThisTrigger:
+          mode.kind === "burst" &&
+            !spec.fireControl?.resetBurstOnTriggerRelease
+            ? advanced.roundsFiredThisTrigger
+            : 0,
+      };
+  if (triggerCycleComplete(current, spec)) {
+    return { fired: false, state: current, reason: "trigger-cycle-complete" };
+  }
   if (current.reloadEndsAtMs !== null) {
     return { fired: false, state: current, reason: "weapon-reloading" };
   }
@@ -112,6 +173,7 @@ export function fireVehicleWeaponOperation(
         ...current,
         roundsRemaining,
         nextShotAtMs,
+        roundsFiredThisTrigger: current.roundsFiredThisTrigger + 1,
       },
     };
   }
@@ -125,6 +187,7 @@ export function fireVehicleWeaponOperation(
       nextShotAtMs,
       reloadStartedAtMs: nowMs,
       reloadEndsAtMs: nowMs + reloadDurationMs,
+      roundsFiredThisTrigger: current.roundsFiredThisTrigger + 1,
     },
   };
 }
@@ -135,6 +198,7 @@ export function nextVehicleWeaponFireAtMs(
   nowMs: number,
 ): number | null {
   const current = advanceVehicleWeaponOperation(state, spec, nowMs);
+  if (triggerCycleComplete(current, spec)) return null;
   if (current.reloadEndsAtMs !== null) return current.reloadEndsAtMs;
   if (current.roundsRemaining <= 0) return null;
   if (
@@ -142,6 +206,26 @@ export function nextVehicleWeaponFireAtMs(
     vehicleWeaponShotIntervalMs(spec) <= 0
   ) return null;
   return Math.max(nowMs, current.nextShotAtMs);
+}
+
+export function releaseVehicleWeaponTrigger(
+  state: VehicleWeaponOperationState,
+  spec: VehicleWeaponOperationSpec,
+  nowMs: number,
+): VehicleWeaponOperationState {
+  const current = advanceVehicleWeaponOperation(state, spec, nowMs);
+  const mode = defaultFireMode(spec);
+  const resetProgress =
+    mode.kind !== "burst" ||
+    Boolean(spec.fireControl?.resetBurstOnTriggerRelease) ||
+    triggerCycleComplete(current, spec);
+  return {
+    ...current,
+    triggerActive: false,
+    roundsFiredThisTrigger: resetProgress
+      ? 0
+      : current.roundsFiredThisTrigger,
+  };
 }
 
 export function reloadVehicleWeaponOperation(

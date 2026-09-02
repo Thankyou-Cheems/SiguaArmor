@@ -45,6 +45,11 @@ test("weapon and zoom controls switch only observed Station-owned routes", () =>
   assert.match(viewerSource, /显示炮镜遮罩与分划/u);
   assert.match(viewerSource, /crew-view-immersive-controls/u);
   assert.match(viewerSource, /gunnerSightOverlayEnabled/u);
+  assert.doesNotMatch(
+    overlaySource,
+    /onEquipmentChange\(defaultEquipmentRef\)/u,
+    "a reticle fallback must not switch the active weapon back after a number-key selection",
+  );
 });
 
 test("operation view exposes direct ring control and keyboard-only camera input", () => {
@@ -70,7 +75,11 @@ test("held WASD input stays frame-based while synchronizing every rendered layer
   assert.match(viewerSource, /const heldOperationKeys = new Set<string>\(\)/u);
   assert.match(viewerSource, /const stepOperationMovement = \(frameTime: number\) =>/u);
   assert.match(viewerSource, /requestAnimationFrame\(stepOperationMovement\)/u);
-  assert.match(viewerSource, /operationViewContinuousPoseDelta/u);
+  assert.match(viewerSource, /operationViewMotionStep/u);
+  assert.match(
+    viewerSource,
+    /visualAttachment\?\.motion\.inputDynamics/u,
+  );
   assert.match(
     viewerSource,
     /updateTurretStationPose\([\s\S]*?\{ transient: true \},\s*\);/u,
@@ -217,6 +226,16 @@ test("operation fire shares one equipment identity and uses a pooled projectile 
   assert.match(wikiSource, /launchOriginProfiles\.length === 0/u);
 });
 
+test("operation input separates canvas fire from UI weapon selection", () => {
+  assert.match(
+    viewerSource,
+    /event\.isPrimary\s*&&\s*event\.target === renderer\.domElement/u,
+  );
+  assert.match(viewerSource, /event\.currentTarget\.blur\(\)/u);
+  assert.match(viewerSource, /action\.kind === "weapon"/u);
+  assert.match(viewerSource, /selectOperationEquipmentRef\.current/u);
+});
+
 test("dynamic sight instruments consume live operation and Wiki station motion", () => {
   assert.match(overlaySource, /data-dynamic-range-meters/u);
   assert.match(overlaySource, /data-dynamic-rounds-remaining/u);
@@ -225,11 +244,11 @@ test("dynamic sight instruments consume live operation and Wiki station motion",
   assert.match(overlaySource, /resolveGunnerSightDynamicBinding/u);
   assert.match(
     viewerSource,
-    /yawDegreesPerSecond:\s*station\.turret\.maxYawSpeed/u,
+    /maxYawSpeedDegreesPerSecond:\s*station\?\.turret\.maxYawSpeed/u,
   );
   assert.match(
     viewerSource,
-    /pitchDegreesPerSecond:\s*station\.turret\.maxPitchSpeed/u,
+    /maxPitchSpeedDegreesPerSecond:\s*station\?\.turret\.maxPitchSpeed/u,
   );
   assert.doesNotMatch(viewerSource, /OPERATION_VIEW_YAW_SPEED/u);
   assert.doesNotMatch(viewerSource, /OPERATION_VIEW_PITCH_SPEED/u);

@@ -133,3 +133,77 @@ test("accepts a source-proven dynamic widget with no static image layer", () => 
     "observed-dynamic-presentation",
   );
 });
+
+test("accepts the authored magazine text color channel used by M1A2 optics", () => {
+  const record = fixture();
+  record.stations[0].textLayers = [{ widgetName: "ammoIndicator" }];
+  record.stations[0].dynamicChannels = [
+    "magazine-rounds-display-color",
+    "weapon-change",
+    "zoom-change",
+  ];
+  record.stations[0].dynamicBindings = [{
+    id: "color-and-opacity:ammoIndicator:magazine-rounds-display-color:K2Node_CallFunction_411",
+    state: "observed-blueprint-property-route",
+    semantic: "magazine-rounds-display-color",
+    targetWidgetName: "ammoIndicator",
+    property: "color-and-opacity",
+    relatedSeatPawnClassPaths: [],
+    valueModel: { kind: "boolean-linear-color-select" },
+    source: {
+      declaringClassPath: "/Game/Test/W_Reticle.W_Reticle_C",
+      graphPath: "/Game/Test/W_Reticle.W_Reticle:EventGraph",
+      setterNode: "K2Node_CallFunction_411",
+      setterFunction: "SetColorAndOpacity",
+      contextFunctions: ["SetColorAndOpacity"],
+      contextVariables: ["ammoIndicator"],
+      inheritedDepth: 0,
+      aliasNode: null,
+    },
+  }];
+  const compiled = compileVehicleGunnerSight(record, graph);
+  assert.equal(
+    compiled.stations[0].dynamicBindings[0].semantic,
+    "magazine-rounds-display-color",
+  );
+});
+
+for (const semantic of [
+  "weapon-and-ammo-label",
+  "weapon-fire-mode-label",
+  "zoom-stage-label",
+]) {
+  test(`accepts the published ${semantic} text channel`, () => {
+    const record = fixture();
+    record.stations[0].textLayers = [{ widgetName: "DynamicText" }];
+    record.stations[0].dynamicChannels = [
+      semantic,
+      "weapon-change",
+      "zoom-change",
+    ].sort();
+    record.stations[0].dynamicBindings = [{
+      id: `text:DynamicText:${semantic}:K2Node_CallFunction_1`,
+      state: "observed-blueprint-property-route",
+      semantic,
+      targetWidgetName: "DynamicText",
+      property: "text",
+      relatedSeatPawnClassPaths: [],
+      valueModel: null,
+      source: {
+        declaringClassPath: "/Game/Test/W_Reticle.W_Reticle_C",
+        graphPath: "/Game/Test/W_Reticle.W_Reticle:EventGraph",
+        setterNode: "K2Node_CallFunction_1",
+        setterFunction: "SetText",
+        contextFunctions: ["SetText"],
+        contextVariables: ["DynamicText"],
+        inheritedDepth: 0,
+        aliasNode: null,
+      },
+    }];
+    const compiled = compileVehicleGunnerSight(record, graph);
+    assert.equal(
+      compiled.stations[0].dynamicBindings[0].semantic,
+      semantic,
+    );
+  });
+}

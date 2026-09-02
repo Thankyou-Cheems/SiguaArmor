@@ -36,6 +36,7 @@ export interface GunnerSightRuntimeState {
   stabilized: boolean;
   guidanceActive: boolean;
   currentWeaponLabel: string;
+  currentFireModeSourceValue?: number | null;
   currentWeaponClassPath?: string;
   commanderOverride?: boolean;
   weaponOverheated?: boolean;
@@ -190,6 +191,10 @@ export function resolveGunnerSightDynamicBinding(
                 Math.floor(state.roundsRemaining),
               )}`,
         };
+      case "weapon-fire-mode-label": {
+        const fireMode = finiteOrNull(state.currentFireModeSourceValue);
+        return { text: fireMode === null ? "" : String(Math.trunc(fireMode)) };
+      }
       case "zoom-stage-label":
         return { text: `Z${(state.activeZoomIndex ?? 0) + 1}` };
       case "station-relative-yaw-degrees":

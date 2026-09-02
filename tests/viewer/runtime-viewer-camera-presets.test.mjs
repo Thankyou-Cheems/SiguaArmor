@@ -21,17 +21,17 @@ const viewerStyles = await readFile(
   "utf8",
 );
 
-test("camera presets expose five numbered views without a bottom view", () => {
+test("camera presets remain clickable views but no longer own number keys", () => {
   assert.deepEqual(
-    RUNTIME_VIEWER_CAMERA_VIEWS.map(({ id, shortcut }) => [id, shortcut]),
-    [
-      ["front", "1"],
-      ["left", "2"],
-      ["rear", "3"],
-      ["right", "4"],
-      ["top", "5"],
-    ],
+    RUNTIME_VIEWER_CAMERA_VIEWS.map(({ id }) => id),
+    ["front", "left", "rear", "right", "top"],
   );
+  assert.equal(
+    RUNTIME_VIEWER_CAMERA_VIEWS.some((view) => "shortcut" in view),
+    false,
+  );
+  assert.doesNotMatch(viewerSource, /applyNumberedCameraView/u);
+  assert.doesNotMatch(viewerSource, /数字键 1–5/u);
   assert.equal(RUNTIME_VIEWER_CAMERA_VIEWS.some(({ id }) => id === "bottom"), false);
   assert.deepEqual(
     RUNTIME_VIEWER_CAMERA_VIEWS

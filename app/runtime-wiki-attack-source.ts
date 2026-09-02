@@ -7,6 +7,11 @@ import type {
   RuntimeAttackSource,
   RuntimeAttackSourceWeapon,
 } from "./runtime-probe-weapon-labels.ts";
+import type { VehicleWeaponFireControl } from "../lib/vehicle-weapon-operation-state.ts";
+import {
+  weaponDpsWeaponsFromVehicleRuntimeDocument,
+} from "../lib/weapon-dps-source.ts";
+import type { WeaponDpsWeapon } from "../lib/weapon-dps-model.ts";
 
 export interface WikiWeaponRuntimeSourceDocument {
   schemaVersion: "sigua-weapon-runtime-source/v2";
@@ -55,6 +60,8 @@ export interface WikiWeaponRuntimeSourceDocument {
         dryReloadSeconds: number;
         roundsPerMinute: number;
         timeBetweenShotsSeconds: number;
+        timeBetweenSingleShotsSeconds?: number;
+        fireControl?: VehicleWeaponFireControl;
       };
     }>;
     weapons: Array<{
@@ -97,6 +104,7 @@ export interface RuntimeAttackSourcePresentation {
 
 export interface RuntimeAttackSourceLibrary {
   runtimeAttackSources: readonly RuntimeAttackSource[];
+  weaponDpsWeapons?: readonly WeaponDpsWeapon[];
   runtimeAttackSourceForId(id: string): RuntimeAttackSource | null;
   runtimeAttackWeaponSupportsHitAnalysis(weapon: RuntimeAttackSourceWeapon): boolean;
 }
@@ -114,6 +122,8 @@ export interface RuntimeStationEquipmentBinding {
     dryReloadSeconds: number;
     roundsPerMinute: number;
     timeBetweenShotsSeconds: number;
+    timeBetweenSingleShotsSeconds?: number;
+    fireControl?: VehicleWeaponFireControl;
   };
 }
 
@@ -272,8 +282,13 @@ export function createRuntimeAttackSourceLibrary(
     source.shareSlug,
     ...source.cardIds,
   ]);
+  const weaponDpsWeapons = weaponDpsWeaponsFromVehicleRuntimeDocument(
+    document as unknown as Record<string, unknown>,
+    canonicalRawName,
+  ).weapons;
   return {
     runtimeAttackSources: [source],
+    weaponDpsWeapons,
     runtimeAttackSourceForId(id) {
       return sourceIds.has(id) ? source : null;
     },

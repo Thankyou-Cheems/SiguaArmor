@@ -16,6 +16,7 @@ import type { RuntimeCrewSeatBinding } from "../lib/vehicle-crew-seat-runtime";
 import {
   compileVehicleStationGraph,
   type CompiledVehicleStationGraph,
+  type VehicleStationInputDynamics,
   type VehicleStationGraphRecord,
   type VehicleStationGraphPointer,
 } from "../lib/vehicle-station-graph";
@@ -119,6 +120,7 @@ interface RuntimeStationMotion {
     | "USQRotatingMovementComponent::SetCurrentRotation@0x1803f03f0";
   yawDriver: RuntimeMotionDriver | null;
   pitchDriver: RuntimeMotionDriver | null;
+  inputDynamics: VehicleStationInputDynamics | null;
   reason: string | null;
 }
 

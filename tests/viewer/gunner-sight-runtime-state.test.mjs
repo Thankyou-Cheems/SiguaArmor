@@ -19,6 +19,7 @@ const liveState = {
   stabilized: true,
   guidanceActive: false,
   currentWeaponLabel: "3OF26 125mm Fragmentation",
+  currentFireModeSourceValue: 2,
   currentWeaponClassPath: "/Game/Vehicles/T72/Weapons/BP_3OF26.BP_3OF26_C",
   commanderOverride: false,
   weaponOverheated: false,
@@ -97,6 +98,13 @@ test("updates combined weapon, operation status and zoom labels", () => {
       liveState,
     ),
     { text: "3OF26 125mm Fragmentation · 7" },
+  );
+  assert.deepEqual(
+    resolveGunnerSightDynamicBinding(
+      { semantic: "weapon-fire-mode-label", property: "text" },
+      liveState,
+    ),
+    { text: "2" },
   );
   assert.deepEqual(
     resolveGunnerSightDynamicBinding(
