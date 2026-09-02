@@ -3,7 +3,7 @@ import type {
   StationGraphTransform,
   VehicleStationGraphVisualPlacement,
 } from "./vehicle-station-graph.ts";
-import { wikiUrl } from "./wiki-source.ts";
+import { wikiProjectileAlgorithmUrl } from "./wiki-source.ts";
 
 export interface ProjectileVector3 {
   x: number;
@@ -867,7 +867,7 @@ export function loadWikiNativeProjectileAlgorithm(pathname: string) {
     throw new Error(`Invalid projectile algorithm path: ${pathname}`);
   }
   if (projectileAlgorithmRequest) return projectileAlgorithmRequest;
-  const source = wikiUrl(pathname);
+  const source = wikiProjectileAlgorithmUrl(pathname);
   projectileAlgorithmRequest = import(/* @vite-ignore */ source)
     .then((module) => {
       const candidate = module as Partial<NativeProjectileAlgorithm>;
