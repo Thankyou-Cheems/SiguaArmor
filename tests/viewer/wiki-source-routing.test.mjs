@@ -23,7 +23,15 @@ import {
   loadWikiVehicleRuntimeSource,
   loadWikiVehicleRadialQuery,
   loadWikiVehicleVisualAttachment,
+  wikiProjectileAlgorithmUrl,
 } from "../../lib/wiki-source.ts";
+
+test("projectile algorithms share the launch-contract cache identity", () => {
+  assert.equal(
+    wikiProjectileAlgorithmUrl("/algorithms/ballistics/native-projectile.js"),
+    "https://wiki.siguad.icu/algorithms/ballistics/native-projectile.js?mechanics=projectile-playback-v1",
+  );
+});
 
 test("shared runtime files resolve directly to SiguaWiki", () => {
   const model = "/assets/runtime-probe/models/" + "a".repeat(64) + ".gltf";

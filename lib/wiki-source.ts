@@ -25,6 +25,10 @@ export function wikiUrl(pathname: string) {
   return url.href;
 }
 
+export function wikiProjectileAlgorithmUrl(pathname: string) {
+  return wikiUrl(`${pathname}${WIKI_WEAPON_PROJECTILE_QUERY}`);
+}
+
 async function fetchJson(pathname: string, maxAgeMs = Number.POSITIVE_INFINITY) {
   const existing = requests.get(pathname);
   if (existing && Date.now() < existing.expiresAt) return existing.request;

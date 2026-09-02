@@ -13,6 +13,16 @@ export interface GunnerSightLayerPlacement {
   transform: string;
 }
 
+export type GunnerSightLayerFallbackKind = "reticle" | "screen";
+
+export function gunnerSightLayerFallbackKind(
+  layer: Pick<GunnerSightLayer, "role"> | null,
+): GunnerSightLayerFallbackKind | null {
+  if (!layer || layer.role === "reticle") return "reticle";
+  if (layer.role === "viewport-screen") return "screen";
+  return null;
+}
+
 function finite(values: unknown[]) {
   return values.every((value) => typeof value === "number" && Number.isFinite(value));
 }

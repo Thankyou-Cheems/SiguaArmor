@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   compileGunnerSightRenderLayers,
+  gunnerSightProjectionIsVisible,
 } from "../../lib/gunner-sight-presentation.ts";
 
 const projection = (id) => ({
@@ -161,5 +162,52 @@ test("keeps source global paint order across root and nested panel layers", () =
   assert.deepEqual(
     layers.map(({ kind, widgetName }) => `${kind}:${widgetName}`),
     ["solid:SideMask", "image:Dial"],
+  );
+});
+
+test("does not count an authored active projection as rendered after its source panel hides it", () => {
+  const projections = ["default", "zoom"].map(projection);
+  const station = {
+    layers: [{
+      widgetName: "MainReticle",
+      role: "reticle",
+      state: "observed-static-brush-resource",
+      visibility: "Visible",
+      projectionRef: "default",
+      paintOrder: 1,
+      layout: layout("MainReticle", 0),
+    }],
+    textLayers: [],
+  };
+  const activeStage = {
+    zoomIndex: 1,
+    sourceObjectPath: "/Game/Test/T_Zoom.T_Zoom",
+    projectionRef: "zoom",
+    projectionBindingKey: "variant",
+    presentation: {
+      kind: "material-texture-parameter",
+      targetWidgetName: "MainReticle",
+      materialTemplateRef: "/Game/Test/MI_Main.MI_Main",
+      parameterName: "Texture",
+      setterNodes: ["SetTexture"],
+    },
+  };
+  const layers = compileGunnerSightRenderLayers(station, activeStage, projections);
+
+  assert.equal(
+    gunnerSightProjectionIsVisible(
+      layers,
+      "zoom",
+      new Map([["MainReticle", false]]),
+    ),
+    false,
+  );
+  assert.equal(
+    gunnerSightProjectionIsVisible(
+      layers,
+      "zoom",
+      new Map([["MainReticle", true]]),
+    ),
+    true,
   );
 });

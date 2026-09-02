@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { gunnerSightLayerPlacement } from "../../lib/gunner-sight-layout.ts";
+import {
+  gunnerSightLayerFallbackKind,
+  gunnerSightLayerPlacement,
+} from "../../lib/gunner-sight-layout.ts";
 
 const transform = (scale) => ({
   Translation: { X: 0, Y: 0 },
@@ -78,4 +81,21 @@ test("unresolved or malformed layout fails closed", () => {
       steps: [],
     },
   }), null);
+});
+
+test("missing source layout never expands auxiliary direction art to the viewport", () => {
+  assert.equal(gunnerSightLayerFallbackKind(null), "reticle");
+  assert.equal(gunnerSightLayerFallbackKind({ role: "reticle" }), "reticle");
+  assert.equal(
+    gunnerSightLayerFallbackKind({ role: "viewport-screen" }),
+    "screen",
+  );
+  assert.equal(
+    gunnerSightLayerFallbackKind({ role: "auxiliary-static" }),
+    null,
+  );
+  assert.equal(
+    gunnerSightLayerFallbackKind({ role: "damage-overlay" }),
+    null,
+  );
 });

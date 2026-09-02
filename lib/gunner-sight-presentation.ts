@@ -24,6 +24,18 @@ export type GunnerSightRenderLayer =
       layer: GunnerSightTextLayer;
     };
 
+export function gunnerSightProjectionIsVisible(
+  renderLayers: GunnerSightRenderLayer[],
+  projectionId: string,
+  visibilityByWidgetName: ReadonlyMap<string, boolean>,
+) {
+  return renderLayers.some((layer) =>
+    layer.kind === "image" &&
+    layer.projection.id === projectionId &&
+    visibilityByWidgetName.get(layer.widgetName) !== false
+  );
+}
+
 function visible(layer: { visibility: string | null; renderOpacity: number | null }) {
   return !["Collapsed", "Hidden"].includes(layer.visibility ?? "Visible") &&
     layer.renderOpacity !== 0;
