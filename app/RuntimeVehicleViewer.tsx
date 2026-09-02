@@ -3943,6 +3943,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         currentWeaponLabel: activeOperationWeapon?.displayNameZh ??
             activeOperationEquipment?.equipment.displayName ??
             "",
+        currentFireModeSourceValue: activeOperationSpec?.fireControl?.modes[activeOperationSpec.fireControl.defaultModeIndex]?.sourceValue ?? null,
         currentWeaponClassPath: activeGunnerSightStation?.weaponModes.find((mode) => mode.equipmentRef === activeOperationEquipmentRef)?.weaponClassPath ?? "",
         commanderOverride: false,
         weaponOverheated: false,
@@ -4281,6 +4282,19 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             setWeaponDpsFactsState("idle");
             return;
         }
+        const coordinates = {
+            weaponAssignmentId: selectedAttackWeapon.weaponAssignmentId ?? null,
+            sourceCardId: selectedAttackWeapon.sourceCardId,
+            sourceRawName: selectedAttackWeapon.sourceRawName,
+            weaponId: selectedAttackWeapon.weaponId,
+        };
+        const exactCandidates = attackLibrary?.weaponDpsWeapons;
+        if (exactCandidates) {
+            const exact = resolveWeaponDpsWeaponForRuntimeAssignment(exactCandidates, coordinates);
+            setWeaponDpsFacts(exact);
+            setWeaponDpsFactsState(exact ? "ready" : "unavailable");
+            return;
+        }
         let active = true;
         setWeaponDpsFactsState("loading");
         const request = sharedWeaponDpsFactsRequest ??
@@ -4295,12 +4309,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             .then((candidates) => {
             if (!active)
                 return;
-            const exact = resolveWeaponDpsWeaponForRuntimeAssignment(candidates, {
-                weaponAssignmentId: selectedAttackWeapon.weaponAssignmentId ?? null,
-                sourceCardId: selectedAttackWeapon.sourceCardId,
-                sourceRawName: selectedAttackWeapon.sourceRawName,
-                weaponId: selectedAttackWeapon.weaponId,
-            });
+            const exact = resolveWeaponDpsWeaponForRuntimeAssignment(candidates, coordinates);
             if (!exact) {
                 setWeaponDpsFacts(null);
                 setWeaponDpsFactsState("unavailable");
@@ -4318,7 +4327,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         return () => {
             active = false;
         };
-    }, [activeShotId, selectedAttackWeapon]);
+    }, [activeShotId, attackLibrary, selectedAttackWeapon]);
     const catalogCompletedWeaponCount = attackSource?.catalogCompletedWeaponCount ?? 0;
     const attackReady = attackState.kind === "ready" && loadedAttackSourceCardId === attackSource?.cardId;
     const verdict = shotVerdict(shotResult);

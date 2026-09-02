@@ -153,6 +153,133 @@ function overheatForBinding(
   return uniqueProfiles.size === 1 ? [...uniqueProfiles.values()][0] : null;
 }
 
+function evidenceNumber(value: unknown) {
+  return numberValue(record(value)?.value) ?? numberValue(value);
+}
+
+function runtimeDamagePerShot(profile: UnknownRecord) {
+  const ballistics = record(profile.ballisticsModel);
+  const weapons = Array.isArray(ballistics?.weapons)
+    ? ballistics.weapons
+    : [];
+  const weaponIndex = Math.max(
+    0,
+    Math.floor(nonNegative(profile.ballisticsWeaponIndex) ?? 0),
+  );
+  const weapon = record(weapons[weaponIndex]);
+  const projectiles = Array.isArray(ballistics?.projectiles)
+    ? ballistics.projectiles
+    : [];
+  const projectileIndex = Math.max(
+    0,
+    Math.floor(evidenceNumber(weapon?.projectileIndex) ?? 0),
+  );
+  const projectile = record(projectiles[projectileIndex]);
+  const maxDamage = evidenceNumber(weapon?.maxDamage);
+  const impactDamage = evidenceNumber(projectile?.impactDamage);
+  return positive(maxDamage) ?? positive(impactDamage) ??
+    nonNegative(maxDamage) ?? nonNegative(impactDamage);
+}
+
+/**
+ * Builds the timing fact for one exact vehicle loadout from its already-loaded
+ * runtime slice. This keeps the normal 3D hit path on the per-vehicle query;
+ * the full weapon catalog remains reserved for an explicitly opened global
+ * source selector.
+ */
+export function weaponDpsWeaponsFromVehicleRuntimeDocument(
+  document: WeaponDpsCatalogDocument,
+  sourceRawName: string,
+): WeaponDpsCatalogResult {
+  const source = record(document.source);
+  const sourceCardId = stringValue(source?.cardId);
+  const loadouts = Array.isArray(document.loadouts) ? document.loadouts : [];
+  const loadout = loadouts
+    .map((value) => record(value))
+    .find((candidate) => stringValue(candidate?.rawName) === sourceRawName);
+  const profiles = Array.isArray(document.weaponProfiles)
+    ? document.weaponProfiles
+    : [];
+  const profilesById = new Map(
+    profiles
+      .map((value) => record(value))
+      .filter((value): value is UnknownRecord => value !== null)
+      .map((profile) => [stringValue(profile.weaponProfileId), profile] as const)
+      .filter((entry): entry is [string, UnknownRecord] => entry[0] !== null),
+  );
+  const stationEquipment = Array.isArray(loadout?.stationEquipment)
+    ? loadout.stationEquipment
+    : [];
+  const equipmentById = new Map(
+    stationEquipment
+      .map((value) => record(value))
+      .filter((value): value is UnknownRecord => value !== null)
+      .map((equipment) => [stringValue(equipment.id), equipment] as const)
+      .filter((entry): entry is [string, UnknownRecord] => entry[0] !== null),
+  );
+  const assignments = Array.isArray(loadout?.weapons) ? loadout.weapons : [];
+  const weapons: WeaponDpsWeapon[] = [];
+  let overheatProfileCount = 0;
+  for (const value of assignments) {
+    const assignment = record(value);
+    const equipmentId = stringValue(assignment?.stationEquipmentId);
+    const profileId = stringValue(assignment?.weaponProfileId);
+    const variantId = stringValue(assignment?.selectorVariantId);
+    const equipment = equipmentId ? equipmentById.get(equipmentId) : null;
+    const profile = profileId ? profilesById.get(profileId) : null;
+    const operation = record(equipment?.operation);
+    if (
+      !assignment ||
+      !equipmentId ||
+      !variantId ||
+      !equipment ||
+      !profile ||
+      !operation
+    ) continue;
+    const interval = positive(operation.timeBetweenShotsSeconds) ??
+      (positive(operation.roundsPerMinute)
+        ? 60 / (operation.roundsPerMinute as number)
+        : null);
+    const selectorVariant = record(profile.selectorVariant);
+    const overheat = profileFromVariant(selectorVariant);
+    if (overheat) overheatProfileCount += 1;
+    weapons.push({
+      id: equipmentId,
+      assignmentId: equipmentId,
+      label:
+        stringValue(equipment.displayName) ??
+        stringValue(profile.displayName) ??
+        stringValue(equipment.gunName) ??
+        equipmentId,
+      sourceLabel: [sourceCardId, sourceRawName].filter(Boolean).join(" · "),
+      sourceCardId,
+      sourceRawName,
+      variantIds: [variantId],
+      damagePerShot: runtimeDamagePerShot(profile),
+      timeBetweenShotsSeconds: interval,
+      magazineSize: positive(operation.magazineSize),
+      totalRounds: totalRounds(
+        operation.numberOfMags,
+        operation.magazineSize,
+      ),
+      tacticalReloadSeconds: positive(operation.tacticalReloadSeconds),
+      dryReloadSeconds: positive(operation.dryReloadSeconds),
+      overheat,
+    });
+  }
+  return {
+    weapons,
+    sourceRevision:
+      stringValue(document.sourceBuildId) ??
+      stringValue(document.dataRevision) ??
+      stringValue(document.generatedAtUtc) ??
+      weapons.find((weapon) => weapon.overheat?.sourceBuildId)?.overheat
+        ?.sourceBuildId ??
+      null,
+    overheatProfileCount,
+  };
+}
+
 export function weaponDpsWeaponsFromWikiDocument(
   document: WeaponDpsCatalogDocument,
 ): WeaponDpsCatalogResult {

@@ -59,6 +59,7 @@ export interface GunnerSightOperationState {
   stabilized: boolean;
   guidanceActive: boolean;
   currentWeaponLabel: string;
+  currentFireModeSourceValue: number | null;
   currentWeaponClassPath: string;
   commanderOverride: boolean;
   weaponOverheated: boolean;
