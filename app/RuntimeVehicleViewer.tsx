@@ -6277,11 +6277,22 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             renderer.setClearColor(presentation.clearColor, presentation.clearAlpha);
             gridHelper?.scale.set(presentation.groundGridScale, 1, presentation.groundGridScale);
             gridHelper?.updateMatrixWorld(true);
+            analysisVisualDepthGroup.visible =
+                presentation.analysisDepthOccludersVisible;
+            const hitGroup = hitGroupRef.current;
+            if (hitGroup) {
+                hitGroup.visible = presentation.suppressHitAnalysis
+                    ? false
+                    : modeRef.current !== "exterior" ||
+                        exteriorSpacedArmorHighlightRef.current;
+            }
             host.dataset.operationScene = active ? "range-reference" : "inspection";
             host.dataset.operationInput = active
                 ? "wasd-q-and-direct-ui"
                 : "orbit-pointer";
             host.dataset.operationGroundGridScale = String(presentation.groundGridScale);
+            host.dataset.operationAnalysisDepthOccluders = String(presentation.analysisDepthOccludersVisible);
+            host.dataset.operationHitAnalysisSuppressed = String(presentation.suppressHitAnalysis);
         };
         const applyDriverMaskVisibility = (requestedVisible: boolean) => {
             const visible = Boolean(driverMaskLayer &&
