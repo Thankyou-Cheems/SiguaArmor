@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   resolveWeaponDpsWeaponForRuntimeAssignment,
   weaponDpsWeaponsFromWikiDocument,
+  weaponDpsWeaponsFromVehicleRuntimeDocument,
 } from "../../lib/weapon-dps-source.ts";
 
 const sampleCatalog = {
@@ -47,6 +48,89 @@ const sampleCatalog = {
     }],
   },
 };
+
+const sampleVehicleRuntime = {
+  schemaVersion: "sigua-weapon-runtime-source/v2",
+  source: {
+    kind: "vehicle",
+    cardId: "afu--bmp-2--ifv",
+    rawNames: ["BP_BMP2_AFU"],
+  },
+  weaponProfiles: [{
+    weaponProfileId: "profile-thermal",
+    weaponId: "variant-thermal",
+    displayName: "2A42 AP",
+    gunName: "BP_BMP2_2A42_AP",
+    ballisticsWeaponIndex: 0,
+    ballisticsModel: {
+      weapons: [{ maxDamage: { state: "observed", value: 300 } }],
+      projectiles: [{ impactDamage: { state: "observed", value: 300 } }],
+    },
+    selectorVariant: {
+      id: "variant-thermal",
+      overheat: {
+        state: "observed",
+        heatPerShot: 3.4,
+        temperatureMin: 60,
+        temperatureMax: 120,
+        coolingRatePerSecond: 15,
+        triggerStep: 6,
+        shutdownTemperature: 105,
+        triggerAt: 108,
+        unlockTemperature: 102,
+      },
+    },
+  }],
+  loadouts: [{
+    rawName: "BP_BMP2_AFU",
+    stationEquipment: [{
+      id: "assignment-exact",
+      gunName: "BP_BMP2_2A42_AP",
+      displayName: "2A42 AP",
+      operation: {
+        numberOfMags: 4,
+        magazineSize: 100,
+        tacticalReloadSeconds: 4,
+        dryReloadSeconds: 5,
+        roundsPerMinute: 652.173913,
+        timeBetweenShotsSeconds: 0.092,
+      },
+    }],
+    weapons: [{
+      weaponAssignmentId: "assignment-exact:variant-thermal",
+      stationEquipmentId: "assignment-exact",
+      weaponProfileId: "profile-thermal",
+      selectorVariantId: "variant-thermal",
+    }],
+  }],
+};
+
+test("exact vehicle runtime slice supplies hit timing without the full weapon catalog", () => {
+  const result = weaponDpsWeaponsFromVehicleRuntimeDocument(
+    sampleVehicleRuntime,
+    "BP_BMP2_AFU",
+  );
+  assert.equal(result.weapons.length, 1);
+  assert.equal(result.weapons[0].assignmentId, "assignment-exact");
+  assert.equal(result.weapons[0].sourceCardId, "afu--bmp-2--ifv");
+  assert.equal(result.weapons[0].sourceRawName, "BP_BMP2_AFU");
+  assert.equal(result.weapons[0].damagePerShot, 300);
+  assert.equal(result.weapons[0].timeBetweenShotsSeconds, 0.092);
+  assert.equal(result.weapons[0].magazineSize, 100);
+  assert.equal(result.weapons[0].totalRounds, 400);
+  assert.equal(result.weapons[0].tacticalReloadSeconds, 4);
+  assert.equal(result.weapons[0].dryReloadSeconds, 5);
+  assert.equal(result.weapons[0].overheat?.triggerAt, 108);
+  assert.equal(
+    resolveWeaponDpsWeaponForRuntimeAssignment(result.weapons, {
+      weaponAssignmentId: "assignment-exact:variant-thermal",
+      sourceCardId: "afu--bmp-2--ifv",
+      sourceRawName: "BP_BMP2_AFU",
+      weaponId: "variant-thermal",
+    })?.assignmentId,
+    "assignment-exact",
+  );
+});
 
 test("Wiki adapter keeps exact assignment identity and carries the thermal profile", () => {
   const result = weaponDpsWeaponsFromWikiDocument(sampleCatalog);
@@ -157,6 +241,10 @@ test("DPS analysis stays inside the clicked-hit damage card", async () => {
   const styles = await readFile(new URL("../../app/globals.css", import.meta.url), "utf8");
   const timeline = await readFile(new URL("../../app/WeaponRhythmTimeline.tsx", import.meta.url), "utf8");
   assert.doesNotMatch(viewer, /weaponDpsHref|viewer-weapon-dps-link|\/weapon-dps\?/u);
+  assert.match(
+    viewer,
+    /const exactCandidates = attackLibrary\?\.weaponDpsWeapons;[\s\S]*?if \(exactCandidates\)[\s\S]*?return;[\s\S]*?loadWikiWeaponCatalog\(\)/u,
+  );
   assert.match(viewer, /function HitDpsTimingCard/u);
   assert.match(viewer, /selectPrimaryWeaponHitDpsEstimate/u);
   assert.match(viewer, /击毁载具（弹药架）/u);

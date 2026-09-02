@@ -148,6 +148,10 @@ test("one Wiki vehicle source is a complete default hit-analysis library", () =>
   assert.equal(source?.weapons.length, 1);
   assert.equal(source?.weapons[0].weaponId, "weapon-variant-test");
   assert.equal(source?.weapons[0].weaponAssignmentId, "equipment-test:weapon-variant-test");
+  assert.equal(library.weaponDpsWeapons?.length, 1);
+  assert.equal(library.weaponDpsWeapons?.[0].assignmentId, "equipment-test");
+  assert.equal(library.weaponDpsWeapons?.[0].damagePerShot, 8000);
+  assert.equal(library.weaponDpsWeapons?.[0].timeBetweenShotsSeconds, 8);
   assert.equal(
     library.runtimeAttackWeaponSupportsHitAnalysis(source.weapons[0]),
     true,
