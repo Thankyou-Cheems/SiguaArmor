@@ -25,6 +25,7 @@
     "assets:faction-mattes": "node tools/refine-faction-art-mattes.mjs",
     "catalog:bootstrap": "node tools/build-catalog-bootstrap.mjs",
     "audit:vehicle-projectile-playback": "node --experimental-strip-types tools/audit-vehicle-projectile-playback.mjs",
+    "audit:vehicle-loadout-closure": "node tools/audit-vehicle-loadout-closure.mjs",
     "supporters:publish": "node tools/publish-runtime-document.mjs supporters",
     "updates:publish": "node tools/publish-runtime-document.mjs updates"
   },
