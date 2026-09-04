@@ -2966,6 +2966,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const resolveVehicleGuidanceAimPoseRef = useRef<(() => VehicleGuidanceAimPose | null) | null>(null);
     const spawnVehicleProjectileVisualRef = useRef<((request: VehicleProjectileVisualRequest) => boolean) | null>(null);
     const prepareVehicleProjectileVisualRef = useRef<((visual: SourceProjectileVisual) => Promise<void>) | null>(null);
+    const setProjectileVisibilityEnhancedRef = useRef<((value: boolean) => void) | null>(null);
+    const projectileVisibilityEnhancedRef = useRef(true);
     const fireVehicleProjectileRef = useRef<() => HeldOperationFireAttempt>(() => ({ nextAttemptAtMs: null }));
     const stopVehicleProjectileFireRef = useRef<() => void>(() => undefined);
     const releaseVehicleWeaponTriggerRef = useRef<() => void>(() => undefined);
@@ -3343,6 +3345,11 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const [vehicleProjectileResource, setVehicleProjectileResource] = useState<RuntimeVehicleProjectileResource | null>(null);
     const [vehicleProjectileResourceState, setVehicleProjectileResourceState] = useState<"idle" | "loading" | "ready" | "error">("idle");
     const [vehicleProjectileNotice, setVehicleProjectileNotice] = useState("");
+    const [projectileVisibilityEnhanced, setProjectileVisibilityEnhanced] = useState(true);
+    useEffect(() => {
+        projectileVisibilityEnhancedRef.current = projectileVisibilityEnhanced;
+        setProjectileVisibilityEnhancedRef.current?.(projectileVisibilityEnhanced);
+    }, [projectileVisibilityEnhanced]);
     const [vehicleWeaponOperationStore] = useState(createRuntimeVehicleWeaponOperationStore);
     const [guidanceActiveUntilMs, setGuidanceActiveUntilMs] = useState(0);
     const [controlPanelOpen, setControlPanelOpen] = useState(true);
@@ -4042,7 +4049,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 setVehicleProjectileNotice(operationShot.reason === "weapon-reloading"
                     ? "武器正在装填"
                     : operationShot.reason === "weapon-cooldown"
-                        ? "武器尚未达到 Wiki 射击间隔"
+                        ? ""
                         : operationShot.reason === "trigger-cycle-complete"
                             ? "松开后再次扣动扳机"
                             : "当前弹匣已空");
@@ -6122,6 +6129,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         scene.add(explosionPlacementPreview.root);
         const vehicleProjectileThreeRuntime = createVehicleProjectileThreeRuntime({
             scene,
+            visibilityEnhanced: projectileVisibilityEnhancedRef.current,
             render: () => renderRef.current?.(),
             onActiveCountChange: (count) => {
                 host.dataset.projectilePlaybackActiveCount = String(count);
@@ -6134,6 +6142,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             onResourceError: (error) => setVehicleProjectileNotice(`弹体模型加载失败：${error.message}`),
         });
         prepareVehicleProjectileVisualRef.current = vehicleProjectileThreeRuntime.prepare;
+        setProjectileVisibilityEnhancedRef.current = vehicleProjectileThreeRuntime.setVisibilityEnhanced;
         spawnVehicleProjectileVisualRef.current = (request) => vehicleProjectileThreeRuntime.spawn(request);
         const stationPose = (stationId: string) => turretPosesRef.current.find((pose) => pose.stationId === stationId) ?? {
             stationId,
@@ -9090,6 +9099,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             vehicleProjectileThreeRuntime.dispose();
             spawnVehicleProjectileVisualRef.current = null;
             prepareVehicleProjectileVisualRef.current = null;
+            setProjectileVisibilityEnhancedRef.current = null;
             resolveVehicleProjectileLaunchPoseRef.current = null;
             resolveVehicleGuidanceAimPoseRef.current = null;
             shotVisualsRef.current = [];
@@ -9423,6 +9433,10 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     refillVehicleAmmunition();
                     e.currentTarget.blur();
                 }}>补满弹药</button>) : null}
+            {activeOperationWeapon ? (<button type="button" role="switch" aria-label="弹道与弹体可见度增强" aria-checked={projectileVisibilityEnhanced} data-active={projectileVisibilityEnhanced || undefined} title="网页辅助标记：加亮弹体位置与飞行轨迹，不改变真实弹道、弹速或模型尺寸" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => {
+                    setProjectileVisibilityEnhanced((enabled) => !enabled);
+                    event.currentTarget.blur();
+                }}>弹道增强</button>) : null}
             {activeOperationWeapon || !driverViewActive ? (<span className="crew-view-operation-keys" aria-label="键盘操作提示">
                 {activeOperationWeapon ? (<><kbd>左键</kbd><span>按住开火</span></>) : null}
                 {!driverViewActive ? (<>

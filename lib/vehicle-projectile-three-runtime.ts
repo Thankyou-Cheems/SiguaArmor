@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
+import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
+import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry.js";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 
 import {
   sampleProjectileTrajectory,
@@ -14,6 +17,7 @@ import { wikiUrl } from "./wiki-source.ts";
 
 export const VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M = 3_000;
 const DEFAULT_MAX_ACTIVE_PROJECTILES = 32;
+const VISIBILITY_TRAIL_SEGMENTS = 10;
 
 export interface VehicleProjectileLaunchPose {
   positionCm: ProjectileVector3;
@@ -119,6 +123,7 @@ export function createVehicleProjectileThreeRuntime({
   maxActiveProjectiles = DEFAULT_MAX_ACTIVE_PROJECTILES,
   loadModel,
   onResourceError,
+  visibilityEnhanced = true,
 }: {
   scene: THREE.Scene;
   render: () => void;
@@ -127,6 +132,7 @@ export function createVehicleProjectileThreeRuntime({
   maxActiveProjectiles?: number;
   loadModel?: (pathname: string) => Promise<THREE.Object3D>;
   onResourceError?: (error: Error) => void;
+  visibilityEnhanced?: boolean;
 }) {
   const root = new THREE.Group();
   root.name = "runtime-source-locked-projectiles";
@@ -233,6 +239,47 @@ export function createVehicleProjectileThreeRuntime({
   trails.name = "runtime-source-locked-projectile-trails";
   trails.frustumCulled = false;
   root.add(trails);
+
+  // Explicit webpage assistance, not a source mesh or a native tracer. Both
+  // buffers are fixed-capacity and shared by every active round, including
+  // meshless/non-tracer bullets. The source body keeps its real dimensions.
+  const cuePositions = new Float32Array(maxActiveProjectiles * VISIBILITY_TRAIL_SEGMENTS * 6);
+  const cueGeometry = new LineSegmentsGeometry().setPositions(cuePositions);
+  const cueAttribute = (cueGeometry.getAttribute("instanceStart") as THREE.InterleavedBufferAttribute).data;
+  cueAttribute.setUsage(THREE.DynamicDrawUsage);
+  cueGeometry.instanceCount = 0;
+  const cueMaterial = new LineMaterial({ color: 0xffd878, linewidth: 2.4,
+    transparent: true, opacity: .8, depthWrite: false, toneMapped: false });
+  const flightCues = new LineSegments2(cueGeometry, cueMaterial);
+  flightCues.name = "runtime-projectile-visibility-trails";
+  flightCues.frustumCulled = false;
+  root.add(flightCues);
+
+  const markerPositions = new Float32Array(maxActiveProjectiles * 3);
+  const markerGeometry = new THREE.BufferGeometry();
+  const markerAttribute = new THREE.BufferAttribute(markerPositions, 3).setUsage(THREE.DynamicDrawUsage);
+  markerGeometry.setAttribute("position", markerAttribute);
+  markerGeometry.setDrawRange(0, 0);
+  const markerMaterial = new THREE.ShaderMaterial({
+    uniforms: { pointSize: { value: 7 } },
+    vertexShader: `uniform float pointSize;
+      void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = pointSize;
+      }`,
+    fragmentShader: `void main() {
+      float radius = length(gl_PointCoord - vec2(0.5)) * 2.0;
+      float alpha = 1.0 - smoothstep(0.5, 1.0, radius);
+      if (alpha <= 0.0) discard;
+      gl_FragColor = vec4(mix(vec3(1.0), vec3(1.0, 0.65, 0.18), smoothstep(0.15, 0.85, radius)), alpha);
+    }`,
+    transparent: true, depthWrite: false, toneMapped: false,
+  });
+  const markers = new THREE.Points(markerGeometry, markerMaterial);
+  markers.name = "runtime-projectile-visibility-markers";
+  markers.frustumCulled = false;
+  markers.onBeforeRender = (renderer) => { markerMaterial.uniforms.pointSize!.value = 7 * renderer.getPixelRatio(); };
+  root.add(markers);
   scene.add(root);
 
   const active: Array<{
@@ -246,6 +293,7 @@ export function createVehicleProjectileThreeRuntime({
   const trailStart = new THREE.Vector3();
   let animationFrame = 0;
   let publishedCount = -1;
+  let enhanced = visibilityEnhanced;
 
   const animate = (frameTimeMs: number) => {
     animationFrame = 0;
@@ -259,11 +307,16 @@ export function createVehicleProjectileThreeRuntime({
     }
     for (const primitives of readyModels.values()) for (const primitive of primitives) primitive.batch.count = 0;
     root.visible = active.length > 0;
+    flightCues.visible = markers.visible = enhanced;
+    trails.visible = !enhanced;
     let trailCount = 0;
+    let cueCount = 0;
+    let markerCount = 0;
     active.forEach((playback) => {
+      const elapsedSeconds = (frameTimeMs - playback.startedAtMs) / 1000;
       const sample = sampleProjectileTrajectory(
         playback.request.samples,
-        (frameTimeMs - playback.startedAtMs) / 1000,
+        elapsedSeconds,
       );
       if (!sample) return;
       position.set(
@@ -286,6 +339,30 @@ export function createVehicleProjectileThreeRuntime({
         const batch = part.primitive.batch;
         instanceMatrix.multiplyMatrices(bodyTransform.matrix, part.local);
         batch.setMatrixAt(batch.count++, instanceMatrix);
+      }
+      if (enhanced) {
+        position.toArray(markerPositions, markerCount++ * 3);
+        const speedMPerSecond = Math.hypot(sample.velocityCmPerSecond.x,
+          sample.velocityCmPerSecond.y, sample.velocityCmPerSecond.z) / 100;
+        const tailSeconds = Math.min(.18, 120 / Math.max(1, speedMPerSecond));
+        const fromSeconds = Math.max(0, elapsedSeconds - tailSeconds);
+        // Follow the already solved curve, never extrapolate a straight streak
+        // through a bend or change the projectile's speed to keep it visible.
+        let previous = sampleProjectileTrajectory(playback.request.samples, fromSeconds)!;
+        for (let step = 1; step <= VISIBILITY_TRAIL_SEGMENTS; step++) {
+          const next = step === VISIBILITY_TRAIL_SEGMENTS ? sample : sampleProjectileTrajectory(
+            playback.request.samples, fromSeconds + (elapsedSeconds - fromSeconds) * step / VISIBILITY_TRAIL_SEGMENTS,
+          )!;
+          const offset = cueCount++ * 6;
+          cuePositions[offset] = previous.positionCm.x / 100;
+          cuePositions[offset + 1] = previous.positionCm.z / 100;
+          cuePositions[offset + 2] = previous.positionCm.y / 100;
+          cuePositions[offset + 3] = next.positionCm.x / 100;
+          cuePositions[offset + 4] = next.positionCm.z / 100;
+          cuePositions[offset + 5] = next.positionCm.y / 100;
+          previous = next;
+        }
+        return;
       }
       // A flight cue represents only an authored particle route. Mesh-only and
       // invisible projectiles must not acquire the old universal gold trail.
@@ -317,6 +394,10 @@ export function createVehicleProjectileThreeRuntime({
     for (const primitives of readyModels.values()) for (const primitive of primitives) primitive.batch.instanceMatrix.needsUpdate = true;
     trailGeometry.setDrawRange(0, trailCount * 2);
     trailAttribute.needsUpdate = true;
+    cueGeometry.instanceCount = cueCount;
+    cueAttribute.needsUpdate = true;
+    markerGeometry.setDrawRange(0, markerCount);
+    markerAttribute.needsUpdate = true;
     if (publishedCount !== active.length) { onActiveCountChange?.(active.length); publishedCount = active.length; }
     render();
     if (active.length > 0) {
@@ -328,6 +409,12 @@ export function createVehicleProjectileThreeRuntime({
 
   return {
     prepare,
+    setVisibilityEnhanced(value: boolean) {
+      enhanced = value;
+      flightCues.visible = markers.visible = value;
+      trails.visible = !value;
+      if (!disposed && active.length > 0 && animationFrame === 0) animationFrame = requestAnimationFrame(animate);
+    },
     spawn(request: VehicleProjectileVisualRequest) {
       if (disposed || request.samples.length < 2) return false;
       void prepare(request.visual).catch(error => onResourceError?.(error instanceof Error ? error : new Error(String(error))));
@@ -353,6 +440,8 @@ export function createVehicleProjectileThreeRuntime({
       models.clear(); readyModels.clear(); preparations.clear(); readyVisuals.clear();
       trailGeometry.dispose();
       trailMaterial.dispose();
+      cueGeometry.dispose(); cueMaterial.dispose();
+      markerGeometry.dispose(); markerMaterial.dispose();
     },
   };
 }
