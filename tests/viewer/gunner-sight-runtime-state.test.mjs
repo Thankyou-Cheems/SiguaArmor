@@ -162,6 +162,18 @@ test("resolves ready, reload and stabilization indicators from live state", () =
   );
 });
 
+test("normal fire cadence is not presented as an empty magazine", () => {
+  const binding = { semantic: "weapon-ready-status", property: "text" };
+  const state = { ...liveState, weaponReloading: false };
+  assert.deepEqual(resolveGunnerSightDynamicBinding(binding, state), { text: "" });
+  assert.deepEqual(resolveGunnerSightDynamicBinding(binding,
+    { ...state, roundsRemaining: 0 }), { text: "EMPTY" });
+  assert.deepEqual(resolveGunnerSightDynamicBinding(binding,
+    { ...state, weaponReady: true }), { text: "READY" });
+  assert.deepEqual(resolveGunnerSightDynamicBinding(binding,
+    { ...state, roundsRemaining: null }), { text: "" });
+});
+
 test("resolves current and related station dials from the live pose", () => {
   assert.deepEqual(
     resolveGunnerSightDynamicBinding(

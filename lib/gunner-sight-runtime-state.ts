@@ -209,7 +209,10 @@ export function resolveGunnerSightDynamicBinding(
             ? "RELOAD"
             : state.weaponReady
               ? "READY"
-              : "EMPTY",
+              // A cadence/equip delay is not evidence of an empty magazine.
+              : state.roundsRemaining === 0
+                ? "EMPTY"
+                : "",
         };
       default:
         return null;

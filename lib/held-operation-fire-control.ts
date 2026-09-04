@@ -25,6 +25,7 @@ export function createHeldOperationFireController({
 }: HeldOperationFireControllerOptions): HeldOperationFireController {
   let active = false;
   let timerId: number | null = null;
+  let dueAtMs: number | null = null;
 
   const clearScheduledAttempt = () => {
     if (timerId === null) return;
@@ -34,12 +35,19 @@ export function createHeldOperationFireController({
   const runAttempt = () => {
     timerId = null;
     if (!active) return;
+    // Browser timers accept integral milliseconds and may wake before a
+    // fractional source deadline. Waiting is not a failed trigger attempt.
+    if (dueAtMs !== null && nowMs() < dueAtMs) {
+      timerId = setTimer(runAttempt, Math.max(1, Math.ceil(dueAtMs - nowMs())));
+      return;
+    }
     const { nextAttemptAtMs } = attempt();
+    dueAtMs = nextAttemptAtMs;
     if (nextAttemptAtMs === null) {
       active = false;
       return;
     }
-    const delayMs = Math.max(minimumDelayMs, nextAttemptAtMs - nowMs());
+    const delayMs = Math.ceil(Math.max(minimumDelayMs, nextAttemptAtMs - nowMs()));
     timerId = setTimer(runAttempt, delayMs);
   };
 
@@ -47,10 +55,12 @@ export function createHeldOperationFireController({
     start() {
       if (active) return;
       active = true;
+      dueAtMs = null;
       runAttempt();
     },
     stop() {
       active = false;
+      dueAtMs = null;
       clearScheduledAttempt();
     },
     isActive() {

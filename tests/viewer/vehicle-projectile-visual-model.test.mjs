@@ -7,6 +7,53 @@ const frame = { translationCm: { x: -100, y: 0, z: 20 }, rotationQuaternion: { x
 const samples = [{ timeSeconds: 0, positionCm: { x: 1000, y: 0, z: 0 }, velocityCmPerSecond: { x: 100, y: 0, z: 0 }, phase: "ascending" },
   { timeSeconds: 10, positionCm: { x: 2000, y: 0, z: 0 }, velocityCmPerSecond: { x: 100, y: 0, z: 0 }, phase: "ascending" }];
 
+test("enhanced flight cues make non-tracer shots visible with bounded screen-sized markers and curved history", (t) => {
+  let nextFrame;
+  const oldRequest = globalThis.requestAnimationFrame, oldCancel = globalThis.cancelAnimationFrame;
+  globalThis.requestAnimationFrame = fn => { nextFrame = fn; return 1; };
+  globalThis.cancelAnimationFrame = () => {};
+  t.after(() => { globalThis.requestAnimationFrame = oldRequest; globalThis.cancelAnimationFrame = oldCancel; });
+  const scene = new THREE.Scene();
+  const runtime = createVehicleProjectileThreeRuntime({ scene, render() {}, maxActiveProjectiles: 3 });
+  const visual = { bodies: [], effects: [], nativeTracer: { effect: null, isTracer: false } };
+  const curved = [
+    { timeSeconds: 0, positionCm: { x: 0, y: 0, z: 0 }, velocityCmPerSecond: { x: 100000, y: 0, z: 0 } },
+    { timeSeconds: .1, positionCm: { x: 10000, y: 0, z: -100 }, velocityCmPerSecond: { x: 100000, y: 0, z: -2000 } },
+    { timeSeconds: .2, positionCm: { x: 20000, y: 0, z: -400 }, velocityCmPerSecond: { x: 100000, y: 0, z: -4000 } },
+  ];
+  const unchanged = JSON.stringify(curved);
+  const start = performance.now();
+  for (let i = 0; i < 6; i++) runtime.spawn({ weaponAssignmentId: "mg", weaponLabel: "test", samples: curved, visual });
+  nextFrame(start + 150);
+  const markers = scene.getObjectByName("runtime-projectile-visibility-markers");
+  const trails = scene.getObjectByName("runtime-projectile-visibility-trails");
+  assert.ok(markers?.isPoints, "all rounds need an explicit presentation cue, even without a native tracer");
+  assert.equal(markers.geometry.drawRange.count, 3);
+  assert.ok(markers.material.vertexShader.includes("gl_PointSize"));
+  assert.ok(trails?.isLineSegments2, "a one-pixel native line is not a readable enhanced trail");
+  assert.ok(trails.material.linewidth >= 2);
+  assert.ok(trails.geometry.instanceCount > 3 && trails.geometry.instanceCount <= 30);
+  assert.equal(markers.material.depthTest, true, "markers must not see through vehicles");
+  const markerArray = markers.geometry.attributes.position.array;
+  const trailArray = trails.geometry.attributes.instanceStart.data.array;
+  assert.equal(trailArray.length, 3 * 10 * 6);
+  assert.ok(Math.abs(markerArray[0] - 150) < 1);
+  assert.ok(Math.abs(markerArray[1] + 2.5) < .1);
+  nextFrame(start + 160);
+  assert.equal(markers.geometry.attributes.position.array, markerArray);
+  assert.equal(trails.geometry.attributes.instanceStart.data.array, trailArray);
+  runtime.setVisibilityEnhanced(false);
+  nextFrame(start + 170);
+  assert.equal(markers.visible, false);
+  assert.equal(trails.visible, false);
+  assert.equal(scene.getObjectByName("runtime-source-locked-projectile-trails").geometry.drawRange.count, 0);
+  assert.equal(JSON.stringify(curved), unchanged, "presentation never mutates ballistic samples");
+  let disposed = 0;
+  for (const item of [markers.geometry, markers.material, trails.geometry, trails.material]) item.addEventListener("dispose", () => disposed++);
+  runtime.dispose();
+  assert.equal(disposed, 4);
+});
+
 test("meshless source projectiles do not receive an invented cylinder", () => {
   const scene = new THREE.Scene();
   const runtime = createVehicleProjectileThreeRuntime({ scene, render() {} });
