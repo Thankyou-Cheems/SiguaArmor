@@ -172,6 +172,7 @@ export interface NativeProjectileTrajectorySample {
     timeSeconds: number;
     positionCm: ProjectileVector3;
     velocityCmPerSecond: ProjectileVector3;
+    bodyDirection?: ProjectileVector3;
     phase: string;
 }
 export interface NativeProjectileSimulationResult {
@@ -683,6 +684,9 @@ export function sampleProjectileTrajectory(samples: NativeProjectileTrajectorySa
         timeSeconds,
         positionCm: interpolate(left.positionCm, right.positionCm),
         velocityCmPerSecond: interpolate(left.velocityCmPerSecond, right.velocityCmPerSecond),
+        ...(left.bodyDirection && right.bodyDirection ? {
+            bodyDirection: interpolate(left.bodyDirection, right.bodyDirection),
+        } : {}),
         phase: alpha < 0.5 ? left.phase : right.phase,
     };
 }
