@@ -215,6 +215,19 @@ test("the same source resolves turret labels without the full catalog", () => {
   assert.equal(resolveEquipment("missing"), null);
 });
 
+test("source magazine feed parameters reach the shared operation model without a full-catalog request", () => {
+  const source = structuredClone(document);
+  const firingPresentation = {
+    weaponClassPath: "/Game/Weapon.Weapon_C",
+    inventorySlotNumbers: [3],
+    magazineFeed: { allowRoundInChamber: true, allowSingleLoad: false },
+  };
+  source.loadouts[0].stationEquipment[0].firingPresentation = firingPresentation;
+  const binding = createRuntimeStationEquipmentResolver(source)("equipment-test");
+  assert.deepEqual(binding.operation, { ...document.loadouts[0].stationEquipment[0].operation, ...firingPresentation.magazineFeed });
+  assert.deepEqual(binding.firingPresentation, firingPresentation);
+});
+
 test("a shared vehicle attacker resolves through the small source index", () => {
   const index = {
     schemaVersion: "sigua-weapon-runtime-index/v2",
@@ -274,7 +287,7 @@ test("weapon runtime requests bypass pre-refresh browser cache entries", () => {
   );
   assert.match(
     wikiSourceText,
-    /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=exact-assignment-radial-v4"/u,
+    /const WIKI_WEAPON_RUNTIME_QUERY = "\?projection=inventory-firing-v5"/u,
   );
   assert.match(
     wikiSourceText,

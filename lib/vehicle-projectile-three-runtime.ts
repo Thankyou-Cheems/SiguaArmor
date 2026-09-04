@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
 import {
   sampleProjectileTrajectory,
@@ -7,6 +9,8 @@ import {
   type VehicleGuidanceAimPose,
 } from "./vehicle-projectile-playback.ts";
 import type { StationGraphTransform } from "./vehicle-station-graph.ts";
+import type { SourceProjectileVisual } from "./vehicle-firing-presentation.ts";
+import { wikiUrl } from "./wiki-source.ts";
 
 export const VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M = 3_000;
 const DEFAULT_MAX_ACTIVE_PROJECTILES = 32;
@@ -20,6 +24,7 @@ export interface VehicleProjectileVisualRequest {
   weaponAssignmentId: string;
   weaponLabel: string;
   samples: NativeProjectileTrajectorySample[];
+  visual: SourceProjectileVisual;
 }
 
 function threePointFromUnrealCentimetres(value: ProjectileVector3) {
@@ -112,37 +117,105 @@ export function createVehicleProjectileThreeRuntime({
   onActiveCountChange,
   onSettled,
   maxActiveProjectiles = DEFAULT_MAX_ACTIVE_PROJECTILES,
+  loadModel,
+  onResourceError,
 }: {
   scene: THREE.Scene;
   render: () => void;
   onActiveCountChange?: (count: number) => void;
   onSettled?: () => void;
   maxActiveProjectiles?: number;
+  loadModel?: (pathname: string) => Promise<THREE.Object3D>;
+  onResourceError?: (error: Error) => void;
 }) {
   const root = new THREE.Group();
   root.name = "runtime-source-locked-projectiles";
   root.visible = false;
-  const bodyGeometry = new THREE.CylinderGeometry(
-    0.008,
-    0.008,
-    0.085,
-    6,
-    1,
-    false,
-  );
-  const bodyMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffd76f,
-    toneMapped: false,
-  });
-  const bodies = new THREE.InstancedMesh(
-    bodyGeometry,
-    bodyMaterial,
-    maxActiveProjectiles,
-  );
-  bodies.name = "runtime-source-locked-projectile-bodies";
-  bodies.count = 0;
-  bodies.frustumCulled = false;
-  bodies.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  const readModel = loadModel ?? (async (pathname: string) =>
+    (await loader.loadAsync(wikiUrl(pathname))).scene);
+  type Primitive = { geometry: THREE.BufferGeometry; material: THREE.Material | THREE.Material[]; local: THREE.Matrix4; batch: THREE.InstancedMesh };
+  type Part = { primitive: Primitive; local: THREE.Matrix4 };
+  const models = new Map<string, Promise<Primitive[]>>();
+  const readyModels = new Map<string, Primitive[]>();
+  const multiplicities = new Map<string, number>();
+  const preparations = new Map<SourceProjectileVisual, Promise<void>>();
+  const readyVisuals = new Map<SourceProjectileVisual, Part[]>();
+  const ownedGeometry = new Set<THREE.BufferGeometry>();
+  const ownedMaterials = new Set<THREE.Material>();
+  const ownedTextures = new Set<THREE.Texture>();
+  let disposed = false;
+  const batchFor = (primitive: Omit<Primitive, "batch">, capacity: number) => {
+    const batch = new THREE.InstancedMesh(primitive.geometry, primitive.material, capacity);
+    batch.name = "runtime-source-projectile-model";
+    batch.count = 0;
+    batch.frustumCulled = false;
+    batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    root.add(batch);
+    return batch;
+  };
+  const releaseSource = (source: THREE.Object3D) => {
+    const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), textures = new Set<THREE.Texture>();
+    source.traverse(object => {
+      if (!(object instanceof THREE.Mesh)) return;
+      geometries.add(object.geometry);
+      for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+        materials.add(material);
+        for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
+      }
+    });
+    geometries.forEach(value => value.dispose());
+    materials.forEach(value => value.dispose());
+    textures.forEach(value => value.dispose());
+  };
+  const prepare = async (visual: SourceProjectileVisual) => {
+    if (disposed) return;
+    const previous = preparations.get(visual);
+    if (previous) return previous;
+    const run = async () => {
+      const counts = new Map<string, number>();
+      for (const body of visual.bodies) counts.set(body.model, (counts.get(body.model) ?? 0) + 1);
+      for (const [pathname, count] of counts) {
+        if (count > (multiplicities.get(pathname) ?? 0)) {
+          multiplicities.set(pathname, count);
+          for (const primitive of readyModels.get(pathname) ?? []) {
+            primitive.batch.removeFromParent();
+            primitive.batch.dispose();
+            primitive.batch = batchFor(primitive, maxActiveProjectiles * count);
+          }
+        }
+        if (!models.has(pathname)) {
+          const request = readModel(pathname).then(source => {
+            if (disposed) { releaseSource(source); return []; }
+            source.updateWorldMatrix(true, true);
+            const primitives: Primitive[] = [];
+            source.traverseVisible(object => {
+              if (!(object instanceof THREE.Mesh)) return;
+              ownedGeometry.add(object.geometry);
+              for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+                ownedMaterials.add(material);
+                for (const value of Object.values(material)) if (value instanceof THREE.Texture) ownedTextures.add(value);
+              }
+              const primitive = { geometry: object.geometry, material: object.material, local: object.matrixWorld.clone() };
+              primitives.push({ ...primitive, batch: batchFor(primitive, maxActiveProjectiles * multiplicities.get(pathname)!) });
+            });
+            readyModels.set(pathname, primitives);
+            return primitives;
+          }).catch(error => { models.delete(pathname); throw error; });
+          models.set(pathname, request);
+        }
+      }
+      const parts = (await Promise.all(visual.bodies.map(async body => {
+        const primitives = await models.get(body.model)!;
+        const frame = vehicleProjectileAnchorMatrixFromUnrealFrame(body.componentToActor);
+        return primitives.map(primitive => ({ primitive, local: frame.clone().multiply(primitive.local) }));
+      }))).flat();
+      if (!disposed) readyVisuals.set(visual, parts);
+    };
+    const request = run().catch(error => { preparations.delete(visual); throw error; });
+    preparations.set(visual, request);
+    return request;
+  };
   const trailPositions = new Float32Array(maxActiveProjectiles * 2 * 3);
   const trailGeometry = new THREE.BufferGeometry();
   const trailAttribute = new THREE.BufferAttribute(trailPositions, 3);
@@ -159,7 +232,7 @@ export function createVehicleProjectileThreeRuntime({
   const trails = new THREE.LineSegments(trailGeometry, trailMaterial);
   trails.name = "runtime-source-locked-projectile-trails";
   trails.frustumCulled = false;
-  root.add(bodies, trails);
+  root.add(trails);
   scene.add(root);
 
   const active: Array<{
@@ -167,12 +240,12 @@ export function createVehicleProjectileThreeRuntime({
     startedAtMs: number;
   }> = [];
   const bodyTransform = new THREE.Object3D();
-  const bodyUp = new THREE.Vector3(0, 1, 0);
+  const instanceMatrix = new THREE.Matrix4();
   const position = new THREE.Vector3();
   const direction = new THREE.Vector3();
   const trailStart = new THREE.Vector3();
   let animationFrame = 0;
-  let disposed = false;
+  let publishedCount = -1;
 
   const animate = (frameTimeMs: number) => {
     animationFrame = 0;
@@ -184,9 +257,10 @@ export function createVehicleProjectileThreeRuntime({
         active.splice(index, 1);
       }
     }
-    bodies.count = active.length;
+    for (const primitives of readyModels.values()) for (const primitive of primitives) primitive.batch.count = 0;
     root.visible = active.length > 0;
-    active.forEach((playback, index) => {
+    let trailCount = 0;
+    active.forEach((playback) => {
       const sample = sampleProjectileTrajectory(
         playback.request.samples,
         (frameTimeMs - playback.startedAtMs) / 1000,
@@ -197,18 +271,26 @@ export function createVehicleProjectileThreeRuntime({
         sample.positionCm.z / 100,
         sample.positionCm.y / 100,
       );
-      direction.set(
-        sample.velocityCmPerSecond.x,
-        sample.velocityCmPerSecond.z,
-        sample.velocityCmPerSecond.y,
-      );
+      const facing = sample.bodyDirection ?? sample.velocityCmPerSecond;
+      direction.set(facing.x, facing.z, facing.y);
       if (direction.lengthSq() < 1e-10) direction.set(1, 0, 0);
       else direction.normalize();
       bodyTransform.position.copy(position);
-      bodyTransform.quaternion.setFromUnitVectors(bodyUp, direction);
+      // SpawnProjectile uses ShootDir.ToOrientationRotator(): yaw/pitch with
+      // zero roll, not the shortest-arc rotation (which rolls diagonal shots).
+      bodyTransform.rotation.set(0, -Math.atan2(direction.z, direction.x),
+        Math.atan2(direction.y, Math.hypot(direction.x, direction.z)), "YZX");
       bodyTransform.scale.set(1, 1, 1);
       bodyTransform.updateMatrix();
-      bodies.setMatrixAt(index, bodyTransform.matrix);
+      for (const part of readyVisuals.get(playback.request.visual) ?? []) {
+        const batch = part.primitive.batch;
+        instanceMatrix.multiplyMatrices(bodyTransform.matrix, part.local);
+        batch.setMatrixAt(batch.count++, instanceMatrix);
+      }
+      // A flight cue represents only an authored particle route. Mesh-only and
+      // invisible projectiles must not acquire the old universal gold trail.
+      if (!playback.request.visual.effects.length &&
+          !(playback.request.visual.nativeTracer.isTracer && playback.request.visual.nativeTracer.effect)) return;
       const speedMPerSecond = Math.hypot(
         sample.velocityCmPerSecond.x,
         sample.velocityCmPerSecond.y,
@@ -219,8 +301,12 @@ export function createVehicleProjectileThreeRuntime({
         0.12,
         1.8,
       );
+      // The flight cue follows travel, even when the authored body keeps its
+      // launch facing instead of turning with gravity.
+      direction.set(sample.velocityCmPerSecond.x, sample.velocityCmPerSecond.z,
+        sample.velocityCmPerSecond.y).normalize();
       trailStart.copy(position).addScaledVector(direction, -trailLengthM);
-      const offset = index * 6;
+      const offset = trailCount++ * 6;
       trailPositions[offset] = trailStart.x;
       trailPositions[offset + 1] = trailStart.y;
       trailPositions[offset + 2] = trailStart.z;
@@ -228,10 +314,10 @@ export function createVehicleProjectileThreeRuntime({
       trailPositions[offset + 4] = position.y;
       trailPositions[offset + 5] = position.z;
     });
-    bodies.instanceMatrix.needsUpdate = true;
-    trailGeometry.setDrawRange(0, active.length * 2);
+    for (const primitives of readyModels.values()) for (const primitive of primitives) primitive.batch.instanceMatrix.needsUpdate = true;
+    trailGeometry.setDrawRange(0, trailCount * 2);
     trailAttribute.needsUpdate = true;
-    onActiveCountChange?.(active.length);
+    if (publishedCount !== active.length) { onActiveCountChange?.(active.length); publishedCount = active.length; }
     render();
     if (active.length > 0) {
       animationFrame = requestAnimationFrame(animate);
@@ -241,8 +327,10 @@ export function createVehicleProjectileThreeRuntime({
   };
 
   return {
+    prepare,
     spawn(request: VehicleProjectileVisualRequest) {
       if (disposed || request.samples.length < 2) return false;
+      void prepare(request.visual).catch(error => onResourceError?.(error instanceof Error ? error : new Error(String(error))));
       if (active.length >= maxActiveProjectiles) active.shift();
       active.push({ request, startedAtMs: performance.now() });
       root.visible = true;
@@ -258,8 +346,11 @@ export function createVehicleProjectileThreeRuntime({
       animationFrame = 0;
       active.length = 0;
       root.removeFromParent();
-      bodyGeometry.dispose();
-      bodyMaterial.dispose();
+      for (const primitives of readyModels.values()) for (const primitive of primitives) primitive.batch.dispose();
+      ownedGeometry.forEach(value => value.dispose());
+      ownedMaterials.forEach(value => value.dispose());
+      ownedTextures.forEach(value => value.dispose());
+      models.clear(); readyModels.clear(); preparations.clear(); readyVisuals.clear();
       trailGeometry.dispose();
       trailMaterial.dispose();
     },

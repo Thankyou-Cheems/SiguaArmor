@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -13,6 +14,10 @@ import {
   gunnerSightLayerFallbackKind,
   gunnerSightLayerPlacement,
 } from "../lib/gunner-sight-layout";
+import {
+  gunnerSightMaskPolygon,
+  loadGunnerSightMaskFrame,
+} from "../lib/gunner-sight-mask";
 import {
   compileGunnerSightRenderLayers,
   gunnerSightProjectionIsVisible,
@@ -594,7 +599,6 @@ export function GunnerSightOverlay({
   stationPoseBindings,
   operationState,
   weaponOperation,
-  onEquipmentChange,
   onZoomStageChange,
 }: {
   station: GunnerSightStation;
@@ -609,7 +613,6 @@ export function GunnerSightOverlay({
   stationPoseBindings: GunnerSightStationPoseBinding[];
   operationState: GunnerSightOperationState;
   weaponOperation: GunnerSightWeaponOperationRuntime;
-  onEquipmentChange: (equipmentRef: string) => void;
   onZoomStageChange: (zoomIndex: number) => void;
 }) {
   const poseSnapshot = useSyncExternalStore(
@@ -671,7 +674,6 @@ export function GunnerSightOverlay({
   );
   const {
     projectionById,
-    modes,
     activeMode,
     stages,
     activeStage,
@@ -707,6 +709,32 @@ export function GunnerSightOverlay({
       ),
     };
   }, [activeEquipmentRef, activeZoomIndex, projections, station]);
+  const frameMaskId = dynamicFilterId("viewport-frame", useId());
+  const frameCandidates = useMemo(() => renderLayers.flatMap((renderLayer) => {
+    if (renderLayer.kind !== "image" || renderLayer.layer.role !== "viewport-screen") {
+      return [];
+    }
+    const placement = gunnerSightLayerPlacement(renderLayer.layer);
+    return placement ? [{
+      layer: renderLayer.layer,
+      placement,
+      source: wikiUrl(renderLayer.projection.assetUrl),
+    }] : [];
+  }), [renderLayers]);
+  const [closedFrameSources, setClosedFrameSources] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all(frameCandidates.map(async ({ source }) =>
+      [source, await loadGunnerSightMaskFrame(source)] as const
+    )).then((classifications) => {
+      if (!cancelled) setClosedFrameSources(new Set(
+        classifications.filter(([, closed]) => closed).map(([source]) => source),
+      ));
+    });
+    return () => { cancelled = true; };
+  }, [frameCandidates]);
   const reticleProjection = stageProjection(activeStage, projectionById) ??
     station.layers
       .filter((layer) => layer.role === "reticle" && layer.visibility !== "Collapsed")
@@ -743,6 +771,17 @@ export function GunnerSightOverlay({
         ),
       )
     : true;
+  const framePolygons = frameCandidates.flatMap(({ layer, placement, source }) => {
+    const dynamic = renderLayerPresentations.get(layer.widgetName);
+    if (!closedFrameSources.has(source) || dynamic?.visible === false ||
+      dynamic?.opacity === 0 || dynamic?.color?.A === 0) return [];
+    const angle = Number.isFinite(dynamic?.angleDegrees)
+      ? dynamic!.angleDegrees! - (layer.renderTransform?.Angle ?? 0)
+      : 0;
+    return [gunnerSightMaskPolygon(
+      placement, angle, layer.renderTransformPivot ?? undefined,
+    )];
+  });
 
   return (
     <section
@@ -766,6 +805,22 @@ export function GunnerSightOverlay({
       title="静态炮镜与视口遮罩；不表示光学损坏、失明或命中机制。"
     >
       <div className="gunner-sight-overlay__layers" aria-hidden="true">
+        {framePolygons.length ? (
+          <svg className="gunner-sight-overlay__layout gunner-sight-overlay__frame-backdrop"
+            viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <mask id={frameMaskId} maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
+                <rect width="1920" height="1080" fill="white" />
+                {/* Union of visible source footprints: a second small frame must
+                    not crop another frame's aperture. Original art paints above. */}
+                {framePolygons.map((polygon, index) => (
+                  <polygon key={index} points={polygon.map((point) => point.join(",")).join(" ")} fill="black" />
+                ))}
+              </mask>
+            </defs>
+            <rect width="1920" height="1080" fill="black" mask={`url(#${frameMaskId})`} />
+          </svg>
+        ) : null}
         {renderLayers.map((renderLayer) => {
           const dynamic = renderLayerPresentations.get(
             renderLayer.widgetName,
@@ -809,38 +864,6 @@ export function GunnerSightOverlay({
         <span className="gunner-sight-overlay__identity">
           <b>{stationLabel}</b>
         </span>
-        {modes.length > 1 && activeMode ? (
-          <label>
-            <span>武器分划</span>
-            <select
-              value={activeMode?.equipmentRef ?? ""}
-              onChange={(event) => {
-                const nextEquipmentRef = event.currentTarget.value;
-                onEquipmentChange(nextEquipmentRef);
-                const nextMode = modes.find(
-                  (mode) => mode.equipmentRef === nextEquipmentRef,
-                );
-                const nextStage = nextMode?.zoomStages[0] ??
-                  station.defaultZoomStages[0];
-                if (nextStage) onZoomStageChange(nextStage.zoomIndex);
-                event.currentTarget.blur();
-              }}
-              aria-label="切换当前站位武器分划"
-            >
-              {modes.map((mode) => (
-                <option value={mode.equipmentRef} key={mode.equipmentRef}>
-                  {mode.displayName}
-                </option>
-              ))}
-            </select>
-          </label>
-        ) : (
-          <span className="gunner-sight-overlay__weapon">
-            {activeMode?.displayName ??
-              dynamicRuntimeState.currentWeaponLabel ??
-              "固定炮镜分划"}
-          </span>
-        )}
         {stages.length > 1 ? (
           <div className="gunner-sight-overlay__zoom" role="group" aria-label="切换炮镜倍率">
             {stages.map((stage) => (

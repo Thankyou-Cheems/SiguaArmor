@@ -69,15 +69,17 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
   const dailyReleaseOrder = [
+    ["2026-09-04-operation-refill-mask", "2026-09-04"],
+    ["2026-09-03-source-firing-presentation", "2026-09-03"],
     ["2026-09-02-operation-cache-release", "2026-09-02"],
     ["2026-09-01-sights-projectiles-articulation", "2026-09-01"],
     ["2026-08-31-driver-crew-controls", "2026-08-31"],
     ["2026-08-30-station-graph-closure", "2026-08-30"],
   ];
 
-  assert.equal(currentEntry.id, "2026-09-02-operation-cache-release");
+  assert.equal(currentEntry.id, "2026-09-04-operation-refill-mask");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-09-02");
+    assert.equal(document.siteUpdatedOn, "2026-09-04");
     assert.deepEqual(document.entries[0], currentEntry);
     assert.deepEqual(
       document.entries.slice(0, dailyReleaseOrder.length).map(({ id, date }) => [id, date]),
@@ -88,8 +90,14 @@ test("both edition logs lead with the current release and omit superseded claims
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(document.entries[0]), /数字键 1–4/u);
-    assert.match(JSON.stringify(document.entries[0]), /99\.92%/u);
+    assert.match(JSON.stringify(document.entries[0]), /补满弹药/u);
+    assert.match(JSON.stringify(document.entries[0]), /开放式分划/u);
+    assert.match(JSON.stringify(document.entries[1]), /保留空槽/u);
+    const cacheEntry = document.entries.find(
+      ({ id }) => id === "2026-09-02-operation-cache-release",
+    );
+    assert.ok(cacheEntry, "previous cache release entry must be retained");
+    assert.match(JSON.stringify(cacheEntry), /99\.92%/u);
     const sightEntry = document.entries.find(
       ({ id }) => id === "2026-09-01-sights-projectiles-articulation",
     );

@@ -5,12 +5,19 @@ export interface OperationViewKeyInput {
   zoomIndex: number;
   zoomCount: number;
   equipmentRefs?: readonly string[];
+  inventorySlots?: readonly OperationInventorySlot[];
+}
+
+export interface OperationInventorySlot {
+  equipmentRef: string;
+  slotNumber: number;
 }
 
 export interface OperationViewEquipmentRefsInput {
   stationEquipmentRefs: readonly string[];
   sightEquipmentRefs: readonly string[];
   playableEquipmentRefs: readonly string[];
+  inventorySlots?: readonly OperationInventorySlot[];
 }
 
 export const OPERATION_VIEW_STANDARD_ASPECT_RATIO = 16 / 9;
@@ -274,10 +281,12 @@ export function operationViewEquipmentRefs({
   stationEquipmentRefs,
   sightEquipmentRefs,
   playableEquipmentRefs,
+  inventorySlots,
 }: OperationViewEquipmentRefsInput): string[] {
   const available = new Set([
     ...sightEquipmentRefs,
     ...playableEquipmentRefs,
+    ...(inventorySlots?.map((slot) => slot.equipmentRef) ?? []),
   ]);
   const ordered: string[] = [];
   const append = (equipmentRef: string) => {
@@ -289,7 +298,12 @@ export function operationViewEquipmentRefs({
   }
   for (const equipmentRef of sightEquipmentRefs) append(equipmentRef);
   for (const equipmentRef of playableEquipmentRefs) append(equipmentRef);
-  return ordered;
+  if (!inventorySlots) return ordered;
+  const slotByRef = new Map<string, number>();
+  for (const slot of inventorySlots) {
+    slotByRef.set(slot.equipmentRef, Math.min(slotByRef.get(slot.equipmentRef) ?? Infinity, slot.slotNumber));
+  }
+  return ordered.sort((a, b) => (slotByRef.get(a) ?? Infinity) - (slotByRef.get(b) ?? Infinity));
 }
 
 function operationViewWeaponSlotForCode(code: string): number | null {
@@ -324,11 +338,14 @@ export function operationViewKeyAction({
   zoomIndex,
   zoomCount,
   equipmentRefs = [],
+  inventorySlots,
 }: OperationViewKeyInput): OperationViewKeyAction | null {
   const slotNumber = operationViewWeaponSlotForCode(code);
   if (slotNumber !== null) {
     if (repeat) return null;
-    const equipmentRef = equipmentRefs[slotNumber - 1];
+    const equipmentRef = inventorySlots
+      ? inventorySlots.find((slot) => slot.slotNumber === slotNumber)?.equipmentRef
+      : equipmentRefs[slotNumber - 1];
     return equipmentRef
       ? { kind: "weapon", equipmentRef, slotNumber }
       : null;

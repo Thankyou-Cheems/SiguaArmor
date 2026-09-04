@@ -29,7 +29,7 @@ import {
 test("projectile algorithms share the launch-contract cache identity", () => {
   assert.equal(
     wikiProjectileAlgorithmUrl("/algorithms/ballistics/native-projectile.js"),
-    "https://wiki.siguad.icu/algorithms/ballistics/native-projectile.js?mechanics=projectile-playback-v1",
+    "https://wiki.siguad.icu/algorithms/ballistics/native-projectile.js?presentation=projectile-body-v2",
   );
 });
 

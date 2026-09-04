@@ -1,5 +1,10 @@
 "use client";
 
+import { VehicleWeaponHud } from "./VehicleWeaponHud";
+import { sourceProjectileForShot, type SourceProjectileVisual, type VehicleFiringPresentation } from "../lib/vehicle-firing-presentation";
+import { loadWikiDataset } from "../lib/wiki-source";
+import type { OperationInventorySlot } from "../lib/operation-view-control";
+
 import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import * as THREE from "three";
@@ -184,18 +189,14 @@ import {
 } from "../lib/held-operation-fire-control";
 import {
   createRuntimeVehicleWeaponOperationStore,
-  type RuntimeVehicleWeaponOperationStore,
 } from "../lib/runtime-vehicle-weapon-operation-store";
 import {
   advanceVehicleWeaponOperation,
   createVehicleWeaponOperation,
   fireVehicleWeaponOperation,
   nextVehicleWeaponFireAtMs,
-  presentVehicleWeaponOperation,
   releaseVehicleWeaponTrigger,
   reloadVehicleWeaponOperation,
-  vehicleWeaponShotIntervalMs,
-  type VehicleWeaponOperationSpec,
   type VehicleWeaponOperationState,
 } from "../lib/vehicle-weapon-operation-state";
 import {
@@ -340,113 +341,6 @@ function operationClockMs() {
   return typeof performance === "undefined" ? Date.now() : performance.now();
 }
 
-function LiveVehicleWeaponStatus({
-  store,
-  equipmentRef,
-  spec,
-  weaponLabel,
-}: {
-  store: RuntimeVehicleWeaponOperationStore;
-  equipmentRef: string;
-  spec: VehicleWeaponOperationSpec | null;
-  weaponLabel: string;
-}) {
-  const snapshot = useSyncExternalStore(
-    store.subscribe,
-    store.getSnapshot,
-    store.getSnapshot,
-  );
-  const operationState = useMemo(
-    () => spec && equipmentRef
-      ? snapshot.states.get(equipmentRef) ?? createVehicleWeaponOperation(spec, 0)
-      : null,
-    [equipmentRef, snapshot, spec],
-  );
-  const [clockMs, setClockMs] = useState(operationClockMs);
-  const operationEndsAtMs = Math.max(
-    operationState?.nextShotAtMs ?? 0,
-    operationState?.reloadEndsAtMs ?? 0,
-  );
-
-  useEffect(() => {
-    setClockMs(operationClockMs());
-  }, [equipmentRef, operationState, spec]);
-  useEffect(() => {
-    if (operationClockMs() >= operationEndsAtMs) return;
-    const timer = window.setInterval(() => {
-      const nextClockMs = operationClockMs();
-      setClockMs(nextClockMs);
-      if (nextClockMs >= operationEndsAtMs) window.clearInterval(timer);
-    }, 50);
-    return () => window.clearInterval(timer);
-  }, [operationEndsAtMs]);
-
-  if (!operationState || !spec) return null;
-  const presentation = presentVehicleWeaponOperation(
-    operationState,
-    spec,
-    clockMs,
-  );
-  const reloadRemainingMs = presentation.weaponReloading
-    ? Math.max(0, (operationState.reloadEndsAtMs ?? clockMs) - clockMs)
-    : 0;
-  const cooldownRemainingMs = !presentation.weaponReloading &&
-      !presentation.weaponReady &&
-      presentation.roundsRemaining > 0
-    ? Math.max(0, operationState.nextShotAtMs - clockMs)
-    : 0;
-  const shotIntervalMs = Math.max(1, vehicleWeaponShotIntervalMs(spec));
-  const progress = presentation.weaponReloading
-    ? presentation.reloadProgress
-    : presentation.weaponReady
-      ? 1
-      : presentation.roundsRemaining <= 0
-        ? 0
-        : Math.max(0, Math.min(1, 1 - cooldownRemainingMs / shotIntervalMs));
-  const status = presentation.weaponReloading
-    ? "reloading"
-    : presentation.roundsRemaining <= 0
-      ? "empty"
-      : presentation.weaponReady
-        ? "ready"
-        : "cooldown";
-  const statusLabel = status === "reloading"
-    ? `装填 ${Math.ceil(reloadRemainingMs / 100) / 10} s`
-    : status === "empty"
-      ? "弹药耗尽"
-      : status === "ready"
-        ? "可击发"
-        : `射击间隔 ${Math.ceil(cooldownRemainingMs / 100) / 10} s`;
-
-  return (
-    <aside
-      className="crew-view-weapon-status"
-      data-state={status}
-      data-rounds-remaining={presentation.roundsRemaining}
-      data-magazine-capacity={presentation.magazineCapacity}
-      data-reserve-magazines={presentation.magazinesRemaining}
-      data-progress={progress.toFixed(3)}
-      aria-label={`${weaponLabel}：${statusLabel}，弹匣 ${presentation.roundsRemaining}/${presentation.magazineCapacity}，备用 ${presentation.magazinesRemaining}`}
-    >
-      <div className="crew-view-weapon-status__heading">
-        <span>{weaponLabel}</span>
-        <strong>
-          <b>{presentation.roundsRemaining}</b>
-          <i>/</i>
-          {presentation.magazineCapacity}
-          <small>备 {presentation.magazinesRemaining}</small>
-        </strong>
-      </div>
-      <div className="crew-view-weapon-status__track" aria-hidden="true">
-        <span style={{ width: `${(progress * 100).toFixed(1)}%` }} />
-      </div>
-      <div className="crew-view-weapon-status__state">
-        <span>{statusLabel}</span>
-        <span>左键按住开火</span>
-      </div>
-    </aside>
-  );
-}
 
 async function mapWithConcurrency<T>(
   values: readonly T[],
@@ -4441,6 +4335,7 @@ export function RuntimeVehicleViewer({
   const spawnVehicleProjectileVisualRef = useRef<
     ((request: VehicleProjectileVisualRequest) => boolean) | null
   >(null);
+  const prepareVehicleProjectileVisualRef = useRef<((visual: SourceProjectileVisual) => Promise<void>) | null>(null);
   const fireVehicleProjectileRef = useRef<() => HeldOperationFireAttempt>(
     () => ({ nextAttemptAtMs: null }),
   );
@@ -4448,10 +4343,13 @@ export function RuntimeVehicleViewer({
   const releaseVehicleWeaponTriggerRef = useRef<() => void>(() => undefined);
   const reloadVehicleWeaponRef = useRef<() => void>(() => undefined);
   const operationEquipmentRefsRef = useRef<readonly string[]>([]);
+  const operationInventorySlotsRef = useRef<readonly OperationInventorySlot[]>([]);
+  const [firingPresentation, setFiringPresentation] = useState<VehicleFiringPresentation | null>(null);
   const selectOperationEquipmentRef = useRef<(equipmentRef: string) => void>(
     () => undefined,
   );
   const vehicleProjectileShotSequenceRef = useRef(0);
+  const vehicleProjectileSourceShotCountsRef = useRef(new Map<string, number>());
   const vehicleProjectileMagazineStateRef = useRef<{
     weaponAssignmentId: string | null;
     shotsFiredInMagazine: number;
@@ -5250,6 +5148,7 @@ export function RuntimeVehicleViewer({
         zoomIndex: activeCrewViewZoomIndexRef.current,
         zoomCount: station?.view?.magnificationLevels.length ?? 0,
         equipmentRefs: operationEquipmentRefsRef.current,
+        inventorySlots: operationInventorySlotsRef.current,
       });
       if (!action || (action.kind === "zoom" && !station)) return;
       event.preventDefault();
@@ -5551,23 +5450,27 @@ export function RuntimeVehicleViewer({
     [vehicleOperationWeapons],
   );
   const operationEquipmentRefs = useMemo(
-    () => operationViewEquipmentRefs({
+    () => !equipmentResolver ? [] : operationViewEquipmentRefs({
       stationEquipmentRefs: graphOperationEquipmentRefs,
       sightEquipmentRefs: sightOperationEquipmentRefs,
       playableEquipmentRefs: playableOperationEquipmentRefs,
+      inventorySlots: graphOperationEquipmentRefs.flatMap((equipmentRef) =>
+        equipmentResolver?.(equipmentRef)?.firingPresentation?.inventorySlotNumbers.map(
+          (slotNumber) => ({ equipmentRef, slotNumber }),
+        ) ?? []),
     }),
     [
       graphOperationEquipmentRefs,
       playableOperationEquipmentRefs,
       sightOperationEquipmentRefs,
+      equipmentResolver,
     ],
   );
   useEffect(() => {
-    const sightDefault = sightOperationEquipmentRefs[0];
     setActiveOperationEquipmentRef((current) =>
       operationEquipmentRefs.includes(current)
         ? current
-        : sightDefault ?? operationEquipmentRefs[0] ?? ""
+        : operationEquipmentRefs[0] ?? ""
     );
   }, [
     operationEquipmentRefs,
@@ -5633,13 +5536,38 @@ export function RuntimeVehicleViewer({
   }, [activeOperationEquipmentRef, operationEquipmentRefs]);
   useEffect(() => {
     operationEquipmentRefsRef.current = operationEquipmentRefs;
+    operationInventorySlotsRef.current = operationEquipmentRefs.flatMap((equipmentRef) =>
+      equipmentResolver?.(equipmentRef)?.firingPresentation?.inventorySlotNumbers.map(
+        (slotNumber) => ({ equipmentRef, slotNumber }),
+      ) ?? []);
     selectOperationEquipmentRef.current = selectOperationEquipment;
     return () => {
       if (selectOperationEquipmentRef.current === selectOperationEquipment) {
         selectOperationEquipmentRef.current = () => undefined;
       }
     };
-  }, [operationEquipmentRefs, selectOperationEquipment]);
+  }, [operationEquipmentRefs, selectOperationEquipment, equipmentResolver]);
+  useEffect(() => {
+    if (activeCrewViewStationId === null || firingPresentation) return;
+    let active = true;
+    void loadWikiDataset("/data/weapons/firing-presentation.json", "sigua-vehicle-firing-presentation/v1")
+      .then((value) => { if (active) setFiringPresentation(value as VehicleFiringPresentation); })
+      .catch((error: unknown) => {
+        if (active) setVehicleProjectileNotice(error instanceof Error ? error.message : String(error));
+      });
+    return () => { active = false; };
+  }, [activeCrewViewStationId, firingPresentation]);
+  useEffect(() => {
+    if (!firingPresentation || activeCrewViewStationId === null) return;
+    const weapon = firingPresentation.weapons[equipmentResolver?.(activeOperationEquipmentRef)?.firingPresentation?.weaponClassPath ?? ""];
+    if (!weapon) return;
+    let active = true;
+    const visuals = [weapon.projectileClass, weapon.tracerProjectileClass]
+      .flatMap(path => path && firingPresentation.projectiles[path] ? [firingPresentation.projectiles[path]!] : []);
+    void Promise.all(visuals.map(visual => prepareVehicleProjectileVisualRef.current?.(visual)))
+      .catch((error: unknown) => { if (active) setVehicleProjectileNotice(`弹体模型加载失败：${error instanceof Error ? error.message : String(error)}`); });
+    return () => { active = false; };
+  }, [activeCrewViewStationId, activeOperationEquipmentRef, firingPresentation, equipmentResolver, viewerState.kind]);
   useEffect(() => {
     if (activeCrewViewStationId === null) return;
     if (vehicleProjectileResource) {
@@ -5819,12 +5747,21 @@ export function RuntimeVehicleViewer({
       const guidanceAim = binding.guidanceInputPolicy === "none"
         ? null
         : resolveVehicleGuidanceAimPoseRef.current?.() ?? null;
-      const simulationInput = buildVehicleProjectileSimulationInput(
+      if (!firingPresentation) throw new Error("正在载入游戏弹体显示资源…");
+      const sourceWeapon = firingPresentation.weapons[equipmentResolver?.(activeOperationEquipmentRef)?.firingPresentation?.weaponClassPath ?? ""];
+      if (!sourceWeapon) throw new Error("当前武器缺少源弹体显示配置");
+      const sourceShotIndex = vehicleProjectileSourceShotCountsRef.current.get(activeOperationEquipmentRef) ?? 0;
+      const sourceShot = sourceProjectileForShot(firingPresentation, sourceWeapon, sourceShotIndex);
+      if (!sourceShot?.visual) throw new Error("当前弹体缺少源显示配置");
+      const simulationInput = { ...buildVehicleProjectileSimulationInput(
         binding,
         launch,
         direction,
         guidanceAim,
-      );
+      ),
+        rotationFollowsVelocity: sourceShot.visual.bodyRotation.followsVelocity,
+        rotationRemainsVertical: sourceShot.visual.bodyRotation.remainsVertical,
+      };
       const result = binding.guidanceInputPolicy === "none"
         ? vehicleProjectileResource.algorithm.simulateNonGuidedProjectile(
             simulationInput,
@@ -5850,8 +5787,10 @@ export function RuntimeVehicleViewer({
         weaponAssignmentId: binding.weaponAssignmentId,
         weaponLabel: activeOperationWeapon.displayNameZh,
         samples,
+        visual: sourceShot.visual,
       }) ?? false;
       if (!spawned) throw new Error("3D 弹体渲染层尚未就绪");
+      vehicleProjectileSourceShotCountsRef.current.set(activeOperationEquipmentRef, sourceShotIndex + 1);
       publishVehicleWeaponOperationState(
         activeOperationEquipmentRef,
         operationShot.state,
@@ -5883,6 +5822,8 @@ export function RuntimeVehicleViewer({
         host.dataset.projectilePlaybackSpread =
           "presentation-sample-native-cone";
         host.dataset.projectilePlaybackGuidance = binding.guidanceInputPolicy;
+        host.dataset.projectileSourceClass = sourceShot.classPath;
+        host.dataset.projectileSourceModelCount = String(sourceShot.visual.bodies.length);
       }
       return {
         nextAttemptAtMs: nextVehicleWeaponFireAtMs(
@@ -5907,6 +5848,8 @@ export function RuntimeVehicleViewer({
     vehicleProjectileResource,
     vehicleProjectileResourceState,
     publishVehicleWeaponOperationState,
+    firingPresentation,
+    equipmentResolver,
   ]);
   const reloadVehicleWeapon = useCallback(() => {
     if (!activeOperationSpec || !activeOperationEquipmentRef) {
@@ -5929,7 +5872,7 @@ export function RuntimeVehicleViewer({
     );
     setVehicleProjectileNotice(
       result.started
-        ? "已按 Wiki 装填时间开始换弹"
+        ? ""
         : result.reason === "weapon-reloading"
           ? "武器正在装填"
           : result.reason === "magazine-full"
@@ -5960,6 +5903,19 @@ export function RuntimeVehicleViewer({
     activeOperationSpec,
     publishVehicleWeaponOperationState,
   ]);
+  const refillVehicleAmmunition = useCallback(() => {
+    // Stop held fire before clearing: releasing the trigger can publish a state.
+    stopVehicleProjectileFireRef.current();
+    vehicleWeaponOperationStatesRef.current.clear();
+    vehicleWeaponOperationStore.clear();
+    vehicleProjectileMagazineStateRef.current = {
+      weaponAssignmentId: null,
+      shotsFiredInMagazine: 0,
+    };
+    // Unused/reset weapons initialize from their source magazine capacities and
+    // reserve counts. Keep weapon selection, pose, zoom and in-flight projectiles.
+    setVehicleProjectileNotice("已补满全部武器弹药（含备弹）");
+  }, [vehicleWeaponOperationStore]);
   useEffect(() => {
     fireVehicleProjectileRef.current = fireVehicleProjectile;
     return () => {
@@ -8199,7 +8155,9 @@ export function RuntimeVehicleViewer({
           host.dataset.projectilePlaybackState = "settled";
         }
       },
+      onResourceError: (error) => setVehicleProjectileNotice(`弹体模型加载失败：${error.message}`),
     });
+    prepareVehicleProjectileVisualRef.current = vehicleProjectileThreeRuntime.prepare;
     spawnVehicleProjectileVisualRef.current = (request) =>
       vehicleProjectileThreeRuntime.spawn(request);
 
@@ -11771,6 +11729,7 @@ export function RuntimeVehicleViewer({
       hitModelRef.current = null;
       vehicleProjectileThreeRuntime.dispose();
       spawnVehicleProjectileVisualRef.current = null;
+      prepareVehicleProjectileVisualRef.current = null;
       resolveVehicleProjectileLaunchPoseRef.current = null;
       resolveVehicleGuidanceAimPoseRef.current = null;
       shotVisualsRef.current = [];
@@ -12273,7 +12232,6 @@ export function RuntimeVehicleViewer({
             spec: activeOperationSpec,
             guidanceActiveUntilMs,
           }}
-          onEquipmentChange={selectOperationEquipment}
           onZoomStageChange={(zoomIndex) => {
             applyCrewViewZoomRef.current?.(
               activeTurretStation.id,
@@ -12283,142 +12241,124 @@ export function RuntimeVehicleViewer({
         />
       ) : null}
 
-      {activeCrewViewStationId !== null && activeOperationWeapon && activeOperationSpec ? (
-        <LiveVehicleWeaponStatus
+      {activeCrewViewStationId !== null && firingPresentation && equipmentResolver ? (
+        <VehicleWeaponHud
+          document={firingPresentation}
           store={vehicleWeaponOperationStore}
-          equipmentRef={activeOperationEquipmentRef}
-          spec={activeOperationSpec}
-          weaponLabel={activeOperationWeapon.displayNameZh}
+          activeEquipmentRef={activeOperationEquipmentRef}
+          equipmentRefs={operationEquipmentRefs}
+          equipmentResolver={equipmentResolver}
+          onSelect={selectOperationEquipment}
         />
       ) : null}
 
-      {activeCrewViewStationId !== null && !driverViewActive && activeTurretStation ? (
-        <div
-          className="crew-view-operation-panel"
-          data-expanded={operationPanelExpanded}
-          aria-label={`${activeTurretStation.label}方位俯仰控制`}
-        >
-          <LiveOperationTurretControls
-            poseStore={liveTurretPoseStore}
-            stations={runtimeTurretStations}
-            topDownProjection={turretTopDownProjection}
-            activeStationId={activeTurretStation.id}
-            expanded={operationPanelExpanded}
-            onExpandedChange={setOperationPanelExpanded}
-            onStationChange={(stationId) => {
-              setActiveTurretStationId(stationId);
-              enterCrewViewpointRef.current?.(stationId);
-              commitTurretNavigation(stationId);
-            }}
-            onPoseChange={(station, yawDegrees, pitchDegrees) => {
-              updateTurretStationPose(
-                station,
-                yawDegrees,
-                pitchDegrees,
-              );
-            }}
-            onReset={(station) => {
-              const nextPoseStates = updateTurretStationPose(
-                station,
-                0,
-                0,
-              );
-              commitTurretNavigation(station.id, nextPoseStates);
-            }}
-            onInteractionEnd={(station) =>
-              commitTurretNavigation(station.id)}
-          />
-        </div>
-      ) : null}
-
       {activeCrewViewStationId !== null ? (
-        <div
-          className="crew-view-immersive-controls"
-          aria-label={driverViewActive
-            ? "驾驶员视角控制"
-            : `${activeTurretStation?.label ?? "武器站"}真实操作视角控制`}
-        >
-          {driverViewActive && driverMaskAvailable ? (
-            <button
-              type="button"
-              role="switch"
-              aria-label="显示驾驶遮罩"
-              aria-checked={driverMaskEnabled}
-              data-active={driverMaskEnabled || undefined}
-              onClick={() => setDriverMaskEnabled((enabled) => !enabled)}
-            >
-              {driverMaskEnabled ? "隐藏驾驶遮罩" : "显示驾驶遮罩"}
-            </button>
-          ) : !driverViewActive && gunnerSightPresentationAvailable ? (
-            <button
-              type="button"
-              role="switch"
-              aria-label="显示炮镜遮罩与分划"
-              aria-checked={gunnerSightOverlayEnabled}
-              data-active={gunnerSightOverlayEnabled || undefined}
-              onClick={() =>
-                setGunnerSightOverlayEnabled((enabled) => !enabled)}
-            >
-              {gunnerSightOverlayEnabled ? "隐藏炮镜" : "显示炮镜"}
-            </button>
-          ) : null}
-          {(driverViewActive || !gunnerSightPresentationAvailable) &&
-              vehicleOperationWeapons.length > 1 ? (
-            <label className="crew-view-projectile-weapon">
-              <span>武器</span>
-              <select
-                value={activeOperationWeapon?.stationEquipmentId ?? ""}
-                onChange={(event) => {
-                  selectOperationEquipment(event.currentTarget.value);
-                  event.currentTarget.blur();
-                }}
-                aria-label="选择真实操作视角武器"
-              >
-                {vehicleOperationWeapons.map((weapon) => (
-                  <option
-                    value={weapon.stationEquipmentId}
-                    key={weapon.weaponAssignmentId}
-                  >
-                    {weapon.displayNameZh}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-          {activeOperationWeapon || !driverViewActive ? (
-            <span className="crew-view-operation-keys" aria-label="键盘操作提示">
-              {activeOperationWeapon ? (
-                <><kbd>左键</kbd><span>按住开火</span></>
-              ) : null}
-              {!driverViewActive ? (
-                <>
-                  <kbd>WASD</kbd><span>方位 / 俯仰</span>
-                  <kbd>Q</kbd><span>倍率</span>
-                  <kbd>R</kbd><span>装填</span>
-                  {operationEquipmentRefs.length > 1 ? (
-                    <><kbd>1–9</kbd><span>切换武器</span></>
-                  ) : null}
-                </>
-              ) : null}
-            </span>
-          ) : null}
-          <button
-            type="button"
-            aria-label={driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}
-            aria-keyshortcuts="Escape"
-            onClick={() => exitCrewViewpointRef.current?.()}
+        <div className="crew-view-operation-dock">
+          <div
+            className="crew-view-immersive-controls"
+            aria-label={driverViewActive
+              ? "驾驶员视角控制"
+              : `${activeTurretStation?.label ?? "武器站"}真实操作视角控制`}
           >
-            {driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}
-            <kbd>Esc</kbd>
-          </button>
-          {vehicleProjectileNotice ? (
-            <output
-              className="crew-view-projectile-status"
-              data-state={vehicleProjectileResolution?.state ??
-                vehicleProjectileResourceState}
+            {driverViewActive && driverMaskAvailable ? (
+              <button
+                type="button"
+                role="switch"
+                aria-label="显示驾驶遮罩"
+                aria-checked={driverMaskEnabled}
+                data-active={driverMaskEnabled || undefined}
+                onClick={() => setDriverMaskEnabled((enabled) => !enabled)}
+              >
+                {driverMaskEnabled ? "隐藏驾驶遮罩" : "显示驾驶遮罩"}
+              </button>
+            ) : !driverViewActive && gunnerSightPresentationAvailable ? (
+              <button
+                type="button"
+                role="switch"
+                aria-label="显示炮镜遮罩与分划"
+                aria-checked={gunnerSightOverlayEnabled}
+                data-active={gunnerSightOverlayEnabled || undefined}
+                onClick={() =>
+                  setGunnerSightOverlayEnabled((enabled) => !enabled)}
+              >
+                {gunnerSightOverlayEnabled ? "隐藏炮镜" : "显示炮镜"}
+              </button>
+            ) : null}
+            {firingPresentation && (vehicleOperationSource?.weapons.length ?? 0) > 0 ? (
+              <button
+                type="button"
+                title="补满当前载具所有武器的装填弹与备弹（网页预览）"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  refillVehicleAmmunition();
+                  e.currentTarget.blur();
+                }}
+              >补满弹药</button>
+            ) : null}
+            {activeOperationWeapon || !driverViewActive ? (
+              <span className="crew-view-operation-keys" aria-label="键盘操作提示">
+                {activeOperationWeapon ? (
+                  <><kbd>左键</kbd><span>按住开火</span></>
+                ) : null}
+                {!driverViewActive ? (
+                  <>
+                    <kbd>WASD</kbd><span>方位 / 俯仰</span>
+                    <kbd>Q</kbd><span>倍率</span>
+                  </>
+                ) : null}
+                {activeOperationWeapon ? <><kbd>R</kbd><span>装填</span></> : null}
+                {operationEquipmentRefs.length > 1 ? (
+                  <><kbd>1–9</kbd><span>切换武器</span></>
+                ) : null}
+              </span>
+            ) : null}
+            <button
+              type="button"
+              aria-label={driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"}
+              aria-keyshortcuts="Escape"
+              onClick={() => exitCrewViewpointRef.current?.()}
             >
-              {vehicleProjectileNotice}
-            </output>
+              退出视角
+              <kbd>Esc</kbd>
+            </button>
+            {vehicleProjectileNotice ? (
+              <output
+                className="crew-view-projectile-status"
+                data-state={vehicleProjectileResolution?.state ??
+                  vehicleProjectileResourceState}
+              >
+                {vehicleProjectileNotice}
+              </output>
+            ) : null}
+          </div>
+          {!driverViewActive && activeTurretStation ? (
+            <div
+              className="crew-view-operation-panel"
+              data-expanded={operationPanelExpanded}
+              aria-label={`${activeTurretStation.label}方位俯仰控制`}
+            >
+              <LiveOperationTurretControls
+                poseStore={liveTurretPoseStore}
+                stations={runtimeTurretStations}
+                topDownProjection={turretTopDownProjection}
+                activeStationId={activeTurretStation.id}
+                expanded={operationPanelExpanded}
+                onExpandedChange={setOperationPanelExpanded}
+                onStationChange={(stationId) => {
+                  setActiveTurretStationId(stationId);
+                  enterCrewViewpointRef.current?.(stationId);
+                  commitTurretNavigation(stationId);
+                }}
+                onPoseChange={(station, yawDegrees, pitchDegrees) => {
+                  updateTurretStationPose(station, yawDegrees, pitchDegrees);
+                }}
+                onReset={(station) => {
+                  const nextPoseStates = updateTurretStationPose(station, 0, 0);
+                  commitTurretNavigation(station.id, nextPoseStates);
+                }}
+                onInteractionEnd={(station) => commitTurretNavigation(station.id)}
+              />
+            </div>
           ) : null}
         </div>
       ) : null}
