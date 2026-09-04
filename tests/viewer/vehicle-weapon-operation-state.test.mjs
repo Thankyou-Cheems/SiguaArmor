@@ -187,3 +187,37 @@ test("manual reload uses the Wiki tactical duration and dry reload keeps the dry
     "weapon-reloading",
   );
 });
+
+test("native magazine changes retain partial magazines and select the fullest one", () => {
+  const spec = { ...t72Round, numberOfMags: 3, magazineSize: 10 };
+  const initial = createVehicleWeaponOperation(spec, 0);
+  const partial = { ...initial, roundsRemaining: 7 };
+  const loading = reloadVehicleWeaponOperation(partial, spec, 0);
+  const ready = advanceVehicleWeaponOperation(loading.state, spec, 8_000);
+  assert.equal(ready.roundsRemaining, 10);
+  assert.equal(ready.reserveMagazines, 2);
+  assert.deepEqual(ready.reserveMagazineRounds, [10, 7]);
+  assert.equal(ready.roundsRemaining + ready.reserveMagazineRounds.reduce((a, b) => a + b, 0), 27);
+});
+
+test("native chambered round transfers into the newly loaded magazine without creating ammunition", () => {
+  const spec = { ...t72Round, numberOfMags: 3, magazineSize: 10, allowRoundInChamber: true };
+  const initial = createVehicleWeaponOperation(spec, 0);
+  const partial = { ...initial, roundsRemaining: 7 };
+  const ready = advanceVehicleWeaponOperation(reloadVehicleWeaponOperation(partial, spec, 0).state, spec, 8_000);
+  assert.equal(ready.roundsRemaining, 11);
+  assert.deepEqual(ready.reserveMagazineRounds, [10, 6]);
+  const full = reloadVehicleWeaponOperation(ready, spec, 8_001);
+  assert.equal(full.reason, "magazine-full");
+  assert.equal(reloadVehicleWeaponOperation(createVehicleWeaponOperation({ ...spec, magazineSize: 1 }, 0), { ...spec, magazineSize: 1 }, 0).reason, "magazine-full");
+});
+
+test("single-load feed fills the current magazine from spares without discarding partial ammunition", () => {
+  const spec = { ...t72Round, numberOfMags: 3, magazineSize: 10, allowSingleLoad: true };
+  const initial = createVehicleWeaponOperation(spec, 0);
+  const partial = { ...initial, roundsRemaining: 7, reserveMagazineRounds: [2, 1] };
+  const ready = advanceVehicleWeaponOperation(reloadVehicleWeaponOperation(partial, spec, 0).state, spec, 8_000);
+  assert.equal(ready.roundsRemaining, 10);
+  assert.equal(ready.reserveMagazines, 0);
+  assert.deepEqual(ready.reserveMagazineRounds, []);
+});

@@ -6,7 +6,7 @@ const WIKI_PRESENTATION_QUERY = "?presentation=v6";
 const WIKI_VEHICLE_MECHANICS_QUERY = "?mechanics=burning-radial-v3";
 const WIKI_VEHICLE_RUNTIME_QUERY = "?projection=vehicle-station-graph-v1";
 const WIKI_WEAPON_CATALOG_QUERY = "?mechanics=overheat-v1";
-const WIKI_WEAPON_RUNTIME_QUERY = "?projection=exact-assignment-radial-v4";
+const WIKI_WEAPON_RUNTIME_QUERY = "?projection=inventory-firing-v5";
 const WIKI_WEAPON_PROJECTILE_QUERY = "?mechanics=projectile-playback-v1";
 
 const requests = new Map<
@@ -26,7 +26,7 @@ export function wikiUrl(pathname: string) {
 }
 
 export function wikiProjectileAlgorithmUrl(pathname: string) {
-  return wikiUrl(`${pathname}${WIKI_WEAPON_PROJECTILE_QUERY}`);
+  return wikiUrl(`${pathname}?presentation=projectile-body-v2`);
 }
 
 async function fetchJson(pathname: string, maxAgeMs = Number.POSITIVE_INFINITY) {

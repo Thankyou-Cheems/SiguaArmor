@@ -7,7 +7,8 @@ import type {
   RuntimeAttackSource,
   RuntimeAttackSourceWeapon,
 } from "./runtime-probe-weapon-labels.ts";
-import type { VehicleWeaponFireControl } from "../lib/vehicle-weapon-operation-state.ts";
+import type { VehicleWeaponFireControl, VehicleWeaponOperationSpec } from "../lib/vehicle-weapon-operation-state.ts";
+import type { VehicleFiringEquipmentBinding } from "../lib/vehicle-firing-presentation.ts";
 import {
   weaponDpsWeaponsFromVehicleRuntimeDocument,
 } from "../lib/weapon-dps-source.ts";
@@ -53,6 +54,7 @@ export interface WikiWeaponRuntimeSourceDocument {
       gunName: string;
       displayName: string;
       turretName: string | null;
+      firingPresentation?: VehicleFiringEquipmentBinding;
       operation: {
         numberOfMags: number;
         magazineSize: number;
@@ -114,21 +116,13 @@ export interface RuntimeAttackSourceSelection {
 }
 
 export interface RuntimeStationEquipmentBinding {
+  firingPresentation?: VehicleFiringEquipmentBinding;
   equipment: {
     gunName: string;
     displayName: string;
     turretName: string | null;
   };
-  operation: {
-    numberOfMags: number;
-    magazineSize: number;
-    tacticalReloadSeconds: number;
-    dryReloadSeconds: number;
-    roundsPerMinute: number;
-    timeBetweenShotsSeconds: number;
-    timeBetweenSingleShotsSeconds?: number;
-    fireControl?: VehicleWeaponFireControl;
-  };
+  operation: VehicleWeaponOperationSpec;
 }
 
 export type RuntimeStationEquipmentResolver = (
@@ -327,7 +321,12 @@ export function createRuntimeStationEquipmentResolver(
           displayName: equipment.displayName,
           turretName: equipment.turretName,
         },
-        operation: equipment.operation,
+        operation: equipment.firingPresentation?.magazineFeed
+          ? { ...equipment.operation, ...equipment.firingPresentation.magazineFeed }
+          : equipment.operation,
+        ...(equipment.firingPresentation
+          ? { firingPresentation: equipment.firingPresentation }
+          : {}),
       },
     ]),
   );

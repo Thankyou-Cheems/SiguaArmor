@@ -9,6 +9,7 @@ const [
   styles,
   wikiSource,
   projectileThreeRuntimeSource,
+  weaponHudSource,
 ] = await Promise.all([
   readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8"),
   readFile(new URL("../../app/GunnerSightOverlay.tsx", import.meta.url), "utf8"),
@@ -19,6 +20,7 @@ const [
     new URL("../../lib/vehicle-projectile-three-runtime.ts", import.meta.url),
     "utf8",
   ),
+  readFile(new URL("../../app/VehicleWeaponHud.tsx", import.meta.url), "utf8"),
 ]);
 
 test("gunner view renders the exact Station sidecar as screen and reticle layers", () => {
@@ -39,7 +41,9 @@ test("gunner view renders the exact Station sidecar as screen and reticle layers
 test("weapon and zoom controls switch only observed Station-owned routes", () => {
   assert.match(overlaySource, /station\.weaponModes/u);
   assert.match(overlaySource, /mode\.equipmentRef/u);
-  assert.match(overlaySource, /切换当前站位武器分划/u);
+  assert.match(weaponHudSource, /游戏内武器栏/u);
+  assert.match(weaponHudSource, /inventorySlotNumbers/u);
+  assert.match(viewerSource, /onSelect=\{selectOperationEquipment\}/u);
   assert.match(overlaySource, /切换炮镜倍率/u);
   assert.doesNotMatch(controlsSource, /显示炮镜遮罩与分划/u);
   assert.match(viewerSource, /显示炮镜遮罩与分划/u);
@@ -172,7 +176,7 @@ test("active crew view fills only the 3D viewport with compact corner controls",
   );
   assert.match(
     styles,
-    /\.crew-view-immersive-controls\s*\{[\s\S]*?top:\s*8px;[\s\S]*?right:\s*8px;/u,
+    /\.crew-view-operation-dock\s*\{[^}]*top:\s*8px;[^}]*right:\s*8px;/u,
   );
 });
 
@@ -195,8 +199,10 @@ test("gunner operation view preserves one 16:9 combat frame with black UI gutter
   );
   assert.match(
     styles,
-    /\.crew-view-operation-panel\s*\{[^}]*top:\s*42px;[^}]*right:\s*8px;/u,
+    /\.crew-view-operation-dock\s*\{[^}]*flex-direction:\s*column;[^}]*max-height:\s*calc\(100% - 16px\);[^}]*overflow-y:\s*auto;/u,
   );
+  assert.doesNotMatch(styles, /\.crew-view-operation-panel\s*\{[^}]*(position:\s*absolute|top:)/u,
+    "posture controls must flow below wrapped actions/notices, not overlap at a fixed offset");
   assert.match(
     styles,
     /\.crew-view-operation-panel\[data-expanded="false"\]\s*\{[^}]*width:\s*max-content;/u,
@@ -205,19 +211,40 @@ test("gunner operation view preserves one 16:9 combat frame with black UI gutter
   assert.match(overlaySource, /standard-16:9-90-horizontal-baseline/u);
 });
 
+test("refill resets all loaded and reserve ammunition without switching view or firing from the button", () => {
+  const start = viewerSource.indexOf("const refillVehicleAmmunition = useCallback(");
+  const refill = viewerSource.slice(start, viewerSource.indexOf("}, [vehicleWeaponOperationStore]);", start));
+  assert.match(refill, /stopVehicleProjectileFireRef\.current\(\);\s*vehicleWeaponOperationStatesRef\.current\.clear\(\);\s*vehicleWeaponOperationStore\.clear\(\);/u);
+  assert.match(refill, /vehicleProjectileMagazineStateRef\.current = \{\s*weaponAssignmentId: null,\s*shotsFiredInMagazine: 0,/u);
+  assert.doesNotMatch(refill, /setActive|setGuidance|exitCrewViewpoint|spawnVehicleProjectile/u);
+  assert.match(viewerSource, /补满当前载具所有武器的装填弹与备弹/u);
+  assert.match(viewerSource, /firingPresentation && \(vehicleOperationSource\?\.weapons\.length \?\? 0\) > 0/u,
+    "an unarmed observer can also refill the other stations on this vehicle");
+  assert.match(viewerSource, /onPointerDown=\{\(e\) => e\.stopPropagation\(\)\}[\s\S]*?refillVehicleAmmunition\(\);\s*e\.currentTarget\.blur\(\);/u);
+});
+
+test("sight gutters use visible closed texture footprints underneath the authored layers", () => {
+  assert.match(overlaySource, /loadGunnerSightMaskFrame\(source\)/u);
+  assert.match(overlaySource, /dynamic\?\.visible === false/u);
+  assert.match(overlaySource, /gunnerSightMaskPolygon\(/u);
+  assert.match(overlaySource, /<mask[^>]*maskUnits="userSpaceOnUse"/u);
+  assert.match(overlaySource, /<polygon[^\n]*fill="black"/u);
+  assert.ok(overlaySource.indexOf("gunner-sight-overlay__frame-backdrop") < overlaySource.indexOf("{renderLayers.map"));
+});
+
 test("operation fire shares one equipment identity and uses a pooled projectile layer", () => {
   assert.match(overlaySource, /activeEquipmentRef/u);
-  assert.match(overlaySource, /onEquipmentChange/u);
+  assert.match(weaponHudSource, /onSelect\(id\)/u);
   assert.doesNotMatch(overlaySource, /useState\(defaultEquipmentRef\)/u);
   assert.match(viewerSource, /compileVehicleProjectilePlaybackBinding/u);
   assert.match(viewerSource, /presentation-sample-native-cone/u);
   assert.doesNotMatch(viewerSource, /event\.code === "Space"/u);
   assert.match(viewerSource, /event\.button === 0/u);
   assert.match(viewerSource, /createHeldOperationFireController/u);
-  assert.match(viewerSource, /左键按住开火/u);
+  assert.match(viewerSource, /<kbd>左键<\/kbd><span>按住开火<\/span>/u);
   assert.match(viewerSource, /event\.code === "KeyR"/u);
   assert.match(viewerSource, /reloadVehicleWeaponOperation/u);
-  assert.match(viewerSource, /crew-view-weapon-status/u);
+  assert.match(weaponHudSource, /crew-view-weapon-status/u);
   assert.match(viewerSource, /buildVehicleProjectileSimulationInput/u);
   assert.match(projectileThreeRuntimeSource, /new THREE\.InstancedMesh/u);
   assert.match(projectileThreeRuntimeSource, /DEFAULT_MAX_ACTIVE_PROJECTILES/u);
@@ -231,9 +258,16 @@ test("operation input separates canvas fire from UI weapon selection", () => {
     viewerSource,
     /event\.isPrimary\s*&&\s*event\.target === renderer\.domElement/u,
   );
-  assert.match(viewerSource, /event\.currentTarget\.blur\(\)/u);
+  assert.match(weaponHudSource, /e\.currentTarget\.blur\(\)/u);
+  assert.match(weaponHudSource, /onPointerDown=\{\(e\) => e\.stopPropagation\(\)\}/u);
   assert.match(viewerSource, /action\.kind === "weapon"/u);
   assert.match(viewerSource, /selectOperationEquipmentRef\.current/u);
+});
+
+test("source HUD uses the same 1080-reference combat frame instead of fixed browser pixels", () => {
+  assert.match(weaponHudSource, /source-weapon-hud__frame/u);
+  assert.match(weaponHudSource, /100cqh \/ 1080/u);
+  assert.match(styles, /\.source-weapon-hud__frame\s*\{[^}]*width:\s*min\(100cqw, calc\(100cqh \* 16 \/ 9\)\);[^}]*container-type:\s*size;/u);
 });
 
 test("dynamic sight instruments consume live operation and Wiki station motion", () => {

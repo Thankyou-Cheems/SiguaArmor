@@ -7,6 +7,8 @@ export interface VehicleWeaponOperationSpec {
   timeBetweenShotsSeconds: number;
   timeBetweenSingleShotsSeconds?: number;
   fireControl?: VehicleWeaponFireControl;
+  allowRoundInChamber?: boolean;
+  allowSingleLoad?: boolean;
 }
 
 export interface VehicleWeaponFireMode {
@@ -24,6 +26,7 @@ export interface VehicleWeaponFireControl {
 export interface VehicleWeaponOperationState {
   roundsRemaining: number;
   reserveMagazines: number;
+  reserveMagazineRounds: readonly number[];
   nextShotAtMs: number;
   reloadStartedAtMs: number | null;
   reloadEndsAtMs: number | null;
@@ -101,12 +104,11 @@ export function createVehicleWeaponOperation(
   spec: VehicleWeaponOperationSpec,
   nowMs: number,
 ): VehicleWeaponOperationState {
+  const reserveMagazines = Math.max(0, positiveInteger(spec.numberOfMags, 1) - 1);
   return {
     roundsRemaining: magazineCapacity(spec),
-    reserveMagazines: Math.max(
-      0,
-      positiveInteger(spec.numberOfMags, 1) - 1,
-    ),
+    reserveMagazines,
+    reserveMagazineRounds: Array<number>(reserveMagazines).fill(magazineCapacity(spec)),
     nextShotAtMs: nowMs,
     reloadStartedAtMs: null,
     reloadEndsAtMs: null,
@@ -123,10 +125,33 @@ export function advanceVehicleWeaponOperation(
   if (state.reloadEndsAtMs === null || nowMs < state.reloadEndsAtMs) {
     return state;
   }
+  // ASQWeapon::LoadMagAmmo keeps partially used magazines, sorting by remaining
+  // rounds. A chambered round belongs to the old magazine's total until reload;
+  // transfer it rather than creating an extra round or discarding old ammunition.
+  const chambered = spec.allowRoundInChamber && state.roundsRemaining > 0 ? 1 : 0;
+  let current = state.roundsRemaining;
+  const magazines = [...state.reserveMagazineRounds];
+  if (spec.allowSingleLoad) {
+    let needed = Math.min(magazineCapacity(spec), magazineCapacity(spec) - current + chambered);
+    for (let i = 0; i < magazines.length && needed > 0; i++) {
+      const transferred = Math.min(magazines[i]!, needed);
+      current += transferred;
+      magazines[i]! -= transferred;
+      needed -= transferred;
+    }
+    magazines.unshift(current);
+  } else {
+    current -= chambered;
+    if (current > 0) magazines.push(current);
+  }
+  magazines.sort((a, b) => b - a);
+  const roundsRemaining = (magazines.shift() ?? 0) + (spec.allowSingleLoad ? 0 : chambered);
+  const reserveMagazineRounds = magazines.filter((rounds) => rounds > 0);
   return {
     ...state,
-    roundsRemaining: magazineCapacity(spec),
-    reserveMagazines: Math.max(0, state.reserveMagazines - 1),
+    roundsRemaining,
+    reserveMagazineRounds,
+    reserveMagazines: reserveMagazineRounds.length,
     nextShotAtMs: Math.max(state.nextShotAtMs, state.reloadEndsAtMs),
     reloadStartedAtMs: null,
     reloadEndsAtMs: null,
@@ -240,7 +265,9 @@ export function reloadVehicleWeaponOperation(
   if (current.reserveMagazines <= 0) {
     return { started: false, state: current, reason: "no-reserve-magazines" };
   }
-  if (current.roundsRemaining >= magazineCapacity(spec)) {
+  const capacity = magazineCapacity(spec);
+  const fullCapacity = capacity + (spec.allowRoundInChamber && capacity > 1 ? 1 : 0);
+  if (current.roundsRemaining >= fullCapacity) {
     return { started: false, state: current, reason: "magazine-full" };
   }
   const reloadDurationMs = current.roundsRemaining <= 0
@@ -255,6 +282,15 @@ export function reloadVehicleWeaponOperation(
       reloadEndsAtMs: nowMs + reloadDurationMs,
     },
   };
+}
+
+export function vehicleWeaponMagazineRounds(
+  state: VehicleWeaponOperationState,
+  spec: VehicleWeaponOperationSpec,
+  nowMs: number,
+): readonly number[] {
+  const current = advanceVehicleWeaponOperation(state, spec, nowMs);
+  return [current.roundsRemaining, ...current.reserveMagazineRounds];
 }
 
 export function presentVehicleWeaponOperation(
