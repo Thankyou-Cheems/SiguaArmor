@@ -25,6 +25,18 @@ export function wikiUrl(pathname: string) {
   return url.href;
 }
 
+// A loopback source lets local previews consume the private map release without
+// copying it into Armor or opening the private resource service to the Internet.
+export function wikiMapUrl(pathname: string) {
+  const origin = process.env.NEXT_PUBLIC_SIGUA_MAP_ORIGIN?.replace(/\/+$/u, "");
+  if (!origin) return wikiUrl(pathname);
+  const url = new URL(pathname, `${origin}/`);
+  if (!pathname.startsWith("/") || url.origin !== origin) {
+    throw new Error(`Invalid map resource path: ${pathname}`);
+  }
+  return url.href;
+}
+
 export function wikiProjectileAlgorithmUrl(pathname: string) {
   return wikiUrl(`${pathname}?presentation=projectile-body-v2`);
 }

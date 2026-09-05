@@ -7,6 +7,40 @@ const frame = { translationCm: { x: -100, y: 0, z: 20 }, rotationQuaternion: { x
 const samples = [{ timeSeconds: 0, positionCm: { x: 1000, y: 0, z: 0 }, velocityCmPerSecond: { x: 100, y: 0, z: 0 }, phase: "ascending" },
   { timeSeconds: 10, positionCm: { x: 2000, y: 0, z: 0 }, velocityCmPerSecond: { x: 100, y: 0, z: 0 }, phase: "ascending" }];
 
+test("only the latest actual impact persists, even when a frame jumps past the projectile's terminal time", t => {
+  let nextFrame;
+  const oldRequest = globalThis.requestAnimationFrame, oldCancel = globalThis.cancelAnimationFrame;
+  globalThis.requestAnimationFrame = fn => { nextFrame = fn; return 1; };
+  globalThis.cancelAnimationFrame = () => {};
+  t.after(() => { globalThis.requestAnimationFrame = oldRequest; globalThis.cancelAnimationFrame = oldCancel; });
+  const scene = new THREE.Scene(), published = [];
+  const runtime = createVehicleProjectileThreeRuntime({ scene, render() {}, onImpactTrace: trace => published.push(trace.summary) });
+  const visual = { bodies: [], effects: [], nativeTracer: {} };
+  const trace = (x, timeSeconds, summary) => ({ timeSeconds, summary,
+    pointsCm: [{ x: 0, y: 0, z: 0 }, { x, y: 0, z: 0 }, { x: x + 100, y: 0, z: 0 }],
+    contacts: [{ pointCm: { x, y: 0, z: 0 }, penetrated: true }, { pointCm: { x: x + 100, y: 0, z: 0 }, penetrated: false }] });
+  const start = performance.now();
+  const rounds = samples.map((s, i) => ({ ...s, timeSeconds: i * .1 }));
+  runtime.spawn({ weaponAssignmentId: 'a', weaponLabel: 'test', samples: rounds, visual, impactTrace: trace(1000, .1, 'older') });
+  const impactRoot = scene.getObjectByName('runtime-last-projectile-impact');
+  nextFrame(start + 20);
+  assert.equal(impactRoot.visible, false, 'do not reveal a future impact at trigger time');
+  nextFrame(start + 200);
+  assert.equal(impactRoot.visible, true);
+  assert.deepEqual(published, ['older']);
+  assert.equal(scene.getObjectByName('runtime-source-locked-projectiles').visible, false);
+  const positions = impactRoot.children[0].geometry.attributes.instanceStart.data.array;
+  assert.equal(positions[9], 11);
+  runtime.spawn({ weaponAssignmentId: 'b', weaponLabel: 'test', samples: rounds, visual, impactTrace: trace(2000, .1, 'newer') });
+  nextFrame(performance.now() + 200);
+  assert.deepEqual(published, ['older', 'newer']);
+  assert.equal(impactRoot.children[0].geometry.attributes.instanceStart.data.array, positions);
+  assert.equal(positions[9], 21);
+  assert.equal(impactRoot.children.length, 2, 'no per-shot geometry accumulation');
+  runtime.dispose();
+  assert.equal(scene.children.length, 0);
+});
+
 test("enhanced flight cues make non-tracer shots visible with bounded screen-sized markers and curved history", (t) => {
   let nextFrame;
   const oldRequest = globalThis.requestAnimationFrame, oldCancel = globalThis.cancelAnimationFrame;

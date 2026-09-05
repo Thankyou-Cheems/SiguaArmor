@@ -207,7 +207,20 @@ export interface NativeProjectileSimulationResult {
   status: string;
   elapsedSeconds: number;
   samples: NativeProjectileTrajectorySample[];
+  impact?: {
+    positionCm: ProjectileVector3;
+    armed: boolean;
+    impactNormal?: ProjectileVector3;
+  } | null;
 }
+
+export type NativeProjectileSweep = (input: {
+  startCm: ProjectileVector3;
+  endCm: ProjectileVector3;
+  sphereRadiusCm: number;
+  startTimeSeconds: number;
+  deltaSeconds: number;
+}) => { timeFraction: number; impactNormal: ProjectileVector3 } | null;
 
 export interface NativeProjectileAlgorithm {
   simulateNonGuidedProjectile(
@@ -725,12 +738,14 @@ export function buildVehicleProjectileSimulationInput(
   launch: { positionCm: ProjectileVector3; direction: ProjectileVector3 },
   direction = launch.direction,
   guidanceAim: VehicleGuidanceAimPose | null = null,
+  sweepSphere?: NativeProjectileSweep,
 ) {
   const movement = binding.projectileProfile.movement;
   const collision = binding.projectileProfile.collision;
   const fuze = binding.projectileProfile.fuze;
   const lifespan = finite(fuze.initialLifeSpanSeconds);
   const base = {
+    sweepSphere,
     positionCm: launch.positionCm,
     direction: normalize(direction),
     muzzleVelocityCmPerSecond: binding.muzzleVelocityCmPerSecond,
@@ -784,8 +799,8 @@ export function buildVehicleProjectileSimulationInput(
     guidanceInputAt: () => ({
       ...frozenAim,
       fireOriginDisplacementCm: 0,
-      // ExactQuery is intentionally absent from this viewer slice. The only
-      // admissible local presentation is an explicit clear-LOS scenario.
+      // Movement contact is queried separately. Live guidance-controller LOS
+      // remains a declared clear-LOS scenario, not a building-occlusion claim.
       connectionBlockReason: null,
       guidanceBlockReason: null,
     }),

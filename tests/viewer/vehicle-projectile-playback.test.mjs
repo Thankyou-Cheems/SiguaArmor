@@ -681,6 +681,18 @@ test("builds native integration input in the current launch direction", () => {
   assert.equal(input.maximumTimeSeconds, 5);
 });
 
+test("operation input passes the scene sphere sweep to the actual native solver seam", () => {
+  const resolution = compileVehicleProjectilePlaybackBinding({
+    catalog: catalog(), stationGraph: stationGraph(), stationId: STATION, weapon,
+  });
+  assert.equal(resolution.state, "ready");
+  const launch = { positionCm: { x: 0, y: 0, z: 200 }, direction: { x: 1, y: 0, z: 0 } };
+  const sweepSphere = () => ({ timeFraction: .5, impactNormal: { x: -1, y: 0, z: 0 } });
+  const input = buildVehicleProjectileSimulationInput(resolution.binding, launch, launch.direction, null, sweepSphere);
+  assert.equal(input.sweepSphere, sweepSphere, "a loaded world must not silently become free flight");
+  assert.equal(input.sweepSphere({ startCm: launch.positionCm, endCm: { x: 2000, y: 0, z: 200 }, sphereRadiusCm: 1 }).timeFraction, .5);
+});
+
 test("spread samples are deterministic and trajectory interpolation is continuous", () => {
   assert.deepEqual(
     presentationProjectileSpreadSample(WEAPON_ASSIGNMENT, 3),

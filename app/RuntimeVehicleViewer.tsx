@@ -3,6 +3,7 @@
 import { VehicleWeaponHud } from "./VehicleWeaponHud";
 import { sourceProjectileForShot, type SourceProjectileVisual, type VehicleFiringPresentation } from "../lib/vehicle-firing-presentation";
 import { loadWikiDataset } from "../lib/wiki-source";
+import { createNarvaSchoolEnvironment, loadNarvaSchoolEnvironment } from "../lib/runtime-narva-school-environment";
 import type { OperationInventorySlot } from "../lib/operation-view-control";
 
 import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
@@ -85,6 +86,8 @@ import {
   RADIAL_DAMAGE_VISUAL_TIMING_MS,
 } from "../lib/radial-damage-visualization";
 import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
+import { loadNarvaSchoolQuery, type SchoolSweepHit } from "../lib/runtime-narva-school-query";
+import { buildSchoolImpactTrace } from "../lib/runtime-world-penetration";
 import {
   isRuntimeForcedRicochetLayer,
   runtimeShotPathLayerPresentation,
@@ -176,6 +179,7 @@ import {
   vehicleProjectileAnchorMatrixFromUnrealFrame,
   VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M,
   type VehicleProjectileLaunchPose,
+  type VehicleProjectileImpactTrace,
   type VehicleProjectileVisualRequest,
 } from "../lib/vehicle-projectile-three-runtime";
 import { GunnerSightOverlay } from "./GunnerSightOverlay";
@@ -191,12 +195,12 @@ import {
   createRuntimeVehicleWeaponOperationStore,
 } from "../lib/runtime-vehicle-weapon-operation-store";
 import {
-  advanceVehicleWeaponOperation,
   createVehicleWeaponOperation,
   fireVehicleWeaponOperation,
   nextVehicleWeaponFireAtMs,
   releaseVehicleWeaponTrigger,
   reloadVehicleWeaponOperation,
+  setVehicleWeaponInfiniteAmmo,
   type VehicleWeaponOperationState,
 } from "../lib/vehicle-weapon-operation-state";
 import {
@@ -2126,6 +2130,7 @@ function disposeScene(root: THREE.Object3D) {
   const materials = new Set<THREE.Material>();
   const textures = new Set<THREE.Texture>();
   root.traverse((object) => {
+    if (object instanceof THREE.InstancedMesh) object.dispose();
     if (
       !(object instanceof THREE.Mesh) &&
       !(object instanceof THREE.Line) &&
@@ -4335,6 +4340,11 @@ export function RuntimeVehicleViewer({
   const spawnVehicleProjectileVisualRef = useRef<
     ((request: VehicleProjectileVisualRequest) => boolean) | null
   >(null);
+  const schoolProjectileQueryRef = useRef<{
+    query: Awaited<ReturnType<typeof loadNarvaSchoolQuery>>;
+    offset: THREE.Vector3;
+  } | null>(null);
+  const worldImpactStatusRef = useRef<HTMLDivElement>(null);
   const prepareVehicleProjectileVisualRef = useRef<((visual: SourceProjectileVisual) => Promise<void>) | null>(null);
   const setProjectileVisibilityEnhancedRef = useRef<((value: boolean) => void) | null>(null);
   const projectileVisibilityEnhancedRef = useRef(true);
@@ -4813,6 +4823,7 @@ export function RuntimeVehicleViewer({
     loaded: 0,
     total: uniqueAssetCount,
   });
+  const [environmentState, setEnvironmentState] = useState("正在加载 Narva 学校与足球场…");
   const [initialCameraFitReady, setInitialCameraFitReady] = useState(false);
   const [exteriorPlaceholderReady, setExteriorPlaceholderReady] = useState(false);
   useEffect(() => {
@@ -4864,6 +4875,7 @@ export function RuntimeVehicleViewer({
     useState<"idle" | "loading" | "ready" | "error">("idle");
   const [vehicleProjectileNotice, setVehicleProjectileNotice] = useState("");
   const [projectileVisibilityEnhanced, setProjectileVisibilityEnhanced] = useState(true);
+  const [infiniteAmmoEnabled, setInfiniteAmmoEnabled] = useState(false);
   useEffect(() => {
     projectileVisibilityEnhancedRef.current = projectileVisibilityEnhanced;
     setProjectileVisibilityEnhancedRef.current?.(projectileVisibilityEnhanced);
@@ -4925,6 +4937,7 @@ export function RuntimeVehicleViewer({
     vehicleWeaponOperationStatesRef.current.clear();
     vehicleWeaponOperationStore.clear();
     stopVehicleProjectileFireRef.current();
+    setInfiniteAmmoEnabled(false);
     setGuidanceActiveUntilMs(0);
     crewOccupantDisplayEnabledRef.current = false;
     crewHitProxyDisplayEnabledRef.current = false;
@@ -5686,10 +5699,11 @@ export function RuntimeVehicleViewer({
       const storedOperationState =
         vehicleWeaponOperationStatesRef.current.get(
           activeOperationEquipmentRef,
-        ) ?? createVehicleWeaponOperation(activeOperationSpec, nowMs);
-      const currentOperationState = advanceVehicleWeaponOperation(
+        ) ?? createVehicleWeaponOperation(activeOperationSpec, nowMs, infiniteAmmoEnabled);
+      const currentOperationState = setVehicleWeaponInfiniteAmmo(
         storedOperationState,
         activeOperationSpec,
+        infiniteAmmoEnabled,
         nowMs,
       );
       const operationShot = fireVehicleWeaponOperation(
@@ -5720,8 +5734,8 @@ export function RuntimeVehicleViewer({
       const previousMagazineState = vehicleProjectileMagazineStateRef.current;
       const magazineState =
         previousMagazineState.weaponAssignmentId === binding.weaponAssignmentId &&
-          currentOperationState.roundsRemaining <
-            activeOperationSpec.magazineSize
+          (infiniteAmmoEnabled || currentOperationState.roundsRemaining <
+            activeOperationSpec.magazineSize)
         ? previousMagazineState
         : {
             weaponAssignmentId: binding.weaponAssignmentId,
@@ -5760,11 +5774,23 @@ export function RuntimeVehicleViewer({
       const sourceShotIndex = vehicleProjectileSourceShotCountsRef.current.get(activeOperationEquipmentRef) ?? 0;
       const sourceShot = sourceProjectileForShot(firingPresentation, sourceWeapon, sourceShotIndex);
       if (!sourceShot?.visual) throw new Error("当前弹体缺少源显示配置");
+      const school = schoolProjectileQueryRef.current;
+      if (!school) throw new Error("学校场景碰撞仍未就绪，暂不能开火");
+      const traceComplex = binding.projectileProfile.collision.traceComplexOnMove;
+      if (typeof traceComplex !== "boolean") throw new Error("当前弹体缺少源碰撞查询模式");
+      const shotContacts: Array<{ hit: SchoolSweepHit; direction: THREE.Vector3; timeSeconds: number }> = [];
       const simulationInput = { ...buildVehicleProjectileSimulationInput(
         binding,
         launch,
         direction,
         guidanceAim,
+        (input) => {
+          const hit = school.query.sweepSphere(input, school.offset, traceComplex);
+          if (hit) shotContacts.push({ hit, timeSeconds: input.startTimeSeconds + input.deltaSeconds * hit.timeFraction,
+            direction: new THREE.Vector3(input.endCm.x - input.startCm.x,
+              input.endCm.z - input.startCm.z, input.endCm.y - input.startCm.y).normalize() });
+          return hit;
+        },
       ),
         rotationFollowsVelocity: sourceShot.visual.bodyRotation.followsVelocity,
         rotationRemainsVertical: sourceShot.visual.bodyRotation.remainsVertical,
@@ -5790,11 +5816,26 @@ export function RuntimeVehicleViewer({
         ) / 100;
         if (distanceM >= VEHICLE_PROJECTILE_PLAYBACK_MAX_DISTANCE_M) break;
       }
+      const contact = shotContacts.at(-1);
+      let impactTrace: VehicleProjectileImpactTrace | undefined;
+      if (contact && contact.timeSeconds <= (samples.at(-1)?.timeSeconds ?? 0)) {
+        const point = contact.hit.sceneHit.point;
+        const center = result.impact ? new THREE.Vector3(result.impact.positionCm.x / 100,
+          result.impact.positionCm.z / 100, result.impact.positionCm.y / 100) : point;
+        const hitRangeM = center.distanceTo(new THREE.Vector3(launch.positionCm.x / 100,
+          launch.positionCm.z / 100, launch.positionCm.y / 100));
+        const ballistics = resolveEditorNativeBallistics(activeOperationWeapon.ballisticsModel,
+          activeOperationWeapon.ballisticsWeaponIndex, hitRangeM);
+        impactTrace = buildSchoolImpactTrace({ query:school.query, offset:school.offset, hit:contact.hit.sceneHit,
+          center, direction:contact.direction, timeSeconds:contact.timeSeconds, ballistics,
+          armed:result.impact?.armed === true, terminalImpact:result.status === "impact" });
+      }
       const spawned = spawnVehicleProjectileVisualRef.current?.({
         weaponAssignmentId: binding.weaponAssignmentId,
         weaponLabel: activeOperationWeapon.displayNameZh,
         samples,
         visual: sourceShot.visual,
+        impactTrace,
       }) ?? false;
       if (!spawned) throw new Error("3D 弹体渲染层尚未就绪");
       vehicleProjectileSourceShotCountsRef.current.set(activeOperationEquipmentRef, sourceShotIndex + 1);
@@ -5857,8 +5898,13 @@ export function RuntimeVehicleViewer({
     publishVehicleWeaponOperationState,
     firingPresentation,
     equipmentResolver,
+    infiniteAmmoEnabled,
   ]);
   const reloadVehicleWeapon = useCallback(() => {
+    if (infiniteAmmoEnabled) {
+      setVehicleProjectileNotice("无限弹药已开启，无需装填");
+      return;
+    }
     if (!activeOperationSpec || !activeOperationEquipmentRef) {
       setVehicleProjectileNotice("当前武器缺少 Wiki 弹匣与装填控制数据");
       return;
@@ -5890,6 +5936,7 @@ export function RuntimeVehicleViewer({
     activeOperationEquipmentRef,
     activeOperationSpec,
     publishVehicleWeaponOperationState,
+    infiniteAmmoEnabled,
   ]);
   const releaseActiveVehicleWeaponTrigger = useCallback(() => {
     if (!activeOperationSpec || !activeOperationEquipmentRef) return;
@@ -5923,6 +5970,21 @@ export function RuntimeVehicleViewer({
     // reserve counts. Keep weapon selection, pose, zoom and in-flight projectiles.
     setVehicleProjectileNotice("已补满全部武器弹药（含备弹）");
   }, [vehicleWeaponOperationStore]);
+  const toggleInfiniteAmmo = useCallback(() => {
+    stopVehicleProjectileFireRef.current();
+    const enabled = !infiniteAmmoEnabled;
+    const nowMs = operationClockMs();
+    for (const [equipmentRef, state] of vehicleWeaponOperationStatesRef.current) {
+      const spec = equipmentResolver?.(equipmentRef)?.operation;
+      if (!spec) continue;
+      publishVehicleWeaponOperationState(
+        equipmentRef,
+        setVehicleWeaponInfiniteAmmo(state, spec, enabled, nowMs),
+      );
+    }
+    setInfiniteAmmoEnabled(enabled);
+    setVehicleProjectileNotice("");
+  }, [infiniteAmmoEnabled, equipmentResolver, publishVehicleWeaponOperationState]);
   useEffect(() => {
     fireVehicleProjectileRef.current = fireVehicleProjectile;
     return () => {
@@ -7729,6 +7791,7 @@ export function RuntimeVehicleViewer({
   useEffect(() => {
     const host = hostRef.current;
     if (!host || !visual) return;
+    const worldImpactStatus = worldImpactStatusRef.current;
     applyCameraViewPresetRef.current = null;
     applyInfantryDistancePreviewRef.current = null;
     enterFreeCameraViewRef.current = null;
@@ -7776,7 +7839,7 @@ export function RuntimeVehicleViewer({
     let exteriorReady = false;
     let exteriorPromise: Promise<void> | null = null;
     let startExteriorAssets: (() => void) | null = null;
-    let gridHelper: THREE.GridHelper | null = null;
+    let groundReferenceY = 0;
     let groundScale: THREE.Group | null = null;
     let referenceSoldier: THREE.Object3D | null = null;
     let referenceSoldierLoadScheduled = false;
@@ -7812,6 +7875,9 @@ export function RuntimeVehicleViewer({
     let protectionMapHitPoseDirty = false;
     exteriorOccurrencesRef.current = exteriorOccurrences;
     const scene = new THREE.Scene();
+    const environmentRoot = new THREE.Group();
+    environmentRoot.name = "runtime-environment";
+    scene.add(environmentRoot);
     const camera = new THREE.PerspectiveCamera(
       SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
       1,
@@ -8164,6 +8230,11 @@ export function RuntimeVehicleViewer({
         }
       },
       onResourceError: (error) => setVehicleProjectileNotice(`弹体模型加载失败：${error.message}`),
+      onImpactTrace: (trace) => {
+        if (worldImpactStatus) worldImpactStatus.textContent = trace.summary;
+        host.dataset.projectileImpactSummary = trace.summary;
+        host.dataset.projectileImpactContacts = String(trace.contacts.length);
+      },
     });
     prepareVehicleProjectileVisualRef.current = vehicleProjectileThreeRuntime.prepare;
     setProjectileVisibilityEnhancedRef.current = vehicleProjectileThreeRuntime.setVisibilityEnhanced;
@@ -8336,12 +8407,6 @@ export function RuntimeVehicleViewer({
         presentation.clearColor,
         presentation.clearAlpha,
       );
-      gridHelper?.scale.set(
-        presentation.groundGridScale,
-        1,
-        presentation.groundGridScale,
-      );
-      gridHelper?.updateMatrixWorld(true);
       analysisVisualDepthGroup.visible =
         presentation.analysisDepthOccludersVisible;
       const hitGroup = hitGroupRef.current;
@@ -8351,13 +8416,11 @@ export function RuntimeVehicleViewer({
           : modeRef.current !== "exterior" ||
             exteriorSpacedArmorHighlightRef.current;
       }
-      host.dataset.operationScene = active ? "range-reference" : "inspection";
+      host.dataset.operationScene = active ? "narva-school" : "inspection";
       host.dataset.operationInput = active
         ? "wasd-q-and-direct-ui"
         : "orbit-pointer";
-      host.dataset.operationGroundGridScale = String(
-        presentation.groundGridScale,
-      );
+      host.dataset.operationEnvironmentScale = "1";
       host.dataset.operationAnalysisDepthOccluders = String(
         presentation.analysisDepthOccludersVisible,
       );
@@ -8587,7 +8650,7 @@ export function RuntimeVehicleViewer({
       const activeExplosionRecord = shotRecordsRef.current.find(
         (record) => record.shotId === activeShotIdRef.current,
       );
-      const groundPlaneY = (gridHelper?.position.y ?? 0) + 0.02;
+      const groundPlaneY = groundReferenceY + 0.02;
       activeExplosionRecord?.visual.explosionLayers.forEach((layer) => {
         if (!layer.configured || !layer.root.visible) return;
         layer.root.updateMatrixWorld(true);
@@ -8744,6 +8807,36 @@ export function RuntimeVehicleViewer({
     };
     renderRef.current = render;
     requestRenderRef.current = requestRender;
+    host.dataset.environmentState = "loading";
+    host.dataset.environmentQueryState = "loading";
+    void loadNarvaSchoolQuery().then((query) => {
+      if (cancelled) return;
+      // The environment may move with the viewer's ground/centering setup.
+      // Keep its live translation, not a snapshot taken before model loading.
+      schoolProjectileQueryRef.current = { query, offset: environmentRoot.position };
+      host.dataset.environmentQueryState = "ready";
+      host.dataset.environmentQueryPlacementCount = String(query.placementCount);
+    }).catch((error: unknown) => {
+      if (cancelled) return;
+      host.dataset.environmentQueryState = "error";
+      setVehicleProjectileNotice(`场景碰撞不可用：${error instanceof Error ? error.message : String(error)}`);
+    });
+    void loadNarvaSchoolEnvironment().then((data) => {
+      if (cancelled) return;
+      const environment = createNarvaSchoolEnvironment(data);
+      environmentRoot.add(environment);
+      host.dataset.environmentState = "ready";
+      host.dataset.environmentScene = environment.userData.sceneId;
+      host.dataset.environmentAnchorSourceMeters = JSON.stringify(environment.userData.anchorSourceMeters);
+      host.dataset.environmentPlacementCount = String(environment.userData.placementCount);
+      host.dataset.environmentResourceBytes = String(environment.userData.resourceBytes);
+      setEnvironmentState("");
+      render();
+    }).catch((error: unknown) => {
+      if (cancelled) return;
+      host.dataset.environmentState = "error";
+      setEnvironmentState(`学校场景暂不可用：${error instanceof Error ? error.message : String(error)}`);
+    });
     const applyCrewViewCameraPose = (
       station: RuntimeTurretPreviewStation,
       pose: CrewViewPose,
@@ -9943,10 +10036,12 @@ export function RuntimeVehicleViewer({
           ) -
           center.y -
           0.03;
-      if (gridHelper) {
-        scene.remove(gridHelper);
-        disposeScene(gridHelper);
-      }
+      groundReferenceY = groundY;
+      // Match the vehicle's centre after its existing fit/rebase. Environment
+      // bounds must not influence the vehicle camera or any hit calculations.
+      environmentRoot.position.set(vehicleCameraTarget.x, groundY, vehicleCameraTarget.z);
+      environmentRoot.updateMatrixWorld(true);
+      host.dataset.environmentCenterWorld = JSON.stringify(environmentRoot.position.toArray());
       if (groundScale) {
         if (groundScaleRef.current === groundScale) {
           groundScaleRef.current = null;
@@ -9979,20 +10074,6 @@ export function RuntimeVehicleViewer({
         groundScaleWidthSpanM,
       );
       const groundGridSpacingM = RUNTIME_GROUND_SCALE_TICK_INTERVAL_M;
-      const groundGridDivisions = Math.max(
-        1,
-        Math.ceil(
-          Math.max(radius * 4, groundScaleLengthM, groundScaleWidthM) /
-            groundGridSpacingM,
-        ),
-      );
-      const groundGridSizeM = groundGridDivisions * groundGridSpacingM;
-      gridHelper = new THREE.GridHelper(
-        groundGridSizeM,
-        groundGridDivisions,
-        0x555555,
-        0x292929,
-      );
       groundScale = createRuntimeGroundScale(
         groundScaleLengthM,
         groundScaleWidthM,
@@ -10009,8 +10090,6 @@ export function RuntimeVehicleViewer({
         groundY + 0.006,
         groundScaleOriginZ,
       );
-      gridHelper.position.set(groundScaleOriginX, groundY, groundScaleOriginZ);
-      scene.add(gridHelper);
       host.dataset.groundScaleGridAlignment = "reference-soldier-feet";
       host.dataset.groundScaleGridSpacingM = String(groundGridSpacingM);
       host.dataset.groundScaleLengthM = String(groundScaleLengthM);
@@ -10080,7 +10159,7 @@ export function RuntimeVehicleViewer({
           margin: 1.18,
         });
         camera.near = Math.max(radius / 300, 0.02);
-        camera.far = radius * 30;
+        camera.far = Math.max(500, radius * 30);
         controls.maxDistance = Math.max(40, radius * 50);
         camera.updateProjectionMatrix();
         return fitDistance;
@@ -10444,15 +10523,15 @@ export function RuntimeVehicleViewer({
       targetGroup: THREE.Object3D,
       datasetPrefix: "exterior" | "analysis",
     ) => {
-      if (!gridHelper) return;
       targetGroup.updateMatrixWorld(true);
       const bounds = new THREE.Box3().setFromObject(targetGroup);
       if (bounds.isEmpty()) return;
       host.dataset[`${datasetPrefix}BoundsMinY`] = String(bounds.min.y);
       if (chassisPose !== null && physicalPoseEnabledRef.current) return;
       const requiredGroundY = bounds.min.y - 0.03;
-      gridHelper.position.y = Math.min(gridHelper.position.y, requiredGroundY);
-      host.dataset.referencePlaneY = String(gridHelper.position.y);
+      groundReferenceY = Math.min(groundReferenceY, requiredGroundY);
+      environmentRoot.position.y = groundReferenceY;
+      host.dataset.referencePlaneY = String(groundReferenceY);
       host.dataset.referencePlaneAuthority = "geometry-bounds";
     };
 
@@ -10479,7 +10558,7 @@ export function RuntimeVehicleViewer({
       );
       return { bounds, pointer };
     };
-    const explosionGroundFloorY = () => (gridHelper?.position.y ?? 0) + 0.02;
+    const explosionGroundFloorY = () => groundReferenceY + 0.02;
     const explosionGroundPoint = (normalizedPointer: THREE.Vector2) => {
       raycaster.setFromCamera(normalizedPointer, camera);
       return raycaster.ray.intersectPlane(
@@ -11738,6 +11817,8 @@ export function RuntimeVehicleViewer({
       hitModelRef.current = null;
       vehicleProjectileThreeRuntime.dispose();
       spawnVehicleProjectileVisualRef.current = null;
+      schoolProjectileQueryRef.current = null;
+      if (worldImpactStatus) worldImpactStatus.textContent = "";
       prepareVehicleProjectileVisualRef.current = null;
       setProjectileVisibilityEnhancedRef.current = null;
       resolveVehicleProjectileLaunchPoseRef.current = null;
@@ -12241,6 +12322,7 @@ export function RuntimeVehicleViewer({
             equipmentRef: activeOperationEquipmentRef,
             spec: activeOperationSpec,
             guidanceActiveUntilMs,
+            infiniteAmmoEnabled,
           }}
           onZoomStageChange={(zoomIndex) => {
             applyCrewViewZoomRef.current?.(
@@ -12259,6 +12341,7 @@ export function RuntimeVehicleViewer({
           equipmentRefs={operationEquipmentRefs}
           equipmentResolver={equipmentResolver}
           onSelect={selectOperationEquipment}
+          infiniteAmmoEnabled={infiniteAmmoEnabled}
         />
       ) : null}
 
@@ -12295,6 +12378,7 @@ export function RuntimeVehicleViewer({
               </button>
             ) : null}
             {firingPresentation && (vehicleOperationSource?.weapons.length ?? 0) > 0 ? (
+              <>
               <button
                 type="button"
                 title="补满当前载具所有武器的装填弹与备弹（网页预览）"
@@ -12304,6 +12388,20 @@ export function RuntimeVehicleViewer({
                   e.currentTarget.blur();
                 }}
               >补满弹药</button>
+              <button
+                type="button"
+                role="switch"
+                aria-label="无限弹药（无需装填）"
+                aria-checked={infiniteAmmoEnabled}
+                data-active={infiniteAmmoEnabled || undefined}
+                title="网页练习：弹匣保持满弹，无需装填；保留真实开火间隔与单发、连发规则"
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={(event) => {
+                  toggleInfiniteAmmo();
+                  event.currentTarget.blur();
+                }}
+              >无限弹药</button>
+              </>
             ) : null}
             {activeOperationWeapon ? (
               <button
@@ -12331,7 +12429,7 @@ export function RuntimeVehicleViewer({
                     <kbd>Q</kbd><span>倍率</span>
                   </>
                 ) : null}
-                {activeOperationWeapon ? <><kbd>R</kbd><span>装填</span></> : null}
+                {activeOperationWeapon && !infiniteAmmoEnabled ? <><kbd>R</kbd><span>装填</span></> : null}
                 {operationEquipmentRefs.length > 1 ? (
                   <><kbd>1–9</kbd><span>切换武器</span></>
                 ) : null}
@@ -12401,6 +12499,11 @@ export function RuntimeVehicleViewer({
           <span>{viewerState.message}</span>
         </div>
       ) : null}
+      {environmentState ? (
+        <div className="runtime-environment-status" role="status">{environmentState}</div>
+      ) : null}
+      <div ref={worldImpactStatusRef} className="runtime-world-impact-status" role="status"
+        aria-live="off" title="最近一次实际命中的参考线；绿点：参考解算穿透，红点：停止，黄点：未确认。只保留一条，不代表弹体继续飞行；学校原生命中列表和法线尚未全部核实。" />
 
       {exteriorUnavailableMessage ? (
         <aside className="viewer-resource-warning" role="note" aria-label="官方资源问题提示">

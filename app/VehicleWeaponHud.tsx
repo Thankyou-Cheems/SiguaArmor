@@ -8,7 +8,7 @@ import { sourceMagazineDepletedTexture, sourceMagazineColor, sourceHudCssColor, 
 import { wikiUrl } from "../lib/wiki-source.ts";
 
 export function VehicleWeaponHud({
-  document, store, equipmentRefs, activeEquipmentRef, equipmentResolver, onSelect,
+  document, store, equipmentRefs, activeEquipmentRef, equipmentResolver, onSelect, infiniteAmmoEnabled = false,
 }: {
   document: VehicleFiringPresentation;
   store: RuntimeVehicleWeaponOperationStore;
@@ -16,14 +16,15 @@ export function VehicleWeaponHud({
   activeEquipmentRef: string;
   equipmentResolver: RuntimeStationEquipmentResolver;
   onSelect: (id: string) => void;
+  infiniteAmmoEnabled?: boolean;
 }) {
   const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
   const binding = equipmentResolver(activeEquipmentRef);
   const spec = binding?.operation;
   const source = document.weapons[binding?.firingPresentation?.weaponClassPath ?? ""];
   const state = useMemo(() => spec
-    ? snapshot.states.get(activeEquipmentRef) ?? createVehicleWeaponOperation(spec, 0) : null,
-  [snapshot, activeEquipmentRef, spec]);
+    ? snapshot.states.get(activeEquipmentRef) ?? createVehicleWeaponOperation(spec, 0, infiniteAmmoEnabled) : null,
+  [snapshot, activeEquipmentRef, spec, infiniteAmmoEnabled]);
   const [now, setNow] = useState(0);
   const [inventoryShown, showInventory] = useState(true);
   const [pinned, pinInventory] = useState(false);
@@ -51,7 +52,7 @@ export function VehicleWeaponHud({
   const magazineRounds = vehicleWeaponMagazineRounds(state, spec, now);
   const remaining = presentation.magazinesRemaining + (presentation.roundsRemaining > 0 ? 1 : 0);
   const iconCount = Math.min(24, Math.max(1, spec.numberOfMags));
-  const statusLabel = presentation.weaponReloading ? "装填中" : status === "empty" ? "弹药耗尽" : "已装填";
+  const statusLabel = infiniteAmmoEnabled ? "无限弹药 · 无需装填" : presentation.weaponReloading ? "装填中" : status === "empty" ? "弹药耗尽" : "已装填";
   const layout = document.hud.layout;
   const sourceUnit = (pixels: number) => `calc(${pixels} * 100cqh / 1080)`;
   const nativeStyles = {
@@ -65,6 +66,7 @@ export function VehicleWeaponHud({
   return (
     <aside className="crew-view-weapon-status source-weapon-hud" data-state={status}
       style={nativeStyles}
+      data-infinite-ammo={infiniteAmmoEnabled}
       data-rounds-remaining={presentation.roundsRemaining}
       data-magazine-capacity={presentation.magazineCapacity}
       data-reserve-magazines={presentation.magazinesRemaining}
@@ -79,7 +81,7 @@ export function VehicleWeaponHud({
           const data = document.weapons[item?.firingPresentation?.weaponClassPath ?? ""];
           if (!item || !data || !slots) return null;
           const selected = id === activeEquipmentRef;
-          const itemState = snapshot.states.get(id) ?? createVehicleWeaponOperation(item.operation, 0);
+          const itemState = snapshot.states.get(id) ?? createVehicleWeaponOperation(item.operation, 0, infiniteAmmoEnabled);
           const itemAmmo = presentVehicleWeaponOperation(itemState, item.operation, now);
           const count = data.showMagCount ? itemAmmo.magazinesRemaining + (itemAmmo.roundsRemaining > 0 ? 1 : 0)
             : data.showItemCount ? itemAmmo.roundsRemaining : null;
@@ -93,7 +95,7 @@ export function VehicleWeaponHud({
               {textureUrl(selected ? data.selectionIcon : data.categoryIcon) ? <img
                 src={textureUrl(selected ? data.selectionIcon : data.categoryIcon)} alt="" draggable={false} /> : null}
               <kbd>{slots.join("/")}</kbd>
-              {selected && count !== null ? <small>{count}</small> : null}
+              {selected && (infiniteAmmoEnabled || count !== null) ? <small>{infiniteAmmoEnabled ? "∞" : count}</small> : null}
             </span>
           </button>;
         })}
@@ -109,7 +111,7 @@ export function VehicleWeaponHud({
           {binding.equipment.displayName}
         </button>
         <div className="source-weapon-hud__details">
-          {(source.showAmmoDataInHud || document.hud.showAmmoInMag) ? <span className="source-weapon-hud__round-count">{presentation.roundsRemaining}/{presentation.magazineCapacity}</span> : null}
+          {(infiniteAmmoEnabled || source.showAmmoDataInHud || document.hud.showAmmoInMag) ? <span className="source-weapon-hud__round-count" aria-label={infiniteAmmoEnabled ? "无限弹药，无需装填" : undefined}>{infiniteAmmoEnabled ? "∞" : `${presentation.roundsRemaining}/${presentation.magazineCapacity}`}</span> : null}
           {spec.allowRoundInChamber && presentation.roundsRemaining > 0 ? <span
             className="source-weapon-hud__chamber" aria-label="膛内有弹"
             style={{
@@ -121,7 +123,7 @@ export function VehicleWeaponHud({
             }} /> : null}
           <span>{sourceWeaponFireModeLabel(document, spec)}</span>
         </div>
-        {icons ? <div className="source-weapon-hud__magazines" aria-label={`剩余 ${remaining} 个弹匣或弹药单元`}>
+        {icons && !infiniteAmmoEnabled ? <div className="source-weapon-hud__magazines" aria-label={`剩余 ${remaining} 个弹匣或弹药单元`}>
           {Array.from({ length: iconCount }, (_, index) => {
             const fullness = Math.min(1, (magazineRounds[index] ?? 0) / presentation.magazineCapacity);
             const foreground = textureUrl(sourceMagazineDepletedTexture(icons, fullness));
