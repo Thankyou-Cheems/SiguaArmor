@@ -81,6 +81,7 @@ export interface GunnerSightWeaponOperationRuntime {
   equipmentRef: string;
   spec: VehicleWeaponOperationSpec | null;
   guidanceActiveUntilMs: number;
+  infiniteAmmoEnabled?: boolean;
 }
 
 function operationClockMs() {
@@ -99,12 +100,13 @@ function useLiveGunnerSightOperationState(
   const operationState = useMemo(
     () => weaponOperation.spec && weaponOperation.equipmentRef
       ? operationSnapshot.states.get(weaponOperation.equipmentRef) ??
-        createVehicleWeaponOperation(weaponOperation.spec, 0)
+        createVehicleWeaponOperation(weaponOperation.spec, 0, weaponOperation.infiniteAmmoEnabled)
       : null,
     [
       operationSnapshot,
       weaponOperation.equipmentRef,
       weaponOperation.spec,
+      weaponOperation.infiniteAmmoEnabled,
     ],
   );
   const [clockMs, setClockMs] = useState(operationClockMs);

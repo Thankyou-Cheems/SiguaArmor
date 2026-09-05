@@ -289,7 +289,7 @@
 }
 
 .runtime-vehicle-viewer[data-crew-view-active="true"]
-  > :not(.viewer-canvas):not(.gunner-sight-overlay):not(.crew-view-operation-dock):not(.crew-view-weapon-status) {
+  > :not(.viewer-canvas):not(.gunner-sight-overlay):not(.crew-view-operation-dock):not(.crew-view-weapon-status):not(.runtime-world-impact-status) {
   display: none !important;
 }
 
@@ -19060,3 +19060,25 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     max-height: calc(100% - 64px);
   }
 }
+.runtime-environment-status,
+.runtime-world-impact-status {
+  position: absolute;
+  left: 50%;
+  bottom: 3rem;
+  transform: translateX(-50%);
+  z-index: 8;
+  max-width: min(34rem, 80%);
+  padding: .45rem .7rem;
+  background: #101713eb;
+  color: #d5d6c7;
+  font-size: .8rem;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+.runtime-world-impact-status {
+  bottom: .65rem;
+  z-index: 62;
+  border-left: 2px solid #d3b875;
+  font-variant-numeric: tabular-nums;
+}
+.runtime-world-impact-status:empty { display: none; }

@@ -29,6 +29,14 @@ export interface VehicleProjectileVisualRequest {
   weaponLabel: string;
   samples: NativeProjectileTrajectorySample[];
   visual: SourceProjectileVisual;
+  impactTrace?: VehicleProjectileImpactTrace;
+}
+
+export interface VehicleProjectileImpactTrace {
+  timeSeconds: number;
+  pointsCm: ProjectileVector3[];
+  contacts: Array<{ pointCm: ProjectileVector3; penetrated: boolean | null }>;
+  summary: string;
 }
 
 function threePointFromUnrealCentimetres(value: ProjectileVector3) {
@@ -124,6 +132,7 @@ export function createVehicleProjectileThreeRuntime({
   loadModel,
   onResourceError,
   visibilityEnhanced = true,
+  onImpactTrace,
 }: {
   scene: THREE.Scene;
   render: () => void;
@@ -133,6 +142,7 @@ export function createVehicleProjectileThreeRuntime({
   loadModel?: (pathname: string) => Promise<THREE.Object3D>;
   onResourceError?: (error: Error) => void;
   visibilityEnhanced?: boolean;
+  onImpactTrace?: (trace: VehicleProjectileImpactTrace) => void;
 }) {
   const root = new THREE.Group();
   root.name = "runtime-source-locked-projectiles";
@@ -282,9 +292,64 @@ export function createVehicleProjectileThreeRuntime({
   root.add(markers);
   scene.add(root);
 
+  // One persistent diagnostic path for the most recent actual impact, not an
+  // ever-growing shot history. It is separate from physical projectile bodies.
+  const impactRoot = new THREE.Group();
+  impactRoot.name = "runtime-last-projectile-impact";
+  impactRoot.visible = false;
+  const impactCapacity = 128;
+  const impactPositions = new Float32Array(impactCapacity * 6);
+  const impactGeometry = new LineSegmentsGeometry().setPositions(impactPositions);
+  const impactAttribute = (impactGeometry.getAttribute("instanceStart") as THREE.InterleavedBufferAttribute).data;
+  impactAttribute.setUsage(THREE.DynamicDrawUsage);
+  impactGeometry.instanceCount = 0;
+  const impactMaterial = new LineMaterial({ color: 0xffd878, linewidth: 2,
+    transparent: true, opacity: .7, depthTest: false, depthWrite: false, toneMapped: false });
+  const impactLine = new LineSegments2(impactGeometry, impactMaterial);
+  impactLine.frustumCulled = false;
+  impactLine.renderOrder = 180;
+  impactRoot.add(impactLine);
+  const contactPositions = new Float32Array(impactCapacity * 3), contactColors = new Float32Array(impactCapacity * 3);
+  const contactGeometry = new THREE.BufferGeometry();
+  contactGeometry.setAttribute("position", new THREE.BufferAttribute(contactPositions, 3).setUsage(THREE.DynamicDrawUsage));
+  contactGeometry.setAttribute("color", new THREE.BufferAttribute(contactColors, 3).setUsage(THREE.DynamicDrawUsage));
+  const contactMaterial = new THREE.PointsMaterial({ size: 6, sizeAttenuation: false, vertexColors: true,
+    depthTest: false, depthWrite: false, transparent: true, opacity: .9, toneMapped: false });
+  const contactPoints = new THREE.Points(contactGeometry, contactMaterial);
+  contactPoints.frustumCulled = false;
+  contactPoints.renderOrder = 181;
+  impactRoot.add(contactPoints);
+  scene.add(impactRoot);
+  let lastImpactTimeMs = -Infinity;
+  const publishImpact = (trace: VehicleProjectileImpactTrace, impactTimeMs: number) => {
+    if (impactTimeMs < lastImpactTimeMs) return;
+    lastImpactTimeMs = impactTimeMs;
+    const count = Math.min(impactCapacity, Math.max(0, trace.pointsCm.length - 1));
+    for (let index = 0; index < count; index++) {
+      const from = Math.floor(index * (trace.pointsCm.length - 1) / count);
+      const to = Math.floor((index + 1) * (trace.pointsCm.length - 1) / count);
+      threePointFromUnrealCentimetres(trace.pointsCm[from]).toArray(impactPositions, index * 6);
+      threePointFromUnrealCentimetres(trace.pointsCm[to]).toArray(impactPositions, index * 6 + 3);
+    }
+    impactGeometry.instanceCount = count;
+    impactAttribute.needsUpdate = true;
+    const contacts = Math.min(impactCapacity, trace.contacts.length);
+    for (let index = 0; index < contacts; index++) {
+      const contact = trace.contacts[contacts === 1 ? 0 : Math.floor(index * (trace.contacts.length - 1) / (contacts - 1))];
+      threePointFromUnrealCentimetres(contact.pointCm).toArray(contactPositions, index * 3);
+      new THREE.Color(contact.penetrated === true ? 0x8bf0b0 : contact.penetrated === false ? 0xff7668 : 0xffd878).toArray(contactColors, index * 3);
+    }
+    contactGeometry.setDrawRange(0, contacts);
+    contactGeometry.attributes.position.needsUpdate = true;
+    contactGeometry.attributes.color.needsUpdate = true;
+    impactRoot.visible = true;
+    onImpactTrace?.(trace);
+  };
+
   const active: Array<{
     request: VehicleProjectileVisualRequest;
     startedAtMs: number;
+    impactPublished: boolean;
   }> = [];
   const bodyTransform = new THREE.Object3D();
   const instanceMatrix = new THREE.Matrix4();
@@ -300,6 +365,11 @@ export function createVehicleProjectileThreeRuntime({
     if (disposed) return;
     for (let index = active.length - 1; index >= 0; index -= 1) {
       const playback = active[index]!;
+      const trace = playback.request.impactTrace;
+      if (trace && !playback.impactPublished && frameTimeMs >= playback.startedAtMs + trace.timeSeconds * 1000) {
+        publishImpact(trace, playback.startedAtMs + trace.timeSeconds * 1000);
+        playback.impactPublished = true;
+      }
       const finalTime = playback.request.samples.at(-1)?.timeSeconds ?? 0;
       if ((frameTimeMs - playback.startedAtMs) / 1000 > finalTime) {
         active.splice(index, 1);
@@ -419,7 +489,7 @@ export function createVehicleProjectileThreeRuntime({
       if (disposed || request.samples.length < 2) return false;
       void prepare(request.visual).catch(error => onResourceError?.(error instanceof Error ? error : new Error(String(error))));
       if (active.length >= maxActiveProjectiles) active.shift();
-      active.push({ request, startedAtMs: performance.now() });
+      active.push({ request, startedAtMs: performance.now(), impactPublished: false });
       root.visible = true;
       if (animationFrame === 0) {
         animationFrame = requestAnimationFrame(animate);
@@ -429,6 +499,11 @@ export function createVehicleProjectileThreeRuntime({
     dispose() {
       if (disposed) return;
       disposed = true;
+      impactRoot.removeFromParent();
+      impactGeometry.dispose();
+      impactMaterial.dispose();
+      contactGeometry.dispose();
+      contactMaterial.dispose();
       if (animationFrame !== 0) cancelAnimationFrame(animationFrame);
       animationFrame = 0;
       active.length = 0;
