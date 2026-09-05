@@ -48,7 +48,7 @@ import { GunnerSightOverlay } from "./GunnerSightOverlay";
 import type { GunnerSightOperationState, GunnerSightStationPoseBinding, } from "./GunnerSightOverlay";
 import { createHeldOperationFireController, type HeldOperationFireAttempt, } from "../lib/held-operation-fire-control";
 import { createRuntimeVehicleWeaponOperationStore, } from "../lib/runtime-vehicle-weapon-operation-store";
-import { advanceVehicleWeaponOperation, createVehicleWeaponOperation, fireVehicleWeaponOperation, nextVehicleWeaponFireAtMs, releaseVehicleWeaponTrigger, reloadVehicleWeaponOperation, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
+import { createVehicleWeaponOperation, fireVehicleWeaponOperation, nextVehicleWeaponFireAtMs, releaseVehicleWeaponTrigger, reloadVehicleWeaponOperation, setVehicleWeaponInfiniteAmmo, type VehicleWeaponOperationState, } from "../lib/vehicle-weapon-operation-state";
 import { estimateWeaponHitDps, selectPrimaryWeaponHitDpsEstimate, singleShotWeaponHitTarget, targetPoolsForShot, vehicleTargetBurningProfile, type WeaponHitDpsEstimate, type WeaponHitDpsTarget, } from "../lib/weapon-hit-dps";
 import { resolveWeaponDpsWeaponForRuntimeAssignment, weaponDpsWeaponsFromWikiDocument, } from "../lib/weapon-dps-source";
 import type { WeaponDpsSimulation, WeaponDpsWeapon, } from "../lib/weapon-dps-model";
@@ -3346,6 +3346,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
     const [vehicleProjectileResourceState, setVehicleProjectileResourceState] = useState<"idle" | "loading" | "ready" | "error">("idle");
     const [vehicleProjectileNotice, setVehicleProjectileNotice] = useState("");
     const [projectileVisibilityEnhanced, setProjectileVisibilityEnhanced] = useState(true);
+    const [infiniteAmmoEnabled, setInfiniteAmmoEnabled] = useState(false);
     useEffect(() => {
         projectileVisibilityEnhancedRef.current = projectileVisibilityEnhanced;
         setProjectileVisibilityEnhancedRef.current?.(projectileVisibilityEnhanced);
@@ -3396,6 +3397,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         vehicleWeaponOperationStatesRef.current.clear();
         vehicleWeaponOperationStore.clear();
         stopVehicleProjectileFireRef.current();
+        setInfiniteAmmoEnabled(false);
         setGuidanceActiveUntilMs(0);
         crewOccupantDisplayEnabledRef.current = false;
         crewHitProxyDisplayEnabledRef.current = false;
@@ -4041,8 +4043,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 throw new Error("当前武器缺少 Wiki 弹匣与装填控制数据");
             }
             const nowMs = operationClockMs();
-            const storedOperationState = vehicleWeaponOperationStatesRef.current.get(activeOperationEquipmentRef) ?? createVehicleWeaponOperation(activeOperationSpec, nowMs);
-            const currentOperationState = advanceVehicleWeaponOperation(storedOperationState, activeOperationSpec, nowMs);
+            const storedOperationState = vehicleWeaponOperationStatesRef.current.get(activeOperationEquipmentRef) ?? createVehicleWeaponOperation(activeOperationSpec, nowMs, infiniteAmmoEnabled);
+            const currentOperationState = setVehicleWeaponInfiniteAmmo(storedOperationState, activeOperationSpec, infiniteAmmoEnabled, nowMs);
             const operationShot = fireVehicleWeaponOperation(currentOperationState, activeOperationSpec, nowMs);
             if (!operationShot.fired) {
                 publishVehicleWeaponOperationState(activeOperationEquipmentRef, operationShot.state);
@@ -4059,8 +4061,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             }
             const previousMagazineState = vehicleProjectileMagazineStateRef.current;
             const magazineState = previousMagazineState.weaponAssignmentId === binding.weaponAssignmentId &&
-                currentOperationState.roundsRemaining <
-                    activeOperationSpec.magazineSize
+                (infiniteAmmoEnabled || currentOperationState.roundsRemaining <
+                    activeOperationSpec.magazineSize)
                 ? previousMagazineState
                 : {
                     weaponAssignmentId: binding.weaponAssignmentId,
@@ -4169,8 +4171,13 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         publishVehicleWeaponOperationState,
         firingPresentation,
         equipmentResolver,
+        infiniteAmmoEnabled,
     ]);
     const reloadVehicleWeapon = useCallback(() => {
+        if (infiniteAmmoEnabled) {
+            setVehicleProjectileNotice("无限弹药已开启，无需装填");
+            return;
+        }
         if (!activeOperationSpec || !activeOperationEquipmentRef) {
             setVehicleProjectileNotice("当前武器缺少 Wiki 弹匣与装填控制数据");
             return;
@@ -4190,6 +4197,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         activeOperationEquipmentRef,
         activeOperationSpec,
         publishVehicleWeaponOperationState,
+        infiniteAmmoEnabled,
     ]);
     const releaseActiveVehicleWeaponTrigger = useCallback(() => {
         if (!activeOperationSpec || !activeOperationEquipmentRef)
@@ -4213,6 +4221,19 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         };
         setVehicleProjectileNotice("已补满全部武器弹药（含备弹）");
     }, [vehicleWeaponOperationStore]);
+    const toggleInfiniteAmmo = useCallback(() => {
+        stopVehicleProjectileFireRef.current();
+        const enabled = !infiniteAmmoEnabled;
+        const nowMs = operationClockMs();
+        for (const [equipmentRef, state] of vehicleWeaponOperationStatesRef.current) {
+            const spec = equipmentResolver?.(equipmentRef)?.operation;
+            if (!spec)
+                continue;
+            publishVehicleWeaponOperationState(equipmentRef, setVehicleWeaponInfiniteAmmo(state, spec, enabled, nowMs));
+        }
+        setInfiniteAmmoEnabled(enabled);
+        setVehicleProjectileNotice("");
+    }, [infiniteAmmoEnabled, equipmentResolver, publishVehicleWeaponOperationState]);
     useEffect(() => {
         fireVehicleProjectileRef.current = fireVehicleProjectile;
         return () => {
@@ -9414,11 +9435,12 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 equipmentRef: activeOperationEquipmentRef,
                 spec: activeOperationSpec,
                 guidanceActiveUntilMs,
+                infiniteAmmoEnabled,
             }} onZoomStageChange={(zoomIndex) => {
                 applyCrewViewZoomRef.current?.(activeTurretStation.id, zoomIndex);
             }}/>) : null}
 
-      {activeCrewViewStationId !== null && firingPresentation && equipmentResolver ? (<VehicleWeaponHud document={firingPresentation} store={vehicleWeaponOperationStore} activeEquipmentRef={activeOperationEquipmentRef} equipmentRefs={operationEquipmentRefs} equipmentResolver={equipmentResolver} onSelect={selectOperationEquipment}/>) : null}
+      {activeCrewViewStationId !== null && firingPresentation && equipmentResolver ? (<VehicleWeaponHud document={firingPresentation} store={vehicleWeaponOperationStore} activeEquipmentRef={activeOperationEquipmentRef} equipmentRefs={operationEquipmentRefs} equipmentResolver={equipmentResolver} onSelect={selectOperationEquipment} infiniteAmmoEnabled={infiniteAmmoEnabled}/>) : null}
 
       {activeCrewViewStationId !== null ? (<div className="crew-view-operation-dock">
           <div className="crew-view-immersive-controls" aria-label={driverViewActive
@@ -9429,10 +9451,16 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
               </button>) : !driverViewActive && gunnerSightPresentationAvailable ? (<button type="button" role="switch" aria-label="显示炮镜遮罩与分划" aria-checked={gunnerSightOverlayEnabled} data-active={gunnerSightOverlayEnabled || undefined} onClick={() => setGunnerSightOverlayEnabled((enabled) => !enabled)}>
                 {gunnerSightOverlayEnabled ? "隐藏炮镜" : "显示炮镜"}
               </button>) : null}
-            {firingPresentation && (vehicleOperationSource?.weapons.length ?? 0) > 0 ? (<button type="button" title="补满当前载具所有武器的装填弹与备弹（网页预览）" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => {
+            {firingPresentation && (vehicleOperationSource?.weapons.length ?? 0) > 0 ? (<>
+              <button type="button" title="补满当前载具所有武器的装填弹与备弹（网页预览）" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => {
                     refillVehicleAmmunition();
                     e.currentTarget.blur();
-                }}>补满弹药</button>) : null}
+                }}>补满弹药</button>
+              <button type="button" role="switch" aria-label="无限弹药（无需装填）" aria-checked={infiniteAmmoEnabled} data-active={infiniteAmmoEnabled || undefined} title="网页练习：弹匣保持满弹，无需装填；保留真实开火间隔与单发、连发规则" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => {
+                    toggleInfiniteAmmo();
+                    event.currentTarget.blur();
+                }}>无限弹药</button>
+              </>) : null}
             {activeOperationWeapon ? (<button type="button" role="switch" aria-label="弹道与弹体可见度增强" aria-checked={projectileVisibilityEnhanced} data-active={projectileVisibilityEnhanced || undefined} title="网页辅助标记：加亮弹体位置与飞行轨迹，不改变真实弹道、弹速或模型尺寸" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => {
                     setProjectileVisibilityEnhanced((enabled) => !enabled);
                     event.currentTarget.blur();
@@ -9443,7 +9471,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                     <kbd>WASD</kbd><span>方位 / 俯仰</span>
                     <kbd>Q</kbd><span>倍率</span>
                   </>) : null}
-                {activeOperationWeapon ? <><kbd>R</kbd><span>装填</span></> : null}
+                {activeOperationWeapon && !infiniteAmmoEnabled ? <><kbd>R</kbd><span>装填</span></> : null}
                 {operationEquipmentRefs.length > 1 ? (<><kbd>1–9</kbd><span>切换武器</span></>) : null}
               </span>) : null}
             <button type="button" aria-label={driverViewActive ? "退出驾驶员视角" : "退出真实操作视角"} aria-keyshortcuts="Escape" onClick={() => exitCrewViewpointRef.current?.()}>
