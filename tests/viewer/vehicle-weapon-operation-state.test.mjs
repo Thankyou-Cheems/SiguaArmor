@@ -9,6 +9,7 @@ import {
   presentVehicleWeaponOperation,
   releaseVehicleWeaponTrigger,
   reloadVehicleWeaponOperation,
+  setVehicleWeaponInfiniteAmmo,
 } from "../../lib/vehicle-weapon-operation-state.ts";
 
 const t72Round = {
@@ -220,4 +221,91 @@ test("single-load feed fills the current magazine from spares without discarding
   assert.equal(ready.roundsRemaining, 10);
   assert.equal(ready.reserveMagazines, 0);
   assert.deepEqual(ready.reserveMagazineRounds, []);
+});
+
+const practiceWeapon = Object.freeze({
+  numberOfMags: 2, magazineSize: 3,
+  tacticalReloadSeconds: 4, dryReloadSeconds: 6,
+  roundsPerMinute: 600, timeBetweenShotsSeconds: 0.1,
+});
+
+test("infinite ammunition fires past total supply without consuming magazines or loading", () => {
+  let state = createVehicleWeaponOperation(practiceWeapon, 0, true);
+  const reserves = state.reserveMagazineRounds;
+  for (let index = 0; index < 1_000; index++) {
+    const shot = fireVehicleWeaponOperation(state, practiceWeapon, index * 100);
+    assert.equal(shot.fired, true);
+    state = shot.state;
+    assert.equal(state.roundsRemaining, 3);
+    assert.equal(state.reserveMagazineRounds, reserves);
+    assert.equal(state.reserveMagazines, 1);
+    assert.equal(state.reloadEndsAtMs, null);
+    assert.equal(nextVehicleWeaponFireAtMs(state, practiceWeapon, index * 100), (index + 1) * 100);
+  }
+});
+
+test("enabling infinite ammunition cancels a dry reload but retains the shot cooldown", () => {
+  const spec = { ...practiceWeapon, magazineSize: 1 };
+  const fired = fireVehicleWeaponOperation(createVehicleWeaponOperation(spec, 0), spec, 0);
+  assert.equal(fired.state.reloadEndsAtMs, 6_000);
+  const enabled = setVehicleWeaponInfiniteAmmo(fired.state, spec, true, 50);
+  assert.equal(enabled.reloadEndsAtMs, null);
+  assert.equal(enabled.reloadStartedAtMs, null);
+  assert.equal(enabled.roundsRemaining, 1);
+  assert.equal(enabled.nextShotAtMs, 100);
+  assert.equal(fireVehicleWeaponOperation(enabled, spec, 50).reason, "weapon-cooldown");
+  assert.equal(fireVehicleWeaponOperation(enabled, spec, 100).fired, true);
+  assert.equal(presentVehicleWeaponOperation(enabled, spec, 100).weaponReady, true);
+  assert.equal(presentVehicleWeaponOperation(enabled, spec, 100).weaponReloading, false);
+});
+
+test("infinite ammunition also recovers an exhausted weapon with no reserves", () => {
+  const spec = { ...practiceWeapon, magazineSize: 1, numberOfMags: 1 };
+  const empty = fireVehicleWeaponOperation(createVehicleWeaponOperation(spec, 0), spec, 0).state;
+  const enabled = setVehicleWeaponInfiniteAmmo(empty, spec, true, 100);
+  assert.equal(enabled.reserveMagazines, 0);
+  assert.equal(fireVehicleWeaponOperation(enabled, spec, 100).fired, true);
+  assert.equal(reloadVehicleWeaponOperation(enabled, spec, 100).reason, "infinite-ammo");
+});
+
+test("disabling infinite ammunition restores consumption, dry reload and exhausted state", () => {
+  const spec = { ...practiceWeapon, magazineSize: 1 };
+  const unlimited = fireVehicleWeaponOperation(createVehicleWeaponOperation(spec, 0, true), spec, 0).state;
+  const finite = setVehicleWeaponInfiniteAmmo(unlimited, spec, false, 50);
+  assert.equal(fireVehicleWeaponOperation(finite, spec, 50).reason, "weapon-cooldown");
+  const first = fireVehicleWeaponOperation(finite, spec, 100);
+  assert.equal(first.state.roundsRemaining, 0);
+  assert.equal(first.state.reloadEndsAtMs, 6_100);
+  const last = fireVehicleWeaponOperation(first.state, spec, 6_100);
+  assert.equal(last.fired, true);
+  assert.equal(last.state.reserveMagazines, 0);
+  assert.equal(nextVehicleWeaponFireAtMs(last.state, spec, 6_200), null);
+});
+
+test("manual reload cannot start a tactical reload in infinite mode", () => {
+  const spec = { ...practiceWeapon, allowRoundInChamber: true };
+  const state = createVehicleWeaponOperation(spec, 0, true);
+  const result = reloadVehicleWeaponOperation(state, spec, 0);
+  assert.equal(result.started, false);
+  assert.equal(result.reason, "infinite-ammo");
+  assert.equal(result.state, state);
+});
+
+test("infinite ammunition keeps authored single and burst trigger limits", () => {
+  for (const [kind, rounds] of [["single", 1], ["burst", 3]]) {
+    const spec = { ...practiceWeapon, fireControl: {
+      defaultModeIndex: 0, modes: [{ kind, sourceValue: rounds, roundsPerTrigger: rounds }],
+      resetBurstOnTriggerRelease: false,
+    } };
+    let state = createVehicleWeaponOperation(spec, 0, true);
+    for (let index = 0; index < rounds; index++) {
+      const shot = fireVehicleWeaponOperation(state, spec, index * 100);
+      assert.equal(shot.fired, true);
+      state = shot.state;
+    }
+    assert.equal(nextVehicleWeaponFireAtMs(state, spec, rounds * 100), null);
+    assert.equal(fireVehicleWeaponOperation(state, spec, rounds * 100).reason, "trigger-cycle-complete");
+    state = releaseVehicleWeaponTrigger(state, spec, rounds * 100);
+    assert.equal(fireVehicleWeaponOperation(state, spec, rounds * 100).fired, true);
+  }
 });

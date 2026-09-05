@@ -24,6 +24,8 @@ export interface VehicleWeaponFireControl {
 }
 
 export interface VehicleWeaponOperationState {
+  /** Browser practice option; never part of the source weapon configuration. */
+  infiniteAmmo?: boolean;
   roundsRemaining: number;
   reserveMagazines: number;
   reserveMagazineRounds: readonly number[];
@@ -103,9 +105,11 @@ function tacticalReloadMs(spec: VehicleWeaponOperationSpec) {
 export function createVehicleWeaponOperation(
   spec: VehicleWeaponOperationSpec,
   nowMs: number,
+  infiniteAmmo = false,
 ): VehicleWeaponOperationState {
   const reserveMagazines = Math.max(0, positiveInteger(spec.numberOfMags, 1) - 1);
   return {
+    infiniteAmmo,
     roundsRemaining: magazineCapacity(spec),
     reserveMagazines,
     reserveMagazineRounds: Array<number>(reserveMagazines).fill(magazineCapacity(spec)),
@@ -114,6 +118,26 @@ export function createVehicleWeaponOperation(
     reloadEndsAtMs: null,
     triggerActive: false,
     roundsFiredThisTrigger: 0,
+  };
+}
+
+export function setVehicleWeaponInfiniteAmmo(
+  state: VehicleWeaponOperationState,
+  spec: VehicleWeaponOperationSpec,
+  enabled: boolean,
+  nowMs: number,
+): VehicleWeaponOperationState {
+  const current = advanceVehicleWeaponOperation(state, spec, nowMs);
+  if (Boolean(current.infiniteAmmo) === enabled) return current;
+  if (!enabled) return { ...current, infiniteAmmo: false };
+  // Refill only the loaded magazine and cancel loading. Retain shot cadence,
+  // trigger mode and reserve magazines; disabling resumes finite ammunition.
+  return {
+    ...current,
+    infiniteAmmo: true,
+    roundsRemaining: Math.max(current.roundsRemaining, magazineCapacity(spec)),
+    reloadStartedAtMs: null,
+    reloadEndsAtMs: null,
   };
 }
 
@@ -188,7 +212,9 @@ export function fireVehicleWeaponOperation(
   if (nowMs < current.nextShotAtMs) {
     return { fired: false, state: current, reason: "weapon-cooldown" };
   }
-  const roundsRemaining = current.roundsRemaining - 1;
+  const roundsRemaining = current.infiniteAmmo
+    ? current.roundsRemaining
+    : current.roundsRemaining - 1;
   const nextShotAtMs = nowMs + vehicleWeaponShotIntervalMs(spec);
   if (roundsRemaining > 0 || current.reserveMagazines <= 0) {
     return {
@@ -259,6 +285,9 @@ export function reloadVehicleWeaponOperation(
   nowMs: number,
 ): { started: boolean; state: VehicleWeaponOperationState; reason: string | null } {
   const current = advanceVehicleWeaponOperation(state, spec, nowMs);
+  if (current.infiniteAmmo) {
+    return { started: false, state: current, reason: "infinite-ammo" };
+  }
   if (current.reloadEndsAtMs !== null) {
     return { started: false, state: current, reason: "weapon-reloading" };
   }
