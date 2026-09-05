@@ -39,4 +39,6 @@ const branches = git(["for-each-ref", "refs/heads", "--format=%(refname:short)%0
     exactAnnotatedTags: annotated.get(commit) ?? [] };
 });
 console.log(JSON.stringify({ root, main: git(["rev-parse", "main"]).trim(), worktrees, branches,
-  note: "Read-only inventory. A retained commit and clean status do not authorize removal: review ignored custody and active process ownership." }, null, 2));
+  fetchRefspecs: git(["config", "--get-all", "remote.origin.fetch"]).trim().split("\n"),
+  remoteTrackingBranches: git(["for-each-ref", "refs/remotes", "--format=%(refname:short)"]).trim().split("\n").filter(Boolean),
+  note: "Read-only local inventory. Refresh with git fetch --prune origin; use git ls-remote --heads origin before retiring remote branches. Retained commits and clean status still require ignored-custody and active-process review." }, null, 2));

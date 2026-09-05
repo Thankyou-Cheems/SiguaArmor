@@ -12,6 +12,8 @@ git worktree add .local/worktrees/my-task -b codex/my-task main
 
 任务的状态写在对应文档或 Issue 中。记录结论、证据范围、未闭合项和下一步；分支和目录只承担临时编辑隔离。完成后合并适用内容，删除临时分支和工作树。保留候选时，先提交并创建注明边界的 annotated tag，再释放工作树，需要继续时从 tag 建新分支。
 
+盘点工具只读本地 Git 状态。先用 `git fetch --prune origin` 更新远端引用；移除远端分支前再用 `git ls-remote --heads origin` 核对真实列表和精确 tip。部分 fetch refspec 可能隐藏远端旧分支，不能把 `git branch -r` 当成完整线上清单。
+
 移除前逐一确认：精确 tip 已包含在 `main` 或 annotated tag；所有 dirty/untracked 内容已保存；ignored 文件已区分可重建缓存与需保管材料；没有其他任务或进程使用目录。`workspace:status` 是只读盘点，不代替这些检查。遇到 junction，只处理链接本身。备份、凭据和研究材料放在其所属私有保管目录。
 
 ## 状态与 tag
