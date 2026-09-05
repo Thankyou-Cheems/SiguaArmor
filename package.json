@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "vinext dev",
+    "workspace:status": "node tools/workspaces.mjs",
     "check": "npm run typecheck && npm test",
     "build": "vinext build",
     "deploy:package": "node tools/deploy/package-deployment.mjs --output-root outputs/deployment",
