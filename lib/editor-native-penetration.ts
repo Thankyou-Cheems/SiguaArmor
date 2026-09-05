@@ -12,10 +12,10 @@ export interface EditorNativePenetrationArithmetic {
   availablePenetrationMm: number;
 }
 
-// ASQWeapon::DealDamage builds the armor-test trace 1 cm before the first
-// impact surface. DidPenetrateArmor measures every hit from that trace start,
-// so even the first armor layer consumes 1 cm of the projectile penetration
-// trace. Same-build 2A70/100 mm Frag Dedicated PIE read back 0.01 m exactly.
+// Entry-offset model for the legacy straight-ray fixture. Native PostImpact
+// backsteps 1 cm from ImpactPoint, but component refinement creates a different
+// TraceStart. Use nativeTraceDistanceM when consuming real query records.
+// Same-build 2A70/100 mm Frag Dedicated PIE observed 0.01 m in its entry fixture.
 export const EDITOR_NATIVE_ARMOR_TRACE_ENTRY_OFFSET_M = Math.fround(0.01);
 
 export function editorNativeTraceIncludesDistance({
@@ -65,6 +65,7 @@ export function resolveEditorNativePenetrationArithmetic({
   cumulativeDamageAbsorbed,
   penetrationAtRangeMm,
   incidenceFactor,
+  nativeTraceDistanceM,
 }: {
   distanceFromRayOriginM: number;
   firstDistanceFromRayOriginM: number;
@@ -73,16 +74,20 @@ export function resolveEditorNativePenetrationArithmetic({
   cumulativeDamageAbsorbed: number;
   penetrationAtRangeMm: number;
   incidenceFactor: number;
+  /** Exact query distance; legacy analytical rays use the entry-offset model. */
+  nativeTraceDistanceM?: number;
 }): EditorNativePenetrationArithmetic {
   const f32 = Math.fround;
   const distanceFromFirstHitM = f32(
     distanceFromRayOriginM - firstDistanceFromRayOriginM,
   );
-  const distanceFromPenetrationTraceStartM = f32(
+  const distanceFromPenetrationTraceStartM = nativeTraceDistanceM ?? f32(
     EDITOR_NATIVE_ARMOR_TRACE_ENTRY_OFFSET_M + distanceFromFirstHitM,
   );
-  const postPenetrationTraceFactor =
-    penetrationTraceDistanceM > 0
+  const capacityCm = f32(f32(penetrationTraceDistanceM) * 100);
+  const postPenetrationTraceFactor = nativeTraceDistanceM !== undefined
+    ? capacityCm > 0 ? f32((capacityCm - nativeTraceDistanceM * 100) / capacityCm) : 0
+    : penetrationTraceDistanceM > 0
       ? f32(
           f32(
             penetrationTraceDistanceM -

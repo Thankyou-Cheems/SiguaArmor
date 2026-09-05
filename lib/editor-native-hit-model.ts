@@ -196,6 +196,8 @@ export interface EditorNativeBallistics {
   explosiveLayerOrderEvidence: string | null;
   explosiveLayerOrderResolved: boolean | null;
   impactRadialOrder: EditorNativeImpactRadialOrder | null;
+  /** Distinguishes a source-backed order from the legacy fallback. */
+  impactRadialOrderSourceKnown?: boolean;
   unknowns: string[];
 }
 
@@ -500,6 +502,39 @@ function preferredNumber(
   return null;
 }
 
+/** Weapon-side DealDamage/DidPenetrateArmor inputs. The caller must supply
+ * receiver Actor origin and the actual owning/instigating Pawn origin; a muzzle,
+ * occupant mesh or hit distance is not an interchangeable damage-curve input.
+ * This does not select the separate projectile-owned direct-damage route. */
+export function resolveEditorWeaponHitRanges(
+  model: EditorNativeModel,
+  weaponIndex: number,
+  inputs: { penetrationDistanceM: number | null; damageDistanceCm: number | null; shotDamageMultiplier: number | null },
+) {
+  const unknowns: string[] = [];
+  const weapon = model.weapons[weaponIndex];
+  if (!weapon) return { penetrationAtRangeMm: null, impactDamageAtRange: null, unknowns: ["weapon index is unresolved"] };
+  const penetrationCurve = curveIndex(weapon.armorPenetrationCurveIndex, model.curves, "penetration curve", unknowns);
+  const damageCurve = curveIndex(weapon.damageFalloffCurveIndex, model.curves, "damage curve", unknowns);
+  const sample = (index: number | null | undefined, range: number | null, constant: EditorField<number>, label: string) => {
+    if (index === null) return editorEvidenceValue(constant);
+    if (index === undefined || range === null || !Number.isFinite(range) || range < 0) {
+      addUnknown(unknowns, `${label} native range is unresolved`);
+      return null;
+    }
+    return sampleEditorNativeCurve(model.curves[index], f32(range));
+  };
+  const penetration = sample(penetrationCurve, inputs.penetrationDistanceM, weapon.armorPenetrationDepthMm, "penetration");
+  const damage = sample(damageCurve, inputs.damageDistanceCm, weapon.maxDamage, "damage");
+  const multiplier = inputs.shotDamageMultiplier;
+  return {
+    penetrationAtRangeMm: penetration === null ? null : penetrationCurve === null ? Math.trunc(penetration) : penetration,
+    impactDamageAtRange: damage === null || multiplier === null || !Number.isFinite(multiplier)
+      ? null : f32(f32(damage) * f32(multiplier)),
+    unknowns,
+  };
+}
+
 export function resolveEditorNativeBallistics(
   model: EditorNativeModel,
   weaponIndex: number,
@@ -790,6 +825,7 @@ export function resolveEditorNativeBallistics(
     explosiveLayerOrderEvidence,
     explosiveLayerOrderResolved,
     impactRadialOrder,
+    impactRadialOrderSourceKnown: impactRadialOrderField.known,
     unknowns,
   };
 }

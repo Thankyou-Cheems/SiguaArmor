@@ -3,6 +3,7 @@ import { ExtendedTriangle, MeshBVH, type SerializedBVH } from "three-mesh-bvh";
 import { normalizeHitIntersections } from "./hit-intersection-ordering.ts";
 import { decodeSchoolTerrain, fetchNarvaSchoolResource, loadNarvaSchoolSource, type SchoolScene } from "./runtime-narva-school-environment.ts";
 import type { NativeProjectileSweep, ProjectileVector3 } from "./vehicle-projectile-playback.ts";
+import { raycastSchoolConvex, type SchoolNativeConvex } from "./runtime-school-native-convex.ts";
 
 type Section = { byteOffset: number; byteLength: number; elementCount: number; componentType: string };
 type Resource = { url: string; bytes: number };
@@ -44,18 +45,23 @@ export type SchoolRayHit = {
   surfaceProfileIndex: number;
   surface: SchoolSurfaceProfile;
   distanceM: number;
+  /** Native Location-to-TraceStart distance, retained through component refine. */
+  traceDistanceM?: number;
   point: THREE.Vector3;
   faceNormal: THREE.Vector3;
   incidenceFactor: number;
+  elementIndex?: number;
+  externalFaceIndex?: number;
   queryUncertainty?: string;
 };
-export type SchoolSweepHit = { timeFraction: number; impactNormal: ProjectileVector3; sceneHit: SchoolRayHit };
+export type SchoolSweepHit = { timeFraction: number; normal: ProjectileVector3; impactNormal: ProjectileVector3; sceneHit: SchoolRayHit };
 export type SchoolCollision = {
   geometry: THREE.BufferGeometry;
   tree: MeshBVH;
   profiles: SchoolSurfaceProfile[];
   profileIndices: Uint16Array | Uint32Array;
   normals: Float32Array;
+  nativeCooked?: { cullsBackFace: boolean; externalFaceIndices: Int32Array; elementIndex: number; triangleVisitRanks?: Uint32Array };
 };
 export type SchoolQueryPlacement = {
   id: string; label: string;
@@ -64,6 +70,8 @@ export type SchoolQueryPlacement = {
   matrix: THREE.Matrix4;
   surface: (profile: SchoolSurfaceProfile) => SchoolSurfaceProfile;
   isInstanced?: boolean;
+  nativeConvexes?: SchoolNativeConvex[];
+  simpleSurface?: SchoolSurfaceProfile;
   queryUncertainty?: string;
 };
 
@@ -146,7 +154,7 @@ export function schoolQueryPlacementMatrix(placement: SchoolScene["placements"][
 // Swept sphere/triangle time of impact, including thin faces, edges and corners.
 // The distance to a convex triangle along a segment is convex. Find its minimum
 // then bisect only the entering interval; this cannot tunnel between frames.
-export function sweepSchoolTriangle(triangle: ExtendedTriangle, start: THREE.Vector3, end: THREE.Vector3, radius: number) {
+export function sweepSchoolTriangle(triangle: ExtendedTriangle, start: THREE.Vector3, end: THREE.Vector3, radius: number, ignoreSeparating = true) {
   const delta = end.clone().sub(start), length = delta.length();
   if (length < 1e-10) return null;
   const ray = new THREE.Ray(start, delta.clone().divideScalar(length));
@@ -161,8 +169,8 @@ export function sweepSchoolTriangle(triangle: ExtendedTriangle, start: THREE.Vec
   triangle.closestPointToPoint(start, surface);
   const initial = start.clone().sub(surface);
   if (initial.length() <= radius + 1e-8) {
-    if (initial.dot(delta) >= 0) return null; // separating contact, including a previous bounce
-    return { timeFraction: 0, point: surface.clone(), normal: initial.normalize() };
+    if (ignoreSeparating && initial.dot(delta) >= 0) return null;
+    return { timeFraction: 0, penetrationDepth: Math.max(0, radius - initial.length()), point: surface.clone(), normal: initial.normalize() };
   }
   if (radius === 0) {
     if (!crossing) return null;
@@ -183,14 +191,20 @@ export function sweepSchoolTriangle(triangle: ExtendedTriangle, start: THREE.Vec
 
 export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
   const rows = placements.map(row => ({ ...row, inverse: row.matrix.clone().invert(), normalMatrix: new THREE.Matrix3().getNormalMatrix(row.matrix),
+    convexes: row.nativeConvexes?.map(shape => {
+      const matrix = row.matrix.clone().multiply(shape.matrix);
+      return { ...shape, matrix, inverse: matrix.clone().invert(), normalMatrix: new THREE.Matrix3().getNormalMatrix(matrix) };
+    }),
     bounds: new THREE.Box3().union(row.simple?.geometry.boundingBox ?? new THREE.Box3()).union(row.complex?.geometry.boundingBox ?? new THREE.Box3()).applyMatrix4(row.matrix) }));
   const surfaceHit = (row: typeof rows[number], parsed: SchoolCollision, index: number, point: THREE.Vector3, start: THREE.Vector3,
     direction: THREE.Vector3, offset: THREE.Vector3): SchoolRayHit => {
     const faceNormal = new THREE.Vector3().fromArray(parsed.normals, index * 3).applyMatrix3(row.normalMatrix).normalize();
     const profileIndex = parsed.profileIndices[index];
     return { componentId: row.id, label: row.label, triangleIndex: index, surfaceProfileIndex: profileIndex,
-      surface: row.surface(parsed.profiles[profileIndex]), distanceM: point.distanceTo(start), point: point.clone().add(offset),
-      faceNormal, incidenceFactor: -direction.dot(faceNormal), queryUncertainty: row.queryUncertainty };
+      surface: row.surface(parsed.profiles[profileIndex]), distanceM: point.distanceTo(start),
+      traceDistanceM: parsed.nativeCooked ? point.distanceTo(start) : undefined, point: point.clone().add(offset),
+      faceNormal, incidenceFactor: -direction.dot(faceNormal), queryUncertainty: row.queryUncertainty,
+      elementIndex: parsed.nativeCooked?.elementIndex, externalFaceIndex: parsed.nativeCooked?.externalFaceIndices[index] };
   };
   const api = {
     placementCount: rows.length,
@@ -199,6 +213,24 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       const end = start.clone().addScaledVector(unit, far), worldRay = new THREE.Ray(start, unit);
       const hits: SchoolRayHit[] = [];
       for (const row of rows) {
+        // Native simple hulls can extend beyond the complex/display bounds.
+        if (kind === "simple" && row.movementKind === "simple" && row.convexes) {
+          for (const shape of row.convexes) {
+            const localStart = start.clone().applyMatrix4(shape.inverse);
+            const delta = end.clone().applyMatrix4(shape.inverse).sub(localStart), length = delta.length();
+            if (length < 1e-10) continue;
+            const hit = raycastSchoolConvex(shape.planes, localStart, delta.divideScalar(length), length);
+            if (!hit) continue;
+            const point = hit.point.applyMatrix4(shape.matrix);
+            const faceNormal = hit.normal.applyMatrix3(shape.normalMatrix).normalize();
+            if (!row.simpleSurface) throw new Error(`场景缺少简单碰撞材质：${row.id}`);
+            hits.push({ componentId: row.id, label: row.label, triangleIndex: -1, surfaceProfileIndex: 0,
+              surface: row.simpleSurface, distanceM: point.distanceTo(start), traceDistanceM: point.distanceTo(start), point: point.add(offset), faceNormal,
+              incidenceFactor: -unit.dot(faceNormal), elementIndex: shape.elementIndex, externalFaceIndex: -1,
+              queryUncertainty: row.queryUncertainty });
+          }
+          continue;
+        }
         if (!worldRay.intersectsBox(row.bounds)) continue;
         const parsed = kind === "complex" ? row.complex ?? row.simple : row[row.movementKind];
         if (!parsed) continue;
@@ -206,16 +238,23 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
         const delta = end.clone().applyMatrix4(row.inverse).sub(localStart), length = delta.length();
         if (length < 1e-10) continue;
         const ray = new THREE.Ray(localStart, delta.divideScalar(length));
-        for (const hit of parsed.tree.raycast(ray, THREE.DoubleSide, .000001, length)) {
+        const native = parsed.nativeCooked;
+        const candidates = native ? [parsed.tree.raycastFirst(ray, native.cullsBackFace ? THREE.FrontSide : THREE.DoubleSide, 0, length)]
+          : parsed.tree.raycast(ray, THREE.DoubleSide, .000001, length);
+        for (const hit of candidates) {
+          if (!hit) continue;
           if (hit.faceIndex == null) continue;
           const point = hit.point.applyMatrix4(row.matrix);
           hits.push(surfaceHit(row, parsed, hit.faceIndex, point, start, unit, offset));
         }
       }
-      return normalizeHitIntersections(hits.map((hit, index) => ({ index, componentId: hit.componentId,
+      // Never collapse different native shape contacts by component/position.
+      const nativeHits = hits.filter(hit => hit.elementIndex !== undefined);
+      const legacyHits = hits.filter(hit => hit.elementIndex === undefined);
+      return [...nativeHits, ...normalizeHitIntersections(legacyHits.map((hit, index) => ({ index, componentId: hit.componentId,
         surfaceProfileIndex: hit.surfaceProfileIndex, sourceFaceId: hit.triangleIndex, distanceM: hit.distanceM,
         point: hit.point.toArray() as [number, number, number], faceNormal: hit.faceNormal.toArray() as [number, number, number] })))
-        .map(({ hit }) => hits[hit.index]).sort((a, b) => a.distanceM - b.distanceM);
+        .map(({ hit }) => legacyHits[hit.index])].sort((a, b) => a.distanceM - b.distanceM);
     },
     postImpact(origin: THREE.Vector3, direction: THREE.Vector3, far: number, offset = new THREE.Vector3()) {
       // The exported meshes do not yet prove native per-primitive cardinality.
@@ -233,14 +272,18 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       const unit = direction.clone().normalize();
       const end = origin.clone().addScaledVector(unit, far);
       const merge = (start: THREE.Vector3, forward: THREE.Vector3) => {
-        const complex = nearest(api.raycast(start, forward, far, offset));
-        const simple = nearest(api.raycast(start, forward, far, offset, "simple"));
+        const nativeOrCandidate = (hits: SchoolRayHit[]) => [
+          ...hits.filter(hit => hit.elementIndex !== undefined),
+          ...nearest(hits.filter(hit => hit.elementIndex === undefined)),
+        ].sort((a, b) => a.distanceM - b.distanceM);
+        const complex = nativeOrCandidate(api.raycast(start, forward, far, offset));
+        const simple = nativeOrCandidate(api.raycast(start, forward, far, offset, "simple"));
         return mergeSchoolPenetrationQueries(complex, simple, far,
           hit => rows.find(row => row.id === hit.componentId)?.isInstanced,
           hit => {
             const remaining = far - hit.distanceM;
             if (remaining <= 0) return null;
-            const refined = nearest(api.raycast(hit.point, forward, remaining, offset))
+            const refined = nativeOrCandidate(api.raycast(hit.point, forward, remaining, offset))
               .find(candidate => candidate.componentId === hit.componentId);
             return refined ? { ...refined, distanceM: hit.distanceM + refined.distanceM } : null;
           });
@@ -260,6 +303,8 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       const direction = end.clone().sub(start).normalize(), radius = Math.max(0, input.sphereRadiusCm / 100);
       const worldBox = new THREE.Box3().setFromPoints([start, end]).expandByScalar(radius);
       let first: SchoolSweepHit | null = null;
+      let firstDistance = Infinity;
+      let firstRowId: string | null = null, firstRank = Infinity;
       const triangle = new ExtendedTriangle();
       for (const row of rows) {
         if (!row.bounds.intersectsBox(worldBox)) continue;
@@ -271,14 +316,27 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
         parsed.tree.shapecast({
           intersectsBounds: bounds => bounds.intersectsBox(localBox),
           intersectsTriangle: (candidate, index) => {
+            // Chaos triangle sweep visitor uses a scaled face normal and a
+            // signed 1e-4 facing tolerance. The nearly-parallel band may supply
+            // an initial MTD, but cannot supply a later entering contact.
+            const facing = candidate.getNormal(new THREE.Vector3()).applyMatrix3(row.normalMatrix).normalize().dot(direction);
+            if (parsed.nativeCooked?.cullsBackFace && facing > Math.fround(.0001)) return false;
             triangle.a.copy(candidate.a).applyMatrix4(row.matrix);
             triangle.b.copy(candidate.b).applyMatrix4(row.matrix);
             triangle.c.copy(candidate.c).applyMatrix4(row.matrix);
             triangle.needsUpdate = true;
-            const hit = sweepSchoolTriangle(triangle, start, end, radius);
-            if (hit && (!first || hit.timeFraction < first.timeFraction)) {
-              first = { timeFraction: hit.timeFraction, impactNormal: { x: hit.normal.x, y: hit.normal.z, z: hit.normal.y },
-                sceneHit: surfaceHit(row, parsed, index, hit.point, start, direction, offset) };
+            const hit = sweepSchoolTriangle(triangle, start, end, radius, !parsed.nativeCooked);
+            if (parsed.nativeCooked?.cullsBackFace && hit && hit.timeFraction > 0 && facing >= -Math.fround(.0001)) return false;
+            let distance = hit ? hit.timeFraction * start.distanceTo(end) - (hit.penetrationDepth ?? 0) : Infinity;
+            if (parsed.nativeCooked) distance = Math.fround(distance * 100) / 100;
+            const rank = parsed.nativeCooked?.triangleVisitRanks?.[index] ?? Infinity;
+            if (hit && (distance < firstDistance || distance === firstDistance && row.id === firstRowId && rank < firstRank)) {
+              firstDistance = distance;
+              firstRowId = row.id; firstRank = rank;
+              const sceneHit = surfaceHit(row, parsed, index, hit.point, start, direction, offset);
+              const normal = parsed.nativeCooked && hit.timeFraction > 0 ? sceneHit.faceNormal : hit.normal;
+              first = { timeFraction: hit.timeFraction, normal: { x: hit.normal.x, y: hit.normal.z, z: hit.normal.y },
+                impactNormal: { x: normal.x, y: normal.z, z: normal.y }, sceneHit };
             }
             return false;
           },

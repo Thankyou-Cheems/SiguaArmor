@@ -193,6 +193,7 @@ export type NativeProjectileSweep = (input: {
     deltaSeconds: number;
 }) => {
     timeFraction: number;
+    normal?: ProjectileVector3;
     impactNormal: ProjectileVector3;
 } | null;
 export interface NativeProjectileAlgorithm {
@@ -596,6 +597,10 @@ export function buildVehicleProjectileSimulationInput(binding: VehicleProjectile
 }, direction = launch.direction, guidanceAim: VehicleGuidanceAimPose | null = null, sweepSphere?: NativeProjectileSweep) {
     const movement = binding.projectileProfile.movement;
     const collision = binding.projectileProfile.collision;
+    const radius = collision.collisionSizeCm;
+    if (typeof radius !== "number" || !Number.isFinite(radius) || radius <= 0) {
+        throw new Error("当前弹体缺少运行时碰撞尺寸");
+    }
     const fuze = binding.projectileProfile.fuze;
     const lifespan = finite(fuze.initialLifeSpanSeconds);
     const base = {
@@ -614,7 +619,7 @@ export function buildVehicleProjectileSimulationInput(binding: VehicleProjectile
         maximumTimeSeconds: lifespan > 0 ? Math.min(lifespan, 12) : 12,
         initialLifeSpanSeconds: lifespan,
         minFlightTimeSeconds: finite(fuze.minFlightTimeSeconds),
-        sphereRadiusCm: finite(collision.sphereRadiusCm),
+        sphereRadiusCm: radius,
         shouldBounce: movement.bShouldBounce === true,
         bounciness: finite(movement.Bounciness, 0.6),
         friction: finite(movement.Friction, 0.2),
