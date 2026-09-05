@@ -25,6 +25,6 @@ npm run build
 
 The browser fetches shared catalogs, visual descriptors, compressed vehicle models, and hit geometry directly from `https://wiki.siguad.icu`. There is no bundled shared-data fallback.
 
-See `CONTEXT.md` for the ownership model.
+See [CONTEXT.md](CONTEXT.md) for the ownership model and [workspaces](docs/workspaces.md) for current releases, retained candidates and parallel development. `npm run workspace:status` inventories local worktrees and branch retention without changing them.
 
 Public visibility and approved website distribution do not relicense third-party game names, trademarks, or assets; those remain the property of their respective owners.

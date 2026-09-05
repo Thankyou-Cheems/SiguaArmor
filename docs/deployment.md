@@ -2,6 +2,8 @@
 
 SiguaArmor uses one ordinary build and one small deployment candidate. Shared game data and large runtime assets are not included; browsers read them from `https://wiki.siguad.icu`.
 
+Build a release from a committed source state. Keep unrelated local candidates in their own worktree. After activation is verified, retain that exact source with an annotated deployed tag following [workspaces](workspaces.md); a branch name or an old build directory does not identify production. Record enough release context to distinguish a live source checkpoint from an accepted or archived candidate.
+
 ```powershell
 npm ci
 npm run check
