@@ -26,6 +26,29 @@ RESTART_FOR = {
     "Caddyfile": "sigua-public",
 }
 
+# http.request preserves Host when connecting through a Docker service name;
+# Node's fetch may replace it with the URL hostname.
+PROBE_SCRIPT = """(async () => {
+  const http = require('node:http');
+  const host = new URL(process.env.SIGUA_PUBLIC_ORIGIN).host;
+  const connection = new URL(process.env.SIGUA_PROBE_CONNECT || 'http://sigua-public:8080');
+  const cases = [['/',200],['/squad/',200],['/sigua/',200],['/__admin/content/session',401]];
+  for (const [path,status] of cases) {
+    await new Promise((resolve,reject) => {
+      const request = http.get({hostname: connection.hostname, port: connection.port, path,
+        headers: {Host: host, Accept: 'text/html',
+          'X-Sigua-Origin-Auth': process.env.SIGUA_ORIGIN_AUTH_SECRET}}, response => {
+        response.resume();
+        response.on('error', reject);
+        response.on('end', () => response.statusCode === status ? resolve() :
+          reject(Error(path+': '+response.statusCode)));
+      });
+      request.setTimeout(15000, () => request.destroy(Error(path+': timeout')));
+      request.on('error', reject);
+    });
+  }
+})().catch(error => {console.error(error.message);process.exit(1)})"""
+
 
 def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -165,19 +188,7 @@ class Host:
             if status != "healthy":
                 raise RuntimeError(f"{service}: {status}")
         # Run inside an existing Node service; secrets stay in its environment.
-        script = """(async () => {
-          const host = new URL(process.env.SIGUA_PUBLIC_ORIGIN).host;
-          const cases = [['/',200],['/squad/',200],['/sigua/',200],['/__admin/content/session',401]];
-          for (const [path,status] of cases) {
-            const response = await fetch('http://sigua-public:8080'+path, {
-              headers: {Host: host, Accept: 'text/html',
-                'X-Sigua-Origin-Auth': process.env.SIGUA_ORIGIN_AUTH_SECRET},
-              signal: AbortSignal.timeout(15000)});
-            if (response.status !== status) throw Error(path+': '+response.status);
-            await response.arrayBuffer();
-          }
-        })().catch(error => {console.error(error.message);process.exit(1)})"""
-        self.run(["docker", "exec", "sigua-content-admin", "node", "-e", script])
+        self.run(["docker", "exec", "sigua-content-admin", "node", "-e", PROBE_SCRIPT])
 
 
 def replace_parts(root, source, names):

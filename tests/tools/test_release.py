@@ -2,9 +2,13 @@ import copy
 import importlib.util
 import io
 import json
+import os
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+import subprocess
 import tarfile
 import tempfile
+import threading
 import unittest
 
 SPEC = importlib.util.spec_from_file_location(
@@ -69,6 +73,30 @@ class ReleaseTests(unittest.TestCase):
         release.snapshot(self.root, candidate)
         release.write_json(candidate / "release.json", {"sourceCommit": "new"})
         return candidate
+
+    def test_origin_probe_uses_site_host_when_connecting_to_service_address(self):
+        seen = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                seen.append(self.path)
+                valid = self.headers.get('Host') == 'armor.example' and self.headers.get('X-Sigua-Origin-Auth') == 'test-only'
+                self.send_response((401 if self.path.startswith('/__admin') else 200) if valid else 404)
+                self.end_headers()
+            def log_message(self, *args):
+                pass
+        with HTTPServer(('127.0.0.1', 0), Handler) as server:
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            try:
+                result = subprocess.run(['node', '-e', release.PROBE_SCRIPT], capture_output=True, text=True,
+                    env={**os.environ, 'SIGUA_PUBLIC_ORIGIN': 'https://armor.example',
+                         'SIGUA_ORIGIN_AUTH_SECRET': 'test-only',
+                         'SIGUA_PROBE_CONNECT': f'http://127.0.0.1:{server.server_port}'}, timeout=20)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(seen, ['/', '/squad/', '/sigua/', '/__admin/content/session'])
+            finally:
+                server.shutdown()
+                thread.join()
 
     def test_static_publish_preserves_mounts_services_and_live_data(self):
         candidate = self.candidate()
