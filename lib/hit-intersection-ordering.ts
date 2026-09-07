@@ -193,4 +193,3 @@ export function normalizeHitIntersections<T extends HitIntersectionOrderingInput
     sourceHitIndices: intersection.sourceHitIndices,
   }));
 }
-
