@@ -87,8 +87,6 @@ def unpack(archive, folder):
             name = PurePosixPath(member.name)
             if name.is_absolute() or ".." in name.parts or not (member.isfile() or member.isdir()):
                 raise RuntimeError(f"Unsafe archive member: {member.name}")
-            if any(part.startswith(".") and part != "." for part in name.parts):
-                raise RuntimeError(f"Unexpected hidden file: {member.name}")
         # Validated ordinary files/directories only; also works on Python 3.10 hosts.
         for member in members:
             target = folder.joinpath(*PurePosixPath(member.name).parts)

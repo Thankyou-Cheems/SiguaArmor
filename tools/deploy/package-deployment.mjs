@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { cp, rm, stat, writeFile } from "node:fs/promises";
+import { cp, mkdir, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -28,6 +28,17 @@ async function requireDirectory(directory) {
   }
 }
 
+export async function copyServiceSources(sourceRoot, outputRoot) {
+  const files = execFileSync("git", ["ls-files", "-z", "--", "services"], {
+    cwd: sourceRoot, encoding: "utf8",
+  }).split("\0").filter(Boolean);
+  for (const file of files) {
+    const target = path.join(outputRoot, file);
+    await mkdir(path.dirname(target), { recursive: true });
+    await cp(path.join(sourceRoot, file), target);
+  }
+}
+
 export async function packageDeployment(outputRoot, { wikiRef } = {}) {
   const client = path.join(ROOT, "dist", "client");
   const standalone = path.join(ROOT, "dist", "standalone");
@@ -49,7 +60,7 @@ export async function packageDeployment(outputRoot, { wikiRef } = {}) {
       path.join(outputRoot, "release", "international-runtime"),
       { recursive: true },
     ),
-    cp(services, path.join(outputRoot, "services"), { recursive: true }),
+    copyServiceSources(ROOT, outputRoot),
   ]);
   await writeFile(path.join(outputRoot, "release.json"), JSON.stringify({
     sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim(),

@@ -11,7 +11,7 @@ npm run deploy
 npm run deploy:status
 ```
 
-`deploy` runs typecheck, all tests, lint, production build and packaging, then uploads one complete compressed candidate. It compares candidate components with the actual server files and replaces only changed components. Static files use the existing Caddy directory mount; changes to the Node runtime, administration service, analytics service or Caddy configuration recreate the affected container. Analytics source/configuration changes rebuild its image. Compose service configuration changes also recreate affected services. Service additions/removals need a separate host migration.
+`deploy` runs typecheck, all tests, lint, production build and packaging, then uploads one complete compressed candidate. Service packaging copies tracked source files, excluding local installed dependencies and caches. It compares candidate components with the actual server files and replaces only changed components. Static files use the existing Caddy directory mount; changes to the Node runtime, administration service, analytics service or Caddy configuration recreate the affected container. Analytics source/configuration changes rebuild its image. Compose service configuration changes also recreate affected services. Service additions/removals need a separate host migration.
 
 The default SSH alias and stack path are shown by `npm run deploy -- --help`. Override them with `--host` / `--root` or `SIGUA_DEPLOY_SSH_HOST` / `SIGUA_DEPLOY_ROOT`. Add `--wiki-ref <commit>` when this release depends on a particular published Wiki change; this is an operational note, not a browser pin. `npm run deploy:package` remains available for inspecting a local candidate; `deploy` always builds its own fresh candidate.
 
