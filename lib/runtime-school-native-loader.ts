@@ -98,14 +98,23 @@ export function schoolNativePlacements(manifest:NativeSchoolManifest,packets:Map
   if (manifest.schemaVersion!=="sigua-school-native-query/v1"||manifest.sourceBuildId!=="squad-sdk-v10.5.3-d341d671c7d80407"||manifest.placements.length!==79) throw new Error("Unsupported school query source");
   const models=new Map(manifest.prototypes.map(p=>{const parsed=schoolNativePrototype(packets.get(p.prototypeId)!);if(parsed.meta.prototypeId!==p.prototypeId)throw new Error("School prototype mismatch");return [p.prototypeId,parsed] as const;}));
   const material=(path:string,slot=0):SchoolSurfaceProfile=>{const p=manifest.physicalMaterials[path];if(!p)throw new Error("Missing native material");return {...p,sourceMaterialSlot:slot,physicalMaterialPath:path};};
+  const actors = new Map(manifest.actors.map(actor => [actor.actorId, actor]));
+  if (actors.size !== manifest.actors.length) throw new Error("Duplicate native Actor identity");
   const rows:SchoolQueryPlacement[]=manifest.placements.map(p=>{
-    const model=models.get(p.prototypeId),receiver=manifest.actors.find(a=>a.actorId===p.actorId);
+    const model=models.get(p.prototypeId),receiver=actors.get(p.actorId);
     if (!model||!receiver) throw new Error("Missing native school binding");
+    // Immutable Actor/material bindings belong to preparation, not each contact.
+    const bindings = new Map(p.surfaceBindings.map(binding => [binding.slotIndex, binding.physicalMaterialPath]));
+    const surfaces = new Map(model.complex.profiles.map(profile => {
+      const path = bindings.get(profile.sourceMaterialSlot);
+      if (!path) throw new Error("Missing material slot");
+      return [profile.sourceMaterialSlot, material(path, profile.sourceMaterialSlot)] as const;
+    }));
     const placement={stableId:p.stableId,prototypeId:p.prototypeId,sourceTransform:{translationMeters:p.nativePose.translationCm.map(v=>v/100) as [number,number,number],rotationQuaternion:p.nativePose.rotationQuaternion,scale3d:p.nativePose.scale3d}};
     return {id:String(p.stableId),label:model.meta.prototypeId,simple:null,complex:model.complex,nativeConvexes:model.nativeConvexes,
       simpleSurface:material(p.simpleMaterial),movementKind:model.meta.placementSupport.geometryKind,
       matrix:schoolQueryPlacementMatrix(placement,{sourceCenterMeters:{x:0,y:0},sourceBaseZMeters:0,scale:100},[0,0,0]),
-      surface:s=>{const binding=p.surfaceBindings.find(b=>b.slotIndex===s.sourceMaterialSlot);if(!binding)throw new Error("Missing material slot");return material(binding.physicalMaterialPath,s.sourceMaterialSlot);},
+      surface:s=>surfaces.get(s.sourceMaterialSlot)!,
       isInstanced:p.isInstanced,nativePose:p.nativePose,receiver};
   });
   rows.push(...schoolNativeTerrain(terrain));
@@ -165,4 +174,12 @@ export async function loadSchoolNativeQuery() {
   const read=async(r:Resource)=>{if(!r.url.startsWith("/assets/maps/narva/native-query/")||!Number.isSafeInteger(r.bytes)||r.bytes<=0||r.bytes>16*1024*1024)throw new Error("Invalid school resource");const b=await(await fetchNarvaSchoolResource(r.url)).arrayBuffer();if(b.byteLength!==r.bytes)throw new Error("Incomplete school resource");return b;};
   const [terrain]=await Promise.all([read(manifest.terrain),Promise.all(Array.from({length:4},async()=>{while(next<manifest.prototypes.length){const p=manifest.prototypes[next++];buffers.set(p.prototypeId,await read(p));}}))]);
   return assembleSchoolNativeQuery(manifest,buffers,terrain);
+}
+
+// Immutable query data is shared across viewer mounts. Rejections are evicted
+// so re-entering operation can retry; no display payload or fallback is used.
+let queryRequest: Promise<ReturnType<typeof assembleSchoolNativeQuery>> | null = null;
+export function loadNarvaSchoolQuery() {
+  queryRequest ??= loadSchoolNativeQuery().catch(error => { queryRequest = null; throw error; });
+  return queryRequest;
 }

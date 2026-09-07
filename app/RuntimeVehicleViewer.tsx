@@ -28,7 +28,8 @@ import { loadWikiVehicleRadialQuery } from "../lib/wiki-source";
 import { runtimeAttackDistanceControl, runtimeAttackTargetDistanceLimitM, } from "./runtime-attack-ballistics-model";
 import { buildRadialDamageVisualizationPlan, radialDamageCoverageState, radialDamageGroundIntersectionRadiusM, radialDamageLegendPlacement, RADIAL_DAMAGE_VISUAL_TIMING_MS, } from "../lib/radial-damage-visualization";
 import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
-import { loadNarvaSchoolQuery, type SchoolSweepHit } from "../lib/runtime-narva-school-query";
+import type { SchoolSweepHit } from "../lib/runtime-narva-school-query";
+import type { loadNarvaSchoolQuery } from "../lib/runtime-school-native-loader";
 import { buildSchoolImpactTrace } from "../lib/runtime-world-penetration";
 import { NativeWeaponArmorCache } from "../lib/editor-native-hit-state";
 import { isRuntimeForcedRicochetLayer, runtimeShotPathLayerPresentation, } from "../lib/runtime-shot-path-presentation";
@@ -6363,6 +6364,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             syncAnalysisVisualPresentation();
         };
         const setOperationSceneActive = (active: boolean) => {
+            if (active)
+                ensureSchoolQuery();
             const presentation = operationViewScenePresentation(active);
             renderer.setClearColor(presentation.clearColor, presentation.clearAlpha);
             analysisVisualDepthGroup.visible =
@@ -6690,19 +6693,28 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         renderRef.current = render;
         requestRenderRef.current = requestRender;
         host.dataset.environmentState = "loading";
-        host.dataset.environmentQueryState = "loading";
-        void loadNarvaSchoolQuery().then((query) => {
-            if (cancelled)
+        host.dataset.environmentQueryState = "idle";
+        let schoolQueryRequest: Promise<void> | null = null;
+        const ensureSchoolQuery = () => {
+            if (schoolQueryRequest || cancelled)
                 return;
-            schoolProjectileQueryRef.current = { query, offset: environmentRoot.position };
-            host.dataset.environmentQueryState = "ready";
-            host.dataset.environmentQueryPlacementCount = String(query.placementCount);
-        }).catch((error: unknown) => {
-            if (cancelled)
-                return;
-            host.dataset.environmentQueryState = "error";
-            setVehicleProjectileNotice(`场景碰撞不可用：${error instanceof Error ? error.message : String(error)}`);
-        });
+            host.dataset.environmentQueryState = "loading";
+            schoolQueryRequest = import("../lib/runtime-school-native-loader")
+                .then(module => module.loadNarvaSchoolQuery()).then(query => {
+                if (cancelled)
+                    return;
+                schoolProjectileQueryRef.current = { query, offset: environmentRoot.position };
+                host.dataset.environmentQueryState = "ready";
+                host.dataset.environmentQueryPlacementCount = String(query.placementCount);
+                setVehicleProjectileNotice(current => current.startsWith("学校场景碰撞") || current.startsWith("场景碰撞不可用") ? "" : current);
+            }).catch((error: unknown) => {
+                schoolQueryRequest = null;
+                if (cancelled)
+                    return;
+                host.dataset.environmentQueryState = "error";
+                setVehicleProjectileNotice(`场景碰撞不可用：${error instanceof Error ? error.message : String(error)}`);
+            });
+        };
         void loadNarvaSchoolEnvironment().then((data) => {
             if (cancelled)
                 return;

@@ -12,6 +12,7 @@ export default defineConfig([
     },
   },
   globalIgnores([
+    ".local/**",
     ".next/**",
     "dist/**",
     "out/**",

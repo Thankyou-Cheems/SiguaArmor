@@ -261,87 +261,91 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       faceNormal, incidenceFactor: -direction.dot(faceNormal), queryUncertainty: row.queryUncertainty, receiver: row.receiver,
       elementIndex: parsed.nativeCooked?.elementIndex, externalFaceIndex: parsed.nativeCooked?.externalFaceIndices[index] };
   };
+  const rowsById = new Map(rows.map(row => [row.id, row]));
+  if (rowsById.size !== rows.length) throw new Error("Duplicate school component identity");
+  const raycastRows = (candidates: typeof rows, origin: THREE.Vector3, direction: THREE.Vector3, far: number, offset = new THREE.Vector3(), kind: "simple" | "complex" = "complex", sourceSegment?: NativeSchoolSegment) => {
+    const start = origin.clone().sub(offset), unit = direction.clone().normalize();
+    const end = start.clone().addScaledVector(unit, far), worldRay = new THREE.Ray(start, unit);
+    const hits: SchoolRayHit[] = [];
+    for (const row of candidates) {
+      // Native simple hulls can extend beyond the complex/display bounds.
+      if (kind === "simple" && row.movementKind === "simple" && row.convexes) {
+        for (const shape of row.convexes) {
+          const localStart = start.clone().applyMatrix4(shape.inverse);
+          const delta = end.clone().applyMatrix4(shape.inverse).sub(localStart), length = delta.length();
+          if (length < 1e-10) continue;
+          const hit = raycastSchoolConvex(shape.planes, localStart, delta.divideScalar(length), length);
+          if (!hit) continue;
+          const point = hit.point.applyMatrix4(shape.matrix);
+          const faceNormal = hit.normal.applyMatrix3(shape.normalMatrix).normalize();
+          if (!row.simpleSurface) throw new Error(`场景缺少简单碰撞材质：${row.id}`);
+          hits.push({ componentId: row.id, label: row.label, triangleIndex: -1, surfaceProfileIndex: 0,
+            surface: row.simpleSurface, distanceM: point.distanceTo(start), traceDistanceM: point.distanceTo(start), point: point.add(offset), faceNormal,
+            incidenceFactor: -unit.dot(faceNormal), elementIndex: shape.elementIndex, externalFaceIndex: -1,
+            queryUncertainty: row.queryUncertainty, receiver: row.receiver,
+            sourcePointCm:[(point.x-offset.x)*100,(point.z-offset.z)*100,(point.y-offset.y)*100] });
+        }
+        continue;
+      }
+      const parsed = kind === "complex" ? row.complex ?? row.simple : row[row.movementKind];
+      if (!parsed) continue;
+      if (parsed.nativeCooked?.nativeTree && row.nativePose && sourceSegment) {
+        const input = createSchoolNativeRay(sourceSegment, row.nativePose);
+        if (!input) continue;
+        const hit = raycastSchoolNativeMesh(parsed.geometry, parsed.nativeCooked.nativeTree, parsed.nativeCooked.cullsBackFace, input.ray, input.far);
+        const result = hit && schoolNativeRayResult(hit, input, sourceSegment, row.nativePose);
+        if (!hit || !result) continue;
+        const point = new THREE.Vector3(result.pointCm.x / 100, result.pointCm.z / 100, result.pointCm.y / 100);
+        const faceNormal = new THREE.Vector3(result.normal.x, result.normal.z, result.normal.y);
+        hits.push({ ...surfaceHit(row, parsed, hit.faceIndex, point, start, unit, offset),
+          distanceM: result.distanceCm / 100, traceDistanceM: result.locationCm.distanceTo(new THREE.Vector3(...sourceSegment.startCm)) / 100, faceNormal,
+          incidenceFactor: -unit.dot(faceNormal), sourcePointCm: result.pointCm.toArray() as [number, number, number], nativeHitKey: { distanceCm: result.distanceCm, timeFraction: result.time,
+            impactPointCm: result.pointCm.toArray() as [number, number, number] } });
+        continue;
+      }
+      if (!worldRay.intersectsBox(row.bounds)) continue;
+      const localStart = start.clone().applyMatrix4(row.inverse);
+      const delta = end.clone().applyMatrix4(row.inverse).sub(localStart), length = delta.length();
+      if (length < 1e-10) continue;
+      const ray = new THREE.Ray(localStart, delta.divideScalar(length));
+      const native = parsed.nativeCooked;
+      const candidates = native ? [parsed.tree.raycastFirst(ray, native.cullsBackFace ? THREE.FrontSide : THREE.DoubleSide, 0, length)]
+        : parsed.tree.raycast(ray, THREE.DoubleSide, .000001, length);
+      for (const hit of candidates) {
+        if (!hit) continue;
+        if (hit.faceIndex == null) continue;
+        const point = hit.point.applyMatrix4(row.matrix);
+        const result=surfaceHit(row, parsed, hit.faceIndex, point, start, unit, offset);
+        if (row.nativeHeightfield && result.faceNormal.dot(unit)>0) {
+          result.faceNormal.negate();result.incidenceFactor=-unit.dot(result.faceNormal);
+        }
+        if (row.nativeHeightfield) result.sourcePointCm=api.toSourcePointCm(result.point,offset);
+        hits.push(result);
+      }
+    }
+    // Never collapse different native shape contacts by component/position.
+    const nativeHits = hits.filter(hit => hit.elementIndex !== undefined);
+    for (const hit of nativeHits) hit.nativeHitKey ??= {
+      distanceCm: Math.fround(hit.traceDistanceM! * 100), timeFraction: Math.fround(hit.distanceM / far),
+      impactPointCm: hit.sourcePointCm ?? [(hit.point.x-offset.x)*100,(hit.point.z-offset.z)*100,(hit.point.y-offset.y)*100],
+    };
+    const legacyHits = hits.filter(hit => hit.elementIndex === undefined);
+    return [...nativeHits, ...normalizeHitIntersections(legacyHits.map((hit, index) => ({ index, componentId: hit.componentId,
+      surfaceProfileIndex: hit.surfaceProfileIndex, sourceFaceId: hit.triangleIndex, distanceM: hit.distanceM,
+      point: hit.point.toArray() as [number, number, number], faceNormal: hit.faceNormal.toArray() as [number, number, number] })))
+      .map(({ hit }) => legacyHits[hit.index])].sort((a, b) => a.distanceM - b.distanceM);
+  };
   const api = {
     toSourcePointCm(point: THREE.Vector3, offset = new THREE.Vector3()): [number,number,number] {
       return [(point.x-offset.x)*100,(point.z-offset.z)*100,(point.y-offset.y)*100];
     },
     placementCount: rows.length,
     raycast(origin: THREE.Vector3, direction: THREE.Vector3, far: number, offset = new THREE.Vector3(), kind: "simple" | "complex" = "complex", sourceSegment?: NativeSchoolSegment) {
-      const start = origin.clone().sub(offset), unit = direction.clone().normalize();
-      const end = start.clone().addScaledVector(unit, far), worldRay = new THREE.Ray(start, unit);
-      const hits: SchoolRayHit[] = [];
-      for (const row of rows) {
-        // Native simple hulls can extend beyond the complex/display bounds.
-        if (kind === "simple" && row.movementKind === "simple" && row.convexes) {
-          for (const shape of row.convexes) {
-            const localStart = start.clone().applyMatrix4(shape.inverse);
-            const delta = end.clone().applyMatrix4(shape.inverse).sub(localStart), length = delta.length();
-            if (length < 1e-10) continue;
-            const hit = raycastSchoolConvex(shape.planes, localStart, delta.divideScalar(length), length);
-            if (!hit) continue;
-            const point = hit.point.applyMatrix4(shape.matrix);
-            const faceNormal = hit.normal.applyMatrix3(shape.normalMatrix).normalize();
-            if (!row.simpleSurface) throw new Error(`场景缺少简单碰撞材质：${row.id}`);
-            hits.push({ componentId: row.id, label: row.label, triangleIndex: -1, surfaceProfileIndex: 0,
-              surface: row.simpleSurface, distanceM: point.distanceTo(start), traceDistanceM: point.distanceTo(start), point: point.add(offset), faceNormal,
-              incidenceFactor: -unit.dot(faceNormal), elementIndex: shape.elementIndex, externalFaceIndex: -1,
-              queryUncertainty: row.queryUncertainty, receiver: row.receiver,
-              sourcePointCm:[(point.x-offset.x)*100,(point.z-offset.z)*100,(point.y-offset.y)*100] });
-          }
-          continue;
-        }
-        const parsed = kind === "complex" ? row.complex ?? row.simple : row[row.movementKind];
-        if (!parsed) continue;
-        if (parsed.nativeCooked?.nativeTree && row.nativePose && sourceSegment) {
-          const input = createSchoolNativeRay(sourceSegment, row.nativePose);
-          if (!input) continue;
-          const hit = raycastSchoolNativeMesh(parsed.geometry, parsed.nativeCooked.nativeTree, parsed.nativeCooked.cullsBackFace, input.ray, input.far);
-          const result = hit && schoolNativeRayResult(hit, input, sourceSegment, row.nativePose);
-          if (!hit || !result) continue;
-          const point = new THREE.Vector3(result.pointCm.x / 100, result.pointCm.z / 100, result.pointCm.y / 100);
-          const faceNormal = new THREE.Vector3(result.normal.x, result.normal.z, result.normal.y);
-          hits.push({ ...surfaceHit(row, parsed, hit.faceIndex, point, start, unit, offset),
-            distanceM: result.distanceCm / 100, traceDistanceM: result.locationCm.distanceTo(new THREE.Vector3(...sourceSegment.startCm)) / 100, faceNormal,
-            incidenceFactor: -unit.dot(faceNormal), sourcePointCm: result.pointCm.toArray() as [number, number, number], nativeHitKey: { distanceCm: result.distanceCm, timeFraction: result.time,
-              impactPointCm: result.pointCm.toArray() as [number, number, number] } });
-          continue;
-        }
-        if (!worldRay.intersectsBox(row.bounds)) continue;
-        const localStart = start.clone().applyMatrix4(row.inverse);
-        const delta = end.clone().applyMatrix4(row.inverse).sub(localStart), length = delta.length();
-        if (length < 1e-10) continue;
-        const ray = new THREE.Ray(localStart, delta.divideScalar(length));
-        const native = parsed.nativeCooked;
-        const candidates = native ? [parsed.tree.raycastFirst(ray, native.cullsBackFace ? THREE.FrontSide : THREE.DoubleSide, 0, length)]
-          : parsed.tree.raycast(ray, THREE.DoubleSide, .000001, length);
-        for (const hit of candidates) {
-          if (!hit) continue;
-          if (hit.faceIndex == null) continue;
-          const point = hit.point.applyMatrix4(row.matrix);
-          const result=surfaceHit(row, parsed, hit.faceIndex, point, start, unit, offset);
-          if (row.nativeHeightfield && result.faceNormal.dot(unit)>0) {
-            result.faceNormal.negate();result.incidenceFactor=-unit.dot(result.faceNormal);
-          }
-          if (row.nativeHeightfield) result.sourcePointCm=api.toSourcePointCm(result.point,offset);
-          hits.push(result);
-        }
-      }
-      // Never collapse different native shape contacts by component/position.
-      const nativeHits = hits.filter(hit => hit.elementIndex !== undefined);
-      for (const hit of nativeHits) hit.nativeHitKey ??= {
-        distanceCm: Math.fround(hit.traceDistanceM! * 100), timeFraction: Math.fround(hit.distanceM / far),
-        impactPointCm: hit.sourcePointCm ?? [(hit.point.x-offset.x)*100,(hit.point.z-offset.z)*100,(hit.point.y-offset.y)*100],
-      };
-      const legacyHits = hits.filter(hit => hit.elementIndex === undefined);
-      return [...nativeHits, ...normalizeHitIntersections(legacyHits.map((hit, index) => ({ index, componentId: hit.componentId,
-        surfaceProfileIndex: hit.surfaceProfileIndex, sourceFaceId: hit.triangleIndex, distanceM: hit.distanceM,
-        point: hit.point.toArray() as [number, number, number], faceNormal: hit.faceNormal.toArray() as [number, number, number] })))
-        .map(({ hit }) => legacyHits[hit.index])].sort((a, b) => a.distanceM - b.distanceM);
+      return raycastRows(rows, origin, direction, far, offset, kind, sourceSegment);
     },
     postImpact(origin: THREE.Vector3, direction: THREE.Vector3, far: number, offset = new THREE.Vector3(), sourceSegment?: NativeSchoolSegment) {
-      // The exported meshes do not yet prove native per-primitive cardinality.
-      // Keep one bounded *candidate* per placement, but never admit an ambiguous
-      // triangle list as verified penetration. Reverse candidates carry exits.
+      // Only legacy export contacts need conservative per-placement reduction.
+      // Native cooked contacts retain their per-shape identity and order.
       const nearest = (hits: SchoolRayHit[]) => {
         const seen = new Set<string>();
         const counts = new Map<string,number>();
@@ -361,12 +365,12 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
         const complex = nativeOrCandidate(api.raycast(start, forward, far, offset, "complex", segment));
         const simple = nativeOrCandidate(api.raycast(start, forward, far, offset, "simple", segment));
         return mergeSchoolPenetrationQueries(complex, simple, far,
-          hit => rows.find(row => row.id === hit.componentId)?.isInstanced,
+          hit => rowsById.get(hit.componentId)?.isInstanced,
           hit => {
             const remaining = far - hit.distanceM;
             if (remaining <= 0) return null;
             const refinedSegment: NativeSchoolSegment | undefined = segment && hit.sourcePointCm ? {startCm:[...hit.sourcePointCm], endCm:segment.endCm} : undefined;
-            const refined = nativeOrCandidate(api.raycast(hit.point, forward, remaining, offset, "complex", refinedSegment))
+            const refined = nativeOrCandidate(raycastRows([rowsById.get(hit.componentId)!], hit.point, forward, remaining, offset, "complex", refinedSegment))
               .find(candidate => candidate.componentId === hit.componentId);
             return refined ? { ...refined, distanceM: hit.distanceM + refined.distanceM,
               nativeHitKey: refined.nativeHitKey && hit.nativeHitKey
@@ -391,7 +395,7 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       let first: SchoolSweepHit | null = null;
       let firstDistance = Infinity;
       let firstRowId: string | null = null, firstRank = Infinity;
-      const triangle = new ExtendedTriangle();
+      const triangle = new ExtendedTriangle(), facingNormal = new THREE.Vector3();
       for (const row of rows) {
         if (!row.bounds.intersectsBox(worldBox)) continue;
         // Projectile TraceComplexOnMove selects this query. The school's
@@ -409,12 +413,14 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
             // Chaos triangle sweep visitor uses a scaled face normal and a
             // signed 1e-4 facing tolerance. The nearly-parallel band may supply
             // an initial MTD, but cannot supply a later entering contact.
-            const facing = candidate.getNormal(new THREE.Vector3()).applyMatrix3(row.normalMatrix).normalize().dot(direction);
+            const facing = candidate.getNormal(facingNormal).applyMatrix3(row.normalMatrix).normalize().dot(direction);
             if (parsed.nativeCooked?.cullsBackFace && facing > Math.fround(.0001)) return false;
-            triangle.a.copy(candidate.a).applyMatrix4(row.matrix);
-            triangle.b.copy(candidate.b).applyMatrix4(row.matrix);
-            triangle.c.copy(candidate.c).applyMatrix4(row.matrix);
-            triangle.needsUpdate = true;
+            if (!nativeSweep) {
+              triangle.a.copy(candidate.a).applyMatrix4(row.matrix);
+              triangle.b.copy(candidate.b).applyMatrix4(row.matrix);
+              triangle.c.copy(candidate.c).applyMatrix4(row.matrix);
+              triangle.needsUpdate = true;
+            }
             const nativeHit = nativeSweep?.(candidate);
             const hit = nativeSweep ? nativeHit : sweepSchoolTriangle(triangle, start, end, radius, !parsed.nativeCooked);
             if (parsed.nativeCooked?.cullsBackFace && hit && hit.timeFraction > 0 && facing >= -Math.fround(.0001)) return false;
@@ -437,7 +443,7 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       // TypeScript does not follow assignments made by the shapecast callback.
       const result = first as SchoolSweepHit | null;
       if (result && result.timeFraction > 0) {
-        const row = rows.find(row => row.id === result.sceneHit.componentId)!;
+        const row = rowsById.get(result.sceneHit.componentId)!;
         const parsed = traceComplex ? row.complex ?? row.simple : row[row.movementKind];
         if (parsed?.nativeCooked) {
           const point = result.sceneHit.point.clone().sub(offset);
@@ -451,11 +457,4 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
     },
   };
   return api;
-}
-
-let queryRequest: Promise<ReturnType<typeof createSchoolQuery>> | null = null;
-export function loadNarvaSchoolQuery() {
-  queryRequest ??= import("./runtime-school-native-loader.ts").then(module=>module.loadSchoolNativeQuery())
-    .catch(error=>{queryRequest=null;throw error;});
-  return queryRequest;
 }
