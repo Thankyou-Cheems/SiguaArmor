@@ -6,6 +6,7 @@ export type NativeTraceReceiver = {
   actorLocationCm: readonly [number, number, number];
   passesDamageToParent: boolean;
   attachParentActorId: string | null;
+  canBeDamaged?: boolean;
 };
 
 export function resolveNativeRepeatingActor(

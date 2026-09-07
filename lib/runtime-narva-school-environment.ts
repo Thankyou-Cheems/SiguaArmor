@@ -155,11 +155,11 @@ export async function fetchNarvaSchoolResource(path: string) {
   return response;
 }
 
-// Display and ExactQuery share the source descriptor and native heightfield,
-// not a rendered mesh. Either consumer can load without the other.
+// Display uses the small source appearance grid. ExactQuery loads its own
+// cooked prototypes and component-specific native heights independently.
 export function loadNarvaSchoolSource() {
   sourceRequest ??= (async () => {
-    const scene = await (await fetchNarvaSchoolResource("/data/maps/narva/infantry-scene.json")).json() as SchoolScene;
+    const scene = await (await fetchNarvaSchoolResource("/data/maps/narva/school-scene.json")).json() as SchoolScene;
     const terrainBuffer = await (await fetchNarvaSchoolResource(scene.terrain.url)).arrayBuffer();
     return { scene, terrainBuffer };
   })().catch(error => { sourceRequest = null; throw error; });
@@ -172,7 +172,7 @@ export function loadNarvaSchoolEnvironment(): Promise<EnvironmentData> {
     const algorithmUrl = wikiMapUrl("/algorithms/maps/fixed-display-format.js");
     const [{ scene, terrainBuffer }, display, algorithm] = await Promise.all([
       loadNarvaSchoolSource(),
-      fetchNarvaSchoolResource("/data/maps/narva/fixed-display.json").then((response) => response.json()) as Promise<FixedDisplay>,
+      fetchNarvaSchoolResource("/data/maps/narva/school-display.json").then((response) => response.json()) as Promise<FixedDisplay>,
       import(/* @vite-ignore */ algorithmUrl) as Promise<{ decodeFixedDisplayMesh(buffer: ArrayBuffer): DecodedMesh }>,
     ]);
     const plan = planNarvaSchoolEnvironment(scene, display);

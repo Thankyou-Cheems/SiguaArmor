@@ -35,7 +35,8 @@ export interface VehicleProjectileVisualRequest {
 export interface VehicleProjectileImpactTrace {
   timeSeconds: number;
   pointsCm: ProjectileVector3[];
-  contacts: Array<{ pointCm: ProjectileVector3; penetrated: boolean | null }>;
+  contacts: Array<{ pointCm: ProjectileVector3; penetrated: boolean | null;
+    remainingDamage?: number; dispatchedPointDamage?: number | null; receiverActorId?: string }>;
   summary: string;
 }
 

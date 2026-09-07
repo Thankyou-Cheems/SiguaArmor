@@ -22,7 +22,7 @@ import { createRuntimeTurretPoseStore, type RuntimeTurretPoseStore, } from "../l
 import { resolveRuntimeRunningGearHitComponentPoses } from "../lib/runtime-running-gear-hit-pose";
 import { createRuntimeSkeletalPoseController, runtimeSkeletalPoseEvidence, type RuntimeSkeletalPoseController, } from "../lib/runtime-skeletal-pose";
 import { carryNestedRuntimeTurretAssemblies, clampTurretPitch, clampTurretYaw, normalizeTurretYaw, resolveRuntimeTurretAssembly, resolveRuntimeTurretHitComponentAssembly, resolveRuntimeTurretMotionFrame, runtimeTurretFallbackSpec, turretArticulationMatrices, type RuntimeTurretAssembly, } from "../lib/turret-articulation";
-import { editorNativeEffectiveDamageAmount, isEditorNativeComponentOnlyDamageEvent, isEditorNativeVehicleDamageEvent, resolveEditorNativeBallistics, simulateEditorNativeShot, type EditorNativeBallistics, type EditorNativeDamageEvent, type EditorNativeIntersection, type EditorNativeModel, type EditorNativeShotResult, } from "../lib/editor-native-hit-model";
+import { editorNativeEffectiveDamageAmount, isEditorNativeComponentOnlyDamageEvent, isEditorNativeVehicleDamageEvent, resolveEditorNativeBallistics, resolveEditorWeaponHitRanges, simulateEditorNativeShot, type EditorNativeBallistics, type EditorNativeDamageEvent, type EditorNativeIntersection, type EditorNativeModel, type EditorNativeShotResult, } from "../lib/editor-native-hit-model";
 import { buildVehicleRadialLayerHitSets, validateVehicleRadialQuerySource, type VehicleRadialQuerySource, } from "../lib/vehicle-radial-query";
 import { loadWikiVehicleRadialQuery } from "../lib/wiki-source";
 import { runtimeAttackDistanceControl, runtimeAttackTargetDistanceLimitM, } from "./runtime-attack-ballistics-model";
@@ -30,6 +30,7 @@ import { buildRadialDamageVisualizationPlan, radialDamageCoverageState, radialDa
 import { editorNativeTraceTerminalDistanceM } from "../lib/editor-native-penetration";
 import { loadNarvaSchoolQuery, type SchoolSweepHit } from "../lib/runtime-narva-school-query";
 import { buildSchoolImpactTrace } from "../lib/runtime-world-penetration";
+import { NativeWeaponArmorCache } from "../lib/editor-native-hit-state";
 import { isRuntimeForcedRicochetLayer, runtimeShotPathLayerPresentation, } from "../lib/runtime-shot-path-presentation";
 import { editorDamageCardEffect } from "../lib/editor-damage-card-effects";
 import { summarizeEditorDamageSettlements } from "../lib/editor-damage-settlement";
@@ -2974,6 +2975,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         query: Awaited<ReturnType<typeof loadNarvaSchoolQuery>>;
         offset: THREE.Vector3;
     } | null>(null);
+    const schoolWeaponCachesRef = useRef(new Map<string, NativeWeaponArmorCache>());
+    const resolveWeaponPawnOriginRef = useRef<((stationId: string | null) => THREE.Vector3 | null) | null>(null);
     const worldImpactStatusRef = useRef<HTMLDivElement>(null);
     const prepareVehicleProjectileVisualRef = useRef<((visual: SourceProjectileVisual) => Promise<void>) | null>(null);
     const setProjectileVisibilityEnhancedRef = useRef<((value: boolean) => void) | null>(null);
@@ -4108,6 +4111,16 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             const school = schoolProjectileQueryRef.current;
             if (!school)
                 throw new Error("学校场景碰撞仍未就绪，暂不能开火");
+            const pawnOrigin = resolveWeaponPawnOriginRef.current?.(activeOperationGraphStation?.id ?? null);
+            if (!pawnOrigin)
+                throw new Error("当前武器的所属位置尚未就绪");
+            const sourcePawn = school.query.toSourcePointCm(pawnOrigin, school.offset);
+            const cacheKey = binding.weaponAssignmentId;
+            let armorCache = schoolWeaponCachesRef.current.get(cacheKey);
+            if (!armorCache) {
+                armorCache = new NativeWeaponArmorCache();
+                schoolWeaponCachesRef.current.set(cacheKey, armorCache);
+            }
             const traceComplex = binding.projectileProfile.collision.traceComplexOnMove;
             if (typeof traceComplex !== "boolean")
                 throw new Error("当前弹体缺少源碰撞查询模式");
@@ -4149,7 +4162,12 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
                 const ballistics = resolveEditorNativeBallistics(activeOperationWeapon.ballisticsModel, activeOperationWeapon.ballisticsWeaponIndex, hitRangeM);
                 impactTrace = buildSchoolImpactTrace({ query: school.query, offset: school.offset, hit: contact.hit.sceneHit,
                     center, direction: contact.direction, timeSeconds: contact.timeSeconds, ballistics,
-                    armed: result.impact?.armed === true, terminalImpact: result.status === "impact" });
+                    armed: result.impact?.armed === true, terminalImpact: result.status === "impact", armorCache,
+                    evaluateHit: hit => resolveEditorWeaponHitRanges(activeOperationWeapon.ballisticsModel, activeOperationWeapon.ballisticsWeaponIndex, {
+                        penetrationDistanceM: hit.sourcePointCm ? Math.hypot(...hit.sourcePointCm.map((v, i) => v - sourcePawn[i])) / 100 : null,
+                        damageDistanceCm: hit.receiver ? Math.hypot(...hit.receiver.actorLocationCm.map((v, i) => v - sourcePawn[i])) : null,
+                        shotDamageMultiplier: 1,
+                    }) });
             }
             const spawned = spawnVehicleProjectileVisualRef.current?.({
                 weaponAssignmentId: binding.weaponAssignmentId,
@@ -4205,6 +4223,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         activeOperationEquipmentRef,
         activeOperationSpec,
         activeOperationWeapon,
+        activeOperationGraphStation,
         vehicleProjectileResolution,
         vehicleProjectileResource,
         vehicleProjectileResourceState,
@@ -5837,6 +5856,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         if (!host || !visual)
             return;
         const worldImpactStatus = worldImpactStatusRef.current;
+        const schoolWeaponCaches = schoolWeaponCachesRef.current;
         applyCameraViewPresetRef.current = null;
         applyInfantryDistancePreviewRef.current = null;
         enterFreeCameraViewRef.current = null;
@@ -7090,6 +7110,19 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             });
         };
         resolveVehicleGuidanceAimPoseRef.current = () => resolveVehicleGuidanceAimPose(camera);
+        resolveWeaponPawnOriginRef.current = (stationId) => {
+            chassisPoseGroup.updateMatrixWorld(true);
+            if (stationId === null)
+                return new THREE.Vector3().setFromMatrixPosition(chassisPoseGroup.matrixWorld);
+            const definition = preview.stationGraph?.stations.find(row => row.id === stationId);
+            const station = runtimeTurretStationsRef.current.find(row => row.crewSeat.stationId === stationId);
+            if (!definition?.mount.referenceFrame.value || !station)
+                return null;
+            const matrix = vehicleProjectileAnchorMatrixFromUnrealFrame(definition.mount.referenceFrame.value);
+            for (const parent of stationArticulationMatrixChainForChannels(station, []))
+                matrix.premultiply(new THREE.Matrix4().fromArray(parent));
+            return new THREE.Vector3().setFromMatrixPosition(matrix.premultiply(chassisPoseGroup.matrixWorld));
+        };
         applyTurretPose();
         host.dataset.spacedArmorAnimation = "disabled";
         const raycaster = new THREE.Raycaster();
@@ -9198,6 +9231,8 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
             prepareVehicleProjectileVisualRef.current = null;
             setProjectileVisibilityEnhancedRef.current = null;
             resolveVehicleProjectileLaunchPoseRef.current = null;
+            resolveWeaponPawnOriginRef.current = null;
+            schoolWeaponCaches.clear();
             resolveVehicleGuidanceAimPoseRef.current = null;
             shotVisualsRef.current = [];
             shotRecordsRef.current = [];
@@ -9264,6 +9299,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
         maxShotTraces,
         preview.cardId,
         preview.generatedClass,
+        preview.stationGraph?.stations,
         radialQuery,
         preview.suspension.records,
         preview.variantRawName,

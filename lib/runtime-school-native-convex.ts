@@ -6,6 +6,8 @@ export type SchoolNativeConvex = {
   elementIndex: number;
   planes: readonly number[];
   matrix: THREE.Matrix4;
+  /** FKBoxElem scales extents before rotating; non-uniform scale cannot shear it. */
+  isBox?: boolean;
 };
 
 /** v10.5.3 FConvex::RaycastFast, zero thickness. A starts-inside ray returns

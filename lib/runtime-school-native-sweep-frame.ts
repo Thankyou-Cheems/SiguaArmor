@@ -4,7 +4,7 @@ import type { NativeSchoolPose, NativeSchoolSegment } from "./runtime-school-nat
 
 /** Construct once per placement/query, sharing the cooked prototype geometry.
  * Sphere radius remains in cm: scale the triangle, not the sphere/direction. */
-export function createSchoolNativeSphereSweep(segment: NativeSchoolSegment, pose: NativeSchoolPose, radius: number) {
+export function createSchoolNativeSphereSweep(segment: NativeSchoolSegment, pose: NativeSchoolPose, radius: number, heightfield = false) {
   const f=Math.fround, quaternion=pose.rotationQuaternion.map(f);
   const rotate=(v: THREE.Vector3, inverse=false) => {
     const sign=inverse?-1:1, axis=new THREE.Vector3(quaternion[0]*sign,quaternion[1]*sign,quaternion[2]*sign);
@@ -21,12 +21,25 @@ export function createSchoolNativeSphereSweep(segment: NativeSchoolSegment, pose
   if (scale.some(v=>!(v>0))) throw new Error("Unsupported native school scale");
   return (triangle: THREE.Triangle) => {
     const vertices=[triangle.a,triangle.b,triangle.c].map(v=>v.toArray().map((x,i)=>f(x*scale[i])) as SweepVector) as [SweepVector,SweepVector,SweepVector];
-    const hit=sweepSphereTriangle({vertices,origin,direction,length,radius});
+    // Heightfield visitor translates each float triangle to its first vertex
+    // before GJK, then restores that vertex using float addition.
+    const anchor=heightfield ? vertices[0] : null;
+    const relativeVertices=anchor ? vertices.map(v=>v.map((x,i)=>f(x-anchor[i])) as SweepVector) as [SweepVector,SweepVector,SweepVector] : vertices;
+    const relativeOrigin=anchor ? origin.map((x,i)=>f(x-anchor[i])) as SweepVector : origin;
+    const hit=sweepSphereTriangle({vertices:relativeVertices,origin:relativeOrigin,direction,length,radius});
     if (!hit) return null;
-    const p=rotate(new THREE.Vector3(...hit.point)).add(translation).divideScalar(100);
+    if (anchor) hit.point=hit.point.map((x,i)=>f(x+anchor[i])) as SweepVector;
+    if (heightfield && hit.distance<=0) {
+      const b=relativeVertices[1],c=relativeVertices[2];
+      const n: SweepVector=[f(f(b[1]*c[2])-f(b[2]*c[1])),f(f(b[2]*c[0])-f(b[0]*c[2])),f(f(b[0]*c[1])-f(b[1]*c[0]))];
+      const inverse=f(1/f(Math.sqrt(f(f(f(n[0]*n[0])+f(n[1]*n[1]))+f(n[2]*n[2])))));
+      hit.normal=n.map(x=>f(x*inverse)) as SweepVector;
+    }
+    const sourcePoint=rotate(new THREE.Vector3(...hit.point)).add(translation);
+    const p=sourcePoint.clone().divideScalar(100);
     const n=rotate(new THREE.Vector3(...hit.normal));
     return {timeFraction:f(Math.max(0,hit.distance)/length),signedDistanceM:hit.distance/100,
-      penetrationDepth:Math.max(0,-hit.distance)/100,
+      penetrationDepth:Math.max(0,-hit.distance)/100, sourcePointCm:sourcePoint.toArray() as SweepVector,
       point:new THREE.Vector3(p.x,p.z,p.y),normal:new THREE.Vector3(n.x,n.z,n.y)};
   };
 }

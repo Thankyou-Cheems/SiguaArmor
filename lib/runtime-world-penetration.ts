@@ -11,6 +11,8 @@ export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orde
         hit: SchoolRayHit;
         penetrated: boolean | null;
         availablePenetrationMm: number | null;
+        remainingDamage?: number;
+        dispatchedPointDamage?: number | null;
     }> = [];
     const first = hits[0]?.distanceM ?? 0;
     let absorbed = 0;
@@ -78,7 +80,9 @@ export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orde
             }
             reason = penetrated ? "穿透" : "穿透能力不足";
         }
-        layers.push({ hit, penetrated, availablePenetrationMm });
+        const dispatchedPointDamage = penetrated !== true || surface.damageParentActor === false || hit.receiver?.canBeDamaged === false
+            ? 0 : hit.receiver?.canBeDamaged === true && surface.damageParentActor === true ? arithmetic.remainingDamage : null;
+        layers.push({ hit, penetrated, availablePenetrationMm, remainingDamage: arithmetic.remainingDamage, dispatchedPointDamage });
         if (penetrated !== true)
             return { layers, terminalDistanceM, reason, complete: penetrated !== null };
         if (surface.damageAbsorbed === null)
@@ -110,6 +114,10 @@ export function buildSchoolImpactTrace({ query, offset, hit, direction, timeSeco
     const trace: VehicleProjectileImpactTrace = { timeSeconds,
         pointsCm: [cm(hit.point.clone().addScaledVector(direction, -3)), cm(hit.point)],
         contacts: [{ pointCm: cm(hit.point), penetrated: null }], summary: "最近命中 · 碰撞点" };
+    if (hit.queryUncertainty) {
+        trace.summary = `最近命中 · 穿透未确认 · ${hit.queryUncertainty}`;
+        return trace;
+    }
     if (!terminalImpact) {
         trace.summary = "最近命中 · 反弹/停驻碰撞";
         return trace;
@@ -133,18 +141,36 @@ export function buildSchoolImpactTrace({ query, offset, hit, direction, timeSeco
     }
     const start = hit.point.clone().addScaledVector(direction, -.01);
     const queryLengthM = Math.max(Math.fround(Math.fround(ballistics.traceDistanceAfterPenetrationM) * 100), 1) / 100 + .01;
-    const hits = query.postImpact(start, direction, queryLengthM, offset).map(row => row.hit);
+    const sourcePoint = hit.sourcePointCm;
+    const sourceDirection = [direction.x, direction.z, direction.y];
+    const spanCm = Math.max(Math.fround(Math.fround(ballistics.traceDistanceAfterPenetrationM) * 100), 1);
+    const sourceSegment = sourcePoint ? {
+        startCm: sourcePoint.map((v, i) => v - sourceDirection[i]) as [
+            number,
+            number,
+            number
+        ],
+        endCm: sourcePoint.map((v, i) => v + sourceDirection[i] * spanCm) as [
+            number,
+            number,
+            number
+        ],
+    } : undefined;
+    const hits = query.postImpact(start, direction, queryLengthM, offset, sourceSegment).map(row => row.hit);
     const result = resolveWorldPenetration(ballistics, hits, evaluateHit, armorCache);
     const last = result.layers.at(-1);
     if (last) {
         const end = start.clone().addScaledVector(direction, Math.min(result.terminalDistanceM, queryLengthM));
         trace.pointsCm = [trace.pointsCm[0], ...result.layers.map(layer => cm(layer.hit.point)), cm(end)];
-        trace.contacts = result.layers.map(layer => ({ pointCm: cm(layer.hit.point), penetrated: layer.penetrated }));
+        trace.contacts = result.layers.map(layer => ({ pointCm: cm(layer.hit.point), penetrated: layer.penetrated,
+            remainingDamage: layer.remainingDamage, dispatchedPointDamage: layer.dispatchedPointDamage, receiverActorId: layer.hit.receiver?.actorId }));
     }
     const passed = result.layers.filter(layer => layer.penetrated === true).length;
     trace.summary = result.complete ? `最近命中 · 穿透参考 ${passed} 层 · ${result.reason}`
         : `最近命中 · 穿透未确认${passed ? `（参考通过 ${passed} 层）` : ""} · ${result.reason}`;
     if (pointBeforeExplosion)
         trace.summary += "；爆炸范围伤害未模拟";
+    if (last?.remainingDamage !== undefined)
+        trace.summary += ` · 末层入射伤害 ${Math.max(0, last.remainingDamage).toFixed(1)}`;
     return trace;
 }

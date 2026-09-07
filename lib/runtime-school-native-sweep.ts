@@ -115,7 +115,9 @@ export function sweepSphereTriangle(input: NativeTriangleSweep): NativeTriangleC
     initialRefining=t===0 && distance<inflated && distance>epsilon;
     previous=distance;
   }
-  if (t>0) return {distance:t,normal:axis,point:sub(add(origin,mul(direction,t)),mul(axis,r))};
+  // Native adds the small contact offset before the large local origin.
+  // Algebraically regrouping origin + travel - radius changes edge identities.
+  if (t>0) return {distance:t,normal:axis,point:add(add(sub([0,0,0],mul(axis,r)),mul(direction,t)),origin)};
   if (dot(v,v)<=epsilon) {
     if (!s.length) return {distance:f(-r),normal:[0,0,1],point:support([1,0,0])};
     const point=s.reduce((sum,a,i)=>add(sum,mul(a,weights[i])),[0,0,0] as SweepVector);
@@ -136,5 +138,5 @@ export function sweepSphereTriangle(input: NativeTriangleSweep): NativeTriangleC
   const distance=f(Math.sqrt(retainedDistance??dot(v,v)));
   if (distance>r+1e-5) return null;
   const normal=distance>0 ? norm(v) : axis, depth=Math.max(0,f(r-distance));
-  return {distance:f(-depth),normal,point:sub(origin,mul(normal,f(r-depth)))};
+  return {distance:f(-depth),normal,point:add(add(sub([0,0,0],mul(normal,r)),mul(normal,depth)),origin)};
 }
