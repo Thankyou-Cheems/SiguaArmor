@@ -3,6 +3,20 @@
 	auto_https off
 }
 
+(armor-static-files) {
+	root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
+	route {
+		file_server {
+			precompressed br gzip
+			pass_thru
+		}
+		file_server {
+			root {$SIGUA_PUBLIC_ROOT:/srv/public}/previous-assets
+			precompressed br gzip
+		}
+	}
+}
+
 :8080 {
 	route {
 		@wikiContentAdminRequest {
@@ -102,10 +116,7 @@
 			@chinaAssets path /china-assets/*
 			header @chinaAssets Cache-Control "public, max-age=31536000, immutable"
 			handle @chinaAssets {
-				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
-				file_server {
-					precompressed br gzip
-				}
+				import armor-static-files
 			}
 
 			@squadImmutable path /squad/assets/* /assets/* /squad/fonts/*.woff2 /fonts/*.woff2 /squad/images/vehicle-impressions/* /images/vehicle-impressions/* /squad/images/china-vehicle-impressions/* /images/china-vehicle-impressions/*
@@ -119,18 +130,12 @@
 			@squadStatic path /squad/assets/* /squad/fonts/* /squad/icons/* /squad/images/*
 			handle @squadStatic {
 				uri strip_prefix /squad
-				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
-				file_server {
-					precompressed br gzip
-				}
+				import armor-static-files
 			}
 
 			@squadRootStatic path /assets/* /fonts/* /icons/* /images/*
 			handle @squadRootStatic {
-				root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
-				file_server {
-					precompressed br gzip
-				}
+				import armor-static-files
 			}
 
 			@footerContentDocument path /notices.json /supporters.json /updates.json

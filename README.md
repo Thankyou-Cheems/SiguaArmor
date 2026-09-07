@@ -22,7 +22,7 @@ npm run check
 npm run build
 ```
 
-`npm run dev` starts local development. `npm run deploy:package` creates the small server candidate after a successful build; see `docs/deployment.md`.
+`npm run dev` starts local development. For publication, rollback and release retention, follow [deployment](docs/deployment.md).
 
 The browser fetches shared catalogs, visual descriptors, compressed vehicle models, and hit geometry directly from `https://wiki.siguad.icu`. There is no bundled shared-data fallback.
 

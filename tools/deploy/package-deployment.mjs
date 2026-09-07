@@ -1,4 +1,5 @@
-import { cp, rm, stat } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { cp, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -27,7 +28,7 @@ async function requireDirectory(directory) {
   }
 }
 
-export async function packageDeployment(outputRoot) {
+export async function packageDeployment(outputRoot, { wikiRef } = {}) {
   const client = path.join(ROOT, "dist", "client");
   const standalone = path.join(ROOT, "dist", "standalone");
   const services = path.join(ROOT, "services");
@@ -50,6 +51,11 @@ export async function packageDeployment(outputRoot) {
     ),
     cp(services, path.join(outputRoot, "services"), { recursive: true }),
   ]);
+  await writeFile(path.join(outputRoot, "release.json"), JSON.stringify({
+    sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim(),
+    packagedAt: new Date().toISOString(),
+    ...(wikiRef ? { wikiRef } : {}),
+  }, null, 2) + "\n", "utf8");
   return outputRoot;
 }
 

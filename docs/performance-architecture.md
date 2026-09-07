@@ -30,7 +30,7 @@ OrbitControls owns pointer state and camera math. One viewer-local request-rende
 
 ## Release order
 
-Reusable Wiki bytes are published before Armor references them. New immutable hashes need no purge; changed descriptor and data URLs are purged precisely and verified from the public origin. Armor then builds one candidate, switches the server release atomically, retains one rollback, and receives browser/console QA. This request flow remains direct static delivery until a separately validated product requirement justifies a dynamic service.
+Reusable Wiki bytes are published before Armor references them. New immutable URLs need no purge; changed descriptor and data URLs are purged precisely and verified from the public origin. Follow [deployment](deployment.md) for the product switch, rollback and browser checks. This request flow remains direct static delivery until a separately validated product requirement justifies a dynamic service.
 
 ## Performance checks
 
