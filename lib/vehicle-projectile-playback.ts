@@ -322,7 +322,6 @@ function stationWeaponLaunchAnchor(station: CompiledVehicleStationGraph["station
     if (attachment?.state !== "derived-seat-pawn-component" ||
         attachment.meshRole !== "WeaponMesh1P" ||
         attachment.attachmentRule !== "SnapToTargetIncludingScale" ||
-        attachment.sourceFunction !== "runtime" ||
         attachment.parent.kind !== "station-component" ||
         attachment.parent.stationId !== station.id ||
         !attachment.parent.componentName ||

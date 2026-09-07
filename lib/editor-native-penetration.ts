@@ -15,7 +15,6 @@ export interface EditorNativePenetrationArithmetic {
 // Entry-offset model for the legacy straight-ray fixture. Native PostImpact
 // backsteps 1 cm from ImpactPoint, but component refinement creates a different
 // TraceStart. Use nativeTraceDistanceM when consuming real query records.
-// Same-build 2A70/100 mm Frag Dedicated PIE observed 0.01 m in its entry fixture.
 export const EDITOR_NATIVE_ARMOR_TRACE_ENTRY_OFFSET_M = Math.fround(0.01);
 
 export function editorNativeTraceIncludesDistance({
