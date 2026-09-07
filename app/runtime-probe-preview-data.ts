@@ -546,7 +546,8 @@ export async function runtimePreviewForCatalogBinding(cardId: string, rawName: s
     if (!expectedVisualArtifactRef || !expectedRuntimeVehicleId) {
         throw new Error(`Vehicle catalog has no Wiki visual for ${cardId} / ${rawName}`);
     }
-    const cached = previewCache.get(expectedVisualArtifactRef);
+    const cacheKey = JSON.stringify([cardId, rawName, expectedRuntimeVehicleId, expectedVisualArtifactRef, siteEdition]);
+    const cached = previewCache.get(cacheKey);
     if (cached)
         return cached;
     const request = Promise.all([
@@ -589,7 +590,11 @@ export async function runtimePreviewForCatalogBinding(cardId: string, rawName: s
         }
         return toRuntimePreview(cardId, rawName, expectedVisualArtifactRef, runtimeVariant, descriptor, stationGraphRecord, gunnerSightRecord, driverViewRecord);
     });
-    previewCache.set(expectedVisualArtifactRef, request);
+    previewCache.set(cacheKey, request);
+    void request.catch(() => {
+        if (previewCache.get(cacheKey) === request)
+            previewCache.delete(cacheKey);
+    });
     return request;
 }
 export async function runtimePreviewForVariant(cardId: string, rawName: string, siteEdition: SiteEdition = "international") {

@@ -2454,7 +2454,7 @@ function DetailPanel({
               key={card.cardId}
               siteEdition={siteEdition}
               cardId={record.promoEntryId}
-              rawName={data?.general.rawName ?? record.mapping.selectedRawName ?? ""}
+              rawName={card.variant?.sourceRawName ?? data?.general.rawName ?? record.mapping.selectedRawName ?? ""}
               runtimeVehicleRef={card.variant?.runtimeVehicleRef ?? null}
               visualArtifactRef={card.variant?.visualArtifactRef ?? null}
               displayName={displayName}
@@ -2467,7 +2467,7 @@ function DetailPanel({
                 type: record.official.typeZh,
                 canonicalRawName:
                   card.variant?.editorAvailability?.mechanicalRawName ??
-                  data?.general.rawName ?? record.mapping.selectedRawName ?? "",
+                  card.variant?.sourceRawName ?? data?.general.rawName ?? record.mapping.selectedRawName ?? "",
               }}
               referenceData={data}
               textureVariants={viewerTextureVariants}
