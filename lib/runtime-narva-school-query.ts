@@ -7,6 +7,7 @@ import { raycastSchoolConvex, type SchoolNativeConvex } from "./runtime-school-n
 import type { NativeArmorHitKey, NativeTraceReceiver } from "./editor-native-hit-state.ts";
 import { createSchoolNativeRay, raycastSchoolNativeMesh, schoolNativeRayResult,
   type NativeMeshTree, type NativeSchoolPose, type NativeSchoolSegment } from "./runtime-school-native-ray.ts";
+import { createSchoolNativeSphereSweep } from "./runtime-school-native-sweep-frame.ts";
 
 type Section = { byteOffset: number; byteLength: number; elementCount: number; componentType: string };
 type Resource = { url: string; bytes: number };
@@ -373,6 +374,10 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
         const parsed = traceComplex ? row.complex ?? row.simple : row[row.movementKind];
         if (!parsed) throw new Error(`场景缺少移动碰撞：${row.id}`);
         const localBox = worldBox.clone().applyMatrix4(row.inverse);
+        const nativeSweep = parsed.nativeCooked && row.nativePose ? createSchoolNativeSphereSweep({
+          startCm:[input.startCm.x-offset.x*100,input.startCm.y-offset.z*100,input.startCm.z-offset.y*100],
+          endCm:[input.endCm.x-offset.x*100,input.endCm.y-offset.z*100,input.endCm.z-offset.y*100],
+        },row.nativePose,input.sphereRadiusCm) : null;
         parsed.tree.shapecast({
           intersectsBounds: bounds => bounds.intersectsBox(localBox),
           intersectsTriangle: (candidate, index) => {
@@ -385,9 +390,10 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
             triangle.b.copy(candidate.b).applyMatrix4(row.matrix);
             triangle.c.copy(candidate.c).applyMatrix4(row.matrix);
             triangle.needsUpdate = true;
-            const hit = sweepSchoolTriangle(triangle, start, end, radius, !parsed.nativeCooked);
+            const nativeHit = nativeSweep?.(candidate);
+            const hit = nativeSweep ? nativeHit : sweepSchoolTriangle(triangle, start, end, radius, !parsed.nativeCooked);
             if (parsed.nativeCooked?.cullsBackFace && hit && hit.timeFraction > 0 && facing >= -Math.fround(.0001)) return false;
-            let distance = hit ? hit.timeFraction * start.distanceTo(end) - (hit.penetrationDepth ?? 0) : Infinity;
+            let distance = nativeHit?.signedDistanceM ?? (hit ? hit.timeFraction * start.distanceTo(end) - (hit.penetrationDepth ?? 0) : Infinity);
             if (parsed.nativeCooked) distance = Math.fround(distance * 100) / 100;
             const rank = parsed.nativeCooked?.triangleVisitRanks?.[index] ?? Infinity;
             if (hit && (distance < firstDistance || distance === firstDistance && row.id === firstRowId && rank < firstRank)) {
