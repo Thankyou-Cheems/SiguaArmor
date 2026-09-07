@@ -4,7 +4,8 @@ import { editorNativeDidPenetrateArmor, editorNativePenetrationPrefilter, editor
 import type { SchoolRayHit } from "./runtime-narva-school-query.ts";
 import type { createSchoolQuery } from "./runtime-narva-school-query.ts";
 import type { VehicleProjectileImpactTrace } from "./vehicle-projectile-three-runtime.ts";
-export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orderedHits: readonly SchoolRayHit[], evaluateHit?: (hit: SchoolRayHit) => Pick<EditorNativeBallistics, "penetrationAtRangeMm" | "impactDamageAtRange">) {
+import { resolveNativeRepeatingActor, type NativeWeaponArmorCache } from "./editor-native-hit-state.ts";
+export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orderedHits: readonly SchoolRayHit[], evaluateHit?: (hit: SchoolRayHit) => Pick<EditorNativeBallistics, "penetrationAtRangeMm" | "impactDamageAtRange">, armorCache?: NativeWeaponArmorCache) {
     const hits = orderedHits.filter(hit => editorNativePenetrationPrefilter(hit.surface.considerForPenetration) !== "skip");
     const layers: Array<{
         hit: SchoolRayHit;
@@ -13,6 +14,7 @@ export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orde
     }> = [];
     const first = hits[0]?.distanceM ?? 0;
     let absorbed = 0;
+    const seenActors = new Set<string>();
     let terminalDistanceM = first;
     let reason = "未取得参与穿透的表面";
     const { penetrationTraceDistanceM, traceDistanceAfterPenetrationM } = ballistics;
@@ -30,6 +32,19 @@ export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orde
             return { layers, terminalDistanceM, reason: hit.queryUncertainty, complete: false };
         }
         const surface = hit.surface;
+        if (hit.receiver) {
+            if (surface.damageParentActor === undefined) {
+                layers.push({ hit, penetrated: null, availablePenetrationMm: null });
+                return { layers, terminalDistanceM, reason: "材质的 Actor 结算标志尚未确认", complete: false };
+            }
+            const flags = resolveNativeRepeatingActor(seenActors, hit.receiver, surface.damageParentActor);
+            if (!flags.useActor) {
+                if (surface.allowPenetration === false)
+                    return { layers, terminalDistanceM,
+                        reason: "重复 Actor；后续查询已被材质截断", complete: true };
+                continue;
+            }
+        }
         const { penetrationAtRangeMm, impactDamageAtRange } = evaluateHit?.(hit) ?? ballistics;
         if (penetrationAtRangeMm === null || impactDamageAtRange === null) {
             layers.push({ hit, penetrated: null, availablePenetrationMm: null });
@@ -39,6 +54,7 @@ export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orde
             firstDistanceFromRayOriginM: first, penetrationTraceDistanceM, baseDamage: impactDamageAtRange,
             cumulativeDamageAbsorbed: absorbed, penetrationAtRangeMm, incidenceFactor: hit.incidenceFactor,
             nativeTraceDistanceM: hit.traceDistanceM });
+        let availablePenetrationMm: number | null = arithmetic.availablePenetrationMm;
         let penetrated: boolean | null;
         if (surface.allowPenetration === false) {
             penetrated = false;
@@ -49,11 +65,20 @@ export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orde
             reason = "命中材质尚未确认";
         }
         else {
-            penetrated = arithmetic.remainingDamage > 0 && (surface.armorThicknessMm <= 0 ||
-                editorNativeDidPenetrateArmor(arithmetic.availablePenetrationMm, surface.armorThicknessMm));
+            if (arithmetic.remainingDamage <= 0)
+                penetrated = false;
+            else {
+                const thickness = surface.armorThicknessMm;
+                const compute = () => ({ penetrated: thickness <= 0 ||
+                        editorNativeDidPenetrateArmor(arithmetic.availablePenetrationMm, thickness),
+                    availablePenetrationMm: arithmetic.availablePenetrationMm });
+                const decision = armorCache && hit.nativeHitKey ? armorCache.evaluate(hit.nativeHitKey, compute) : compute();
+                penetrated = decision.penetrated;
+                availablePenetrationMm = decision.availablePenetrationMm;
+            }
             reason = penetrated ? "穿透" : "穿透能力不足";
         }
-        layers.push({ hit, penetrated, availablePenetrationMm: arithmetic.availablePenetrationMm });
+        layers.push({ hit, penetrated, availablePenetrationMm });
         if (penetrated !== true)
             return { layers, terminalDistanceM, reason, complete: penetrated !== null };
         if (surface.damageAbsorbed === null)
@@ -68,7 +93,7 @@ export function resolveWorldPenetration(ballistics: EditorNativeBallistics, orde
     }
     return { layers, terminalDistanceM, reason, complete: layers.length > 0 };
 }
-export function buildSchoolImpactTrace({ query, offset, hit, direction, timeSeconds, ballistics, armed, terminalImpact }: {
+export function buildSchoolImpactTrace({ query, offset, hit, direction, timeSeconds, ballistics, armed, terminalImpact, evaluateHit, armorCache }: {
     query: ReturnType<typeof createSchoolQuery>;
     offset: THREE.Vector3;
     hit: SchoolRayHit;
@@ -78,6 +103,8 @@ export function buildSchoolImpactTrace({ query, offset, hit, direction, timeSeco
     ballistics: EditorNativeBallistics;
     armed: boolean;
     terminalImpact: boolean;
+    evaluateHit?: Parameters<typeof resolveWorldPenetration>[2];
+    armorCache?: NativeWeaponArmorCache;
 }): VehicleProjectileImpactTrace {
     const cm = (p: THREE.Vector3) => ({ x: p.x * 100, y: p.z * 100, z: p.y * 100 });
     const trace: VehicleProjectileImpactTrace = { timeSeconds,
@@ -107,7 +134,7 @@ export function buildSchoolImpactTrace({ query, offset, hit, direction, timeSeco
     const start = hit.point.clone().addScaledVector(direction, -.01);
     const queryLengthM = Math.max(Math.fround(Math.fround(ballistics.traceDistanceAfterPenetrationM) * 100), 1) / 100 + .01;
     const hits = query.postImpact(start, direction, queryLengthM, offset).map(row => row.hit);
-    const result = resolveWorldPenetration(ballistics, hits);
+    const result = resolveWorldPenetration(ballistics, hits, evaluateHit, armorCache);
     const last = result.layers.at(-1);
     if (last) {
         const end = start.clone().addScaledVector(direction, Math.min(result.terminalDistanceM, queryLengthM));

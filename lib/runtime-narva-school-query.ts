@@ -4,6 +4,9 @@ import { normalizeHitIntersections } from "./hit-intersection-ordering.ts";
 import { decodeSchoolTerrain, fetchNarvaSchoolResource, loadNarvaSchoolSource, type SchoolScene } from "./runtime-narva-school-environment.ts";
 import type { NativeProjectileSweep, ProjectileVector3 } from "./vehicle-projectile-playback.ts";
 import { raycastSchoolConvex, type SchoolNativeConvex } from "./runtime-school-native-convex.ts";
+import type { NativeArmorHitKey, NativeTraceReceiver } from "./editor-native-hit-state.ts";
+import { createSchoolNativeRay, raycastSchoolNativeMesh, schoolNativeRayResult,
+  type NativeMeshTree, type NativeSchoolPose, type NativeSchoolSegment } from "./runtime-school-native-ray.ts";
 
 type Section = { byteOffset: number; byteLength: number; elementCount: number; componentType: string };
 type Resource = { url: string; bytes: number };
@@ -14,6 +17,7 @@ export type SchoolSurfaceProfile = {
   considerForPenetration: boolean | null;
   allowPenetration: boolean | null;
   damageAbsorbed: number | null;
+  damageParentActor?: boolean;
 };
 export type SchoolCollisionDescriptor = {
   sourceKind: "simple" | "complex";
@@ -53,6 +57,8 @@ export type SchoolRayHit = {
   elementIndex?: number;
   externalFaceIndex?: number;
   queryUncertainty?: string;
+  receiver?: NativeTraceReceiver;
+  nativeHitKey?: NativeArmorHitKey;
 };
 export type SchoolSweepHit = { timeFraction: number; normal: ProjectileVector3; impactNormal: ProjectileVector3; sceneHit: SchoolRayHit };
 export type SchoolCollision = {
@@ -61,7 +67,7 @@ export type SchoolCollision = {
   profiles: SchoolSurfaceProfile[];
   profileIndices: Uint16Array | Uint32Array;
   normals: Float32Array;
-  nativeCooked?: { cullsBackFace: boolean; externalFaceIndices: Int32Array; elementIndex: number; triangleVisitRanks?: Uint32Array };
+  nativeCooked?: { cullsBackFace: boolean; externalFaceIndices: Int32Array; elementIndex: number; triangleVisitRanks?: Uint32Array; nativeTree?: NativeMeshTree };
 };
 export type SchoolQueryPlacement = {
   id: string; label: string;
@@ -73,7 +79,41 @@ export type SchoolQueryPlacement = {
   nativeConvexes?: SchoolNativeConvex[];
   simpleSurface?: SchoolSurfaceProfile;
   queryUncertainty?: string;
+  receiver?: NativeTraceReceiver;
+  nativePose?: NativeSchoolPose;
 };
+
+/** PhysicsCore FindFaceIndex searches within 1 cm of a positive-time contact.
+ * Chaos chooses the most opposing nearby face, independently of GJK's support
+ * feature. Strict distance and native BVH visitation resolve admission/ties.
+ * This candidate uses the query transform's precision, not display geometry. */
+export function selectSchoolSweepFace(parsed: SchoolCollision, matrix: THREE.Matrix4,
+  point: THREE.Vector3, direction: THREE.Vector3, originalIndex: number) {
+  if (!parsed.nativeCooked) return originalIndex;
+  const box = new THREE.Box3().setFromCenterAndSize(point, new THREE.Vector3(.02, .02, .02))
+    .applyMatrix4(matrix.clone().invert());
+  const normalMatrix = new THREE.Matrix3().getNormalMatrix(matrix);
+  const triangle = new ExtendedTriangle(), normal = new THREE.Vector3(), closest = new THREE.Vector3();
+  let bestDot = Infinity, bestRank = Infinity, result = originalIndex;
+  parsed.tree.shapecast({
+    intersectsBounds: bounds => bounds.intersectsBox(box),
+    intersectsTriangle: (candidate, index) => {
+      triangle.a.copy(candidate.a).applyMatrix4(matrix);
+      triangle.b.copy(candidate.b).applyMatrix4(matrix);
+      triangle.c.copy(candidate.c).applyMatrix4(matrix);
+      triangle.needsUpdate = true;
+      triangle.closestPointToPoint(point, closest);
+      if (closest.distanceToSquared(point) >= .0001) return false;
+      candidate.getNormal(normal).applyMatrix3(normalMatrix).normalize();
+      const dot = normal.dot(direction), rank = parsed.nativeCooked?.triangleVisitRanks?.[index] ?? index;
+      if (dot < bestDot || dot === bestDot && rank < bestRank) {
+        bestDot = dot; bestRank = rank; result = index;
+      }
+      return false;
+    },
+  });
+  return result;
+}
 
 /** v10.5.3 ProcessSimpleAndComplexTraces. Native Time is a fraction of the
  * whole trace, not metres. Raw Complex anchors remain even if not considered. */
@@ -203,12 +243,12 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
     return { componentId: row.id, label: row.label, triangleIndex: index, surfaceProfileIndex: profileIndex,
       surface: row.surface(parsed.profiles[profileIndex]), distanceM: point.distanceTo(start),
       traceDistanceM: parsed.nativeCooked ? point.distanceTo(start) : undefined, point: point.clone().add(offset),
-      faceNormal, incidenceFactor: -direction.dot(faceNormal), queryUncertainty: row.queryUncertainty,
+      faceNormal, incidenceFactor: -direction.dot(faceNormal), queryUncertainty: row.queryUncertainty, receiver: row.receiver,
       elementIndex: parsed.nativeCooked?.elementIndex, externalFaceIndex: parsed.nativeCooked?.externalFaceIndices[index] };
   };
   const api = {
     placementCount: rows.length,
-    raycast(origin: THREE.Vector3, direction: THREE.Vector3, far: number, offset = new THREE.Vector3(), kind: "simple" | "complex" = "complex") {
+    raycast(origin: THREE.Vector3, direction: THREE.Vector3, far: number, offset = new THREE.Vector3(), kind: "simple" | "complex" = "complex", sourceSegment?: NativeSchoolSegment) {
       const start = origin.clone().sub(offset), unit = direction.clone().normalize();
       const end = start.clone().addScaledVector(unit, far), worldRay = new THREE.Ray(start, unit);
       const hits: SchoolRayHit[] = [];
@@ -227,13 +267,27 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
             hits.push({ componentId: row.id, label: row.label, triangleIndex: -1, surfaceProfileIndex: 0,
               surface: row.simpleSurface, distanceM: point.distanceTo(start), traceDistanceM: point.distanceTo(start), point: point.add(offset), faceNormal,
               incidenceFactor: -unit.dot(faceNormal), elementIndex: shape.elementIndex, externalFaceIndex: -1,
-              queryUncertainty: row.queryUncertainty });
+              queryUncertainty: row.queryUncertainty, receiver: row.receiver });
           }
           continue;
         }
-        if (!worldRay.intersectsBox(row.bounds)) continue;
         const parsed = kind === "complex" ? row.complex ?? row.simple : row[row.movementKind];
         if (!parsed) continue;
+        if (parsed.nativeCooked?.nativeTree && row.nativePose && sourceSegment) {
+          const input = createSchoolNativeRay(sourceSegment, row.nativePose);
+          if (!input) continue;
+          const hit = raycastSchoolNativeMesh(parsed.geometry, parsed.nativeCooked.nativeTree, parsed.nativeCooked.cullsBackFace, input.ray, input.far);
+          const result = hit && schoolNativeRayResult(hit, input, sourceSegment, row.nativePose);
+          if (!hit || !result) continue;
+          const point = new THREE.Vector3(result.pointCm.x / 100, result.pointCm.z / 100, result.pointCm.y / 100);
+          const faceNormal = new THREE.Vector3(result.normal.x, result.normal.z, result.normal.y);
+          hits.push({ ...surfaceHit(row, parsed, hit.faceIndex, point, start, unit, offset),
+            distanceM: result.distanceCm / 100, traceDistanceM: result.locationCm.distanceTo(new THREE.Vector3(...sourceSegment.startCm)) / 100, faceNormal,
+            incidenceFactor: -unit.dot(faceNormal), nativeHitKey: { distanceCm: result.distanceCm, timeFraction: result.time,
+              impactPointCm: result.pointCm.toArray() as [number, number, number] } });
+          continue;
+        }
+        if (!worldRay.intersectsBox(row.bounds)) continue;
         const localStart = start.clone().applyMatrix4(row.inverse);
         const delta = end.clone().applyMatrix4(row.inverse).sub(localStart), length = delta.length();
         if (length < 1e-10) continue;
@@ -250,6 +304,10 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       }
       // Never collapse different native shape contacts by component/position.
       const nativeHits = hits.filter(hit => hit.elementIndex !== undefined);
+      for (const hit of nativeHits) hit.nativeHitKey ??= {
+        distanceCm: Math.fround(hit.traceDistanceM! * 100), timeFraction: Math.fround(hit.distanceM / far),
+        impactPointCm: [hit.point.x * 100, hit.point.z * 100, hit.point.y * 100],
+      };
       const legacyHits = hits.filter(hit => hit.elementIndex === undefined);
       return [...nativeHits, ...normalizeHitIntersections(legacyHits.map((hit, index) => ({ index, componentId: hit.componentId,
         surfaceProfileIndex: hit.surfaceProfileIndex, sourceFaceId: hit.triangleIndex, distanceM: hit.distanceM,
@@ -285,7 +343,9 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
             if (remaining <= 0) return null;
             const refined = nativeOrCandidate(api.raycast(hit.point, forward, remaining, offset))
               .find(candidate => candidate.componentId === hit.componentId);
-            return refined ? { ...refined, distanceM: hit.distanceM + refined.distanceM } : null;
+            return refined ? { ...refined, distanceM: hit.distanceM + refined.distanceM,
+              nativeHitKey: refined.nativeHitKey && hit.nativeHitKey
+                ? { ...refined.nativeHitKey, timeFraction: hit.nativeHitKey.timeFraction } : undefined } : null;
           });
       };
       const forward = merge(origin, unit), reverse = merge(end, unit.clone().negate());
@@ -342,7 +402,20 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
           },
         });
       }
-      return first;
+      // TypeScript does not follow assignments made by the shapecast callback.
+      const result = first as SchoolSweepHit | null;
+      if (result && result.timeFraction > 0) {
+        const row = rows.find(row => row.id === result.sceneHit.componentId)!;
+        const parsed = traceComplex ? row.complex ?? row.simple : row[row.movementKind];
+        if (parsed?.nativeCooked) {
+          const point = result.sceneHit.point.clone().sub(offset);
+          const index = selectSchoolSweepFace(parsed, row.matrix, point, direction, result.sceneHit.triangleIndex);
+          const selected = surfaceHit(row, parsed, index, point, start, direction, offset);
+          result.sceneHit = { ...selected, distanceM: result.sceneHit.distanceM };
+          result.impactNormal = { x: selected.faceNormal.x, y: selected.faceNormal.z, z: selected.faceNormal.y };
+        }
+      }
+      return result;
     },
   };
   return api;
