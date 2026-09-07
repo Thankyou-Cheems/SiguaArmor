@@ -9615,7 +9615,7 @@ export function RuntimeVehicleViewer({ preview, showChrome = true, mode: request
           <span>{viewerState.message}</span>
         </div>) : null}
       {environmentState ? (<div className="runtime-environment-status" role="status">{environmentState}</div>) : null}
-      <div ref={worldImpactStatusRef} className="runtime-world-impact-status" role="status" aria-live="off" title="最近一次实际命中的参考线；绿点：参考解算穿透，红点：停止，黄点：未确认。只保留一条，不代表弹体继续飞行；学校原生命中列表和法线尚未全部核实。"/>
+      <div ref={worldImpactStatusRef} className="runtime-world-impact-status" role="status" aria-live="off" title="最近一次实际命中的参考线；绿点：穿透，红点：停止，黄点：未确认。只保留一条，不代表弹体继续飞行；适用于当前学校范围，不包含建筑破坏与爆炸范围伤害。"/>
 
       {exteriorUnavailableMessage ? (<aside className="viewer-resource-warning" role="note" aria-label="官方资源问题提示">
           <div className="viewer-resource-warning__heading">
