@@ -36,6 +36,13 @@ test("aircraft loads both collision records without vehicle stations or a driver
   assert.equal(preview.driverView,null); assert.equal(preview.stationGraph,null);
   assert.equal(fixture.driverCalls,0);
 });
+test("aircraft keeps the game component scale and translation without display normalization",async()=>{
+  reset();
+  const matrix=[0,0,-.5,0,0,.5,0,0,.5,0,0,0,-200,400,0,1];
+  fixture.descriptor.placements[0].matrix=matrix;
+  const preview=await load("game-scale","MQ9","runtime","visual");
+  assert.deepEqual(preview.visual.placements[0].matrix,matrix);
+});
 test("vehicle preview still requires its station graph and driver",async()=>{
   reset(); delete fixture.variant.targetKind;
   await assert.rejects(load("vehicle","MQ9","runtime","visual"),/driver view is missing/);

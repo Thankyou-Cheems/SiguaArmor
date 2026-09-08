@@ -1015,6 +1015,7 @@ interface RuntimeWeaponOption {
 
 type RuntimePointerOutline =
   | "damage"
+  | "actor-damage-estimate"
   | "component-damage-no-vehicle"
   | "blocked-absolute"
   | "blocked-effective"
@@ -1050,6 +1051,7 @@ function viewerPointerMetric(value: number | null, suffix = "") {
 function viewerPointerOutlineLabel(outline: RuntimePointerOutline) {
   return ({
     damage: "可造成车辆伤害",
+    "actor-damage-estimate": "预计可造成机体伤害",
     "component-damage-no-vehicle": "可损害部件但无车辆伤害",
     "blocked-absolute": "穿深不足",
     "blocked-effective": "强制跳弹",
@@ -10938,6 +10940,7 @@ export function RuntimeVehicleViewer({
           : result.layers[result.stoppedAtLayer] ?? null;
         const vehicleDamage = result.damage.filter(isEditorNativeVehicleDamageEvent);
         const componentOnlyDamage = result.damage.filter(isEditorNativeComponentOnlyDamageEvent);
+        const actorEstimate = editorNativeActorDamageEstimate(result);
         const fill = vehicleDamage.some((damage) => damage.poolKind === "ammo-rack")
           ? "ammo-rack"
           : vehicleDamage.some((damage) => damage.poolKind === "engine")
@@ -10945,6 +10948,8 @@ export function RuntimeVehicleViewer({
             : null;
         const outline: RuntimePointerOutline = result.resolution === "native-unknown"
           ? "unknown"
+          : actorEstimate !== null && actorEstimate.damage > 0
+            ? "actor-damage-estimate"
           : vehicleDamage.length > 0
             ? "damage"
             : componentOnlyDamage.length > 0
@@ -12887,7 +12892,7 @@ export function RuntimeVehicleViewer({
             <div className="viewer-flat-control-list">
             {preview.targetKind === "command-aircraft" ? (
               <div className="viewer-aircraft-collision-controls">
-                <label>碰撞模型 <select aria-label="飞机碰撞模型" value={collisionQueryKind}
+                <label>碰撞查询对照 <select aria-label="飞机碰撞模型" value={collisionQueryKind}
                   onChange={(event) => {
                     const query = event.target.value === "simple" ? "simple" : "complex";
                     clearShotVisual();
@@ -12899,10 +12904,10 @@ export function RuntimeVehicleViewer({
                       onNavigationStateChangeRef.current?.(next);
                     }
                   }}>
-                  <option value="complex">精细碰撞</option>
-                  <option value="simple">简化碰撞</option>
+                  <option value="complex">三角网格（Complex）</option>
+                  <option value="simple">凸体（Simple）</option>
                 </select></label>
-                <p>按所选碰撞材质估算穿透与机体扣血；完整弹道和爆炸伤害尚未验证。</p>
+                <p>三角网格贴合机体表面，凸体使用游戏资产自带的碰撞外形。游戏穿透处理会组合两类查询；这里分别估算，切换不代表游戏精度设置。完整弹道和爆炸伤害尚未验证。</p>
               </div>
             ) : null}
             <div className="viewer-protection-primary" data-enabled={protectionMapAvailable}>

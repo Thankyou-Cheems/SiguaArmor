@@ -7714,6 +7714,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   opacity: 0.96;
 }
 
+.viewer-realtime-crosshair[data-outline="actor-damage-estimate"],
 .viewer-realtime-crosshair[data-outline="damage"] {
   --pointer-outline: var(--pointer-outline-damage);
 }
@@ -7777,6 +7778,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   transform: translate(calc(-100% - 22px), 22px);
 }
 
+.viewer-realtime-readout[data-outline="actor-damage-estimate"],
 .viewer-realtime-readout[data-outline="damage"] {
   border-color: color-mix(in srgb, var(--pointer-outline-damage) 58%, transparent);
   background:
@@ -7804,6 +7806,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   border-top: 1px solid rgba(225, 200, 155, 0.14);
 }
 
+.viewer-realtime-readout[data-outline="actor-damage-estimate"] .viewer-realtime-readout__status,
 .viewer-realtime-readout[data-outline="damage"] .viewer-realtime-readout__status {
   color: var(--pointer-outline-damage);
   border-top-color: color-mix(in srgb, var(--pointer-outline-damage) 28%, transparent);

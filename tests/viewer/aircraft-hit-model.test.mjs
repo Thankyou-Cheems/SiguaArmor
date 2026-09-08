@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import { simulateEditorNativeShot, editorNativeActorDamageEstimate, editorNativeEffectiveDamageAmount } from "../../lib/editor-native-hit-model.ts";
+import { isEditorNativeVehicleDamageEvent, isEditorNativeComponentOnlyDamageEvent } from "../../lib/editor-native-hit-model.ts";
+
+// Exercise the hover call site with the same shot that populates the health card.
+const viewer = readFileSync(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8");
+const hoverBody = viewer.slice(viewer.indexOf("        const stoppedLayer = result.stoppedAtLayer"), viewer.indexOf("        const rawThicknessMm = firstLayer?"))
+  .replace(/: RuntimePointerOutline/g, "");
+const hoverOutline = new Function("result", "editorNativeActorDamageEstimate", "isEditorNativeVehicleDamageEvent", "isEditorNativeComponentOnlyDamageEvent", "isRuntimeForcedRicochetLayer", `${hoverBody}; return outline;`);
+const outlineFor = result => hoverOutline(result, editorNativeActorDamageEstimate, isEditorNativeVehicleDamageEvent, isEditorNativeComponentOnlyDamageEvent, () => false);
 
 const absent={state:"absent",value:null};
 function model() { return {
@@ -26,6 +35,20 @@ test("aircraft applies the Actor health multiplier once across repeated body fac
   assert.deepEqual(editorNativeActorDamageEstimate(result),{damage:150,maxHealth:1000,remainingHealth:850});
   result.damage[0].certainty="native-unknown";
   assert.equal(editorNativeActorDamageEstimate(result),null);
+});
+
+test("positive aircraft health estimate is also reported by the hover status",()=>{
+  const result=shot(model());
+  assert.equal(editorNativeActorDamageEstimate(result).damage,150);
+  assert.equal(outlineFor(result),"actor-damage-estimate");
+  assert.equal(editorNativeEffectiveDamageAmount(result.damage[0]),0);
+  result.damage[0].certainty="native-unknown";
+  assert.notEqual(outlineFor(result),"actor-damage-estimate");
+});
+
+test("zero aircraft damage is not presented as an estimated damaging hit",()=>{
+  const target=model(); target.damageReceiver.damageMultiplier=0;
+  assert.notEqual(outlineFor(shot(target)),"actor-damage-estimate");
 });
 test("aircraft preserves material gates, unknown material and strict penetration threshold",()=>{
   for(const change of [{allowPenetration:false},{damageParentActor:false},{armorThicknessMm:10},{armorThicknessMm:{state:"native-unknown",value:null}}]) {
