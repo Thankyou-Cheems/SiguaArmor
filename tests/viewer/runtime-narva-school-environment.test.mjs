@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFile } from "node:fs/promises";
 import * as THREE from "three";
 import {
-  planNarvaSchoolEnvironment, decodeSchoolTerrain, narvaPlacementMatrix, createNarvaSchoolEnvironment,
+  planNarvaSchoolEnvironment, decodeSchoolTerrain, narvaPlacementMatrix, createNarvaSchoolEnvironment, setNarvaSchoolInspectionTone,
 } from "../../lib/runtime-narva-school-environment.ts";
 
 function fixture() {
@@ -85,15 +85,26 @@ test("environment uses one draw per shared geometry, has no LOD or textures, and
   assert.equal(root.children[1].material.map, null);
   assert.equal(root.userData.collisionAuthority, false);
   assert.equal(root.userData.cameraDistanceLod, false);
+  const shader = { uniforms: {}, fragmentShader: "#include <opaque_fragment>" };
+  root.children[0].material.onBeforeCompile(shader);
+  assert.equal(shader.uniforms.schoolInspectionTone.value, 1);
+  assert.match(shader.fragmentShader, /mix\(outgoingLight, schoolMuted, schoolInspectionTone\)/);
+  setNarvaSchoolInspectionTone(root, false);
+  assert.equal(shader.uniforms.schoolInspectionTone.value, 0);
+  setNarvaSchoolInspectionTone(root, true);
+  assert.equal(shader.uniforms.schoolInspectionTone.value, 1);
+  assert.deepEqual([...mesh.colorsRgb], Array(9).fill(255));
   assert.deepEqual([...mesh.positions], [0, 0, 0, 1, 0, 0, 0, 0, 1]);
   assert.deepEqual([...mesh.indices], [0, 1, 2]);
   root.traverse((object) => { if (object.isInstancedMesh) object.dispose(); object.geometry?.dispose(); });
   root.children[0].material.dispose();
 });
 
-test("viewer replaces GridHelper without scaling scenery or including it in vehicle fit/hit roots", async () => {
+test("viewer keeps both backgrounds outside vehicle fit/hit roots and aligns the classic grid to the reference scale", async () => {
   const source = await readFile(new URL("../../app/RuntimeVehicleViewer.tsx", import.meta.url), "utf8");
-  assert.doesNotMatch(source, /new THREE\.GridHelper|environmentRoot\.scale|modelGroup\.add\(environmentRoot/);
+  assert.doesNotMatch(source, /environmentRoot\.scale|modelGroup\.add\(environmentRoot|modelGroup\.add\(gridHelper/);
+  assert.match(source, /scene\.add\(gridHelper\)/);
+  assert.match(source, /gridHelper\.position\.set\(groundScaleOriginX, groundY, groundScaleOriginZ\)/);
   assert.match(source, /scene\.add\(environmentRoot\)/);
   assert.match(source, /environmentRoot\.position\.set\(vehicleCameraTarget\.x, groundY, vehicleCameraTarget\.z\)/);
   assert.match(source, /object instanceof THREE\.InstancedMesh\) object\.dispose/);

@@ -3,7 +3,8 @@
 import { VehicleWeaponHud } from "./VehicleWeaponHud";
 import { sourceProjectileForShot, type SourceProjectileVisual, type VehicleFiringPresentation } from "../lib/vehicle-firing-presentation";
 import { loadWikiDataset } from "../lib/wiki-source";
-import { createNarvaSchoolEnvironment, loadNarvaSchoolEnvironment } from "../lib/runtime-narva-school-environment";
+import { createNarvaSchoolEnvironment, loadNarvaSchoolEnvironment, setNarvaSchoolInspectionTone } from "../lib/runtime-narva-school-environment";
+import { getRuntimeViewerBackground, setRuntimeViewerBackground, subscribeRuntimeViewerBackground, runtimeViewerBackgroundPresentation } from "../lib/runtime-viewer-background";
 import type { OperationInventorySlot } from "../lib/operation-view-control";
 
 import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
@@ -4833,6 +4834,9 @@ export function RuntimeVehicleViewer({
     total: uniqueAssetCount,
   });
   const [environmentState, setEnvironmentState] = useState("正在加载 Narva 学校与足球场…");
+  const background = useSyncExternalStore(subscribeRuntimeViewerBackground, getRuntimeViewerBackground, () => "school" as const);
+  const backgroundRef = useRef(background);
+  const applyBackgroundRef = useRef<(() => void) | null>(null);
   const [initialCameraFitReady, setInitialCameraFitReady] = useState(false);
   const [exteriorPlaceholderReady, setExteriorPlaceholderReady] = useState(false);
   useEffect(() => {
@@ -7822,6 +7826,11 @@ export function RuntimeVehicleViewer({
   }, [physicalPoseEnabled]);
 
   useEffect(() => {
+    backgroundRef.current = background;
+    applyBackgroundRef.current?.();
+  }, [background]);
+
+  useEffect(() => {
     const host = hostRef.current;
     if (!host || !visual) return;
     const worldImpactStatus = worldImpactStatusRef.current;
@@ -7875,6 +7884,9 @@ export function RuntimeVehicleViewer({
     let startExteriorAssets: (() => void) | null = null;
     let groundReferenceY = 0;
     let groundScale: THREE.Group | null = null;
+    let gridHelper: THREE.GridHelper | null = null;
+    let schoolEnvironment: THREE.Group | null = null;
+    let operationBackgroundActive = false;
     let referenceSoldier: THREE.Object3D | null = null;
     let referenceSoldierLoadScheduled = false;
     let referenceSoldierLoadTimer = 0;
@@ -7912,6 +7924,17 @@ export function RuntimeVehicleViewer({
     const environmentRoot = new THREE.Group();
     environmentRoot.name = "runtime-environment";
     scene.add(environmentRoot);
+    const applyBackground = () => {
+      const presentation = runtimeViewerBackgroundPresentation(backgroundRef.current, operationBackgroundActive);
+      environmentRoot.visible = presentation.schoolVisible;
+      if (gridHelper) gridHelper.visible = presentation.gridVisible;
+      if (schoolEnvironment) setNarvaSchoolInspectionTone(schoolEnvironment, presentation.schoolMuted);
+      host.dataset.viewerBackground = presentation.gridVisible ? "grid" : "school";
+      host.dataset.schoolTone = presentation.schoolMuted ? "muted" : "original";
+      requestRenderRef.current?.();
+    };
+    applyBackgroundRef.current = applyBackground;
+    applyBackground();
     const camera = new THREE.PerspectiveCamera(
       SQUAD_INFANTRY_DEFAULT_HORIZONTAL_FOV_DEG,
       1,
@@ -8436,6 +8459,8 @@ export function RuntimeVehicleViewer({
     };
 
     const setOperationSceneActive = (active: boolean) => {
+      operationBackgroundActive = active;
+      applyBackground();
       if (active) ensureSchoolQuery();
       const presentation = operationViewScenePresentation(active);
       renderer.setClearColor(
@@ -8870,7 +8895,9 @@ export function RuntimeVehicleViewer({
     void loadNarvaSchoolEnvironment().then((data) => {
       if (cancelled) return;
       const environment = createNarvaSchoolEnvironment(data);
+      schoolEnvironment = environment;
       environmentRoot.add(environment);
+      applyBackground();
       host.dataset.environmentState = "ready";
       host.dataset.environmentScene = environment.userData.sceneId;
       host.dataset.environmentAnchorSourceMeters = JSON.stringify(environment.userData.anchorSourceMeters);
@@ -10144,6 +10171,15 @@ export function RuntimeVehicleViewer({
       );
       const groundScaleOriginX = groundScaleOriginWorldX - center.x;
       const groundScaleOriginZ = groundScaleOriginWorldZ - center.z;
+      if (gridHelper) {
+        scene.remove(gridHelper);
+        disposeScene(gridHelper);
+      }
+      const gridDivisions = Math.max(1, Math.ceil(Math.max(radius * 4, groundScaleLengthM, groundScaleWidthM) / groundGridSpacingM));
+      gridHelper = new THREE.GridHelper(gridDivisions * groundGridSpacingM, gridDivisions, 0x555555, 0x292929);
+      gridHelper.position.set(groundScaleOriginX, groundY, groundScaleOriginZ);
+      scene.add(gridHelper);
+      applyBackground();
       groundScale.position.set(
         groundScaleOriginX,
         groundY + 0.006,
@@ -10591,6 +10627,7 @@ export function RuntimeVehicleViewer({
       const requiredGroundY = bounds.min.y - 0.03;
       groundReferenceY = Math.min(groundReferenceY, requiredGroundY);
       environmentRoot.position.y = groundReferenceY;
+      if (gridHelper) gridHelper.position.y = groundReferenceY;
       host.dataset.referencePlaneY = String(groundReferenceY);
       host.dataset.referencePlaneAuthority = "geometry-bounds";
     };
@@ -11872,6 +11909,7 @@ export function RuntimeVehicleViewer({
       analysisVisualGroupRef.current = null;
       hitGroupRef.current = null;
       groundScaleRef.current = null;
+      applyBackgroundRef.current = null;
       applyCameraNavigationRef.current = null;
       analysisMeshRef.current = null;
       parsedHitRef.current = null;
@@ -12567,7 +12605,7 @@ export function RuntimeVehicleViewer({
           <span>{viewerState.message}</span>
         </div>
       ) : null}
-      {environmentState ? (
+      {environmentState && (background === "school" || activeCrewViewStationId !== null) ? (
         <div className="runtime-environment-status" role="status">{environmentState}</div>
       ) : null}
       <div ref={worldImpactStatusRef} className="runtime-world-impact-status" role="status"
@@ -12890,6 +12928,14 @@ export function RuntimeVehicleViewer({
               </div>
             </div>
             <div className="viewer-flat-control-list">
+            <label className="viewer-background-control">
+              <span>背景</span>
+              <select aria-label="查看背景" value={background}
+                onChange={(event) => setRuntimeViewerBackground(event.target.value === "grid" ? "grid" : "school")}>
+                <option value="school">纳尔瓦学校</option>
+                <option value="grid">经典网格</option>
+              </select>
+            </label>
             {preview.targetKind === "command-aircraft" ? (
               <div className="viewer-aircraft-collision-controls">
                 <label>碰撞查询对照 <select aria-label="飞机碰撞模型" value={collisionQueryKind}

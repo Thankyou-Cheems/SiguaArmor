@@ -224,6 +224,20 @@ export function createNarvaSchoolEnvironment(data: EnvironmentData) {
     resourceBytes: data.plan.resourceBytes };
   const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0,
     flatShading: true, side: THREE.DoubleSide });
+  // Grade only scenery after lighting; vehicle materials and shared colors stay intact.
+  const inspectionTone = { value: 1 };
+  root.userData.inspectionTone = inspectionTone;
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.schoolInspectionTone = inspectionTone;
+    shader.fragmentShader = `uniform float schoolInspectionTone;\n${shader.fragmentShader}`
+      .replace("#include <opaque_fragment>", `
+        float schoolLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
+        vec3 schoolMuted = mix(vec3(schoolLuminance), outgoingLight, 0.45) * 0.30 + vec3(0.012);
+        outgoingLight = mix(outgoingLight, schoolMuted, schoolInspectionTone);
+        #include <opaque_fragment>
+      `);
+  };
+  material.customProgramCacheKey = () => "narva-school-inspection-tone-v1";
   const terrain = new THREE.Mesh(geometryFor(data.terrain, false), material);
   terrain.name = "narva-school-source-terrain";
   root.add(terrain);
@@ -238,4 +252,8 @@ export function createNarvaSchoolEnvironment(data: EnvironmentData) {
     root.add(mesh);
   }
   return root;
+}
+
+export function setNarvaSchoolInspectionTone(root: THREE.Group, muted: boolean) {
+  root.userData.inspectionTone.value = muted ? 1 : 0;
 }
