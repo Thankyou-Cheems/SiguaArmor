@@ -19082,3 +19082,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   font-variant-numeric: tabular-nums;
 }
 .runtime-world-impact-status:empty { display: none; }
+.viewer-aircraft-collision-controls { display: grid; gap: .5rem; padding: .6rem 0; }
+.viewer-aircraft-collision-controls label { display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
+.viewer-aircraft-collision-controls select { color: inherit; background: #19211e; border: 1px solid #526157; border-radius: .3rem; padding: .3rem .5rem; }
+.viewer-aircraft-collision-controls p { margin: 0; color: #adb7ae; font-size: .75rem; line-height: 1.5; }

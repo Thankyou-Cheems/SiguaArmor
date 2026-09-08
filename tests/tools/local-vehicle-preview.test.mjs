@@ -24,3 +24,11 @@ test("local preview serves crew, gunner-sight and driver-view assets before the 
     "http://127.0.0.1:4174",
   );
 });
+
+test("aircraft preview serves only explicitly named local payloads", () => {
+  const local="/assets/runtime-probe/hit-runtime/records/aircraft.json";
+  const config=createWikiHybridViteConfig({wikiRoot:"D:/Dev/SiguaWiki",localAssetOrigin:"https://wiki.siguad.icu",localAssetPaths:[local]});
+  assert.equal(config.server.proxy["/assets"].bypass({url:local+"?query=v1"}),local+"?query=v1");
+  assert.equal(config.server.proxy["/assets"].bypass({url:"/assets/runtime-probe/models/other.gltf"}),undefined);
+  assert.throws(()=>createWikiHybridViteConfig({wikiRoot:"x",localAssetOrigin:"https://wiki.siguad.icu",localAssetPaths:["/assets/../secret"]}),/local asset paths/);
+});

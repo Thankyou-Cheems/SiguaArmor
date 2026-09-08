@@ -381,6 +381,13 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
     result.records[0].variants[0].visualArtifactRef,
     "visual-mq9",
   );
+  wiki.extensions.supportAir.bindings[0].runtimeVehicleRef = "aircraft-runtime";
+  assert.throws(() => buildFactionCatalogFromWiki(wiki,index,"test","international"), /绑定不匹配/);
+  index.records[0].variants[0].runtimeVehicleRef = "aircraft-runtime";
+  const aircraft = buildFactionCatalogFromWiki(wiki,index,"test","international").records[0].variants[0];
+  assert.equal(aircraft.runtimeVehicleRef,"aircraft-runtime");
+  assert.equal(aircraft.vehicleRef,null);
+  assert.equal(aircraft.data,null);
 });
 
 test("Armor builds localized searchable cards from Wiki presentation data", () => {

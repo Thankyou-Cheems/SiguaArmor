@@ -58,6 +58,7 @@ import {
 } from "../lib/turret-articulation";
 import {
   editorNativeEffectiveDamageAmount,
+  editorNativeActorDamageEstimate,
   isEditorNativeComponentOnlyDamageEvent,
   isEditorNativeVehicleDamageEvent,
   resolveEditorNativeBallistics,
@@ -1756,6 +1757,7 @@ function RuntimeWeaponSelector({
 function editorPoolLabel(kind: string) {
   return ({
     hull: "车体",
+    actor: "机体",
     seat: "炮塔/武器站",
     engine: "发动机",
     "ammo-rack": "弹药架",
@@ -2902,7 +2904,7 @@ function HitDpsTimingCard({
   );
   if (directOneShotTarget && factsState === "unavailable") {
     const poolLabel = editorPoolLabel(directOneShotTarget.poolKind);
-    const resultLabel = directOneShotTarget.poolKind === "hull"
+    const resultLabel = directOneShotTarget.poolKind === "hull" || directOneShotTarget.poolKind === "actor"
       ? "单发摧毁"
       : `单发打坏${poolLabel}`;
     return (
@@ -2951,7 +2953,7 @@ function HitDpsTimingCard({
     primaryEstimate.poolKind === "ammo-rack" &&
     !primarySimulation.ammoExhausted &&
     primarySimulation.killTimeSeconds !== null;
-  const primaryOutcomeLabel = primaryEstimate.poolKind === "hull"
+  const primaryOutcomeLabel = primaryEstimate.poolKind === "actor" ? "估算击毁飞机" : primaryEstimate.poolKind === "hull"
     ? "击毁载具"
     : primaryIsAmmoRackVehicleKill
       ? "击毁载具（弹药架）"
@@ -2966,7 +2968,7 @@ function HitDpsTimingCard({
   const primaryResultLabel = primarySimulation.ammoExhausted
     ? "弹药耗尽"
     : primaryIsOneShot
-      ? primaryEstimate.poolKind === "hull"
+      ? primaryEstimate.poolKind === "hull" || primaryEstimate.poolKind === "actor"
         ? "单发摧毁"
         : primaryIsAmmoRackVehicleKill
           ? "单发击毁载具（弹药架）"
@@ -4476,13 +4478,15 @@ export function RuntimeVehicleViewer({
   >(null);
   const cancelProtectionMapRef = useRef<(() => void) | null>(null);
   const visual = preview.visual;
-  const hit = preview.hit;
+  const [collisionQueryKind, setCollisionQueryKind] = useState<"complex" | "simple">(navigationState?.collisionQuery ?? "complex");
+  useEffect(() => setCollisionQueryKind(navigationState?.collisionQuery ?? "complex"), [navigationState?.collisionQuery]);
+  const hit = collisionQueryKind === "simple" && preview.simpleHit ? preview.simpleHit : preview.hit;
   const radialQuery = preview.radialQuery;
   const chassisPose = preview.chassisPose;
   const gunnerSight = preview.gunnerSight;
   const driverView = preview.driverView;
   const driverMaskAvailable =
-    driverView.mask.state === "observed-source-viewport-geometry";
+    driverView?.mask.state === "observed-source-viewport-geometry";
   const crewOccupantPlan = useMemo(
     () => buildCrewOccupantPresentationPlan(preview.crewSeat),
     [preview.crewSeat],
@@ -5322,6 +5326,12 @@ export function RuntimeVehicleViewer({
         active = false;
       };
     }
+    if (preview.targetKind === "command-aircraft" && allowGlobalAttackSources) {
+      requestGlobalAttackLibrary();
+      return () => {
+        active = false;
+      };
+    }
     void loadWikiVehicleWeaponRuntimeSource(preview.cardId)
       .then((value) => {
         if (!active) return;
@@ -5359,11 +5369,13 @@ export function RuntimeVehicleViewer({
       active = false;
     };
   }, [
+    allowGlobalAttackSources,
     attackLibraryOverride,
     attackSourcePresentation,
     displayName,
     loadIndexedAttackLibrary,
     preview.cardId,
+    preview.targetKind,
     preview.variantRawName,
     requestGlobalAttackLibrary,
   ]);
@@ -6136,6 +6148,7 @@ export function RuntimeVehicleViewer({
     : null;
   const maxDistanceM = distanceControl?.maxDistanceM ?? 0;
   const protectionMapAvailable =
+    preview.targetKind !== "command-aircraft" &&
     hitState.kind === "ready" &&
     hitHeader !== null &&
     attackReady &&
@@ -7531,6 +7544,7 @@ export function RuntimeVehicleViewer({
       turrets: "",
     };
     const next: ViewerNavigationState = {
+      ...current,
       view: mode,
       protection: protectionActive,
       attacker: attackSource.shareSlug,
@@ -8161,7 +8175,7 @@ export function RuntimeVehicleViewer({
     let driverMaskLayer: RuntimeDriverMaskLayer | null = null;
     let driverMaskLoadRequest: Promise<RuntimeDriverMaskLayer | null> | null =
       null;
-    const driverPose = driverViewPose(driverView);
+    const driverPose = driverView ? driverViewPose(driverView) : null;
     const crewOccupantHolder = new THREE.Group();
     crewOccupantHolder.name = "runtime-crew-occupant-holder";
     crewOccupantHolder.visible = false;
@@ -8461,7 +8475,7 @@ export function RuntimeVehicleViewer({
     applyDriverMaskVisibilityRef.current = applyDriverMaskVisibility;
 
     const ensureDriverMaskLayer = () => {
-      if (!driverMaskAvailable) {
+      if (!driverMaskAvailable || !driverView) {
         host.dataset.driverMaskAssetState = "absent";
         return Promise.resolve(null);
       }
@@ -8492,6 +8506,10 @@ export function RuntimeVehicleViewer({
     };
 
     const updateDriverViewpointMarker = () => {
+      if (!driverPose) {
+        driverViewpointMarker.root.visible = false;
+        return null;
+      }
       const operatorViewActive = activeCrewViewStationIdRef.current !== null;
       driverViewpointMarker.root.visible = Boolean(
         driverViewpointMarkerEnabledRef.current && !operatorViewActive,
@@ -8929,6 +8947,7 @@ export function RuntimeVehicleViewer({
       crewViewpointMarker.root.visible = false;
     };
     const applyDriverViewCameraPose = () => {
+      if (!driverPose || !driverView) return;
       activeCrewViewPose = driverPose;
       chassisPoseGroup.updateMatrixWorld(true);
       const worldPosition = new THREE.Vector3()
@@ -10373,6 +10392,7 @@ export function RuntimeVehicleViewer({
         return true;
       };
       const enterDriverViewpoint = () => {
+        if (!driverView || !driverPose) return false;
         controls.enabled = false;
         setOperationSceneActive(true);
         cameraFitUserLocked = true;
@@ -12096,6 +12116,8 @@ export function RuntimeVehicleViewer({
     ...penetrationDamageEvents,
     ...explosionDamageEvents,
   ];
+  const actorDamageEstimate = preview.targetKind === "command-aircraft" && shotResult
+    ? editorNativeActorDamageEstimate(shotResult) : null;
   const visibleShotLayers = shotResult?.layers.slice(0, MAX_VISIBLE_LAYERS) ?? [];
   const damageEventsByLayer = groupDamageEventsByVisibleLayer(
     visibleShotLayers,
@@ -12103,10 +12125,10 @@ export function RuntimeVehicleViewer({
   );
   const damageOutcomeSummaries = summarizeDamageOutcomes(effectiveDamageEvents);
   const hullDamageOutcome = damageOutcomeSummaries.find(
-    (outcome) => outcome.poolKind === "hull",
+    (outcome) => outcome.poolKind === "hull" || outcome.poolKind === "actor",
   ) ?? null;
   const componentDamageOutcomes = damageOutcomeSummaries.filter(
-    (outcome) => outcome.poolKind !== "hull",
+    (outcome) => outcome.poolKind !== "hull" && outcome.poolKind !== "actor",
   );
   const clickedLayer = shotResult?.layers[0] ?? null;
   const clickedComponent = clickedLayer && hitHeader
@@ -12123,7 +12145,7 @@ export function RuntimeVehicleViewer({
     ? 0
     : Math.max(0, Math.min(100, (hullRemainingHealth / hullDamageOutcome.maxHealth) * 100));
   const totalEffectiveDamage = effectiveDamageEvents
-    .filter((event) => event.poolKind === "hull")
+    .filter((event) => event.poolKind === "hull" || event.poolKind === "actor")
     .reduce(
       (total, event) => total + editorNativeEffectiveDamageAmount(event),
       0,
@@ -12605,7 +12627,7 @@ export function RuntimeVehicleViewer({
               ? `当前载具相对装甲厚度连续色阶，${formatArmorThicknessLegendValue(armorThicknessRange.minMm)} 至 ${formatArmorThicknessLegendValue(armorThicknessRange.maxMm)}`
               : "装甲厚度绝对连续色阶，0 至 890 毫米"}
           >
-            <strong>{relativeArmorScaleActive ? "相对厚度" : "装甲厚度"}</strong>
+            <strong>{relativeArmorScaleActive ? "相对厚度" : preview.targetKind === "command-aircraft" ? "材质穿透厚度" : "装甲厚度"}</strong>
             <div
               className="viewer-armor-thickness-legend__bar"
               style={{
@@ -12622,14 +12644,14 @@ export function RuntimeVehicleViewer({
                 </span>
               ))}
             </div>
-            <small>
+            {preview.targetKind !== "command-aircraft" ? <small>
               <span><i data-kind="spaced-armor" />附加装甲</span>
               <span><i data-kind="no-penetration" />无敌区</span>
               <span><i data-kind="gun-collision" />武器/碰撞轮廓</span>
               <span><i data-kind="component-only-damage" />可损坏部件</span>
               <span><i data-kind="engine" />发动机</span>
               <span><i data-kind="ammo-rack" />弹药架</span>
-            </small>
+            </small> : null}
           </div>
         </div>
       ) : null}
@@ -12726,11 +12748,15 @@ export function RuntimeVehicleViewer({
           <button
             className="viewer-global-weapon-fallback"
             type="button"
+            data-state={globalAttackLibraryState}
+            title={globalAttackLibraryState === "error" ? attackLibraryError : undefined}
             disabled={globalAttackLibraryState === "loading"}
             onClick={requestGlobalAttackLibrary}
           >
             {globalAttackLibraryState === "loading"
               ? "正在载入武器选择器…"
+              : globalAttackLibraryState === "error"
+                ? "武器选择器载入失败 · 点击重试"
               : "当前载具没有独立武器分片 · 载入全站武器选择器"}
           </button>
         ) : (
@@ -12853,12 +12879,32 @@ export function RuntimeVehicleViewer({
                       disabled={!onModeChange}
                       onClick={() => onModeChange?.(value)}
                     >
-                      {label}
+                      {preview.targetKind === "command-aircraft" && value === "armor" ? "穿透材质" : label}
                     </button>
                 ))}
               </div>
             </div>
             <div className="viewer-flat-control-list">
+            {preview.targetKind === "command-aircraft" ? (
+              <div className="viewer-aircraft-collision-controls">
+                <label>碰撞模型 <select aria-label="飞机碰撞模型" value={collisionQueryKind}
+                  onChange={(event) => {
+                    const query = event.target.value === "simple" ? "simple" : "complex";
+                    clearShotVisual();
+                    setCollisionQueryKind(query);
+                    const current = navigationStateRef.current;
+                    if (current) {
+                      const next = { ...current, collisionQuery: query === "simple" ? "simple" as const : undefined, shots: "" };
+                      navigationStateRef.current = next;
+                      onNavigationStateChangeRef.current?.(next);
+                    }
+                  }}>
+                  <option value="complex">精细碰撞</option>
+                  <option value="simple">简化碰撞</option>
+                </select></label>
+                <p>按所选碰撞材质估算穿透与机体扣血；完整弹道和爆炸伤害尚未验证。</p>
+              </div>
+            ) : null}
             <div className="viewer-protection-primary" data-enabled={protectionMapAvailable}>
               <button
                 className="viewer-protection-switch viewer-state-switch"
@@ -13040,7 +13086,7 @@ export function RuntimeVehicleViewer({
                 <span data-protection="ammo">弹药架</span>
               </div>
             ) : null}
-            <div className="viewer-crew-occupant-row">
+            {preview.targetKind !== "command-aircraft" ? <div className="viewer-crew-occupant-row">
               <button
                 className="viewer-protection-switch viewer-state-switch viewer-crew-occupant-switch"
                 type="button"
@@ -13131,7 +13177,7 @@ export function RuntimeVehicleViewer({
                   ) : null}
                 </div>
               ) : null}
-            </div>
+            </div> : null}
             <div className="viewer-interaction-hint viewer-interaction-hint--protection" aria-label="3D 操作提示">
               <span>左键旋转</span><span>右键拖动</span><span>滚轮缩放</span>
             </div>
@@ -13188,7 +13234,7 @@ export function RuntimeVehicleViewer({
               >
                 相机
               </button>
-              <button
+              {driverView ? <button
                 type="button"
                 role="tab"
                 data-target-kind="driver"
@@ -13197,7 +13243,7 @@ export function RuntimeVehicleViewer({
                 onClick={() => setControlTargetId(DRIVER_CONTROL_TARGET_ID)}
               >
                 驾驶 · F1
-              </button>
+              </button> : null}
               {runtimeTurretStations.length > 0 ? (
                 <div
                   className="viewer-control-target-slider__station-group"
@@ -13253,7 +13299,7 @@ export function RuntimeVehicleViewer({
                     applyInfantryDistancePreviewRef.current?.(distanceM)}
                   onFree={() => enterFreeCameraViewRef.current?.()}
                 />
-                <div className="viewer-physical-pose-row">
+                {preview.targetKind !== "command-aircraft" ? <div className="viewer-physical-pose-row">
                   <button
                     className="viewer-state-switch viewer-physical-pose-switch"
                     type="button"
@@ -13273,7 +13319,7 @@ export function RuntimeVehicleViewer({
                       ? physicalPoseActive ? "开启" : "关闭"
                       : "无数据"}</strong>
                   </button>
-                </div>
+                </div> : null}
               </div>
             ) : controlTargetId === DRIVER_CONTROL_TARGET_ID ? (
               <div
@@ -13479,6 +13525,20 @@ export function RuntimeVehicleViewer({
               </span>
             </div>
           </div>
+          {actorDamageEstimate ? (
+            <section className="viewer-shot-outcome-summary" aria-label="机体伤害估算">
+              <div className="viewer-shot-outcome-summary__total">
+                <span className="viewer-shot-outcome-summary__total-value">
+                  <strong>{metricText(actorDamageEstimate.damage)}</strong><sub>估算机体伤害</sub>
+                </span>
+                <span className="viewer-shot-outcome-summary__hull-health"
+                  aria-label={`估算机体剩余血量 ${metricText(actorDamageEstimate.remainingHealth)}，总血量 ${metricText(actorDamageEstimate.maxHealth)}`}>
+                  <i aria-hidden="true"><b style={{width:`${actorDamageEstimate.remainingHealth / actorDamageEstimate.maxHealth * 100}%`}} /></i>
+                  <strong>{metricText(actorDamageEstimate.remainingHealth)} / {metricText(actorDamageEstimate.maxHealth)}</strong>
+                </span>
+              </div>
+            </section>
+          ) : null}
           {effectiveDamageEvents.length > 0 ? (
             <section
               className="viewer-shot-outcome-summary"
@@ -13496,7 +13556,7 @@ export function RuntimeVehicleViewer({
                   <span
                     className="viewer-shot-outcome-summary__hull-health"
                     title="车体剩余血量 / 总血量"
-                    aria-label={`车体剩余血量 ${metricText(hullRemainingHealth)}，总血量 ${metricText(hullDamageOutcome.maxHealth)}`}
+                    aria-label={`${hullDamageOutcome.poolKind === "actor" ? "机体" : "车体"}剩余血量 ${metricText(hullRemainingHealth)}，总血量 ${metricText(hullDamageOutcome.maxHealth)}`}
                   >
                     <i aria-hidden="true">
                       <b style={{ width: `${hullHealthPercent}%` }} />
@@ -13622,7 +13682,9 @@ export function RuntimeVehicleViewer({
                     <span className="viewer-causal-spine__metrics">
                       <span
                         data-metric="thickness"
-                        title={layer.armorThicknessMm === 0
+                        title={layer.armorThicknessMm === null && layer.penetrated === null
+                          ? "该表面的穿透材质尚未确认"
+                          : layer.armorThicknessMm === 0
                           ? isNoPenetration
                             ? "该表面明确禁用穿透；0 mm 不会覆盖 NoPen 规则"
                             : layer.penetrated === true
@@ -13631,7 +13693,9 @@ export function RuntimeVehicleViewer({
                           : "装甲厚度"}
                         aria-label={`装甲厚度 ${metricText(layer.armorThicknessMm)} 毫米`}
                       >
-                        {layer.armorThicknessMm === null ? "不可穿透" : layer.armorThicknessMm.toFixed(1)}
+                        {layer.armorThicknessMm === null
+                          ? layer.penetrated === null ? "未知" : "不可穿透"
+                          : layer.armorThicknessMm.toFixed(1)}
                       </span>
                       <span
                         data-metric="remaining"

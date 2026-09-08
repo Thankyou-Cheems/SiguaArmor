@@ -65,7 +65,7 @@ export interface EditorNativeHealthPoolRecord {
 
 export interface EditorNativeOwnerRecord {
   ownerId: string;
-  kind: "vehicle-root" | "seat";
+  kind: "vehicle-root" | "seat" | "actor-root";
   parentOwnerIndex: number | null;
   healthPoolIndex: number | null;
 }
@@ -149,6 +149,11 @@ export interface EditorNativeCapabilityRecord {
 }
 
 export interface EditorNativeModel {
+  damageReceiver?: {
+    kind: "actor-health-component";
+    healthPoolIndex: number;
+    damageMultiplier: number;
+  };
   vehicleId?: string;
   owners?: readonly EditorNativeOwnerRecord[];
   healthPools: readonly EditorNativeHealthPoolRecord[];
@@ -349,6 +354,18 @@ export function editorNativeEffectiveDamageAmount(event: EditorNativeDamageEvent
     Number.isFinite(event.effectiveDamage)
     ? Math.max(0, event.effectiveDamage)
     : 0;
+}
+
+/** A separate display estimate; partial evidence never becomes resolved damage. */
+export function editorNativeActorDamageEstimate(result: EditorNativeShotResult) {
+  const events = result.damage.filter(event => event.poolKind === "actor" && event.damageKind === "point");
+  if (events.length !== 1) return null;
+  const event = events[0];
+  if (!["partial", "resolved"].includes(event.certainty) ||
+      event.maxHealth === null || !Number.isFinite(event.maxHealth) || event.maxHealth <= 0 ||
+      !Number.isFinite(event.poolDamage) || event.poolDamage < 0) return null;
+  const damage = Math.min(event.maxHealth, event.poolDamage);
+  return { damage, maxHealth: event.maxHealth, remainingHealth: event.maxHealth - damage };
 }
 
 export function isEditorNativeVehicleDamageEvent(event: EditorNativeDamageEvent) {
@@ -1327,7 +1344,16 @@ export function simulateEditorNativeShot({
       addUnknown(unknowns, `${pool.poolId} damage type routing is unresolved`);
       return false;
     }
-    const factors = directDamageFactors(model, poolIndex, damageTypePath, unknowns);
+    const receiver = model.damageReceiver;
+    if (receiver && (receiver.kind !== "actor-health-component" ||
+        receiver.healthPoolIndex !== poolIndex || pool.kind !== "actor" ||
+        !Number.isFinite(receiver.damageMultiplier) || receiver.damageMultiplier < 0)) {
+      addUnknown(unknowns, "Actor health receiver identity is unresolved");
+      return false;
+    }
+    const factors = receiver
+      ? { modifier: receiver.damageMultiplier, modifierSourcePoolIndex: poolIndex }
+      : directDamageFactors(model, poolIndex, damageTypePath, unknowns);
     if (factors === null) return false;
     const maxHealth = readField(pool.maxHealth);
     const poolDamage = f32(f32(Math.max(0, incomingDamage)) * f32(factors.modifier));

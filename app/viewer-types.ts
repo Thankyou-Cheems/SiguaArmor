@@ -3,6 +3,7 @@ export type ViewerAssetMode = "exterior" | "armor" | "interior";
 export interface ViewerNavigationState {
   view: ViewerAssetMode;
   protection: boolean;
+  collisionQuery?: "simple";
   attacker: string;
   weapon: string;
   weaponIndex: number | null;

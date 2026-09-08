@@ -56,13 +56,13 @@ export interface HitSceneCoordinateSystem {
   mapping: "[ueX/100, -ueY/100, ueZ/100]";
   determinant: -1;
   matrixOrder: "column-major";
-  triangleWinding: "editor-source-preserved";
+  triangleWinding: "editor-source-preserved" | "native-outward";
   faceNormals: "recomputed-from-editor-source-winding";
 }
 
 export interface HitSceneOwner {
   ownerId: string;
-  kind: "vehicle-root" | "seat";
+  kind: "vehicle-root" | "seat" | "actor-root";
   parentOwnerIndex: number | null;
   seatIndex: number | null;
   socketName: Evidence<string>;
@@ -81,6 +81,7 @@ export interface HitSceneDamageModifier {
 }
 
 export type HitSceneHealthPoolKind =
+  | "actor"
   | "hull"
   | "seat"
   | "engine"
@@ -224,6 +225,11 @@ export interface HitSceneRecordCounts {
 }
 
 export interface HitSceneRecordHeader {
+  damageReceiver?: {
+    kind: "actor-health-component";
+    healthPoolIndex: number;
+    damageMultiplier: number;
+  };
   formatVersion: HitSceneRecordFormatVersion;
   vehicleId: string;
   officialNameZh: string;

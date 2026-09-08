@@ -173,6 +173,7 @@ interface WikiVehicleCommunityAliases {
 }
 
 interface WikiSupportAirBinding {
+  runtimeVehicleRef?: string;
   bindingKey: string;
   cardId: string;
   rawName: string;
@@ -696,7 +697,7 @@ export function buildFactionCatalogFromWiki(
             supportAirBinding.cardId !== wikiSourceCardId ||
             supportAirBinding.rawName !== variant.sourceRawName ||
             variant.vehicleRef !== null ||
-            variant.runtimeVehicleRef !== null ||
+            (supportAirBinding.runtimeVehicleRef ?? null) !== variant.runtimeVehicleRef ||
             visualArtifactRef !== variant.visualArtifactRef
           ) {
             throw new Error(`SiguaWiki 空中单位绑定不匹配：${variant.sourceRawName}`);
@@ -705,7 +706,7 @@ export function buildFactionCatalogFromWiki(
             sourceRawName: variant.sourceRawName,
             catalogBindingRef: null,
             vehicleRef: null,
-            runtimeVehicleRef: null,
+            runtimeVehicleRef: supportAirBinding.runtimeVehicleRef ?? null,
             visualArtifactRef: variant.visualArtifactRef,
             alias: variant.alias,
             searchTerms: variant.searchTerms,

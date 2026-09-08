@@ -288,7 +288,9 @@ export interface RuntimeVehiclePreview {
   crewSeat: RuntimeCrewSeatBinding | null;
   stationGraph: CompiledVehicleStationGraph | null;
   gunnerSight: CompiledVehicleGunnerSight | null;
-  driverView: VehicleDriverViewRecord;
+  driverView: VehicleDriverViewRecord | null;
+  targetKind?: "command-aircraft";
+  simpleHit?: RuntimeVehiclePreview["hit"];
 }
 
 interface WikiRuntimeVisual {
@@ -306,6 +308,8 @@ interface WikiRuntimeVisual {
 }
 
 interface WikiVehicleRuntimeVariant {
+  targetKind?: "command-aircraft";
+  simpleHit?: WikiVehicleRuntimeVariant["hit"];
   rawName: string;
   runtimeVehicleRef: string;
   generatedClass: string;
@@ -551,7 +555,7 @@ function toRuntimePreview(
   descriptor: WikiRuntimeVisual,
   stationGraphRecord: VehicleStationGraphRecord | null,
   gunnerSightRecord: VehicleGunnerSightRecord | null,
-  driverViewRecord: VehicleDriverViewRecord,
+  driverViewRecord: VehicleDriverViewRecord | null,
 ): RuntimeVehiclePreview {
   if (
     descriptor.status !== "complete" ||
@@ -568,7 +572,12 @@ function toRuntimePreview(
   const skeletalPlacements = placements.filter((placement) =>
     placement.componentClassPath.includes("SkeletalMeshComponent"),
   );
-  const stationGraph = compileVehicleStationGraph(
+  const aircraft = runtimeVariant.targetKind === "command-aircraft";
+  if (aircraft && (runtimeVariant.stationGraph || runtimeVariant.crewSeat ||
+      runtimeVariant.visualAttachment || runtimeVariant.radialQuery || !runtimeVariant.hit || !runtimeVariant.simpleHit)) {
+    throw new Error(`SiguaWiki aircraft receiver mapping is invalid for ${cardId} / ${rawName}`);
+  }
+  const stationGraph = aircraft ? null : compileVehicleStationGraph(
     stationGraphRecord,
     runtimeVariant.stationGraph,
     {
@@ -581,24 +590,26 @@ function toRuntimePreview(
     },
     placements,
   );
-  if (!stationGraph) {
+  if (!aircraft && !stationGraph) {
     throw new Error(`SiguaWiki station graph is missing for ${cardId} / ${rawName}`);
   }
   const visualAttachment =
-    stationGraph.visualAttachment as RuntimeVisualAttachmentBinding;
-  const crewSeat = stationGraph.crewSeat;
-  const gunnerSight = compileVehicleGunnerSight(
+    (stationGraph?.visualAttachment ?? null) as RuntimeVisualAttachmentBinding | null;
+  const crewSeat = stationGraph?.crewSeat ?? null;
+  const gunnerSight = stationGraph ? compileVehicleGunnerSight(
     gunnerSightRecord,
     stationGraph,
-  );
-  const driverView = projectVehicleDriverView(driverViewRecord, {
+  ) : null;
+  const driverView = stationGraph && driverViewRecord ? projectVehicleDriverView(driverViewRecord, {
     sourceVehicleRef: stationGraph.sourceVehicleRef,
     rawName,
     generatedClass: runtimeVariant.generatedClass,
-  });
+  }) : null;
   const hit = hitForRuntimeVariant(runtimeVariant);
   return {
     cardId,
+    ...(aircraft ? { targetKind: "command-aircraft" as const } : {}),
+    ...(aircraft ? { simpleHit: hitForRuntimeVariant({ ...runtimeVariant, hit: runtimeVariant.simpleHit ?? null }) } : {}),
     status: "visual-ready",
     statusLabel: "SIGUAWIKI / WEB-USABLE",
     variantRawName: rawName,
@@ -713,7 +724,7 @@ export async function runtimePreviewForCatalogBinding(
           ) as Promise<VehicleDriverViewRecord>,
         ])
       : [null, null];
-    if (!driverViewRecord) {
+    if (!driverViewRecord && runtimeVariant.targetKind !== "command-aircraft") {
       throw new Error(`SiguaWiki driver view is missing for ${cardId} / ${rawName}`);
     }
     return toRuntimePreview(

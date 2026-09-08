@@ -316,7 +316,7 @@ test("effective damage uses the selected B health-rail summary above the causal 
   assert.match(viewerSource, /<strong>\{metricText\(totalEffectiveDamage\)\}<\/strong>[\s\S]*?<sub>有效伤害<\/sub>/u);
   assert.match(
     viewerSource,
-    /const totalEffectiveDamage = effectiveDamageEvents[\s\S]*?\.filter\(\(event\) => event\.poolKind === "hull"\)[\s\S]*?\.reduce/u,
+    /const totalEffectiveDamage = effectiveDamageEvents[\s\S]*?\.filter\(\(event\) => event\.poolKind === "hull" \|\| event\.poolKind === "actor"\)[\s\S]*?\.reduce/u,
   );
   assert.match(
     viewerSource,

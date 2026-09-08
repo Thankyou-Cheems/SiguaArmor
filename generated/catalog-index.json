@@ -10147,8 +10147,8 @@
           "sourceRawName": "BP_CommandActor_UAV_MQ9",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-e79eff0a4d3905fd5abe9b068f8dd9fe3c5d588900c768f8077b14b1ae5eb0b2",
+          "runtimeVehicleRef": "vehicle-6980977ec587fbf069ff9988a4171184fc8da923542d92fe76f1f4bfe22a1faa",
+          "visualArtifactRef": "visual-artifact-82e7fcf4ae6cd9657876e3acb49f62404c0240b491dda5f47d8e75b9c271fc41",
           "cardId": "adf--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "adf--mq9--uav--commandactor-uav-mq9"
         }
@@ -10168,8 +10168,8 @@
           "sourceRawName": "BP_CommandActor_FA18_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-24dbeeb206a78f84ddd0f1c361939c05566d0ed87b8f86ec2d354104ad6f84f9",
+          "runtimeVehicleRef": "vehicle-0106401c2b5abc6d7f44815d89e1d94393129e8f03462fe0fe5b384818e9004a",
+          "visualArtifactRef": "visual-artifact-78c360d5c7f0718036b17fcb4f089a0447bb187fd2319735fa69c092070005ad",
           "cardId": "adf--fa18--cas--commandactor-fa18-strafe",
           "routeSlug": "adf--fa18--cas--commandactor-fa18-strafe"
         },
@@ -10177,8 +10177,8 @@
           "sourceRawName": "BP_CommandActor_FA18_Rockets_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-dad7b8b14897e986173a8c6007ea5e22bfae1bc47f430ad6f573a8bafa4d4213",
+          "runtimeVehicleRef": "vehicle-530dd79b45f8c56876144b6bb26b9b6c4fc30b4bbaeaab26c6df3db9222f28ab",
+          "visualArtifactRef": "visual-artifact-5ddfadf7db1e64bdc493cefc87d0dd0354e392e01b305d15a452660a17242ec6",
           "cardId": "adf--fa18--cas--commandactor-fa18-rockets-strafe",
           "routeSlug": "adf--fa18--cas--commandactor-fa18-rockets-strafe"
         }
@@ -10198,8 +10198,8 @@
           "sourceRawName": "BP_CommandActor_UAV_TB2",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-45da972cf04d880cfb436c6e289ac4ae2c1c53f597b40e984fa6175f20c5b82a",
+          "runtimeVehicleRef": "vehicle-4dabc7cd53d3aa4dab7027c5cd6bf63b7ee259fd2bf106ae3cb353c4d4316311",
+          "visualArtifactRef": "visual-artifact-1e176288c25289038783ea1f6fcfb0d01a82473db5c00a95bec4d52899510354",
           "cardId": "afu--tb2--uav--commandactor-uav-tb2",
           "routeSlug": "afu--tb2--uav--commandactor-uav-tb2"
         }
@@ -10219,8 +10219,8 @@
           "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-f1f74fca66e822514755d7a4fa5eaf54fd44f557b3be6210dd4354c37981f1c8",
+          "runtimeVehicleRef": "vehicle-70bca98896751dea1c50e85d580d02cbab030ccb081cb5f6e22a3d3591128ccf",
+          "visualArtifactRef": "visual-artifact-8fd9b43b02f06019cbeb600ff522a52ded9146f188fdcac839c922a7a234737b",
           "cardId": "afu--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "afu--su25--cas--commandactor-su25-bomb-strafe"
         },
@@ -10228,8 +10228,8 @@
           "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-e31ee62f0c3bb4bac54008643d296cce41a65424a44e20fefaed8aaee9f65e86",
+          "runtimeVehicleRef": "vehicle-79bfb987d63384f8e0ece0f03ac62825db466749c4c90c6046c2bf2034d03919",
+          "visualArtifactRef": "visual-artifact-e9f23065e44fc455bab0bf00de5ec97af8563a841702a8f92a35f0ecb099e050",
           "cardId": "afu--su25--cas--commandactor-su25-rockets-strafe",
           "routeSlug": "afu--su25--cas--commandactor-su25-rockets-strafe"
         }
@@ -10270,8 +10270,8 @@
           "sourceRawName": "BP_CommandActor_UAV_MQ9",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-2e91fdf41742baae8e080d5f50235af1620f51a627346bcba8d2cffaa18ab505",
+          "runtimeVehicleRef": "vehicle-6980977ec587fbf069ff9988a4171184fc8da923542d92fe76f1f4bfe22a1faa",
+          "visualArtifactRef": "visual-artifact-5e09e1a99c63af4974b2913bc9b88a5d24267c08a35fe2d663b8bb7e07a01698",
           "cardId": "baf--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "baf--mq9--uav--commandactor-uav-mq9"
         }
@@ -10291,8 +10291,8 @@
           "sourceRawName": "BP_CommandActor_A10_Strafe_2",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-5a4ad2c773493ba5573a7715d0fa4482cb711a8262c049c7e1954aa5dd78c153",
+          "runtimeVehicleRef": "vehicle-70350146b4cb85440c98a02b95f74e086a8b48a962a97b02d75ab3790cddf93e",
+          "visualArtifactRef": "visual-artifact-4d1723be759d6857dc36eb5d56d48acafc010df32f6831442e3d9cb8746a7374",
           "cardId": "baf--a10--cas--commandactor-a10-strafe-2",
           "routeSlug": "baf--a10--cas--commandactor-a10-strafe-2"
         }
@@ -10312,8 +10312,8 @@
           "sourceRawName": "BP_CommandActor_UAV_MQ9",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-eb8c923752fbfd1e68a297ee69e9dbfa6ef952d83e2001635d3383f1f57bb5ec",
+          "runtimeVehicleRef": "vehicle-6980977ec587fbf069ff9988a4171184fc8da923542d92fe76f1f4bfe22a1faa",
+          "visualArtifactRef": "visual-artifact-bcbbcfd543556af91176f8fdaf50901bda6012a4898b4af7aa572e4c16c3bfd0",
           "cardId": "caf--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "caf--mq9--uav--commandactor-uav-mq9"
         }
@@ -10333,8 +10333,8 @@
           "sourceRawName": "BP_CommandActor_A10_Strafe_2",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-6c9a501dc8db4a2b2bf67aa7c400aeb62345f0255f3b6e1c52d22b46405fe357",
+          "runtimeVehicleRef": "vehicle-70350146b4cb85440c98a02b95f74e086a8b48a962a97b02d75ab3790cddf93e",
+          "visualArtifactRef": "visual-artifact-b8573b1f77b99c037fbd38be5a4fd8a03bb3e34eb5b2179c6a760b68ee49afd0",
           "cardId": "caf--a10--cas--commandactor-a10-strafe-2",
           "routeSlug": "caf--a10--cas--commandactor-a10-strafe-2"
         }
@@ -10354,8 +10354,8 @@
           "sourceRawName": "BP_CommandActor_CF18_Bomb_Strafe_NEW",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-2b559d774ec205ecd4185bb1da9b79d131d3e67a46aa84e9d7a7e48c73b38008",
+          "runtimeVehicleRef": "vehicle-25ec073ea61e59e006ce3c66887213b9e93950678e9ffa1bbbc03e6726e58b4f",
+          "visualArtifactRef": "visual-artifact-bdd4cdcf5ec2dcb99c2ba765c516d826e6eeecff4a5e54c43fd44b9be4be29f6",
           "cardId": "caf--cf18--cas--commandactor-cf18-bomb-strafe-new",
           "routeSlug": "caf--cf18--cas--commandactor-cf18-bomb-strafe-new"
         },
@@ -10363,8 +10363,8 @@
           "sourceRawName": "BP_CommandActor_FA18_Rockets_Strafe_CAF",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-c5d497c61e84f980db70bd9c064dbd2af213603efc2d6e51238e99835187d2b4",
+          "runtimeVehicleRef": "vehicle-e709ecd755d34b8bcc084f8251e2761b7f4b58961f2446d4cbb990a401a4e81a",
+          "visualArtifactRef": "visual-artifact-a494207767ae19c7c656e0f165b41dcb3c9923a818c5130232b14af5574276a5",
           "cardId": "caf--cf18--cas--commandactor-fa18-rockets-strafe-caf",
           "routeSlug": "caf--cf18--cas--commandactor-fa18-rockets-strafe-caf"
         }
@@ -10414,8 +10414,8 @@
           "sourceRawName": "BP_CommandActor_UAV_Pchela",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-84cd4f8190542a45044bfac42a5e3c03e961462fced277c00b4f8e4a706f0316",
+          "runtimeVehicleRef": "vehicle-de83baa49420f9c350dc50585bcfec6d9aeeb9c500a3be6536f101318336416d",
+          "visualArtifactRef": "visual-artifact-7545623eb65c10f517cd9251928d92a44828dc972e20bbd26a33ccba3bfd8971",
           "cardId": "gfi--pchela--uav--commandactor-uav-pchela",
           "routeSlug": "gfi--pchela--uav--commandactor-uav-pchela"
         }
@@ -10435,8 +10435,8 @@
           "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-b86cf7ca458331dd0f9b83f2a5df71ecc280049c3f6a79d1355615aecf7a2f81",
+          "runtimeVehicleRef": "vehicle-70bca98896751dea1c50e85d580d02cbab030ccb081cb5f6e22a3d3591128ccf",
+          "visualArtifactRef": "visual-artifact-fe87f319a7f7bc51ec0b32707d18f8f2730af088be43bfc4b6fe383c0cadaec3",
           "cardId": "gfi--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "gfi--su25--cas--commandactor-su25-bomb-strafe"
         },
@@ -10444,8 +10444,8 @@
           "sourceRawName": "BP_CommandActor_SU25_GFI_Rockets_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-208aa16aa16ac54518e80e87479203147d5264a24da79c2ac6402d377436753a",
+          "runtimeVehicleRef": "vehicle-5557d310c2f04b481727f42e46895818c5e830285f919225d1d8053ce4d2f775",
+          "visualArtifactRef": "visual-artifact-1a60fbf9b59467ce983f5d4baf4989a98817532733b44a38584990bae27d183a",
           "cardId": "gfi--su25--cas--commandactor-su25-gfi-rockets-strafe",
           "routeSlug": "gfi--su25--cas--commandactor-su25-gfi-rockets-strafe"
         }
@@ -10516,8 +10516,8 @@
           "sourceRawName": "BP_CommandActor_UAV_CH4A",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-c16a645ba8028900ba24bbf8e220aed045a05f93c08e92bfbeb3ab64a31f5cb4",
+          "runtimeVehicleRef": "vehicle-dac9dcc701bfa9a37f902e3a35ca678238721ab7372a62510599127e09e97f77",
+          "visualArtifactRef": "visual-artifact-d3599409afc5585feeb6ec116e1b50c0fe84dc57cbf8509c6619c69dcffe0b16",
           "cardId": "pla--ch4a--uav--commandactor-uav-ch4a",
           "routeSlug": "pla--ch4a--uav--commandactor-uav-ch4a"
         }
@@ -10537,8 +10537,8 @@
           "sourceRawName": "BP_CommandActor_JH7A_Rockets_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-21562bd53ffae767ac3a18c00ed542ba8540dffdc73765f399dd0f289a50395d",
+          "runtimeVehicleRef": "vehicle-f05a88c5abbf409b5573af4d28e6e2f62aef4e252ee2218b2a68ec01ae9b05d2",
+          "visualArtifactRef": "visual-artifact-c7f35108715dbf0d3f8aa0860a4e8aa21999131cf8a5da7beabd59e6754c18f8",
           "cardId": "pla--jh7a--cas--commandactor-jh7a-rockets-strafe",
           "routeSlug": "pla--jh7a--cas--commandactor-jh7a-rockets-strafe"
         }
@@ -10600,8 +10600,8 @@
           "sourceRawName": "BP_CommandActor_UAV_CH4A",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-014667927a65b33d683cb9ca857bed4389763a1659476d925831babf19ddfb14",
+          "runtimeVehicleRef": "vehicle-dac9dcc701bfa9a37f902e3a35ca678238721ab7372a62510599127e09e97f77",
+          "visualArtifactRef": "visual-artifact-bc8053443d8c923f96673109f6567d707a2b84944c9ff713b0bee7321211dc12",
           "cardId": "planmc--ch4a--uav--commandactor-uav-ch4a",
           "routeSlug": "planmc--ch4a--uav--commandactor-uav-ch4a"
         }
@@ -10621,8 +10621,8 @@
           "sourceRawName": "BP_CommandActor_JH7A_Rockets_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-5a121d83cff8a7cd1e0c1c4580df0008d43036d02310b6e82c7713a9fa44ac04",
+          "runtimeVehicleRef": "vehicle-f05a88c5abbf409b5573af4d28e6e2f62aef4e252ee2218b2a68ec01ae9b05d2",
+          "visualArtifactRef": "visual-artifact-f4692cccad03ea8a797a6bf31e6176d2c47fcd28b3ef0e1feb9d6b51b1637fac",
           "cardId": "planmc--jh7a--cas--commandactor-jh7a-rockets-strafe",
           "routeSlug": "planmc--jh7a--cas--commandactor-jh7a-rockets-strafe"
         }
@@ -10663,8 +10663,8 @@
           "sourceRawName": "BP_CommandActor_UAV_Pchela",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-d7a9473e21c49eb9703b9670e48fe7098c1347f2e09bf930058dad81383b32ba",
+          "runtimeVehicleRef": "vehicle-de83baa49420f9c350dc50585bcfec6d9aeeb9c500a3be6536f101318336416d",
+          "visualArtifactRef": "visual-artifact-bc963ae6fcc74c780b6c75ac6e8e23969d085a62669fffb183ca6b8f6678eab4",
           "cardId": "rgf--pchela--uav--commandactor-uav-pchela",
           "routeSlug": "rgf--pchela--uav--commandactor-uav-pchela"
         }
@@ -10684,8 +10684,8 @@
           "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-54289559db64bbb142530014eed904d652fd13517a3b30be5321fb7da5b0815c",
+          "runtimeVehicleRef": "vehicle-70bca98896751dea1c50e85d580d02cbab030ccb081cb5f6e22a3d3591128ccf",
+          "visualArtifactRef": "visual-artifact-b2d02d53d23b54d1e8af63c89ba5e14cdecc5a7d2cce6d362a2fdb516be5c855",
           "cardId": "rgf--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "rgf--su25--cas--commandactor-su25-bomb-strafe"
         },
@@ -10693,8 +10693,8 @@
           "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-8c4f460ce8334e859a40f53aed65e59f3d74dce61dc9ba2d01535a5a1f493c42",
+          "runtimeVehicleRef": "vehicle-79bfb987d63384f8e0ece0f03ac62825db466749c4c90c6046c2bf2034d03919",
+          "visualArtifactRef": "visual-artifact-ace29371f09fc589d57add837a2939f610cc37ecb95c9cc2ddef302fec74e038",
           "cardId": "rgf--su25--cas--commandactor-su25-rockets-strafe",
           "routeSlug": "rgf--su25--cas--commandactor-su25-rockets-strafe"
         }
@@ -10735,8 +10735,8 @@
           "sourceRawName": "BP_CommandActor_UAV_TB2",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-e0f4f044e5b1b15a7090ddb0eb38ae5bf4f57f540e2d6924ce87a7488ef30462",
+          "runtimeVehicleRef": "vehicle-4dabc7cd53d3aa4dab7027c5cd6bf63b7ee259fd2bf106ae3cb353c4d4316311",
+          "visualArtifactRef": "visual-artifact-4256fcac6fb383b77342fc47687c36ebd3b05dd9b14239fa6947866e3dd92554",
           "cardId": "tlf--tb2--uav--commandactor-uav-tb2",
           "routeSlug": "tlf--tb2--uav--commandactor-uav-tb2"
         }
@@ -10756,8 +10756,8 @@
           "sourceRawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-b4c500731860cf5e7e33eb568360e21a40d38abfddac86371066f6a31a2e499d",
+          "runtimeVehicleRef": "vehicle-cc14c1ece6ff4cd681b3842e831e7fad7979475fca761daaa96fce579d5e3ed7",
+          "visualArtifactRef": "visual-artifact-626c2cf6dab4d96aedb1b7decfb2c04a73d1986c32df003b2746fb5cbdca175b",
           "cardId": "tlf--f16--cas--commandactor-f16-rockets-strafe-tlf",
           "routeSlug": "tlf--f16--cas--commandactor-f16-rockets-strafe-tlf"
         }
@@ -10777,8 +10777,8 @@
           "sourceRawName": "BP_CommandActor_UAV_MQ9",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-c291311e6bf1a99e6f70ed3902e60c59b485006b0738a821706ff11665303f42",
+          "runtimeVehicleRef": "vehicle-6980977ec587fbf069ff9988a4171184fc8da923542d92fe76f1f4bfe22a1faa",
+          "visualArtifactRef": "visual-artifact-6b9c1d3795cdf32d0820e9870dfb3e82645f272f840bb138728aaecae49f3b34",
           "cardId": "usa--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "usa--mq9--uav--commandactor-uav-mq9"
         }
@@ -10798,8 +10798,8 @@
           "sourceRawName": "BP_CommandActor_A10_Strafe_2",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-509be3788a097a23c2c1e4d0a2c8153aed2b5b6645984c3357fd16da18c0a65b",
+          "runtimeVehicleRef": "vehicle-70350146b4cb85440c98a02b95f74e086a8b48a962a97b02d75ab3790cddf93e",
+          "visualArtifactRef": "visual-artifact-7ed5e10cd43bb514b048f4d6a82b382a1b7c0c5bbc21f786036edc2986fbc948",
           "cardId": "usa--a10--cas--commandactor-a10-strafe-2",
           "routeSlug": "usa--a10--cas--commandactor-a10-strafe-2"
         }
@@ -10819,8 +10819,8 @@
           "sourceRawName": "BP_CommandActor_UAV_MQ9",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-f4cdf74a58e39433518d50a496e2166f4c00b073c4a3cc2c42188a9ae4f96347",
+          "runtimeVehicleRef": "vehicle-6980977ec587fbf069ff9988a4171184fc8da923542d92fe76f1f4bfe22a1faa",
+          "visualArtifactRef": "visual-artifact-778b9b070b6520db8f42dc64123852dbca5aa64130bbf0e5ccb330f865b679d4",
           "cardId": "usmc--mq9--uav--commandactor-uav-mq9",
           "routeSlug": "usmc--mq9--uav--commandactor-uav-mq9"
         }
@@ -10841,8 +10841,8 @@
           "sourceRawName": "BP_CommandActor_FA18_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-24dbeeb206a78f84ddd0f1c361939c05566d0ed87b8f86ec2d354104ad6f84f9",
+          "runtimeVehicleRef": "vehicle-0106401c2b5abc6d7f44815d89e1d94393129e8f03462fe0fe5b384818e9004a",
+          "visualArtifactRef": "visual-artifact-78c360d5c7f0718036b17fcb4f089a0447bb187fd2319735fa69c092070005ad",
           "cardId": "usmc--fa18--cas--commandactor-fa18-strafe",
           "routeSlug": "usmc--fa18--cas--commandactor-fa18-strafe"
         }
@@ -10862,8 +10862,8 @@
           "sourceRawName": "BP_CommandActor_UAV_Pchela",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-427f8658310f489524933f5b1e48cc48220ff782c16b05b75a788937771e09ab",
+          "runtimeVehicleRef": "vehicle-de83baa49420f9c350dc50585bcfec6d9aeeb9c500a3be6536f101318336416d",
+          "visualArtifactRef": "visual-artifact-71b1eff306da5efe8407666bf7430c012ae9786a052683f7eec48780b813ba76",
           "cardId": "vdv--pchela--uav--commandactor-uav-pchela",
           "routeSlug": "vdv--pchela--uav--commandactor-uav-pchela"
         }
@@ -10883,8 +10883,8 @@
           "sourceRawName": "BP_CommandActor_SU25_Bomb_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-2dc0e9f31aabe8df69d1e5ab278bc76a0446e693d9d658353bc9bb403293d42b",
+          "runtimeVehicleRef": "vehicle-70bca98896751dea1c50e85d580d02cbab030ccb081cb5f6e22a3d3591128ccf",
+          "visualArtifactRef": "visual-artifact-2729fc09565c95ac010c6768173f176d42bea1f6a8340fe08d901c9f217bdaa1",
           "cardId": "vdv--su25--cas--commandactor-su25-bomb-strafe",
           "routeSlug": "vdv--su25--cas--commandactor-su25-bomb-strafe"
         },
@@ -10892,8 +10892,8 @@
           "sourceRawName": "BP_CommandActor_SU25_Rockets_Strafe",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-b46460252a68fdb51c9c51e05ed39fdd2da64cb95843a6452c66c08f65895d3d",
+          "runtimeVehicleRef": "vehicle-79bfb987d63384f8e0ece0f03ac62825db466749c4c90c6046c2bf2034d03919",
+          "visualArtifactRef": "visual-artifact-0aab78bc8ee69d37c8c223cc6709aaf54b47e37c5796a8c6cc4b858014745dcb",
           "cardId": "vdv--su25--cas--commandactor-su25-rockets-strafe",
           "routeSlug": "vdv--su25--cas--commandactor-su25-rockets-strafe"
         }
@@ -10934,8 +10934,8 @@
           "sourceRawName": "BP_CommandActor_F16_Rockets_Strafe_TLF",
           "catalogBindingRef": null,
           "vehicleRef": null,
-          "runtimeVehicleRef": null,
-          "visualArtifactRef": "visual-artifact-e40e49f02ec83158491bfc1ad68d90c4afdda84fd647315a09e33e899d973eb1",
+          "runtimeVehicleRef": "vehicle-cc14c1ece6ff4cd681b3842e831e7fad7979475fca761daaa96fce579d5e3ed7",
+          "visualArtifactRef": "visual-artifact-84d3633c74f784f6c65dbf573d660c2d2e90f62cab33d8eb8ebb84b3896295ff",
           "cardId": "wpmc--f16--cas--commandactor-f16-rockets-strafe-tlf",
           "routeSlug": "wpmc--f16--cas--commandactor-f16-rockets-strafe-tlf"
         }

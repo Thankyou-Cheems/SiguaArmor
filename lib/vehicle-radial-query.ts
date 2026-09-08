@@ -259,7 +259,7 @@ export function buildVehicleRadialLayerHitSets({
 }: {
   source: VehicleRadialQuerySource;
   model: {
-    owners?: readonly { kind: "vehicle-root" | "seat" }[];
+    owners?: readonly { kind: "vehicle-root" | "seat" | "actor-root" }[];
     components: readonly {
       componentId: string;
       classPath?: string;

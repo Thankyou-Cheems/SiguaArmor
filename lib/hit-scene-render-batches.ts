@@ -305,7 +305,7 @@ export function damageableComponentSurfaceInfo(
   );
   if (directDamagePoolIndex === null) return false;
   const pool = pack.header.healthPools[directDamagePoolIndex];
-  return Boolean(pool && pool.kind !== "hull");
+  return Boolean(pool && pool.kind !== "hull" && pool.kind !== "actor");
 }
 
 export function componentOnlyDamageSurfaceInfo(
