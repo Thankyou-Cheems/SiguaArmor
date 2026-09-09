@@ -6,7 +6,13 @@ import {
   loadWikiVehicleDriverView,
   loadWikiVehicleRuntimeSource,
   loadWikiVehicleStationGraph,
+  loadWikiVehicleGroundedPose,
 } from "../lib/wiki-source";
+import {
+  groundedPoseLocalMatrices,
+  validateRuntimeGroundedPose,
+  type RuntimeGroundedPose,
+} from "../lib/runtime-grounded-pose";
 import type {
   RuntimePlanarSuspensionCoverageResult,
   RuntimePlanarSuspensionPoseRecord,
@@ -47,8 +53,8 @@ interface RuntimeChassisPose {
   generatedClass: string;
   rawName: string;
   promoEntryIds: string[];
-  poseState: "runtime-observed-normal-time";
-  sourceBuildId: "squad-editor-v10.5.0.621766.2374-ue5.7.4";
+  poseState: "runtime-observed-normal-time" | "runtime-observed-rendered-normal-time";
+  sourceBuildId: string;
   pitchDeg: number;
   rollDeg: number;
   heightAbovePlaneCm: number;
@@ -240,6 +246,7 @@ export interface RuntimeVehiclePreview {
   visualVehicleId: string | null;
   note: string;
   chassisPose: RuntimeChassisPose | null;
+  groundedPose?: RuntimeGroundedPose | null;
   suspension: {
     records: RuntimePlanarSuspensionPoseRecord[];
     coverage: RuntimePlanarSuspensionCoverageResult | null;
@@ -556,6 +563,7 @@ function toRuntimePreview(
   stationGraphRecord: VehicleStationGraphRecord | null,
   gunnerSightRecord: VehicleGunnerSightRecord | null,
   driverViewRecord: VehicleDriverViewRecord | null,
+  renderedPose: RuntimeGroundedPose | null,
 ): RuntimeVehiclePreview {
   if (
     descriptor.status !== "complete" ||
@@ -564,11 +572,21 @@ function toRuntimePreview(
   ) {
     throw new Error(`SiguaWiki visual is not web-usable: ${artifactRef}`);
   }
-  const { placements, selection } = applyVisualSelection(
+  const { placements: selectedPlacements, selection } = applyVisualSelection(
     cardId,
     rawName,
     descriptor.placements,
   );
+  const requiresRenderedPose = runtimeVariant.targetKind !== "command-aircraft" &&
+    runtimeVariant.suspension.coverage?.status !== "not-applicable";
+  const bodyPlacements = selectedPlacements.filter(p => (p.name ?? "").trim().toLowerCase() === "vehicle mesh");
+  const groundedPose = renderedPose && bodyPlacements.length > 0 && bodyPlacements.every(p =>
+    groundedPoseLocalMatrices(renderedPose, runtimeVariant.generatedClass, p) !== undefined)
+    ? renderedPose : null;
+  const placements = selectedPlacements.map(p => groundedPose && bodyPlacements.includes(p)
+    ? { ...p, runtimeBonePoseStatus: "observed" as const, runtimeBonePoseNormalTimeSampleCount: 3,
+        runtimeBonePoseReferenceEquivalent: false }
+    : p);
   const skeletalPlacements = placements.filter((placement) =>
     placement.componentClassPath.includes("SkeletalMeshComponent"),
   );
@@ -616,7 +634,19 @@ function toRuntimePreview(
     generatedClass: descriptor.generatedClass,
     visualVehicleId: descriptor.runtimeVehicleRef,
     note: `该变体直接读取 SiguaWiki 的已发布视觉记录。${descriptor.reason}`,
-    chassisPose: runtimeVariant.chassisPose,
+    chassisPose: requiresRenderedPose
+      ? groundedPose ? {
+          targetKey: runtimeVariant.chassisPose?.targetKey ?? rawName,
+          generatedClass: runtimeVariant.generatedClass,
+          rawName,
+          promoEntryIds: runtimeVariant.chassisPose?.promoEntryIds ?? [],
+          poseState: "runtime-observed-rendered-normal-time",
+          sourceBuildId: groundedPose.sourceBuildId,
+          ...groundedPose.chassis,
+          gltfMatrix: groundedPose.chassis.gltfMatrix as RuntimeChassisPoseMatrix,
+        } : null
+      : runtimeVariant.chassisPose,
+    groundedPose,
     suspension: runtimeVariant.suspension,
     runtime: {
       actors: null,
@@ -714,6 +744,12 @@ export async function runtimePreviewForCatalogBinding(
     ) {
       throw new Error(`SiguaWiki station graph mapping differs for ${cardId} / ${rawName}`);
     }
+    const renderedPoseRequest = runtimeVariant.targetKind !== "command-aircraft" &&
+      runtimeVariant.suspension.coverage?.status !== "not-applicable"
+      ? loadWikiVehicleGroundedPose(runtimeVariant.generatedClass)
+          .then(value => value ? validateRuntimeGroundedPose(value, runtimeVariant.generatedClass) : null)
+          .catch(() => null)
+      : Promise.resolve(null);
     const [gunnerSightRecord, driverViewRecord] = stationGraphRecord
       ? await Promise.all([
           loadOptionalWikiVehicleGunnerSight(
@@ -736,6 +772,7 @@ export async function runtimePreviewForCatalogBinding(
       stationGraphRecord,
       gunnerSightRecord,
       driverViewRecord,
+      await renderedPoseRequest,
     );
   });
   previewCache.set(cacheKey, request);

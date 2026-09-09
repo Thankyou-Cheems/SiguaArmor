@@ -14,6 +14,29 @@ const requests = new Map<
   { expiresAt: number; request: Promise<unknown> }
 >();
 
+export async function loadWikiVehicleGroundedPose(generatedClass: string) {
+  const catalog = await fetchJson("/data/vehicles/grounded-poses/v1/catalog.json", 60_000) as {
+    schemaVersion?: string;
+    sourceBuildId?: string;
+    vehicles?: { generatedClass: string; status: string; record?: { url: string; sha256: string; bytes: number } }[];
+  };
+  if (catalog.schemaVersion !== "sigua-vehicle-grounded-pose-index/v1" || !Array.isArray(catalog.vehicles)) {
+    throw new Error("SiguaWiki grounded-pose catalog is invalid");
+  }
+  const matches = catalog.vehicles.filter(row => row.generatedClass === generatedClass);
+  if (matches.length !== 1 || matches[0].status !== "observed") return null;
+  const ref = matches[0].record;
+  if (!ref || !/^[a-f0-9]{64}$/u.test(ref.sha256) ||
+    ref.url !== `/data/vehicles/grounded-poses/v1/records/${ref.sha256}.json` || !Number.isSafeInteger(ref.bytes) || ref.bytes <= 0) {
+    throw new Error("SiguaWiki grounded-pose reference is invalid");
+  }
+  const value = await fetchJson(ref.url, Number.POSITIVE_INFINITY, ref) as { schemaVersion?: string; sourceBuildId?: string };
+  if (value.schemaVersion !== "sigua-vehicle-grounded-pose/v1" || !catalog.sourceBuildId || value.sourceBuildId !== catalog.sourceBuildId) {
+    throw new Error("SiguaWiki grounded-pose source build differs");
+  }
+  return value;
+}
+
 export function wikiUrl(pathname: string) {
   if (!pathname.startsWith("/")) {
     throw new Error(`Invalid SiguaWiki path: ${pathname}`);
@@ -41,8 +64,9 @@ export function wikiProjectileAlgorithmUrl(pathname: string) {
   return wikiUrl(`${pathname}?presentation=projectile-body-v2`);
 }
 
-async function fetchJson(pathname: string, maxAgeMs = Number.POSITIVE_INFINITY) {
-  const existing = requests.get(pathname);
+async function fetchJson(pathname: string, maxAgeMs = Number.POSITIVE_INFINITY, integrity?: { sha256: string; bytes: number }) {
+  const cacheKey = integrity ? `${pathname}\0${integrity.sha256}:${integrity.bytes}` : pathname;
+  const existing = requests.get(cacheKey);
   if (existing && Date.now() < existing.expiresAt) return existing.request;
   const request = fetch(wikiUrl(pathname), {
     credentials: "omit",
@@ -51,13 +75,22 @@ async function fetchJson(pathname: string, maxAgeMs = Number.POSITIVE_INFINITY) 
       if (!response.ok) {
         throw new Error(`SiguaWiki ${pathname} returned HTTP ${response.status}`);
       }
+      if (integrity) {
+        const data = await response.arrayBuffer();
+        const digest = await crypto.subtle.digest("SHA-256", data);
+        const hash = Array.from(new Uint8Array(digest), value => value.toString(16).padStart(2, "0")).join("");
+        if (data.byteLength !== integrity.bytes || hash !== integrity.sha256) {
+          throw new Error(`SiguaWiki ${pathname} failed integrity validation`);
+        }
+        return JSON.parse(new TextDecoder().decode(data)) as unknown;
+      }
       return response.json() as Promise<unknown>;
     })
     .catch((error) => {
-      if (requests.get(pathname)?.request === request) requests.delete(pathname);
+      if (requests.get(cacheKey)?.request === request) requests.delete(cacheKey);
       throw error;
     });
-  requests.set(pathname, { expiresAt: Date.now() + maxAgeMs, request });
+  requests.set(cacheKey, { expiresAt: Date.now() + maxAgeMs, request });
   return request;
 }
 

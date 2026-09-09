@@ -45,6 +45,7 @@ import {
   runtimeSkeletalPoseEvidence,
   type RuntimeSkeletalPoseController,
 } from "../lib/runtime-skeletal-pose";
+import { groundedPoseLocalMatrices } from "../lib/runtime-grounded-pose";
 import {
   carryNestedRuntimeTurretAssemblies,
   clampTurretPitch,
@@ -5258,7 +5259,7 @@ export function RuntimeVehicleViewer({
     displayOverrides?.exteriorSpacedArmorHighlight ??
     localExteriorSpacedArmorHighlight;
   const physicalPoseEnabled =
-    displayOverrides?.physicalPoseEnabled ?? localPhysicalPoseEnabled;
+    chassisPose !== null && (displayOverrides?.physicalPoseEnabled ?? localPhysicalPoseEnabled);
   const relativeArmorScale =
     displayOverrides?.relativeArmorScale ?? localRelativeArmorScale;
   const [armorThicknessRange, setArmorThicknessRange] =
@@ -8051,7 +8052,7 @@ export function RuntimeVehicleViewer({
           vehiclePlanarSuspensionCoverage?.status === "not-applicable"
           ? "explicit-not-applicable"
           : enabled && skeletalPoseBindings.size > 0
-            ? "normal-time-runtime-observed"
+            ? preview.groundedPose ? "rendered-normal-time-runtime-observed" : "normal-time-runtime-observed"
             : enabled
               ? "unavailable"
               : "inverse-bind-reference";
@@ -8064,7 +8065,7 @@ export function RuntimeVehicleViewer({
       host.dataset.suspensionPoseGeneratedClass =
         preview.generatedClass ?? "unavailable";
       host.dataset.suspensionPoseCoverageReason =
-        vehiclePlanarSuspensionCoverage?.reason ?? "resolved";
+        preview.groundedPose?.admission ?? vehiclePlanarSuspensionCoverage?.reason ?? "resolved";
       host.dataset.suspensionPoseStableOccurrenceIds = [
         ...observedRunningGearOccurrenceIds,
       ]
@@ -8074,13 +8075,17 @@ export function RuntimeVehicleViewer({
     const applySkeletalPose = (enabled: boolean) => {
       for (const {
         controller,
-        skinnedMeshes,
       } of skeletalPoseBindings) {
         if (!enabled) {
           controller.apply("reference");
         } else {
           controller.apply("observed");
         }
+      }
+      // Bone and mesh world matrices (including the changed chassis) must be
+      // current before caching bounds for the newly deformed running gear.
+      modelGroup.updateMatrixWorld(true);
+      for (const { skinnedMeshes } of skeletalPoseBindings) {
         for (const mesh of skinnedMeshes) {
           mesh.computeBoundingBox();
           mesh.computeBoundingSphere();
@@ -8122,6 +8127,9 @@ export function RuntimeVehicleViewer({
             placement.runtimeBonePoseNormalTimeSampleCount ?? 1,
           referenceEquivalent:
             placement.runtimeBonePoseReferenceEquivalent === true,
+          observedLocalMatricesByBoneName: groundedPoseLocalMatrices(
+            preview.groundedPose, preview.generatedClass, placement,
+          ),
         });
         if (!controller) continue;
         if (!physicalPoseEnabledRef.current) {
@@ -8165,7 +8173,7 @@ export function RuntimeVehicleViewer({
           : "static"
         : "unavailable";
       host.dataset.chassisPoseAuthority = chassisPose
-        ? "normal-time-runtime-observed"
+        ? preview.groundedPose ? "rendered-normal-time-runtime-observed" : "normal-time-runtime-observed"
         : "unavailable";
       if (chassisPose) {
         host.dataset.chassisPoseGeneratedClass = chassisPose.generatedClass;
@@ -10061,6 +10069,7 @@ export function RuntimeVehicleViewer({
       );
       const runtimePoseGroundActive =
         chassisPose !== null && physicalPoseEnabledRef.current;
+      const sourceGroundY = runtimePoseGroundActive ? 0 : bounds.min.y;
       let referenceSoldierBounds: THREE.Box3 | null = null;
       if (referenceSoldier) {
         referenceSoldier.position.set(0, 0, 0);
@@ -10077,8 +10086,7 @@ export function RuntimeVehicleViewer({
             - groundReferenceClearanceM
             - soldierSize.x / 2
             - soldierCenter.x,
-          (runtimePoseGroundActive ? 0 : bounds.min.y) -
-            initialSoldierBounds.min.y,
+          sourceGroundY - initialSoldierBounds.min.y,
           bounds.min.z
             - groundReferenceClearanceM
             - soldierSize.z / 2
@@ -10114,14 +10122,7 @@ export function RuntimeVehicleViewer({
         sphere.radius,
         compactPortableDrone ? 0.3 : 2.5,
       );
-      const groundY = runtimePoseGroundActive
-        ? modelGroup.position.y
-        : Math.min(
-            bounds.min.y,
-            referenceSoldierBounds?.min.y ?? bounds.min.y,
-          ) -
-          center.y -
-          0.03;
+      const groundY = sourceGroundY - center.y;
       groundReferenceY = groundY;
       // Match the vehicle's centre after its existing fit/rebase. Environment
       // bounds must not influence the vehicle camera or any hit calculations.
@@ -10305,7 +10306,7 @@ export function RuntimeVehicleViewer({
           const pose = runtimeViewerCameraPose({
             viewId: preset.id,
             distanceM: safeDistanceM,
-            groundY,
+            groundY: groundReferenceY,
             vehicleTarget: vehicleCameraTarget.toArray(),
           });
           controls.target.fromArray(pose.target);
@@ -10321,7 +10322,7 @@ export function RuntimeVehicleViewer({
           const basePosition = runtimeViewerInfantryCameraPosition({
             yawDegrees,
             distanceM: safeDistanceM,
-            groundY,
+            groundY: groundReferenceY,
           });
           controls.target.set(
             vehicleCameraTarget.x,
@@ -10361,7 +10362,7 @@ export function RuntimeVehicleViewer({
           delete host.dataset.infantryPreviewEyeHeightM;
         } else {
           host.dataset.infantryPreviewEyeHeightM = String(
-            camera.position.y - groundY,
+            camera.position.y - groundReferenceY,
           );
         }
         render();
@@ -10615,21 +10616,37 @@ export function RuntimeVehicleViewer({
       referenceSoldierLoadTimer = window.setTimeout(loadReferenceSoldierAsset, 0);
     };
 
-    const lowerReferencePlaneToGroup = (
-      targetGroup: THREE.Object3D,
-      datasetPrefix: "exterior" | "analysis",
-    ) => {
+    const syncReferencePlane = () => {
+      if (fittedSource === null) return;
+      // Prefer the complete display once loaded. Re-evaluate in both directions
+      // after a pose change; retaining a previous minimum makes load order and
+      // earlier toggle states part of the apparent suspension height.
+      const targetGroup = exteriorReady
+        ? visualGroup
+        : analysisVisualReady ? analysisVisualGroup : hitGroupRef.current;
+      if (!targetGroup) return;
+      modelGroup.updateMatrixWorld(true);
       targetGroup.updateMatrixWorld(true);
-      const bounds = new THREE.Box3().setFromObject(targetGroup);
+      const bounds = new THREE.Box3().setFromObject(targetGroup, true);
       if (bounds.isEmpty()) return;
+      const datasetPrefix = exteriorReady ? "exterior" : "analysis";
       host.dataset[`${datasetPrefix}BoundsMinY`] = String(bounds.min.y);
-      if (chassisPose !== null && physicalPoseEnabledRef.current) return;
-      const requiredGroundY = bounds.min.y - 0.03;
-      groundReferenceY = Math.min(groundReferenceY, requiredGroundY);
+      const observed = chassisPose !== null && physicalPoseEnabledRef.current;
+      const nextGroundY = observed ? modelGroup.position.y : bounds.min.y;
+      const delta = nextGroundY - groundReferenceY;
+      groundReferenceY = nextGroundY;
+      if (referenceSoldier) referenceSoldier.position.y += delta;
       environmentRoot.position.y = groundReferenceY;
+      environmentRoot.updateMatrixWorld(true);
+      host.dataset.environmentCenterWorld = JSON.stringify(environmentRoot.position.toArray());
       if (gridHelper) gridHelper.position.y = groundReferenceY;
+      if (groundScale) {
+        groundScale.position.y = groundReferenceY + 0.006;
+        host.dataset.groundScaleOriginY = String(groundScale.position.y);
+      }
       host.dataset.referencePlaneY = String(groundReferenceY);
-      host.dataset.referencePlaneAuthority = "geometry-bounds";
+      host.dataset.referencePlaneAuthority = observed ? "runtime-probe-map" : "geometry-bounds";
+      host.dataset.visualGroundGapM = String(bounds.min.y - groundReferenceY);
     };
 
     const applyChassisPose = (enabled: boolean) => {
@@ -10640,6 +10657,7 @@ export function RuntimeVehicleViewer({
       setRealtimePointer(null);
       protectionCache = null;
       modelGroup.updateMatrixWorld(true);
+      syncReferencePlane();
       render();
       if (protectionEnabledRef.current) {
         scheduleProtectionMap({ invalidate: true });
@@ -11424,13 +11442,14 @@ export function RuntimeVehicleViewer({
       analysisVisualReady = true;
       host.dataset.analysisVisualAssetState = "ready";
       applyTurretPose();
+      syncReferencePlane();
     };
 
     const loadExteriorAssets = () => {
       if (exteriorReady) {
         if (modeRef.current === "exterior") {
           setViewerState({ kind: "ready", loaded: urls.length, total: urls.length });
-          lowerReferencePlaneToGroup(visualGroup, "exterior");
+          syncReferencePlane();
           render();
         }
         return;
@@ -11560,7 +11579,7 @@ export function RuntimeVehicleViewer({
           ) {
             fitViewToGroup(visualGroup, "exterior");
           }
-          lowerReferencePlaneToGroup(visualGroup, "exterior");
+          syncReferencePlane();
           if (modeRef.current === "exterior") {
             visualGroup.visible = true;
             setViewerState({ kind: "ready", loaded: urls.length, total: urls.length });
@@ -11683,7 +11702,7 @@ export function RuntimeVehicleViewer({
             host.dataset.hitRenderer = "reference-batched-shader";
             fitViewToGroup(hitGroup, "hit");
             if (exteriorReady) {
-              lowerReferencePlaneToGroup(visualGroup, "exterior");
+              syncReferencePlane();
             }
             if (modeRef.current !== "exterior") {
               setViewerState({
@@ -11706,7 +11725,7 @@ export function RuntimeVehicleViewer({
                 visualGroup.children.length > 0
               ) {
                 fitViewToGroup(visualGroup, "exterior");
-                lowerReferencePlaneToGroup(visualGroup, "exterior");
+                syncReferencePlane();
               }
             }
             return null;
@@ -11995,6 +12014,7 @@ export function RuntimeVehicleViewer({
     maxShotTraces,
     preview.cardId,
     preview.generatedClass,
+    preview.groundedPose,
     preview.stationGraph?.stations,
     radialQuery,
     preview.suspension.records,
@@ -13360,8 +13380,8 @@ export function RuntimeVehicleViewer({
                     data-active={physicalPoseActive}
                     disabled={!chassisPose}
                     title={chassisPose
-                      ? `稳定物理姿态：俯仰 ${chassisPose.pitchDeg.toFixed(2)}°，横滚 ${chassisPose.rollDeg.toFixed(2)}°`
-                      : "当前载具没有稳定收敛的运行时底盘姿态"}
+                      ? `平面静止物理姿态：俯仰 ${chassisPose.pitchDeg.toFixed(2)}°，横滚 ${chassisPose.rollDeg.toFixed(2)}°`
+                      : "当前载具暂无已核验的平面静止姿态"}
                     onClick={() => setPhysicalPoseEnabled((enabled) => !enabled)}
                   >
                     <span className="viewer-state-switch__track" aria-hidden="true"><span /></span>

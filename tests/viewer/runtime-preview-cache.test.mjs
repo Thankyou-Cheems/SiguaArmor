@@ -17,6 +17,7 @@ const bundle = await build({
       export async function loadOptionalWikiVehicleGunnerSight() { return null; }
       export async function loadWikiVehicleDriverView() { return null; }
       export async function loadWikiVehicleStationGraph() { return null; }
+      export async function loadWikiVehicleGroundedPose() { return null; }
     ` }));
   } }],
 });

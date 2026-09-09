@@ -90,7 +90,7 @@ test("3D preview resolves one vehicle runtime source instead of the full vehicle
   assert.doesNotMatch(runtimePreviewSource, /await loadWikiVehicleCatalog/u);
   assert.doesNotMatch(runtimePreviewSource, /runtime-chassis-pose/u);
   assert.doesNotMatch(runtimePreviewSource, /chassis-poses\.json/u);
-  assert.match(runtimePreviewSource, /chassisPose: runtimeVariant\.chassisPose/u);
+  assert.match(runtimePreviewSource, /loadWikiVehicleGroundedPose\(runtimeVariant\.generatedClass\)/u);
   assert.doesNotMatch(runtimePreviewSource, /suspension-poses\.json/u);
   assert.match(runtimePreviewSource, /suspension: runtimeVariant\.suspension/u);
   assert.doesNotMatch(runtimeSuspensionSource, /loadWikiDataset/u);

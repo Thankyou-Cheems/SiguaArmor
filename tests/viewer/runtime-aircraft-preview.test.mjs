@@ -15,6 +15,7 @@ const bundle=await build({
       export async function loadOptionalWikiVehicleGunnerSight() { return null; }
       export async function loadWikiVehicleDriverView() { fixture.driverCalls++; throw new Error('no aircraft driver'); }
       export async function loadWikiVehicleStationGraph() { throw new Error('no aircraft stations'); }
+      export async function loadWikiVehicleGroundedPose() { return null; }
     `}));
   }}],
 });

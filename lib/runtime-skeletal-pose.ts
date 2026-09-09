@@ -44,6 +44,7 @@ export type RuntimeBoneTranslationOffsets = Readonly<
 export interface RuntimeSkeletalPoseControllerOptions {
   observedSampleCount: number;
   referenceEquivalent: boolean;
+  observedLocalMatricesByBoneName?: Readonly<Record<string, readonly number[]>>;
 }
 
 interface RuntimeChassisJointContext {
@@ -85,6 +86,8 @@ const SWAY_BAR_TOKEN = /sway[_-]?bar/iu;
 const SWING_ARM_TOKEN = /swing[_-]?arm/iu;
 const TIE_ROD_TOKEN = /tie[_-]?rod/iu;
 const DRIVE_AXLE_TOKEN = /drive[_-]?axle|driveaxle/iu;
+const CONTROL_ARM_TOKEN = /^(?:lower|upper|trailing|leading|control)[_-]?arm(?:[_-]|$)/iu;
+const DRIVE_SHAFT_TOKEN = /^drive[_-]?shaft(?:[_-]|$)/iu;
 const AXLE_TOKEN = /axle/iu;
 const HUB_TOKEN = /hub/iu;
 const STRUT_TOKEN = /strut/iu;
@@ -215,6 +218,13 @@ export function classifyRuntimeChassisJointName(
 
   if (context.assetHasPrimary !== true) return unknown();
 
+  if (CONTROL_ARM_TOKEN.test(name)) {
+    return included("suspension-arm", "include-control-arm-token");
+  }
+  if (DRIVE_SHAFT_TOKEN.test(name)) {
+    return included("drive-shaft", "include-drive-shaft-token");
+  }
+
   if (SHOCK_TOKEN.test(name)) {
     return included("suspension-shock", "include-shock-token");
   }
@@ -328,12 +338,18 @@ function updateSkeletonWorld(skeleton: THREE.Skeleton) {
   skeleton.update();
 }
 
+function sourceBoneName(bone: THREE.Bone): string {
+  // GLTFLoader preserves the source name here before sanitizing punctuation
+  // and making Object3D names unique for animation bindings.
+  return typeof bone.userData.name === "string" ? bone.userData.name : bone.name;
+}
+
 function selectedWheelPoseBones(skeleton: THREE.Skeleton) {
   const bones = new Set(skeleton.bones);
   const selected = new Set<THREE.Bone>();
   const primaryBones = new Set(
     skeleton.bones.filter((bone) =>
-      isPrimaryRuntimeRunningGearJoint(bone.name),
+      isPrimaryRuntimeRunningGearJoint(sourceBoneName(bone)),
     ),
   );
 
@@ -355,7 +371,8 @@ function selectedWheelPoseBones(skeleton: THREE.Skeleton) {
   }
 
   for (const bone of skeleton.bones) {
-    const classification = classifyRuntimeChassisJointName(bone.name, {
+    if (!(bone.parent instanceof THREE.Bone) || !bones.has(bone.parent)) continue;
+    const classification = classifyRuntimeChassisJointName(sourceBoneName(bone), {
       assetHasPrimary: primaryBones.size > 0,
       relatedToPrimary: relatedToPrimary(bone),
     });
@@ -415,9 +432,22 @@ export function createRuntimeSkeletalPoseController(
   const selectedBones = selectedWheelPoseBones(skeleton);
   if (selectedBones.length === 0) return null;
 
-  const observedByBone = new Map(
-    skeleton.bones.map((bone) => [bone, localTrs(bone)]),
-  );
+  const observedByBone = new Map<THREE.Bone, LocalTrs>();
+  const observedMatrixByBone = new Map<THREE.Bone, THREE.Matrix4>();
+  const matrixAutoUpdateByBone = new Map(skeleton.bones.map(bone => [bone, bone.matrixAutoUpdate]));
+  for (const bone of skeleton.bones) {
+    const matrix = selectedBones.includes(bone)
+      ? options.observedLocalMatricesByBoneName?.[sourceBoneName(bone)] : undefined;
+    if (matrix) {
+      if (matrix.length !== 16 || !matrix.every(Number.isFinite)) return null;
+      const transform = new THREE.Matrix4().fromArray(matrix);
+      if (Math.abs(transform.determinant()) <= 1e-12) return null;
+      observedMatrixByBone.set(bone, transform);
+      observedByBone.set(bone, localTrsFromMatrix(transform));
+    } else {
+      observedByBone.set(bone, localTrs(bone));
+    }
+  }
 
   const boneIndexByBone = new Map(
     skeleton.bones.map((bone, index) => [bone, index]),
@@ -449,12 +479,12 @@ export function createRuntimeSkeletalPoseController(
         referenceByBone.get(bone)!,
       ),
     )
-    .map((bone) => bone.name);
+    .map(sourceBoneName);
   const selectedBoneByName = new Map<string, THREE.Bone | null>();
   for (const bone of selectedBones) {
     selectedBoneByName.set(
-      bone.name,
-      selectedBoneByName.has(bone.name) ? null : bone,
+      sourceBoneName(bone),
+      selectedBoneByName.has(sourceBoneName(bone)) ? null : bone,
     );
   }
 
@@ -490,13 +520,13 @@ export function createRuntimeSkeletalPoseController(
 
   return {
     evidence: runtimeSkeletalPoseEvidence(options),
-    selectedBoneNames: selectedBones.map((bone) => bone.name),
+    selectedBoneNames: selectedBones.map(sourceBoneName),
     changedBoneNames,
     declaredReferenceEquivalentMismatch:
       options.referenceEquivalent && changedBoneNames.length > 0,
     apply(mode, referenceTranslationOffsetsByBoneName = {}) {
       for (const bone of selectedBones) {
-        const offset = referenceTranslationOffsetsByBoneName[bone.name];
+        const offset = referenceTranslationOffsetsByBoneName[sourceBoneName(bone)];
         const nativePlanarBone = mode === "native-planar" && offset;
         applyLocalTrs(
           bone,
@@ -504,6 +534,16 @@ export function createRuntimeSkeletalPoseController(
             ? referenceByBone.get(bone)!
             : observedByBone.get(bone)!,
         );
+        const observedMatrix = observedMatrixByBone.get(bone);
+        if (mode === "observed" && observedMatrix) {
+          // Relative component matrices can contain shear under animated
+          // nonuniform scale (e.g. CTM131 sway bars). Decomposing to TRS alone
+          // loses the observed pose. Keep exact matrices for rendering/hits.
+          bone.matrix.copy(observedMatrix);
+          bone.matrixAutoUpdate = false;
+        } else {
+          bone.matrixAutoUpdate = matrixAutoUpdateByBone.get(bone)!;
+        }
         if (
           nativePlanarBone &&
           Number.isFinite(offset.x) &&

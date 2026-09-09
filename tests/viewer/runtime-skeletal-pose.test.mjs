@@ -64,6 +64,58 @@ function xyz(object) {
   return object.position.toArray();
 }
 
+test("rendered patch supersedes baked wheel pose and keeps the reference root and hit delta coherent", () => {
+  const f=createSkeletonFixture({rewriteCommonInverseBindBasis:true});
+  const overrides={carrier:new THREE.Matrix4().makeTranslation(6,0,0).elements,
+    Wheel_L1:new THREE.Matrix4().makeTranslation(0,3,0).elements,
+    turret:new THREE.Matrix4().makeTranslation(100,100,100).elements};
+  const controller=createRuntimeSkeletalPoseController(f.skeleton,{observedSampleCount:3,referenceEquivalent:false,observedLocalMatricesByBoneName:overrides});
+  const component=new THREE.Group();component.add(f.root);
+  for(let i=0;i<3;i++) {
+    controller.apply('observed');component.updateMatrixWorld(true);
+    assertXyzNear(f.root,[10,20,30]);assertXyzNear(f.wheel,[0,3,0]);assertXyzNear(f.carrier,[6,0,0]);
+    assertXyzNear(f.turret,[0,0,9]);
+    const delta=controller.componentPoseMatrixForBone('Wheel_L1',component);
+    assertXyzNear({name:'hit delta',position:new THREE.Vector3().setFromMatrixPosition(delta)},[2,-2,0]);
+    controller.apply('reference');component.updateMatrixWorld(true);
+    assertXyzNear(f.carrier,[4,0,0]);assertXyzNear(f.wheel,[0,5,0]);
+    const referenceDelta=controller.componentPoseMatrixForBone('Wheel_L1',component).elements;
+    new THREE.Matrix4().elements.forEach((value,index)=>assert.ok(Math.abs(referenceDelta[index]-value)<1e-12));
+  }
+});
+
+test("CTM131 independent control arms and drive shafts follow running gear without moving cabin controls", () => {
+  for(const name of ['lowerarm_L2','upperarm_R3','driveshaft_A12A2']) {
+    assert.equal(classifyRuntimeChassisJointName(name,{assetHasPrimary:true}).status,'include');
+    assert.equal(classifyRuntimeChassisJointName(name).status,'unknown');
+  }
+  assert.equal(classifyRuntimeChassisJointName('steeringwheelbone',{assetHasPrimary:true}).status,'exclude');
+});
+
+test("source bone identity survives GLTFLoader punctuation sanitizing",()=>{
+  const f=createSkeletonFixture();f.wheel.name='RoadWheel03';f.wheel.userData.name='RoadWheel.03';
+  const controller=createRuntimeSkeletalPoseController(f.skeleton,{observedSampleCount:3,referenceEquivalent:false,
+    observedLocalMatricesByBoneName:{'RoadWheel.03':new THREE.Matrix4().makeTranslation(0,3,0).elements}});
+  const component=new THREE.Group();component.add(f.root);
+  controller.apply('observed');component.updateMatrixWorld(true);
+  assertXyzNear(f.wheel,[0,3,0]);assert.ok(controller.selectedBoneNames.includes('RoadWheel.03'));
+  assert.ok(controller.componentPoseMatrixForBone('RoadWheel.03',component));
+});
+
+test("observed parent-local shear survives skeleton updates and toggling",()=>{
+  const f=createSkeletonFixture(),matrix=new THREE.Matrix4().makeTranslation(0,3,0);
+  matrix.elements[4]=0.2;
+  const controller=createRuntimeSkeletalPoseController(f.skeleton,{observedSampleCount:3,referenceEquivalent:false,
+    observedLocalMatricesByBoneName:{Wheel_L1:matrix.elements}});
+  for(let i=0;i<3;i++) {
+    controller.apply('observed');f.root.updateMatrixWorld(true);f.skeleton.update();
+    assert.deepEqual(f.wheel.matrix.elements,matrix.elements);
+    assert.equal(f.wheel.matrixAutoUpdate,false);
+    controller.apply('reference');f.root.updateMatrixWorld(true);
+    assert.equal(f.wheel.matrixAutoUpdate,true);assertXyzNear(f.wheel,[0,5,0]);
+  }
+});
+
 function assertXyzNear(object, expected, epsilon = 1e-12) {
   const actual = xyz(object);
   assert.equal(actual.length, expected.length);
