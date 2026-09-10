@@ -1,8 +1,18 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-04T13:27:19.478Z",
-  "siteUpdatedOn": "2026-09-04",
+  "updatedAt": "2026-09-10T23:23:33.994Z",
+  "siteUpdatedOn": "2026-09-11",
   "entries": [
+    {
+      "id": "2026-09-11-protection-batch-reuse",
+      "date": "2026-09-11",
+      "title": "防护分析计算提速",
+      "items": [
+        "优化防护图的批量计算，降低连续分析的 CPU 开销，计算较慢的设备可更快看到完整结果。保持原有采样精度、装甲命中顺序与伤害判定规则。",
+        "转动视角、调整炮塔或切换载具后，按新状态重新计算；不会沿用上一批的模型变换。",
+        "算法参考：Wald 等，[Interactive Rendering with Coherent Ray Tracing（Eurographics 2001）](https://doi.org/10.1111/1467-8659.00508)。本次采用批次内共用准备工作的思路。"
+      ]
+    },
     {
       "id": "2026-09-04-operation-refill-mask",
       "date": "2026-09-04",

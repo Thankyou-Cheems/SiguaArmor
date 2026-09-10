@@ -12,6 +12,7 @@ import {
   UPDATES_REFRESH_MS,
 } from "../lib/updates-document.mjs";
 import type { SiteEdition } from "./site-edition";
+import { splitUpdateReferences } from "../lib/updates-references";
 
 export type UpdatesDocument = NonNullable<ReturnType<typeof parseUpdatesDocument>>;
 
@@ -214,7 +215,13 @@ export function SiteFooterUpdatesModal({
                 </header>
                 <ul>
                   {entry.items.map((item, itemIndex) => (
-                    <li key={`${entry.id}-${itemIndex}`}>{item}</li>
+                    <li key={`${entry.id}-${itemIndex}`}>
+                      {splitUpdateReferences(item).map((part, partIndex) => part.href ? (
+                        <a key={partIndex} href={part.href} target="_blank" rel="noopener noreferrer">
+                          {part.text}
+                        </a>
+                      ) : part.text)}
+                    </li>
                   ))}
                 </ul>
               </article>

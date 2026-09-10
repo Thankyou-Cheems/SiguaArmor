@@ -11,6 +11,10 @@ import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "luci
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
+import {
+  prepareRuntimeHitRayQuery,
+  type RuntimeHitRayQuery,
+} from "../lib/runtime-hit-ray-query.ts";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -9447,38 +9451,14 @@ export function RuntimeVehicleViewer({
     const raycaster = new THREE.Raycaster();
     raycaster.firstHitOnly = false;
     const pointer = new THREE.Vector2();
-    const normalMatrix = new THREE.Matrix3();
-
-    const collectRayIntersections = () => {
+    const prepareRayIntersections = () => {
       const parsed = parsedHitRef.current;
       const analysisMesh = analysisMeshRef.current;
-      if (!parsed || !analysisMesh) return [];
-      modelGroup.updateMatrixWorld(true);
-      normalMatrix.getNormalMatrix(analysisMesh.matrixWorld);
-      return raycaster.intersectObject(analysisMesh, false).flatMap<EditorNativeIntersection>(
-        (intersection) => {
-          const triangleIndex = intersection.faceIndex;
-          if (triangleIndex === undefined || triangleIndex === null || !intersection.face) return [];
-          const componentIndex = parsed.triangleComponentIndex[triangleIndex];
-          const surfaceProfileIndex = parsed.triangleSurfaceProfileIndex[triangleIndex];
-          if (componentIndex === undefined || surfaceProfileIndex === undefined) return [];
-          const normal = new THREE.Vector3()
-            .fromArray(parsed.faceNormals, triangleIndex * 3)
-            .normalize()
-            .applyNormalMatrix(normalMatrix)
-            .normalize();
-          return [{
-            triangleIndex,
-            componentIndex,
-            surfaceProfileIndex,
-            distanceFromRayOriginM: intersection.distance,
-            point: [intersection.point.x, intersection.point.y, intersection.point.z] as const,
-            faceNormal: [normal.x, normal.y, normal.z] as const,
-            incidenceFactor: -raycaster.ray.direction.dot(normal),
-          }];
-        },
-      );
+      return parsed && analysisMesh
+        ? prepareRuntimeHitRayQuery(modelGroup, parsed, analysisMesh)
+        : null;
     };
+    const collectRayIntersections = () => prepareRayIntersections()?.(raycaster) ?? [];
     const collectIntersections = (normalizedPointer: THREE.Vector2) => {
       raycaster.setFromCamera(normalizedPointer, camera);
       return collectRayIntersections();
@@ -9603,12 +9583,14 @@ export function RuntimeVehicleViewer({
         grid: Pick<ProtectionMapGridCache, "width" | "height">,
         column: number,
         row: number,
+        query: RuntimeHitRayQuery | null,
       ) => {
         pointer.set(
           ((column + 0.5) / grid.width) * 2 - 1,
           1 - ((row + 0.5) / grid.height) * 2,
         );
-        const intersections = collectIntersections(pointer);
+        raycaster.setFromCamera(pointer, camera);
+        const intersections = query?.(raycaster) ?? [];
         if (intersections.length === 0) return 0 as RuntimeProtectionMapCell;
         return classifyRuntimeProtectionShot(simulateEditorNativeShot({
           model: parsed.header,
@@ -9694,6 +9676,7 @@ export function RuntimeVehicleViewer({
       const processBatch = () => {
         if (cancelled || token !== protectionToken || !protectionEnabledRef.current) return;
         const batchStartedAt = performance.now();
+        const batchQuery = prepareRayIntersections();
         let batchCount = 0;
         let visitedCount = 0;
         let precisionAdvanced = false;
@@ -9710,7 +9693,7 @@ export function RuntimeVehicleViewer({
           ) {
             const [column, row] = levelSamples[levelSampleIndex];
             visitedCount += 1;
-            const cell = sampleCell(standardGrid, column, row);
+            const cell = sampleCell(standardGrid, column, row, batchQuery);
             const cellIndex = row * standardGrid.width + column;
             standardGrid.sampleValues[cellIndex] = cell;
             standardGrid.sampledMask[cellIndex] = 1;
@@ -9764,7 +9747,7 @@ export function RuntimeVehicleViewer({
             if (superGrid.sampledMask[cellIndex] !== 0) continue;
             const column = cellIndex % superGrid.width;
             const row = Math.floor(cellIndex / superGrid.width);
-            const cell = sampleCell(superGrid, column, row);
+            const cell = sampleCell(superGrid, column, row, batchQuery);
             superGrid.sampleValues[cellIndex] = cell;
             superGrid.sampledMask[cellIndex] = 1;
             superGrid.reconstructed[cellIndex] = cell;

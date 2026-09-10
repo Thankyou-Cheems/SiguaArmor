@@ -10689,6 +10689,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   line-height: 1.65;
 }
 
+.site-footer__updates-list a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
 .site-footer__sponsor-modal-close {
   display: grid;
   flex: 0 0 auto;
