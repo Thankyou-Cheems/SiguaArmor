@@ -69,6 +69,7 @@ test("both edition logs lead with the current release and omit superseded claims
   );
   const currentEntry = documents[0].entries[0];
   const dailyReleaseOrder = [
+    ["2026-09-11-protection-adaptive-budget", "2026-09-11"],
     ["2026-09-11-protection-batch-reuse", "2026-09-11"],
     ["2026-09-04-operation-refill-mask", "2026-09-04"],
     ["2026-09-03-source-firing-presentation", "2026-09-03"],
@@ -78,7 +79,7 @@ test("both edition logs lead with the current release and omit superseded claims
     ["2026-08-30-station-graph-closure", "2026-08-30"],
   ];
 
-  assert.equal(currentEntry.id, "2026-09-11-protection-batch-reuse");
+  assert.equal(currentEntry.id, "2026-09-11-protection-adaptive-budget");
   for (const document of documents) {
     assert.equal(document.siteUpdatedOn, "2026-09-11");
     assert.deepEqual(document.entries[0], currentEntry);
