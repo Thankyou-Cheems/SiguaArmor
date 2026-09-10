@@ -12,6 +12,10 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useSyncExt
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
 import {
+  createProtectionFrameBudget,
+  runtimeProtectionMapFrameHasBudget,
+} from "../lib/runtime-protection-frame-budget";
+import {
   prepareRuntimeHitRayQuery,
   type RuntimeHitRayQuery,
 } from "../lib/runtime-hit-ray-query.ts";
@@ -309,7 +313,6 @@ import {
   classifyRuntimeProtectionShot,
   reconstructRuntimeProtectionMapBlock,
   runtimeProtectionMapCumulativeSampleCount,
-  runtimeProtectionMapFrameHasBudget,
   runtimeProtectionMapGridSize,
   runtimeProtectionMapLevelOffsets,
   runtimeProtectionMapSuperGridSize,
@@ -9673,10 +9676,13 @@ export function RuntimeVehicleViewer({
       }
       host.dataset.protectionMapState = "calculating";
 
+      const frameBudget = createProtectionFrameBudget();
       const processBatch = () => {
         if (cancelled || token !== protectionToken || !protectionEnabledRef.current) return;
+        const limits = frameBudget.begin();
         const batchStartedAt = performance.now();
         const batchQuery = prepareRayIntersections();
+        let samplingFinishedAt = batchStartedAt;
         let batchCount = 0;
         let visitedCount = 0;
         let precisionAdvanced = false;
@@ -9684,6 +9690,7 @@ export function RuntimeVehicleViewer({
           sampledRays: batchCount,
           visitedCells: visitedCount,
           elapsedMs: performance.now() - batchStartedAt,
+          limits,
         });
         if (phase === "standard") {
           const dirtyBlocks = new Set<number>();
@@ -9705,6 +9712,7 @@ export function RuntimeVehicleViewer({
             batchCount += 1;
           }
 
+          samplingFinishedAt = performance.now();
           dirtyBlocks.forEach((blockIndex) => {
             const blockRow = Math.floor(blockIndex / standardGrid.width);
             const blockColumn = blockIndex % standardGrid.width;
@@ -9754,6 +9762,7 @@ export function RuntimeVehicleViewer({
             completedSamples += 1;
             batchCount += 1;
           }
+          samplingFinishedAt = performance.now();
           if (superGrid.nextProgressiveIndex >= superSampleOrder.length) {
             phase = "done";
             setProtectionRenderedPrecision(RUNTIME_PROTECTION_MAP_SUPER_PRECISION);
@@ -9785,6 +9794,8 @@ export function RuntimeVehicleViewer({
           });
           lastProtectionUiUpdateAt = uiUpdateAt;
         }
+        frameBudget.finish(batchCount, samplingFinishedAt - batchStartedAt,
+          performance.now() - batchStartedAt, precisionAdvanced);
         if (phase === "done") {
           host.dataset.protectionMapState = "ready";
           protectionFrame = 0;
