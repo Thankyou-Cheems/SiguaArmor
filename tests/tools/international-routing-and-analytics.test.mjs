@@ -92,11 +92,17 @@ test("both edition logs lead with the current release and omit superseded claims
       "superseded 2026-07-24 update entry must be removed",
     );
     assert.doesNotMatch(JSON.stringify(document), /发动机改为紫色系/u);
-    assert.match(JSON.stringify(currentEntry), /保持原有采样精度/u);
-    assert.match(JSON.stringify(currentEntry), /https:\/\/doi\.org\/10\.1111\/1467-8659\.00508/u);
-    assert.match(JSON.stringify(document.entries[1]), /补满弹药/u);
-    assert.match(JSON.stringify(document.entries[1]), /开放式分划/u);
-    assert.match(JSON.stringify(document.entries[2]), /保留空槽/u);
+    assert.match(JSON.stringify(currentEntry), /根据实际计算速度/u);
+    assert.match(JSON.stringify(currentEntry), /最终精度.*保持不变/u);
+    const batchEntry = document.entries.find(({ id }) => id === "2026-09-11-protection-batch-reuse");
+    assert.ok(batchEntry);
+    assert.match(JSON.stringify(batchEntry), /保持原有采样精度/u);
+    assert.match(JSON.stringify(batchEntry), /https:\/\/doi\.org\/10\.1111\/1467-8659\.00508/u);
+    const refillEntry = document.entries.find(({ id }) => id === "2026-09-04-operation-refill-mask");
+    assert.ok(refillEntry);
+    assert.match(JSON.stringify(refillEntry), /补满弹药/u);
+    assert.match(JSON.stringify(refillEntry), /开放式分划/u);
+    assert.match(JSON.stringify(document.entries.find(({ id }) => id === "2026-09-03-source-firing-presentation")), /保留空槽/u);
     const cacheEntry = document.entries.find(
       ({ id }) => id === "2026-09-02-operation-cache-release",
     );
