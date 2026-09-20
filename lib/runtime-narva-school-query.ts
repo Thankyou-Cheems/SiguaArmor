@@ -263,6 +263,15 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
   };
   const rowsById = new Map(rows.map(row => [row.id, row]));
   if (rowsById.size !== rows.length) throw new Error("Duplicate school component identity");
+  const selectCollision = (row: typeof rows[number], kind: "simple" | "complex") => {
+    if (kind === "complex") {
+      if (!row.complex) throw new Error(`场景复杂碰撞不可用：${row.id}`);
+      return row.complex;
+    }
+    // movementKind is the normalized UE effective route. In particular,
+    // CTF_UseComplexAsSimple intentionally selects row.complex here.
+    return row[row.movementKind];
+  };
   const raycastRows = (candidates: typeof rows, origin: THREE.Vector3, direction: THREE.Vector3, far: number, offset = new THREE.Vector3(), kind: "simple" | "complex" = "complex", sourceSegment?: NativeSchoolSegment) => {
     const start = origin.clone().sub(offset), unit = direction.clone().normalize();
     const end = start.clone().addScaledVector(unit, far), worldRay = new THREE.Ray(start, unit);
@@ -287,7 +296,7 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
         }
         continue;
       }
-      const parsed = kind === "complex" ? row.complex ?? row.simple : row[row.movementKind];
+      const parsed = selectCollision(row, kind);
       if (!parsed) continue;
       if (parsed.nativeCooked?.nativeTree && row.nativePose && sourceSegment) {
         const input = createSchoolNativeRay(sourceSegment, row.nativePose);
@@ -397,10 +406,14 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       let firstRowId: string | null = null, firstRank = Infinity;
       const triangle = new ExtendedTriangle(), facingNormal = new THREE.Vector3();
       for (const row of rows) {
+        // A complex-purpose query must fail closed even when this placement
+        // lies outside the current sweep box; otherwise an incomplete packet
+        // can be misreported as a clear sweep.
+        const selectedComplex = traceComplex ? selectCollision(row, "complex") : null;
         if (!row.bounds.intersectsBox(worldBox)) continue;
         // Projectile TraceComplexOnMove selects this query. The school's
         // placementSupport flag belongs to grounding, not projectile movement.
-        const parsed = traceComplex ? row.complex ?? row.simple : row[row.movementKind];
+        const parsed = selectedComplex ?? selectCollision(row, "simple");
         if (!parsed) throw new Error(`场景缺少移动碰撞：${row.id}`);
         const localBox = worldBox.clone().applyMatrix4(row.inverse);
         const nativeSweep = parsed.nativeCooked && row.nativePose ? createSchoolNativeSphereSweep({
@@ -444,7 +457,7 @@ export function createSchoolQuery(placements: SchoolQueryPlacement[]) {
       const result = first as SchoolSweepHit | null;
       if (result && result.timeFraction > 0) {
         const row = rowsById.get(result.sceneHit.componentId)!;
-        const parsed = traceComplex ? row.complex ?? row.simple : row[row.movementKind];
+        const parsed = selectCollision(row, traceComplex ? "complex" : "simple");
         if (parsed?.nativeCooked) {
           const point = result.sceneHit.point.clone().sub(offset);
           const index = selectSchoolSweepFace(parsed, row.matrix, point, direction, result.sceneHit.triangleIndex);

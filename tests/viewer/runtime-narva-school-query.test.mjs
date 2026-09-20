@@ -104,6 +104,22 @@ test("movement source shape and direct complex material geometry remain separate
   assert.equal(hits[0].incidenceFactor, 1);
 });
 
+test("complex query is unavailable instead of falling back to simple geometry", () => {
+  const query = createSchoolQuery([{ ...row("missing-complex"), complex: null }]);
+  assert.throws(() => query.raycast(new THREE.Vector3(), new THREE.Vector3(1, 0, 0), 20), /场景复杂碰撞不可用：missing-complex/);
+  assert.throws(() => query.sweepSphere(sweep()), /场景复杂碰撞不可用：missing-complex/);
+});
+
+test("complex-as-simple routes simple-purpose ray and sweep through complex geometry", () => {
+  const query = createSchoolQuery([{ ...row("complex-as-simple"), simple: null, complex: wall(12), movementKind: "complex" }]);
+  const rayHits = query.raycast(new THREE.Vector3(), new THREE.Vector3(1, 0, 0), 20, undefined, "simple");
+  assert.equal(rayHits.length, 1);
+  assert.equal(rayHits[0].point.x, 12);
+  const sweepHit = query.sweepSphere(sweep(), new THREE.Vector3(), false);
+  assert.ok(sweepHit);
+  assert.equal(sweepHit.sceneHit.point.x, 12);
+});
+
 test("sphere sweep includes edges/corners missed by a center ray, preserves clear gaps and ignores separating bounces", () => {
   const tri = new ExtendedTriangle(new THREE.Vector3(10, -1, -1), new THREE.Vector3(10, 1, -1), new THREE.Vector3(10, 0, 1));
   const hit = sweepSchoolTriangle(tri, new THREE.Vector3(0, 0, 1.05), new THREE.Vector3(20, 0, 1.05), .1);
