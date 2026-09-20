@@ -92,6 +92,22 @@ test("CTM131 independent control arms and drive shafts follow running gear witho
   assert.equal(classifyRuntimeChassisJointName('steeringwheelbone',{assetHasPrimary:true}).status,'exclude');
 });
 
+test("source-solved running gear needs complete parent matrices and never claims observed samples", () => {
+  const f=createSkeletonFixture({rewriteCommonInverseBindBasis:true});
+  const options={groundedPoseAdmission:'source-solved-flat-rest',observedSampleCount:0,referenceEquivalent:false,
+    observedLocalMatricesByBoneName:{carrier:new THREE.Matrix4().makeTranslation(6,0,0).elements,
+      Wheel_L1:new THREE.Matrix4().makeTranslation(0,3,0).elements}};
+  const controller=createRuntimeSkeletalPoseController(f.skeleton,options);
+  assert.ok(controller);assert.equal(controller.evidence,'source-solved-flat-rest');
+  controller.apply('observed');f.root.updateMatrixWorld(true);
+  assertXyzNear(f.wheel,[0,3,0]);assertXyzNear(f.carrier,[6,0,0]);
+  assertXyzNear(f.turret,[0,0,9]);
+  controller.apply('reference');f.root.updateMatrixWorld(true);
+  assertXyzNear(f.wheel,[0,5,0]);assertXyzNear(f.carrier,[4,0,0]);
+  delete options.observedLocalMatricesByBoneName.carrier;
+  assert.equal(createRuntimeSkeletalPoseController(f.skeleton,options),null);
+});
+
 test("source bone identity survives GLTFLoader punctuation sanitizing",()=>{
   const f=createSkeletonFixture();f.wheel.name='RoadWheel03';f.wheel.userData.name='RoadWheel.03';
   const controller=createRuntimeSkeletalPoseController(f.skeleton,{observedSampleCount:3,referenceEquivalent:false,

@@ -53,7 +53,7 @@ interface RuntimeChassisPose {
   generatedClass: string;
   rawName: string;
   promoEntryIds: string[];
-  poseState: "runtime-observed-normal-time" | "runtime-observed-rendered-normal-time";
+  poseState: "runtime-observed-normal-time" | "runtime-observed-rendered-normal-time" | "source-solved-flat-rest";
   sourceBuildId: string;
   pitchDeg: number;
   rollDeg: number;
@@ -640,7 +640,8 @@ function toRuntimePreview(
           generatedClass: runtimeVariant.generatedClass,
           rawName,
           promoEntryIds: runtimeVariant.chassisPose?.promoEntryIds ?? [],
-          poseState: "runtime-observed-rendered-normal-time",
+          poseState: groundedPose.admission === "source-solved-flat-rest"
+            ? "source-solved-flat-rest" : "runtime-observed-rendered-normal-time",
           sourceBuildId: groundedPose.sourceBuildId,
           ...groundedPose.chassis,
           gltfMatrix: groundedPose.chassis.gltfMatrix as RuntimeChassisPoseMatrix,

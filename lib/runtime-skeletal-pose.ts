@@ -6,6 +6,7 @@ export type RuntimeSkeletalPoseMode =
   | "native-planar";
 
 export type RuntimeSkeletalPoseEvidence =
+  | "source-solved-flat-rest"
   | "observed-stable"
   | "observed-snapshot"
   | "reference-equivalent";
@@ -44,6 +45,9 @@ export type RuntimeBoneTranslationOffsets = Readonly<
 export interface RuntimeSkeletalPoseControllerOptions {
   observedSampleCount: number;
   referenceEquivalent: boolean;
+  groundedPoseAdmission?: "rendered-physics-three-stable-samples" | "source-solved-flat-rest";
+  // Legacy option name: exact admitted component poses can also come from
+  // offline source solving; provenance remains on the grounded-pose record.
   observedLocalMatricesByBoneName?: Readonly<Record<string, readonly number[]>>;
 }
 
@@ -406,7 +410,10 @@ export function isRuntimeWheelOrSuspensionBoneName(name: string) {
 export function runtimeSkeletalPoseEvidence({
   observedSampleCount,
   referenceEquivalent,
+  groundedPoseAdmission,
 }: RuntimeSkeletalPoseControllerOptions): RuntimeSkeletalPoseEvidence {
+  if (groundedPoseAdmission === "source-solved-flat-rest") return "source-solved-flat-rest";
+  if (groundedPoseAdmission === "rendered-physics-three-stable-samples") return "observed-stable";
   if (referenceEquivalent) return "reference-equivalent";
   return observedSampleCount >= 3
     ? "observed-stable"
@@ -431,6 +438,8 @@ export function createRuntimeSkeletalPoseController(
 
   const selectedBones = selectedWheelPoseBones(skeleton);
   if (selectedBones.length === 0) return null;
+  if (options.groundedPoseAdmission && selectedBones.some(bone =>
+    !options.observedLocalMatricesByBoneName?.[sourceBoneName(bone)])) return null;
 
   const observedByBone = new Map<THREE.Bone, LocalTrs>();
   const observedMatrixByBone = new Map<THREE.Bone, THREE.Matrix4>();

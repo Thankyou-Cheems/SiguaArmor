@@ -3,7 +3,13 @@ export interface RuntimeGroundedPose {
   sourceBuildId: string;
   generatedClass: string;
   basis: "gltf-y-up-metres-parent-local";
-  admission: "rendered-physics-three-stable-samples";
+  admission: "rendered-physics-three-stable-samples" | "source-solved-flat-rest";
+  derivation?: {
+    method: "ue-source-grounded/v1";
+    inputsSha256: string;
+    implementationSha256: string;
+    comparisonSha256: string;
+  };
   chassis: {
     gltfMatrix: number[];
     pitchDeg: number;
@@ -24,9 +30,17 @@ function validMatrix(value: unknown, requireNonsingular = true): value is number
 
 export function validateRuntimeGroundedPose(value: unknown, generatedClass: string): RuntimeGroundedPose {
   const pose = value as RuntimeGroundedPose;
+  const solved = pose?.admission === "source-solved-flat-rest";
+  const derived = pose?.derivation;
+  if (solved && (derived?.method !== "ue-source-grounded/v1" ||
+    ![derived.inputsSha256, derived.implementationSha256, derived.comparisonSha256]
+      .every(hash => typeof hash === "string" && /^[a-f0-9]{64}$/u.test(hash)))) {
+    throw new Error("Invalid source-solved physical pose provenance");
+  }
+  if (!solved && derived !== undefined) throw new Error("Observed pose cannot claim a solved derivation");
   if (pose?.schemaVersion !== "sigua-vehicle-grounded-pose/v1" ||
     pose.generatedClass !== generatedClass || pose.basis !== "gltf-y-up-metres-parent-local" ||
-    pose.admission !== "rendered-physics-three-stable-samples" ||
+    (!solved && pose.admission !== "rendered-physics-three-stable-samples") ||
     typeof pose.sourceBuildId !== "string" || !pose.sourceBuildId || !pose.chassis ||
     !validMatrix(pose.chassis.gltfMatrix) ||
     ![...pose.chassis.gltfMatrix, pose.chassis.pitchDeg, pose.chassis.rollDeg, pose.chassis.heightAbovePlaneCm].every(Number.isFinite) ||
@@ -58,6 +72,12 @@ export function validateRuntimeGroundedPose(value: unknown, generatedClass: stri
     identities.add(identity);
   }
   return pose;
+}
+
+export function groundedPoseAuthority(pose: RuntimeGroundedPose | null | undefined):
+  "source-solved-flat-rest" | "rendered-normal-time-runtime-observed" | "normal-time-runtime-observed" {
+  return pose?.admission === "source-solved-flat-rest" ? "source-solved-flat-rest"
+    : pose ? "rendered-normal-time-runtime-observed" : "normal-time-runtime-observed";
 }
 
 export function groundedPoseLocalMatrices(

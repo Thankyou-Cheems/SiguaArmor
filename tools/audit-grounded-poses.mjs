@@ -17,10 +17,12 @@ const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const catalog=await readJson(path.join(poseRoot,'data/vehicles/grounded-poses/v1/catalog.json'));
 const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),rows=[];
 for(const entry of catalog.vehicles) {
-  if(entry.status!=='observed')continue;
+  if(entry.status==='unavailable')continue;
+  if(!['observed','solved'].includes(entry.status))throw Error('Unknown grounded pose status');
   const data=await readFile(path.join(poseRoot,entry.record.url));
   if(data.length!==entry.record.bytes||sha(data)!==entry.record.sha256)throw Error('Pose hash mismatch');
   const pose=validateRuntimeGroundedPose(JSON.parse(data),entry.generatedClass);
+  if((entry.status==='solved')!==(pose.admission==='source-solved-flat-rest'))throw Error('Grounded catalog admission differs');
   for(const binding of pose.bindings) {
     const file=path.join(assetRoot,binding.assetUrl),original=await readFile(file);
     if(!binding.assetUrl.includes('/'+sha(original)+'.gltf'))throw Error('Source glTF hash mismatch');
@@ -36,7 +38,7 @@ for(const entry of catalog.vehicles) {
     const root=new THREE.Group();root.matrixAutoUpdate=false;root.add(model);
     const meshes=[];model.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});
     const matrices=groundedPoseLocalMatrices(pose,entry.generatedClass,binding);
-    const controllers=[...new Set(meshes.map(m=>m.skeleton))].map(s=>createRuntimeSkeletalPoseController(s,{observedSampleCount:3,referenceEquivalent:false,observedLocalMatricesByBoneName:matrices}));
+    const controllers=[...new Set(meshes.map(m=>m.skeleton))].map(s=>createRuntimeSkeletalPoseController(s,{groundedPoseAdmission:pose.admission,observedSampleCount:pose.admission==='rendered-physics-three-stable-samples'?3:0,referenceEquivalent:false,observedLocalMatricesByBoneName:matrices}));
     if(!controllers.length||controllers.some(c=>!c))throw Error('Unusable source skin: '+entry.generatedClass);
     const selected=[...new Set(controllers.flatMap(c=>c.selectedBoneNames))];
     const missing=selected.filter(name=>!matrices[name]);
@@ -56,7 +58,7 @@ for(const entry of catalog.vehicles) {
       states.push({mode,minY:precise.min.y,maxY:precise.max.y});
     }
     if(Math.abs(states[0].minY-states[2].minY)>1e-10)throw Error('Pose toggle drift');
-    rows.push({generatedClass:entry.generatedClass,model:binding.assetUrl,selectedBones:selected.length,states});
+    rows.push({generatedClass:entry.generatedClass,admission:pose.admission,model:binding.assetUrl,selectedBones:selected.length,states});
     model.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});
   }
 }

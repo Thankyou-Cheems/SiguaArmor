@@ -53,7 +53,7 @@ import {
   runtimeSkeletalPoseEvidence,
   type RuntimeSkeletalPoseController,
 } from "../lib/runtime-skeletal-pose";
-import { groundedPoseLocalMatrices } from "../lib/runtime-grounded-pose";
+import { groundedPoseAuthority, groundedPoseLocalMatrices } from "../lib/runtime-grounded-pose";
 import {
   carryNestedRuntimeTurretAssemblies,
   clampTurretPitch,
@@ -4533,6 +4533,9 @@ export function RuntimeVehicleViewer({
   );
   const vehicleMeshSkeletalPoseEvidence = vehicleMeshRuntimePosePlacement
     ? runtimeSkeletalPoseEvidence({
+        groundedPoseAdmission: groundedPoseLocalMatrices(
+          preview.groundedPose, preview.generatedClass, vehicleMeshRuntimePosePlacement,
+        ) ? preview.groundedPose?.admission : undefined,
         observedSampleCount:
           vehicleMeshRuntimePosePlacement.runtimeBonePoseNormalTimeSampleCount ??
           1,
@@ -8045,21 +8048,23 @@ export function RuntimeVehicleViewer({
       );
       host.dataset.skeletalPoseChangedBoneCount = String(changedBoneNames.size);
       host.dataset.skeletalPoseVisualDifference =
-        changedBoneNames.size > 0 ? "observed-differs" : "none";
+        changedBoneNames.size > 0
+          ? preview.groundedPose?.admission === "source-solved-flat-rest" ? "solved-differs" : "observed-differs"
+          : "none";
       host.dataset.skeletalPoseReferenceMismatch =
         declaredReferenceEquivalentMismatch ? "true" : "false";
       host.dataset.suspensionPoseState = enabled
         ? vehiclePlanarSuspensionCoverage?.status === "not-applicable"
             ? "not-applicable"
             : skeletalPoseBindings.size > 0
-              ? "runtime-observed"
+              ? preview.groundedPose?.admission === "source-solved-flat-rest" ? "source-solved-flat-rest" : "runtime-observed"
               : "unavailable"
         : "reference";
       host.dataset.suspensionPoseAuthority = enabled &&
           vehiclePlanarSuspensionCoverage?.status === "not-applicable"
           ? "explicit-not-applicable"
           : enabled && skeletalPoseBindings.size > 0
-            ? preview.groundedPose ? "rendered-normal-time-runtime-observed" : "normal-time-runtime-observed"
+            ? groundedPoseAuthority(preview.groundedPose)
             : enabled
               ? "unavailable"
               : "inverse-bind-reference";
@@ -8129,14 +8134,16 @@ export function RuntimeVehicleViewer({
         }
       });
       for (const [skeleton, skinnedMeshes] of skinnedMeshesBySkeleton) {
+        const groundedMatrices = groundedPoseLocalMatrices(
+          preview.groundedPose, preview.generatedClass, placement,
+        );
         const controller = createRuntimeSkeletalPoseController(skeleton, {
+          groundedPoseAdmission: groundedMatrices ? preview.groundedPose?.admission : undefined,
           observedSampleCount:
             placement.runtimeBonePoseNormalTimeSampleCount ?? 1,
           referenceEquivalent:
             placement.runtimeBonePoseReferenceEquivalent === true,
-          observedLocalMatricesByBoneName: groundedPoseLocalMatrices(
-            preview.groundedPose, preview.generatedClass, placement,
-          ),
+          observedLocalMatricesByBoneName: groundedMatrices,
         });
         if (!controller) continue;
         if (!physicalPoseEnabledRef.current) {
@@ -8180,7 +8187,7 @@ export function RuntimeVehicleViewer({
           : "static"
         : "unavailable";
       host.dataset.chassisPoseAuthority = chassisPose
-        ? preview.groundedPose ? "rendered-normal-time-runtime-observed" : "normal-time-runtime-observed"
+        ? groundedPoseAuthority(preview.groundedPose)
         : "unavailable";
       if (chassisPose) {
         host.dataset.chassisPoseGeneratedClass = chassisPose.generatedClass;
@@ -9313,7 +9320,7 @@ export function RuntimeVehicleViewer({
         host.dataset.runningGearHitPoseState =
           physicalPoseEnabledRef.current
             ? runningGearHitPoses.componentPoses.length > 0
-              ? "runtime-observed"
+              ? preview.groundedPose?.admission === "source-solved-flat-rest" ? "source-solved-flat-rest" : "runtime-observed"
               : wheelHitComponentCount > 0
                 ? "unavailable"
                 : trackHitComponentCount > 0

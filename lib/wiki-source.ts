@@ -24,16 +24,20 @@ export async function loadWikiVehicleGroundedPose(generatedClass: string) {
     throw new Error("SiguaWiki grounded-pose catalog is invalid");
   }
   const matches = catalog.vehicles.filter(row => row.generatedClass === generatedClass);
-  if (matches.length !== 1 || matches[0].status !== "observed") return null;
+  if (matches.length !== 1 || !["observed", "solved"].includes(matches[0].status)) return null;
   const ref = matches[0].record;
   if (!ref || !/^[a-f0-9]{64}$/u.test(ref.sha256) ||
     ref.url !== `/data/vehicles/grounded-poses/v1/records/${ref.sha256}.json` || !Number.isSafeInteger(ref.bytes) || ref.bytes <= 0) {
     throw new Error("SiguaWiki grounded-pose reference is invalid");
   }
-  const value = await fetchJson(ref.url, Number.POSITIVE_INFINITY, ref) as { schemaVersion?: string; sourceBuildId?: string };
+  const value = await fetchJson(ref.url, Number.POSITIVE_INFINITY, ref) as {
+    schemaVersion?: string; sourceBuildId?: string; admission?: string;
+  };
   if (value.schemaVersion !== "sigua-vehicle-grounded-pose/v1" || !catalog.sourceBuildId || value.sourceBuildId !== catalog.sourceBuildId) {
     throw new Error("SiguaWiki grounded-pose source build differs");
   }
+  const expectedAdmission = matches[0].status === "solved" ? "source-solved-flat-rest" : "rendered-physics-three-stable-samples";
+  if (value.admission !== expectedAdmission) throw new Error("SiguaWiki grounded-pose method differs from catalog");
   return value;
 }
 
