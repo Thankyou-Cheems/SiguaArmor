@@ -1881,18 +1881,18 @@ export function simulateEditorNativeShot({
       addUnknown(unknowns, `${surface.surfaceProfileId} armor thickness is unreadable`);
       stopReason = "armor thickness is native-unknown";
     } else {
-      // DidPenetrateArmor uses a strict comparison; equality is a failed penetration.
-      penetrated = editorNativeDidPenetrateArmor(
+      // DealDamage rejects depleted damage before DidPenetrateArmor. That
+      // helper bypasses angle/range arithmetic for non-positive thickness;
+      // positive armor still requires strictly greater penetration.
+      penetrated = remainingDamage > 0 && editorNativeDidPenetrateArmor(
         availablePenetrationMm,
         thickness.value,
       );
       if (!penetrated) {
         stopReason =
-          thickness.value === 0 && postPenetrationTraceFactor <= 0
-            ? "post-penetration trace distance is exhausted"
-            : thickness.value === 0 && remainingDamageRatio <= 0
-              ? "remaining damage is exhausted"
-              : "available penetration is not greater than thickness";
+          remainingDamage <= 0
+            ? "remaining damage is exhausted"
+            : "available penetration is not greater than thickness";
       }
     }
 

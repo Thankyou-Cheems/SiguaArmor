@@ -78,7 +78,7 @@ export function resolveWorldPenetration(
       if (arithmetic.remainingDamage <= 0) penetrated = false;
       else {
         const thickness = surface.armorThicknessMm;
-        const compute = () => ({ penetrated: thickness <= 0 ||
+        const compute = () => ({ penetrated:
           editorNativeDidPenetrateArmor(arithmetic.availablePenetrationMm, thickness),
           availablePenetrationMm: arithmetic.availablePenetrationMm });
         const decision = armorCache && hit.nativeHitKey ? armorCache.evaluate(hit.nativeHitKey, compute) : compute();

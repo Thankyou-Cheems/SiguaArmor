@@ -68,3 +68,52 @@ test("ordinary vehicle receivers keep their existing damage-type resistance",()=
   target.healthPools[0].damageModifiers=[{damageTypePath:"/Script/Engine.DamageType",modifier:.25}];
   assert.equal(shot(target).damage[0].poolDamage,18.75);
 });
+
+test("zero-thickness vehicle and aircraft surfaces bypass angle and attenuation, not material gates", () => {
+  for (const vehicle of [false, true]) {
+    for (const incidenceFactor of [-1, 0, 1]) {
+      const target = model();
+      if (vehicle) {
+        delete target.damageReceiver;
+        target.healthPools[0].kind = "hull";
+        target.owners[0].kind = "vehicle-root";
+      }
+      target.surfaceProfiles[0].armorThicknessMm = 0;
+      // Zero penetration-test span makes the positive-armor factor zero.
+      target.projectiles[0].traceDistanceAfterPenetrationMeters = 0;
+      const intersections = [{ ...hit, incidenceFactor }];
+      const result = shot(target, intersections);
+      assert.equal(result.layers[0].penetrated, true);
+      assert.equal(result.damage.length, 1);
+      target.surfaceProfiles[0].allowPenetration = false;
+      assert.equal(shot(target, intersections).layers[0].penetrated, false);
+      target.surfaceProfiles[0].considerForPenetration = false;
+      assert.equal(shot(target, intersections).layers.length, 0);
+    }
+  }
+});
+
+test("zero-thickness material cannot turn zero remaining damage into penetration", () => {
+  const target = model();
+  target.surfaceProfiles[0].armorThicknessMm = 0;
+  target.surfaceProfiles[0].damageAbsorbed = 75;
+  const result = shot(target, [hit, { ...hit, triangleIndex: 1,
+    point: [1, 0, 0], distanceFromRayOriginM: 2 }]);
+  assert.deepEqual(result.layers.map(layer => layer.penetrated), [true, false]);
+  assert.equal(result.layers[1].remainingDamage, 0);
+  assert.equal(result.damage.length, 1);
+});
+
+test("negative damage and negative incidence cannot multiply into a positive armor decision", () => {
+  const target = model();
+  const result = simulateEditorNativeShot({ model: target, weaponIndex: 0,
+    targetDistanceM: 0, shotDamageMultiplier: 0,
+    intersections: [{ ...hit, incidenceFactor: -1 }] });
+  assert.equal(result.layers[0].penetrated, false);
+  assert.equal(result.damage.length, 0);
+  target.surfaceProfiles[0].damageAbsorbed = 100;
+  const absorbed = shot(target, [hit, { ...hit, triangleIndex: 1,
+    point: [1, 0, 0], distanceFromRayOriginM: 2, incidenceFactor: -1 }]);
+  assert.equal(absorbed.layers[1].penetrated, false);
+  assert.equal(absorbed.layers[1].remainingDamage, -25);
+});

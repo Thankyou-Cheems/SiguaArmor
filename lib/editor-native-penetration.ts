@@ -117,5 +117,7 @@ export function editorNativeDidPenetrateArmor(
   availablePenetrationMm: number,
   armorThicknessMm: number,
 ) {
-  return availablePenetrationMm > armorThicknessMm;
+  // Native DidPenetrateArmor only enters angle/range arithmetic for a
+  // positive threshold. The caller still owns allow and remaining-damage gates.
+  return armorThicknessMm <= 0 || availablePenetrationMm > armorThicknessMm;
 }
