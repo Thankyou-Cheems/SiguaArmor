@@ -33,10 +33,33 @@ export async function copyServiceSources(sourceRoot, outputRoot) {
     cwd: sourceRoot, encoding: "utf8",
   }).split("\0").filter(Boolean);
   for (const file of files) {
+    const source = path.join(sourceRoot, file);
+    try {
+      await stat(source);
+    } catch (error) {
+      if (error.code === "ENOENT") continue;
+      throw error;
+    }
     const target = path.join(outputRoot, file);
     await mkdir(path.dirname(target), { recursive: true });
-    await cp(path.join(sourceRoot, file), target);
+    await cp(source, target);
   }
+}
+
+export function buildAnalyticsExecutable(sourceRoot, outputRoot) {
+  const source = path.join(sourceRoot, "services", "analytics");
+  const target = path.join(outputRoot, "services", "analytics", "analytics-server");
+  execFileSync("go", ["build", "-trimpath", "-ldflags=-s -w", "-o", target, "."], {
+    cwd: source,
+    stdio: "inherit",
+    env: {
+      ...process.env,
+      CGO_ENABLED: "0",
+      GOARCH: "amd64",
+      GOOS: "linux",
+      GOTOOLCHAIN: "local",
+    },
+  });
 }
 
 export async function packageDeployment(outputRoot, { wikiRef } = {}) {
@@ -62,6 +85,7 @@ export async function packageDeployment(outputRoot, { wikiRef } = {}) {
     ),
     copyServiceSources(ROOT, outputRoot),
   ]);
+  buildAnalyticsExecutable(ROOT, outputRoot);
   await writeFile(path.join(outputRoot, "release.json"), JSON.stringify({
     sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim(),
     packagedAt: new Date().toISOString(),

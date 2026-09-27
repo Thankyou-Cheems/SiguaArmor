@@ -4,14 +4,18 @@ This is the maintained release procedure. Commands live in `package.json` and `t
 
 ## Publish Armor
 
-Use a committed, clean product checkout with dependencies installed (`npm ci`). Local requirements are Node/npm, Python 3 for release tests, tar and SSH/SCP. The configured server needs Python 3, Docker Compose v2 and an existing Armor stack with its `.env` and persistent data.
+Use a committed, clean product checkout with dependencies installed (`npm ci`). Local requirements are Node/npm, Go 1.25 or newer, Python 3 for release tests, tar and SSH/SCP. The configured x86-64 server needs Python 3, Docker Compose v2 and an existing Armor stack with its `.env` and persistent data. The release packager cross-compiles the analytics service to a static Linux/amd64 executable; the server builds its scratch image from that packaged executable without pulling a Go builder image.
 
 ```powershell
 npm run deploy
 npm run deploy:status
 ```
 
-`deploy` runs typecheck, all tests, lint, production build and packaging, then uploads one complete compressed candidate. Service packaging copies tracked source files, excluding local installed dependencies and caches. It compares candidate components with the actual server files and replaces only changed components. Static files use the existing Caddy directory mount; changes to the Node runtime, administration service, analytics service or Caddy configuration recreate the affected container. Analytics source/configuration changes rebuild its image. Compose service configuration changes also recreate affected services. Service additions/removals need a separate host migration.
+`deploy` runs typecheck, all tests including Go analytics tests, lint, production build and packaging, then uploads one complete compressed candidate. Service packaging copies tracked source files, excluding local installed dependencies and caches. It compares candidate components with the actual server files and replaces only changed components. Static files use the existing Caddy directory mount; changes to the Node runtime, administration service, analytics service or Caddy configuration recreate the affected container. Analytics source/configuration changes rebuild its image. Compose service configuration changes also recreate affected services. Service additions/removals need a separate host migration.
+
+Analytics now records encrypted IPs for 30 days and publishes IP-deduplicated daily counts only; it neither mounts nor loads the city GeoIP database. Existing v1 city archives remain readable for their daily totals. The former MMDB may remain in private server custody while the previous release is a rollback target; it is outside the active container and consumes no analytics process memory. See [ADR 0002](adr/0002-ip-only-dau-analytics.md).
+
+Analytics runs as a dependency-free Go executable in a scratch image while preserving the existing endpoint and record formats. In an isolated server candidate with a copy of all 74 current analytics files, its idle process RSS was 8.1 MiB and its RSS after 200 distinct IPs from 16 concurrent clients was 10.9 MiB, compared with roughly 160–165 MiB for the then-current production Node/GeoIP process. All 73 completed days matched the live daily totals. This is controlled candidate evidence, not a post-deployment measurement. See [ADR 0003](adr/0003-lightweight-analytics-runtime.md).
 
 The default SSH alias and stack path are shown by `npm run deploy -- --help`. Override them with `--host` / `--root` or `SIGUA_DEPLOY_SSH_HOST` / `SIGUA_DEPLOY_ROOT`. Add `--wiki-ref <commit>` when this release depends on a particular published Wiki change; this is an operational note, not a browser pin. `npm run deploy:package` remains available for inspecting a local candidate; `deploy` always builds its own fresh candidate.
 
@@ -40,7 +44,7 @@ At the configured stack root:
 | `previous/` | One complete previous version; automatically rotated after a successful changed release |
 | `incoming/`, `.previous-pending/` | Candidate and temporary recovery copy; removed after success |
 | `release/previous-assets/` | Only the immediately preceding build's `assets/` and `china-assets/`, for already-open pages; rotated when client files change |
-| `data/`, `.env` | Live content, analytics, GeoIP and secrets; excluded from packaging, switching and rollback |
+| `data/`, `.env` | Live content, analytics, retained rollback-only GeoIP file and secrets; excluded from packaging, switching and rollback |
 
 The static fallback serves only existing public asset routes. It never reads arbitrary historical rollback folders, old HTML or server source. Pages older than the retained build may need a refresh. Preserve the current and previous versions when cleaning; obsolete `candidate-*`, `rollback-*`, retired/failed-release folders and old upload scratch directories may be removed only after checking active mounts/processes and any unique persistent files. Do not prune Docker images as part of directory cleanup.
 

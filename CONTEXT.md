@@ -11,6 +11,10 @@ SiguaArmor is one public product repository. Its shared-data seam is `lib/wiki-s
 
 The browser reads Wiki data and assets directly over HTTPS. SiguaArmor does not pin a Wiki release, mirror shared catalogs, or fall back to bundled shared data. A failed Wiki request is visible as a product data-loading failure. Observed grounded poses additionally require the catalog's exact class, model binding and record integrity before enabling the physical-state switch; unavailable observations retain the reference display.
 
+## Language
+
+**Daily active visitor (DAU)**: One distinct client IP observed by either Armor edition during one UTC day. It counts network addresses rather than people; shared or changing addresses can make it differ from the number of human visitors.
+
 `generated/catalog-index.json` and its China counterpart contain only product-owned card topology, grouping order, and routes. Localized labels, search terms/aliases, and card thumbnails come from the Wiki vehicle and faction catalogs; Armor keeps the ranking, fuzzy-pinyin, grouping, and interaction implementations.
 
 The retired Maintainer repository is only historical migration provenance. Do not rebuild its private/public split or its release compiler.

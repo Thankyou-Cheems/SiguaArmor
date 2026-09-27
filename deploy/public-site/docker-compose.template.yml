@@ -127,18 +127,14 @@ services:
     env_file:
       - .env
     environment:
-      NODE_ENV: production
       SIGUA_PUBLIC_ORIGIN: {{ARMOR_ORIGIN}}
       SIGUA_ANALYTICS_DIR: /srv/analytics
       SIGUA_ANALYTICS_RETENTION_DAYS: "30"
-      SIGUA_ANALYTICS_CITY_THRESHOLD: "3"
-      SIGUA_GEOIP_CITY_DATABASE: /srv/geoip/dbip-city-lite.mmdb
       SIGUA_TRUST_EDGEONE_CLIENT_IP: "1"
       SIGUA_ANALYTICS_LISTEN_HOST: 0.0.0.0
       SIGUA_ANALYTICS_PORT: "8081"
     volumes:
       - ./data/analytics:/srv/analytics
-      - ./data/geoip/dbip-city-lite.mmdb:/srv/geoip/dbip-city-lite.mmdb:ro
     networks:
       - homelab-web
     security_opt:
@@ -150,7 +146,7 @@ services:
     expose:
       - "8081"
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8081/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "/app/analytics-server", "healthcheck"]
       interval: 10s
       timeout: 3s
       retries: 5

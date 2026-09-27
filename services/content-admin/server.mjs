@@ -545,7 +545,7 @@ export function createContentAdminApp(config, options = {}) {
     }
     const overview = await upstream.json();
     if (
-      overview?.schemaVersion !== "sigua-admin-dau-overview/v1" ||
+      overview?.schemaVersion !== "sigua-admin-dau-overview/v2" ||
       !Array.isArray(overview.days)
     ) {
       throw new Error("analytics overview upstream returned an invalid document");

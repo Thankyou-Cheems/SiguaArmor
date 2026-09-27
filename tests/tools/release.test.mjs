@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import { parseArgs } from "../../tools/deploy/release.mjs";
-import { copyServiceSources } from "../../tools/deploy/package-deployment.mjs";
+import { buildAnalyticsExecutable, copyServiceSources } from "../../tools/deploy/package-deployment.mjs";
 
 test("service packaging excludes local dependencies, credentials and caches", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "armor-package-"));
@@ -21,6 +21,20 @@ test("service packaging excludes local dependencies, credentials and caches", as
     assert.deepEqual(await readdir(path.join(root, "candidate/services/demo")), ["server.mjs"]);
   } finally {
     await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("analytics packaging produces a Linux amd64 executable for the scratch image", async () => {
+  const output = await mkdtemp(path.join(os.tmpdir(), "armor-analytics-package-"));
+  try {
+    await mkdir(path.join(output, "services", "analytics"), { recursive: true });
+    const sourceRoot = path.resolve(import.meta.dirname, "..", "..");
+    buildAnalyticsExecutable(sourceRoot, output);
+    const binary = await readFile(path.join(output, "services", "analytics", "analytics-server"));
+    assert.equal(binary.subarray(0, 4).toString("hex"), "7f454c46");
+    assert.equal(binary.readUInt16LE(18), 62);
+  } finally {
+    await rm(output, { recursive: true, force: true });
   }
 });
 

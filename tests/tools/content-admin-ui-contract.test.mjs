@@ -42,13 +42,13 @@ test("management session opens a source-backed all-history DAU dashboard", async
   assert.match(modal, /requestAdminJson<AdminAnalyticsOverview>\("\/analytics"\)/u);
   assert.match(modal, /<AdminAnalyticsDashboard overview=\{analytics\}/u);
   assert.match(modal, /analytics: "日活总览"/u);
-  assert.match(dashboard, /schemaVersion !== "sigua-admin-dau-overview\/v1"/u);
+  assert.match(dashboard, /schemaVersion !== "sigua-admin-dau-overview\/v2"/u);
   assert.match(dashboard, /今日 DAU/u);
   assert.match(dashboard, /近 7 日均值/u);
-  assert.match(dashboard, /地区可见率/u);
-  assert.match(dashboard, /累计活跃人次/u);
+  assert.match(dashboard, /累计日活人次/u);
   assert.match(dashboard, /原始 IP 不下发/u);
+  assert.doesNotMatch(dashboard, /cityThreshold|geoIpDatabaseRelease|countryTotals/u);
   assert.match(dashboard, /overview\.days/u);
   assert.match(styles, /\.admin-analytics__trend/u);
-  assert.match(styles, /\.admin-analytics__cities/u);
+  assert.match(styles, /\.admin-analytics__selected-day/u);
 });

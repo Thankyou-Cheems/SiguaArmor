@@ -1,14 +1,9 @@
-FROM node:22.23.1-alpine3.23
+FROM scratch
 
-WORKDIR /app
+COPY --chmod=0555 analytics-server /app/analytics-server
 
-COPY --chown=node:node package.json package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
-
-COPY --chown=node:node server.mjs dau-analytics.mjs ./
-
-USER node
+USER 1000:1000
 
 EXPOSE 8081
 
-CMD ["node", "server.mjs"]
+ENTRYPOINT ["/app/analytics-server"]

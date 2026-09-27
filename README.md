@@ -14,7 +14,7 @@ SiguaArmor is the public source repository for the vehicle and weapon reference 
 - Research methods, Editor/SDK extraction, raw or uncompressed game assets, source locks, and evidence remain in the private SiguaResearch repository.
 - Asset authoring tools and private publication metadata live in the private part of SiguaWiki. This repository contains product runtime, build/deployment maintenance and necessary behavior comments.
 
-After cloning, run:
+Install Node.js 22.13 or newer and Go 1.25 or newer, then run:
 
 ```powershell
 npm ci

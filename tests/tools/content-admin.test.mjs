@@ -159,10 +159,8 @@ async function withContentAdminServer(callback, options = {}) {
 
 test("content-admin reuses the management session for the analytics overview", async () => {
   const overview = {
-    schemaVersion: "sigua-admin-dau-overview/v1",
+    schemaVersion: "sigua-admin-dau-overview/v2",
     generatedAt: "2026-08-28T12:00:00.000Z",
-    geoIpDatabaseRelease: "2026-08",
-    cityThreshold: 3,
     days: [],
   };
   let proxiedRequest = null;
