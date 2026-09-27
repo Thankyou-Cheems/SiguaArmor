@@ -380,6 +380,7 @@ function GunnerSightLayerImage({
     const fallbackKind = gunnerSightLayerFallbackKind(layer);
     if (!fallbackKind) return null;
     return (
+      // eslint-disable-next-line @next/next/no-img-element -- shared Wiki sight assets must render their exact source pixels
       <img
         className={`gunner-sight-overlay__fallback gunner-sight-overlay__${fallbackKind}`}
         data-layout-role={role}

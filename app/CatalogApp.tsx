@@ -3219,6 +3219,10 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
     siteEdition: SiteEdition;
     index: PublicCatalogIndex;
   } | null>(null);
+  const fullCatalogCacheRef = useRef(new Map<SiteEdition, PublicCatalogIndex>());
+  const fullCatalogRequestsRef = useRef(
+    new Map<SiteEdition, Promise<PublicCatalogIndex>>(),
+  );
   const [loadFailure, setLoadFailure] = useState<{
     siteEdition: SiteEdition;
     message: string;
@@ -3270,34 +3274,46 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
   }, [loadedCatalog, siteEdition]);
 
   const requestFullCatalog = useCallback(async () => {
-    const current = loadedCatalog?.siteEdition === siteEdition
-      ? loadedCatalog.index
-      : null;
-    const expectedCount = current?.groups.reduce(
-      (total, group) => total + group.recordCount,
-      0,
-    );
-    if (current && current.records.length === expectedCount) return current;
-    try {
-      const next = await loadPublicCatalog(siteEdition);
-      setLoadedCatalog({ siteEdition, index: next });
+    const cached = fullCatalogCacheRef.current.get(siteEdition);
+    if (cached) {
+      setLoadedCatalog({ siteEdition, index: cached });
       setLoadFailure(null);
-      return next;
-    } catch (reason: unknown) {
-      setLoadFailure({
-        siteEdition,
-        message: reason instanceof Error ? reason.message : String(reason),
-      });
-      throw reason;
+      return cached;
     }
-  }, [loadedCatalog, siteEdition]);
+    const pending = fullCatalogRequestsRef.current.get(siteEdition);
+    if (pending) return pending;
+
+    const request = loadPublicCatalog(siteEdition)
+      .then((next) => {
+        fullCatalogCacheRef.current.set(siteEdition, next);
+        setLoadedCatalog({ siteEdition, index: next });
+        setLoadFailure(null);
+        return next;
+      })
+      .catch((reason: unknown) => {
+        setLoadFailure({
+          siteEdition,
+          message: reason instanceof Error ? reason.message : String(reason),
+        });
+        throw reason;
+      })
+      .finally(() => {
+        if (fullCatalogRequestsRef.current.get(siteEdition) === request) {
+          fullCatalogRequestsRef.current.delete(siteEdition);
+        }
+      });
+    fullCatalogRequestsRef.current.set(siteEdition, request);
+    return request;
+  }, [siteEdition]);
 
   const requestCatalogLocation = useCallback(async (href: string) => {
     try {
-      const next = await loadInitialPublicCatalog(siteEdition, href);
-      setLoadedCatalog({ siteEdition, index: next });
+      const cachedFullCatalog = fullCatalogCacheRef.current.get(siteEdition);
+      const next = cachedFullCatalog ?? await loadInitialPublicCatalog(siteEdition, href);
+      const completeCatalog = fullCatalogCacheRef.current.get(siteEdition) ?? next;
+      setLoadedCatalog({ siteEdition, index: completeCatalog });
       setLoadFailure(null);
-      return next;
+      return completeCatalog;
     } catch (reason: unknown) {
       setLoadFailure({
         siteEdition,
@@ -3805,6 +3821,7 @@ function CatalogAppReady({
           { groupId: ALL_GROUPS, query: "", selectedId: null, viewer: nextViewer },
           "pushState",
         );
+        void onRequestLocation(window.location.href).catch(() => undefined);
       },
       () => {
         window.requestAnimationFrame(() => {
@@ -3816,7 +3833,7 @@ function CatalogAppReady({
         });
       },
     );
-  }, [commitNavigation, groupId, hasGroupSelection, runFactionMorph, setHelpOpen]);
+  }, [commitNavigation, groupId, hasGroupSelection, onRequestLocation, runFactionMorph, setHelpOpen]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
