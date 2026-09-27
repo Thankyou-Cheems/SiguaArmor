@@ -41,6 +41,35 @@ export async function loadWikiVehicleGroundedPose(generatedClass: string) {
   return value;
 }
 
+export async function loadWikiVehicleTerrainPoses(generatedClass: string) {
+  const catalog = await fetchJson("/data/vehicles/terrain-poses/v1/catalog.json", 60_000) as {
+    schemaVersion: string; sourceBuildId: string;
+    vehicles: {generatedClass:string;record:{url:string;sha256:string;bytes:number}}[];
+  };
+  if(catalog.schemaVersion!=="sigua-vehicle-terrain-poses-index/v1"||!Array.isArray(catalog.vehicles))throw new Error("地形姿态目录无效");
+  const matches=catalog.vehicles.filter(v=>v.generatedClass===generatedClass);
+  if(!matches.length)return null;
+  if(matches.length!==1)throw new Error("地形姿态车型重复");
+  const ref=matches[0].record;
+  if(!/^[a-f0-9]{64}$/u.test(ref?.sha256)||ref.url!==`/data/vehicles/terrain-poses/v1/records/${ref.sha256}.json`||
+    !Number.isSafeInteger(ref.bytes)||ref.bytes<=0||ref.bytes>256*1024)throw new Error("地形姿态记录无效");
+  const {validateTerrainPoseSet}=await import("./runtime-terrain-pose.ts");
+  const set=validateTerrainPoseSet(await fetchJson(ref.url,Infinity,ref),generatedClass);
+  if(set.sourceBuildId!==catalog.sourceBuildId)throw new Error("地形姿态版本不匹配");
+  const flatCatalog=await fetchJson("/data/vehicles/grounded-poses/v1/catalog.json",60_000) as {vehicles:{generatedClass:string;record?:{sha256:string}}[]};
+  const flatRows=flatCatalog.vehicles?.filter(row=>row.generatedClass===generatedClass);
+  if(flatRows?.length!==1||flatRows[0].record?.sha256!==set.flatReferenceSha256)throw new Error("平地基准已更新，地形姿态需刷新");
+  // Bind the exact existing flat reference and real scene bytes. A data update
+  // must regenerate this small derived record instead of silently reusing it.
+  await Promise.all([set.scene.query,set.scene.display,{url:`/data/vehicles/grounded-poses/v1/records/${set.flatReferenceSha256}.json`,sha256:set.flatReferenceSha256}].map(async entry=>{
+    const response=await fetch(wikiUrl(entry.url));if(!response.ok)throw new Error("地形姿态依赖不可用");
+    const data=await response.arrayBuffer();
+    const digest=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",data))).map(v=>v.toString(16).padStart(2,"0")).join("");
+    if(digest!==entry.sha256)throw new Error("场景或平地基准已更新，地形姿态需刷新");
+  }));
+  return set;
+}
+
 export function wikiUrl(pathname: string) {
   if (!pathname.startsWith("/")) {
     throw new Error(`Invalid SiguaWiki path: ${pathname}`);

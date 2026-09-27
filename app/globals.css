@@ -5661,6 +5661,11 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   align-items: center;
 }
 
+.viewer-physical-pose-row { flex-wrap: wrap; gap: 6px; }
+.viewer-terrain-pose-control { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; width: 100%; font-size: 12px; }
+.viewer-terrain-pose-control select { flex: 1; min-width: 110px; color: inherit; background: var(--panel-bg, #20252b); border: 1px solid #59616c; border-radius: 5px; padding: 4px; }
+.viewer-terrain-pose-control small { width: 100%; opacity: .75; }
+
 .viewer-crew-occupant-row {
   position: relative;
   flex-direction: column;

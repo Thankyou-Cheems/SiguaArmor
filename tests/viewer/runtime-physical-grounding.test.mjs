@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 import ts from "typescript";
 import * as THREE from "three";
+import {terrainEnvironmentOffset} from "../../lib/runtime-terrain-pose.ts";
 
 // Execute the real viewer callbacks together. A test of only a ground-height
 // formula misses the bug: the toggle/load callers used to leave it untouched.
@@ -45,6 +46,7 @@ function fixture() {
     applyChassisPoseMatrix(enabled) { chassis.position.y = enabled ? 0.5 : 0; },
     applySkeletalPose(enabled) { wheel.position.y = enabled ? -0.3 : 0.35; },
     applyTurretPose() {}, setRealtimePointer() {}, protectionCache: null, render() {},
+    activeTerrain:()=>null, terrainEnvironmentOffset, applyBackground() {},
     protectionEnabledRef: { current: false }, scheduleProtectionMap() {},
   };
   context.applyChassisPoseMatrix(true);
@@ -89,4 +91,15 @@ test("late exterior loading replaces an analysis minimum in either direction", (
   const minimum=new THREE.Box3().setFromObject(f.visualGroup,true).min.y;
   near(f.groundReferenceY,minimum,'complete exterior may raise the previous plane');
   f.applyPose(true);near(f.groundReferenceY,-2,'observed plane remains independent of proxy bounds');
+});
+
+test("terrain scene translation stays bound to the same source origin and resets on disable",()=>{
+ const f=fixture();
+ const terrain={set:{scene:{anchorSourceCm:[13500,-51500,200]}},pose:{originSourceCm:[18000,-53000,300]}};
+ f.activeTerrain=()=>f.physicalPoseEnabledRef.current?terrain:null;
+ for(let i=0;i<3;i++){
+  f.applyPose(true);assert.deepEqual(f.environmentRoot.position.toArray(),[-45,-3,15]);
+  f.applyPose(false);near(f.environmentRoot.position.x,0,'restore school X');near(f.environmentRoot.position.z,0,'restore school Z');
+  near(f.environmentRoot.position.y,f.groundReferenceY,'restore reference height');
+ }
 });

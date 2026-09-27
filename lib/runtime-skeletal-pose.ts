@@ -20,6 +20,7 @@ export interface RuntimeSkeletalPoseController {
     mode: RuntimeSkeletalPoseMode,
     referenceTranslationOffsetsByBoneName?: RuntimeBoneTranslationOffsets,
   ): void;
+  applyTerrain(localMatrices: Readonly<Record<string, readonly number[]>>): void;
   componentPoseMatrixForBone(
     boneName: string,
     componentRoot: THREE.Object3D,
@@ -533,6 +534,21 @@ export function createRuntimeSkeletalPoseController(
     changedBoneNames,
     declaredReferenceEquivalentMismatch:
       options.referenceEquivalent && changedBoneNames.length > 0,
+    applyTerrain(localMatrices) {
+      // Validate every selected running-gear joint before changing any bone.
+      const updates=selectedBones.map(bone=>{
+        const values=localMatrices[sourceBoneName(bone)];
+        if(values?.length!==16||!values.every(Number.isFinite))throw new Error("地形姿态缺少当前模型骨骼");
+        const matrix=new THREE.Matrix4().fromArray(values);
+        if(Math.abs(matrix.determinant())<=1e-12)throw new Error("地形姿态骨骼不可逆");
+        return {bone,matrix};
+      });
+      for(const {bone,matrix} of updates){
+        applyLocalTrs(bone,localTrsFromMatrix(matrix));
+        bone.matrix.copy(matrix);bone.matrixAutoUpdate=false;bone.matrixWorldNeedsUpdate=true;
+      }
+      updateSkeletonWorld(skeleton);
+    },
     apply(mode, referenceTranslationOffsetsByBoneName = {}) {
       for (const bone of selectedBones) {
         const offset = referenceTranslationOffsetsByBoneName[sourceBoneName(bone)];

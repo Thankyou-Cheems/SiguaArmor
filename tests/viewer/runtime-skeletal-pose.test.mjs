@@ -60,6 +60,20 @@ function createSkeletonFixture({
   return { skeleton, root, carrier, wheel, turret };
 }
 
+test('terrain overrides are atomic and restore the exact flat and reference poses',()=>{
+  const {skeleton,wheel,carrier}=createSkeletonFixture();
+  const controller=createRuntimeSkeletalPoseController(skeleton,{observedSampleCount:3,referenceEquivalent:false});
+  assert.ok(controller);
+  const observed=wheel.matrix.clone();
+  const values={carrier:carrier.matrix.toArray(),Wheel_L1:new THREE.Matrix4().makeTranslation(0,6.5,0).toArray()};
+  for(const name of controller.selectedBoneNames)if(!values[name])values[name]=skeleton.bones.find(b=>b.name===name).matrix.toArray();
+  controller.applyTerrain(values);assert.equal(wheel.matrix.elements[13],6.5);
+  const terrain=wheel.matrix.clone();assert.throws(()=>controller.applyTerrain({}));assert.deepEqual(wheel.matrix.elements,terrain.elements);
+  controller.apply('observed');assert.deepEqual(wheel.matrix.elements,observed.elements);
+  controller.apply('reference');assert.equal(wheel.position.y,5);
+  controller.applyTerrain(values);assert.equal(wheel.matrix.elements[13],6.5);
+});
+
 function xyz(object) {
   return object.position.toArray();
 }

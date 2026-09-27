@@ -2,7 +2,8 @@
 
 import { VehicleWeaponHud } from "./VehicleWeaponHud";
 import { sourceProjectileForShot, type SourceProjectileVisual, type VehicleFiringPresentation } from "../lib/vehicle-firing-presentation";
-import { loadWikiDataset } from "../lib/wiki-source";
+import { loadWikiDataset, loadWikiVehicleTerrainPoses } from "../lib/wiki-source";
+import { terrainPoseLocalMatrices, terrainEnvironmentOffset, type TerrainPose, type TerrainPoseSet } from "../lib/runtime-terrain-pose";
 import { createNarvaSchoolEnvironment, loadNarvaSchoolEnvironment, setNarvaSchoolInspectionTone } from "../lib/runtime-narva-school-environment";
 import { getRuntimeViewerBackground, setRuntimeViewerBackground, subscribeRuntimeViewerBackground, runtimeViewerBackgroundPresentation } from "../lib/runtime-viewer-background";
 import type { OperationInventorySlot } from "../lib/operation-view-control";
@@ -780,6 +781,7 @@ interface RuntimeSkeletalPoseBinding {
   skinnedMeshes: THREE.SkinnedMesh[];
   model: THREE.Object3D;
   placementMatrix: THREE.Matrix4;
+  terrainBinding: RuntimeVisualPlacement;
 }
 
 interface RuntimeTurretPose {
@@ -4447,6 +4449,10 @@ export function RuntimeVehicleViewer({
   );
   const applyChassisPoseRef = useRef<((enabled: boolean) => void) | null>(null);
   const physicalPoseEnabledRef = useRef(true);
+  const [terrainPoseSet, setTerrainPoseSet] = useState<TerrainPoseSet | null>(null);
+  const [terrainPoseId, setTerrainPoseId] = useState("");
+  const [terrainPoseNotice, setTerrainPoseNotice] = useState("");
+  const terrainPoseRef = useRef<{set:TerrainPoseSet;pose:TerrainPose} | null>(null);
   const applyTurretPoseRef = useRef<(
     (options?: { interactive?: boolean }) => void
   ) | null>(null);
@@ -7837,6 +7843,23 @@ export function RuntimeVehicleViewer({
   }, [physicalPoseEnabled]);
 
   useEffect(() => {
+    let cancelled=false;
+    setTerrainPoseSet(null);setTerrainPoseId("");setTerrainPoseNotice("");terrainPoseRef.current=null;
+    if(preview.generatedClass && preview.groundedPose) {
+      void loadWikiVehicleTerrainPoses(preview.generatedClass).then(set=>{
+        if(!cancelled)setTerrainPoseSet(set);
+      }).catch((error:unknown)=>{if(!cancelled)setTerrainPoseNotice(`地形姿态不可用：${error instanceof Error?error.message:String(error)}`);});
+    }
+    return ()=>{cancelled=true;};
+  }, [preview.generatedClass, preview.groundedPose]);
+
+  useEffect(() => {
+    const pose=terrainPoseSet?.presets.find(p=>p.id===terrainPoseId);
+    terrainPoseRef.current=terrainPoseSet&&pose?{set:terrainPoseSet,pose}:null;
+    applyChassisPoseRef.current?.(physicalPoseEnabledRef.current);
+  }, [terrainPoseSet, terrainPoseId]);
+
+  useEffect(() => {
     backgroundRef.current = background;
     applyBackgroundRef.current?.();
   }, [background]);
@@ -7935,8 +7958,9 @@ export function RuntimeVehicleViewer({
     const environmentRoot = new THREE.Group();
     environmentRoot.name = "runtime-environment";
     scene.add(environmentRoot);
+    const activeTerrain = () => physicalPoseEnabledRef.current ? terrainPoseRef.current : null;
     const applyBackground = () => {
-      const presentation = runtimeViewerBackgroundPresentation(backgroundRef.current, operationBackgroundActive);
+      const presentation = runtimeViewerBackgroundPresentation(backgroundRef.current, operationBackgroundActive || Boolean(activeTerrain()));
       environmentRoot.visible = presentation.schoolVisible;
       if (gridHelper) gridHelper.visible = presentation.gridVisible;
       if (schoolEnvironment) setNarvaSchoolInspectionTone(schoolEnvironment, presentation.schoolMuted);
@@ -8039,7 +8063,7 @@ export function RuntimeVehicleViewer({
           : "unavailable"
         : "reference";
       host.dataset.skeletalPoseEvidence =
-        vehicleMeshSkeletalPoseEvidence ?? "unavailable";
+        activeTerrain() ? "quasi-static-terrain" : vehicleMeshSkeletalPoseEvidence ?? "unavailable";
       host.dataset.skeletalPoseControllerCount = String(
         skeletalPoseBindings.size,
       );
@@ -8060,7 +8084,7 @@ export function RuntimeVehicleViewer({
               ? preview.groundedPose?.admission === "source-solved-flat-rest" ? "source-solved-flat-rest" : "runtime-observed"
               : "unavailable"
         : "reference";
-      host.dataset.suspensionPoseAuthority = enabled &&
+      host.dataset.suspensionPoseAuthority = activeTerrain() ? "quasi-static-vertical-reactions/v1" : enabled &&
           vehiclePlanarSuspensionCoverage?.status === "not-applicable"
           ? "explicit-not-applicable"
           : enabled && skeletalPoseBindings.size > 0
@@ -8087,11 +8111,15 @@ export function RuntimeVehicleViewer({
     const applySkeletalPose = (enabled: boolean) => {
       for (const {
         controller,
+        terrainBinding,
       } of skeletalPoseBindings) {
         if (!enabled) {
           controller.apply("reference");
         } else {
-          controller.apply("observed");
+          const matrices=terrainPoseLocalMatrices(activeTerrain()?.pose??null,terrainBinding);
+          if(activeTerrain()&&!matrices)throw new Error("地形姿态与当前模型不匹配");
+          if(matrices)controller.applyTerrain(matrices);
+          else controller.apply("observed");
         }
       }
       // Bone and mesh world matrices (including the changed chassis) must be
@@ -8104,6 +8132,7 @@ export function RuntimeVehicleViewer({
         }
       }
       updateSkeletalPoseDataset(enabled);
+      if(activeTerrain())host.dataset.suspensionPoseAuthority="quasi-static-vertical-reactions/v1";
     };
     const registerSkeletalPose = (
       model: THREE.Object3D,
@@ -8149,7 +8178,10 @@ export function RuntimeVehicleViewer({
         if (!physicalPoseEnabledRef.current) {
           controller.apply("reference");
         } else {
-          controller.apply("observed");
+          const terrainMatrices=terrainPoseLocalMatrices(activeTerrain()?.pose??null,placement);
+          if(activeTerrain()&&!terrainMatrices)throw new Error("地形姿态与加载模型不匹配");
+          if(terrainMatrices)controller.applyTerrain(terrainMatrices);
+          else controller.apply("observed");
         }
         for (const mesh of skinnedMeshes) {
           mesh.computeBoundingBox();
@@ -8163,6 +8195,7 @@ export function RuntimeVehicleViewer({
           skinnedMeshes,
           model,
           placementMatrix: new THREE.Matrix4().fromArray(placement.matrix),
+          terrainBinding: placement,
         });
       }
       updateSkeletalPoseDataset(physicalPoseEnabledRef.current);
@@ -8178,7 +8211,7 @@ export function RuntimeVehicleViewer({
     const applyChassisPoseMatrix = (enabled: boolean) => {
       const active = enabled && chassisPose !== null;
       chassisPoseGroup.matrix.copy(
-        active ? settledChassisPoseMatrix : staticChassisPoseMatrix,
+        activeTerrain() ? new THREE.Matrix4().fromArray(activeTerrain()!.pose.chassis.gltfMatrix) : active ? settledChassisPoseMatrix : staticChassisPoseMatrix,
       );
       chassisPoseGroup.matrixWorldNeedsUpdate = true;
       host.dataset.chassisPoseState = chassisPose
@@ -8186,7 +8219,7 @@ export function RuntimeVehicleViewer({
           ? "settled"
           : "static"
         : "unavailable";
-      host.dataset.chassisPoseAuthority = chassisPose
+      host.dataset.chassisPoseAuthority = activeTerrain() ? "quasi-static-vertical-reactions/v1" : chassisPose
         ? groundedPoseAuthority(preview.groundedPose)
         : "unavailable";
       if (chassisPose) {
@@ -8196,6 +8229,14 @@ export function RuntimeVehicleViewer({
         host.dataset.chassisPoseActorOriginHeightCm = String(
           chassisPose.heightAbovePlaneCm,
         );
+      }
+      const terrain=activeTerrain();
+      host.dataset.terrainPose=terrain?.pose.id??"flat";
+      host.dataset.terrainPoseBodyClearance=terrain?"complete-clear":"not-selected";
+      if(terrain){
+        host.dataset.chassisPosePitchDegrees=String(terrain.pose.chassis.pitchDeg);
+        host.dataset.chassisPoseRollDegrees=String(terrain.pose.chassis.rollDeg);
+        host.dataset.chassisPoseActorOriginHeightCm=String(terrain.pose.chassis.gltfMatrix[13]*100);
       }
     };
     applyChassisPoseMatrix(physicalPoseEnabledRef.current);
@@ -8728,6 +8769,9 @@ export function RuntimeVehicleViewer({
     applyCrewOccupantVisibility(crewOccupantDisplayEnabledRef.current);
 
     const render = () => {
+      // Flat-plane comparison aids have no terrain support solution of their own.
+      if (referenceSoldier) referenceSoldier.visible = !activeTerrain() && !crewOccupantDisplayEnabledRef.current;
+      if (groundScale) groundScale.visible = !activeTerrain();
       shotVisuals.forEach((shotVisual) => {
         shotVisual.explosionLayers.forEach((visual) => {
           updateShotExplosionDamageTypeIconPosition(visual, camera);
@@ -9320,7 +9364,7 @@ export function RuntimeVehicleViewer({
         host.dataset.runningGearHitPoseState =
           physicalPoseEnabledRef.current
             ? runningGearHitPoses.componentPoses.length > 0
-              ? preview.groundedPose?.admission === "source-solved-flat-rest" ? "source-solved-flat-rest" : "runtime-observed"
+              ? activeTerrain() ? "quasi-static-terrain" : preview.groundedPose?.admission === "source-solved-flat-rest" ? "source-solved-flat-rest" : "runtime-observed"
               : wheelHitComponentCount > 0
                 ? "unavailable"
                 : trackHitComponentCount > 0
@@ -10128,6 +10172,8 @@ export function RuntimeVehicleViewer({
       // Match the vehicle's centre after its existing fit/rebase. Environment
       // bounds must not influence the vehicle camera or any hit calculations.
       environmentRoot.position.set(vehicleCameraTarget.x, groundY, vehicleCameraTarget.z);
+      const terrain=activeTerrain();
+      if(terrain)environmentRoot.position.copy(modelGroup.position).add(new THREE.Vector3().fromArray(terrainEnvironmentOffset(terrain.set,terrain.pose)));
       environmentRoot.updateMatrixWorld(true);
       host.dataset.environmentCenterWorld = JSON.stringify(environmentRoot.position.toArray());
       if (groundScale) {
@@ -10637,7 +10683,12 @@ export function RuntimeVehicleViewer({
       const delta = nextGroundY - groundReferenceY;
       groundReferenceY = nextGroundY;
       if (referenceSoldier) referenceSoldier.position.y += delta;
-      environmentRoot.position.y = groundReferenceY;
+      const terrain=activeTerrain();
+      if(terrain)environmentRoot.position.copy(modelGroup.position).add(new THREE.Vector3().fromArray(terrainEnvironmentOffset(terrain.set,terrain.pose)));
+      else {
+        const center=bounds.getCenter(new THREE.Vector3());
+        environmentRoot.position.set(center.x,groundReferenceY,center.z);
+      }
       environmentRoot.updateMatrixWorld(true);
       host.dataset.environmentCenterWorld = JSON.stringify(environmentRoot.position.toArray());
       if (gridHelper) gridHelper.position.y = groundReferenceY;
@@ -10655,6 +10706,7 @@ export function RuntimeVehicleViewer({
       applyChassisPoseMatrix(enabled);
       applySkeletalPose(enabled);
       applyTurretPose();
+      applyBackground();
       setRealtimePointer(null);
       protectionCache = null;
       modelGroup.updateMatrixWorld(true);
@@ -13380,7 +13432,7 @@ export function RuntimeVehicleViewer({
                     aria-checked={physicalPoseActive}
                     data-active={physicalPoseActive}
                     disabled={!chassisPose}
-                    title={chassisPose
+                    title={terrainPoseId && physicalPoseActive ? "地形静态近似；尚未评估摩擦滑移，不能作为动态驾驶结果" : chassisPose
                       ? `平面静止物理姿态：俯仰 ${chassisPose.pitchDeg.toFixed(2)}°，横滚 ${chassisPose.rollDeg.toFixed(2)}°`
                       : "当前载具暂无已核验的平面静止姿态"}
                     onClick={() => setPhysicalPoseEnabled((enabled) => !enabled)}
@@ -13391,6 +13443,16 @@ export function RuntimeVehicleViewer({
                       ? physicalPoseActive ? "开启" : "关闭"
                       : "无数据"}</strong>
                   </button>
+                  {terrainPoseSet ? <label className="viewer-terrain-pose-control">
+                    <span>地形贴合</span>
+                    <select aria-label="地形贴合" value={terrainPoseId} disabled={!physicalPoseActive}
+                      onChange={event=>setTerrainPoseId(event.target.value)}>
+                      <option value="">平地基准</option>
+                      {terrainPoseSet.presets.map(pose=><option key={pose.id} value={pose.id}>{pose.label}</option>)}
+                    </select>
+                    {terrainPoseId&&physicalPoseActive?<small title="按实际碰撞表面求解；外观表面可能不同。仅覆盖已验证地点。">静态近似 · 未评估滑移</small>:null}
+                  </label>:null}
+                  {terrainPoseNotice?<small role="status">{terrainPoseNotice}</small>:null}
                 </div> : null}
               </div>
             ) : controlTargetId === DRIVER_CONTROL_TARGET_ID ? (
