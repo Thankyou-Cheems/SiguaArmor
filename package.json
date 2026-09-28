@@ -35,10 +35,9 @@
   "dependencies": {
     "json-canonicalize": "2.0.0",
     "lucide-react": "1.24.0",
-    "next": "16.2.6",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "sharp": "^0.34.5",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "three": "^0.185.1",
     "three-mesh-bvh": "^0.9.11"
   },
@@ -53,16 +52,22 @@
     "@vitejs/plugin-rsc": "0.5.26",
     "acorn": "8.17.0",
     "ajv": "^8.20.0",
-    "esbuild": "0.28.0",
+    "esbuild": "0.28.2",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.3.6",
     "fontkit": "^2.0.4",
     "meshoptimizer": "^1.2.0",
     "pinyin-pro": "^3.28.2",
-    "react-server-dom-webpack": "19.2.6",
+    "react-server-dom-webpack": "19.2.8",
+    "sharp": "^0.35.5",
     "typescript": "5.9.3",
     "vinext": "0.0.50",
-    "vite": "8.0.13"
+    "vite": "8.3.1"
+  },
+  "overrides": {
+    "vinext": {
+      "image-size": "2.0.3"
+    }
   },
   "type": "module"
 }

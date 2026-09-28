@@ -27,6 +27,8 @@ The script validates Compose and Caddy before changing live files, keeps a compl
 
 Finish with the affected real user flow, checking network failures and the console. Frontend, framework or Node-runtime changes require opening a vehicle, loading its model, entering the Narva school driver/gunner view and firing. An isolated admin change needs the admin session/edit flow; an isolated analytics change needs DAU collection and display. Game-data or calculation changes additionally need their relevant regression/asset checks. A CSS literal or source-text assertion is not visual acceptance. Successful publication ends with the exact source committed/pushed and an annotated product tag; normal commits retain their original timestamps.
 
+For dependency changes, compare `npm audit` with the actual standalone output and affected routes, then run the same release checks and user flow. `--omit=dev` alone misses bundled runtime code: Vinext and the RSC compiler are development dependencies. Vinext 0.0.50 pins the vulnerable image-size 2.0.2, so the scoped override selects its same-major [patched 2.0.3](https://github.com/advisories/GHSA-5p2g-fcmc-qvqq) without adopting a beta framework; remove it when the selected upstream version resolves a patched dependency itself. Sharp is a local visual-audit tool dependency. Do not use `npm audit fix --force`, hide unresolved advisories, or equate a clean audit with complete security validation. Record material exceptions with the affected code change, rather than adding another approval ledger or permanent gate.
+
 ## Roll back and recover
 
 ```powershell
