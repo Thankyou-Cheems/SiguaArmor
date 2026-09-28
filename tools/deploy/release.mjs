@@ -76,9 +76,7 @@ export async function main(args) {
     if (dirty) throw Error("Commit the intended source changes before deployment; preserve unrelated work separately");
     const npm = process.env.npm_execpath;
     if (!npm) throw Error("Run through npm run deploy");
-    for (const script of ["check", "lint", "build"]) {
-      await run(process.execPath, [npm, "run", script]);
-    }
+    await run(process.execPath, [npm, "run", "verify"]);
     if (await run("git", ["status", "--porcelain"], { capture: true })) {
       throw Error("Build changed tracked source; review and commit it before deployment");
     }

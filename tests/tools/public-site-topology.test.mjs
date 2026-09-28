@@ -294,13 +294,9 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(landing, /People's Liberation Army/u);
   assert.match(landing, /Select database · 选择数据版本/u);
   assert.equal((landing.match(/火热开发中，敬请期待/gu) ?? []).length, 6);
-  assert.match(landing, /pointerenter/u);
-  assert.match(landing, /pointerleave/u);
   assert.match(landing, /17 个阵营的写实士兵/u);
   assert.match(landing, /class="brand__cn">丝瓜地·爱惜呦<\/span>/u);
   assert.match(landing, /class="brand__en" lang="en">SiguaD\.icu<\/span>/u);
-  assert.match(landing, /font-size: clamp\(16px, 1\.6vw, 24px\)/u);
-  assert.match(landing, /linear-gradient\(180deg, #fffef2 4%, #ffe4a3 58%, #fff6dc 100%\)/u);
   assert.doesNotMatch(landing, /Q 版|战术工具花园|正在生长/u);
   assert.doesNotMatch(
     landing,

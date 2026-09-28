@@ -24,15 +24,34 @@ test("service packaging excludes local dependencies, credentials and caches", as
   }
 });
 
-test("analytics packaging produces a Linux amd64 executable for the scratch image", async () => {
+test("analytics packaging stays identical across unrelated product commits", async () => {
   const output = await mkdtemp(path.join(os.tmpdir(), "armor-analytics-package-"));
   try {
-    await mkdir(path.join(output, "services", "analytics"), { recursive: true });
-    const sourceRoot = path.resolve(import.meta.dirname, "..", "..");
-    buildAnalyticsExecutable(sourceRoot, output);
-    const binary = await readFile(path.join(output, "services", "analytics", "analytics-server"));
+    const sourceRoot = path.join(output, "source");
+    const service = path.join(sourceRoot, "services", "analytics");
+    const candidate = path.join(output, "candidate");
+    await mkdir(service, { recursive: true });
+    await mkdir(path.join(candidate, "services", "analytics"), { recursive: true });
+    await writeFile(path.join(service, "go.mod"), "module example.invalid/analytics\n\ngo 1.25\n");
+    await writeFile(path.join(service, "main.go"), 'package main\nimport "fmt"\nfunc main() { fmt.Println("analytics") }\n');
+    const git = (...args) => execFileSync("git", args, { cwd: sourceRoot, stdio: "pipe" });
+    const commit = () => git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "fixture");
+    git("init", "--quiet");
+    git("add", ".");
+    commit();
+    buildAnalyticsExecutable(sourceRoot, candidate);
+    const executable = path.join(candidate, "services", "analytics", "analytics-server");
+    const binary = await readFile(executable);
     assert.equal(binary.subarray(0, 4).toString("hex"), "7f454c46");
     assert.equal(binary.readUInt16LE(18), 62);
+    await writeFile(path.join(sourceRoot, "README.md"), "Unrelated product documentation\n");
+    git("add", ".");
+    commit();
+    buildAnalyticsExecutable(sourceRoot, candidate);
+    assert.ok((await readFile(executable)).equals(binary), "unrelated Git identity must not recreate analytics");
+    await writeFile(path.join(service, "main.go"), 'package main\nimport "fmt"\nfunc main() { fmt.Println("changed analytics") }\n');
+    buildAnalyticsExecutable(sourceRoot, candidate);
+    assert.ok(!(await readFile(executable)).equals(binary), "service changes must still produce a new component");
   } finally {
     await rm(output, { recursive: true, force: true });
   }

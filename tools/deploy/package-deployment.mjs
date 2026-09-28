@@ -49,7 +49,8 @@ export async function copyServiceSources(sourceRoot, outputRoot) {
 export function buildAnalyticsExecutable(sourceRoot, outputRoot) {
   const source = path.join(sourceRoot, "services", "analytics");
   const target = path.join(outputRoot, "services", "analytics", "analytics-server");
-  execFileSync("go", ["build", "-trimpath", "-ldflags=-s -w", "-o", target, "."], {
+  // release.json records the product commit; unrelated commits must not restart analytics.
+  execFileSync("go", ["build", "-buildvcs=false", "-trimpath", "-ldflags=-s -w", "-o", target, "."], {
     cwd: source,
     stdio: "inherit",
     env: {

@@ -14,15 +14,14 @@ SiguaArmor is the public source repository for the vehicle and weapon reference 
 - Research methods, Editor/SDK extraction, raw or uncompressed game assets, source locks, and evidence remain in the private SiguaResearch repository.
 - Asset authoring tools and private publication metadata live in the private part of SiguaWiki. This repository contains product runtime, build/deployment maintenance and necessary behavior comments.
 
-Install Node.js 22.13 or newer and Go 1.25 or newer, then run:
+Install Node.js 24 LTS (see `.node-version`) and Go 1.25 or newer, then run:
 
 ```powershell
 npm ci
-npm run check
-npm run build
+npm run verify
 ```
 
-`npm run dev` starts local development. For publication, rollback and release retention, follow [deployment](docs/deployment.md).
+`npm run dev` starts local development. Use a focused test while editing; `verify` runs the complete local checks once. For publication, use `deploy`, which already includes `verify`, and follow [deployment](docs/deployment.md).
 
 The browser fetches shared catalogs, visual descriptors, compressed vehicle models, and hit geometry directly from `https://wiki.siguad.icu`. There is no bundled shared-data fallback.
 
