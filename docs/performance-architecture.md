@@ -21,6 +21,8 @@ The deep browser modules are the catalog bootstrap (route to one faction), the W
 
 Both editions use Vinext's [static export](https://github.com/cloudflare/vinext#readme), preserving the current React components and routing. Build-time route enumeration covers product topology and legacy identifiers; it does not serialize shared vehicle facts into each page. No `sigua-international` process or standalone server bundle is deployed. Model rendering, school shooting and protection analysis stay in the browser. DAU and administration still call their independent backends; published notices, supporters and update JSON remain ordinary short-cache files, editable without rebuilding the pages.
 
+The [shared analytics assessment](shared-analytics-design.md) compares Armor, Bomana and prospective Calc intake, including the confirmed App-start counter. It is a migration proposal; the current two collectors and Armor's IP policy remain active.
+
 ## 3D performance
 
 Every exterior descriptor now points to the reviewed half-resolution texture projection as its single approved model. The compatibility profile, selected for integrated/mobile renderers or constrained memory/CPU, additionally uses DPR 1, two concurrent model loads, anisotropy 1, and no generated mipmaps. Geometry, nodes, placements, and hit-query assets are unchanged.
