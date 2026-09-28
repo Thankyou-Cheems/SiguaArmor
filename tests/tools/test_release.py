@@ -139,6 +139,7 @@ class ReleaseTests(unittest.TestCase):
             try:
                 result = subprocess.run(['node', '-e', release.PROBE_SCRIPT], capture_output=True, text=True,
                     env={**os.environ, 'SIGUA_PUBLIC_ORIGIN': 'https://armor.example', 'SIGUA_PROBE_STATIC': '1',
+                         'SIGUA_ORIGIN_AUTH_SECRET': 'synthetic-probe-secret',
                          'SIGUA_PROBE_CONNECT': f'http://127.0.0.1:{server.server_port}'}, timeout=20)
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertIn(('POST', '/squad/'), seen)
