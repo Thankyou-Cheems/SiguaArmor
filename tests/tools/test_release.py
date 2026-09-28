@@ -269,6 +269,13 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "explicit host migration"):
             release.affected_services(["docker-compose.yml"], before, after)
 
+    def test_page_rollback_cannot_recreate_the_retired_embedded_collector(self):
+        before = self.host.config(self.root)
+        old_release = copy.deepcopy(before)
+        old_release["services"]["sigua-analytics"] = {"image": "old-collector"}
+        with self.assertRaisesRegex(RuntimeError, "explicit host migration"):
+            release.affected_services(["docker-compose.yml"], before, old_release)
+
     def test_archive_rejects_traversal_and_links(self):
         for number, (name, member_type) in enumerate((("../escape", tarfile.REGTYPE),
                                                     ("release/link", tarfile.SYMTYPE))):

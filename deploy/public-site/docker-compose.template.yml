@@ -22,8 +22,6 @@ services:
     expose:
       - "8080"
     depends_on:
-      sigua-analytics:
-        condition: service_healthy
       sigua-content-admin:
         condition: service_healthy
     healthcheck:
@@ -72,45 +70,6 @@ services:
       - "8083"
     healthcheck:
       test: ["CMD", "wget", "-q", "-T", "3", "-O", "/dev/null", "http://127.0.0.1:8083/healthz"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-        max-file: "3"
-
-  sigua-analytics:
-    container_name: sigua-analytics
-    build:
-      context: ./services/analytics
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    stop_grace_period: 15s
-    env_file:
-      - .env
-    environment:
-      SIGUA_PUBLIC_ORIGIN: {{ARMOR_ORIGIN}}
-      SIGUA_ANALYTICS_DIR: /srv/analytics
-      SIGUA_ANALYTICS_RETENTION_DAYS: "30"
-      SIGUA_TRUST_EDGEONE_CLIENT_IP: "1"
-      SIGUA_ANALYTICS_LISTEN_HOST: 0.0.0.0
-      SIGUA_ANALYTICS_PORT: "8081"
-    volumes:
-      - ./data/analytics:/srv/analytics
-    networks:
-      - homelab-web
-    security_opt:
-      - no-new-privileges:true
-    read_only: true
-    tmpfs:
-      - /tmp
-    user: "1000:1000"
-    expose:
-      - "8081"
-    healthcheck:
-      test: ["CMD", "/app/analytics-server", "healthcheck"]
       interval: 10s
       timeout: 3s
       retries: 5

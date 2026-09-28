@@ -16,7 +16,7 @@ deploy builds and checks a clean source checkout, uploads one complete candidate
 then updates only changed components. rollback restores the previous version.
 Defaults: SIGUA_DEPLOY_SSH_HOST= TencentCloudPublic
           SIGUA_DEPLOY_ROOT= /opt/stacks/sigua-armor-public
-Requires local Node/npm, Go 1.25+, tar, SSH/SCP; server Python 3 and Docker Compose v2.
+Requires local Node/npm, tar, SSH/SCP; server Python 3 and Docker Compose v2.
 See docs/deployment.md for directory ownership, browser checks and Wiki updates.`;
 
 export function parseArgs(args, env = process.env) {

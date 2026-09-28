@@ -14,7 +14,7 @@ SiguaArmor is the public source repository for the vehicle and weapon reference 
 - Research methods, Editor/SDK extraction, raw or uncompressed game assets, source locks, and evidence remain in the private SiguaResearch repository.
 - Asset authoring tools and private publication metadata live in the private part of SiguaWiki. This repository contains product runtime, build/deployment maintenance and necessary behavior comments.
 
-Install Node.js 24 LTS (see `.node-version`) and Go 1.25 or newer, then run:
+Install Node.js 24 LTS (see `.node-version`), then run:
 
 ```powershell
 npm ci
@@ -26,6 +26,8 @@ npm run verify
 The browser fetches shared catalogs, visual descriptors, compressed vehicle models, and hit geometry directly from `https://wiki.siguad.icu`. There is no bundled shared-data fallback.
 
 Both Armor editions are statically exported at build time and served by Caddy/EdgeOne. Vehicle routes, 3D interaction and protection analysis run in the browser; no page-rendering Node service is deployed. Only DAU collection and content administration have application backends. Node/Vinext remains a local development/build tool, and Node also runs the independent administrator service.
+
+DAU collection is owned by the separately deployed SiguaAnalytics service. Armor keeps its beacon, public counter and admin overview; ordinary page releases neither package nor restart the collector. See [shared analytics](docs/shared-analytics-design.md).
 
 See [CONTEXT.md](CONTEXT.md) for the ownership model and [workspaces](docs/workspaces.md) for current releases, retained candidates and parallel development. `npm run workspace:status` inventories local worktrees and branch retention without changing them.
 

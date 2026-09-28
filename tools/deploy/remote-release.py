@@ -16,9 +16,9 @@ import tarfile
 PARTS = (
     "release/squad", "release/index.html",
     "release/navigator", "release/portal-assets", "services/content-admin",
-    "services/analytics", "Caddyfile", "docker-compose.yml",
+    "Caddyfile", "docker-compose.yml",
 )
-SERVICES = ("sigua-content-admin", "sigua-analytics", "sigua-public")
+SERVICES = ("sigua-content-admin", "sigua-public")
 # One explicitly supported transition: remove the stateless page renderer,
 # or restore it with the retained pre-export release. No arbitrary service migration.
 LEGACY_SERVICE = "sigua-international"
@@ -27,7 +27,6 @@ ALL_PARTS = (*PARTS, *OPTIONAL_PARTS)
 RESTART_FOR = {
     "release/international-runtime": "sigua-international",
     "services/content-admin": "sigua-content-admin",
-    "services/analytics": "sigua-analytics",
     "Caddyfile": "sigua-public",
 }
 
@@ -202,8 +201,6 @@ class Host:
                   "--config", "/etc/caddy/Caddyfile"])
 
     def restart(self, services):
-        if "sigua-analytics" in services:
-            self.compose(self.root, "build", "sigua-analytics")
         if services:
             self.compose(self.root, "up", "-d", "--no-deps", "--force-recreate", "--wait",
                          "--wait-timeout", "60", *services)

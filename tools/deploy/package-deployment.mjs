@@ -46,23 +46,6 @@ export async function copyServiceSources(sourceRoot, outputRoot) {
   }
 }
 
-export function buildAnalyticsExecutable(sourceRoot, outputRoot) {
-  const source = path.join(sourceRoot, "services", "analytics");
-  const target = path.join(outputRoot, "services", "analytics", "analytics-server");
-  // release.json records the product commit; unrelated commits must not restart analytics.
-  execFileSync("go", ["build", "-buildvcs=false", "-trimpath", "-ldflags=-s -w", "-o", target, "."], {
-    cwd: source,
-    stdio: "inherit",
-    env: {
-      ...process.env,
-      CGO_ENABLED: "0",
-      GOARCH: "amd64",
-      GOOS: "linux",
-      GOTOOLCHAIN: "local",
-    },
-  });
-}
-
 export async function packageDeployment(outputRoot, { wikiRef } = {}) {
   const client = path.join(ROOT, "dist", "client");
   const services = path.join(ROOT, "services");
@@ -83,7 +66,6 @@ export async function packageDeployment(outputRoot, { wikiRef } = {}) {
     }),
     copyServiceSources(ROOT, outputRoot),
   ]);
-  buildAnalyticsExecutable(ROOT, outputRoot);
   await writeFile(path.join(outputRoot, "release.json"), JSON.stringify({
     sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim(),
     pageDelivery: "static-export",

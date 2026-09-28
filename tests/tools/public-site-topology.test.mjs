@@ -367,7 +367,7 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(caddy, /root \* \{\$SIGUA_PUBLIC_ROOT:\/srv\/public\}\/squad/u);
   assert.match(compose, /image: mirror\.ccs\.tencentyun\.com\/library\/node:24\.21\.0-alpine@sha256:[a-f0-9]{64}/u);
   assert.doesNotMatch(compose, /sigua-international|international-runtime/u);
-  assert.match(compose, /context: \.\/services\/analytics/u);
+  assert.doesNotMatch(compose, /context: \.\/services\/analytics|container_name: sigua-analytics/u);
   assert.match(compose, /\.\/services\/content-admin:\/app:ro/u);
   assert.match(compose, /SIGUA_WIKI_ORIGIN: https:\/\/wiki\.siguad\.icu/u);
   assert.match(compose, /SIGUA_WIKI_ROOT: \/srv\/wiki/u);
@@ -384,7 +384,7 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.equal(
     (compose.match(/SIGUA_PUBLIC_ORIGIN: https:\/\/armor\.siguad\.icu/gu) ?? [])
       .length,
-    2,
+    1,
   );
   assert.doesNotMatch(
     `${selector}\n${landing}\n${caddy}\n${compose}`,

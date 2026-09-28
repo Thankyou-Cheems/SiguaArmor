@@ -4,7 +4,8 @@ SiguaArmor is one public product repository. Its shared-data seam is `lib/wiki-s
 
 | Owner | Content |
 | --- | --- |
-| SiguaArmor | Product UI and behavior, product card/route/group mappings, category-icon and visual selection policy, analytics/admin services, and deployment files |
+| SiguaArmor | Product UI and behavior, product card/route/group mappings, category-icon and visual selection policy, DAU client/display, content admin service, and page deployment files |
+| SiguaAnalytics | Independently deployed metrics service, per-product persistence, deduplication, retention and aggregate APIs; Armor's UTC IP policy stays unchanged |
 | SiguaWiki | Final reusable weapons, vehicles, localized names, community search aliases, deployables, factions, maps, pure algorithms, runtime visual descriptors, card thumbnails, and approved compressed shared assets |
 | SiguaResearch | Investigations, extraction/update tools, source locks, causal conclusions, raw evidence, and raw or uncompressed assets |
 | Server/secret custody | `.env`, credentials, analytics/content data, GeoIP data, backups, and live operational state |
