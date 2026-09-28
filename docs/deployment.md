@@ -4,7 +4,9 @@ This is the maintained release procedure. Commands live in `package.json` and `t
 
 ## Publish Armor
 
-Use a committed, clean product checkout with dependencies installed (`npm ci`). Local requirements are Node/npm, Go 1.25 or newer, Python 3 for release tests, tar and SSH/SCP. The configured x86-64 server needs Python 3, Docker Compose v2 and an existing Armor stack with its `.env` and persistent data. The release packager cross-compiles the analytics service to a static Linux/amd64 executable; the server builds its scratch image from that packaged executable without pulling a Go builder image.
+Use a committed, clean product checkout with dependencies installed (`npm ci`). Local requirements are Node 24 LTS (24.21.0 or a compatible later 24.x, also declared in `.node-version`), npm, Go 1.25 or newer, Python 3 for release tests, tar and SSH/SCP. The configured x86-64 server needs Python 3, Docker Compose v2 and an existing Armor stack with its `.env` and persistent data. The release packager cross-compiles the analytics service to a static Linux/amd64 executable; the server builds its scratch image from that packaged executable without pulling a Go builder image.
+
+The international renderer and content administration run the pinned Node 24.21.0 Alpine image through Tencent's registry mirror. Its OCI index digest is checked against the Docker Official Image before changing the template; retain the former image for rollback. Their HTTP health checks use the image's existing BusyBox wget with a three-second timeout, preserving the ten-second check interval and five-retry policy. A runtime upgrade changes these two service configurations and therefore recreates both containers. Analytics remains Go; Caddy and the static Wiki data do not require a Node runtime. Stage updated runtime images through the domestic mirror before activation; do not assume a mutable image tag is the candidate identity.
 
 ```powershell
 npm run deploy

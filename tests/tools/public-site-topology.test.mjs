@@ -377,7 +377,7 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.match(caddy, /path \/notices\.json \/supporters\.json \/updates\.json/u);
   assert.doesNotMatch(caddy, /generatedPortalAssets|squad\/images\/site/u);
   assert.match(caddy, /root \* \{\$SIGUA_PUBLIC_ROOT:\/srv\/public\}\/squad/u);
-  assert.match(compose, /image: node:22-alpine/u);
+  assert.match(compose, /image: mirror\.ccs\.tencentyun\.com\/library\/node:24\.21\.0-alpine@sha256:[a-f0-9]{64}/u);
   assert.match(compose, /command: \["node", "\/app\/server\.js"\]/u);
   assert.match(compose, /context: \.\/services\/analytics/u);
   assert.match(compose, /\.\/services\/content-admin:\/app:ro/u);

@@ -41,7 +41,7 @@ services:
 
   sigua-international:
     container_name: sigua-international
-    image: node:22-alpine
+    image: mirror.ccs.tencentyun.com/library/node:24.21.0-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
     restart: unless-stopped
     stop_grace_period: 15s
     environment:
@@ -63,7 +63,7 @@ services:
     expose:
       - "8082"
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8082/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "wget", "-q", "-T", "3", "-O", "/dev/null", "http://127.0.0.1:8082/healthz"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -75,7 +75,7 @@ services:
 
   sigua-content-admin:
     container_name: sigua-content-admin
-    image: node:22-alpine
+    image: mirror.ccs.tencentyun.com/library/node:24.21.0-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
     restart: unless-stopped
     stop_grace_period: 15s
     env_file:
@@ -107,7 +107,7 @@ services:
     expose:
       - "8083"
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8083/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "wget", "-q", "-T", "3", "-O", "/dev/null", "http://127.0.0.1:8083/healthz"]
       interval: 10s
       timeout: 3s
       retries: 5
