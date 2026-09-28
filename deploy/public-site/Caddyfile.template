@@ -161,74 +161,46 @@
 				file_server
 			}
 
-			@squadHtml {
-				path /squad/*
-				method GET HEAD
-				header Accept *text/html*
-				header !RSC
-				header !Next-Router-State-Tree
-				header !Next-Router-Prefetch
-				header !Next-Router-Segment-Prefetch
-				header !X-Vinext-Rsc-Render-Mode
-				not path *.rsc
-				not query _rsc=*
-			}
-			handle @squadHtml {
-				uri strip_prefix /squad
-				reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
-					header_up Host {host}
-					header_up X-Forwarded-Prefix /squad
-					header_down Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
-				}
-			}
-
-			@siguaHtml {
-				path /sigua/*
-				method GET HEAD
-				header Accept *text/html*
-				header !RSC
-				header !Next-Router-State-Tree
-				header !Next-Router-Prefetch
-				header !Next-Router-Segment-Prefetch
-				header !X-Vinext-Rsc-Render-Mode
-				not path *.rsc
-				not query _rsc=*
-			}
-			handle @siguaHtml {
+			@armorApplication path /squad.rsc /squad/* /sigua.rsc /sigua/*
+			handle @armorApplication {
 				route {
-					rewrite /sigua/ /china
-					uri replace /sigua /china 1
-					reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
-						header_up Host {host}
-						header_up X-Forwarded-Prefix /sigua
-						header_down Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
-					}
-				}
-			}
-
-			@squadApplication path /squad.rsc /squad/*
-			handle @squadApplication {
-				route {
-					rewrite /squad.rsc /.rsc
+					@notRead not method GET HEAD
+					header @notRead Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+					respond @notRead 405
+					rewrite /squad.rsc /index.rsc
 					uri strip_prefix /squad
-					reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
-						header_up Host {host}
-						header_up X-Forwarded-Prefix /squad
-						header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
-					}
-				}
-			}
-
-			@siguaApplication path /sigua.rsc /sigua/*
-			handle @siguaApplication {
-				route {
 					rewrite /sigua.rsc /china.rsc
-					rewrite /sigua/ /china
 					uri replace /sigua /china 1
-					reverse_proxy {$SIGUA_INTERNATIONAL_UPSTREAM:sigua-international:8082} {
-						header_up Host {host}
-						header_up X-Forwarded-Prefix /sigua
-						header_down Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+					@trailing path_regexp trailing ^(.+)/$
+					rewrite @trailing {re.trailing.1}
+					rewrite / /index
+					root * {$SIGUA_PUBLIC_ROOT:/srv/public}/squad
+
+					# Explicit payload URLs have their own cache key. Header/query variants
+					# stay uncached so an old client cannot poison the HTML document cache.
+					@payloadFile path *.rsc
+					handle @payloadFile {
+						header Content-Type "text/x-component; charset=utf-8"
+						header Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
+						file_server {
+							precompressed br gzip
+						}
+					}
+					@payloadRequest expression `header({'Accept': ['*text/x-component*']}) || header({'RSC': ['*']}) || header({'Next-Router-State-Tree': ['*']}) || header({'Next-Router-Prefetch': ['*']}) || header({'Next-Router-Segment-Prefetch': ['*']}) || header({'X-Vinext-Rsc-Render-Mode': ['*']}) || query({'_rsc': ['*']})`
+					handle @payloadRequest {
+						rewrite * {path}.rsc
+						header Content-Type "text/x-component; charset=utf-8"
+						header Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+						file_server {
+							precompressed br gzip
+						}
+					}
+					handle {
+						try_files {path}.html {path}/index.html =404
+						header Cache-Control "{{ARMOR_HTML_CACHE_CONTROL}}"
+						file_server {
+							precompressed br gzip
+						}
 					}
 				}
 			}
@@ -242,5 +214,9 @@
 		}
 
 		respond "Not Found\n" 404
+	}
+	handle_errors {
+		header Cache-Control "{{PRIVATE_CACHE_CONTROL}}"
+		respond "{err.status_code} {err.status_text}\n" {err.status_code}
 	}
 }

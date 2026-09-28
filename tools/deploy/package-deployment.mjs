@@ -65,13 +65,15 @@ export function buildAnalyticsExecutable(sourceRoot, outputRoot) {
 
 export async function packageDeployment(outputRoot, { wikiRef } = {}) {
   const client = path.join(ROOT, "dist", "client");
-  const standalone = path.join(ROOT, "dist", "standalone");
   const services = path.join(ROOT, "services");
   await Promise.all([
     requireDirectory(client),
-    requireDirectory(standalone),
     requireDirectory(services),
   ]);
+  // Fail before packaging if this was an SSR build or an incomplete export.
+  for (const name of ["index.html", "index.rsc", "china.html", "china.rsc", "duel.html", "china/duel.html"]) {
+    if (!(await stat(path.join(client, name))).isFile()) throw new Error(`Missing static page: ${name}`);
+  }
 
   await rm(outputRoot, { recursive: true, force: true });
   await renderPublicSiteConfig(outputRoot);
@@ -79,16 +81,12 @@ export async function packageDeployment(outputRoot, { wikiRef } = {}) {
     cp(client, path.join(outputRoot, "release", "squad"), {
       recursive: true,
     }),
-    cp(
-      standalone,
-      path.join(outputRoot, "release", "international-runtime"),
-      { recursive: true },
-    ),
     copyServiceSources(ROOT, outputRoot),
   ]);
   buildAnalyticsExecutable(ROOT, outputRoot);
   await writeFile(path.join(outputRoot, "release.json"), JSON.stringify({
     sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim(),
+    pageDelivery: "static-export",
     packagedAt: new Date().toISOString(),
     ...(wikiRef ? { wikiRef } : {}),
   }, null, 2) + "\n", "utf8");

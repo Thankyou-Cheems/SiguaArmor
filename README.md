@@ -25,6 +25,8 @@ npm run verify
 
 The browser fetches shared catalogs, visual descriptors, compressed vehicle models, and hit geometry directly from `https://wiki.siguad.icu`. There is no bundled shared-data fallback.
 
+Both Armor editions are statically exported at build time and served by Caddy/EdgeOne. Vehicle routes, 3D interaction and protection analysis run in the browser; no page-rendering Node service is deployed. Only DAU collection and content administration have application backends. Node/Vinext remains a local development/build tool, and Node also runs the independent administrator service.
+
 See [CONTEXT.md](CONTEXT.md) for the ownership model and [workspaces](docs/workspaces.md) for current releases, retained candidates and parallel development. `npm run workspace:status` inventories local worktrees and branch retention without changing them.
 
 Public visibility and approved website distribution do not relicense third-party game names, trademarks, or assets; those remain the property of their respective owners.

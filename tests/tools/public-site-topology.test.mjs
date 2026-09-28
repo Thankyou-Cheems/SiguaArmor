@@ -53,7 +53,7 @@ test("public topology owns the landing, Armor routes, and exact filing records",
   assert.equal(landingArmorRedirectUrl("/future-product/"), null);
 });
 
-test("document policy caches only ordinary HTML and never varies by mobile UA", () => {
+test("static documents and explicit payloads cache independently of mobile UA; control requests stay private", () => {
   const desktop = classifyPublicDocumentRequest({
     host: "armor.siguad.icu",
     pathname: "/sigua/vehicles/sample",
@@ -100,6 +100,12 @@ test("document policy caches only ordinary HTML and never varies by mobile UA", 
     }),
     { kind: "dynamic-control", cacheControl: "private, no-store" },
   );
+  assert.deepEqual(classifyPublicDocumentRequest({ host: "armor.siguad.icu", pathname: "/squad.rsc" }), {
+    kind: "armor-rsc", cacheControl: PUBLIC_DOCUMENT_CACHE.armorHtml,
+  });
+  assert.deepEqual(classifyPublicDocumentRequest({ host: "armor.siguad.icu", pathname: "/squad/", method: "POST" }), {
+    kind: "method-not-allowed", status: 405, cacheControl: "private, no-store",
+  });
 });
 
 test("selector roots and navigator remain short-cache documents while legacy Armor paths redirect", () => {
@@ -354,27 +360,13 @@ test("deployment templates render from topology without mobile routing or stale 
   assert.doesNotMatch(caddy, /redir @armorRoot/u);
   assert.doesNotMatch(caddy, /legacyWeaponDps|\/weapon-dps/u);
   assert.match(caddy, /@selectorAssets path \/portal-assets\/tactical-squad-wordmark/u);
-  assert.match(caddy, /header !RSC/u);
-  assert.equal(
-    (caddy.match(/uri replace \/sigua \/china 1/gu) ?? []).length,
-    2,
-    "both China HTML and application requests must reach the /china route",
-  );
-  assert.equal(
-    (caddy.match(/rewrite \/sigua\/ \/china/gu) ?? []).length,
-    2,
-    "the China root must avoid leaking Vinext's internal /china redirect",
-  );
-  assert.match(caddy, /@squadApplication path \/squad\.rsc \/squad\/\*/u);
-  assert.match(caddy, /rewrite \/squad\.rsc \/\.rsc/u);
-  assert.match(caddy, /@siguaApplication path \/sigua\.rsc \/sigua\/\*/u);
-  assert.match(caddy, /rewrite \/sigua\.rsc \/china\.rsc/u);
+  assert.doesNotMatch(caddy, /SIGUA_INTERNATIONAL_UPSTREAM|sigua-international:8082/u);
   assert.match(caddy, /s-maxage=60/u);
   assert.match(caddy, /path \/notices\.json \/supporters\.json \/updates\.json/u);
   assert.doesNotMatch(caddy, /generatedPortalAssets|squad\/images\/site/u);
   assert.match(caddy, /root \* \{\$SIGUA_PUBLIC_ROOT:\/srv\/public\}\/squad/u);
   assert.match(compose, /image: mirror\.ccs\.tencentyun\.com\/library\/node:24\.21\.0-alpine@sha256:[a-f0-9]{64}/u);
-  assert.match(compose, /command: \["node", "\/app\/server\.js"\]/u);
+  assert.doesNotMatch(compose, /sigua-international|international-runtime/u);
   assert.match(compose, /context: \.\/services\/analytics/u);
   assert.match(compose, /\.\/services\/content-admin:\/app:ro/u);
   assert.match(compose, /SIGUA_WIKI_ORIGIN: https:\/\/wiki\.siguad\.icu/u);

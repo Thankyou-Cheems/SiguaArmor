@@ -6,6 +6,7 @@ This document records the current browser path from product navigation through S
 
 | Stage | Owner | Default request depth | Failure boundary |
 | --- | --- | --- | --- |
+| Public HTML and RSC navigation | SiguaArmor through Caddy/EdgeOne | existing static file for either edition, generated at build time | missing routes return 404; there is no runtime page-rendering fallback |
 | Catalog route and grouping | SiguaArmor | small product topology index, then one selected faction group | UI shows the catalog loading/error state; no bundled shared-data fallback |
 | Names, aliases, thumbnails, faction flags | SiguaWiki through EdgeOne | faction index plus only the selected faction presentation; approved flags are browser-ready Wiki assets | a Wiki HTTP/schema failure remains visible to the player |
 | Vehicle details | SiguaWiki through EdgeOne | one faction mechanics document after expansion | the card remains navigable while unavailable detail data is reported |
@@ -17,6 +18,8 @@ This document records the current browser path from product navigation through S
 | Administration | Armor content-admin to a narrow Wiki vehicle-data mount | ETag-protected update of community aliases only | it cannot regenerate weapon/runtime assets or write outside the named document |
 
 The deep browser modules are the catalog bootstrap (route to one faction), the Wiki source adapter (URL/schema/cache behavior), the runtime visual descriptor (placement identity plus one approved exterior asset), and the vehicle weapon-runtime slice. Removing any one of these modules would spread request selection and failure behavior back into several UI callers. Product layout, interaction, route state, quality admission, and visual selection stay in Armor; reusable facts and approved browser-ready assets stay in Wiki; extraction and derivation tools stay in Research.
+
+Both editions use Vinext's [static export](https://github.com/cloudflare/vinext#readme), preserving the current React components and routing. Build-time route enumeration covers product topology and legacy identifiers; it does not serialize shared vehicle facts into each page. No `sigua-international` process or standalone server bundle is deployed. Model rendering, school shooting and protection analysis stay in the browser. DAU and administration still call their independent backends; published notices, supporters and update JSON remain ordinary short-cache files, editable without rebuilding the pages.
 
 ## 3D performance
 

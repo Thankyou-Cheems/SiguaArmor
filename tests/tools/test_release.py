@@ -21,6 +21,7 @@ SPEC.loader.exec_module(release)
 class FakeHost:
     def __init__(self):
         self.restarts = []
+        self.retired = []
         self.fail_verify = False
 
     def config(self, folder):
@@ -36,6 +37,9 @@ class FakeHost:
         if self.fail_verify:
             self.fail_verify = False
             raise RuntimeError("unhealthy candidate")
+
+    def retire(self, services):
+        self.retired.extend(services)
 
 
 def fixture(folder):
@@ -55,6 +59,21 @@ def fixture(folder):
         "services": {name: {"image": "test", "environment": {}} for name in release.SERVICES}
     }))
     release.write_json(folder / "release.json", {"sourceCommit": "old"})
+
+
+def legacy_renderer(folder, enabled):
+    config = json.loads((folder / "docker-compose.yml").read_text())
+    runtime = folder / "release/international-runtime"
+    if enabled:
+        config["services"][release.LEGACY_SERVICE] = {"image": "old-node", "environment": {}}
+        config["services"]["sigua-public"]["depends_on"] = [release.LEGACY_SERVICE]
+        runtime.mkdir(exist_ok=True)
+        (runtime / "server.js").write_text("old renderer")
+    else:
+        config["services"].pop(release.LEGACY_SERVICE, None)
+        config["services"]["sigua-public"].pop("depends_on", None)
+        release.remove(runtime)
+    (folder / "docker-compose.yml").write_text(json.dumps(config))
 
 
 class ReleaseTests(unittest.TestCase):
@@ -98,6 +117,36 @@ class ReleaseTests(unittest.TestCase):
                 server.shutdown()
                 thread.join()
 
+    def test_static_origin_probe_checks_payload_types_missing_files_and_post_rejection(self):
+        seen = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                seen.append((self.command, self.path))
+                status = 401 if self.path.startswith('/__admin') else 404 if self.path in (
+                    '/squad/__missing_release_probe__', '/squad/server.js') else 200
+                self.send_response(status)
+                self.send_header('Content-Type', 'text/x-component' if self.path.endswith('.rsc') else 'text/html')
+                self.end_headers()
+            def do_POST(self):
+                seen.append((self.command, self.path))
+                self.send_response(405)
+                self.end_headers()
+            def log_message(self, *args):
+                pass
+        with HTTPServer(('127.0.0.1', 0), Handler) as server:
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            try:
+                result = subprocess.run(['node', '-e', release.PROBE_SCRIPT], capture_output=True, text=True,
+                    env={**os.environ, 'SIGUA_PUBLIC_ORIGIN': 'https://armor.example', 'SIGUA_PROBE_STATIC': '1',
+                         'SIGUA_PROBE_CONNECT': f'http://127.0.0.1:{server.server_port}'}, timeout=20)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(('POST', '/squad/'), seen)
+                self.assertIn(('GET', '/sigua/duel.rsc'), seen)
+            finally:
+                server.shutdown()
+                thread.join()
+
     def test_static_publish_preserves_mounts_services_and_live_data(self):
         candidate = self.candidate()
         (candidate / "release/squad/assets/old.js").unlink()
@@ -123,18 +172,18 @@ class ReleaseTests(unittest.TestCase):
     def test_compose_change_recreates_only_changed_service(self):
         before = self.host.config(self.root)
         after = copy.deepcopy(before)
-        after["services"]["sigua-international"]["environment"]["OPTION"] = "new"
-        self.assertEqual(release.affected_services(["docker-compose.yml"], before, after), ["sigua-international"])
+        after["services"]["sigua-content-admin"]["environment"]["OPTION"] = "new"
+        self.assertEqual(release.affected_services(["docker-compose.yml"], before, after), ["sigua-content-admin"])
 
     def test_failed_activation_restores_complete_current_and_keeps_previous(self):
         fixture(self.root / "previous")
         (self.root / "previous/release/index.html").write_text("older")
         candidate = self.candidate()
-        (candidate / "release/international-runtime/app.js").write_text("broken")
+        (candidate / "services/content-admin/app.js").write_text("broken")
         self.host.fail_verify = True
         with self.assertRaisesRegex(RuntimeError, "unhealthy candidate"):
             release.activate(self.root, candidate, self.host)
-        self.assertEqual((self.root / "release/international-runtime/app.js").read_text(), "old")
+        self.assertEqual((self.root / "services/content-admin/app.js").read_text(), "old")
         self.assertEqual((self.root / "previous/release/index.html").read_text(), "older")
         self.assertFalse((self.root / ".previous-pending").exists())
         self.assertTrue(candidate.exists())
@@ -184,6 +233,40 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Incomplete release"):
             release.activate(self.root, candidate, self.host)
         self.assertEqual((self.root / "release/index.html").read_text(), "old")
+
+    def test_static_migration_retires_renderer_and_can_roll_back_both_directions(self):
+        legacy_renderer(self.root, True)
+        candidate = self.candidate()
+        legacy_renderer(candidate, False)
+        result = release.activate(self.root, candidate, self.host)
+        self.assertEqual(result["restarted"], ["sigua-public"])
+        self.assertEqual(self.host.retired, [release.LEGACY_SERVICE])
+        self.assertFalse((self.root / "release/international-runtime").exists())
+        self.assertEqual((self.root / "previous/release/international-runtime/server.js").read_text(), "old renderer")
+        restored = release.rollback(self.root, self.host)
+        self.assertEqual(restored["restarted"], [release.LEGACY_SERVICE, "sigua-public"])
+        self.assertTrue((self.root / "release/international-runtime/server.js").exists())
+        release.rollback(self.root, self.host)
+        self.assertFalse((self.root / "release/international-runtime").exists())
+        self.assertEqual((self.root / "data/analytics.db").read_bytes(), b"live database")
+
+    def test_failed_static_migration_restores_renderer_without_retiring_it(self):
+        legacy_renderer(self.root, True)
+        candidate = self.candidate()
+        legacy_renderer(candidate, False)
+        self.host.fail_verify = True
+        with self.assertRaisesRegex(RuntimeError, "unhealthy candidate"):
+            release.activate(self.root, candidate, self.host)
+        self.assertEqual(self.host.retired, [])
+        self.assertEqual((self.root / "release/international-runtime/server.js").read_text(), "old renderer")
+        self.assertIn(release.LEGACY_SERVICE, self.host.restarts[-1])
+
+    def test_unrelated_service_changes_are_still_rejected(self):
+        before = self.host.config(self.root)
+        after = copy.deepcopy(before)
+        after["services"]["unexpected-service"] = {"image": "test"}
+        with self.assertRaisesRegex(RuntimeError, "explicit host migration"):
+            release.affected_services(["docker-compose.yml"], before, after)
 
     def test_archive_rejects_traversal_and_links(self):
         for number, (name, member_type) in enumerate((("../escape", tarfile.REGTYPE),

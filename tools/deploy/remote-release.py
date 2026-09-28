@@ -14,11 +14,16 @@ import tarfile
 
 
 PARTS = (
-    "release/squad", "release/international-runtime", "release/index.html",
+    "release/squad", "release/index.html",
     "release/navigator", "release/portal-assets", "services/content-admin",
     "services/analytics", "Caddyfile", "docker-compose.yml",
 )
-SERVICES = ("sigua-international", "sigua-content-admin", "sigua-analytics", "sigua-public")
+SERVICES = ("sigua-content-admin", "sigua-analytics", "sigua-public")
+# One explicitly supported transition: remove the stateless page renderer,
+# or restore it with the retained pre-export release. No arbitrary service migration.
+LEGACY_SERVICE = "sigua-international"
+OPTIONAL_PARTS = ("release/international-runtime",)
+ALL_PARTS = (*PARTS, *OPTIONAL_PARTS)
 RESTART_FOR = {
     "release/international-runtime": "sigua-international",
     "services/content-admin": "sigua-content-admin",
@@ -33,18 +38,25 @@ PROBE_SCRIPT = """(async () => {
   const host = new URL(process.env.SIGUA_PUBLIC_ORIGIN).host;
   const connection = new URL(process.env.SIGUA_PROBE_CONNECT || 'http://sigua-public:8080');
   const cases = [['/',200],['/squad/',200],['/sigua/',200],['/__admin/content/session',401]];
-  for (const [path,status] of cases) {
+  if (process.env.SIGUA_PROBE_STATIC === '1') cases.push(
+    ['/squad/duel',200,'text/html'], ['/sigua/duel',200,'text/html'],
+    ['/squad/duel.rsc',200,'text/x-component'], ['/sigua/duel.rsc',200,'text/x-component'],
+    ['/squad/factions/caf',200,'text/html'], ['/squad/__missing_release_probe__',404],
+    ['/squad/server.js',404], ['/squad/',405,null,'POST']);
+  for (const [path,status,contentType,method='GET'] of cases) {
     await new Promise((resolve,reject) => {
-      const request = http.get({hostname: connection.hostname, port: connection.port, path,
+      const request = http.request({hostname: connection.hostname, port: connection.port, path, method,
         headers: {Host: host, Accept: 'text/html',
           'X-Sigua-Origin-Auth': process.env.SIGUA_ORIGIN_AUTH_SECRET}}, response => {
         response.resume();
         response.on('error', reject);
-        response.on('end', () => response.statusCode === status ? resolve() :
-          reject(Error(path+': '+response.statusCode)));
+        response.on('end', () => response.statusCode === status &&
+          (!contentType || response.headers['content-type']?.startsWith(contentType)) ? resolve() :
+          reject(Error(path+': '+response.statusCode+' '+response.headers['content-type'])));
       });
       request.setTimeout(15000, () => request.destroy(Error(path+': timeout')));
       request.on('error', reject);
+      request.end();
     });
   }
 })().catch(error => {console.error(error.message);process.exit(1)})"""
@@ -98,7 +110,7 @@ def validate_tree(folder):
             raise RuntimeError(f"Release links are not supported: {item}")
         relative = item.relative_to(folder).as_posix()
         if not any(relative == p or relative.startswith(p + "/") or p.startswith(relative + "/")
-                   for p in (*PARTS, "release.json")):
+                   for p in (*ALL_PARTS, "release.json")):
             raise RuntimeError(f"Unexpected release file: {relative}")
 
 
@@ -127,8 +139,9 @@ def snapshot(root, target):
     staging = target.with_name(target.name + ".building")
     remove(staging)
     staging.mkdir()
-    for name in PARTS:
-        copy(root / name, staging / name)
+    for name in ALL_PARTS:
+        if name in PARTS or (root / name).exists():
+            copy(root / name, staging / name)
     metadata = read_json(root / "release.json") if (root / "release.json").exists() else {
         "sourceCommit": None, "note": "Imported live version; see migration record for source."
     }
@@ -138,17 +151,26 @@ def snapshot(root, target):
 
 def changed_parts(root, candidate):
     filecmp.clear_cache()
-    return [name for name in PARTS if not equal(root / name, candidate / name)]
+    return [name for name in ALL_PARTS
+            if ((root / name).exists() or (candidate / name).exists())
+            and not equal(root / name, candidate / name)]
+
+
+def service_names(config):
+    names = set(config["services"])
+    if names not in (set(SERVICES), {*SERVICES, LEGACY_SERVICE}):
+        raise RuntimeError("Service additions/removals require an explicit host migration")
+    return [s for s in (LEGACY_SERVICE, *SERVICES) if s in names]
 
 
 def affected_services(changes, before, after):
-    if set(before["services"]) != set(SERVICES) or set(after["services"]) != set(SERVICES):
-        raise RuntimeError("Service additions/removals require an explicit host migration")
-    affected = {RESTART_FOR[p] for p in changes if p in RESTART_FOR}
-    affected.update(s for s in SERVICES if before["services"][s] != after["services"][s])
+    service_names(before)
+    active = service_names(after)
+    affected = {RESTART_FOR[p] for p in changes if p in RESTART_FOR and RESTART_FOR[p] in active}
+    affected.update(s for s in active if before["services"].get(s) != after["services"][s])
     if any(before.get(key) != after.get(key) for key in ("networks", "volumes", "secrets", "configs")):
-        affected.update(SERVICES)
-    return [s for s in SERVICES if s in affected]
+        affected.update(active)
+    return [s for s in active if s in affected]
 
 
 class Host:
@@ -170,6 +192,10 @@ class Host:
         return json.loads(self.compose(folder, "config", "--format", "json"))
 
     def validate(self, folder, config):
+        active = service_names(config)
+        has_runtime = (folder / "release/international-runtime").is_dir()
+        if (LEGACY_SERVICE in active) != has_runtime:
+            raise RuntimeError("Renderer service and runtime files must be restored or removed together")
         self.run(["docker", "run", "--rm", "--network", "none", "--env-file", str(self.root / ".env"),
                   "-v", f"{folder / 'Caddyfile'}:/etc/caddy/Caddyfile:ro",
                   config["services"]["sigua-public"]["image"], "caddy", "validate",
@@ -183,25 +209,40 @@ class Host:
                          "--wait-timeout", "60", *services)
 
     def verify(self):
-        for service in SERVICES:
+        for service in service_names(self.config(self.root)):
             status = self.run(["docker", "inspect", "--format", "{{.State.Health.Status}}", service]).strip()
             if status != "healthy":
                 raise RuntimeError(f"{service}: {status}")
         # Run inside an existing Node service; secrets stay in its environment.
-        self.run(["docker", "exec", "sigua-content-admin", "node", "-e", PROBE_SCRIPT])
+        metadata = read_json(self.root / "release.json")
+        static = "1" if metadata.get("pageDelivery") == "static-export" else "0"
+        self.run(["docker", "exec", "-e", f"SIGUA_PROBE_STATIC={static}", "sigua-content-admin", "node", "-e", PROBE_SCRIPT])
+
+    def retire(self, services):
+        for service in services:
+            if service != LEGACY_SERVICE:
+                raise RuntimeError(f"Unsupported service retirement: {service}")
+            if self.run(["docker", "ps", "-a", "--filter", f"name=^/{service}$", "--format", "{{.Names}}"]).strip():
+                # This renderer has only a read-only release mount; rollback retains
+                # its configuration and executable files, never a live-data volume.
+                self.run(["docker", "rm", "-f", service])
 
 
 def replace_parts(root, source, names):
     for name in names:
+        if name not in OPTIONAL_PARTS and not (source / name).exists():
+            raise RuntimeError(f"Incomplete release: {name}")
         target = root / name
         staged = target.with_name(target.name + ".deploy-new")
         retired = target.with_name(target.name + ".deploy-old")
         remove(staged)
-        copy(source / name, staged)
+        if (source / name).exists():
+            copy(source / name, staged)
         remove(retired)
         if target.exists():
             target.rename(retired)
-        staged.rename(target)
+        if staged.exists():
+            staged.rename(target)
         remove(retired)
     write_json(root / "release.json", read_json(source / "release.json"))
 
@@ -244,11 +285,13 @@ def activate(root, candidate, host):
         replace_parts(root, candidate, changes)
         host.restart(services)
         host.verify()
+        host.retire(set(service_names(before)) - set(service_names(after)))
     except BaseException:
         # Restore every component; also recovers an interruption between two renames.
-        replace_parts(root, pending, PARTS)
-        host.restart(list(SERVICES))
+        replace_parts(root, pending, ALL_PARTS)
+        host.restart(service_names(before))
         host.verify()
+        host.retire(set(service_names(after)) - set(service_names(before)))
         remove(pending)
         raise
     remove(previous)
@@ -264,9 +307,11 @@ def rollback(root, host):
     pending, previous = root / ".previous-pending", root / "previous"
     if pending.exists():
         validate_tree(pending)
-        replace_parts(root, pending, PARTS)
-        host.restart(list(SERVICES))
+        replace_parts(root, pending, ALL_PARTS)
+        active = service_names(host.config(root))
+        host.restart(active)
         host.verify()
+        host.retire({LEGACY_SERVICE} - set(active))
         remove(pending)
         return {"recoveredInterruptedRelease": True, "release": read_json(root / "release.json")}
     if not previous.exists():

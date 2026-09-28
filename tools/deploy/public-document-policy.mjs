@@ -36,7 +36,7 @@ function normalizeHeaders(headers) {
 
 function isArmorPath(pathname) {
   return ARMOR_BASE_PATHS.some(
-    (basePath) => pathname === basePath || pathname.startsWith(`${basePath}/`),
+    (basePath) => pathname === basePath || pathname === `${basePath}.rsc` || pathname.startsWith(`${basePath}/`),
   );
 }
 
@@ -61,7 +61,6 @@ export function classifyPublicDocumentRequest({
 }) {
   const normalizedHost = host.toLowerCase().replace(/:\d+$/u, "");
   const normalizedMethod = method.toUpperCase();
-  const normalizedHeaders = normalizeHeaders(headers);
 
   if (normalizedHost === LANDING_HOST) {
     const redirect = landingArmorRedirectUrl(pathname, search);
@@ -105,21 +104,17 @@ export function classifyPublicDocumentRequest({
   if (!isArmorPath(pathname)) {
     return Object.freeze({ kind: "armor-static-or-pointer" });
   }
+  if (!["GET", "HEAD"].includes(normalizedMethod)) {
+    return Object.freeze({ kind: "method-not-allowed", status: 405, cacheControl: PUBLIC_DOCUMENT_CACHE.private });
+  }
   if (isRscRequest({ pathname, search, headers })) {
     return Object.freeze({
       kind: "armor-rsc",
-      cacheControl: PUBLIC_DOCUMENT_CACHE.private,
-    });
-  }
-  const acceptsHtml = (normalizedHeaders.get("accept") ?? "").includes("text/html");
-  if (["GET", "HEAD"].includes(normalizedMethod) && acceptsHtml) {
-    return Object.freeze({
-      kind: "armor-html",
-      cacheControl: PUBLIC_DOCUMENT_CACHE.armorHtml,
+      cacheControl: pathname.endsWith(".rsc") ? PUBLIC_DOCUMENT_CACHE.armorHtml : PUBLIC_DOCUMENT_CACHE.private,
     });
   }
   return Object.freeze({
-    kind: "armor-runtime",
-    cacheControl: PUBLIC_DOCUMENT_CACHE.private,
+    kind: "armor-html",
+    cacheControl: PUBLIC_DOCUMENT_CACHE.armorHtml,
   });
 }
