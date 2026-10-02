@@ -34,6 +34,8 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { useSiteTranslation, type SiteTranslate } from "./SiteLanguageProvider";
+import { SiteLanguageSwitcher } from "./SiteLanguageSwitcher";
 import { flushSync } from "react-dom";
 import {
   ICP_RECORD,
@@ -138,12 +140,14 @@ function HomepageUtilityNav({
   switchHref: string;
   switchLabel: string;
 }) {
+  const { t } = useSiteTranslation("common");
   return (
-    <nav className="homepage-utility-nav" aria-label="站点与载具工具">
+    <nav className="homepage-utility-nav" aria-label={t("utilityNav")}>
       <a className="homepage-utility-nav__edition" href={switchHref}>
         <ExternalLink size={13} aria-hidden="true" />
-        <span>{switchLabel}</span>
+        <span>{t(siteEdition === "international" ? "toChina" : "toInternational", { defaultValue: switchLabel })}</span>
       </a>
+      <SiteLanguageSwitcher />
       <DailyActiveDisplay variant="hero" />
       <VehicleDuelEntryLink siteEdition={siteEdition} />
       <VehicleRankerEntryLink siteEdition={siteEdition} />
@@ -444,7 +448,7 @@ function vehicleDisplayName(
   return `${name}${configuration ? ` ${configuration}` : ""}${livery ? `（${livery}）` : ""}`;
 }
 
-function searchVariantLabel(record: CatalogSearchRecord, variant: CatalogSearchVariant) {
+function searchVariantLabel(record: CatalogSearchRecord, variant: CatalogSearchVariant, t: SiteTranslate) {
   const vehicleName = variant.presentation?.vehicleNameZh?.trim()
     ? variant.presentation.vehicleNameZh
     : null;
@@ -458,10 +462,10 @@ function searchVariantLabel(record: CatalogSearchRecord, variant: CatalogSearchV
     .filter((value): value is string => Boolean(value));
   const configuration = [...new Set(configurations)].join(" · ");
   const livery = variant.presentation?.liveryZh ?? null;
-  return [vehicleName, configuration, livery].filter(Boolean).join(" · ") || "标准型";
+  return [vehicleName, configuration, livery].filter(Boolean).join(" · ") || t("standardVariant");
 }
 
-function searchVariantSummary(variants: CatalogSearchVariant[]) {
+function searchVariantSummary(variants: CatalogSearchVariant[], t: SiteTranslate) {
   const configurationKeys = new Set(
     variants.map((variant) => {
       if (variant.presentation) {
@@ -476,8 +480,8 @@ function searchVariantSummary(variants: CatalogSearchVariant[]) {
   const liveryVariantCount = variants.filter(
     (variant) => Boolean(variant.presentation?.liveryZh),
   ).length;
-  const summary = [`${configurationKeys.size} 个配置`];
-  if (liveryVariantCount > 1) summary.push(`${liveryVariantCount} 个涂装变体`);
+  const summary = [t("configurationCount", { count: configurationKeys.size })];
+  if (liveryVariantCount > 1) summary.push(t("liveryCount", { count: liveryVariantCount }));
   return summary.join(" · ");
 }
 
@@ -2228,6 +2232,7 @@ function SiteFooterHelp({
   onClose: () => void;
   onOpenContentAdmin: () => void;
 }) {
+  const { t } = useSiteTranslation("catalog");
   return (
     <div
       className="site-footer__help"
@@ -2236,32 +2241,32 @@ function SiteFooterHelp({
       <aside
         id={helpId}
         className="site-footer__help-panel"
-        aria-label="铁皮饭堂使用帮助"
+        aria-label={t("helpLabel")}
         hidden={!helpOpen}
       >
         <header>
           <div>
-            <strong>铁皮饭堂助手</strong>
+            <strong>{t("helpTitle")}</strong>
           </div>
-          <button type="button" aria-label="关闭帮助" onClick={onClose}>
+          <button type="button" aria-label={t("common:closeHelp")} onClick={onClose}>
             <X size={16} aria-hidden="true" />
           </button>
         </header>
         <ol>
-          <li>在顶栏按名称、俗称或拼音搜索载具。</li>
-          <li>打开载具卡片，切换外观、装甲与内构视图。</li>
-          <li>点击卡片上的圈问号，查看相应载具的百科资料。</li>
-          <li>选择武器后，在防护分析中动态查看当前角度的击穿区域。</li>
-          <li>点击载具模型，模拟射击并展示完整击穿路径。</li>
+          <li>{t("helpSearch")}</li>
+          <li>{t("helpViews")}</li>
+          <li>{t("helpWiki")}</li>
+          <li>{t("helpArmor")}</li>
+          <li>{t("helpShot")}</li>
         </ol>
-        <p>数据仅供参考，实装情况以游戏内为准。</p>
+        <p>{t("referenceNotice")}</p>
         <button
           className="site-footer__help-admin"
           type="button"
           onClick={onOpenContentAdmin}
         >
           <KeyRound size={14} aria-hidden="true" />
-          管理员内容更新
+          {t("adminContent")}
         </button>
       </aside>
 
@@ -2279,7 +2284,7 @@ function SiteFooterHelp({
         </span>
         <span className="site-footer__help-label">
           <HelpCircle size={16} aria-hidden="true" />
-          帮助
+          {t("common:help")}
         </span>
       </button>
     </div>
@@ -2398,6 +2403,7 @@ function DetailPanel({
   viewerNavigation: ViewerNavigationState;
   onViewerNavigationChange: (state: ViewerNavigationState) => void;
 }) {
+  const { t } = useSiteTranslation("catalog");
   if (!card) return null;
   const { data, record } = card;
   const hasViewer = data !== null || Boolean(
@@ -2412,7 +2418,7 @@ function DetailPanel({
     return [{
       id: entry.cardId,
       rawName,
-      label: vehicleLivery(entry.variant) ?? entry.alias ?? `变体 ${index + 1}`,
+      label: vehicleLivery(entry.variant) ?? entry.alias ?? t("variant", { count: index + 1 }),
       displayName: vehicleDisplayName(entry.record, entry.variant, entry.alias),
     }];
   });
@@ -2423,14 +2429,14 @@ function DetailPanel({
       data-open="true"
       role="dialog"
       aria-modal="false"
-      aria-label={`${displayName}载具详情`}
+      aria-label={t("detailsFor", { name: displayName })}
     >
       {hasViewer && !encyclopediaOpen && (
         <button
           className="detail-close detail-close--viewer"
           type="button"
           onClick={onClose}
-          aria-label="关闭载具详情"
+          aria-label={t("common:closeDetail")}
         >
           <X size={19} aria-hidden="true" />
         </button>
@@ -2438,7 +2444,7 @@ function DetailPanel({
       {!hasViewer && !encyclopediaOpen && (
         <button className="detail-close" type="button" onClick={onClose}>
           <X size={19} aria-hidden="true" />
-          <span className="sr-only">关闭载具详情</span>
+          <span className="sr-only">{t("common:closeDetail")}</span>
         </button>
       )}
       <section className="detail-section detail-section--reference detail-section--preview">
@@ -2485,17 +2491,17 @@ function DetailPanel({
           id={`vehicle-encyclopedia-${card.cardId}`}
           data-open={encyclopediaOpen}
           aria-hidden={!encyclopediaOpen}
-          aria-label={`${displayName}载具百科`}
+          aria-label={t("referenceFor", { name: displayName })}
           inert={!encyclopediaOpen}
         >
           <header className="vehicle-encyclopedia__heading">
             <HelpCircle size={18} aria-hidden="true" />
-            <h3>{displayName} · 载具百科</h3>
+            <h3>{displayName} · {t("vehicleReference")}</h3>
             <button
               className="vehicle-encyclopedia__close"
               type="button"
               onClick={onClose}
-              aria-label="关闭载具详情"
+              aria-label={t("common:closeDetail")}
             >
               <X size={18} aria-hidden="true" />
             </button>
@@ -2524,6 +2530,7 @@ function GlobalVehicleSearch({
   onQueryChange,
   onSelect,
 }: GlobalVehicleSearchProps) {
+  const { t } = useSiteTranslation("catalog");
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const resultRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -2556,8 +2563,8 @@ function GlobalVehicleSearch({
           role="combobox"
           type="search"
           value={query}
-          placeholder="搜索载具 / 俗称 / 拼音"
-          aria-label="全局搜索载具名称、俗称或拼音"
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("searchLabel")}
           aria-autocomplete="list"
           aria-controls={resultListId}
           aria-expanded={showResults}
@@ -2576,7 +2583,7 @@ function GlobalVehicleSearch({
         {query && (
           <button
             type="button"
-            aria-label="清除全局搜索"
+            aria-label={t("clearGlobalSearch")}
             onClick={() => {
               onQueryChange("");
               inputRef.current?.focus();
@@ -2592,7 +2599,7 @@ function GlobalVehicleSearch({
           id={resultListId}
           className="global-vehicle-search__results"
           role="listbox"
-          aria-label="全局载具搜索结果"
+          aria-label={t("searchResults")}
         >
           {results.length > 0 ? (
             <div className="global-vehicle-search__result-groups">
@@ -2601,7 +2608,7 @@ function GlobalVehicleSearch({
                   <section
                     className="global-vehicle-search__result-group"
                     key={record.promoEntryId}
-                    aria-label={`${record.official.nameZh}搜索结果`}
+                    aria-label={t("vehicleResults", { name: record.official.nameZh })}
                   >
                     <header className="global-vehicle-search__result-heading">
                       <span className="global-vehicle-search__result-main">
@@ -2610,19 +2617,19 @@ function GlobalVehicleSearch({
                       </span>
                       <span className="global-vehicle-search__result-count">
                         {record.official.typeNameZh}
-                        {variants.length > 0 ? ` · ${searchVariantSummary(variants)}` : ""}
+                        {variants.length > 0 ? ` · ${searchVariantSummary(variants, t)}` : ""}
                       </span>
                     </header>
                     {variants.length > 0 ? (
                       <div
                         className="global-vehicle-search__result-variants"
                         role="group"
-                        aria-label={`${record.official.nameZh}具体配置`}
+                        aria-label={t("vehicleConfigurations", { name: record.official.nameZh })}
                       >
                         {variants.map((variant, variantIndex) => {
                           const displayName = variant.displayName || variant.alias;
                           const localizedDisplayName = displayName;
-                          const label = searchVariantLabel(record, variant);
+                          const label = searchVariantLabel(record, variant, t);
                           return (
                             <button
                               key={variant.sourceRawName}
@@ -2675,7 +2682,7 @@ function GlobalVehicleSearch({
               })}
             </div>
           ) : (
-            <div className="global-vehicle-search__empty">没有匹配的官网宣传载具</div>
+            <div className="global-vehicle-search__empty">{t("searchEmpty")}</div>
           )}
         </div>
       )}
@@ -2839,6 +2846,7 @@ function FactionCharacterWheel({
   onPreviewChange: (groupId: string) => void;
   onSelect: (groupId: string) => void;
 }) {
+  const { t } = useSiteTranslation("catalog");
   const activeIndex = Math.max(
     0,
     groups.findIndex((group) => group.id === activeGroupId),
@@ -3141,7 +3149,7 @@ function FactionCharacterWheel({
     : activeIndex;
 
   return (
-    <section className="faction-character-wheel" aria-label="人物选择轮盘">
+    <section className="faction-character-wheel" aria-label={t("wheel")}>
       <div
         className={`faction-character-wheel__viewport${isDragging ? " faction-character-wheel__viewport--dragging" : ""}${isKinetic ? " faction-character-wheel__viewport--kinetic" : ""}${isClickAnimating ? " faction-character-wheel__viewport--clicking" : ""}`}
         data-motion-state={isClickAnimating ? "clicking" : isDragging ? "dragging" : isKinetic ? "kinetic" : "idle"}
@@ -3151,7 +3159,7 @@ function FactionCharacterWheel({
         onPointerUp={finishPointer}
         onPointerCancel={(event) => finishPointer(event, false)}
         role="group"
-        aria-label="拖动或快速滑动轮盘切换人物"
+        aria-label={t("wheelHint")}
       >
         <div className="faction-character-wheel__track">
           {wheelOffsets.map((offset) => {
@@ -3170,7 +3178,7 @@ function FactionCharacterWheel({
                 tabIndex={Math.abs(offset) > 3 ? -1 : undefined}
                 aria-hidden={Math.abs(offset) > 3 || undefined}
                 aria-current={offset === 0 ? "true" : undefined}
-                aria-label={offset === 0 ? `选择${displayName}` : `将${displayName}移到中央`}
+                aria-label={offset === 0 ? t("wheelSelect", { name: displayName }) : t("wheelCenter", { name: displayName })}
                 onClick={() => handleItemClick(group.id, offset)}
                 onKeyDown={(event) => handleItemKeyDown(event, group.id, offset)}
               >
@@ -3191,7 +3199,7 @@ function FactionCharacterWheel({
                   <img
                     className="faction-character-wheel__portrait"
                     src={asset.foreground}
-                    alt={`${displayName} 人物`}
+                    alt={t("character", { name: displayName })}
                     width={640}
                     height={960}
                     decoding="async"
@@ -3215,6 +3223,7 @@ function FactionCharacterWheel({
 }
 
 export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
+  const { t } = useSiteTranslation("catalog");
   const [loadedCatalog, setLoadedCatalog] = useState<{
     siteEdition: SiteEdition;
     index: PublicCatalogIndex;
@@ -3327,7 +3336,8 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
     return (
       <main className="catalog-data-state" role="alert">
         <CircleAlert aria-hidden="true" />
-        <h1>载具资料暂时无法读取</h1>
+        <SiteLanguageSwitcher />
+        <h1>{t("loadError")}</h1>
         <p>{loadError}</p>
       </main>
     );
@@ -3359,6 +3369,7 @@ function CatalogAppReady({
   onRequestFullCatalog: () => Promise<PublicCatalogIndex>;
   onRequestLocation: (href: string) => Promise<PublicCatalogIndex>;
 }) {
+  const { t } = useSiteTranslation("catalog");
   const editionProfile = siteEditionProfile(siteEdition);
   const editionBasePath =
     process.env.NODE_ENV === "development"
@@ -3559,7 +3570,7 @@ function CatalogAppReady({
 
   const hasGroupSelection = groupId !== ALL_GROUPS;
   const activeGroup = groups.find((group) => group.id === groupId) ?? null;
-  const activeGroupName = activeGroup ? activeGroup.name : `${visualGroups.length} 阵营`;
+  const activeGroupName = activeGroup ? activeGroup.name : t("factionCount", { count: visualGroups.length });
   const activeGroupTitleLines = FACTION_DOCK_TITLE_LINES[activeGroupName] ?? [activeGroupName];
 
   useEffect(() => {
@@ -4032,10 +4043,10 @@ function CatalogAppReady({
       data-detail-open={selectedCard !== null}
     >
       <a className="skip-link" href={hasGroupSelection ? "#main-content" : "#faction-selector"}>
-        {hasGroupSelection ? "跳至载具目录" : "跳至阵营选择"}
+        {t(hasGroupSelection ? "skipCatalog" : "skipFactions")}
       </a>
       {dataAccuracyNoticeOpen ? (
-        <aside className="data-accuracy-notice" role="note" aria-label="数据准确性提示">
+        <aside className="data-accuracy-notice" role="note" aria-label={t("accuracyNotice")}>
           <CircleAlert size={16} aria-hidden="true" />
           <div>
             {dataAccuracyNoticeTitle ? <strong>{dataAccuracyNoticeTitle}</strong> : null}
@@ -4044,14 +4055,14 @@ function CatalogAppReady({
             ))}
             {editionProfile.showNoticeCountdown ? (
               <small className="data-accuracy-notice__countdown">
-                将在 {dataAccuracyNoticeSecondsLeft} 秒后自动关闭
+                {t("autoClose", { count: dataAccuracyNoticeSecondsLeft })}
               </small>
             ) : null}
           </div>
           <button
             className="data-accuracy-notice__close"
             type="button"
-            aria-label="关闭数据准确性提示"
+            aria-label={t("closeAccuracy")}
             onClick={() => setDataAccuracyNoticeOpen(false)}
           >
             <X size={13} aria-hidden="true" />
@@ -4170,7 +4181,7 @@ function CatalogAppReady({
                     switchLabel={editionProfile.switchLabel}
                   />
                 </div>
-                <span>公益项目 · 实装内容以游戏内为准 · 不代表最终品质</span>
+                <span>{t("projectNotice")}</span>
               </div>
               <GlobalVehicleSearch
                 id="homepage-vehicle-search"
@@ -4184,11 +4195,11 @@ function CatalogAppReady({
 
             <div className="faction-selector__intro">
               <h1 id="faction-selector-title" ref={selectorTitleRef} tabIndex={-1}>
-                选择你的阵营
+                {t("chooseFaction")}
               </h1>
             </div>
 
-            <div className="faction-selector__choices" role="group" aria-label="选择阵营">
+            <div className="faction-selector__choices" role="group" aria-label={t("chooseFactionLabel")}>
               {visualGroups.map((group, visualIndex) => {
                 const recordCount = group.recordCount;
                 return (
@@ -4201,7 +4212,7 @@ function CatalogAppReady({
                     type="button"
                     className="faction-selector__choice"
                     data-visual-index={visualIndex}
-                    aria-label={`选择${group.name}，查看 ${recordCount} 个载具家族`}
+                    aria-label={t("selectFaction", { name: group.name, count: recordCount })}
                     aria-pressed={groupId === group.id}
                     tabIndex={hasGroupSelection ? -1 : 0}
                     onPointerEnter={() => setActiveFactionDustId(group.id)}
@@ -4228,7 +4239,7 @@ function CatalogAppReady({
               })}
             </div>
 
-            <nav className="faction-dock" aria-label="切换阵营">
+            <nav className="faction-dock" aria-label={t("switchFaction")}>
               <div
                 className="faction-dock__brand"
                 aria-label={`铁皮饭堂 · ${activeGroupName}`}
@@ -4238,8 +4249,8 @@ function CatalogAppReady({
                     className="faction-dock__home"
                     type="button"
                     tabIndex={hasGroupSelection ? 0 : -1}
-                    aria-label="返回五阵营主界面"
-                    title="返回五阵营主界面"
+                    aria-label={t("backChinaFactions")}
+                    title={t("backChinaFactions")}
                     onClick={() => clearFactionSelection("pointer")}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element -- local CDN-ready brand asset preserves the complete official wordmark */}
@@ -4264,7 +4275,7 @@ function CatalogAppReady({
                     type="button"
                     className="faction-dock__flag"
                     data-active={groupId === group.id}
-                    aria-label={`切换到${group.name}`}
+                    aria-label={t("switchToFaction", { name: group.name })}
                     aria-pressed={groupId === group.id}
                     tabIndex={hasGroupSelection ? 0 : -1}
                     onClick={() => selectFaction(group.id)}
@@ -4284,6 +4295,7 @@ function CatalogAppReady({
                 ))}
               </div>
               <div className="faction-dock__actions">
+            <SiteLanguageSwitcher />
                 <GlobalVehicleSearch
                   id="dock-vehicle-search"
                   variant="dock"
@@ -4327,7 +4339,7 @@ function CatalogAppReady({
                 switchLabel={editionProfile.switchLabel}
               />
               <h1 id="faction-selector-title" ref={selectorTitleRef} tabIndex={-1}>
-                选择你的阵营
+                {t("chooseFaction")}
               </h1>
             </div>
             {previewFaction ? (
@@ -4345,12 +4357,12 @@ function CatalogAppReady({
             id="faction-selector-ai-notice"
             className="faction-selector__ai-notice"
             role="note"
-            aria-label="AI 形象资源声明"
+            aria-label={t("aiTitle")}
           >
             <CircleAlert size={17} aria-hidden="true" />
             <p>
-              <strong>AI 形象资源声明</strong>
-              <span>部分形象资源由 AI 生成，可能存在武器、装备或其他细节失真，感谢您的理解与包容。</span>
+              <strong>{t("aiTitle")}</strong>
+              <span>{t("aiNotice")}</span>
             </p>
           </aside>
           <GlobalVehicleSearch
@@ -4381,14 +4393,14 @@ function CatalogAppReady({
           <header className="faction-selector__choice-panel-heading">
             <span>
               <small>FACTION INDEX</small>
-              <strong>阵营目录</strong>
+              <strong>{t("factionIndex")}</strong>
             </span>
             <em>
               <b>{visualGroups.length}</b>
-              <small>可选阵营</small>
+              <small>{t("availableFactions")}</small>
             </em>
           </header>
-          <div className="faction-selector__choices" role="group" aria-label="选择阵营">
+          <div className="faction-selector__choices" role="group" aria-label={t("chooseFactionLabel")}>
             {visualGroups.map((group, visualIndex) => {
               const recordCount = group.recordCount;
               return (
@@ -4402,7 +4414,7 @@ function CatalogAppReady({
                   className="faction-selector__choice"
                   data-visual-index={visualIndex}
                   data-active={previewFactionId === group.id}
-                  aria-label={`选择${group.name}，查看 ${recordCount} 个载具家族`}
+                  aria-label={t("selectFaction", { name: group.name, count: recordCount })}
                   aria-pressed={groupId === group.id}
                   tabIndex={hasGroupSelection ? -1 : 0}
                   onPointerEnter={() => setActiveCharacterId(group.id)}
@@ -4455,14 +4467,14 @@ function CatalogAppReady({
             })}
           </div>
           <footer className="faction-selector__choice-panel-hint" aria-hidden="true">
-            <span>滚动浏览</span>
+            <span>{t("scrollBrowse")}</span>
             <kbd>↑</kbd><kbd>↓</kbd>
-            <span>快速定位</span>
+            <span>{t("quickJump")}</span>
             <kbd>PgUp</kbd><kbd>PgDn</kbd>
           </footer>
         </div>
 
-        <nav className="faction-dock" aria-label="切换阵营">
+        <nav className="faction-dock" aria-label={t("switchFaction")}>
           <div
             className="faction-dock__brand"
             aria-label={`铁皮饭堂 · ${activeGroupName}`}
@@ -4472,8 +4484,8 @@ function CatalogAppReady({
                 className="faction-dock__home"
                 type="button"
                 tabIndex={hasGroupSelection ? 0 : -1}
-                aria-label="返回阵营选择主界面"
-                title="返回阵营选择主界面"
+                aria-label={t("backFactions")}
+                title={t("backFactions")}
                 onClick={() => clearFactionSelection("pointer")}
               >
                 <IronRiceHallWordmark className="faction-dock__wordmark" />
@@ -4497,7 +4509,7 @@ function CatalogAppReady({
                   className="faction-dock__flag"
                   data-active={groupId === group.id}
                   data-faction={group.id}
-                  aria-label={`切换到${group.name}`}
+                  aria-label={t("switchToFaction", { name: group.name })}
                   aria-pressed={groupId === group.id}
                   tabIndex={hasGroupSelection ? 0 : -1}
                   onClick={() => selectFaction(group.id)}
@@ -4520,6 +4532,7 @@ function CatalogAppReady({
             })}
           </div>
           <div className="faction-dock__actions">
+            <SiteLanguageSwitcher />
             <DailyActiveDisplay variant="dock-mobile" />
             <GlobalVehicleSearch
               id="dock-vehicle-search"
@@ -4553,7 +4566,7 @@ function CatalogAppReady({
             aria-labelledby="catalog-title"
           >
             <p className="sr-only" aria-live="polite">
-              当前阵营 {visibleCardGroups.length} 张载具配置卡片
+              {t("visibleCards", { count: visibleCardGroups.length })}
             </p>
 
             <div className="catalog-workspace" data-detail-open={selectedCard !== null}>
@@ -4561,13 +4574,13 @@ function CatalogAppReady({
                 {!activeCatalog && !activeCatalogError && visibleCardGroups.length === 0 ? (
                   <div className="no-results" role="status" aria-live="polite">
                     <Clock3 size={28} aria-hidden="true" />
-                    <h3>正在加载当前阵营资料</h3>
-                    <p>仅请求所选阵营，不会下载其他阵营的完整数据。</p>
+                    <h3>{t("loadingFaction")}</h3>
+                    <p>{t("loadingFactionHint")}</p>
                   </div>
                 ) : activeCatalogError && !activeCatalog ? (
                   <div className="no-results" role="alert">
                     <CircleAlert size={28} aria-hidden="true" />
-                    <h3>当前阵营资料加载失败</h3>
+                    <h3>{t("factionError")}</h3>
                     <p>{activeCatalogError}</p>
                     <button
                       type="button"
@@ -4581,15 +4594,15 @@ function CatalogAppReady({
                         setCatalogRetryToken((current) => current + 1);
                       }}
                     >
-                      重试加载
+                      {t("common:retry")}
                     </button>
                   </div>
                 ) : visibleCardGroups.length === 0 ? (
                   <div className="no-results">
                     <Search size={28} aria-hidden="true" />
-                    <h3>当前阵营没有匹配条目</h3>
-                    <p>搜索只会匹配官网宣传闭集中的载具。</p>
-                    <button type="button" onClick={() => changeQuery("")}>清除搜索</button>
+                    <h3>{t("factionEmpty")}</h3>
+                    <p>{t("factionEmptyHint")}</p>
+                    <button type="button" onClick={() => changeQuery("")}>{t("clearSearch")}</button>
                   </div>
                 ) : (
                   groups.map((group) => {
@@ -4600,7 +4613,7 @@ function CatalogAppReady({
                     const typeGroups = new Map<string, VisibleCatalogCardGroup[]>();
                     for (const cardGroup of groupCards) {
                       const { record } = cardGroup;
-                      const typeName = record.official.typeZh || "其他载具";
+                      const typeName = record.official.typeZh || t("otherVehicles");
                       const typeCards = typeGroups.get(typeName) ?? [];
                       typeCards.push(cardGroup);
                       typeGroups.set(typeName, typeCards);
@@ -4629,7 +4642,7 @@ function CatalogAppReady({
                       );
                     };
                     return (
-                      <section className="faction-section" key={group.id} aria-label={`${group.name}载具`}>
+                      <section className="faction-section" key={group.id} aria-label={t("factionVehicles", { name: group.name })}>
                         <div className="vehicle-type-groups">
                           {[...typeGroups].map(([typeName, typeCards], typeIndex) => {
                             const headingId = `vehicle-type-${group.id}-${typeIndex}`;
@@ -4647,7 +4660,7 @@ function CatalogAppReady({
                                     {typeName}
                                     {typeNameZh ? <small>{typeNameZh}</small> : null}
                                   </h4>
-                                  <span>{typeCards.length} {typeCards.length === 1 ? "CARD" : "CARDS"}</span>
+                                  <span>{t("cardCount", { count: typeCards.length })}</span>
                                 </header>
                                 <ul className="vehicle-grid">
                                   {typeCards.map((cardGroup) => renderCard(cardGroup))}
@@ -4666,7 +4679,7 @@ function CatalogAppReady({
                 <button
                   className="detail-backdrop"
                   type="button"
-                  aria-label="关闭载具详情"
+                  aria-label={t("common:closeDetail")}
                   onClick={closeDetail}
                 />
               )}

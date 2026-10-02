@@ -32,6 +32,7 @@
     "updates:publish": "node tools/publish-runtime-document.mjs updates"
   },
   "dependencies": {
+    "i18next": "26.4.2",
     "json-canonicalize": "2.0.0",
     "lucide-react": "1.24.0",
     "next": "16.3.6",
@@ -55,6 +56,7 @@
     "eslint": "9.39.4",
     "eslint-config-next": "16.3.6",
     "fontkit": "^2.0.4",
+    "jsdom": "30.1.1",
     "meshoptimizer": "^1.2.0",
     "pinyin-pro": "^3.28.2",
     "react-server-dom-webpack": "19.2.8",
