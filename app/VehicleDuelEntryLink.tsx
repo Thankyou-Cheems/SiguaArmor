@@ -1,3 +1,6 @@
+"use client";
+
+import { useSiteTranslation } from "./SiteLanguageProvider";
 import Link from "next/link";
 import { Swords } from "lucide-react";
 
@@ -18,6 +21,7 @@ export function VehicleDuelEntryLink({
   siteEdition: SiteEdition;
   initialVehicleId?: string | null;
 }) {
+  const { t } = useSiteTranslation();
   const path = duelPath(siteEdition);
   const href = initialVehicleId
     ? `${path}?left=${encodeURIComponent(initialVehicleId)}`
@@ -25,7 +29,7 @@ export function VehicleDuelEntryLink({
   return (
     <Link className="vehicle-duel-entry" href={href} prefetch>
       <Swords size={15} aria-hidden="true" />
-      <span>载具斗蛐蛐</span>
+      <span>{t("duel")}</span>
     </Link>
   );
 }

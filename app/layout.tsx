@@ -3,7 +3,9 @@ import type { CSSProperties } from "react";
 import { ARMOR_ORIGIN } from "../lib/public-site-topology.mjs";
 import { VEHICLE_MODEL_CATEGORY_CSS_VARIABLES } from "../lib/vehicle-model-category-palette";
 import "./globals.css";
+import "./site-language.css";
 import { DailyActiveProvider } from "./DailyActiveBeacon";
+import { SiteLanguageProvider } from "./SiteLanguageProvider";
 import { SiteDisplayFontLoader } from "./SiteDisplayFontLoader";
 
 export const metadata: Metadata = {
@@ -32,7 +34,7 @@ export default function RootLayout({
     >
       <body>
         <SiteDisplayFontLoader />
-        <DailyActiveProvider>{children}</DailyActiveProvider>
+        <SiteLanguageProvider><DailyActiveProvider>{children}</DailyActiveProvider></SiteLanguageProvider>
       </body>
     </html>
   );

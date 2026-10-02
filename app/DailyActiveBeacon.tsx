@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { useSiteTranslation } from "./SiteLanguageProvider";
+
 interface DailyActiveSnapshot {
   schemaVersion: "sigua-public-dau/v1";
   date: string;
@@ -113,9 +115,10 @@ export function DailyActiveDisplay({
   variant: DailyActiveDisplayVariant;
 }) {
   const snapshot = useContext(DailyActiveContext);
+  const { t, language } = useSiteTranslation();
   const formattedDau = useMemo(
-    () => snapshot ? new Intl.NumberFormat("zh-CN").format(snapshot.dau) : "",
-    [snapshot],
+    () => snapshot ? new Intl.NumberFormat(language).format(snapshot.dau) : "",
+    [snapshot, language],
   );
   if (!snapshot) return null;
 
@@ -123,11 +126,11 @@ export function DailyActiveDisplay({
     <span
       className={`daily-active-display daily-active-display--${variant}`}
       role="status"
-      aria-label={`今日活跃 ${formattedDau} 人`}
-      title={`${snapshot.date}（UTC）独立访客`}
+      aria-label={t("activeCount", { value: formattedDau })}
+      title={t("visitorDate", { date: snapshot.date })}
     >
       <i aria-hidden="true" />
-      <span>今日活跃</span>
+      <span>{t("activeToday")}</span>
       <strong>{formattedDau}</strong>
     </span>
   );

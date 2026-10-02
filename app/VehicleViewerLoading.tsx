@@ -1,3 +1,6 @@
+"use client";
+
+import { useSiteTranslation } from "./SiteLanguageProvider";
 interface VehicleViewerLoadingProps {
   vehicleName?: string;
   onClose?: () => void;
@@ -9,6 +12,7 @@ export function VehicleViewerLoading({
   onClose,
   embedded = false,
 }: VehicleViewerLoadingProps) {
+  const { t } = useSiteTranslation("viewer");
   return (
     <div
       className={`vehicle-viewer vehicle-viewer--loading vehicle-viewer--data-loading${
@@ -18,7 +22,7 @@ export function VehicleViewerLoading({
       aria-live="polite"
       aria-busy="true"
       data-embedded={embedded}
-      aria-label={`正在加载${vehicleName ?? "载具"} 3D 数据`}
+      aria-label={t("loadingData", { name: vehicleName ?? t("vehicle") })}
     >
       <div className="viewer-data-loader__ambient" aria-hidden="true" />
       <div className="viewer-data-loader__content">
@@ -36,19 +40,19 @@ export function VehicleViewerLoading({
         <div className="viewer-data-loader__copy">
           <span className="viewer-data-loader__eyebrow">
             <i aria-hidden="true" />
-            载具数据链路
+            {t("dataLink")}
           </span>
-          <strong>正在载入{vehicleName ? ` ${vehicleName}` : " 3D 场景"}</strong>
-          <span>正在从就近节点接收模型、装甲与材质清单</span>
+          <strong>{t("loading", { name: vehicleName || t("scene") })}</strong>
+          <span>{t("receiving")}</span>
           <div className="viewer-data-loader__progress" aria-hidden="true">
             <i />
           </div>
-          <small>首次加载可能需要片刻</small>
+          <small>{t("firstLoad")}</small>
         </div>
       </div>
 
       {onClose ? (
-        <button className="viewer-close" type="button" onClick={onClose} aria-label="关闭载具详情">
+        <button className="viewer-close" type="button" onClick={onClose} aria-label={t("common:closeDetail")}>
           <span aria-hidden="true">×</span>
         </button>
       ) : null}

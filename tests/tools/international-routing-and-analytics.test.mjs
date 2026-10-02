@@ -594,7 +594,7 @@ test("site editions keep independent titles while sharing the optional DAU displ
   assert.match(beacon, /mode: "same-origin"/u);
   assert.match(beacon, /sigua-public-dau\/v1/u);
   assert.match(beacon, /sigua-dau-snapshot:/u);
-  assert.match(beacon, /今日活跃/u);
+  assert.match(beacon, /t\("activeToday"\)/u);
   assert.match(catalogApp, /<DailyActiveDisplay variant="hero" \/>/u);
   assert.match(catalogApp, /<DailyActiveDisplay variant="dock" \/>/u);
   assert.match(catalogApp, /<DailyActiveDisplay variant="dock-mobile" \/>/u);

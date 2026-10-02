@@ -1,3 +1,6 @@
+"use client";
+
+import { useSiteTranslation } from "./SiteLanguageProvider";
 import Link from "next/link";
 import { ListOrdered } from "lucide-react";
 
@@ -16,10 +19,11 @@ export function VehicleRankerEntryLink({
 }: {
   siteEdition: SiteEdition;
 }) {
+  const { t } = useSiteTranslation();
   return (
     <Link className="vehicle-ranker-entry" href={rankerPath(siteEdition)} prefetch>
       <ListOrdered size={15} aria-hidden="true" />
-      <span>从夯到拉</span>
+      <span>{t("ranker")}</span>
     </Link>
   );
 }
