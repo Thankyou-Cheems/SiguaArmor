@@ -12390,6 +12390,8 @@ function RuntimeVehicleViewerScene({
     <div
       ref={sceneRootRef}
       tabIndex={-1}
+      role="group"
+      aria-label={displayName}
       className="viewer-stage runtime-vehicle-viewer"
       data-viewer-state={viewerState.kind}
       data-viewer-presentation={viewerPresentation}

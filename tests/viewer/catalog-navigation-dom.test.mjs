@@ -13,7 +13,7 @@ const mocks = {
   "wiki-vehicle-catalog": `export const wikiVehicleFactionIdsForGroup = () => [];
     export const mergeWikiVehicleFactionMechanics = () => ({});
     export const buildFactionCatalogFromWiki = () => new Promise(() => {});`,
-  "InternationalVehicleViewer": "export default function Viewer(props) { globalThis.__armorViewerProps = props; return null; }",
+  "InternationalVehicleViewer": `import React from "react"; export default function Viewer(props) { globalThis.__armorViewerProps = props; return React.createElement("div", { "data-fixture-viewer": true }, React.createElement("button", { "data-fixture-open-reference": true, onClick: props.onOpenReference }, "Reference")); }`,
 };
 
 test("real catalog React handlers keep the newest faction, failure and history intent", async () => {
@@ -38,6 +38,14 @@ test("real catalog React handlers keep the newest faction, failure and history i
       for (const scenario of ["latest", "search-location-first", "search-full-first", "search-failure", "initial-history", "initial-failure", "current-failure", "history-failure", "viewer-history"]) {
         await import(`${pathToFileURL(path.join(output, "catalog-navigation-dom.js")).href}?edition=${edition}&scenario=${scenario}`);
         await globalThis.__cleanupArmorCatalogDom?.();
+      }
+    }
+    for (const edition of ["international", "china"]) {
+      for (const language of ["zh-CN", "zh-Hant", "en"]) {
+        for (const scenario of ["recovery-focus", "navigation-focus", "reference-focus", "initial-retry-focus", "home-initial-retry-focus", "home-navigation-focus"]) {
+          await import(`${pathToFileURL(path.join(output, "catalog-navigation-dom.js")).href}?edition=${edition}&scenario=${scenario}&language=${language}`);
+          await globalThis.__cleanupArmorCatalogDom?.();
+        }
       }
     }
   } finally {

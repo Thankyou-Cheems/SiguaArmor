@@ -42,8 +42,13 @@ async function retry(name) {
 }
 
 await mount();
+const originalAnnouncement = consumer("left").querySelector('[role="alert"]');
 await retry("left");
 assert.equal(document.activeElement, consumer("left").querySelector("button"), "render-time retry failure preserves its visible button");
+const retryAnnouncement = consumer("left").querySelector('[role="alert"]');
+assert.notEqual(retryAnnouncement, originalAnnouncement, "one new explicit failed attempt renews its short announcement");
+await act(async () => { root.render(<App />); });
+assert.equal(consumer("left").querySelector('[role="alert"]'), retryAnnouncement, "unrelated renders do not restart the announcement");
 state.left = false;
 await retry("left");
 assert.equal(document.activeElement, scene("left"), "successful retry uses this consumer's root");

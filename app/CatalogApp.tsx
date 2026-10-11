@@ -137,6 +137,23 @@ const ALL_GROUPS = ALL_CATALOG_GROUPS;
 const DONATE_QR_SRC = new URL("../donateQR.jpg", import.meta.url).href;
 const FEEDBACK_FORM_URL = "https://docs.qq.com/form/page/DRnd4bWtKUGNnT3Vu";
 
+function focusAvailableCatalogTarget(candidates: Array<HTMLElement | null | undefined>) {
+  for (const target of candidates) {
+    if (!target?.isConnected || target.closest('[hidden], [inert], [aria-hidden="true"]')) continue;
+    let visible = true;
+    for (let element: HTMLElement | null = target; element; element = element.parentElement) {
+      const style = target.ownerDocument.defaultView?.getComputedStyle(element);
+      if (style?.display === "none" || style?.visibility === "hidden" || style?.visibility === "collapse") {
+        visible = false;
+        break;
+      }
+    }
+    if (!visible) continue;
+    target.focus({ preventScroll: true });
+    if (target.ownerDocument.activeElement === target) return;
+  }
+}
+
 function HomepageUtilityNav({
   siteEdition,
   switchHref,
@@ -2412,6 +2429,20 @@ function DetailPanel({
   onViewerNavigationChange: (state: ViewerNavigationState) => void;
 }) {
   const { t } = useSiteTranslation("catalog");
+  const panelRef = useRef<HTMLElement | null>(null);
+  const referenceTitleRef = useRef<HTMLHeadingElement | null>(null);
+  const referenceCardId = card?.cardId;
+  useEffect(() => {
+    if (!encyclopediaOpen || !referenceCardId) return;
+    const frame = window.requestAnimationFrame(() => {
+      // Move into the newly opened overlay, unless focus has left this panel.
+      const active = document.activeElement;
+      if (active === document.body || panelRef.current?.contains(active)) {
+        referenceTitleRef.current?.focus({ preventScroll: true });
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [encyclopediaOpen, referenceCardId]);
   if (!card) return null;
   const { data, record } = card;
   const hasViewer = data !== null || Boolean(
@@ -2433,6 +2464,7 @@ function DetailPanel({
 
   return (
     <aside
+      ref={panelRef}
       className={`detail-panel${hasViewer ? " detail-panel--viewer" : " detail-panel--reference-only"}`}
       data-open="true"
       role="dialog"
@@ -2457,6 +2489,7 @@ function DetailPanel({
       )}
       <section className="detail-section detail-section--reference detail-section--preview">
         {hasViewer && (
+          <div className="detail-preview-viewer" inert={encyclopediaOpen} aria-hidden={encyclopediaOpen}>
           <ViewerErrorBoundary
             key={card.cardId}
             retryMode="reload"
@@ -2504,6 +2537,7 @@ function DetailPanel({
               />
             </Suspense>
           </ViewerErrorBoundary>
+          </div>
         )}
         <section
           className="vehicle-encyclopedia"
@@ -2515,7 +2549,7 @@ function DetailPanel({
         >
           <header className="vehicle-encyclopedia__heading">
             <HelpCircle size={18} aria-hidden="true" />
-            <h3>{displayName} · {t("vehicleReference")}</h3>
+            <h3 ref={referenceTitleRef} tabIndex={-1}>{displayName} · {t("vehicleReference")}</h3>
             <button
               className="vehicle-encyclopedia__close"
               type="button"
@@ -2618,16 +2652,16 @@ function GlobalVehicleSearch({
       </div>
 
       {showResults && (
-        <div
-          id={resultListId}
-          className="global-vehicle-search__results"
-          role="listbox"
-          aria-label={t("searchResults")}
-        >
-          {error ? <div className="global-vehicle-search__empty" role="alert">
-            <p>{t("loadError")}: {error}</p>
-            <button type="button" onClick={onRetry}>{t("common:retry")}</button>
+        <div className="global-vehicle-search__results">
+          {error ? <div className="global-vehicle-search__empty">
+            <p role="alert">{t("loadError")}</p>
+            <details><summary>{t("common:errorDetails")}</summary><p>{error}</p></details>
+            <button type="button" onClick={() => {
+              inputRef.current?.focus();
+              onRetry?.();
+            }}>{t("common:retry")}</button>
           </div> : null}
+          <div id={resultListId} role="listbox" aria-label={t("searchResults")}>
           {results.length > 0 ? (
             <div className="global-vehicle-search__result-groups">
               {results.map(({ record, variants }, index) => {
@@ -2711,6 +2745,7 @@ function GlobalVehicleSearch({
           ) : (
             <div className="global-vehicle-search__empty">{t("searchEmpty")}</div>
           )}
+          </div>
         </div>
       )}
     </div>
@@ -3270,6 +3305,19 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
     loadFailure?.siteEdition === siteEdition ? loadFailure.message : null;
 
   const [initialRetry, setInitialRetry] = useState(0);
+  const initialRecoveryRef = useRef<HTMLElement | null>(null);
+  const initialRetryFocusPending = useRef(false);
+  useEffect(() => {
+    if (!catalogIndex || !initialRetryFocusPending.current) return;
+    const frame = window.requestAnimationFrame(() => {
+      initialRetryFocusPending.current = false;
+      if (document.activeElement !== document.body) return;
+      focusAvailableCatalogTarget([
+        document.getElementById("main-content"), document.getElementById("faction-selector-title"),
+      ]);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [catalogIndex]);
   useEffect(() => {
     let initialized = false;
     const loadLocation = () => {
@@ -3353,12 +3401,25 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
 
   if (loadError) {
     return (
-      <main className="catalog-data-state" role="alert">
+      <main className="catalog-data-state" ref={initialRecoveryRef} tabIndex={-1}>
         <CircleAlert aria-hidden="true" />
         <SiteLanguageSwitcher />
-        <h1>{t("loadError")}</h1>
-        <p>{loadError}</p>
-        <button type="button" onClick={() => setInitialRetry((value) => value + 1)}>{t("common:retry")}</button>
+        <h1 role="alert">{t("loadError")}</h1>
+        <details><summary>{t("common:errorDetails")}</summary><p>{loadError}</p></details>
+        <button type="button" onClick={() => {
+          initialRetryFocusPending.current = true;
+          initialRecoveryRef.current?.focus({ preventScroll: true });
+          setInitialRetry((value) => value + 1);
+        }}>{t("common:retry")}</button>
+      </main>
+    );
+  }
+  // Keep first bootstrap visually empty; only an explicit recovery retains a
+  // visible focus anchor while its already-dismissed error is loading again.
+  if (!catalogIndex && initialRetry > 0) {
+    return (
+      <main className="catalog-data-state" ref={initialRecoveryRef} tabIndex={-1}>
+        <h1 role="status">{t("loading")}</h1>
       </main>
     );
   }
@@ -3749,8 +3810,10 @@ function CatalogAppReady({
 
   const focusCatalogResult = useCallback(() => {
     const title = resultHeadingRef.current;
-    const target = title?.getClientRects().length ? title : document.getElementById("main-content");
-    target?.focus({ preventScroll: true });
+    focusAvailableCatalogTarget([
+      title?.getClientRects().length ? title : null,
+      document.getElementById("main-content"), selectorTitleRef.current,
+    ]);
   }, []);
 
   const runFactionMorph = useCallback(
@@ -4010,6 +4073,7 @@ function CatalogAppReady({
     variant?: CatalogSearchVariant,
   ) => {
     const intent = navigation.begin();
+    const focusOrigin = document.activeElement;
     const nextGroupId = record.official.groupId;
     const nextCardId = variant?.cardId ?? record.defaultCardId;
     setNavigationError(null);
@@ -4044,7 +4108,10 @@ function CatalogAppReady({
     };
     const focusResult = () => {
       window.requestAnimationFrame(() => {
-        if (intent.isCurrent()) focusCatalogResult();
+        if (intent.isCurrent() &&
+            (document.activeElement === focusOrigin || document.activeElement === document.body)) {
+          focusCatalogResult();
+        }
       });
     };
     if (hasGroupSelection) {
@@ -4067,12 +4134,16 @@ function CatalogAppReady({
         "pushState",
       );
     }, selectedId);
-    window.requestAnimationFrame(() => previous?.focus());
+    window.requestAnimationFrame(() => {
+      if (previous?.isConnected && previous.getClientRects().length) previous.focus();
+      else focusCatalogResult();
+    });
   };
 
   const selectFaction = async (nextGroupId: string) => {
     // A cached selection is still newer intent and must supersede pending loads.
     const intent = navigation.begin();
+    const focusOrigin = document.activeElement;
     setNavigationError(null);
     if (!catalogIndex.records.some((record) => record.official.groupId === nextGroupId)) {
       try {
@@ -4105,7 +4176,10 @@ function CatalogAppReady({
     };
     const focusResult = () => {
       window.requestAnimationFrame(() => {
-        if (intent.isCurrent()) focusCatalogResult();
+        if (intent.isCurrent() &&
+            (document.activeElement === focusOrigin || document.activeElement === document.body)) {
+          focusCatalogResult();
+        }
       });
     };
     if (hasGroupSelection) {
@@ -4158,11 +4232,17 @@ function CatalogAppReady({
         {t(hasGroupSelection ? "skipCatalog" : "skipFactions")}
       </a>
       {navigationError ? (
-        <aside className="catalog-navigation-error" role="alert">
-          <strong>{t("loadError")}</strong>
-          <p>{navigationError.message}</p>
-          <button type="button" onClick={navigationError.retry}>{t("common:retry")}</button>
-          <button type="button" onClick={() => setNavigationError(null)}>{t("common:dismiss")}</button>
+        <aside className="catalog-navigation-error">
+          <strong role="alert">{t("loadError")}</strong>
+          <details><summary>{t("common:errorDetails")}</summary><p>{navigationError.message}</p></details>
+          <button type="button" onClick={() => {
+            focusCatalogResult();
+            navigationError.retry();
+          }}>{t("common:retry")}</button>
+          <button type="button" onClick={() => {
+            focusCatalogResult();
+            setNavigationError(null);
+          }}>{t("common:dismiss")}</button>
         </aside>
       ) : null}
       {dataAccuracyNoticeOpen ? (

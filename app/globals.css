@@ -3357,7 +3357,12 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   z-index: 40;
 }
 
-.detail-section--preview > .vehicle-viewer {
+.detail-preview-viewer {
+  display: contents;
+}
+
+.detail-section--preview > .vehicle-viewer,
+.detail-preview-viewer > .vehicle-viewer {
   margin: 0;
   border: 0;
 }

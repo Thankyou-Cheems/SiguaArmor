@@ -13,6 +13,9 @@ function deferred() {
 const parameters = new URL(import.meta.url).searchParams;
 const siteEdition = parameters.get("edition") ?? "international";
 const scenario = parameters.get("scenario") ?? "latest";
+const language = parameters.get("language") ?? "en";
+const isHomeRecovery = scenario.startsWith("home-");
+const hasViewerFixture = scenario === "viewer-history" || scenario === "reference-focus";
 const ids = siteEdition === "china" ? ["ekeqie", "agesi", "shenzhou"] : ["afu", "baf", "pla"];
 const [first, slow, latest] = ids;
 const basePath = siteEdition === "china" ? "/sigua" : "/squad";
@@ -22,19 +25,20 @@ function catalog(loaded = [first, latest]) {
     records: loaded.map(id => ({
       promoEntryId: `${id}--test`, promotionOrder: ids.indexOf(id),
       official: { groupId: id, groupNameZh: id.toUpperCase(), nameZh: `${id} vehicle`, typeZh: "MBT", typeNameZh: "坦克" },
-      selectedRawName: null, selectedDisplayName: `${id} vehicle`, defaultCardId: scenario === "viewer-history" ? `${id}--test--test` : `${id}--test`, routeSlug: `${id}--test`, variants: scenario === "viewer-history" ? [{ sourceRawName: "BP_Test", runtimeVehicleRef: "test-runtime", visualArtifactRef: "test-visual", cardId: `${id}--test--test`, routeSlug: `${id}--test` }] : [],
+      selectedRawName: null, selectedDisplayName: `${id} vehicle`, defaultCardId: hasViewerFixture ? `${id}--test--test` : `${id}--test`, routeSlug: `${id}--test`, variants: hasViewerFixture ? [{ sourceRawName: "BP_Test", runtimeVehicleRef: "test-runtime", visualArtifactRef: "test-visual", cardId: `${id}--test--test`, routeSlug: `${id}--test` }] : [],
     })),
   };
 }
-const dom = new JSDOM('<html><body><div id="root"></div></body></html>', { url: `https://armor.test${basePath}/factions/${first}`, pretendToBeVisual: true });
+const dom = new JSDOM('<html><body><div id="root"></div></body></html>', { url: `https://armor.test${basePath}${isHomeRecovery ? "/" : `/factions/${first}`}`, pretendToBeVisual: true });
 Object.assign(globalThis, {
   window: dom.window, document: dom.window.document, localStorage: dom.window.localStorage,
-  HTMLElement: dom.window.HTMLElement, HTMLImageElement: dom.window.HTMLImageElement,
+  Node: dom.window.Node, HTMLElement: dom.window.HTMLElement, HTMLImageElement: dom.window.HTMLImageElement,
   Event: dom.window.Event, Image: dom.window.Image, IS_REACT_ACT_ENVIRONMENT: true,
   ResizeObserver: class { observe() {} disconnect() {} },
   fetch: async () => { throw new Error("Network is disabled in the catalog regression test"); },
 });
 Object.defineProperty(globalThis, "navigator", { value: dom.window.navigator, configurable: true });
+localStorage.setItem("sigua.ui-language", language);
 document.fonts = { ready: Promise.resolve() };
 window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 // React was imported before jsdom; its legacy input-event detection expects
@@ -106,7 +110,116 @@ async function pop(pathname) {
 const factionUrl = id => `${basePath}/factions/${id}`;
 const vehicleUrl = id => `${basePath}/vehicles/${id}--test`;
 
-if (scenario === "initial-history") {
+if (scenario === "initial-retry-focus" || scenario === "home-initial-retry-focus") {
+  locationRequest = deferred();
+  await mount();
+  await act(async () => locationRequest.reject(new Error("initial failure")));
+  await flush();
+  for (let attempt = 0; attempt < 2; attempt++) {
+    locationRequest = deferred();
+    const retry = document.querySelector("main.catalog-data-state button");
+    assert.ok(retry);
+    await act(async () => { retry.focus(); retry.click(); });
+    await flush();
+    assert.ok(document.querySelector("main.catalog-data-state") && document.activeElement === document.querySelector("main.catalog-data-state"), "retry retains a visible loading anchor");
+    assert.ok(document.querySelector("main.catalog-data-state [role=status]"));
+    await act(async () => attempt === 0 ? locationRequest.reject(new Error("still offline")) : locationRequest.resolve(catalog()));
+    await flush();
+    assert.notEqual(document.activeElement, document.body, "both another failure and success keep focus connected");
+  }
+  if (isHomeRecovery) {
+    assert.equal(document.querySelector(".site-shell").dataset.factionSelected, "false");
+    assert.equal(document.activeElement.id, "faction-selector-title");
+    assert.ok(!document.activeElement.closest("[inert]"));
+  } else assertFaction(first);
+} else if (scenario === "home-navigation-focus") {
+  await mount();
+  assert.ok(document.getElementById("main-content").closest("[inert]"), "unselected catalog is present but cannot be a focus target");
+  const failSelection = async () => {
+    const request = deferred(); pendingGroups.set(slow, request);
+    const choice = [...document.querySelectorAll(".faction-selector__choice")].find(button => button.getAttribute("aria-label").includes(slow.toUpperCase()));
+    await act(async () => { choice.focus(); choice.click(); });
+    await act(async () => request.reject(new Error("home faction offline")));
+    await flush();
+    return document.querySelector(".catalog-navigation-error");
+  };
+  let notice = await failSelection();
+  await act(async () => { const dismiss = notice.querySelectorAll("button")[1]; dismiss.focus(); dismiss.click(); });
+  assert.equal(document.activeElement.id, "faction-selector-title");
+  assert.ok(!document.activeElement.closest("[inert]"));
+  notice = await failSelection();
+  const retryRequest = deferred(); pendingGroups.set(slow, retryRequest);
+  await act(async () => { const retry = notice.querySelector("button"); retry.focus(); retry.click(); });
+  assert.equal(document.activeElement.id, "faction-selector-title");
+  await act(async () => retryRequest.resolve(catalog([slow])));
+  await flush();
+  assertFaction(slow);
+  assert.equal(document.activeElement.id, "main-content");
+  assert.ok(!document.activeElement.closest("[inert]"));
+} else if (scenario === "recovery-focus") {
+  await mount();
+  assert.equal(document.documentElement.lang, language);
+  fullRequest = deferred();
+  await search("vehicle");
+  await act(async () => fullRequest.reject(new Error("controlled diagnostic")));
+  await flush();
+  const input = inputProps().input;
+  const searchError = document.querySelector(".global-vehicle-search__empty:has([role=alert]), .global-vehicle-search__empty[role=alert]");
+  assert.ok(searchError);
+  fullRequest = deferred();
+  await act(async () => { const retry = searchError.querySelector("button"); retry.focus(); retry.click(); });
+  assert.ok(document.activeElement === input, "search retry preserves keyboard context");
+  assert.equal(input.value, "vehicle");
+  assert.ok(!searchError.querySelector("[role=alert] button, [role=alert] details"));
+  assert.ok(!searchError.closest('[role="listbox"]'), "recovery controls are outside the option list");
+  assert.ok(searchError.querySelector("details"), "technical diagnostics are disclosed on demand");
+  await act(async () => fullRequest.resolve(catalog()));
+  await flush();
+  assert.equal(document.activeElement, input);
+  assert.ok(!document.querySelector(".global-vehicle-search__empty [role=alert]"));
+} else if (scenario === "navigation-focus") {
+  await mount();
+  const input = inputProps().input;
+  const failFaction = async () => {
+    const request = deferred(); pendingGroups.set(slow, request);
+    await click(slow);
+    await act(async () => request.reject(new Error("controlled faction diagnostic")));
+    await flush();
+    return document.querySelector(".catalog-navigation-error");
+  };
+  let notice = await failFaction();
+  await act(async () => { const dismiss = notice.querySelectorAll("button")[1]; dismiss.focus(); dismiss.click(); });
+  assert.equal(document.activeElement.id, "main-content", "dismiss returns to a visible catalog anchor");
+  assert.ok(notice.querySelector("[role=alert]"));
+  assert.ok(!notice.querySelector("[role=alert] button, [role=alert] details"));
+  notice = await failFaction();
+  const delayed = deferred(); pendingGroups.set(slow, delayed);
+  await act(async () => { const retry = notice.querySelector("button"); retry.focus(); retry.click(); });
+  assert.equal(document.activeElement.id, "main-content", "retry does not leave focus on a removed notice");
+  await act(async () => input.focus());
+  await act(async () => delayed.resolve(catalog([slow])));
+  await flush();
+  assertFaction(slow);
+  assert.equal(document.activeElement, input, "completion must not steal focus after the user moves elsewhere");
+} else if (scenario === "reference-focus") {
+  window.history.replaceState(null, "", vehicleUrl(first));
+  await mount();
+  const button = document.querySelector("[data-fixture-open-reference]");
+  assert.ok(button);
+  const viewer = button.closest("[data-fixture-viewer]");
+  await act(async () => { button.focus(); button.click(); });
+  await flush();
+  const reference = document.querySelector('.vehicle-encyclopedia[data-open="true"]');
+  assert.ok(reference);
+  assert.ok(document.activeElement === reference.querySelector("h3"), "reference heading receives focus");
+  assert.ok(button.closest("[inert]"), "covered preview cannot receive keyboard focus");
+  assert.ok(viewer.isConnected, "opening reference preserves the viewer rather than remounting it");
+  assert.equal(document.querySelector("[data-fixture-viewer]"), viewer);
+  await act(async () => reference.querySelector("button").click());
+  await flush();
+  assert.equal(document.querySelector(".site-shell").dataset.detailOpen, "false");
+  assert.notEqual(document.activeElement, document.body, "close has a catalog fallback when the original card cannot be focused");
+} else if (scenario === "initial-history") {
   const initial = deferred(); locationRequest = initial;
   await mount();
   const next = deferred(); locationRequest = next;
@@ -160,10 +273,10 @@ if (scenario === "initial-history") {
   await flush();
   assertFaction(slow);
   if (scenario === "search-failure") {
-    assert.match(document.querySelector(".global-vehicle-search__empty[role=alert]").textContent, /search offline/);
-    await act(async () => document.querySelector(".global-vehicle-search__empty[role=alert] button").click());
+    assert.match(document.querySelector(".global-vehicle-search__empty:has([role=alert])").textContent, /search offline/);
+    await act(async () => document.querySelector(".global-vehicle-search__empty:has([role=alert]) button").click());
     await flush();
-    assert.equal(document.querySelector(".global-vehicle-search__empty[role=alert]"), null);
+    assert.equal(document.querySelector(".global-vehicle-search__empty [role=alert]"), null);
   }
   // Selecting a search result is a route change and publishes matching data.
   await act(async () => inputProps().props.onKeyDown({ key: "Enter", preventDefault() {} }));
@@ -279,4 +392,4 @@ assert.equal(document.activeElement.id, "main-content");
 assert.equal(errors.length, 0, errors.map(String).join("\n"));
 await act(async () => root.unmount());
 dom.window.close();
-console.log(JSON.stringify({ result: "passed", siteEdition, scenario, uncaughtErrors: errors.length }));
+console.log(JSON.stringify({ result: "passed", siteEdition, scenario, language, uncaughtErrors: errors.length }));

@@ -17,8 +17,9 @@ interface ViewerErrorBoundaryProps {
 
 export const VIEWER_CONTEXT_LOST = "VIEWER_CONTEXT_LOST";
 
-function ViewerFailure({ error, vehicleName, retryMode, onClose, onOpenReference, onRetry, retryRef }: Omit<ViewerErrorBoundaryProps, "children"> & {
+function ViewerFailure({ error, attempt, vehicleName, retryMode, onClose, onOpenReference, onRetry, retryRef }: Omit<ViewerErrorBoundaryProps, "children"> & {
   error: Error;
+  attempt: number;
   onRetry: (button: HTMLButtonElement) => void;
   retryRef: RefObject<HTMLButtonElement | null>;
 }) {
@@ -28,7 +29,7 @@ function ViewerFailure({ error, vehicleName, retryMode, onClose, onOpenReference
   const reloadPage = retryMode === "reload";
   return (
     <div className="vehicle-viewer vehicle-viewer--error" data-viewer-state="unavailable" data-viewer-retry={reloadPage ? "reload" : "remount"}>
-      <strong role="alert">{vehicleName ? `${vehicleName} · ` : ""}{t("viewerUnavailable")}</strong>
+      <strong key={attempt} role="alert">{vehicleName ? `${vehicleName} · ` : ""}{t("viewerUnavailable")}</strong>
       <span>{t(reloadPage ? "viewerReloadHint" : "viewerRetryHint")}</span>
       <div>
         <button ref={retryRef} type="button" onClick={(event) => onRetry(event.currentTarget)}>
@@ -121,7 +122,7 @@ export class ViewerErrorBoundary extends Component<
     if (!this.state.error) {
       return <Fragment key={this.state.attempt}>{this.props.children}</Fragment>;
     }
-    return <ViewerFailure {...this.props} error={this.state.error} onRetry={this.retry} retryRef={this.retryRef} />;
+    return <ViewerFailure {...this.props} error={this.state.error} attempt={this.state.attempt} onRetry={this.retry} retryRef={this.retryRef} />;
   }
 }
 
