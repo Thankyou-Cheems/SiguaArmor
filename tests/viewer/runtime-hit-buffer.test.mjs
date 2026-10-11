@@ -5,7 +5,7 @@ import { MeshoptEncoder } from "meshoptimizer";
 import * as THREE from "three";
 import { acceleratedRaycast, MeshBVH } from "three-mesh-bvh";
 
-import { createRuntimeHitBufferLoader } from "../../lib/runtime-hit-buffer.ts";
+import { createRuntimeHitBufferLoader, runtimeHitBufferLoader } from "../../lib/runtime-hit-buffer.ts";
 import { editorNativePenetrationPrefilter } from "../../lib/editor-native-penetration.ts";
 import { normalizeHitIntersections } from "../../lib/hit-intersection-ordering.ts";
 import { loadRuntimeHitScene } from "../../lib/runtime-hit-scene.ts";
@@ -964,4 +964,189 @@ test("hit record, geometry source, and BVH source requests start together", asyn
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+
+function deferredHitRequest() {
+  let resolve, reject;
+  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  return { promise, resolve, reject };
+}
+const settleHitTasks = () => new Promise((resolve) => setImmediate(resolve));
+const observeHitResult = (promise) => promise.then((value) => ({ value }), (error) => ({ error }));
+const assertHitAbort = (result) => assert.equal(result.error?.name, "AbortError");
+function fixtureResponse(fixture, url) {
+  const bytes = fixture.responses.get(new URL(String(url)).pathname);
+  assert.ok(bytes, `unexpected hit request ${url}`);
+  return new Response(bytes, { status: 200 });
+}
+
+test("a pre-cancelled hit consumer starts no shared requests", async () => {
+  const fixture = runtimeHitFixture();
+  const originalFetch = globalThis.fetch;
+  let requests = 0;
+  globalThis.fetch = async (url) => { requests++; return fixtureResponse(fixture, url); };
+  const controller = new AbortController();
+  controller.abort();
+  try {
+    const result = await observeHitResult(loadRuntimeHitScene(fixture.descriptor, controller.signal));
+    result.value?.analysisGeometry.dispose();
+    assert.equal(requests, 0);
+    assertHitAbort(result);
+  } finally { globalThis.fetch = originalFetch; }
+});
+
+test("cancelling one hit consumer preserves shared requests and the other consumer's complete BVH", async () => {
+  const fixture = runtimeHitFixture();
+  const originalFetch = globalThis.fetch;
+  const originalDeserialize = MeshBVH.deserialize;
+  const requests = new Map();
+  let deserializations = 0;
+  globalThis.fetch = (url, options) => {
+    assert.equal(options.signal, undefined, "consumer cancellation must not reach shared transport");
+    assert.ok(!requests.has(url), `duplicate shared request ${url}`);
+    const request = deferredHitRequest();
+    requests.set(url, request);
+    return request.promise;
+  };
+  MeshBVH.deserialize = (...args) => { deserializations++; return originalDeserialize(...args); };
+  const controller = new AbortController();
+  try {
+    const abandoned = observeHitResult(loadRuntimeHitScene(fixture.descriptor, controller.signal));
+    const active = loadRuntimeHitScene(fixture.descriptor);
+    controller.abort();
+    for (const [url, request] of requests) request.resolve(fixtureResponse(fixture, url));
+    const [cancelled, survivor] = await Promise.all([abandoned, active]);
+    cancelled.value?.analysisGeometry.dispose();
+    survivor.analysisGeometry.dispose();
+    assertHitAbort(cancelled);
+    assert.equal(requests.size, 3);
+    assert.equal(deserializations, 1);
+    assert.deepEqual([...survivor.indices], [0, 1, 2]);
+    assert.equal(survivor.boundsTree.indirect, true);
+  } finally { globalThis.fetch = originalFetch; MeshBVH.deserialize = originalDeserialize; }
+});
+
+test("a cancelled hit consumer waiting on buffers starts no decode/hash jobs", async () => {
+  const fixture = runtimeHitFixture();
+  const originalFetch = globalThis.fetch;
+  const originalLoad = runtimeHitBufferLoader.load;
+  const requests = new Map();
+  let bufferJobs = 0;
+  globalThis.fetch = (url) => {
+    if (String(url).endsWith("record.json")) return Promise.resolve(fixtureResponse(fixture, url));
+    const request = deferredHitRequest();
+    requests.set(url, request);
+    return request.promise;
+  };
+  runtimeHitBufferLoader.load = (...args) => { bufferJobs++; return originalLoad(...args); };
+  const controller = new AbortController();
+  try {
+    const pending = observeHitResult(loadRuntimeHitScene(fixture.descriptor, controller.signal));
+    await settleHitTasks();
+    controller.abort();
+    for (const [url, request] of requests) request.resolve(fixtureResponse(fixture, url));
+    const result = await pending;
+    result.value?.analysisGeometry.dispose();
+    assert.equal(bufferJobs, 0);
+    assertHitAbort(result);
+  } finally { globalThis.fetch = originalFetch; runtimeHitBufferLoader.load = originalLoad; }
+});
+
+test("cancellation after shared decode starts skips only the abandoned consumer's BVH construction", async () => {
+  const fixture = runtimeHitFixture();
+  const originalFetch = globalThis.fetch;
+  const originalLoad = runtimeHitBufferLoader.load;
+  const originalDeserialize = MeshBVH.deserialize;
+  const gate = deferredHitRequest();
+  let bufferConsumers = 0, deserializations = 0;
+  globalThis.fetch = async (url) => fixtureResponse(fixture, url);
+  runtimeHitBufferLoader.load = (...args) => {
+    bufferConsumers++;
+    return originalLoad(...args).then(async (buffer) => { await gate.promise; return buffer; });
+  };
+  MeshBVH.deserialize = (...args) => { deserializations++; return originalDeserialize(...args); };
+  const controller = new AbortController();
+  try {
+    const abandoned = observeHitResult(loadRuntimeHitScene(fixture.descriptor, controller.signal));
+    const active = loadRuntimeHitScene(fixture.descriptor);
+    await settleHitTasks();
+    assert.equal(bufferConsumers, 4, "both consumers reached the shared decode boundary");
+    controller.abort();
+    gate.resolve();
+    const [cancelled, survivor] = await Promise.all([abandoned, active]);
+    cancelled.value?.analysisGeometry.dispose();
+    survivor.analysisGeometry.dispose();
+    assertHitAbort(cancelled);
+    assert.equal(deserializations, 1);
+    assert.deepEqual([...survivor.positions], [0, 0, 0, 1, 0, 0, 0, 1, 0]);
+  } finally {
+    gate.resolve();
+    globalThis.fetch = originalFetch;
+    runtimeHitBufferLoader.load = originalLoad;
+    MeshBVH.deserialize = originalDeserialize;
+  }
+});
+
+test("a cancelled compressed hit consumer never starts the raw geometry fallback", async () => {
+  const fixture = runtimeHitFixture();
+  const rawGeometry = fixture.responses.get("/assets/hit/geometry.bin");
+  const rawPath = `/assets/runtime-probe/hit-runtime/geometry/${sha256(rawGeometry)}.bin`;
+  const record = JSON.parse(new TextDecoder().decode(fixture.responses.get("/assets/hit/record.json")));
+  record.geometry.path = rawPath;
+  fixture.responses.set("/assets/hit/record.json", new TextEncoder().encode(JSON.stringify(record)).buffer);
+  fixture.responses.set(rawPath, rawGeometry);
+  fixture.descriptor.geometry = {
+    encoding: "meshopt-v1", url: "/assets/hit/cancelled.meshopt.bin",
+    decodedByteLength: rawGeometry.byteLength, decodedSha256: sha256(rawGeometry), chunks: [],
+  };
+  delete fixture.descriptor.geometryUrl;
+  const compressed = deferredHitRequest();
+  const originalFetch = globalThis.fetch;
+  const paths = [];
+  globalThis.fetch = async (url) => {
+    const path = new URL(String(url)).pathname;
+    paths.push(path);
+    if (path === fixture.descriptor.geometry.url) return compressed.promise;
+    return fixtureResponse(fixture, url);
+  };
+  const controller = new AbortController();
+  try {
+    const pending = observeHitResult(loadRuntimeHitScene(fixture.descriptor, controller.signal));
+    await settleHitTasks();
+    controller.abort();
+    compressed.reject(new Error("late compressed transport failure"));
+    const result = await pending;
+    result.value?.analysisGeometry.dispose();
+    assert.equal(paths.includes(rawPath), false);
+    assert.equal(paths.length, 3);
+    assertHitAbort(result);
+  } finally { globalThis.fetch = originalFetch; }
+});
+
+test("late sibling transport failures are consumed after a hit consumer cancels at record arrival", async () => {
+  const fixture = runtimeHitFixture();
+  const originalFetch = globalThis.fetch;
+  const requests = new Map();
+  globalThis.fetch = (url) => {
+    const request = deferredHitRequest();
+    requests.set(url, request);
+    return request.promise;
+  };
+  const controller = new AbortController();
+  try {
+    const pending = observeHitResult(loadRuntimeHitScene(fixture.descriptor, controller.signal));
+    controller.abort();
+    for (const [url, request] of requests) {
+      if (String(url).endsWith("record.json")) request.resolve(fixtureResponse(fixture, url));
+    }
+    const early = await Promise.race([pending, settleHitTasks().then(() => null)]);
+    for (const [url, request] of requests) {
+      if (!String(url).endsWith("record.json")) request.reject(new Error("late sibling failure"));
+    }
+    await pending;
+    await settleHitTasks();
+    assert.ok(early, "cancelled consumer stops before sibling transport completes");
+    assertHitAbort(early);
+  } finally { globalThis.fetch = originalFetch; }
 });

@@ -52,6 +52,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
   }));
   const context = {
     THREE, performance, cancelled: false, resources: createViewerCleanup(),
+    hitLoadController: new AbortController(),
     discardRenderer: false, setFatalRendererError() {},
     urls, renderPlacements: placements, host: { dataset: {} },
     renderQuality: { assetLoadConcurrency: concurrency, tier: "balanced", textureAnisotropy: 1 },
@@ -109,6 +110,7 @@ for (const reason of ["close", "replacement", "context loss"]) {
       assert.ok(prevented);
       assert.ok(f.context.discardRenderer);
     } else f.context.cleanup();
+    assert.equal(f.context.hitLoadController.signal.aborted, true);
     await f.drain();
     await pending;
     assert.deepEqual({ starts: f.started.length, ...f.calls }, { starts: 3, scores: 0, projection: 0, clones: 0 });

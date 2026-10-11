@@ -7915,10 +7915,12 @@ function RuntimeVehicleViewerScene({
     );
 
     let cancelled = false;
+    const hitLoadController = new AbortController();
     let discardRenderer = false;
     const resources = createViewerCleanup();
     const cleanup = () => {
       cancelled = true;
+      hitLoadController.abort();
       resources.dispose();
     };
     try {
@@ -11771,7 +11773,7 @@ function RuntimeVehicleViewerScene({
       : Promise.resolve(null);
     const hitPromise = hit
       ? Promise.all([
-          loadRuntimeHitScene({ ...hit, accessStatus: hit.status }),
+          loadRuntimeHitScene({ ...hit, accessStatus: hit.status }, hitLoadController.signal),
           radialQueryPromise,
         ])
           .then(([parsed, querySource]) => {

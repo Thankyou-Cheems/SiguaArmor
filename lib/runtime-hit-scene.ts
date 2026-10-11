@@ -200,19 +200,24 @@ async function loadGeometryBuffer(
     | { buffer: ArrayBuffer; error?: never }
     | { buffer?: never; error: unknown }
   >,
+  signal?: AbortSignal,
 ) {
+  signal?.throwIfAborted();
   const ref = geometryHitBufferRef(descriptor, record);
   try {
     const result = await source;
+    signal?.throwIfAborted();
     if (result.error !== undefined) throw result.error;
     return await runtimeHitBufferLoader.load(ref, result.buffer);
   } catch (error) {
+    signal?.throwIfAborted();
     if (ref.encoding !== "meshopt-v1") throw error;
     const fallbackRef = rawGeometryHitBufferRef(record);
     const fallbackSource = await fetchRuntimeAsset(
       fallbackRef.url,
       "raw geometry fallback",
     );
+    signal?.throwIfAborted();
     return runtimeHitBufferLoader.load(fallbackRef, fallbackSource);
   }
 }
@@ -300,13 +305,20 @@ export async function loadRuntimeHitRecord(
 }
 
 
+// Cancellation belongs to a viewer consumer. Shared transport and decoded
+// buffers deliberately receive no signal: another viewer may still need them.
 export async function loadRuntimeHitScene(
   descriptor: RuntimeHitArtifactDescriptor,
+  signal?: AbortSignal,
 ): Promise<ParsedRuntimeHitScene> {
+  signal?.throwIfAborted();
   assert(descriptor.formatVersion === "hit-scene-runtime/v1", "descriptor format mismatch");
   assert(/^vehicle-[0-9a-f]{64}$/.test(descriptor.vehicleId), "descriptor identity is not exact");
   const recordPromise = fetchRuntimeAsset(descriptor.recordUrl, "record")
-    .then((recordBuffer) => parseRuntimeHitRecord(recordBuffer, descriptor));
+    .then((recordBuffer) => {
+      signal?.throwIfAborted();
+      return parseRuntimeHitRecord(recordBuffer, descriptor);
+    });
   const geometrySource = fetchRuntimeAsset(
     geometrySourceUrl(descriptor),
     "geometry",
@@ -323,7 +335,9 @@ export async function loadRuntimeHitScene(
     (error: unknown) => ({ error }),
   );
   const record = await recordPromise;
+  signal?.throwIfAborted();
   const bvhBufferPromise = bvhSource.then(async (result) => {
+    signal?.throwIfAborted();
     if ("error" in result) throw result.error;
     return runtimeHitBufferLoader.load(
       bvhHitBufferRef(descriptor, record),
@@ -331,9 +345,10 @@ export async function loadRuntimeHitScene(
     );
   });
   const [geometryBuffer, bvhBuffer] = await Promise.all([
-    loadGeometryBuffer(descriptor, record, geometrySource),
+    loadGeometryBuffer(descriptor, record, geometrySource, signal),
     bvhBufferPromise,
   ]);
+  signal?.throwIfAborted();
 
   const sections = record.geometry.sections;
   const positions = typedSection(
