@@ -19,7 +19,11 @@ const hasViewerFixture = scenario === "viewer-history" || scenario === "referenc
 const ids = siteEdition === "china" ? ["ekeqie", "agesi", "shenzhou"] : ["afu", "baf", "pla"];
 const [first, slow, latest] = ids;
 const basePath = siteEdition === "china" ? "/sigua" : "/squad";
-const groups = ids.map((id, order) => ({ id, order, name: id.toUpperCase(), recordCount: 1 }));
+// The international carousel renders seven distinct slots. A three-faction
+// fixture is sufficient for route races, but creates unrelated duplicate keys
+// when the real homepage is mounted for recovery accessibility tests.
+const groupIds = siteEdition === "international" ? [...ids, "adf", "caf", "crf", "gfi"] : ids;
+const groups = groupIds.map((id, order) => ({ id, order, name: id.toUpperCase(), recordCount: 1 }));
 function catalog(loaded = [first, latest]) {
   return { schemaVersion: "1.0.0", catalogId: "navigation-dom", groups,
     records: loaded.map(id => ({
