@@ -11652,6 +11652,17 @@ function RuntimeVehicleViewerScene({
       host.dataset.exteriorOptimizedAssetCount = String(urls.length);
       const exteriorTextureCache = new Map<string, THREE.Texture>();
       let reusedExteriorTextures = 0;
+      // Pending sources/clones stay invisible but belong to the same scene
+      // cleanup boundary if synchronous assembly fails part way through.
+      const pendingExteriorGroup = new THREE.Group();
+      pendingExteriorGroup.visible = false;
+      scene.add(pendingExteriorGroup);
+      const failExteriorScene = (error: unknown) => {
+        exteriorReady = false;
+        discardRenderer = true;
+        cleanup();
+        setFatalRendererError(error instanceof Error ? error : new Error(String(error)));
+      };
       const attachExteriorSource = (url: string, source: THREE.Object3D) => {
         for (const placement of exteriorPlacementsByUrl.get(url) ?? []) {
           const occurrence = new THREE.Group();
@@ -11665,6 +11676,7 @@ function RuntimeVehicleViewerScene({
             baseMatrix,
           });
           const model = cloneSkeleton(source);
+          pendingExteriorGroup.add(model);
           registerSkeletalPose(model, placement);
           model.traverse((object) => {
             if (!(object instanceof THREE.Mesh)) return;
@@ -11707,6 +11719,8 @@ function RuntimeVehicleViewerScene({
           disposeScene(gltf.scene);
           return;
         }
+        try {
+        pendingExteriorGroup.add(gltf.scene);
         const textureReuse = dedupeRuntimeSceneTextures(
           gltf.scene,
           exteriorTextureCache,
@@ -11716,7 +11730,6 @@ function RuntimeVehicleViewerScene({
         host.dataset.exteriorReusedTextureCount = String(
           reusedExteriorTextures,
         );
-        exteriorSources.set(url, gltf.scene);
         attachExteriorSource(url, gltf.scene);
         exteriorLoaded += 1;
         host.dataset.exteriorLoadedAssetCount = String(exteriorLoaded);
@@ -11730,11 +11743,18 @@ function RuntimeVehicleViewerScene({
             total: urls.length,
           });
         }
+        pendingExteriorGroup.remove(gltf.scene);
+        exteriorSources.set(url, gltf.scene);
+        } catch (error) {
+          failExteriorScene(error);
+        }
         },
         () => !cancelled,
       )
         .then(() => {
           if (cancelled) return;
+          try {
+          scene.remove(pendingExteriorGroup);
           exteriorReady = true;
           host.dataset.exteriorAssetState = "ready";
           syncAnalysisVisualPresentation();
@@ -11746,15 +11766,19 @@ function RuntimeVehicleViewerScene({
             fitViewToGroup(visualGroup, "exterior");
           }
           syncReferencePlane();
+          if (modeRef.current === "exterior") visualGroup.visible = true;
+          render();
           if (modeRef.current === "exterior") {
-            visualGroup.visible = true;
             setViewerState({ kind: "ready", loaded: urls.length, total: urls.length });
           }
-          render();
+          } catch (error) {
+            failExteriorScene(error);
+          }
         })
         .catch((error: unknown) => {
           abandoned = true;
           if (cancelled) return;
+          scene.remove(pendingExteriorGroup);
           host.dataset.exteriorAssetState = "error";
           exteriorPromise = null;
           if (modeRef.current !== "exterior") return;

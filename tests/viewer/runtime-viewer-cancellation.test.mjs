@@ -5,6 +5,8 @@ import vm from "node:vm";
 import ts from "typescript";
 import * as THREE from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
+import { disposeRuntimeScene, retainCachedRuntimeSceneResources } from "../../lib/runtime-scene-resources.ts";
+import { createRuntimeSkeletalPoseController } from "../../lib/runtime-skeletal-pose.ts";
 import { createViewerCleanup } from "../fixtures/viewer-cleanup-source.mjs";
 
 // Execute production queue/load callbacks with deferred GLTF transport. This
@@ -44,6 +46,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
   const sources = new Map();
   const disposed = [];
   const states = [];
+  const fatalErrors = [];
   const calls = { scores: 0, projection: 0, clones: 0 };
   const loadAsync = (url) => {
     const request = deferred();
@@ -58,7 +61,8 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
   const context = {
     THREE, performance, cancelled: false, resources: createViewerCleanup(),
     hitLoadController: new AbortController(),
-    discardRenderer: false, setFatalRendererError() {},
+    discardRenderer: false, setFatalRendererError(error) { fatalErrors.push(error); },
+    scene: new THREE.Scene(),
     urls, renderPlacements: placements, host: { dataset: {} },
     renderQuality: { assetLoadConcurrency: concurrency, tier: "balanced", textureAnisotropy: 1 },
     modeRef: { current: "armor" }, renderer: { capabilities: { getMaxAnisotropy: () => 1 } },
@@ -86,6 +90,8 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
     dedupeRuntimeSceneTextures: () => ({ reused: 0, unique: 0 }),
     disposeScene: (source) => { disposed.push(source.name); },
   };
+  context.scene.add(context.visualGroup, context.analysisVisualGroup, context.analysisVisualDepthGroup);
+  context.resources.add(() => disposeRuntimeScene(context.scene));
   execute(["mapWithConcurrency", "cleanup", "onContextLost", "loadAnalysisVisualAssets", "loadExteriorAssets"], context);
   const resolve = (url) => {
     if (requests.get(url).settled) return;
@@ -102,7 +108,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
       await flush();
     }
   };
-  return { context, started, requests, sources, disposed, states, calls, resolve, drain };
+  return { context, started, requests, sources, disposed, states, fatalErrors, calls, resolve, drain };
 }
 
 for (const reason of ["close", "replacement", "context loss"]) {
@@ -305,4 +311,181 @@ test("a superseded exterior attempt cannot attach late sources during its retry"
   assert.equal(f.context.visualGroup.children.length, 12);
   assert.equal(f.context.exteriorLoaded, 12);
   assert.equal(f.states.at(-1).kind, "ready");
+});
+
+
+function addSecondPlacement(fixture) {
+  fixture.context.renderPlacements.push({
+    ...fixture.context.renderPlacements[0], stableOccurrenceId: "second", name: "second",
+  });
+}
+
+test("partial synchronous exterior assembly fails locally instead of admitting a half-source on retry", async () => {
+  const f = fixture({ count: 1, concurrency: 1 });
+  f.context.modeRef.current = "exterior";
+  addSecondPlacement(f);
+  let registrations = 0;
+  f.context.registerSkeletalPose = () => { if (++registrations === 2) throw new Error("controlled skeletal registration failure"); };
+  f.context.loadExteriorAssets();
+  const first = f.context.exteriorPromise;
+  await f.drain();
+  await first;
+  assert.equal(f.fatalErrors.length, 1);
+  assert.match(f.fatalErrors[0].message, /controlled skeletal registration failure/u);
+  assert.equal(f.context.cancelled, true);
+  assert.equal(f.context.discardRenderer, true);
+  assert.equal(f.context.exteriorSources.size, 0, "only complete sources may be reused");
+  assert.equal(f.context.exteriorReady, false);
+  assert.ok(f.states.every((state) => state.kind !== "ready"));
+  f.context.loadExteriorAssets();
+  assert.equal(f.started.length, 1, "the failed viewer can only be rebuilt explicitly");
+
+  const rebuilt = fixture({ count: 1, concurrency: 1 });
+  rebuilt.context.modeRef.current = "exterior";
+  addSecondPlacement(rebuilt);
+  rebuilt.context.loadExteriorAssets();
+  await rebuilt.drain();
+  await rebuilt.context.exteriorPromise;
+  assert.equal(rebuilt.context.visualGroup.children.length, 2);
+  assert.equal(rebuilt.context.exteriorReady, true);
+  assert.equal(rebuilt.states.at(-1).kind, "ready");
+});
+
+test("synchronous exterior failure cleans pending resources once, retains cached resources and ignores late callbacks", async () => {
+  const f = fixture({ count: 3, concurrency: 3 });
+  const other = fixture({ count: 1, concurrency: 1 });
+  f.context.modeRef.current = other.context.modeRef.current = "exterior";
+  const cached = new THREE.Group();
+  const cachedMesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
+  cached.add(cachedMesh);
+  retainCachedRuntimeSceneResources(cached);
+  other.context.visualGroup.add(cachedMesh.clone());
+  let cachedDisposals = 0, ownDisposals = 0, skeletonDisposals = 0;
+  cachedMesh.geometry.addEventListener("dispose", () => { cachedDisposals++; });
+  cachedMesh.material.addEventListener("dispose", () => { cachedDisposals++; });
+  f.context.registerSkeletalPose = () => { throw new Error("assembly probe"); };
+  f.context.loadExteriorAssets();
+  const attempt = f.context.exteriorPromise;
+  const oldRequests = [...f.requests.values()];
+  f.resolve(f.started[0]);
+  const source = f.sources.get(f.started[0]);
+  source.children[0].geometry.addEventListener("dispose", () => { ownDisposals++; });
+  source.children[0].material.addEventListener("dispose", () => { ownDisposals++; });
+  source.add(cachedMesh.clone());
+  const bone = new THREE.Bone();
+  const skinned = new THREE.SkinnedMesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial());
+  skinned.add(bone);
+  skinned.bind(new THREE.Skeleton([bone]));
+  source.add(skinned);
+  const originalClone = f.context.cloneSkeleton;
+  f.context.cloneSkeleton = (root) => {
+    const cloned = originalClone(root);
+    cloned.traverse((object) => {
+      if (object instanceof THREE.SkinnedMesh) object.skeleton.dispose = () => { skeletonDisposals++; };
+    });
+    return cloned;
+  };
+  await flush();
+  assert.equal(f.fatalErrors.length, 1);
+  assert.equal(ownDisposals, 2);
+  assert.equal(skeletonDisposals, 1, "a clone that fails before occurrence attachment is still cleaned");
+  assert.equal(cachedDisposals, 0);
+  f.context.cleanup();
+  assert.equal(ownDisposals, 2, "cleanup stays idempotent");
+  assert.equal(skeletonDisposals, 1);
+  assert.equal(other.context.cancelled, false);
+  assert.equal(other.fatalErrors.length, 0);
+  const stale = new THREE.Group();
+  stale.name = "late failed-viewer source";
+  oldRequests[1].resolve({ scene: stale });
+  oldRequests[2].reject(new Error("late failed-viewer rejection"));
+  await attempt;
+  await flush();
+  assert.deepEqual(f.disposed, [stale.name]);
+  assert.equal(f.fatalErrors.length, 1);
+  assert.ok(f.states.every((state) => state.kind !== "ready"));
+  assert.equal(other.context.visualGroup.children.length, 1);
+});
+
+for (const stage of ["dedupe", "render", "final render", "final presentation"]) {
+  test(`synchronous exterior ${stage} failure uses the same local teardown`, async () => {
+    const f = fixture({ count: 1, concurrency: 1 });
+    f.context.modeRef.current = "exterior";
+    let calls = 0;
+    const target = stage === "dedupe" ? "dedupeRuntimeSceneTextures"
+      : stage === "final presentation" ? "syncAnalysisVisualPresentation" : "render";
+    f.context[target] = () => {
+      calls++;
+      if (!stage.startsWith("final ") || calls === 2) throw new Error(`${stage} probe`);
+    };
+    f.context.loadExteriorAssets();
+    const attempt = f.context.exteriorPromise;
+    await f.drain();
+    await attempt;
+    assert.equal(f.fatalErrors.length, 1);
+    assert.equal(f.context.cancelled, true);
+    assert.equal(f.context.exteriorReady, false);
+    assert.ok(f.states.every((state) => state.kind !== "ready"));
+  });
+}
+
+
+test("an identity pending parent preserves real skeletal registration matrices, bounds and hit poses", () => {
+  const source = new THREE.Group();
+  const root = new THREE.Bone();
+  root.name = "root";
+  const wheel = new THREE.Bone();
+  wheel.name = "Wheel_L1";
+  wheel.position.y = 2;
+  root.add(wheel);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0, 1, 0, 0, 0, 1, 0], 3));
+  geometry.setAttribute("skinIndex", new THREE.Uint16BufferAttribute([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], 4));
+  geometry.setAttribute("skinWeight", new THREE.Float32BufferAttribute([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], 4));
+  const mesh = new THREE.SkinnedMesh(geometry, new THREE.MeshBasicMaterial());
+  mesh.add(root);
+  source.add(mesh);
+  source.updateMatrixWorld(true);
+  mesh.bind(new THREE.Skeleton([root, wheel]));
+  wheel.position.y = 3;
+  source.updateMatrixWorld(true);
+  mesh.skeleton.update();
+  for (const physical of [false, true]) {
+    const results = [];
+    for (const parented of [false, true]) {
+      const model = clone(source);
+      if (parented) {
+        const scene = new THREE.Scene();
+        const pending = new THREE.Group();
+        pending.visible = false;
+        scene.add(pending);
+        pending.add(model);
+      }
+      const context = {
+        THREE, preview: { generatedClass: "fixture", suspension: { records: [] } },
+        physicalPoseEnabledRef: { current: physical }, activeTerrain: () => null,
+        terrainPoseLocalMatrices: () => null, groundedPoseLocalMatrices: () => undefined,
+        runtimePlanarSuspensionPoseForVisualOccurrence: () => null,
+        createRuntimeSkeletalPoseController, skeletalPoseBindings: new Set(), updateSkeletalPoseDataset() {},
+      };
+      execute(["registerSkeletalPose"], context);
+      context.registerSkeletalPose(model, {
+        name: "vehicle mesh", runtimeBonePoseStatus: "observed", stableOccurrenceId: "fixture",
+        runtimeBonePoseNormalTimeSampleCount: 3, matrix: new THREE.Matrix4().makeTranslation(5, 2, -3).elements,
+      });
+      assert.equal(context.skeletalPoseBindings.size, 1);
+      const binding = [...context.skeletalPoseBindings][0];
+      const skinned = binding.skinnedMeshes[0];
+      results.push({
+        local: skinned.skeleton.bones.map((bone) => bone.matrix.toArray()),
+        world: skinned.skeleton.bones.map((bone) => bone.matrixWorld.toArray()),
+        skinMatrices: [...skinned.skeleton.boneMatrices],
+        bounds: [skinned.boundingBox.min.toArray(), skinned.boundingBox.max.toArray()],
+        sphere: [skinned.boundingSphere.center.toArray(), skinned.boundingSphere.radius],
+        hitPose: binding.controller.componentPoseMatrixForBone("Wheel_L1", model).toArray(),
+        placement: binding.placementMatrix.toArray(),
+      });
+    }
+    assert.deepEqual(results[1], results[0]);
+  }
 });
