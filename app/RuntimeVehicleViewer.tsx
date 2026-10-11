@@ -2,6 +2,7 @@
 
 import { VehicleWeaponHud } from "./VehicleWeaponHud";
 import { ViewerErrorBoundary, createViewerCleanup } from "./ViewerErrorBoundary";
+import { disposeRuntimeScene as disposeScene } from "../lib/runtime-scene-resources";
 import { sourceProjectileForShot, type SourceProjectileVisual, type VehicleFiringPresentation } from "../lib/vehicle-firing-presentation";
 import { loadWikiDataset, loadWikiVehicleTerrainPoses } from "../lib/wiki-source";
 import { terrainPoseLocalMatrices, terrainEnvironmentOffset, type TerrainPose, type TerrainPoseSet } from "../lib/runtime-terrain-pose";
@@ -2140,33 +2141,6 @@ function settledShotExplosionDamageHighlight(record: RuntimeShotRecord) {
       settledLayers[0].pressureSurface.material.uniforms.uColor.value.getHex(),
     strength: SHOT_EXPLOSION_SETTLED_HIGHLIGHT_STRENGTH,
   };
-}
-
-function disposeScene(root: THREE.Object3D) {
-  const geometries = new Set<THREE.BufferGeometry>();
-  const materials = new Set<THREE.Material>();
-  const textures = new Set<THREE.Texture>();
-  root.traverse((object) => {
-    if (object instanceof THREE.InstancedMesh) object.dispose();
-    if (
-      !(object instanceof THREE.Mesh) &&
-      !(object instanceof THREE.Line) &&
-      !(object instanceof THREE.Sprite)
-    ) return;
-    if (object instanceof THREE.Mesh || object instanceof THREE.Line) {
-      geometries.add(object.geometry);
-    }
-    const objectMaterials = Array.isArray(object.material) ? object.material : [object.material];
-    objectMaterials.forEach((material) => {
-      materials.add(material);
-      Object.values(material).forEach((value) => {
-        if (value instanceof THREE.Texture) textures.add(value);
-      });
-    });
-  });
-  textures.forEach((texture) => texture.dispose());
-  materials.forEach((material) => material.dispose());
-  geometries.forEach((geometry) => geometry.dispose());
 }
 
 function createRuntimeGroundScaleNumberLabel(

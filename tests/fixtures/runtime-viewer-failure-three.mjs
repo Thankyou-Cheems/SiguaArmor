@@ -18,6 +18,6 @@ export class WebGLRenderer {
   setSize() { if (this.probe.failure === "initial-resize") throw new Error("Test initial resize failure"); }
   render() { this.probe.renders++; }
   setAnimationLoop() { this.probe.animationStops++; }
-  dispose() { this.probe.disposals++; }
+  dispose() { this.probe.disposals++; this.probe.disposedCanvases?.add(this.domElement); }
   forceContextLoss() { this.probe.contextLosses++; }
 }

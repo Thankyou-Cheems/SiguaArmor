@@ -30,7 +30,7 @@ HTMLCanvasElement.prototype.getContext = () => context;
 
 const probe = globalThis.__viewerFailureProbe = {
   failure: "constructor", attempts: 0, disposals: 0, animationStops: 0,
-  renderListDisposals: 0, contextLosses: 0, renders: 0, observerDisposals: 0, canvases: [],
+  disposedCanvases: new Set(), renderListDisposals: 0, contextLosses: 0, renders: 0, observerDisposals: 0, canvases: [],
 };
 const preview = {
   cardId: "test-vehicle", variantRawName: "Test vehicle", status: "visual-ready",
@@ -144,6 +144,38 @@ assert.deepEqual(released, ["listener", "faulty", "renderer"]);
 cleanup.add(() => released.push("late resource"));
 assert.equal(released.at(-1), "late resource", "late acquisition cannot leak after cancellation");
 
+// Concurrent viewers must never release one another's renderer leases.
+function DualViewerApp() {
+  return <main><section data-left><RuntimeVehicleViewer preview={preview} showChrome={false} allowGlobalAttackSources={false} /></section>
+    <section data-right><RuntimeVehicleViewer preview={preview} showChrome={false} allowGlobalAttackSources={false} /></section></main>;
+}
+await act(async () => { root.render(<SiteLanguageProvider><DualViewerApp /></SiteLanguageProvider>); });
+const left = document.querySelector("[data-left]");
+const right = document.querySelector("[data-right]");
+const leftCanvas = left.querySelector(".runtime-vehicle-viewer__host canvas");
+const rightCanvas = right.querySelector(".runtime-vehicle-viewer__host canvas");
+assert.ok(leftCanvas && rightCanvas && leftCanvas !== rightCanvas);
+assert.equal(leftCanvas.parentElement.dataset.webglRendererLease, "shared");
+assert.equal(rightCanvas.parentElement.dataset.webglRendererLease, "isolated");
+await act(async () => { leftCanvas.dispatchEvent(new Event("webglcontextlost", { cancelable: true })); });
+assert.ok(left.querySelector('[data-viewer-state="unavailable"]'));
+assert.ok(probe.disposedCanvases.has(leftCanvas));
+assert.ok(rightCanvas.isConnected && !probe.disposedCanvases.has(rightCanvas), "shared consumer loss leaves isolated renderer alive");
+await act(async () => { left.querySelector("button").click(); });
+const nextLeftCanvas = left.querySelector(".runtime-vehicle-viewer__host canvas");
+assert.ok(nextLeftCanvas && nextLeftCanvas !== leftCanvas);
+await act(async () => { rightCanvas.dispatchEvent(new Event("webglcontextlost", { cancelable: true })); });
+assert.ok(probe.disposedCanvases.has(rightCanvas));
+assert.ok(nextLeftCanvas.isConnected && !probe.disposedCanvases.has(nextLeftCanvas), "isolated loss leaves the replacement shared renderer alive");
+await act(async () => { right.querySelector("button").click(); });
+const nextRightCanvas = right.querySelector(".runtime-vehicle-viewer__host canvas");
+assert.ok(nextRightCanvas && nextRightCanvas !== rightCanvas);
+assert.equal(nextRightCanvas.parentElement.dataset.webglRendererLease, "isolated");
+await act(async () => { root.render(null); });
+assert.ok(!nextLeftCanvas.isConnected && !nextRightCanvas.isConnected);
+assert.ok(!probe.disposedCanvases.has(nextLeftCanvas), "ordinary close retains the reusable shared renderer");
+assert.ok(probe.disposedCanvases.has(nextRightCanvas), "ordinary close disposes only the isolated renderer");
+
 // The catalog-level boundary also contains failed lazy module imports.
 const RejectedViewer = React.lazy(() => Promise.reject(new Error("Test viewer chunk unavailable")));
 await act(async () => {
@@ -157,4 +189,4 @@ assert.ok(caughtErrors.includes("Test viewer chunk unavailable"));
 await act(async () => { root.unmount(); });
 dom.window.close();
 console.log(JSON.stringify({ result: "passed", attempts: probe.attempts,
-  checks: ["constructor failure isolation", "no automatic retry", "repeated explicit retry", "reference and exit survive", "partial setup cleanup", "discard failed shared lease", "successful retry", "context loss and recovery", "idempotent cleanup", "lazy import failure isolation"] }));
+  checks: ["constructor failure isolation", "no automatic retry", "repeated explicit retry", "reference and exit survive", "partial setup cleanup", "discard failed shared lease", "successful retry", "context loss and recovery", "idempotent cleanup", "lazy import failure isolation", "two simultaneous renderer consumers"] }));

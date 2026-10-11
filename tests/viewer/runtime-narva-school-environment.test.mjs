@@ -107,5 +107,5 @@ test("viewer keeps both backgrounds outside vehicle fit/hit roots and aligns the
   assert.match(source, /gridHelper\.position\.set\(groundScaleOriginX, groundY, groundScaleOriginZ\)/);
   assert.match(source, /scene\.add\(environmentRoot\)/);
   assert.match(source, /environmentRoot\.position\.set\(vehicleCameraTarget\.x, groundY, vehicleCameraTarget\.z\)/);
-  assert.match(source, /object instanceof THREE\.InstancedMesh\) object\.dispose/);
+  assert.match(source, /disposeRuntimeScene as disposeScene/u);
 });

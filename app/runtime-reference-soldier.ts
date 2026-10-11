@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 
+import { retainCachedRuntimeSceneResources } from "../lib/runtime-scene-resources";
 import { runtimeWikiAssetUrl } from "../lib/runtime-visual-lazy-load";
 import { loadWikiDataset } from "../lib/wiki-source";
 import type { VehicleCrewAnimationPose } from "../lib/vehicle-crew-animation-pose";
@@ -92,12 +93,12 @@ function loadReferenceSoldierSource(modelPath = REFERENCE_SOLDIER_MODEL_PATH) {
       "sigua-infantry-posture-runtime/v1",
     ),
     loader.loadAsync(modelUrl),
-  ]).then(([postureValue, { scene }]) => ({
-    scene,
-    dataset: postureDataset(postureValue),
-    modelUrl,
-    glassRebind: rebindGlassToHead(scene),
-  })).catch((error) => {
+  ]).then(([postureValue, { scene }]) => {
+    const dataset = postureDataset(postureValue);
+    const glassRebind = rebindGlassToHead(scene);
+    retainCachedRuntimeSceneResources(scene);
+    return { scene, dataset, modelUrl, glassRebind };
+  }).catch((error) => {
     referenceSoldierSourceRequests.delete(modelPath);
     throw error;
   });
