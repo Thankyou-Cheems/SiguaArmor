@@ -15,25 +15,38 @@ const requests = new Map<
 >();
 
 export async function loadWikiVehicleGroundedPose(generatedClass: string) {
-  const catalog = await fetchJson("/data/vehicles/grounded-poses/v1/catalog.json", 60_000) as {
-    schemaVersion?: string;
-    sourceBuildId?: string;
-    vehicles?: { generatedClass: string; status: string; record?: { url: string; sha256: string; bytes: number } }[];
-  };
-  if (catalog.schemaVersion !== "sigua-vehicle-grounded-pose-index/v1" || !Array.isArray(catalog.vehicles)) {
-    throw new Error("SiguaWiki grounded-pose catalog is invalid");
-  }
+  const catalog = await fetchJson("/data/vehicles/grounded-poses/v1/catalog.json", 60_000, undefined, (value) => {
+    const catalog = value as {
+      schemaVersion?: string;
+      sourceBuildId?: string;
+      vehicles?: { generatedClass: string; status: string; record?: { url: string; sha256: string; bytes: number } }[];
+    };
+    if (catalog.schemaVersion !== "sigua-vehicle-grounded-pose-index/v1" || !Array.isArray(catalog.vehicles)) {
+      throw new Error("SiguaWiki grounded-pose catalog is invalid");
+    }
+    const matches = catalog.vehicles.filter(row => row.generatedClass === generatedClass);
+    if (matches.length === 1 && ["observed", "solved"].includes(matches[0].status)) {
+      const ref = matches[0].record;
+      if (!ref || !/^[a-f0-9]{64}$/u.test(ref.sha256) ||
+        ref.url !== `/data/vehicles/grounded-poses/v1/records/${ref.sha256}.json` || !Number.isSafeInteger(ref.bytes) || ref.bytes <= 0) {
+        throw new Error("SiguaWiki grounded-pose reference is invalid");
+      }
+    }
+    return { ...catalog, vehicles: catalog.vehicles };
+  });
   const matches = catalog.vehicles.filter(row => row.generatedClass === generatedClass);
   if (matches.length !== 1 || !["observed", "solved"].includes(matches[0].status)) return null;
-  const ref = matches[0].record;
-  if (!ref || !/^[a-f0-9]{64}$/u.test(ref.sha256) ||
-    ref.url !== `/data/vehicles/grounded-poses/v1/records/${ref.sha256}.json` || !Number.isSafeInteger(ref.bytes) || ref.bytes <= 0) {
-    throw new Error("SiguaWiki grounded-pose reference is invalid");
-  }
-  const value = await fetchJson(ref.url, Number.POSITIVE_INFINITY, ref) as {
-    schemaVersion?: string; sourceBuildId?: string; admission?: string;
-  };
-  if (value.schemaVersion !== "sigua-vehicle-grounded-pose/v1" || !catalog.sourceBuildId || value.sourceBuildId !== catalog.sourceBuildId) {
+  const ref = matches[0].record!;
+  const value = await fetchJson(ref.url, Number.POSITIVE_INFINITY, ref, (raw) => {
+    const value = raw as { schemaVersion?: string; sourceBuildId?: string; admission?: string };
+    if (value.schemaVersion !== "sigua-vehicle-grounded-pose/v1") {
+      throw new Error("SiguaWiki grounded-pose source build differs");
+    }
+    return value;
+  });
+  // Cross-document disagreement is not proof that either individually valid
+  // response is corrupt. Preserve the existing rejection and catalog TTL.
+  if (!catalog.sourceBuildId || value.sourceBuildId !== catalog.sourceBuildId) {
     throw new Error("SiguaWiki grounded-pose source build differs");
   }
   const expectedAdmission = matches[0].status === "solved" ? "source-solved-flat-rest" : "rendered-physics-three-stable-samples";
@@ -42,23 +55,34 @@ export async function loadWikiVehicleGroundedPose(generatedClass: string) {
 }
 
 export async function loadWikiVehicleTerrainPoses(generatedClass: string) {
-  const catalog = await fetchJson("/data/vehicles/terrain-poses/v1/catalog.json", 60_000) as {
-    schemaVersion: string; sourceBuildId: string;
-    vehicles: {generatedClass:string;record:{url:string;sha256:string;bytes:number}}[];
-  };
-  if(catalog.schemaVersion!=="sigua-vehicle-terrain-poses-index/v1"||!Array.isArray(catalog.vehicles))throw new Error("地形姿态目录无效");
+  const catalog = await fetchJson("/data/vehicles/terrain-poses/v1/catalog.json", 60_000, undefined, (value) => {
+    const catalog = value as {
+      schemaVersion: string; sourceBuildId: string;
+      vehicles: {generatedClass:string;record:{url:string;sha256:string;bytes:number}}[];
+    };
+    if(catalog.schemaVersion!=="sigua-vehicle-terrain-poses-index/v1"||!Array.isArray(catalog.vehicles))throw new Error("地形姿态目录无效");
+    const matches=catalog.vehicles.filter(v=>v.generatedClass===generatedClass);
+    if(matches.length>1)throw new Error("地形姿态车型重复");
+    if(matches.length===1) {
+      const ref=matches[0].record;
+      if(!/^[a-f0-9]{64}$/u.test(ref?.sha256)||ref.url!==`/data/vehicles/terrain-poses/v1/records/${ref.sha256}.json`||
+        !Number.isSafeInteger(ref.bytes)||ref.bytes<=0||ref.bytes>256*1024)throw new Error("地形姿态记录无效");
+    }
+    return catalog;
+  });
   const matches=catalog.vehicles.filter(v=>v.generatedClass===generatedClass);
   if(!matches.length)return null;
-  if(matches.length!==1)throw new Error("地形姿态车型重复");
   const ref=matches[0].record;
-  if(!/^[a-f0-9]{64}$/u.test(ref?.sha256)||ref.url!==`/data/vehicles/terrain-poses/v1/records/${ref.sha256}.json`||
-    !Number.isSafeInteger(ref.bytes)||ref.bytes<=0||ref.bytes>256*1024)throw new Error("地形姿态记录无效");
   const {validateTerrainPoseSet}=await import("./runtime-terrain-pose.ts");
-  const set=validateTerrainPoseSet(await fetchJson(ref.url,Infinity,ref),generatedClass);
+  const set=await fetchJson(ref.url,Infinity,ref,value=>validateTerrainPoseSet(value,generatedClass));
   if(set.sourceBuildId!==catalog.sourceBuildId)throw new Error("地形姿态版本不匹配");
-  const flatCatalog=await fetchJson("/data/vehicles/grounded-poses/v1/catalog.json",60_000) as {vehicles:{generatedClass:string;record?:{sha256:string}}[]};
-  const flatRows=flatCatalog.vehicles?.filter(row=>row.generatedClass===generatedClass);
-  if(flatRows?.length!==1||flatRows[0].record?.sha256!==set.flatReferenceSha256)throw new Error("平地基准已更新，地形姿态需刷新");
+  const flatCatalog=await fetchJson("/data/vehicles/grounded-poses/v1/catalog.json",60_000,undefined,value=>{
+    const flatCatalog=value as {vehicles:{generatedClass:string;record?:{sha256:string}}[]};
+    if(!Array.isArray(flatCatalog.vehicles))throw new Error("平地基准已更新，地形姿态需刷新");
+    return flatCatalog;
+  });
+  const flatRows=flatCatalog.vehicles.filter(row=>row.generatedClass===generatedClass);
+  if(flatRows.length!==1||flatRows[0].record?.sha256!==set.flatReferenceSha256)throw new Error("平地基准已更新，地形姿态需刷新");
   // Bind the exact existing flat reference and real scene bytes. A data update
   // must regenerate this small derived record instead of silently reusing it.
   await Promise.all([set.scene.query,set.scene.display,{url:`/data/vehicles/grounded-poses/v1/records/${set.flatReferenceSha256}.json`,sha256:set.flatReferenceSha256}].map(async entry=>{
@@ -97,14 +121,21 @@ export function wikiProjectileAlgorithmUrl(pathname: string) {
   return wikiUrl(`${pathname}?presentation=projectile-body-v2`);
 }
 
-async function fetchJson(pathname: string, maxAgeMs = Number.POSITIVE_INFINITY, integrity?: { sha256: string; bytes: number }) {
+type WikiJsonValidator<T> = (value: unknown) => T | Promise<T>;
+
+async function fetchJson<T = unknown>(
+  pathname: string,
+  maxAgeMs = Number.POSITIVE_INFINITY,
+  integrity?: { sha256: string; bytes: number },
+  validate: WikiJsonValidator<T> = (value) => value as T,
+): Promise<T> {
   const cacheKey = integrity ? `${pathname}\0${integrity.sha256}:${integrity.bytes}` : pathname;
   const existing = requests.get(cacheKey);
-  if (existing && Date.now() < existing.expiresAt) return existing.request;
-  const request = fetch(wikiUrl(pathname), {
-    credentials: "omit",
-  })
-    .then(async (response) => {
+  let request = existing && Date.now() < existing.expiresAt ? existing.request : undefined;
+  if (!request) {
+    request = fetch(wikiUrl(pathname), {
+      credentials: "omit",
+    }).then(async (response) => {
       if (!response.ok) {
         throw new Error(`SiguaWiki ${pathname} returned HTTP ${response.status}`);
       }
@@ -118,93 +149,104 @@ async function fetchJson(pathname: string, maxAgeMs = Number.POSITIVE_INFINITY, 
         return JSON.parse(new TextDecoder().decode(data)) as unknown;
       }
       return response.json() as Promise<unknown>;
-    })
-    .catch((error) => {
-      if (requests.get(cacheKey)?.request === request) requests.delete(cacheKey);
-      throw error;
     });
-  requests.set(cacheKey, { expiresAt: Date.now() + maxAgeMs, request });
-  return request;
+    requests.set(cacheKey, { expiresAt: Date.now() + maxAgeMs, request });
+  }
+  try {
+    // Share transport work, but validate for each consumer's exact contract.
+    // HTTP 200 with parseable, unusable data must not poison later retries.
+    return await validate(await request);
+  } catch (error) {
+    // A slow failure must never evict a newer request after this entry expires.
+    if (requests.get(cacheKey)?.request === request) requests.delete(cacheKey);
+    throw error;
+  }
 }
 
-export async function loadWikiDataset(
+export async function loadWikiDataset<T = unknown>(
   pathname: string,
   schemaVersion: string,
-) {
-  const value = await fetchJson(pathname);
-  if (
-    typeof value !== "object" ||
-    value === null ||
-    (value as { schemaVersion?: string }).schemaVersion !== schemaVersion
-  ) {
-    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
-  }
-  return value;
+  validate: WikiJsonValidator<T> = (value) => value as T,
+): Promise<T> {
+  return fetchJson(pathname, Number.POSITIVE_INFINITY, undefined, (value) => {
+    if (
+      typeof value !== "object" ||
+      value === null ||
+      (value as { schemaVersion?: string }).schemaVersion !== schemaVersion
+    ) {
+      throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+    }
+    return validate(value);
+  });
 }
 
 export async function loadWikiWeaponCatalog() {
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     `/data/weapons/catalog.json${WIKI_WEAPON_CATALOG_QUERY}`,
     "sigua-weapon-catalog/v2",
+    (value) => {
+      const catalog = value as {
+        schemaVersion?: string;
+        selector?: { variants?: unknown[] };
+        mechanics?: { directDamageModels?: unknown[] };
+      };
+      if (
+        catalog.schemaVersion !== "sigua-weapon-catalog/v2" ||
+        !Array.isArray(catalog.selector?.variants) ||
+        !Array.isArray(catalog.mechanics?.directDamageModels)
+      ) {
+        throw new Error("SiguaWiki weapon catalog has an unsupported shape");
+      }
+      return value;
+    },
   );
-  const catalog = value as {
-    schemaVersion?: string;
-    selector?: { variants?: unknown[] };
-    mechanics?: { directDamageModels?: unknown[] };
-  };
-  if (
-    catalog.schemaVersion !== "sigua-weapon-catalog/v2" ||
-    !Array.isArray(catalog.selector?.variants) ||
-    !Array.isArray(catalog.mechanics?.directDamageModels)
-  ) {
-    throw new Error("SiguaWiki weapon catalog has an unsupported shape");
-  }
-  return value;
 }
 
 export async function loadWikiWeaponBallistics() {
   const pathname = `/data/weapons/ballistics.json${WIKI_WEAPON_PROJECTILE_QUERY}`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     pathname,
     "sigua-weapon-ballistics/v1",
+    (value) => {
+      const document = value as {
+        status?: string;
+        sourceBuildId?: string;
+        algorithms?: { projectile?: string };
+        physics?: {
+          worldGravityZCentimetresPerSecondSquared?: number;
+          serverFrameDeltaSeconds?: number;
+        };
+        launchOriginProfiles?: unknown[];
+        projectileProfiles?: unknown[];
+        weaponAssignments?: unknown[];
+        movementModes?: unknown[];
+        curveAssets?: unknown[];
+        vehicleMountBindings?: unknown[];
+      };
+      if (
+        document.status !== "completed" ||
+        typeof document.sourceBuildId !== "string" ||
+        !/^\/algorithms\/ballistics\/[a-z0-9-]+\.js$/u.test(
+          document.algorithms?.projectile ?? "",
+        ) ||
+        typeof document.physics?.worldGravityZCentimetresPerSecondSquared !==
+          "number" ||
+        typeof document.physics?.serverFrameDeltaSeconds !== "number" ||
+        !Array.isArray(document.launchOriginProfiles) ||
+        document.launchOriginProfiles.length === 0 ||
+        !Array.isArray(document.projectileProfiles) ||
+        !Array.isArray(document.weaponAssignments) ||
+        !Array.isArray(document.movementModes) ||
+        !Array.isArray(document.curveAssets) ||
+        !Array.isArray(document.vehicleMountBindings)
+      ) {
+        throw new Error(
+          `SiguaWiki ${pathname} does not contain the source-locked launch contract`,
+        );
+      }
+      return value;
+    },
   );
-  const document = value as {
-    status?: string;
-    sourceBuildId?: string;
-    algorithms?: { projectile?: string };
-    physics?: {
-      worldGravityZCentimetresPerSecondSquared?: number;
-      serverFrameDeltaSeconds?: number;
-    };
-    launchOriginProfiles?: unknown[];
-    projectileProfiles?: unknown[];
-    weaponAssignments?: unknown[];
-    movementModes?: unknown[];
-    curveAssets?: unknown[];
-    vehicleMountBindings?: unknown[];
-  };
-  if (
-    document.status !== "completed" ||
-    typeof document.sourceBuildId !== "string" ||
-    !/^\/algorithms\/ballistics\/[a-z0-9-]+\.js$/u.test(
-      document.algorithms?.projectile ?? "",
-    ) ||
-    typeof document.physics?.worldGravityZCentimetresPerSecondSquared !==
-      "number" ||
-    typeof document.physics?.serverFrameDeltaSeconds !== "number" ||
-    !Array.isArray(document.launchOriginProfiles) ||
-    document.launchOriginProfiles.length === 0 ||
-    !Array.isArray(document.projectileProfiles) ||
-    !Array.isArray(document.weaponAssignments) ||
-    !Array.isArray(document.movementModes) ||
-    !Array.isArray(document.curveAssets) ||
-    !Array.isArray(document.vehicleMountBindings)
-  ) {
-    throw new Error(
-      `SiguaWiki ${pathname} does not contain the source-locked launch contract`,
-    );
-  }
-  return value;
 }
 
 export async function loadWikiVehicleWeaponRuntimeSource(cardId: string) {
@@ -212,41 +254,45 @@ export async function loadWikiVehicleWeaponRuntimeSource(cardId: string) {
     throw new Error(`Invalid vehicle weapon runtime card id: ${cardId}`);
   }
   const pathname = `/data/weapons/runtime/vehicles/${cardId}.json${WIKI_WEAPON_RUNTIME_QUERY}`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     pathname,
     "sigua-weapon-runtime-source/v2",
+    (value) => {
+      const document = value as {
+        source?: { kind?: string; cardId?: string; rawNames?: unknown[] };
+        weaponProfiles?: unknown[];
+        loadouts?: unknown[];
+      };
+      if (
+        document.source?.kind !== "vehicle" ||
+        document.source.cardId !== cardId ||
+        !Array.isArray(document.source.rawNames) ||
+        !Array.isArray(document.weaponProfiles) ||
+        !Array.isArray(document.loadouts) ||
+        document.loadouts.length === 0
+      ) {
+        throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    source?: { kind?: string; cardId?: string; rawNames?: unknown[] };
-    weaponProfiles?: unknown[];
-    loadouts?: unknown[];
-  };
-  if (
-    document.source?.kind !== "vehicle" ||
-    document.source.cardId !== cardId ||
-    !Array.isArray(document.source.rawNames) ||
-    !Array.isArray(document.weaponProfiles) ||
-    !Array.isArray(document.loadouts) ||
-    document.loadouts.length === 0
-  ) {
-    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadWikiVehicleWeaponRuntimeIndex() {
   const pathname = `/data/weapons/runtime/vehicles/index.json${WIKI_WEAPON_RUNTIME_QUERY}`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     pathname,
     "sigua-weapon-runtime-index/v2",
+    (value) => {
+      const document = value as {
+        vehicleSources?: unknown[];
+      };
+      if (!Array.isArray(document.vehicleSources)) {
+        throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    vehicleSources?: unknown[];
-  };
-  if (!Array.isArray(document.vehicleSources)) {
-    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadWikiVehicleRuntimeSource(cardId: string) {
@@ -254,22 +300,24 @@ export async function loadWikiVehicleRuntimeSource(cardId: string) {
     throw new Error(`Invalid vehicle runtime card id: ${cardId}`);
   }
   const pathname = `/data/vehicles/runtime/${cardId}.json${WIKI_VEHICLE_RUNTIME_QUERY}`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     pathname,
     "sigua-vehicle-runtime-source/v1",
+    (value) => {
+      const document = value as {
+        source?: { cardId?: string };
+        variants?: unknown[];
+      };
+      if (
+        document.source?.cardId !== cardId ||
+        !Array.isArray(document.variants) ||
+        document.variants.length === 0
+      ) {
+        throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    source?: { cardId?: string };
-    variants?: unknown[];
-  };
-  if (
-    document.source?.cardId !== cardId ||
-    !Array.isArray(document.variants) ||
-    document.variants.length === 0
-  ) {
-    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadWikiVehicleRadialQuery(recordPath: string) {
@@ -286,71 +334,77 @@ export async function loadWikiVehicleVisualAttachment(recordPath: string) {
   if (!/^\/data\/vehicles\/visual-attachments\/vehicle-[a-f0-9]+\.json$/u.test(recordPath)) {
     throw new Error(`Invalid vehicle visual-attachment path: ${recordPath}`);
   }
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     recordPath,
     "sigua-vehicle-visual-attachment/v2",
+    (value) => {
+      const document = value as {
+        sourceVehicleRef?: string;
+        stations?: unknown[];
+        visualBindings?: unknown[];
+      };
+      if (
+        !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
+        !Array.isArray(document.stations) ||
+        !Array.isArray(document.visualBindings)
+      ) {
+        throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    sourceVehicleRef?: string;
-    stations?: unknown[];
-    visualBindings?: unknown[];
-  };
-  if (
-    !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
-    !Array.isArray(document.stations) ||
-    !Array.isArray(document.visualBindings)
-  ) {
-    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadWikiVehicleCrewSeat(recordPath: string) {
   if (!/^\/data\/vehicles\/crew-seats\/vehicle-[a-f0-9]+\.json$/u.test(recordPath)) {
     throw new Error(`Invalid vehicle crew-seat path: ${recordPath}`);
   }
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     recordPath,
     "sigua-vehicle-crew-seat/v1",
+    (value) => {
+      const document = value as {
+        sourceVehicleRef?: string;
+        runtimeVehicleRefs?: unknown[];
+        seats?: unknown[];
+      };
+      if (
+        !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
+        !Array.isArray(document.runtimeVehicleRefs) ||
+        !Array.isArray(document.seats)
+      ) {
+        throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    sourceVehicleRef?: string;
-    runtimeVehicleRefs?: unknown[];
-    seats?: unknown[];
-  };
-  if (
-    !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
-    !Array.isArray(document.runtimeVehicleRefs) ||
-    !Array.isArray(document.seats)
-  ) {
-    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadWikiVehicleStationGraph(recordPath: string) {
   if (!/^\/data\/vehicles\/station-graphs\/vehicle-[a-f0-9]+\.json$/u.test(recordPath)) {
     throw new Error(`Invalid vehicle station-graph path: ${recordPath}`);
   }
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     recordPath,
     "sigua-vehicle-station-graph/v1",
+    (value) => {
+      const document = value as {
+        sourceVehicleRef?: string;
+        runtimeVehicleRefs?: unknown[];
+        stations?: unknown[];
+        visualBindings?: unknown[];
+      };
+      if (
+        !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
+        !Array.isArray(document.runtimeVehicleRefs) ||
+        !Array.isArray(document.stations) ||
+        !Array.isArray(document.visualBindings)
+      ) {
+        throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    sourceVehicleRef?: string;
-    runtimeVehicleRefs?: unknown[];
-    stations?: unknown[];
-    visualBindings?: unknown[];
-  };
-  if (
-    !/^vehicle-[a-f0-9]+$/u.test(document.sourceVehicleRef ?? "") ||
-    !Array.isArray(document.runtimeVehicleRefs) ||
-    !Array.isArray(document.stations) ||
-    !Array.isArray(document.visualBindings)
-  ) {
-    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadWikiVehicleGunnerSight(sourceVehicleRef: string) {
@@ -358,25 +412,27 @@ export async function loadWikiVehicleGunnerSight(sourceVehicleRef: string) {
     throw new Error(`Invalid vehicle gunner-sight source: ${sourceVehicleRef}`);
   }
   const recordPath = `/data/vehicles/gunner-sights/${sourceVehicleRef}.json`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     recordPath,
     "sigua-vehicle-gunner-sight/v1",
+    (value) => {
+      const document = value as {
+        sourceVehicleRef?: string;
+        runtimeVehicleRefs?: unknown[];
+        stations?: unknown[];
+        projections?: unknown[];
+      };
+      if (
+        document.sourceVehicleRef !== sourceVehicleRef ||
+        !Array.isArray(document.runtimeVehicleRefs) ||
+        !Array.isArray(document.stations) ||
+        !Array.isArray(document.projections)
+      ) {
+        throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    sourceVehicleRef?: string;
-    runtimeVehicleRefs?: unknown[];
-    stations?: unknown[];
-    projections?: unknown[];
-  };
-  if (
-    document.sourceVehicleRef !== sourceVehicleRef ||
-    !Array.isArray(document.runtimeVehicleRefs) ||
-    !Array.isArray(document.stations) ||
-    !Array.isArray(document.projections)
-  ) {
-    throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadOptionalWikiVehicleGunnerSight(
@@ -398,23 +454,25 @@ export async function loadWikiVehicleDriverView(sourceVehicleRef: string) {
     throw new Error(`Invalid vehicle driver-view source: ${sourceVehicleRef}`);
   }
   const recordPath = `/data/vehicles/driver-views/${sourceVehicleRef}.json`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     recordPath,
     "sigua-vehicle-driver-view/v1",
+    (value) => {
+      const document = value as {
+        sourceVehicleRef?: string;
+        seatKey?: string;
+        camera?: unknown;
+        mask?: unknown;
+      };
+      if (
+        document.sourceVehicleRef !== sourceVehicleRef ||
+        document.seatKey !== `${sourceVehicleRef}:catalog-seat:1` ||
+        !document.camera ||
+        !document.mask
+      ) throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
+      return value;
+    },
   );
-  const document = value as {
-    sourceVehicleRef?: string;
-    seatKey?: string;
-    camera?: unknown;
-    mask?: unknown;
-  };
-  if (
-    document.sourceVehicleRef !== sourceVehicleRef ||
-    document.seatKey !== `${sourceVehicleRef}:catalog-seat:1` ||
-    !document.camera ||
-    !document.mask
-  ) throw new Error(`SiguaWiki ${recordPath} has an unsupported shape`);
-  return value;
 }
 
 export async function loadWikiVehicleFactionMechanics(factionId: string) {
@@ -422,43 +480,45 @@ export async function loadWikiVehicleFactionMechanics(factionId: string) {
     throw new Error(`Invalid vehicle mechanics faction id: ${factionId}`);
   }
   const pathname = `/data/vehicles/factions/${factionId}.json${WIKI_VEHICLE_MECHANICS_QUERY}`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     pathname,
     "sigua-vehicle-faction-mechanics/v1",
+    (value) => {
+      const document = value as {
+        factionId?: string;
+        identities?: { vehicles?: unknown[]; catalogBindings?: unknown[] };
+        profiles?: {
+          general?: unknown[];
+          burning?: unknown[];
+          seats?: unknown[];
+          damageResistances?: unknown[];
+          components?: unknown[];
+        };
+        runtime?: { visualArtifacts?: unknown[] };
+        editorAvailability?: { schemaVersion?: string; bindingAvailability?: unknown[] };
+      };
+      if (
+        document.factionId !== factionId ||
+        !Array.isArray(document.identities?.vehicles) ||
+        !Array.isArray(document.identities?.catalogBindings) ||
+        !Array.isArray(document.profiles?.general) ||
+        !Array.isArray(document.profiles?.burning) ||
+        !Array.isArray(document.profiles?.seats) ||
+        !Array.isArray(document.profiles?.damageResistances) ||
+        !Array.isArray(document.profiles?.components) ||
+        !Array.isArray(document.runtime?.visualArtifacts) ||
+        document.identities.vehicles.some(
+          (vehicle) =>
+            typeof (vehicle as { burningProfileRef?: unknown }).burningProfileRef !== "string",
+        ) ||
+        document.editorAvailability?.schemaVersion !== "sigua-vehicle-editor-availability/v1" ||
+        !Array.isArray(document.editorAvailability?.bindingAvailability)
+      ) {
+        throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+      }
+      return value;
+    },
   );
-  const document = value as {
-    factionId?: string;
-    identities?: { vehicles?: unknown[]; catalogBindings?: unknown[] };
-    profiles?: {
-      general?: unknown[];
-      burning?: unknown[];
-      seats?: unknown[];
-      damageResistances?: unknown[];
-      components?: unknown[];
-    };
-    runtime?: { visualArtifacts?: unknown[] };
-    editorAvailability?: { schemaVersion?: string; bindingAvailability?: unknown[] };
-  };
-  if (
-    document.factionId !== factionId ||
-    !Array.isArray(document.identities?.vehicles) ||
-    !Array.isArray(document.identities?.catalogBindings) ||
-    !Array.isArray(document.profiles?.general) ||
-    !Array.isArray(document.profiles?.burning) ||
-    !Array.isArray(document.profiles?.seats) ||
-    !Array.isArray(document.profiles?.damageResistances) ||
-    !Array.isArray(document.profiles?.components) ||
-    !Array.isArray(document.runtime?.visualArtifacts) ||
-    document.identities.vehicles.some(
-      (vehicle) =>
-        typeof (vehicle as { burningProfileRef?: unknown }).burningProfileRef !== "string",
-    ) ||
-    document.editorAvailability?.schemaVersion !== "sigua-vehicle-editor-availability/v1" ||
-    !Array.isArray(document.editorAvailability?.bindingAvailability)
-  ) {
-    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
-  }
-  return value;
 }
 
 export async function loadWikiVehicleFactionPresentation(factionId: string) {
@@ -466,185 +526,200 @@ export async function loadWikiVehicleFactionPresentation(factionId: string) {
     throw new Error(`Invalid vehicle presentation faction id: ${factionId}`);
   }
   const pathname = `/data/vehicles/faction-presentation/${factionId}.json${WIKI_PRESENTATION_QUERY}`;
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     pathname,
     "sigua-vehicle-faction-presentation/v1",
-  );
-  const document = value as {
-    factionId?: string;
-    presentation?: {
-      editions?: {
-        international?: { records?: unknown[] };
-        china?: { records?: unknown[] };
+    (value) => {
+      const document = value as {
+        factionId?: string;
+        presentation?: {
+          editions?: {
+            international?: { records?: unknown[] };
+            china?: { records?: unknown[] };
+          };
+        };
       };
-    };
-  };
-  if (
-    document.factionId !== factionId ||
-    !Array.isArray(document.presentation?.editions?.international?.records) ||
-    !Array.isArray(document.presentation?.editions?.china?.records)
-  ) {
-    throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
-  }
-  return value;
+      if (
+        document.factionId !== factionId ||
+        !Array.isArray(document.presentation?.editions?.international?.records) ||
+        !Array.isArray(document.presentation?.editions?.china?.records)
+      ) {
+        throw new Error(`SiguaWiki ${pathname} has an unsupported shape`);
+      }
+      return value;
+    },
+  );
 }
 
 export async function loadWikiVehicleCatalog() {
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     `/data/vehicles/catalog.json${WIKI_PRESENTATION_QUERY}`,
     "sigua-vehicle-catalog/v3.1",
-  );
-  const catalog = value as {
-    schemaVersion?: string;
-    identities?: { catalogBindings?: unknown[] };
-    runtime?: { visualArtifacts?: unknown[] };
-    presentation?: {
-      editions?: {
-        international?: { records?: unknown[] };
-        china?: { records?: unknown[] };
+    (value) => {
+      const catalog = value as {
+        schemaVersion?: string;
+        identities?: { catalogBindings?: unknown[] };
+        runtime?: { visualArtifacts?: unknown[] };
+        presentation?: {
+          editions?: {
+            international?: { records?: unknown[] };
+            china?: { records?: unknown[] };
+          };
+        };
       };
-    };
-  };
-  if (
-    catalog.schemaVersion !== "sigua-vehicle-catalog/v3.1" ||
-    !Array.isArray(catalog.identities?.catalogBindings) ||
-    !Array.isArray(catalog.runtime?.visualArtifacts) ||
-    !Array.isArray(catalog.presentation?.editions?.international?.records) ||
-    !Array.isArray(catalog.presentation?.editions?.china?.records)
-  ) {
-    throw new Error("SiguaWiki vehicle catalog has an unsupported shape");
-  }
-  return value;
+      if (
+        catalog.schemaVersion !== "sigua-vehicle-catalog/v3.1" ||
+        !Array.isArray(catalog.identities?.catalogBindings) ||
+        !Array.isArray(catalog.runtime?.visualArtifacts) ||
+        !Array.isArray(catalog.presentation?.editions?.international?.records) ||
+        !Array.isArray(catalog.presentation?.editions?.china?.records)
+      ) {
+        throw new Error("SiguaWiki vehicle catalog has an unsupported shape");
+      }
+      return value;
+    },
+  );
 }
 
 export async function loadWikiVehiclePresentation() {
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     "/data/vehicles/presentation.json",
     "sigua-vehicle-presentation/v1",
-  );
-  const document = value as {
-    schemaVersion?: string;
-    presentation?: {
-      editions?: {
-        international?: { records?: unknown[] };
-        china?: { records?: unknown[] };
+    (value) => {
+      const document = value as {
+        schemaVersion?: string;
+        presentation?: {
+          editions?: {
+            international?: { records?: unknown[] };
+            china?: { records?: unknown[] };
+          };
+        };
       };
-    };
-  };
-  if (
-    document.schemaVersion !== "sigua-vehicle-presentation/v1" ||
-    !Array.isArray(document.presentation?.editions?.international?.records) ||
-    !Array.isArray(document.presentation?.editions?.china?.records)
-  ) {
-    throw new Error("SiguaWiki vehicle presentation has an unsupported shape");
-  }
-  return value;
+      if (
+        document.schemaVersion !== "sigua-vehicle-presentation/v1" ||
+        !Array.isArray(document.presentation?.editions?.international?.records) ||
+        !Array.isArray(document.presentation?.editions?.china?.records)
+      ) {
+        throw new Error("SiguaWiki vehicle presentation has an unsupported shape");
+      }
+      return value;
+    },
+  );
 }
 
 export async function loadWikiVehicleCommunityAliases() {
-  const value = await fetchJson(
+  return fetchJson(
     `/data/vehicles/community-aliases.json${WIKI_PRESENTATION_QUERY}`,
     60_000,
+    undefined,
+    (value) => {
+      const document = value as {
+        schemaVersion?: string;
+        updatedAt?: string;
+        groups?: Array<{
+          id?: string;
+          label?: string;
+          terms?: unknown[];
+          targets?: unknown[];
+        }>;
+      };
+      if (
+        document.schemaVersion !== "sigua-vehicle-community-aliases/v1" ||
+        typeof document.updatedAt !== "string" ||
+        !Array.isArray(document.groups) ||
+        document.groups.some(
+          (group) =>
+            typeof group.id !== "string" ||
+            typeof group.label !== "string" ||
+            !Array.isArray(group.terms) ||
+            !Array.isArray(group.targets),
+        )
+      ) {
+        throw new Error("SiguaWiki vehicle community aliases have an unsupported shape");
+      }
+      return value;
+    },
   );
-  const document = value as {
-    schemaVersion?: string;
-    updatedAt?: string;
-    groups?: Array<{
-      id?: string;
-      label?: string;
-      terms?: unknown[];
-      targets?: unknown[];
-    }>;
-  };
-  if (
-    document.schemaVersion !== "sigua-vehicle-community-aliases/v1" ||
-    typeof document.updatedAt !== "string" ||
-    !Array.isArray(document.groups) ||
-    document.groups.some(
-      (group) =>
-        typeof group.id !== "string" ||
-        typeof group.label !== "string" ||
-        !Array.isArray(group.terms) ||
-        !Array.isArray(group.targets),
-    )
-  ) {
-    throw new Error("SiguaWiki vehicle community aliases have an unsupported shape");
-  }
-  return value;
 }
 
 export async function loadWikiFactionCatalog() {
-  const value = await loadWikiDataset(
+  return loadWikiDataset(
     `/data/factions/catalog.json${WIKI_PRESENTATION_QUERY}`,
     "sigua-faction-catalog/v1",
+    (value) => {
+      const catalog = value as {
+        schemaVersion?: string;
+        factions?: Array<{ code?: string; labels?: { zhHans?: string } }>;
+        catalogGroups?: {
+          china?: Array<{ id?: string; nameZh?: string }>;
+        };
+      };
+      if (
+        catalog.schemaVersion !== "sigua-faction-catalog/v1" ||
+        !Array.isArray(catalog.factions) ||
+        !Array.isArray(catalog.catalogGroups?.china) ||
+        catalog.factions.some(
+          (faction) =>
+            typeof faction.code !== "string" ||
+            typeof faction.labels?.zhHans !== "string",
+        ) ||
+        catalog.catalogGroups.china.some(
+          (group) =>
+            typeof group.id !== "string" ||
+            typeof group.nameZh !== "string",
+        )
+      ) {
+        throw new Error("SiguaWiki faction catalog has an unsupported shape");
+      }
+      return value;
+    },
   );
-  const catalog = value as {
-    schemaVersion?: string;
-    factions?: Array<{ code?: string; labels?: { zhHans?: string } }>;
-    catalogGroups?: {
-      china?: Array<{ id?: string; nameZh?: string }>;
-    };
-  };
-  if (
-    catalog.schemaVersion !== "sigua-faction-catalog/v1" ||
-    !Array.isArray(catalog.factions) ||
-    !Array.isArray(catalog.catalogGroups?.china) ||
-    catalog.factions.some(
-      (faction) =>
-        typeof faction.code !== "string" ||
-        typeof faction.labels?.zhHans !== "string",
-    ) ||
-    catalog.catalogGroups.china.some(
-      (group) =>
-        typeof group.id !== "string" ||
-        typeof group.nameZh !== "string",
-    )
-  ) {
-    throw new Error("SiguaWiki faction catalog has an unsupported shape");
-  }
-  return value;
 }
 
 export async function loadWikiRuntimeVisual(visualArtifactRef: string) {
   if (!/^visual-artifact-[a-f0-9]{64}$/u.test(visualArtifactRef)) {
     throw new Error("Vehicle visual artifact reference is invalid");
   }
-  const value = await fetchJson(
+  return fetchJson(
     `/assets/runtime-probe/visuals/${visualArtifactRef}.json${WIKI_PRESENTATION_QUERY}`,
+    Number.POSITIVE_INFINITY,
+    undefined,
+    (value) => {
+      const descriptor = value as {
+        schemaVersion?: string;
+        id?: string;
+        runtimeVehicleRef?: string;
+        generatedClass?: string;
+        placements?: Array<{
+          assetUrl?: string;
+          compatibilityAssetUrl?: string;
+          matrix?: unknown[];
+        }>;
+      };
+      if (
+        descriptor.schemaVersion !== "sigua-runtime-visual/v1" ||
+        descriptor.id !== visualArtifactRef ||
+        !/^vehicle-[a-f0-9]{64}$/u.test(descriptor.runtimeVehicleRef ?? "") ||
+        typeof descriptor.generatedClass !== "string" ||
+        !Array.isArray(descriptor.placements) ||
+        descriptor.placements.some(
+          (placement) =>
+            !/^\/assets\/runtime-probe\/models\/[a-f0-9]{64}\.gltf$/u.test(
+              placement.assetUrl ?? "",
+            ) ||
+            (placement.compatibilityAssetUrl !== undefined &&
+              !/^\/assets\/runtime-probe\/models\/[a-f0-9]{64}\.gltf$/u.test(
+                placement.compatibilityAssetUrl,
+              )) ||
+            !Array.isArray(placement.matrix) ||
+            placement.matrix.length !== 16,
+        )
+      ) {
+        throw new Error(`SiguaWiki visual descriptor is invalid: ${visualArtifactRef}`);
+      }
+      return value;
+    },
   );
-  const descriptor = value as {
-    schemaVersion?: string;
-    id?: string;
-    runtimeVehicleRef?: string;
-    generatedClass?: string;
-    placements?: Array<{
-      assetUrl?: string;
-      compatibilityAssetUrl?: string;
-      matrix?: unknown[];
-    }>;
-  };
-  if (
-    descriptor.schemaVersion !== "sigua-runtime-visual/v1" ||
-    descriptor.id !== visualArtifactRef ||
-    !/^vehicle-[a-f0-9]{64}$/u.test(descriptor.runtimeVehicleRef ?? "") ||
-    typeof descriptor.generatedClass !== "string" ||
-    !Array.isArray(descriptor.placements) ||
-    descriptor.placements.some(
-      (placement) =>
-        !/^\/assets\/runtime-probe\/models\/[a-f0-9]{64}\.gltf$/u.test(
-          placement.assetUrl ?? "",
-        ) ||
-        (placement.compatibilityAssetUrl !== undefined &&
-          !/^\/assets\/runtime-probe\/models\/[a-f0-9]{64}\.gltf$/u.test(
-            placement.compatibilityAssetUrl,
-          )) ||
-        !Array.isArray(placement.matrix) ||
-        placement.matrix.length !== 16,
-    )
-  ) {
-    throw new Error(`SiguaWiki visual descriptor is invalid: ${visualArtifactRef}`);
-  }
-  return value;
 }
 
 export function wikiAssetUrl(pathname: string) {
