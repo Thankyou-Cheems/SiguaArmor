@@ -366,13 +366,20 @@ async function mapWithConcurrency<T>(
   values: readonly T[],
   concurrency: number,
   task: (value: T) => Promise<void>,
+  shouldContinue: () => boolean = () => true,
 ) {
   let cursor = 0;
+  let failed = false;
   const worker = async () => {
-    while (cursor < values.length) {
+    while (!failed && shouldContinue() && cursor < values.length) {
       const index = cursor;
       cursor += 1;
-      await task(values[index]);
+      try {
+        await task(values[index]);
+      } catch (error) {
+        failed = true;
+        throw error;
+      }
     }
   };
   await Promise.all(
@@ -8609,6 +8616,7 @@ function RuntimeVehicleViewerScene({
     applyDriverMaskVisibilityRef.current = applyDriverMaskVisibility;
 
     const ensureDriverMaskLayer = () => {
+      if (cancelled) return Promise.resolve(null);
       if (!driverMaskAvailable || !driverView) {
         host.dataset.driverMaskAssetState = "absent";
         return Promise.resolve(null);
@@ -8753,6 +8761,7 @@ function RuntimeVehicleViewerScene({
     };
 
     const applyCrewOccupantVisibility = (visible: boolean) => {
+      if (cancelled) return;
       const externalVisible = visible &&
         activeCrewViewStationIdRef.current === null;
       if (referenceSoldier) referenceSoldier.visible = !visible;
@@ -8775,11 +8784,12 @@ function RuntimeVehicleViewerScene({
       host.dataset.crewOccupantState = "loading";
       crewOccupantLoadRequest = import("./runtime-crew-occupants")
         .then(({ createRuntimeCrewOccupantLayer }) =>
-          createRuntimeCrewOccupantLayer({
+          cancelled ? null : createRuntimeCrewOccupantLayer({
             plans: crewOccupantPlan,
             detailedModels: renderQuality.tier !== "compatibility",
           }))
         .then((layer) => {
+          if (!layer) return null;
           if (cancelled) {
             layer.dispose();
             return layer;
@@ -8990,8 +9000,8 @@ function RuntimeVehicleViewerScene({
       if (schoolQueryRequest || cancelled) return;
       host.dataset.environmentQueryState = "loading";
       schoolQueryRequest = import("../lib/runtime-school-native-loader")
-        .then(module => module.loadNarvaSchoolQuery()).then(query => {
-          if (cancelled) return;
+        .then(module => cancelled ? null : module.loadNarvaSchoolQuery()).then(query => {
+          if (cancelled || !query) return;
           // Keep the live environment translation as the vehicle fit settles.
           schoolProjectileQueryRef.current = { query, offset: environmentRoot.position };
           host.dataset.environmentQueryState = "ready";
@@ -10654,10 +10664,13 @@ function RuntimeVehicleViewerScene({
     const loadReferenceSoldierAsset = () => {
       referenceSoldierIdleCallback = 0;
       referenceSoldierLoadTimer = 0;
+      if (cancelled) return;
       host.dataset.referenceSoldierState = "loading";
       void import("./runtime-reference-soldier")
-      .then(({ loadRuntimeReferenceSoldier }) => loadRuntimeReferenceSoldier())
-      .then(({ scene: soldierScene, modelUrl, glassRebind }) => {
+      .then(({ loadRuntimeReferenceSoldier }) => cancelled ? null : loadRuntimeReferenceSoldier())
+      .then((result) => {
+        if (!result) return;
+        const { scene: soldierScene, modelUrl, glassRebind } = result;
         if (cancelled) {
           disposeScene(soldierScene);
           return;
@@ -10702,6 +10715,7 @@ function RuntimeVehicleViewerScene({
       });
     };
     startReferenceSoldierAsset = () => {
+      if (cancelled) return;
       if (renderQuality.tier === "compatibility") {
         host.dataset.referenceSoldierState = "outline-compatibility";
         return;
@@ -11330,8 +11344,19 @@ function RuntimeVehicleViewerScene({
     const sourceAlphaLoader = new GLTFLoader(sourceAlphaLoadingManager);
     sourceAlphaLoader.setMeshoptDecoder(MeshoptDecoder);
     const loadAnalysisVisualAssets = async () => {
+      if (cancelled) return;
       host.dataset.analysisVisualAssetState = "loading";
       const sources = new Map<string, THREE.Object3D>();
+      // Until occurrences are attached, these GLTFs are not owned by scene
+      // cleanup. Never dispose a source borrowed from the exterior scene.
+      const pendingSources = new Set<THREE.Object3D>();
+      const disposePendingSources = () => {
+        pendingSources.forEach(disposeScene);
+        pendingSources.clear();
+      };
+      resources.add(disposePendingSources);
+      let abandoned = false;
+      try {
       await mapWithConcurrency(
         urls,
         renderQuality.assetLoadConcurrency,
@@ -11341,6 +11366,11 @@ function RuntimeVehicleViewerScene({
           ? sourceAlphaLoader
           : analysisLoader;
         const source = exteriorSource ?? (await loader.loadAsync(url)).scene;
+        if (cancelled || abandoned) {
+          if (!exteriorSource) disposeScene(source);
+          return;
+        }
+        if (!exteriorSource) pendingSources.add(source);
         sources.set(url, source);
         sourceGeometryScores.set(url, analysisVisualGeometryScore(source));
         if (exteriorSource) {
@@ -11357,7 +11387,14 @@ function RuntimeVehicleViewerScene({
           });
         }
         },
+        () => !cancelled,
       );
+      } catch (error) {
+        abandoned = true;
+        disposePendingSources();
+        throw error;
+      }
+      if (cancelled) return;
       const projectionStations = runtimeTurretStationsRef.current.flatMap(
         (station) => {
           if (!station.assembly) return [];
@@ -11560,12 +11597,14 @@ function RuntimeVehicleViewerScene({
         analysisVisualDepthOccluderMeshCount,
       );
       analysisVisualReady = true;
+      pendingSources.clear();
       host.dataset.analysisVisualAssetState = "ready";
       applyTurretPose();
       syncReferencePlane();
     };
 
     const loadExteriorAssets = () => {
+      if (cancelled) return;
       if (exteriorReady) {
         if (modeRef.current === "exterior") {
           setViewerState({ kind: "ready", loaded: urls.length, total: urls.length });
@@ -11686,6 +11725,7 @@ function RuntimeVehicleViewerScene({
           });
         }
         },
+        () => !cancelled,
       )
         .then(() => {
           if (cancelled) return;
@@ -11717,7 +11757,7 @@ function RuntimeVehicleViewerScene({
     };
     startExteriorAssets = loadExteriorAssets;
 
-    const radialQueryPromise = radialQuery
+    const radialQueryPromise = hit && radialQuery
       ? loadWikiVehicleRadialQuery(radialQuery.recordUrl).then((value) => {
           const source = validateVehicleRadialQuerySource(value);
           if (
@@ -11891,7 +11931,7 @@ function RuntimeVehicleViewerScene({
     };
 
     startAnalysisVisualAssets = () => {
-      if (analysisVisualPromise || analysisVisualReady) return;
+      if (cancelled || analysisVisualPromise || analysisVisualReady) return;
       analysisVisualPromise = hitPromise.then(async (parsed) => {
         await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
         if (cancelled) return parsed;
