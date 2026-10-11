@@ -3200,8 +3200,8 @@ function FactionCharacterWheel({
                     className="faction-character-wheel__portrait"
                     src={asset.foreground}
                     alt={t("character", { name: displayName })}
-                    width={640}
-                    height={960}
+                    width={1024}
+                    height={1536}
                     decoding="async"
                     draggable={false}
                     style={{
