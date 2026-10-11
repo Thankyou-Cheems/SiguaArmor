@@ -14477,7 +14477,9 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .faction-character-wheel__portrait {
   display: block;
   width: 100%;
-  height: 100%;
+  /* Keep percentage baseline offsets relative to the contained portrait. */
+  height: auto;
+  max-height: 100%;
   mix-blend-mode: normal;
   object-fit: contain;
   object-position: 50% 100%;
