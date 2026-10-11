@@ -11617,11 +11617,14 @@ function RuntimeVehicleViewerScene({
       }
       if (exteriorPromise) return;
       host.dataset.exteriorAssetState = "loading";
-      exteriorLoaded = 0;
-      host.dataset.exteriorLoadedAssetCount = "0";
-      host.dataset.exteriorLoadedOccurrenceCount = "0";
+      // A failed attempt can already have attached complete sources. Retain
+      // those occurrences and retry only the missing URLs.
+      const pendingUrls = urls.filter((url) => !exteriorSources.has(url));
+      exteriorLoaded = exteriorSources.size;
+      host.dataset.exteriorLoadedAssetCount = String(exteriorLoaded);
+      host.dataset.exteriorLoadedOccurrenceCount = String(visualGroup.children.length);
       if (modeRef.current === "exterior") {
-        setViewerState({ kind: "loading", loaded: 0, total: urls.length });
+        setViewerState({ kind: "loading", loaded: exteriorLoaded, total: urls.length });
       }
       const exteriorLoadingManager = new THREE.LoadingManager();
       exteriorLoadingManager.setURLModifier(runtimeWikiAssetUrl);
@@ -11692,14 +11695,15 @@ function RuntimeVehicleViewerScene({
         applyTurretPose();
         syncAnalysisVisualPresentation();
       };
+      let abandoned = false;
       exteriorPromise = mapWithConcurrency(
-        urls,
+        pendingUrls,
         renderQuality.assetLoadConcurrency,
         async (url) => {
         const exteriorAssetUrl = exteriorAssetUrlBySourceUrl.get(url);
         if (!exteriorAssetUrl) throw new Error(`Missing exterior source for ${url}`);
         const gltf = await exteriorLoader.loadAsync(exteriorAssetUrl);
-        if (cancelled) {
+        if (cancelled || abandoned) {
           disposeScene(gltf.scene);
           return;
         }
@@ -11749,6 +11753,7 @@ function RuntimeVehicleViewerScene({
           render();
         })
         .catch((error: unknown) => {
+          abandoned = true;
           if (cancelled) return;
           host.dataset.exteriorAssetState = "error";
           exteriorPromise = null;

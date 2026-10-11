@@ -29,7 +29,11 @@ function execute(names, context) {
 function deferred() {
   let resolve, reject;
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
-  return { promise, resolve, reject };
+  const request = { promise, settled: false,
+    resolve(value) { request.settled = true; resolve(value); },
+    reject(error) { request.settled = true; reject(error); },
+  };
+  return request;
 }
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 
@@ -39,6 +43,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
   const started = [];
   const sources = new Map();
   const disposed = [];
+  const states = [];
   const calls = { scores: 0, projection: 0, clones: 0 };
   const loadAsync = (url) => {
     const request = deferred();
@@ -70,7 +75,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
     analysisVisualGeometryScore: () => { calls.scores++; return 1; },
     buildRuntimeVehicleTopDownProjection: () => { calls.projection++; return null; },
     cloneSkeleton: (source) => { calls.clones++; return clone(source); },
-    registerSkeletalPose() {}, setViewerState() {}, setTurretTopDownProjection() {},
+    registerSkeletalPose() {}, setViewerState(state) { states.push(state); }, setTurretTopDownProjection() {},
     applyTurretPose() {}, syncReferencePlane() {}, syncAnalysisVisualPresentation() {}, render() {}, fitViewToGroup() {},
     isSiguaDProjectedMark: () => false, sourceMeshRequiresStableAnalysisSurface: () => false,
     isStableAnalysisVisualSurfacePlacement: () => false,
@@ -83,6 +88,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
   };
   execute(["mapWithConcurrency", "cleanup", "onContextLost", "loadAnalysisVisualAssets", "loadExteriorAssets"], context);
   const resolve = (url) => {
+    if (requests.get(url).settled) return;
     const source = new THREE.Group();
     source.name = url;
     source.add(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial()));
@@ -96,7 +102,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
       await flush();
     }
   };
-  return { context, started, requests, sources, disposed, calls, resolve, drain };
+  return { context, started, requests, sources, disposed, states, calls, resolve, drain };
 }
 
 for (const reason of ["close", "replacement", "context loss"]) {
@@ -228,4 +234,75 @@ test("a visual-only preview never starts an unconsumed radial query promise", as
   execute(["radialQueryPromise"], context);
   await context.radialQueryPromise;
   assert.equal(requests, 0);
+});
+
+
+test("an exterior failure remains visible when sibling GLTFs succeed or reject late", async () => {
+  const f = fixture();
+  f.context.modeRef.current = "exterior";
+  f.context.loadExteriorAssets();
+  const attempt = f.context.exteriorPromise;
+  f.requests.get(f.started[0]).reject(new Error("exterior GLTF unavailable"));
+  await attempt;
+  assert.equal(f.states.at(-1).kind, "error");
+  f.resolve(f.started[1]);
+  f.requests.get(f.started[2]).reject(new Error("late exterior failure"));
+  await flush();
+  assert.equal(f.started.length, 3);
+  assert.equal(f.states.at(-1).kind, "error", "late success must not replace error with loading");
+  assert.equal(f.context.visualGroup.children.length, 0);
+  assert.deepEqual(f.disposed, [f.started[1]]);
+});
+
+test("retry after a partially completed exterior failure loads only missing sources without duplicate occurrences", async () => {
+  const f = fixture();
+  f.context.modeRef.current = "exterior";
+  f.context.loadExteriorAssets();
+  const firstAttempt = f.context.exteriorPromise;
+  const firstUrl = f.started[0];
+  f.resolve(firstUrl);
+  await flush();
+  assert.equal(f.context.visualGroup.children.length, 1);
+  const failedUrl = f.started[1];
+  f.requests.get(failedUrl).reject(new Error("first attempt failed"));
+  await firstAttempt;
+  for (const url of f.started.slice(2)) f.requests.get(url).reject(new Error("late failure"));
+  await flush();
+  assert.equal(f.states.at(-1).kind, "error");
+  assert.equal(f.context.exteriorPromise, null);
+  f.context.loadExteriorAssets();
+  const retry = f.context.exteriorPromise;
+  await f.drain();
+  await retry;
+  assert.equal(f.started.filter((url) => url === firstUrl).length, 1);
+  assert.equal(f.context.visualGroup.children.length, 12);
+  assert.equal(new Set(f.context.visualGroup.children.map((child) => child.userData.stableOccurrenceId)).size, 12);
+  assert.equal(f.context.exteriorLoaded, 12);
+  assert.equal(f.context.exteriorReady, true);
+  assert.equal(f.states.at(-1).kind, "ready");
+});
+
+test("a superseded exterior attempt cannot attach late sources during its retry", async () => {
+  const f = fixture();
+  f.context.modeRef.current = "exterior";
+  f.context.loadExteriorAssets();
+  const attempt = f.context.exteriorPromise;
+  const oldRequests = [...f.requests.values()];
+  oldRequests[0].reject(new Error("retryable failure"));
+  await attempt;
+  f.context.loadExteriorAssets();
+  const retry = f.context.exteriorPromise;
+  const stale = new THREE.Group();
+  stale.name = "superseded source";
+  oldRequests[1].resolve({ scene: stale });
+  oldRequests[2].reject(new Error("late old failure"));
+  await flush();
+  assert.equal(f.context.exteriorSources.size, 0);
+  assert.equal(f.context.visualGroup.children.length, 0);
+  assert.deepEqual(f.disposed, [stale.name]);
+  await f.drain();
+  await retry;
+  assert.equal(f.context.visualGroup.children.length, 12);
+  assert.equal(f.context.exteriorLoaded, 12);
+  assert.equal(f.states.at(-1).kind, "ready");
 });
