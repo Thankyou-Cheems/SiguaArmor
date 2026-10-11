@@ -1,4 +1,5 @@
-import { mkdtemp, mkdir, rm } from "node:fs/promises";
+import assert from "node:assert/strict";
+import { mkdtemp, mkdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
@@ -24,4 +25,12 @@ test("viewer initialization failures and context loss preserve catalog, retry an
   } finally {
     await rm(output, { recursive: true, force: true });
   }
+});
+
+// Wiring contract complements the actual boundary interaction test above.
+test("catalog lazy boundary chooses page reload while the runtime boundary keeps local retry", async () => {
+  const catalog = await readFile(path.join(root, "app/CatalogApp.tsx"), "utf8");
+  const runtime = await readFile(path.join(root, "app/RuntimeVehicleViewer.tsx"), "utf8");
+  assert.match(catalog, /<ViewerErrorBoundary\s+key=\{card\.cardId\}\s+retryMode="reload"/u);
+  assert.doesNotMatch(runtime, /retryMode="reload"/u);
 });

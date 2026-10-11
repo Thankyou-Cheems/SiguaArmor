@@ -68,6 +68,7 @@ const click = async (label) => {
 const unavailable = () => document.querySelector('[data-viewer-state="unavailable"]');
 await act(async () => { root.render(<SiteLanguageProvider><App /></SiteLanguageProvider>); });
 assert.ok(unavailable(), "constructor failure is confined to the viewer");
+assert.equal(unavailable().dataset.viewerRetry, "remount", "renderer failure keeps a local rebuild path");
 assert.ok(caughtErrors.includes("Test WebGL initialization failure"), caughtErrors.join("\n"));
 assert.equal(probe.attempts, 1);
 assert.equal(document.querySelector("main").dataset.streaming, "idle", "failed viewer stops the parent loading indicator");
@@ -176,17 +177,40 @@ assert.ok(!nextLeftCanvas.isConnected && !nextRightCanvas.isConnected);
 assert.ok(!probe.disposedCanvases.has(nextLeftCanvas), "ordinary close retains the reusable shared renderer");
 assert.ok(probe.disposedCanvases.has(nextRightCanvas), "ordinary close disposes only the isolated renderer");
 
-// The catalog-level boundary also contains failed lazy module imports.
-const RejectedViewer = React.lazy(() => Promise.reject(new Error("Test viewer chunk unavailable")));
+// The outer catalog boundary must not offer a fake remount retry for a cached
+// React.lazy rejection. A user can reload the current URL, inspect data or close.
+let lazyAttempts = 0, referenceClicks = 0, closeClicks = 0;
+const RejectedViewer = React.lazy(() => {
+  lazyAttempts++;
+  return Promise.reject(new Error("Test viewer chunk unavailable"));
+});
 await act(async () => {
-  root.render(<main><nav data-catalog>目录</nav><ViewerErrorBoundary onClose={() => {}}>
+  root.render(<main><nav data-catalog>目录</nav><ViewerErrorBoundary retryMode="reload"
+    onOpenReference={() => { referenceClicks++; }} onClose={() => { closeClicks++; }}>
     <React.Suspense fallback="loading"><RejectedViewer /></React.Suspense>
   </ViewerErrorBoundary></main>);
 });
 assert.ok(unavailable());
+assert.equal(unavailable().dataset.viewerRetry, "reload");
 assert.ok(document.querySelector("[data-catalog]"));
 assert.ok(caughtErrors.includes("Test viewer chunk unavailable"));
+assert.equal(lazyAttempts, 1);
+assert.ok(![...document.querySelectorAll("button")].some(button => button.textContent === "重试 3D 预览"));
+const savedWindow = globalThis.window;
+const reloadUrls = [];
+// Keep real DOM events and substitute only the browser navigation operation.
+globalThis.window = new Proxy(savedWindow, { get(target, key) {
+  if (key === "location") return { href: target.location.href, reload: () => reloadUrls.push(target.location.href) };
+  return Reflect.get(target, key, target);
+} });
+try { await click("刷新页面重试"); } finally { globalThis.window = savedWindow; }
+assert.deepEqual(reloadUrls, [dom.window.location.href], "reload preserves the current deep link and query");
+assert.equal(lazyAttempts, 1, "reload action does not pretend to invalidate React.lazy in place");
+await click("查看载具资料");
+await click("返回目录");
+assert.equal(referenceClicks, 1);
+assert.equal(closeClicks, 1);
 await act(async () => { root.unmount(); });
 dom.window.close();
 console.log(JSON.stringify({ result: "passed", attempts: probe.attempts,
-  checks: ["constructor failure isolation", "no automatic retry", "repeated explicit retry", "reference and exit survive", "partial setup cleanup", "discard failed shared lease", "successful retry", "context loss and recovery", "idempotent cleanup", "lazy import failure isolation", "two simultaneous renderer consumers"] }));
+  checks: ["constructor failure isolation", "no automatic retry", "repeated explicit retry", "reference and exit survive", "partial setup cleanup", "discard failed shared lease", "successful retry", "context loss and recovery", "idempotent cleanup", "lazy import failure isolation and explicit same-URL reload", "two simultaneous renderer consumers"] }));

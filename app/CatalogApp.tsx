@@ -2459,6 +2459,7 @@ function DetailPanel({
         {hasViewer && (
           <ViewerErrorBoundary
             key={card.cardId}
+            retryMode="reload"
             vehicleName={displayName}
             onClose={onClose}
             onOpenReference={onOpenEncyclopedia}
