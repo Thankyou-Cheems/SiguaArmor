@@ -55,6 +55,11 @@ import {
   buildCatalogUrl,
   parseCatalogLocation,
 } from "../lib/catalog-navigation.mjs";
+import {
+  createCatalogNavigationGate,
+  type CatalogNavigationIntent,
+  type CatalogNavigationGate,
+} from "../lib/catalog-navigation-intent";
 import { visibleDamageResistanceOverrides } from "../lib/encyclopedia-damage-resistances";
 import { formatZoomLevel } from "../lib/reference-display.mjs";
 import { vehicleDamageTypeIconKindForPath } from "../lib/vehicle-damage-type-icons";
@@ -103,6 +108,7 @@ import {
 import { DailyActiveDisplay } from "./DailyActiveBeacon";
 import { IronRiceHallWordmark } from "./IronRiceHallWordmark";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
+import { ViewerErrorBoundary } from "./ViewerErrorBoundary";
 import { VehicleDamageTypeIcon } from "./VehicleDamageTypeIcon";
 import { VehicleDuelEntryLink } from "./VehicleDuelEntryLink";
 import { VehicleRankerEntryLink } from "./VehicleRankerEntryLink";
@@ -2391,6 +2397,7 @@ function DetailPanel({
   onTextureVariantSelect,
   onClose,
   encyclopediaOpen,
+  onOpenEncyclopedia,
   viewerNavigation,
   onViewerNavigationChange,
 }: {
@@ -2400,6 +2407,7 @@ function DetailPanel({
   onTextureVariantSelect: (card: CatalogCardEntry) => void;
   onClose: () => void;
   encyclopediaOpen: boolean;
+  onOpenEncyclopedia: () => void;
   viewerNavigation: ViewerNavigationState;
   onViewerNavigationChange: (state: ViewerNavigationState) => void;
 }) {
@@ -2449,42 +2457,52 @@ function DetailPanel({
       )}
       <section className="detail-section detail-section--reference detail-section--preview">
         {hasViewer && (
-          <Suspense
-            fallback={(
-              <VehicleViewerLoading
-                vehicleName={displayName}
-              />
-            )}
+          <ViewerErrorBoundary
+            key={card.cardId}
+            vehicleName={displayName}
+            onClose={onClose}
+            onOpenReference={onOpenEncyclopedia}
           >
-            <VehicleViewer
-              key={card.cardId}
-              siteEdition={siteEdition}
-              cardId={record.promoEntryId}
-              rawName={card.variant?.sourceRawName ?? data?.general.rawName ?? record.mapping.selectedRawName ?? ""}
-              runtimeVehicleRef={card.variant?.runtimeVehicleRef ?? null}
-              visualArtifactRef={card.variant?.visualArtifactRef ?? null}
-              displayName={displayName}
-              attackSourcePresentation={{
-                cardId: record.promoEntryId,
-                displayName,
-                groupId: record.official.groupId,
-                groupName: record.official.groupNameZh,
-                groupOrder: record.promotionOrder,
-                type: record.official.typeZh,
-                canonicalRawName:
-                  card.variant?.editorAvailability?.mechanicalRawName ??
-                  card.variant?.sourceRawName ?? data?.general.rawName ?? record.mapping.selectedRawName ?? "",
-              }}
-              referenceData={data}
-              textureVariants={viewerTextureVariants}
-              onTextureVariantChange={(variantId) => {
-                const nextVariant = textureVariants.find((entry) => entry.cardId === variantId);
-                if (nextVariant) onTextureVariantSelect(nextVariant);
-              }}
-              navigationState={viewerNavigation}
-              onNavigationStateChange={onViewerNavigationChange}
-            />
-          </Suspense>
+            <Suspense
+              fallback={(
+                <VehicleViewerLoading
+                  vehicleName={displayName}
+                  onClose={onClose}
+                />
+              )}
+            >
+              <VehicleViewer
+                key={card.cardId}
+                siteEdition={siteEdition}
+                cardId={record.promoEntryId}
+                rawName={card.variant?.sourceRawName ?? data?.general.rawName ?? record.mapping.selectedRawName ?? ""}
+                runtimeVehicleRef={card.variant?.runtimeVehicleRef ?? null}
+                visualArtifactRef={card.variant?.visualArtifactRef ?? null}
+                displayName={displayName}
+                attackSourcePresentation={{
+                  cardId: record.promoEntryId,
+                  displayName,
+                  groupId: record.official.groupId,
+                  groupName: record.official.groupNameZh,
+                  groupOrder: record.promotionOrder,
+                  type: record.official.typeZh,
+                  canonicalRawName:
+                    card.variant?.editorAvailability?.mechanicalRawName ??
+                    card.variant?.sourceRawName ?? data?.general.rawName ?? record.mapping.selectedRawName ?? "",
+                }}
+                referenceData={data}
+                onClose={onClose}
+                onOpenReference={onOpenEncyclopedia}
+                textureVariants={viewerTextureVariants}
+                onTextureVariantChange={(variantId) => {
+                  const nextVariant = textureVariants.find((entry) => entry.cardId === variantId);
+                  if (nextVariant) onTextureVariantSelect(nextVariant);
+                }}
+                navigationState={viewerNavigation}
+                onNavigationStateChange={onViewerNavigationChange}
+              />
+            </Suspense>
+          </ViewerErrorBoundary>
         )}
         <section
           className="vehicle-encyclopedia"
@@ -2518,6 +2536,8 @@ interface GlobalVehicleSearchProps {
   variant: "hero" | "dock";
   query: string;
   results: CatalogIndexSearchResult[];
+  error?: string | null;
+  onRetry?: () => void;
   onQueryChange: (query: string) => void;
   onSelect: (record: CatalogSearchRecord, variant?: CatalogSearchVariant) => void;
 }
@@ -2527,6 +2547,8 @@ function GlobalVehicleSearch({
   variant,
   query,
   results,
+  error,
+  onRetry,
   onQueryChange,
   onSelect,
 }: GlobalVehicleSearchProps) {
@@ -2601,6 +2623,10 @@ function GlobalVehicleSearch({
           role="listbox"
           aria-label={t("searchResults")}
         >
+          {error ? <div className="global-vehicle-search__empty" role="alert">
+            <p>{t("loadError")}: {error}</p>
+            <button type="button" onClick={onRetry}>{t("common:retry")}</button>
+          </div> : null}
           {results.length > 0 ? (
             <div className="global-vehicle-search__result-groups">
               {results.map(({ record, variants }, index) => {
@@ -3224,6 +3250,7 @@ function FactionCharacterWheel({
 
 export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
   const { t } = useSiteTranslation("catalog");
+  const [navigation] = useState(createCatalogNavigationGate);
   const [loadedCatalog, setLoadedCatalog] = useState<{
     siteEdition: SiteEdition;
     index: PublicCatalogIndex;
@@ -3241,95 +3268,86 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
   const loadError =
     loadFailure?.siteEdition === siteEdition ? loadFailure.message : null;
 
+  const [initialRetry, setInitialRetry] = useState(0);
   useEffect(() => {
-    let cancelled = false;
-    loadInitialPublicCatalog(siteEdition, window.location.href)
-      .then((nextCatalogIndex) => {
-        if (cancelled) return;
-        setLoadedCatalog({ siteEdition, index: nextCatalogIndex });
-        setLoadFailure(null);
-      })
-      .catch((reason: unknown) => {
-        if (cancelled) return;
-        setLoadFailure({
-          siteEdition,
-          message: reason instanceof Error ? reason.message : String(reason),
+    let initialized = false;
+    const loadLocation = () => {
+      if (initialized) return; // The mounted catalog owns subsequent navigation.
+      const intent = navigation.begin();
+      setLoadFailure(null);
+      void loadInitialPublicCatalog(siteEdition, window.location.href)
+        .then((nextCatalogIndex) => {
+          if (!intent.isCurrent()) return;
+          initialized = true;
+          setLoadedCatalog({ siteEdition, index: nextCatalogIndex });
+        })
+        .catch((reason: unknown) => {
+          if (!intent.isCurrent()) return;
+          setLoadFailure({
+            siteEdition,
+            message: reason instanceof Error ? reason.message : String(reason),
+          });
         });
-      });
-    return () => {
-      cancelled = true;
     };
-  }, [siteEdition]);
+    window.addEventListener("popstate", loadLocation);
+    loadLocation();
+    return () => {
+      window.removeEventListener("popstate", loadLocation);
+      navigation.invalidate();
+    };
+  }, [initialRetry, navigation, siteEdition]);
 
-  const requestCatalogGroup = useCallback(async (groupId: string) => {
+  const requestCatalogGroup = useCallback(async (
+    groupId: string,
+    intent: CatalogNavigationIntent,
+  ) => {
     const current = loadedCatalog?.siteEdition === siteEdition
       ? loadedCatalog.index
       : null;
     if (current?.records.some((record) => record.official.groupId === groupId)) {
       return current;
     }
-    try {
-      const next = await loadPublicCatalogGroup(siteEdition, groupId);
+    const next = fullCatalogCacheRef.current.get(siteEdition)
+      ?? await loadPublicCatalogGroup(siteEdition, groupId);
+    if (intent.isCurrent()) {
       setLoadedCatalog({ siteEdition, index: next });
-      setLoadFailure(null);
-      return next;
-    } catch (reason: unknown) {
-      setLoadFailure({
-        siteEdition,
-        message: reason instanceof Error ? reason.message : String(reason),
-      });
-      throw reason;
     }
+    return next;
   }, [loadedCatalog, siteEdition]);
 
+  // Search warms its own data cache. Typing is not a route change, and neither
+  // its success nor its failure may replace the currently displayed catalog.
   const requestFullCatalog = useCallback(async () => {
     const cached = fullCatalogCacheRef.current.get(siteEdition);
-    if (cached) {
-      setLoadedCatalog({ siteEdition, index: cached });
-      setLoadFailure(null);
-      return cached;
-    }
-    const pending = fullCatalogRequestsRef.current.get(siteEdition);
-    if (pending) return pending;
-
-    const request = loadPublicCatalog(siteEdition)
-      .then((next) => {
-        fullCatalogCacheRef.current.set(siteEdition, next);
-        setLoadedCatalog({ siteEdition, index: next });
-        setLoadFailure(null);
-        return next;
-      })
-      .catch((reason: unknown) => {
-        setLoadFailure({
-          siteEdition,
-          message: reason instanceof Error ? reason.message : String(reason),
+    if (cached) return cached;
+    let request = fullCatalogRequestsRef.current.get(siteEdition);
+    if (!request) {
+      request = loadPublicCatalog(siteEdition)
+        .then((catalog) => {
+          fullCatalogCacheRef.current.set(siteEdition, catalog);
+          return catalog;
+        })
+        .finally(() => {
+          if (fullCatalogRequestsRef.current.get(siteEdition) === request) {
+            fullCatalogRequestsRef.current.delete(siteEdition);
+          }
         });
-        throw reason;
-      })
-      .finally(() => {
-        if (fullCatalogRequestsRef.current.get(siteEdition) === request) {
-          fullCatalogRequestsRef.current.delete(siteEdition);
-        }
-      });
-    fullCatalogRequestsRef.current.set(siteEdition, request);
+      fullCatalogRequestsRef.current.set(siteEdition, request);
+    }
     return request;
   }, [siteEdition]);
 
-  const requestCatalogLocation = useCallback(async (href: string) => {
-    try {
-      const cachedFullCatalog = fullCatalogCacheRef.current.get(siteEdition);
-      const next = cachedFullCatalog ?? await loadInitialPublicCatalog(siteEdition, href);
-      const completeCatalog = fullCatalogCacheRef.current.get(siteEdition) ?? next;
+  const requestCatalogLocation = useCallback(async (
+    href: string,
+    intent: CatalogNavigationIntent,
+  ) => {
+    const cachedFullCatalog = fullCatalogCacheRef.current.get(siteEdition);
+    const next = cachedFullCatalog ?? await loadInitialPublicCatalog(siteEdition, href);
+    const completeCatalog = fullCatalogCacheRef.current.get(siteEdition) ?? next;
+    if (intent.isCurrent()) {
       setLoadedCatalog({ siteEdition, index: completeCatalog });
-      setLoadFailure(null);
-      return completeCatalog;
-    } catch (reason: unknown) {
-      setLoadFailure({
-        siteEdition,
-        message: reason instanceof Error ? reason.message : String(reason),
-      });
-      throw reason;
     }
+    return completeCatalog;
   }, [siteEdition]);
 
   if (loadError) {
@@ -3339,6 +3357,7 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
         <SiteLanguageSwitcher />
         <h1>{t("loadError")}</h1>
         <p>{loadError}</p>
+        <button type="button" onClick={() => setInitialRetry((value) => value + 1)}>{t("common:retry")}</button>
       </main>
     );
   }
@@ -3347,8 +3366,10 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
   }
   return (
     <CatalogAppReady
+      key={siteEdition}
       catalogIndex={catalogIndex}
       siteEdition={siteEdition}
+      navigation={navigation}
       onRequestGroup={requestCatalogGroup}
       onRequestFullCatalog={requestFullCatalog}
       onRequestLocation={requestCatalogLocation}
@@ -3357,6 +3378,7 @@ export function CatalogApp({ siteEdition }: { siteEdition: SiteEdition }) {
 }
 
 function CatalogAppReady({
+  navigation,
   catalogIndex,
   siteEdition,
   onRequestGroup,
@@ -3365,9 +3387,10 @@ function CatalogAppReady({
 }: {
   catalogIndex: PublicCatalogIndex;
   siteEdition: SiteEdition;
-  onRequestGroup: (groupId: string) => Promise<PublicCatalogIndex>;
+  navigation: CatalogNavigationGate;
+  onRequestGroup: (groupId: string, intent: CatalogNavigationIntent) => Promise<PublicCatalogIndex>;
   onRequestFullCatalog: () => Promise<PublicCatalogIndex>;
-  onRequestLocation: (href: string) => Promise<PublicCatalogIndex>;
+  onRequestLocation: (href: string, intent: CatalogNavigationIntent) => Promise<PublicCatalogIndex>;
 }) {
   const { t } = useSiteTranslation("catalog");
   const editionProfile = siteEditionProfile(siteEdition);
@@ -3393,6 +3416,14 @@ function CatalogAppReady({
   );
   const [query, setQuery] = useState(initialLocation.query);
   const [globalQuery, setGlobalQuery] = useState("");
+  const [searchCatalog, setSearchCatalog] = useState<PublicCatalogIndex | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchRetry, setSearchRetry] = useState(0);
+  const [navigationError, setNavigationError] = useState<{
+    message: string;
+    retry: () => void;
+  } | null>(null);
+  const committedHrefRef = useRef(typeof window === "undefined" ? "" : window.location.href);
   const [groupId, setGroupId] = useState(initialLocation.groupId);
   const [selectedId, setSelectedId] = useState<string | null>(
     initialLocation.selectedId,
@@ -3640,14 +3671,24 @@ function CatalogAppReady({
   }, [groupId, hasGroupSelection, siteEdition, visualGroups.length]);
 
   const globalSearchResults = useMemo(() => {
-    return searchCatalogIndexRecords(catalogIndex.records, globalQuery);
-  }, [catalogIndex.records, globalQuery]);
+    return searchCatalogIndexRecords((searchCatalog ?? catalogIndex).records, globalQuery);
+  }, [catalogIndex, globalQuery, searchCatalog]);
 
   const changeGlobalQuery = useCallback((nextQuery: string) => {
     setGlobalQuery(nextQuery);
-    if (!nextQuery.trim()) return;
-    void onRequestFullCatalog().catch(() => undefined);
-  }, [onRequestFullCatalog]);
+  }, []);
+
+  useEffect(() => {
+    if (!globalQuery.trim() || searchCatalog) return;
+    let cancelled = false;
+    setSearchError(null);
+    void onRequestFullCatalog().then((next) => {
+      if (!cancelled) setSearchCatalog(next);
+    }).catch((reason: unknown) => {
+      if (!cancelled) setSearchError(reason instanceof Error ? reason.message : String(reason));
+    });
+    return () => { cancelled = true; };
+  }, [globalQuery, onRequestFullCatalog, searchCatalog, searchRetry]);
 
   useEffect(() => {
     setCatalogsByGroup({});
@@ -3663,13 +3704,16 @@ function CatalogAppReady({
         viewer: ViewerNavigationState;
       },
       mode: "pushState" | "replaceState",
+      nextCatalogIndex = catalogIndex,
     ) => {
-      const nextUrl = buildCatalogUrl(next, catalogIndex, { basePath: editionBasePath });
+      const nextUrl = buildCatalogUrl(next, nextCatalogIndex, { basePath: editionBasePath });
       window.history[mode](
         null,
         "",
         nextUrl,
       );
+      committedHrefRef.current = window.location.href;
+      setNavigationError(null);
     },
     [catalogIndex, editionBasePath],
   );
@@ -3702,9 +3746,17 @@ function CatalogAppReady({
     siteEdition,
   ]);
 
+  const focusCatalogResult = useCallback(() => {
+    const title = resultHeadingRef.current;
+    const target = title?.getClientRects().length ? title : document.getElementById("main-content");
+    target?.focus({ preventScroll: true });
+  }, []);
+
   const runFactionMorph = useCallback(
-    (factionId: string, update: () => void, afterUpdate?: () => void) => {
+    (factionId: string, update: () => void, afterUpdate: (() => void) | undefined, intent: CatalogNavigationIntent) => {
+      if (!intent.isCurrent()) return;
       const commitUpdate = () => {
+        if (!intent.isCurrent()) return;
         flushSync(update);
         afterUpdate?.();
       };
@@ -3717,6 +3769,8 @@ function CatalogAppReady({
       flushSync(() => setMorphFactionId(factionId));
       const transition = document.startViewTransition(commitUpdate);
       factionViewTransitionRef.current = transition;
+      void transition.ready.catch(() => undefined);
+      void transition.updateCallbackDone.catch(() => undefined);
       void transition.finished
         .catch(() => undefined)
         .finally(() => {
@@ -3729,6 +3783,10 @@ function CatalogAppReady({
   );
 
   const runDetailTransition = useCallback((update: () => void, cardId?: string | null) => {
+    const intent = navigation.begin();
+    const commitUpdate = () => {
+      if (intent.isCurrent()) flushSync(update);
+    };
     if (typeof document.startViewTransition !== "function") {
       update();
       return;
@@ -3745,8 +3803,10 @@ function CatalogAppReady({
     transitionCard?.style.setProperty("view-transition-name", "vehicle-card-morph");
     detailTransitionCardRef.current = transitionCard;
     document.documentElement.dataset.detailTransition = "true";
-    const transition = document.startViewTransition(() => flushSync(update));
+    const transition = document.startViewTransition(commitUpdate);
     detailViewTransitionRef.current = transition;
+    void transition.ready.catch(() => undefined);
+    void transition.updateCallbackDone.catch(() => undefined);
     void transition.finished
       .catch(() => undefined)
       .finally(() => {
@@ -3759,12 +3819,16 @@ function CatalogAppReady({
           delete document.documentElement.dataset.detailTransition;
         }
       });
-  }, []);
+  }, [navigation]);
 
   useEffect(() => {
     const applyLocation = () => {
-      void onRequestLocation(window.location.href).then((nextCatalogIndex) => {
-        const next = parseCatalogLocation(window.location.href, nextCatalogIndex, {
+      const intent = navigation.begin();
+      const href = window.location.href;
+      setNavigationError(null);
+      void onRequestLocation(href, intent).then((nextCatalogIndex) => {
+        if (!intent.isCurrent()) return;
+        const next = parseCatalogLocation(href, nextCatalogIndex, {
           basePath: editionBasePath,
         });
         setGroupId(next.groupId);
@@ -3773,13 +3837,26 @@ function CatalogAppReady({
         setViewerNavigation(next.viewer as ViewerNavigationState);
         setEncyclopediaOpen(false);
         setHelpOpen(false);
-      }).catch(() => undefined);
+        committedHrefRef.current = href;
+      }).catch((reason: unknown) => {
+        if (!intent.isCurrent()) return;
+        // Failed Back/Forward retains the last usable selection and restores its
+        // URL without adding an entry. Retry still remembers the requested URL.
+        window.history.replaceState(null, "", committedHrefRef.current);
+        setNavigationError({
+          message: reason instanceof Error ? reason.message : String(reason),
+          retry: () => {
+            window.history.replaceState(null, "", href);
+            applyLocation();
+          },
+        });
+      });
     };
     window.addEventListener("popstate", applyLocation);
     return () => {
       window.removeEventListener("popstate", applyLocation);
     };
-  }, [editionBasePath, onRequestLocation]);
+  }, [editionBasePath, navigation, onRequestLocation]);
 
   const visibleCardGroups = useMemo<VisibleCatalogCardGroup[]>(() => {
     const normalizedQuery = normalizeVehicleSearch(query);
@@ -3815,6 +3892,7 @@ function CatalogAppReady({
 
   const clearFactionSelection = useCallback((source: "keyboard" | "pointer") => {
     if (!hasGroupSelection) return;
+    const intent = navigation.begin();
     const previousGroupId = groupId;
     selectorRef.current?.scrollIntoView({ block: "start" });
     runFactionMorph(
@@ -3832,10 +3910,11 @@ function CatalogAppReady({
           { groupId: ALL_GROUPS, query: "", selectedId: null, viewer: nextViewer },
           "pushState",
         );
-        void onRequestLocation(window.location.href).catch(() => undefined);
+        void onRequestLocation(window.location.href, intent).catch(() => undefined);
       },
       () => {
         window.requestAnimationFrame(() => {
+          if (!intent.isCurrent()) return;
           if (source === "keyboard") {
             selectorTitleRef.current?.focus({ preventScroll: true });
           } else {
@@ -3843,8 +3922,9 @@ function CatalogAppReady({
           }
         });
       },
+      intent,
     );
-  }, [commitNavigation, groupId, hasGroupSelection, onRequestLocation, runFactionMorph, setHelpOpen]);
+  }, [commitNavigation, groupId, hasGroupSelection, navigation, onRequestLocation, runFactionMorph, setHelpOpen]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -3896,6 +3976,7 @@ function CatalogAppReady({
 
   const selectTextureVariant = (card: CatalogCardEntry) => {
     if (selectedId === card.cardId) return;
+    navigation.begin();
     setHelpOpen(false);
     setSelectedId(card.cardId);
     setEncyclopediaOpen(false);
@@ -3923,15 +4004,29 @@ function CatalogAppReady({
     }, card.cardId);
   };
 
-  const selectGlobalSearchResult = (
+  const selectGlobalSearchResult = async (
     record: CatalogSearchRecord,
     variant?: CatalogSearchVariant,
   ) => {
+    const intent = navigation.begin();
     const nextGroupId = record.official.groupId;
     const nextCardId = variant?.cardId ?? record.defaultCardId;
+    setNavigationError(null);
+    let nextCatalogIndex: PublicCatalogIndex;
+    try {
+      nextCatalogIndex = await onRequestGroup(nextGroupId, intent);
+    } catch (reason: unknown) {
+      if (intent.isCurrent()) setNavigationError({
+        message: reason instanceof Error ? reason.message : String(reason),
+        retry: () => { void selectGlobalSearchResult(record, variant); },
+      });
+      return;
+    }
+    if (!intent.isCurrent()) return;
     setActiveCharacterId(null);
     setActiveFactionDustId(null);
     const update = () => {
+      if (!intent.isCurrent()) return;
       const nextViewer = viewerNavigationForVehicle(record.promoEntryId);
       setGlobalQuery("");
       setQuery("");
@@ -3943,18 +4038,19 @@ function CatalogAppReady({
       commitNavigation(
         { groupId: nextGroupId, query: "", selectedId: nextCardId, viewer: nextViewer },
         "pushState",
+        nextCatalogIndex,
       );
     };
     const focusResult = () => {
-      window.requestAnimationFrame(() =>
-        resultHeadingRef.current?.focus({ preventScroll: true }),
-      );
+      window.requestAnimationFrame(() => {
+        if (intent.isCurrent()) focusCatalogResult();
+      });
     };
     if (hasGroupSelection) {
       update();
       focusResult();
     } else {
-      runFactionMorph(nextGroupId, update, focusResult);
+      runFactionMorph(nextGroupId, update, focusResult, intent);
     }
   };
 
@@ -3974,16 +4070,25 @@ function CatalogAppReady({
   };
 
   const selectFaction = async (nextGroupId: string) => {
+    // A cached selection is still newer intent and must supersede pending loads.
+    const intent = navigation.begin();
+    setNavigationError(null);
     if (!catalogIndex.records.some((record) => record.official.groupId === nextGroupId)) {
       try {
-        await onRequestGroup(nextGroupId);
-      } catch {
+        await onRequestGroup(nextGroupId, intent);
+      } catch (reason: unknown) {
+        if (intent.isCurrent()) setNavigationError({
+          message: reason instanceof Error ? reason.message : String(reason),
+          retry: () => { void selectFaction(nextGroupId); },
+        });
         return;
       }
     }
+    if (!intent.isCurrent()) return;
     setActiveCharacterId(null);
     setActiveFactionDustId(null);
     const update = () => {
+      if (!intent.isCurrent()) return;
       const nextViewer = { ...DEFAULT_VIEWER_NAVIGATION_STATE } as ViewerNavigationState;
       setGlobalQuery("");
       setQuery("");
@@ -3998,19 +4103,20 @@ function CatalogAppReady({
       );
     };
     const focusResult = () => {
-      window.requestAnimationFrame(() =>
-        resultHeadingRef.current?.focus({ preventScroll: true }),
-      );
+      window.requestAnimationFrame(() => {
+        if (intent.isCurrent()) focusCatalogResult();
+      });
     };
     if (hasGroupSelection) {
       update();
       focusResult();
     } else {
-      runFactionMorph(nextGroupId, update, focusResult);
+      runFactionMorph(nextGroupId, update, focusResult, intent);
     }
   };
 
   const changeQuery = (nextQuery: string) => {
+    navigation.begin();
     const nextViewer = { ...DEFAULT_VIEWER_NAVIGATION_STATE } as ViewerNavigationState;
     setQuery(nextQuery);
     setSelectedId(null);
@@ -4024,6 +4130,11 @@ function CatalogAppReady({
 
   const updateViewerNavigation = useCallback(
     (nextViewer: ViewerNavigationState) => {
+      // A still-mounted viewer must not rewrite a Back/Forward URL while its
+      // replacement catalog is loading.
+      if (window.location.href !== committedHrefRef.current) return;
+      const current = parseCatalogLocation(window.location.href, catalogIndex, { basePath: editionBasePath });
+      if (current.groupId !== groupId || current.selectedId !== selectedId || current.query !== query) return;
       setViewerNavigation(nextViewer);
       if (!selectedId) return;
       commitNavigation(
@@ -4031,7 +4142,7 @@ function CatalogAppReady({
         "replaceState",
       );
     },
-    [commitNavigation, groupId, query, selectedId],
+    [catalogIndex, commitNavigation, editionBasePath, groupId, query, selectedId],
   );
 
   return (
@@ -4045,6 +4156,14 @@ function CatalogAppReady({
       <a className="skip-link" href={hasGroupSelection ? "#main-content" : "#faction-selector"}>
         {t(hasGroupSelection ? "skipCatalog" : "skipFactions")}
       </a>
+      {navigationError ? (
+        <aside className="catalog-navigation-error" role="alert">
+          <strong>{t("loadError")}</strong>
+          <p>{navigationError.message}</p>
+          <button type="button" onClick={navigationError.retry}>{t("common:retry")}</button>
+          <button type="button" onClick={() => setNavigationError(null)}>{t("common:dismiss")}</button>
+        </aside>
+      ) : null}
       {dataAccuracyNoticeOpen ? (
         <aside className="data-accuracy-notice" role="note" aria-label={t("accuracyNotice")}>
           <CircleAlert size={16} aria-hidden="true" />
@@ -4188,6 +4307,8 @@ function CatalogAppReady({
                 variant="hero"
                 query={globalQuery}
                 results={globalSearchResults}
+                  error={searchError}
+                  onRetry={() => setSearchRetry((value) => value + 1)}
                 onQueryChange={changeGlobalQuery}
                 onSelect={selectGlobalSearchResult}
               />
@@ -4301,6 +4422,8 @@ function CatalogAppReady({
                   variant="dock"
                   query={globalQuery}
                   results={globalSearchResults}
+                  error={searchError}
+                  onRetry={() => setSearchRetry((value) => value + 1)}
                   onQueryChange={changeGlobalQuery}
                   onSelect={selectGlobalSearchResult}
                 />
@@ -4370,6 +4493,8 @@ function CatalogAppReady({
             variant="hero"
             query={globalQuery}
             results={globalSearchResults}
+                  error={searchError}
+                  onRetry={() => setSearchRetry((value) => value + 1)}
             onQueryChange={changeGlobalQuery}
             onSelect={selectGlobalSearchResult}
           />
@@ -4539,6 +4664,8 @@ function CatalogAppReady({
               variant="dock"
               query={globalQuery}
               results={globalSearchResults}
+                  error={searchError}
+                  onRetry={() => setSearchRetry((value) => value + 1)}
               onQueryChange={changeGlobalQuery}
               onSelect={selectGlobalSearchResult}
             />
@@ -4561,6 +4688,7 @@ function CatalogAppReady({
         >
           <main
             id="main-content"
+            tabIndex={-1}
             className="catalog-main"
             data-detail-open={selectedCard !== null}
             aria-labelledby="catalog-title"
@@ -4690,6 +4818,7 @@ function CatalogAppReady({
                 onTextureVariantSelect={selectTextureVariant}
                 onClose={closeDetail}
                 encyclopediaOpen={encyclopediaOpen}
+                onOpenEncyclopedia={() => setEncyclopediaOpen(true)}
                 viewerNavigation={viewerNavigation}
                 onViewerNavigationChange={updateViewerNavigation}
               />

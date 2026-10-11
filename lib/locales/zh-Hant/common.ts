@@ -1,4 +1,5 @@
 export default {
+  "dismiss": "關閉提示",
   "language": "介面語言",
   "languageError": "語言套件暫時無法載入，請重試。",
   "primaryNav": "主要導覽",

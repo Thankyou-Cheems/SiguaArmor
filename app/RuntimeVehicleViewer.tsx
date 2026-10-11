@@ -1,6 +1,7 @@
 "use client";
 
 import { VehicleWeaponHud } from "./VehicleWeaponHud";
+import { ViewerErrorBoundary, createViewerCleanup } from "./ViewerErrorBoundary";
 import { sourceProjectileForShot, type SourceProjectileVisual, type VehicleFiringPresentation } from "../lib/vehicle-firing-presentation";
 import { loadWikiDataset, loadWikiVehicleTerrainPoses } from "../lib/wiki-source";
 import { terrainPoseLocalMatrices, terrainEnvironmentOffset, type TerrainPose, type TerrainPoseSet } from "../lib/runtime-terrain-pose";
@@ -2360,7 +2361,7 @@ interface RuntimeRendererLease {
   renderer: THREE.WebGLRenderer;
   rendererId: number;
   shared: boolean;
-  release: () => void;
+  release: (discard?: boolean) => void;
 }
 
 let sharedRuntimeRenderer: THREE.WebGLRenderer | null = null;
@@ -2389,8 +2390,14 @@ function acquireRuntimeRenderer(): RuntimeRendererLease {
       !sharedRuntimeRenderer ||
       sharedRuntimeRenderer.getContext().isContextLost()
     ) {
-      sharedRuntimeRenderer?.dispose();
-      sharedRuntimeRenderer?.domElement.remove();
+      const staleRenderer = sharedRuntimeRenderer;
+      sharedRuntimeRenderer = null;
+      if (staleRenderer) {
+        const cleanup = createViewerCleanup();
+        cleanup.add(() => staleRenderer.domElement.remove());
+        cleanup.add(() => staleRenderer.dispose());
+        cleanup.dispose();
+      }
       const created = createRuntimeRenderer();
       sharedRuntimeRenderer = created.renderer;
       sharedRuntimeRendererId = created.rendererId;
@@ -2410,18 +2417,24 @@ function acquireRuntimeRenderer(): RuntimeRendererLease {
     renderer,
     rendererId,
     shared,
-    release: () => {
+    release: (discard = false) => {
       if (released) return;
       released = true;
-      renderer.setAnimationLoop(null);
-      renderer.renderLists.dispose();
-      renderer.domElement.remove();
+      const keepShared = shared && sharedRuntimeRenderer === renderer && !discard;
+      // Free the lease before resource disposal, which can itself fail on a lost context.
       if (shared && sharedRuntimeRenderer === renderer) {
         sharedRuntimeRendererLeased = false;
-        return;
+        if (discard) sharedRuntimeRenderer = null;
       }
-      renderer.dispose();
-      renderer.forceContextLoss();
+      const cleanup = createViewerCleanup();
+      if (!keepShared) {
+        cleanup.add(() => renderer.forceContextLoss());
+        cleanup.add(() => renderer.dispose());
+      }
+      cleanup.add(() => renderer.domElement.remove());
+      cleanup.add(() => renderer.renderLists.dispose());
+      cleanup.add(() => renderer.setAnimationLoop(null));
+      cleanup.dispose();
     },
   };
 }
@@ -4275,7 +4288,20 @@ export interface RuntimeVehicleViewerDisplayOverrides {
 
 let sharedWeaponDpsFactsRequest: Promise<WeaponDpsWeapon[]> | null = null;
 
-export function RuntimeVehicleViewer({
+export function RuntimeVehicleViewer(props: Parameters<typeof RuntimeVehicleViewerScene>[0]) {
+  return (
+    <ViewerErrorBoundary
+      key={`${props.preview.cardId}:${props.preview.variantRawName}`}
+      vehicleName={props.displayName ?? props.preview.variantRawName}
+      onClose={props.onClose}
+      onOpenReference={props.onOpenReference}
+    >
+      <RuntimeVehicleViewerScene {...props} />
+    </ViewerErrorBoundary>
+  );
+}
+
+function RuntimeVehicleViewerScene({
   preview,
   showChrome = true,
   mode: requestedMode = "exterior",
@@ -4304,6 +4330,7 @@ export function RuntimeVehicleViewer({
   onClose?: () => void;
   navigationState?: ViewerNavigationState;
   onNavigationStateChange?: (state: ViewerNavigationState) => void;
+  onOpenReference?: () => void;
   onExteriorStreamingChange?: (state: { loaded: number; total: number } | null) => void;
   attackLibraryOverride?: RuntimeAttackSourceLibrary | null;
   duelTarget?: boolean;
@@ -4319,6 +4346,7 @@ export function RuntimeVehicleViewer({
     1,
     Math.min(MAX_SHOT_TRACES, Math.trunc(shotTraceLimit)),
   );
+  const [fatalRendererError, setFatalRendererError] = useState<Error | null>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const protectionCanvasRef = useRef<HTMLCanvasElement>(null);
   const explosionOriginHudRef = useRef<HTMLDivElement>(null);
@@ -4864,6 +4892,7 @@ export function RuntimeVehicleViewer({
         : null,
     );
   }, [mode, onExteriorStreamingChange, viewerState]);
+  useEffect(() => () => onExteriorStreamingChange?.(null), [onExteriorStreamingChange]);
   const [hitState, setHitState] = useState<HitState>(hit ? { kind: "loading" } : { kind: "absent" });
   const [hitHeader, setHitHeader] = useState<ParsedRuntimeHitScene["header"] | null>(null);
   const [attackLibrary, setAttackLibrary] =
@@ -7905,6 +7934,13 @@ export function RuntimeVehicleViewer({
     );
 
     let cancelled = false;
+    let discardRenderer = false;
+    const resources = createViewerCleanup();
+    const cleanup = () => {
+      cancelled = true;
+      resources.dispose();
+    };
+    try {
     let analysisLoaded = 0;
     let analysisVisualReady = false;
     let analysisVisualErrorMessage: string | null = null;
@@ -7944,6 +7980,19 @@ export function RuntimeVehicleViewer({
     let protectionTimer = 0;
     let protectionToken = 0;
     let protectionCache: ProtectionMapComputationCache | null = null;
+    resources.add(() => {
+      if (referenceSoldierIdleCallback !== 0) window.cancelIdleCallback(referenceSoldierIdleCallback);
+      window.clearTimeout(referenceSoldierLoadTimer);
+      window.clearTimeout(protectionTimer);
+      cancelAnimationFrame(protectionFrame);
+      cancelAnimationFrame(hoverFrame);
+      cancelAnimationFrame(explosionDragFrame);
+      cancelAnimationFrame(placementPreviewFrame);
+      if (shotAnimationFrameRef.current !== 0) {
+        cancelAnimationFrame(shotAnimationFrameRef.current);
+        shotAnimationFrameRef.current = 0;
+      }
+    });
     const exteriorOccurrences = new Map<string, RuntimeExteriorOccurrence>();
     const exteriorSources = new Map<string, THREE.Object3D>();
     const analysisOccurrences = new Map<
@@ -7978,6 +8027,17 @@ export function RuntimeVehicleViewer({
     );
     const rendererLease = acquireRuntimeRenderer();
     const renderer = rendererLease.renderer;
+    resources.add(() => rendererLease.release(discardRenderer));
+    resources.add(() => disposeScene(scene));
+    const onContextLost = (event: Event) => {
+      event.preventDefault();
+      if (cancelled) return;
+      discardRenderer = true;
+      cleanup();
+      setFatalRendererError(new Error("浏览器的 WebGL 图形上下文已丢失，请手动重试。"));
+    };
+    renderer.domElement.addEventListener("webglcontextlost", onContextLost);
+    resources.add(() => renderer.domElement.removeEventListener("webglcontextlost", onContextLost));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -7998,6 +8058,11 @@ export function RuntimeVehicleViewer({
     host.dataset.renderQuality = renderQuality.tier;
     const viewerRoot = host.closest<HTMLElement>(".runtime-vehicle-viewer");
     if (viewerRoot) viewerRoot.dataset.renderQuality = renderQuality.tier;
+    resources.add(() => {
+      if (viewerRoot?.dataset.renderQuality === renderQuality.tier) {
+        delete viewerRoot.dataset.renderQuality;
+      }
+    });
     host.dataset.renderPixelRatio = String(renderQuality.pixelRatio);
     host.dataset.renderQualityReason = renderQuality.reason;
     host.dataset.assetLoadConcurrency = String(
@@ -8012,6 +8077,7 @@ export function RuntimeVehicleViewer({
     host.dataset.webglRendererId = String(rendererLease.rendererId);
 
     const controls = new OrbitControls(camera, renderer.domElement);
+    resources.add(() => controls.dispose());
     const compactPortableDrone =
       preview.cardId.includes("--portable-recon-drone--");
     controls.enableDamping = false;
@@ -8021,6 +8087,7 @@ export function RuntimeVehicleViewer({
 
     const modelGroup = new THREE.Group();
     modelGroup.name = preview.visualVehicleId ?? "runtime-visual";
+    scene.add(modelGroup);
     referenceSoldier = createReferenceSoldierOutlineProxy(() => {
       if (!cancelled) render();
     });
@@ -8261,6 +8328,7 @@ export function RuntimeVehicleViewer({
       ? "deferred"
       : "absent";
     let driverMaskLayer: RuntimeDriverMaskLayer | null = null;
+    resources.add(() => { driverMaskLayer?.dispose(); driverMaskLayer = null; });
     let driverMaskLoadRequest: Promise<RuntimeDriverMaskLayer | null> | null =
       null;
     const driverPose = driverView ? driverViewPose(driverView) : null;
@@ -8268,6 +8336,7 @@ export function RuntimeVehicleViewer({
     crewOccupantHolder.name = "runtime-crew-occupant-holder";
     crewOccupantHolder.visible = false;
     let crewOccupantLayer: RuntimeCrewOccupantLayer | null = null;
+    resources.add(() => { crewOccupantLayer?.dispose(); crewOccupantLayer = null; });
     let crewOccupantLoadRequest: Promise<RuntimeCrewOccupantLayer | null> | null = null;
     let activeCrewViewPose: CrewViewPose | null = null;
     modelGroup.add(chassisPoseGroup);
@@ -8356,6 +8425,7 @@ export function RuntimeVehicleViewer({
         host.dataset.projectileImpactContacts = String(trace.contacts.length);
       },
     });
+    resources.add(() => vehicleProjectileThreeRuntime.dispose());
     prepareVehicleProjectileVisualRef.current = vehicleProjectileThreeRuntime.prepare;
     setProjectileVisibilityEnhancedRef.current = vehicleProjectileThreeRuntime.setVisibilityEnhanced;
     spawnVehicleProjectileVisualRef.current = (request) =>
@@ -8769,6 +8839,7 @@ export function RuntimeVehicleViewer({
     applyCrewOccupantVisibility(crewOccupantDisplayEnabledRef.current);
 
     const render = () => {
+      if (cancelled) return;
       // Flat-plane comparison aids have no terrain support solution of their own.
       if (referenceSoldier) referenceSoldier.visible = !activeTerrain() && !crewOccupantDisplayEnabledRef.current;
       if (groundScale) groundScale.visible = !activeTerrain();
@@ -8928,8 +8999,9 @@ export function RuntimeVehicleViewer({
       renderer.render(scene, camera);
     };
     let renderFrame = 0;
+    resources.add(() => cancelAnimationFrame(renderFrame));
     const requestRender = () => {
-      if (renderFrame !== 0) return;
+      if (cancelled || renderFrame !== 0) return;
       renderFrame = requestAnimationFrame(() => {
         renderFrame = 0;
         render();
@@ -9538,6 +9610,8 @@ export function RuntimeVehicleViewer({
       }
     };
 
+    resources.add(() => cancelProtectionMap(true));
+
     const runProtectionMap = () => {
       const parsed = parsedHitRef.current;
       const weaponModel = attackModelRef.current;
@@ -9871,6 +9945,7 @@ export function RuntimeVehicleViewer({
     let initialFitAspect = camera.aspect;
     let initialFitStabilizationPending = false;
     let initialFitStabilizationTimer = 0;
+    resources.add(() => window.clearTimeout(initialFitStabilizationTimer));
     const scheduleInitialFitStabilization = () => {
       window.clearTimeout(initialFitStabilizationTimer);
       initialFitStabilizationTimer = window.setTimeout(() => {
@@ -10049,12 +10124,18 @@ export function RuntimeVehicleViewer({
         scheduleProtectionMap({ invalidate: true });
       }
     };
+    resources.add(() => {
+      controls.removeEventListener("start", onControlsStart);
+      controls.removeEventListener("change", onControlsChange);
+      controls.removeEventListener("end", onControlsEnd);
+    });
     controls.addEventListener("start", onControlsStart);
     controls.addEventListener("change", onControlsChange);
     controls.addEventListener("end", onControlsEnd);
     let rendererWidth = 0;
     let rendererHeight = 0;
     const resize = () => {
+      if (cancelled) return;
       const width = Math.max(host.clientWidth, 1);
       const height = Math.max(host.clientHeight, 1);
       const sizeChanged = width !== rendererWidth || height !== rendererHeight;
@@ -10089,6 +10170,7 @@ export function RuntimeVehicleViewer({
       }
     };
     const resizeObserver = new ResizeObserver(resize);
+    resources.add(() => resizeObserver.disconnect());
     resizeObserver.observe(host);
     resize();
 
@@ -10925,6 +11007,7 @@ export function RuntimeVehicleViewer({
       heldOperationFirePointerId = null;
       host.dataset.operationFireHeld = "false";
     };
+    resources.add(stopHeldOperationFire);
     const onOperationVisibilityChange = () => {
       if (document.visibilityState !== "visible") stopHeldOperationFire();
     };
@@ -11213,6 +11296,16 @@ export function RuntimeVehicleViewer({
         record.radialOriginOverrideM[2],
       ]);
     };
+    resources.add(() => {
+      renderer.domElement.removeEventListener("pointerdown", onPointerDown, true);
+      renderer.domElement.removeEventListener("pointermove", onPointerMove);
+      renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
+      renderer.domElement.removeEventListener("pointerup", onPointerUp);
+      renderer.domElement.removeEventListener("pointercancel", onPointerCancel);
+      renderer.domElement.removeEventListener("wheel", onExplosionWheel, true);
+      window.removeEventListener("blur", stopHeldOperationFire);
+      document.removeEventListener("visibilitychange", onOperationVisibilityChange);
+    });
     renderer.domElement.addEventListener("pointerdown", onPointerDown, true);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
     renderer.domElement.addEventListener("pointerleave", onPointerLeave);
@@ -11947,22 +12040,8 @@ export function RuntimeVehicleViewer({
     };
     activateAssetModeRef.current(modeRef.current);
 
-    return () => {
-      cancelled = true;
-      if (referenceSoldierIdleCallback !== 0) {
-        window.cancelIdleCallback(referenceSoldierIdleCallback);
-      }
-      window.clearTimeout(referenceSoldierLoadTimer);
-      cancelProtectionMap(true);
-      cancelAnimationFrame(hoverFrame);
-      cancelAnimationFrame(explosionDragFrame);
-      cancelAnimationFrame(renderFrame);
-      if (shotAnimationFrameRef.current !== 0) {
-        cancelAnimationFrame(shotAnimationFrameRef.current);
-        shotAnimationFrameRef.current = 0;
-      }
+    resources.add(() => {
       animatedShotIdRef.current = null;
-      window.clearTimeout(initialFitStabilizationTimer);
       resetViewRef.current = null;
       applyCameraViewPresetRef.current = null;
       applyInfantryDistancePreviewRef.current = null;
@@ -11988,7 +12067,6 @@ export function RuntimeVehicleViewer({
       radialQueryRef.current = null;
       radialQueryHitPoseRef.current = new Map();
       hitModelRef.current = null;
-      vehicleProjectileThreeRuntime.dispose();
       spawnVehicleProjectileVisualRef.current = null;
       schoolProjectileQueryRef.current = null;
       if (worldImpactStatus) worldImpactStatus.textContent = "";
@@ -12029,33 +12107,17 @@ export function RuntimeVehicleViewer({
       }
       scheduleProtectionMapRef.current = null;
       cancelProtectionMapRef.current = null;
-      resizeObserver.disconnect();
-      renderer.domElement.removeEventListener("pointerdown", onPointerDown, true);
-      renderer.domElement.removeEventListener("pointermove", onPointerMove);
-      renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
-      renderer.domElement.removeEventListener("pointerup", onPointerUp);
-      renderer.domElement.removeEventListener("pointercancel", onPointerCancel);
-      renderer.domElement.removeEventListener("wheel", onExplosionWheel, true);
-      window.removeEventListener("blur", stopHeldOperationFire);
-      document.removeEventListener("visibilitychange", onOperationVisibilityChange);
-      stopHeldOperationFire();
       if (stopVehicleProjectileFireRef.current === stopHeldOperationFire) {
         stopVehicleProjectileFireRef.current = () => undefined;
       }
-      if (viewerRoot?.dataset.renderQuality === renderQuality.tier) {
-        delete viewerRoot.dataset.renderQuality;
-      }
-      controls.removeEventListener("start", onControlsStart);
-      controls.removeEventListener("change", onControlsChange);
-      controls.removeEventListener("end", onControlsEnd);
-      controls.dispose();
-      driverMaskLayer?.dispose();
-      driverMaskLayer = null;
-      crewOccupantLayer?.dispose();
-      crewOccupantLayer = null;
-      disposeScene(scene);
-      rendererLease.release();
-    };
+    });
+    return cleanup;
+    } catch (error) {
+      discardRenderer = true;
+      cleanup();
+      // React's local viewer boundary contains synchronous effect failures too.
+      throw error;
+    }
   }, [
     applySettledShotDamageHighlight,
     chassisPose,
@@ -12267,6 +12329,7 @@ export function RuntimeVehicleViewer({
       0,
     );
   const damageAnimationKey = `${activeShotId}:${damageAnimationRevision}`;
+  if (fatalRendererError) throw fatalRendererError;
   const activeShotWeaponName = selectedAttackWeapon
     ? weaponNameZh(
         selectedAttackWeapon.selectorVariant?.label

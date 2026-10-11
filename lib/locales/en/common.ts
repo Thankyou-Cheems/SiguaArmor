@@ -1,4 +1,5 @@
 export default {
+  "dismiss": "Dismiss",
   "language": "Interface language",
   "languageError": "Could not load this language. Please try again.",
   "primaryNav": "Primary navigation",

@@ -23,7 +23,7 @@ test("returning to faction selection restores the homepage catalog", () => {
 
   assert.match(
     clearFactionSelection,
-    /onRequestLocation\(window\.location\.href\)/u,
+    /onRequestLocation\(window\.location\.href, intent\)/u,
     "the homepage URL must reload its all-faction summary after the in-place return",
   );
 });

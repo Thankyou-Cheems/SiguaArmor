@@ -14142,8 +14142,18 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   padding: 0;
 }
 
+/* Language and search share the right track without overflowing the centered
+   flag rail. Stacking also leaves room for all 17 factions on desktop. */
 .site-shell[data-site-edition="international"] .faction-dock__actions {
+  width: 100%;
+  align-items: flex-end;
+  flex-direction: column;
   justify-self: end;
+  gap: 6px;
+}
+
+.site-shell[data-site-edition="international"] .global-vehicle-search--dock {
+  max-width: 100%;
 }
 
 @media (min-width: 681px) {
@@ -14172,15 +14182,21 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 @media (max-width: 1040px) and (min-width: 681px) {
   .site-shell[data-site-edition="international"] .faction-dock {
-    grid-template-columns:
-      minmax(0, 1fr)
-      minmax(500px, 52vw)
-      minmax(0, 1fr);
+    grid-template-areas:
+      "brand actions"
+      "flags flags";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: 52px minmax(0, 1fr);
     padding-inline: 14px;
   }
 
   .site-shell[data-site-edition="international"] .faction-dock__brand h2 {
     display: none;
+  }
+
+  .site-shell[data-site-edition="international"] .faction-dock__actions {
+    align-items: center;
+    flex-direction: row;
   }
 
   .site-shell[data-site-edition="international"] .global-vehicle-search--dock {
@@ -14193,8 +14209,8 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     grid-template-areas:
       "brand actions"
       "flags flags";
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: 44px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    grid-template-rows: 80px minmax(0, 1fr);
     gap: 0 8px;
     padding: 4px 8px 0;
   }
@@ -14217,13 +14233,24 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     width: min(112px, 29vw);
   }
 
+  .site-shell[data-site-edition="international"]
+    .faction-selector[data-selected="true"]
+    .faction-dock {
+    height: 148px;
+  }
+
   .site-shell[data-site-edition="international"] .faction-dock__actions {
+    display: grid;
     grid-area: actions;
-    justify-self: end;
+    width: min(100%, 260px);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 6px;
   }
 
   .site-shell[data-site-edition="international"] .global-vehicle-search--dock {
-    width: min(38vw, 156px);
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .site-shell[data-site-edition="international"] .faction-dock__flags {
@@ -14252,13 +14279,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   }
 
   .site-shell[data-site-edition="international"] .catalog-reveal .catalog-main {
-    scroll-margin-top: 116px;
-    padding-top: 132px;
+    scroll-margin-top: 148px;
+    padding-top: 164px;
   }
 
   .site-shell[data-site-edition="international"] .detail-panel {
     top: auto;
-    height: calc(100dvh - 116px);
+    height: calc(100dvh - 148px);
     max-height: none;
   }
 
@@ -14268,7 +14295,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   .site-shell[data-site-edition="international"]
     .detail-panel--viewer
     .viewer-canvas {
-    height: calc(100dvh - 116px);
+    height: calc(100dvh - 148px);
   }
 }
 
@@ -19010,3 +19037,24 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .viewer-aircraft-collision-controls label { display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
 .viewer-aircraft-collision-controls select { color: inherit; background: #19211e; border: 1px solid #526157; border-radius: .3rem; padding: .3rem .5rem; }
 .viewer-aircraft-collision-controls p { margin: 0; color: #adb7ae; font-size: .75rem; line-height: 1.5; }
+
+/* Request failures leave the working catalog and its navigation available. */
+.catalog-navigation-error {
+  position: fixed;
+  z-index: 120;
+  inset: auto 16px 16px;
+  width: fit-content;
+  max-width: min(480px, calc(100vw - 32px));
+  max-height: 40dvh;
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 12px 36px #0008;
+}
+
+.catalog-navigation-error button + button {
+  margin-left: 12px;
+}

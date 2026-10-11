@@ -36,6 +36,7 @@ interface InternationalVehicleViewerProps {
   textureVariants?: TextureVariantOption[];
   onTextureVariantChange?: (variantId: string) => void;
   onClose?: () => void;
+  onOpenReference?: () => void;
   navigationState: ViewerNavigationState;
   onNavigationStateChange: (state: ViewerNavigationState) => void;
 }
@@ -56,6 +57,7 @@ export default function InternationalVehicleViewer({
   textureVariants = [],
   onTextureVariantChange,
   onClose,
+  onOpenReference,
   navigationState,
   onNavigationStateChange,
 }: InternationalVehicleViewerProps) {
@@ -191,6 +193,7 @@ export default function InternationalVehicleViewer({
           referenceData={referenceData}
           onModeChange={selectMode}
           onClose={onClose}
+          onOpenReference={onOpenReference}
           navigationState={navigationState}
           onNavigationStateChange={onNavigationStateChange}
           onExteriorStreamingChange={setTextureStreaming}

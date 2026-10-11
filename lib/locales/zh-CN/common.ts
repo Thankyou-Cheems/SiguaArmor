@@ -1,4 +1,5 @@
 export default {
+  "dismiss": "关闭提示",
   "language": "界面语言",
   "languageError": "语言包暂时无法加载，请重试。",
   "primaryNav": "主要导航",
