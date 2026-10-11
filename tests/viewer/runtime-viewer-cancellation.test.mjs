@@ -7,7 +7,7 @@ import * as THREE from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { disposeRuntimeScene, retainCachedRuntimeSceneResources } from "../../lib/runtime-scene-resources.ts";
 import { createRuntimeSkeletalPoseController } from "../../lib/runtime-skeletal-pose.ts";
-import { createViewerCleanup } from "../fixtures/viewer-cleanup-source.mjs";
+import { createViewerCleanup, VIEWER_CONTEXT_LOST } from "../fixtures/viewer-cleanup-source.mjs";
 
 // Execute production queue/load callbacks with deferred GLTF transport. This
 // keeps cancellation, scene work and error handling real without a GPU/network.
@@ -59,7 +59,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
     matrix: new THREE.Matrix4().elements,
   }));
   const context = {
-    THREE, performance, cancelled: false, resources: createViewerCleanup(),
+    THREE, VIEWER_CONTEXT_LOST, performance, cancelled: false, resources: createViewerCleanup(),
     hitLoadController: new AbortController(),
     discardRenderer: false, setFatalRendererError(error) { fatalErrors.push(error); },
     scene: new THREE.Scene(),

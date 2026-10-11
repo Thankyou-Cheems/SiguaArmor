@@ -1,7 +1,7 @@
 "use client";
 
 import { VehicleWeaponHud } from "./VehicleWeaponHud";
-import { ViewerErrorBoundary, createViewerCleanup } from "./ViewerErrorBoundary";
+import { ViewerErrorBoundary, VIEWER_CONTEXT_LOST, createViewerCleanup } from "./ViewerErrorBoundary";
 import { disposeRuntimeScene as disposeScene } from "../lib/runtime-scene-resources";
 import { sourceProjectileForShot, type SourceProjectileVisual, type VehicleFiringPresentation } from "../lib/vehicle-firing-presentation";
 import { loadWikiDataset, loadWikiVehicleTerrainPoses } from "../lib/wiki-source";
@@ -11,7 +11,7 @@ import { getRuntimeViewerBackground, setRuntimeViewerBackground, subscribeRuntim
 import type { OperationInventorySlot } from "../lib/operation-view-control";
 
 import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode, type RefObject } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
 import {
@@ -4269,20 +4269,24 @@ export interface RuntimeVehicleViewerDisplayOverrides {
 
 let sharedWeaponDpsFactsRequest: Promise<WeaponDpsWeapon[]> | null = null;
 
-export function RuntimeVehicleViewer(props: Parameters<typeof RuntimeVehicleViewerScene>[0]) {
+export function RuntimeVehicleViewer(props: Omit<Parameters<typeof RuntimeVehicleViewerScene>[0], "sceneRootRef">) {
+  const sceneRootRef = useRef<HTMLDivElement>(null);
+  const getRetryFocusTarget = useCallback(() => sceneRootRef.current, []);
   return (
     <ViewerErrorBoundary
       key={`${props.preview.cardId}:${props.preview.variantRawName}`}
       vehicleName={props.displayName ?? props.preview.variantRawName}
       onClose={props.onClose}
       onOpenReference={props.onOpenReference}
+      getRetryFocusTarget={getRetryFocusTarget}
     >
-      <RuntimeVehicleViewerScene {...props} />
+      <RuntimeVehicleViewerScene {...props} sceneRootRef={sceneRootRef} />
     </ViewerErrorBoundary>
   );
 }
 
 function RuntimeVehicleViewerScene({
+  sceneRootRef,
   preview,
   showChrome = true,
   mode: requestedMode = "exterior",
@@ -4301,6 +4305,7 @@ function RuntimeVehicleViewerScene({
   displayOverrides,
   shotTraceLimit = MAX_SHOT_TRACES,
 }: {
+  sceneRootRef: RefObject<HTMLDivElement | null>;
   preview: RuntimeVehiclePreview;
   showChrome?: boolean;
   mode?: ViewerAssetMode;
@@ -8017,7 +8022,7 @@ function RuntimeVehicleViewerScene({
       if (cancelled) return;
       discardRenderer = true;
       cleanup();
-      setFatalRendererError(new Error("浏览器的 WebGL 图形上下文已丢失，请手动重试。"));
+      setFatalRendererError(new Error(VIEWER_CONTEXT_LOST));
     };
     renderer.domElement.addEventListener("webglcontextlost", onContextLost);
     resources.add(() => renderer.domElement.removeEventListener("webglcontextlost", onContextLost));
@@ -12383,6 +12388,8 @@ function RuntimeVehicleViewerScene({
     : null;
   return (
     <div
+      ref={sceneRootRef}
+      tabIndex={-1}
       className="viewer-stage runtime-vehicle-viewer"
       data-viewer-state={viewerState.kind}
       data-viewer-presentation={viewerPresentation}

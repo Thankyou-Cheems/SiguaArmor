@@ -1,6 +1,7 @@
 "use client";
 
-import { Component, Fragment, type ReactNode } from "react";
+import { Component, Fragment, createRef, type ReactNode, type RefObject } from "react";
+import { useSiteTranslation } from "./SiteLanguageProvider";
 
 interface ViewerErrorBoundaryProps {
   children: ReactNode;
@@ -10,6 +11,35 @@ interface ViewerErrorBoundaryProps {
   retryMode?: "remount" | "reload";
   onClose?: () => void;
   onOpenReference?: () => void;
+  // Resolve only this consumer's existing scene root, without adding wrapper DOM.
+  getRetryFocusTarget?: () => HTMLElement | null;
+}
+
+export const VIEWER_CONTEXT_LOST = "VIEWER_CONTEXT_LOST";
+
+function ViewerFailure({ error, vehicleName, retryMode, onClose, onOpenReference, onRetry, retryRef }: Omit<ViewerErrorBoundaryProps, "children"> & {
+  error: Error;
+  onRetry: (button: HTMLButtonElement) => void;
+  retryRef: RefObject<HTMLButtonElement | null>;
+}) {
+  // Common is loaded before a language becomes active. A broken viewer/chunk
+  // must not depend on fetching another namespace just to explain recovery.
+  const { t } = useSiteTranslation("common");
+  const reloadPage = retryMode === "reload";
+  return (
+    <div className="vehicle-viewer vehicle-viewer--error" data-viewer-state="unavailable" data-viewer-retry={reloadPage ? "reload" : "remount"}>
+      <strong role="alert">{vehicleName ? `${vehicleName} · ` : ""}{t("viewerUnavailable")}</strong>
+      <span>{t(reloadPage ? "viewerReloadHint" : "viewerRetryHint")}</span>
+      <div>
+        <button ref={retryRef} type="button" onClick={(event) => onRetry(event.currentTarget)}>
+          {t(reloadPage ? "viewerReload" : "viewerRetry")}
+        </button>
+        {onOpenReference ? <button type="button" onClick={onOpenReference}>{t("viewerReference")}</button> : null}
+        {onClose ? <button type="button" onClick={onClose}>{t("viewerCatalog")}</button> : null}
+      </div>
+      <details><summary>{t("errorDetails")}</summary><span>{error.message === VIEWER_CONTEXT_LOST ? t("viewerContextLost") : error.message}</span></details>
+    </div>
+  );
 }
 
 // Only this subtree is replaced. Catalog navigation and reference data stay mounted.
@@ -18,35 +48,80 @@ export class ViewerErrorBoundary extends Component<
   { error: Error | null; attempt: number }
 > {
   state = { error: null as Error | null, attempt: 0 };
+  private retryRef = createRef<HTMLButtonElement>();
+  private retryFocus: { source: HTMLElement; dispose: () => void } | null = null;
 
   static getDerivedStateFromError(error: unknown) {
     return { error: error instanceof Error ? error : new Error(String(error)) };
   }
 
+  componentDidCatch() {
+    // A renderer can fail in its mount effect after the new root was committed.
+    // Keep an explicit retry's focus on its replacement recovery button.
+    this.restoreRetryFocus();
+  }
+
+  componentWillUnmount() {
+    this.clearRetryFocus();
+  }
+
+  private clearRetryFocus = () => {
+    this.retryFocus?.dispose();
+    this.retryFocus = null;
+  };
+
+  private restoreRetryFocus = () => {
+    const pending = this.retryFocus;
+    if (!pending) return;
+    const document = pending.source.ownerDocument;
+    const active = document.activeElement;
+    if (active !== pending.source && (pending.source.isConnected || (active && active !== document.body))) {
+      this.clearRetryFocus();
+      return;
+    }
+    const target = this.state.error ? this.retryRef.current : this.props.getRetryFocusTarget?.();
+    if (!target?.isConnected || target.closest('[hidden], [inert], [aria-hidden="true"]')) {
+      this.clearRetryFocus();
+      return;
+    }
+    for (let element: HTMLElement | null = target; element; element = element.parentElement) {
+      const style = document.defaultView?.getComputedStyle(element);
+      if (style?.display === "none" || style?.visibility === "hidden" || style?.visibility === "collapse") {
+        this.clearRetryFocus();
+        return;
+      }
+    }
+    pending.source = target;
+    target.focus({ preventScroll: true });
+  };
+
+  private retry = (button: HTMLButtonElement) => {
+    if (this.props.retryMode === "reload") {
+      window.location.reload();
+      return;
+    }
+    this.clearRetryFocus();
+    const document = button.ownerDocument;
+    if (document.activeElement === button) {
+      // Ignore focus lost only because our old DOM is removed. Any deliberate
+      // move elsewhere, including another viewer, cancels this recovery intent.
+      const onFocus = (event: FocusEvent) => {
+        if (event.target !== this.retryFocus?.source) this.clearRetryFocus();
+      };
+      document.addEventListener("focusin", onFocus);
+      this.retryFocus = {
+        source: button,
+        dispose: () => document.removeEventListener("focusin", onFocus),
+      };
+    }
+    this.setState(({ attempt }) => ({ error: null, attempt: attempt + 1 }), this.restoreRetryFocus);
+  };
+
   render() {
     if (!this.state.error) {
       return <Fragment key={this.state.attempt}>{this.props.children}</Fragment>;
     }
-    const reloadPage = this.props.retryMode === "reload";
-    return (
-      <div className="vehicle-viewer vehicle-viewer--error" data-viewer-state="unavailable" data-viewer-retry={reloadPage ? "reload" : "remount"} role="alert">
-        <strong>{this.props.vehicleName ? `${this.props.vehicleName} · ` : ""}3D 预览暂时不可用</strong>
-        <span>{reloadPage
-          ? "3D 组件未能启动。请刷新当前页面重新加载，或继续使用目录与载具资料。"
-          : "3D 渲染已停止。你可以手动重试，或继续使用页面导航与载具资料。"}</span>
-        <div>
-          <button type="button" onClick={() => {
-            if (reloadPage) window.location.reload();
-            else this.setState(({ attempt }) => ({ error: null, attempt: attempt + 1 }));
-          }}>
-            {reloadPage ? "刷新页面重试" : "重试 3D 预览"}
-          </button>
-          {this.props.onOpenReference ? <button type="button" onClick={this.props.onOpenReference}>查看载具资料</button> : null}
-          {this.props.onClose ? <button type="button" onClick={this.props.onClose}>返回目录</button> : null}
-        </div>
-        <details><summary>错误信息</summary><span>{this.state.error.message}</span></details>
-      </div>
-    );
+    return <ViewerFailure {...this.props} error={this.state.error} onRetry={this.retry} retryRef={this.retryRef} />;
   }
 }
 
