@@ -1,0 +1,304 @@
+{
+  "cardId": "normalized-fixture",
+  "status": "visual-ready",
+  "statusLabel": "SIGUAWIKI / WEB-USABLE",
+  "variantRawName": "BP_Test",
+  "generatedClass": "/Game/Test/BP_Test.BP_Test_C",
+  "visualVehicleId": "vehicle-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "note": "该变体直接读取 SiguaWiki 的已发布视觉记录。controlled fixture",
+  "chassisPose": {
+    "targetKey": "BP_Test",
+    "generatedClass": "/Game/Test/BP_Test.BP_Test_C",
+    "rawName": "BP_Test",
+    "promoEntryIds": [],
+    "poseState": "runtime-observed-rendered-normal-time",
+    "sourceBuildId": "source-build",
+    "gltfMatrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0.45,
+      0,
+      1
+    ],
+    "pitchDeg": 2,
+    "rollDeg": 1,
+    "heightAbovePlaneCm": 45
+  },
+  "groundedPose": {
+    "schemaVersion": "sigua-vehicle-grounded-pose/v1",
+    "sourceBuildId": "source-build",
+    "generatedClass": "/Game/Test/BP_Test.BP_Test_C",
+    "basis": "gltf-y-up-metres-parent-local",
+    "admission": "rendered-physics-three-stable-samples",
+    "chassis": {
+      "gltfMatrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.45,
+        0,
+        1
+      ],
+      "pitchDeg": 2,
+      "rollDeg": 1,
+      "heightAbovePlaneCm": 45
+    },
+    "rigs": [
+      {
+        "boneNames": [
+          "root"
+        ],
+        "localMatrices": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    ],
+    "bindings": [
+      {
+        "stableOccurrenceId": "body",
+        "assetUrl": "/assets/runtime-probe/models/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.gltf",
+        "sourceMeshPath": "/Game/Test/Body",
+        "rigIndex": 0
+      }
+    ]
+  },
+  "suspension": {
+    "records": [],
+    "coverage": null
+  },
+  "runtime": {
+    "actors": null,
+    "components": null,
+    "stableTargets": null,
+    "residualActors": null
+  },
+  "visual": {
+    "artifactRef": "visual-test",
+    "requiredOccurrences": 1,
+    "sourceAssets": 1,
+    "totalBytes": 100,
+    "runtimeBonePoseStatus": "observed",
+    "runtimeBonePoseOccurrenceCount": 1,
+    "runtimeBonePoseJointCount": 0,
+    "runtimeBonePoseReferenceEquivalentOccurrenceCount": 0,
+    "placements": [
+      {
+        "stableOccurrenceId": "body",
+        "actor": "BP_Test_C_0",
+        "name": "Vehicle Mesh",
+        "assetUrl": "/assets/runtime-probe/models/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.gltf",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "sourceMeshPath": "/Game/Test/Body",
+        "componentClassPath": "/Script/Engine.SkeletalMeshComponent",
+        "materialState": "runtime-effective-bindings-baked-parameters-unresolved",
+        "runtimeBonePoseStatus": "observed",
+        "runtimeBonePoseNormalTimeSampleCount": 3,
+        "runtimeBonePoseReferenceEquivalent": false
+      }
+    ],
+    "selection": null
+  },
+  "hit": null,
+  "hitAvailability": {
+    "status": "runtime-no-hit-geometry",
+    "reasonCode": "not-published",
+    "reason": "该变体尚无已发布的命中模型。"
+  },
+  "radialQuery": null,
+  "visualAttachment": {
+    "schemaVersion": "sigua-vehicle-visual-attachment/v2",
+    "sourceBuildId": "squad-sdk-v10.5.3-17c100ea5182370e",
+    "sourceDataRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sourceVehicleRef": "vehicle-0123456789abcdef01234567",
+    "catalogBindingRef": "binding-test",
+    "cardId": "normalized-fixture",
+    "rawName": "BP_Test",
+    "runtimeVehicleRef": "vehicle-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "edition": "international",
+    "visualArtifactRef": "visual-test",
+    "stations": []
+  },
+  "crewSeat": {
+    "schemaVersion": "sigua-vehicle-crew-seat/v1",
+    "sourceBuildId": "squad-sdk-v10.5.3-17c100ea5182370e",
+    "sourceVehicleRef": "vehicle-0123456789abcdef01234567",
+    "runtimeVehicleRefs": [
+      "vehicle-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    ],
+    "catalogBindingRefs": [
+      "binding-test"
+    ],
+    "rawName": "BP_Test",
+    "targetPackage": "/Game/Test/BP_Test",
+    "generatedClass": "/Game/Test/BP_Test.BP_Test_C",
+    "evidence": {
+      "state": "derived-from-vehicle-station-graph",
+      "sourceDataRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "constructionPose": "reference",
+      "runtimeAnimationPose": "native-unknown",
+      "dedicatedServerParity": "native-unknown"
+    },
+    "seats": []
+  },
+  "stationGraph": {
+    "schemaVersion": "sigua-vehicle-station-graph/v1",
+    "sourceVehicleRef": "vehicle-0123456789abcdef01234567",
+    "sourceDataRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "vehicleEquipmentRefs": [],
+    "stations": [],
+    "crewSeat": {
+      "schemaVersion": "sigua-vehicle-crew-seat/v1",
+      "sourceBuildId": "squad-sdk-v10.5.3-17c100ea5182370e",
+      "sourceVehicleRef": "vehicle-0123456789abcdef01234567",
+      "runtimeVehicleRefs": [
+        "vehicle-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "catalogBindingRefs": [
+        "binding-test"
+      ],
+      "rawName": "BP_Test",
+      "targetPackage": "/Game/Test/BP_Test",
+      "generatedClass": "/Game/Test/BP_Test.BP_Test_C",
+      "evidence": {
+        "state": "derived-from-vehicle-station-graph",
+        "sourceDataRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "constructionPose": "reference",
+        "runtimeAnimationPose": "native-unknown",
+        "dedicatedServerParity": "native-unknown"
+      },
+      "seats": []
+    },
+    "visualAttachment": {
+      "schemaVersion": "sigua-vehicle-visual-attachment/v2",
+      "sourceBuildId": "squad-sdk-v10.5.3-17c100ea5182370e",
+      "sourceDataRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sourceVehicleRef": "vehicle-0123456789abcdef01234567",
+      "catalogBindingRef": "binding-test",
+      "cardId": "normalized-fixture",
+      "rawName": "BP_Test",
+      "runtimeVehicleRef": "vehicle-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "edition": "international",
+      "visualArtifactRef": "visual-test",
+      "stations": []
+    }
+  },
+  "gunnerSight": {
+    "schemaVersion": "sigua-vehicle-gunner-sight/v1",
+    "sourceVehicleRef": "vehicle-0123456789abcdef01234567",
+    "sourceDataRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "stations": [],
+    "projections": []
+  },
+  "driverView": {
+    "schemaVersion": "sigua-vehicle-driver-view/v1",
+    "sourceBuildId": "squad-sdk-v10.5.3-17c100ea5182370e",
+    "sourceVehicleRef": "vehicle-0123456789abcdef01234567",
+    "rawName": "BP_Test",
+    "targetPackage": "/Game/Test/BP_Test",
+    "generatedClass": "/Game/Test/BP_Test.BP_Test_C",
+    "seatKey": "vehicle-0123456789abcdef01234567:catalog-seat:1",
+    "catalogSeatIndex": 1,
+    "role": "driver",
+    "camera": {
+      "viewId": "driver-default",
+      "source": "constructed-vehicle-camera-component",
+      "componentName": "FirstPersonVehicleCam",
+      "dynamicParent": {
+        "componentName": "FirstPersonVehicleSpringArm"
+      },
+      "vehicleLocalFrame": {
+        "state": "derived",
+        "value": {
+          "translationCm": {
+            "x": 20,
+            "y": 30,
+            "z": 120
+          },
+          "rotationQuaternion": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+          },
+          "scale3D": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        },
+        "reason": null
+      },
+      "baseHorizontalFovDegrees": {
+        "state": "observed",
+        "value": 90
+      },
+      "focusZoom": {
+        "fovDegrees": null,
+        "alwaysAvailable": null,
+        "maxSpeed": null
+      }
+    },
+    "mask": {
+      "state": "absent-no-first-person-viewport-geometry",
+      "reason": "fixture"
+    },
+    "evidence": {
+      "sourceDataRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "network": "out-of-scope",
+      "finalRuntimeViewTarget": "native-unknown"
+    }
+  }
+}

@@ -729,38 +729,32 @@ export async function runtimePreviewForCatalogBinding(
     ) {
       throw new Error(`SiguaWiki visual mapping differs for ${cardId} / ${rawName}`);
     }
-    const stationGraphRecord = runtimeVariant.stationGraph
-      ? await loadWikiVehicleStationGraph(
-          runtimeVariant.stationGraph.recordUrl,
-        ) as VehicleStationGraphRecord
-      : null;
-    if (
-      stationGraphRecord &&
-      (
-        runtimeVariant.stationGraph?.formatVersion !==
-          stationGraphRecord.schemaVersion ||
-        runtimeVariant.stationGraph?.sourceVehicleRef !==
-          stationGraphRecord.sourceVehicleRef
-      )
-    ) {
-      throw new Error(`SiguaWiki station graph mapping differs for ${cardId} / ${rawName}`);
-    }
+    // The runtime binding already identifies every metadata request. The graph
+    // body is needed for validation/compilation, not for discovering these URLs.
+    // Join before publishing, retaining every pose admission and view check.
+    const graphPointer = runtimeVariant.stationGraph;
+    const stationGraphRequest = graphPointer
+      ? loadWikiVehicleStationGraph(graphPointer.recordUrl).then((value) => {
+          const record = value as VehicleStationGraphRecord;
+          if (graphPointer.formatVersion !== record.schemaVersion ||
+              graphPointer.sourceVehicleRef !== record.sourceVehicleRef) {
+            throw new Error(`SiguaWiki station graph mapping differs for ${cardId} / ${rawName}`);
+          }
+          return record;
+        })
+      : Promise.resolve(null);
     const renderedPoseRequest = runtimeVariant.targetKind !== "command-aircraft" &&
       runtimeVariant.suspension.coverage?.status !== "not-applicable"
       ? loadWikiVehicleGroundedPose(runtimeVariant.generatedClass)
           .then(value => value ? validateRuntimeGroundedPose(value, runtimeVariant.generatedClass) : null)
           .catch(() => null)
       : Promise.resolve(null);
-    const [gunnerSightRecord, driverViewRecord] = stationGraphRecord
-      ? await Promise.all([
-          loadOptionalWikiVehicleGunnerSight(
-            stationGraphRecord.sourceVehicleRef,
-          ) as Promise<VehicleGunnerSightRecord | null>,
-          loadWikiVehicleDriverView(
-            stationGraphRecord.sourceVehicleRef,
-          ) as Promise<VehicleDriverViewRecord>,
-        ])
-      : [null, null];
+    const [stationGraphRecord, gunnerSightRecord, driverViewRecord, renderedPose] = await Promise.all([
+      stationGraphRequest,
+      graphPointer ? loadOptionalWikiVehicleGunnerSight(graphPointer.sourceVehicleRef) as Promise<VehicleGunnerSightRecord | null> : Promise.resolve(null),
+      graphPointer ? loadWikiVehicleDriverView(graphPointer.sourceVehicleRef) as Promise<VehicleDriverViewRecord> : Promise.resolve(null),
+      renderedPoseRequest,
+    ]);
     if (!driverViewRecord && runtimeVariant.targetKind !== "command-aircraft") {
       throw new Error(`SiguaWiki driver view is missing for ${cardId} / ${rawName}`);
     }
@@ -773,7 +767,7 @@ export async function runtimePreviewForCatalogBinding(
       stationGraphRecord,
       gunnerSightRecord,
       driverViewRecord,
-      await renderedPoseRequest,
+      renderedPose,
     );
   });
   previewCache.set(cacheKey, request);
