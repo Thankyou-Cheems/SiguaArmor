@@ -11,7 +11,7 @@ import { getRuntimeViewerBackground, setRuntimeViewerBackground, subscribeRuntim
 import type { OperationInventorySlot } from "../lib/operation-view-control";
 
 import { ChevronRight, CircleAlert, CircleDot, Crosshair, RotateCcw } from "lucide-react";
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode, type RefObject } from "react";
 import * as THREE from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
 import {
@@ -4334,6 +4334,7 @@ function RuntimeVehicleViewerScene({
   );
   const [fatalRendererError, setFatalRendererError] = useState<Error | null>(null);
   const hostRef = useRef<HTMLDivElement>(null);
+  const disposeViewerRef = useRef<(() => void) | null>(null);
   const protectionCanvasRef = useRef<HTMLCanvasElement>(null);
   const explosionOriginHudRef = useRef<HTMLDivElement>(null);
   const crewViewpointHudRef = useRef<HTMLDivElement>(null);
@@ -7879,6 +7880,16 @@ function RuntimeVehicleViewerScene({
     applyBackgroundRef.current?.();
   }, [background]);
 
+  // OrbitControls disconnects from canvas.getRootNode(). Dispose while React
+  // still keeps the canvas in that root, before passive unmount cleanup. Setup
+  // stays passive; dependency changes and StrictMode reuse the same idempotent
+  // cleanup, and this ref always points at the latest viewer instance.
+  useLayoutEffect(() => () => {
+    const cleanup = disposeViewerRef.current;
+    disposeViewerRef.current = null;
+    cleanup?.();
+  }, []);
+
   useEffect(() => {
     const host = hostRef.current;
     if (!host || !visual) return;
@@ -7928,6 +7939,7 @@ function RuntimeVehicleViewerScene({
       hitLoadController.abort();
       resources.dispose();
     };
+    disposeViewerRef.current = cleanup;
     try {
     let analysisLoaded = 0;
     let analysisVisualReady = false;
