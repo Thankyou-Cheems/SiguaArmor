@@ -4,6 +4,11 @@ import { wikiUrl } from "../lib/wiki-source";
 
 const factionFlag = (pathname: string) => wikiUrl(pathname);
 
+const factionPortraitSrcSet = (id: keyof typeof factionPortraitAssets) =>
+  factionPortraitAssets[id].responsiveCandidates
+    .map(({ path, width }) => `${path} ${width}w`)
+    .join(", ");
+
 export interface FactionVisualAsset {
   catalogBackground: string;
   foreground: string;
@@ -37,9 +42,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   adf: {
     catalogBackground: "/images/faction-bg/ADF.webp",
     foreground: factionPortraitAssets.adf.path,
-    foregroundSrcSet: factionPortraitAssets.adf.responsiveCandidates
-      .map(({ path, width }) => `${path} ${width}w`)
-      .join(", "),
+    foregroundSrcSet: factionPortraitSrcSet("adf"),
     foregroundBaselineOffset: -5.15,
     foregroundScale: 0.912,
     logo: factionFlag(factionFlagAssets.adf),
@@ -47,6 +50,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   afu: {
     catalogBackground: "/images/faction-bg/AFU.webp",
     foreground: factionPortraitAssets.afu.path,
+    foregroundSrcSet: factionPortraitSrcSet("afu"),
     foregroundBaselineOffset: 3.46,
     foregroundScale: 1.089,
     logo: factionFlag(factionFlagAssets.afu),
@@ -54,6 +58,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   baf: {
     catalogBackground: "/images/faction-bg/BAF.webp",
     foreground: factionPortraitAssets.baf.path,
+    foregroundSrcSet: factionPortraitSrcSet("baf"),
     foregroundBaselineOffset: -0.24,
     foregroundScale: 1.013,
     logo: factionFlag(factionFlagAssets.baf),
@@ -61,6 +66,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   caf: {
     catalogBackground: "/images/faction-bg/CAF.webp",
     foreground: factionPortraitAssets.caf.path,
+    foregroundSrcSet: factionPortraitSrcSet("caf"),
     foregroundBaselineOffset: 0.33,
     foregroundScale: 1.032,
     logo: factionFlag(factionFlagAssets.caf),
@@ -68,6 +74,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   crf: {
     catalogBackground: "/images/faction-bg/CRF.webp",
     foreground: factionPortraitAssets.crf.path,
+    foregroundSrcSet: factionPortraitSrcSet("crf"),
     foregroundBaselineOffset: -0.7,
     foregroundScale: 1.037,
     logo: factionFlag(factionFlagAssets.crf),
@@ -75,6 +82,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   gfi: {
     catalogBackground: "/images/faction-bg/GFI.webp",
     foreground: factionPortraitAssets.gfi.path,
+    foregroundSrcSet: factionPortraitSrcSet("gfi"),
     foregroundBaselineOffset: 4.4,
     foregroundScale: 1.092,
     logo: factionFlag(factionFlagAssets.gfi),
@@ -82,6 +90,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   imf: {
     catalogBackground: "/images/faction-bg/IMF.webp",
     foreground: factionPortraitAssets.imf.path,
+    foregroundSrcSet: factionPortraitSrcSet("imf"),
     foregroundBaselineOffset: -4.36,
     foregroundScale: 0.923,
     // Derived from the reviewed IMF flag artwork.
@@ -91,6 +100,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
     // The public asset keeps Squad's INS filename while the catalog group ID is MEI.
     catalogBackground: "/images/faction-bg/INS.webp",
     foreground: factionPortraitAssets.mei.path,
+    foregroundSrcSet: factionPortraitSrcSet("mei"),
     foregroundBaselineOffset: 6.63,
     foregroundScale: 1.152,
     // INS/MEI uses the reviewed composite with a Commons AK47 vector silhouette.
@@ -99,6 +109,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   pla: {
     catalogBackground: "/images/faction-bg/PLA.webp",
     foreground: factionPortraitAssets.pla.path,
+    foregroundSrcSet: factionPortraitSrcSet("pla"),
     foregroundBaselineOffset: -2.89,
     foregroundScale: 0.969,
     logo: factionFlag(factionFlagAssets.pla),
@@ -106,6 +117,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   plaagf: {
     catalogBackground: "/images/faction-bg/PLAAGF.webp",
     foreground: factionPortraitAssets.plaagf.path,
+    foregroundSrcSet: factionPortraitSrcSet("plaagf"),
     foregroundBaselineOffset: -3.41,
     foregroundScale: 0.942,
     logo: factionFlag(factionFlagAssets.plaagf),
@@ -113,6 +125,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   planmc: {
     catalogBackground: "/images/faction-bg/PLANMC.webp",
     foreground: factionPortraitAssets.planmc.path,
+    foregroundSrcSet: factionPortraitSrcSet("planmc"),
     foregroundBaselineOffset: -3.97,
     foregroundScale: 0.933,
     // Official PLA Navy naval ensign vector from Wikimedia Commons.
@@ -121,6 +134,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   rgf: {
     catalogBackground: "/images/faction-bg/RGF.webp",
     foreground: factionPortraitAssets.rgf.path,
+    foregroundSrcSet: factionPortraitSrcSet("rgf"),
     foregroundBaselineOffset: -4.32,
     foregroundScale: 0.943,
     logo: factionFlag(factionFlagAssets.rgf),
@@ -128,6 +142,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   tlf: {
     catalogBackground: "/images/faction-bg/TLF.webp",
     foreground: factionPortraitAssets.tlf.path,
+    foregroundSrcSet: factionPortraitSrcSet("tlf"),
     foregroundBaselineOffset: 1.79,
     foregroundScale: 1.055,
     logo: factionFlag(factionFlagAssets.tlf),
@@ -135,6 +150,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   usa: {
     catalogBackground: "/images/faction-bg/USA.webp",
     foreground: factionPortraitAssets.usa.path,
+    foregroundSrcSet: factionPortraitSrcSet("usa"),
     foregroundBaselineOffset: 6.18,
     foregroundScale: 1.117,
     logo: factionFlag(factionFlagAssets.usa),
@@ -142,6 +158,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   usmc: {
     catalogBackground: "/images/faction-bg/USMC.webp",
     foreground: factionPortraitAssets.usmc.path,
+    foregroundSrcSet: factionPortraitSrcSet("usmc"),
     foregroundBaselineOffset: -0.49,
     foregroundScale: 0.996,
     logo: factionFlag(factionFlagAssets.usmc),
@@ -149,6 +166,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   vdv: {
     catalogBackground: "/images/faction-bg/VDV.webp",
     foreground: factionPortraitAssets.vdv.path,
+    foregroundSrcSet: factionPortraitSrcSet("vdv"),
     foregroundBaselineOffset: -1.22,
     foregroundScale: 0.964,
     logo: factionFlag(factionFlagAssets.vdv),
@@ -156,6 +174,7 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   wpmc: {
     catalogBackground: "/images/faction-bg/WPMC.webp",
     foreground: factionPortraitAssets.wpmc.path,
+    foregroundSrcSet: factionPortraitSrcSet("wpmc"),
     foregroundBaselineOffset: -0.78,
     foregroundScale: 0.996,
     logo: factionFlag(factionFlagAssets.wpmc),
