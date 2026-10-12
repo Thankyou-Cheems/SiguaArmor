@@ -41,3 +41,28 @@ test("international portrait delivery preserves reviewed canvas and alpha geomet
     assert.equal(sha256(alpha), asset.alphaSha256, `${id} changed reviewed height, baseline or transparent edges`);
   }
 });
+
+test("responsive candidates preserve their approved alpha and select content-versioned bounded resources", async () => {
+  sharp.concurrency(1);
+  assert.deepEqual(
+    Object.entries(assets).filter(([, asset]) => asset.responsiveCandidates).map(([id]) => id),
+    ["adf"],
+    "the local pilot must remain scoped to ADF",
+  );
+  const candidates = assets.adf.responsiveCandidates;
+  assert.deepEqual(candidates.map(({ width }) => width), [384, 640, 768, 1024]);
+  for (const candidate of candidates) {
+    const image = await readFile(`${root}/public${candidate.path}`);
+    assert.equal(image.length, candidate.bytes);
+    assert.equal(sha256(image), candidate.sha256);
+    assert.equal(candidate.path, `/assets/factions/portraits/adf-clean-w${candidate.width}-q85-${candidate.sha256.slice(0, 16)}.webp`);
+    assert.ok(image.length < assets.adf.bytes, "a pilot candidate must improve ADF delivery bytes");
+    const metadata = await sharp(image).metadata();
+    assert.equal(metadata.format, "webp");
+    assert.equal(metadata.width, candidate.width);
+    assert.equal(metadata.height, candidate.width * 1.5);
+    assert.equal(metadata.hasAlpha, true);
+    const alpha = await sharp(image).extractChannel("alpha").raw().toBuffer();
+    assert.equal(sha256(alpha), candidate.alphaSha256, "reviewed resized transparency changed");
+  }
+});

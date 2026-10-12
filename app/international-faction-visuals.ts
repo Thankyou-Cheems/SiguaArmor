@@ -7,6 +7,7 @@ const factionFlag = (pathname: string) => wikiUrl(pathname);
 export interface FactionVisualAsset {
   catalogBackground: string;
   foreground: string;
+  foregroundSrcSet?: string;
   foregroundBaselineOffset: number;
   foregroundScale: number;
   logo: string;
@@ -36,6 +37,9 @@ export const FACTION_VISUAL_ASSETS: Record<string, FactionVisualAsset> = {
   adf: {
     catalogBackground: "/images/faction-bg/ADF.webp",
     foreground: factionPortraitAssets.adf.path,
+    foregroundSrcSet: factionPortraitAssets.adf.responsiveCandidates
+      .map(({ path, width }) => `${path} ${width}w`)
+      .join(", "),
     foregroundBaselineOffset: -5.15,
     foregroundScale: 0.912,
     logo: factionFlag(factionFlagAssets.adf),

@@ -5,7 +5,45 @@
     "sha256": "16e0f10683abf6c7f000b21576b648599a4c21a6ae36590321c6fe9214f22ba5",
     "alphaSha256": "2a5841b9cab3d71889d54245a8f565c5212eeba6de8fcde34f5565577395da6e",
     "width": 1024,
-    "height": 1536
+    "height": 1536,
+    "responsiveCandidates": [
+      {
+        "width": 384,
+        "height": 576,
+        "quality": 85,
+        "path": "/assets/factions/portraits/adf-clean-w384-q85-374aa412ac4a1d84.webp",
+        "bytes": 46168,
+        "sha256": "374aa412ac4a1d84e3f66a3bce7be9e8242b684285db700751c5e18795787868",
+        "alphaSha256": "0501fa611b420c8600d805aea3a1ab944d3621aa7d93fcff7eda19baa288c7b1"
+      },
+      {
+        "width": 640,
+        "height": 960,
+        "quality": 85,
+        "path": "/assets/factions/portraits/adf-clean-w640-q85-e983c66ca24e95a6.webp",
+        "bytes": 101794,
+        "sha256": "e983c66ca24e95a6eca93600289088b8eb672817b069a7519979833b3d447d98",
+        "alphaSha256": "296e6bc054533fbe60d911b3087b0e71dc49d348fa99ca28c132f1096569dbfc"
+      },
+      {
+        "width": 768,
+        "height": 1152,
+        "quality": 85,
+        "path": "/assets/factions/portraits/adf-clean-w768-q85-89d965e908fc13c4.webp",
+        "bytes": 135662,
+        "sha256": "89d965e908fc13c4c6a486dd5aa4f22e73445eb8880d665a8f48f28f7aef100e",
+        "alphaSha256": "4884d93d972c6ac28dc9be505daff3b72390290063a4bfb23c0ce13700a52197"
+      },
+      {
+        "width": 1024,
+        "height": 1536,
+        "quality": 85,
+        "path": "/assets/factions/portraits/adf-clean-w1024-q85-84c82b8eebf35ad6.webp",
+        "bytes": 187144,
+        "sha256": "84c82b8eebf35ad6ea138a156a635c765555cba5abce762ef3a22a9847bb03d2",
+        "alphaSha256": "2a5841b9cab3d71889d54245a8f565c5212eeba6de8fcde34f5565577395da6e"
+      }
+    ]
   },
   "afu": {
     "path": "/assets/factions/portraits/afu-clean-c23a13d499f839f6.webp",

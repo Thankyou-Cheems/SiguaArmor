@@ -1,5 +1,7 @@
 "use client";
 
+import { characterPortraitSizes } from "./international-faction-portrait-delivery";
+
 import {
   ChevronRight,
   CircleAlert,
@@ -3261,6 +3263,8 @@ function FactionCharacterWheel({
                   <img
                     className="faction-character-wheel__portrait"
                     src={asset.foreground}
+                    srcSet={asset.foregroundSrcSet}
+                    sizes={asset.foregroundSrcSet ? characterPortraitSizes(asset.foregroundScale) : undefined}
                     alt={t("character", { name: displayName })}
                     width={1024}
                     height={1536}

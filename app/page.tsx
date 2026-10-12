@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { armorUrl } from "../lib/public-site-topology.mjs";
 import { CatalogApp } from "./CatalogApp";
+import { FACTION_VISUAL_ASSETS } from "./international-faction-visuals";
+import { characterPortraitSizes } from "./international-faction-portrait-delivery";
 
 export const metadata: Metadata = {
   alternates: { canonical: armorUrl("international") },
@@ -8,5 +10,18 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <CatalogApp siteEdition="international" />;
+  const portrait = FACTION_VISUAL_ASSETS.adf;
+  return (
+    <>
+      <link
+        rel="preload"
+        as="image"
+        href={portrait.foreground}
+        imageSrcSet={portrait.foregroundSrcSet}
+        imageSizes={characterPortraitSizes(portrait.foregroundScale)}
+        fetchPriority="high"
+      />
+      <CatalogApp siteEdition="international" />
+    </>
+  );
 }
