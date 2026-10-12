@@ -10034,10 +10034,16 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
   grid-template-columns:
     minmax(420px, 455px)
     minmax(205px, 220px)
-    minmax(340px, 500px);
+    minmax(0, 1fr);
   justify-content: start;
   column-gap: 22px;
   row-gap: 0;
+}
+
+@media (min-width: 681px) {
+  .site-shell[data-site-edition="china"] .site-footer {
+    padding-right: 196px;
+  }
 }
 
 .site-footer__identity {
@@ -10500,7 +10506,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
       "legal acknowledgements"
       "identity acknowledgements"
       "supporters supporters";
-    grid-template-columns: minmax(0, 455px) minmax(205px, 220px);
+    grid-template-columns: minmax(0, 455px) minmax(205px, 1fr);
   }
 
   .site-footer__supporters {
