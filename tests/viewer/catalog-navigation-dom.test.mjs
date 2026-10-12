@@ -28,7 +28,7 @@ test("real catalog React handlers keep the newest faction, failure and history i
       plugins: [{ name: "catalog-network-fixtures", setup(builder) {
         builder.onResolve({ filter: /^next\/link$/ }, () => ({path: "next-link", namespace: "catalog-fixture"}));
         builder.onResolve({ filter: /^\.\/(?:catalog-bootstrap|wiki-vehicle-catalog|InternationalVehicleViewer)$/ }, args => {
-          if (!args.importer.endsWith("app/CatalogApp.tsx")) return;
+          if (!args.importer.replaceAll("\\", "/").endsWith("app/CatalogApp.tsx")) return;
           return { path: args.path.slice(2), namespace: "catalog-fixture" };
         });
         builder.onLoad({ filter: /.*/, namespace: "catalog-fixture" }, args => ({ contents: mocks[args.path], loader: "js", resolveDir: root }));
