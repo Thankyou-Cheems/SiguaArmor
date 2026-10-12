@@ -14115,7 +14115,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 
 /* Keep the faction rail on the true center line. Equal side tracks prevent the
    logo and search from shifting the thumbnails toward either edge. */
-.faction-dock {
+.site-shell[data-site-edition="international"] .faction-dock {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 }
 
@@ -14301,6 +14301,38 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
     .detail-panel--viewer
     .viewer-canvas {
     height: calc(100dvh - 148px);
+  }
+}
+
+/* China uses a two-track mobile dock. Keep its logo clear of the language
+   selector, and give search its own row within the actions track. */
+@media (max-width: 680px) {
+  .site-shell[data-site-edition="china"] .faction-dock {
+    grid-template-columns: minmax(120px, 1fr) minmax(0, 1.6fr);
+    grid-template-rows: 80px 86px;
+  }
+
+  .site-shell[data-site-edition="china"]
+    .faction-selector[data-selected="true"]
+    .faction-dock {
+    height: 174px;
+  }
+
+  .site-shell[data-site-edition="china"] .faction-dock__actions {
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .site-shell[data-site-edition="china"] .global-vehicle-search--dock {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .site-shell[data-site-edition="china"] .catalog-reveal .catalog-main {
+    scroll-margin-top: 182px;
+    padding-top: 190px;
   }
 }
 
