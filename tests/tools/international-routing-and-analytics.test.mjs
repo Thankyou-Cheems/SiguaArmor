@@ -55,10 +55,11 @@ test("public update logs omit internal content-handling details", async () => {
   }
 });
 
-test("both edition logs lead with the current release and omit superseded claims", async () => {
+test("both public edition logs stay aligned and preserve ordered release history", async () => {
   const documents = await Promise.all(
     [
       path.join(ROOT, "public", "updates.json"),
+      path.join(ROOT, "public", "squad", "updates.json"),
       path.join(ROOT, "app", "updates-seed.json"),
       path.join(ROOT, "app", "updates-china-seed.json"),
     ].map(async (filePath) => {
@@ -67,7 +68,15 @@ test("both edition logs lead with the current release and omit superseded claims
       return parsed;
     }),
   );
-  const currentEntry = documents[0].entries[0];
+  assert.deepEqual(documents[0], documents[1], "public edition logs must match");
+  // Runtime logs can advance without rebuilding the static fallback seeds.
+  for (const document of documents) {
+    assert.ok(document.entries.length > 0);
+    assert.equal(document.siteUpdatedOn, document.entries[0].date);
+    for (let index = 1; index < document.entries.length; index += 1) {
+      assert.ok(document.entries[index - 1].date >= document.entries[index].date);
+    }
+  }
   const dailyReleaseOrder = [
     ["2026-09-11-protection-adaptive-budget", "2026-09-11"],
     ["2026-09-11-protection-batch-reuse", "2026-09-11"],
@@ -79,12 +88,15 @@ test("both edition logs lead with the current release and omit superseded claims
     ["2026-08-30-station-graph-closure", "2026-08-30"],
   ];
 
-  assert.equal(currentEntry.id, "2026-09-11-protection-adaptive-budget");
   for (const document of documents) {
-    assert.equal(document.siteUpdatedOn, "2026-09-11");
-    assert.deepEqual(document.entries[0], currentEntry);
+    const currentEntry = document.entries.find(
+      ({ id }) => id === "2026-09-11-protection-adaptive-budget",
+    );
+    assert.ok(currentEntry, "adaptive budget release must be retained");
     assert.deepEqual(
-      document.entries.slice(0, dailyReleaseOrder.length).map(({ id, date }) => [id, date]),
+      document.entries
+        .filter(({ id }) => dailyReleaseOrder.some(([releaseId]) => releaseId === id))
+        .map(({ id, date }) => [id, date]),
       dailyReleaseOrder,
     );
     assert.ok(
