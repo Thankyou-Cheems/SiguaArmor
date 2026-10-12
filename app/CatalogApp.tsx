@@ -1,5 +1,7 @@
 "use client";
 
+import chinaDisplayAssets from "../generated/china-display-assets.json";
+
 import { characterPortraitSizes } from "./international-faction-portrait-delivery";
 
 import {
@@ -4296,7 +4298,7 @@ function CatalogAppReady({
                 {/* eslint-disable-next-line @next/next/no-img-element -- exact untransformed pixels keep the alpha overlays registered to the official image */}
                 <img
                   className="faction-selector__base"
-                  src="/china-assets/local-preview/official/faction-impression.jpg"
+                  src={chinaDisplayAssets.base.path}
                   alt=""
                 />
               </div>
@@ -4376,7 +4378,7 @@ function CatalogAppReady({
                   {/* eslint-disable-next-line @next/next/no-img-element -- local CDN-ready brand asset preserves the complete official wordmark */}
                   <img
                     className="brand-wordmark"
-                    src="/china-assets/local-preview/official/brand/iron-rice-hall-wordmark.png"
+                    src={chinaDisplayAssets.wordmark.path}
                     alt="铁皮饭堂"
                   />
                   <HomepageUtilityNav
@@ -4462,7 +4464,7 @@ function CatalogAppReady({
                     {/* eslint-disable-next-line @next/next/no-img-element -- local CDN-ready brand asset preserves the complete official wordmark */}
                     <img
                       className="faction-dock__wordmark"
-                      src="/china-assets/local-preview/official/brand/iron-rice-hall-wordmark.png"
+                      src={chinaDisplayAssets.wordmark.path}
                       alt="铁皮饭堂"
                     />
                   </button>

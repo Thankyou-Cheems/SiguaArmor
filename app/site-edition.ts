@@ -1,3 +1,4 @@
+import chinaDisplayAssets from "../generated/china-display-assets.json";
 import type { FactionVisualAsset } from "./international-faction-visuals";
 import {
   ARMOR_EDITIONS,
@@ -56,10 +57,10 @@ export interface ChinaFactionVisualAsset extends FactionVisualAsset {
 export const CHINA_FACTION_VISUAL_ASSETS: Record<string, ChinaFactionVisualAsset> = {
   ekeqie: {
     catalogBackground:
-      "/china-assets/local-preview/official/factions/ekeqie-catalog-background.jpg",
+      chinaDisplayAssets.factions.ekeqie.background.path,
     foreground:
       "/china-assets/local-preview/official/factions/ekeqie-foreground-1e2d7a32e8b1.webp",
-    logo: "/china-assets/local-preview/official/factions/ekeqie-logo.webp",
+    logo: chinaDisplayAssets.factions.ekeqie.logo.path,
     foregroundBaselineOffset: 0,
     foregroundScale: 1,
     x: 277,
@@ -69,10 +70,10 @@ export const CHINA_FACTION_VISUAL_ASSETS: Record<string, ChinaFactionVisualAsset
   },
   agesi: {
     catalogBackground:
-      "/china-assets/local-preview/official/factions/agesi-catalog-background.jpg",
+      chinaDisplayAssets.factions.agesi.background.path,
     foreground:
       "/china-assets/local-preview/official/factions/agesi-foreground-bcfba1e8d6a1.webp",
-    logo: "/china-assets/local-preview/official/factions/agesi-logo.webp",
+    logo: chinaDisplayAssets.factions.agesi.logo.path,
     foregroundBaselineOffset: 0,
     foregroundScale: 1,
     x: 683,
@@ -82,10 +83,10 @@ export const CHINA_FACTION_VISUAL_ASSETS: Record<string, ChinaFactionVisualAsset
   },
   shenzhou: {
     catalogBackground:
-      "/china-assets/local-preview/official/factions/shenzhou-catalog-background.jpg",
+      chinaDisplayAssets.factions.shenzhou.background.path,
     foreground:
       "/china-assets/local-preview/official/factions/shenzhou-foreground-e9abb2b663a6.webp",
-    logo: "/china-assets/local-preview/official/factions/shenzhou-logo.webp",
+    logo: chinaDisplayAssets.factions.shenzhou.logo.path,
     foregroundBaselineOffset: 0,
     foregroundScale: 1,
     x: 1076,
@@ -95,10 +96,10 @@ export const CHINA_FACTION_VISUAL_ASSETS: Record<string, ChinaFactionVisualAsset
   },
   "arctic-union": {
     catalogBackground:
-      "/china-assets/local-preview/official/factions/arctic-union-catalog-background.jpg",
+      chinaDisplayAssets.factions["arctic-union"].background.path,
     foreground:
       "/china-assets/local-preview/official/factions/arctic-union-foreground-54374d3e0bc9.webp",
-    logo: "/china-assets/local-preview/official/factions/arctic-union-logo.webp",
+    logo: chinaDisplayAssets.factions["arctic-union"].logo.path,
     foregroundBaselineOffset: 0,
     foregroundScale: 1,
     x: 1508,
@@ -108,10 +109,10 @@ export const CHINA_FACTION_VISUAL_ASSETS: Record<string, ChinaFactionVisualAsset
   },
   kaweier: {
     catalogBackground:
-      "/china-assets/local-preview/official/factions/kaweier-catalog-background.jpg",
+      chinaDisplayAssets.factions.kaweier.background.path,
     foreground:
       "/china-assets/local-preview/official/factions/kaweier-foreground-9de382c0458b.webp",
-    logo: "/china-assets/local-preview/official/factions/kaweier-logo.webp",
+    logo: chinaDisplayAssets.factions.kaweier.logo.path,
     foregroundBaselineOffset: 0,
     foregroundScale: 1,
     x: 1902,

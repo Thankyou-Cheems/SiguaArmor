@@ -29,7 +29,8 @@
     "audit:vehicle-projectile-playback": "node --experimental-strip-types tools/audit-vehicle-projectile-playback.mjs",
     "audit:vehicle-loadout-closure": "node tools/audit-vehicle-loadout-closure.mjs",
     "supporters:publish": "node tools/publish-runtime-document.mjs supporters",
-    "updates:publish": "node tools/publish-runtime-document.mjs updates"
+    "updates:publish": "node tools/publish-runtime-document.mjs updates",
+    "china:display-assets": "node tools/build-china-display-assets.mjs"
   },
   "dependencies": {
     "i18next": "26.4.2",

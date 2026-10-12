@@ -1,0 +1,86 @@
+{
+  "base": {
+    "path": "/china-assets/local-preview/official/faction-impression-9074b147576a681b.jpg",
+    "legacyPath": "/china-assets/local-preview/official/faction-impression.jpg",
+    "bytes": 453653,
+    "sha256": "9074b147576a681bd251638c62db142f80a18a3957b32fd2e4f1885c749854f7"
+  },
+  "wordmark": {
+    "path": "/china-assets/local-preview/official/brand/iron-rice-hall-wordmark-4fee43d3f65930d5.png",
+    "legacyPath": "/china-assets/local-preview/official/brand/iron-rice-hall-wordmark.png",
+    "bytes": 264872,
+    "sha256": "4fee43d3f65930d56cd12203b65b0e80585ca45b17cb5646f642def45ef232ba"
+  },
+  "factions": {
+    "ekeqie": {
+      "background": {
+        "path": "/china-assets/local-preview/official/factions/ekeqie-catalog-background-d3b29ba597bc390f.jpg",
+        "legacyPath": "/china-assets/local-preview/official/factions/ekeqie-catalog-background.jpg",
+        "bytes": 399192,
+        "sha256": "d3b29ba597bc390f36f8d71c0ebe8501fae30f20aabd1f19cf4ff7e32a99f6ee"
+      },
+      "logo": {
+        "path": "/china-assets/local-preview/official/factions/ekeqie-logo-1df91296b200b5ee.webp",
+        "legacyPath": "/china-assets/local-preview/official/factions/ekeqie-logo.webp",
+        "bytes": 80506,
+        "sha256": "1df91296b200b5ee5f003aca48998099b3e46f295e6b7a250b66603e2a312926"
+      }
+    },
+    "agesi": {
+      "background": {
+        "path": "/china-assets/local-preview/official/factions/agesi-catalog-background-57d70800f15f4df5.jpg",
+        "legacyPath": "/china-assets/local-preview/official/factions/agesi-catalog-background.jpg",
+        "bytes": 456401,
+        "sha256": "57d70800f15f4df5be5f9efae9681f32b6685ad9794ad983d17565a18586ad8d"
+      },
+      "logo": {
+        "path": "/china-assets/local-preview/official/factions/agesi-logo-6ce1a9e72ffaf7a7.webp",
+        "legacyPath": "/china-assets/local-preview/official/factions/agesi-logo.webp",
+        "bytes": 82408,
+        "sha256": "6ce1a9e72ffaf7a723f94e1a81d5fd2f2ac326bf109d2bac872f40a510d3b4a5"
+      }
+    },
+    "shenzhou": {
+      "background": {
+        "path": "/china-assets/local-preview/official/factions/shenzhou-catalog-background-2f940595d382726e.jpg",
+        "legacyPath": "/china-assets/local-preview/official/factions/shenzhou-catalog-background.jpg",
+        "bytes": 292869,
+        "sha256": "2f940595d382726e08d83c16fe72d9c50782fdc63cad16200b8e272dd80ca4be"
+      },
+      "logo": {
+        "path": "/china-assets/local-preview/official/factions/shenzhou-logo-18705ebf4076f33b.webp",
+        "legacyPath": "/china-assets/local-preview/official/factions/shenzhou-logo.webp",
+        "bytes": 78684,
+        "sha256": "18705ebf4076f33b6b2673851479992d121c338fc1eadfbef43ada74f474b490"
+      }
+    },
+    "arctic-union": {
+      "background": {
+        "path": "/china-assets/local-preview/official/factions/arctic-union-catalog-background-b732e29bbf0c38b1.jpg",
+        "legacyPath": "/china-assets/local-preview/official/factions/arctic-union-catalog-background.jpg",
+        "bytes": 281039,
+        "sha256": "b732e29bbf0c38b1dd47e1673d695498b4d1e43b9b8f8cc57178746777ab9993"
+      },
+      "logo": {
+        "path": "/china-assets/local-preview/official/factions/arctic-union-logo-3670263fa384e090.webp",
+        "legacyPath": "/china-assets/local-preview/official/factions/arctic-union-logo.webp",
+        "bytes": 64000,
+        "sha256": "3670263fa384e090fa62bff3c9a3452ffc4d5cdc816e3e6063b3d0cf76297e00"
+      }
+    },
+    "kaweier": {
+      "background": {
+        "path": "/china-assets/local-preview/official/factions/kaweier-catalog-background-ea9442f130bc1920.jpg",
+        "legacyPath": "/china-assets/local-preview/official/factions/kaweier-catalog-background.jpg",
+        "bytes": 225809,
+        "sha256": "ea9442f130bc1920df298718a5dc5c00e3f0c56a0d9e14f2f9763085da33588f"
+      },
+      "logo": {
+        "path": "/china-assets/local-preview/official/factions/kaweier-logo-3beaa3e37a43a97e.webp",
+        "legacyPath": "/china-assets/local-preview/official/factions/kaweier-logo.webp",
+        "bytes": 77754,
+        "sha256": "3beaa3e37a43a97e4c89c52a11eb65806e167a85cc07903d5bc0f9aa062a1c9e"
+      }
+    }
+  }
+}

@@ -62,6 +62,10 @@ The static fallback serves only existing public asset routes. It never reads arb
 
 Local generated candidates and build archives belong in ignored `outputs/`. Routine use overwrites `deployment/`, `deployment.tar.gz` and `deployment-result.json`; unique research evidence or worktree backups belong in private custody rather than accumulating beside release candidates.
 
+## Display asset versions
+
+China display images use content-fingerprinted URLs under the existing immutable asset route. After an approved source image changes, run `npm run china:display-assets` and commit the generated manifest and new fingerprinted copies together. The command copies bytes without resizing or re-encoding, and leaves earlier URLs available for already-open pages. The asset regression checks verify the source, copy and URL digest together. No CDN or security configuration change is required.
+
 ## Wiki and runtime content
 
 Shared data and large assets stay in private SiguaWiki; follow its `docs/publishing.md`. Publish named resources first, then their entry documents and matching compression variants. Keep old data paths available when changing a format used by existing clients. Verify the model, material and collision inputs as a compatible set. Only a corresponding product-code change requires an Armor build.
