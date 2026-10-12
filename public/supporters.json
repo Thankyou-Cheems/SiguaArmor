@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-26T09:57:51.327Z",
+  "updatedAt": "2026-09-10T08:07:05.786Z",
   "entries": [
     {
       "id": "feixing-acv",
-      "name": "@飞行ACV",
+      "name": "飞行ACV",
       "kind": "friend",
       "nameSegments": [
         {
-          "text": "@飞行",
+          "text": "飞行",
           "color": "#ffffff"
         },
         {
@@ -16,15 +16,16 @@
           "color": "#e1c89b"
         }
       ],
-      "url": "https://space.bilibili.com/11219102"
+      "url": "https://space.bilibili.com/11219102",
+      "note": "🍄🍄🍄🍄"
     },
     {
       "id": "predent-jiazhuang",
-      "name": "@Predent假装",
+      "name": "Predent假装",
       "kind": "sponsor",
       "nameSegments": [
         {
-          "text": "@Predent",
+          "text": "Predent",
           "color": "#ffffff"
         },
         {
@@ -32,7 +33,91 @@
           "color": "#e1c89b"
         }
       ],
-      "url": "https://space.bilibili.com/678833642"
+      "url": "https://space.bilibili.com/678833642",
+      "note": "更新Squad的锋芒"
+    },
+    {
+      "id": "mhc-mafty",
+      "name": "麦克西Mafty",
+      "kind": "friend",
+      "nameSegments": [
+        {
+          "text": "麦克西",
+          "color": "#ffffff"
+        },
+        {
+          "text": "Mafty",
+          "color": "#e1c89b"
+        }
+      ],
+      "url": "https://space.bilibili.com/26658109",
+      "note": "🐊混乱将随后而至🐊"
+    },
+    {
+      "id": "hq-blank",
+      "name": "🚩Blanl_Null空白",
+      "kind": "sponsor",
+      "nameSegments": [
+        {
+          "text": "🚩Blanl_Null",
+          "color": "#ffffff"
+        },
+        {
+          "text": "空白",
+          "color": "#e1c89b"
+        }
+      ],
+      "url": "https://steamcommunity.com/profiles/76561198319556799/",
+      "note": "不会反绕后的反绕后"
+    },
+    {
+      "id": "supporter-skyrk",
+      "name": "归于涟漪SkyrK",
+      "kind": "sponsor",
+      "nameSegments": [
+        {
+          "text": "归于涟漪",
+          "color": "#ffffff"
+        },
+        {
+          "text": "SkyrK",
+          "color": "#e1c89b"
+        }
+      ],
+      "url": "https://space.bilibili.com/395285820",
+      "note": "关注涟漪谢谢喵"
+    },
+    {
+      "id": "supporter-mt83p0yr",
+      "name": "哦吼吼",
+      "kind": "sponsor",
+      "nameSegments": [
+        {
+          "text": "哦",
+          "color": "#ffffff"
+        },
+        {
+          "text": "吼吼",
+          "color": "#e1c89b"
+        }
+      ],
+      "note": "铁皮真好玩"
+    },
+    {
+      "id": "supporter-mtv8tiu1",
+      "name": "烦高",
+      "kind": "sponsor",
+      "nameSegments": [
+        {
+          "text": "烦",
+          "color": "#ff00ea"
+        },
+        {
+          "text": "高",
+          "color": "#ae00ff"
+        }
+      ],
+      "note": "法克猫猫头"
     }
   ]
 }
