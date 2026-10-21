@@ -1,3 +1,5 @@
+import { coordinateAdapter } from "./shared/coordinate-basis.js";
+const ueToGltf = coordinateAdapter("ue-cm", "gltf-m");
 import type {
   ReferenceTurret,
   ReferenceTurretArticulation,
@@ -793,8 +795,8 @@ function driverKinematics(
   if (!axisUe) return null;
   // UE centimetres X-forward/Y-right/Z-up -> glTF metres X-forward/Y-up/Z-right.
   return {
-    pivot: [translation.x / 100, translation.z / 100, translation.y / 100],
-    axis: [axisUe[0], axisUe[2], axisUe[1]],
+    pivot: ueToGltf.position([translation.x, translation.y, translation.z]),
+    axis: ueToGltf.direction(axisUe),
   };
 }
 

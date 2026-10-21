@@ -1,4 +1,7 @@
 import * as THREE from "three";
+import { coordinateAdapter } from "./shared/coordinate-basis.js";
+const ueToGltf = coordinateAdapter("ue-cm", "gltf-m");
+const gltfToUe = coordinateAdapter("gltf-m", "ue-cm");
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
@@ -41,19 +44,21 @@ export interface VehicleProjectileImpactTrace {
 }
 
 function threePointFromUnrealCentimetres(value: ProjectileVector3) {
-  return new THREE.Vector3(value.x / 100, value.z / 100, value.y / 100);
+  return new THREE.Vector3(...ueToGltf.position([value.x, value.y, value.z]));
 }
 
 function threeDirectionFromUnreal(value: ProjectileVector3) {
-  return new THREE.Vector3(value.x, value.z, value.y).normalize();
+  return new THREE.Vector3(...ueToGltf.direction([value.x, value.y, value.z])).normalize();
 }
 
 function unrealCentimetresFromThreePoint(value: THREE.Vector3) {
-  return { x: value.x * 100, y: value.z * 100, z: value.y * 100 };
+  const [x, y, z] = gltfToUe.position([value.x, value.y, value.z]);
+  return { x, y, z };
 }
 
 function unrealDirectionFromThree(value: THREE.Vector3) {
-  return { x: value.x, y: value.z, z: value.y };
+  const [x, y, z] = gltfToUe.direction([value.x, value.y, value.z]);
+  return { x, y, z };
 }
 
 export function resolveVehicleGuidanceAimPose(
@@ -71,12 +76,6 @@ export function resolveVehicleGuidanceAimPose(
 export function vehicleProjectileAnchorMatrixFromUnrealFrame(
   frame: StationGraphTransform,
 ) {
-  const unrealToGltf = new THREE.Matrix4().set(
-    1, 0, 0, 0,
-    0, 0, 1, 0,
-    0, 1, 0, 0,
-    0, 0, 0, 1,
-  );
   const quaternion = new THREE.Quaternion(
     frame.rotationQuaternion.x,
     frame.rotationQuaternion.y,
@@ -85,9 +84,9 @@ export function vehicleProjectileAnchorMatrixFromUnrealFrame(
   ).normalize();
   const unrealFrame = new THREE.Matrix4().compose(
     new THREE.Vector3(
-      frame.translationCm.x / 100,
-      frame.translationCm.y / 100,
-      frame.translationCm.z / 100,
+      frame.translationCm.x,
+      frame.translationCm.y,
+      frame.translationCm.z,
     ),
     quaternion,
     new THREE.Vector3(
@@ -96,7 +95,7 @@ export function vehicleProjectileAnchorMatrixFromUnrealFrame(
       frame.scale3D.z,
     ),
   );
-  return unrealToGltf.clone().multiply(unrealFrame).multiply(unrealToGltf);
+  return new THREE.Matrix4().fromArray(ueToGltf.affine(unrealFrame.elements));
 }
 
 export function resolveVehicleProjectileLaunchPose({

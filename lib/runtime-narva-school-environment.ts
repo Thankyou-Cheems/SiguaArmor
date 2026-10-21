@@ -1,5 +1,8 @@
 import * as THREE from "three";
+import { coordinateAdapter } from "./shared/coordinate-basis.js";
 import { wikiMapUrl } from "./wiki-source.ts";
+
+const sourceMetersToGltf = coordinateAdapter("ue-m", "gltf-m");
 
 type Vec3 = [number, number, number];
 type Resource = { url: string; bytes: number };
@@ -77,8 +80,6 @@ export function planNarvaSchoolEnvironment(scene: SchoolScene, display: FixedDis
 
 // Armor uses metres and [source X, source Z, source Y], unlike the Z-up
 // map viewer. Reflect geometry AND conjugate placements exactly once.
-const sourceToViewer = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
-
 export function narvaPlacementMatrix(placement: Placement, anchor: Vec3) {
   const transform = placement.sourceTransform;
   const matrix = new THREE.Matrix4().compose(
@@ -86,7 +87,7 @@ export function narvaPlacementMatrix(placement: Placement, anchor: Vec3) {
     new THREE.Quaternion(...transform.rotationQuaternion).normalize(),
     new THREE.Vector3(...transform.scale3d),
   );
-  return matrix.premultiply(sourceToViewer).multiply(sourceToViewer);
+  return new THREE.Matrix4().fromArray(sourceMetersToGltf.affine(matrix.elements));
 }
 
 const terrainPalette: Record<string, number> = {

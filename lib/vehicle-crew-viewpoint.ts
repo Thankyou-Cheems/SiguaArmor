@@ -1,3 +1,5 @@
+import { coordinateAdapter } from "./shared/coordinate-basis.js";
+const ueToGltf = coordinateAdapter("ue-cm", "gltf-m");
 import type { RuntimeCrewSeatView } from "./vehicle-crew-seat-runtime";
 
 export type CrewViewVector3 = [number, number, number];
@@ -49,7 +51,7 @@ function rotateUeVector(
 }
 
 function ueVectorToGltf([x, y, z]: CrewViewVector3): CrewViewVector3 {
-  return [x, z, y];
+  return ueToGltf.direction([x, y, z]);
 }
 
 export function crewViewBasePose(
@@ -67,11 +69,7 @@ export function crewViewBasePose(
     throw new Error("Crew viewpoint vehicle-local frame is unavailable");
   }
   const translation = value.translationCm;
-  const position: CrewViewVector3 = [
-    translation.x / 100,
-    translation.z / 100,
-    translation.y / 100,
-  ];
+  const position: CrewViewVector3 = ueToGltf.position([translation.x, translation.y, translation.z]);
   if (!finiteVector(position)) {
     throw new Error("Crew viewpoint position is invalid");
   }

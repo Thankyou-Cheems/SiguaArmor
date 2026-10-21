@@ -30,7 +30,9 @@
     "audit:vehicle-loadout-closure": "node tools/audit-vehicle-loadout-closure.mjs",
     "supporters:publish": "node tools/publish-runtime-document.mjs supporters",
     "updates:publish": "node tools/publish-runtime-document.mjs updates",
-    "china:display-assets": "node tools/build-china-display-assets.mjs"
+    "china:display-assets": "node tools/build-china-display-assets.mjs",
+    "check:coordinate-basis": "node tools/sync-coordinate-basis.mjs",
+    "sync:coordinate-basis": "node tools/sync-coordinate-basis.mjs"
   },
   "dependencies": {
     "i18next": "26.4.2",
