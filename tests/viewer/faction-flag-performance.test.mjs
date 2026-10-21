@@ -18,6 +18,7 @@ const globalStyles = await readFile(`${root}/app/globals.css`, "utf8");
 
 test("international dock routes small raster flags through SiguaWiki without local copies", async () => {
   assert.equal(Object.keys(assets).length, 17);
+  assert.equal(assets.imf, "/assets/factions/imf_flag_display-cd2924e917803092.webp");
   assert.match(
     visualsSource,
     /import factionFlagAssets from "\.\.\/generated\/international-faction-flag-assets\.json"/u,
