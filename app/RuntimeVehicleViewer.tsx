@@ -9036,6 +9036,8 @@ function RuntimeVehicleViewerScene({
     void loadNarvaSchoolEnvironment().then((data) => {
       if (cancelled) return;
       const environment = createNarvaSchoolEnvironment(data);
+      if (environment.userData.requiresLocalClipping) renderer.localClippingEnabled = true;
+      resources.add(() => environment.userData.disposeResourceView?.());
       schoolEnvironment = environment;
       environmentRoot.add(environment);
       applyBackground();

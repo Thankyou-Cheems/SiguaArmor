@@ -1,8 +1,7 @@
 import * as THREE from "three";
-import { coordinateAdapter } from "./shared/coordinate-basis.js";
 import { wikiMapUrl } from "./wiki-source.ts";
+import {createSchoolResourceEnvironment, schoolSceneryMaterial, schoolWorldMatrix, type PreparedSchoolDisplay} from './runtime-school-resource-environment.ts';
 
-const sourceMetersToGltf = coordinateAdapter("ue-m", "gltf-m");
 
 type Vec3 = [number, number, number];
 type Resource = { url: string; bytes: number };
@@ -81,13 +80,7 @@ export function planNarvaSchoolEnvironment(scene: SchoolScene, display: FixedDis
 // Armor uses metres and [source X, source Z, source Y], unlike the Z-up
 // map viewer. Reflect geometry AND conjugate placements exactly once.
 export function narvaPlacementMatrix(placement: Placement, anchor: Vec3) {
-  const transform = placement.sourceTransform;
-  const matrix = new THREE.Matrix4().compose(
-    new THREE.Vector3(...transform.translationMeters).sub(new THREE.Vector3(...anchor)),
-    new THREE.Quaternion(...transform.rotationQuaternion).normalize(),
-    new THREE.Vector3(...transform.scale3d),
-  );
-  return new THREE.Matrix4().fromArray(sourceMetersToGltf.affine(matrix.elements));
+  return schoolWorldMatrix(placement.sourceTransform, anchor);
 }
 
 const terrainPalette: Record<string, number> = {
@@ -217,28 +210,19 @@ function geometryFor(data: DecodedMesh, sourceFrame: boolean) {
   return geometry;
 }
 
-export function createNarvaSchoolEnvironment(data: EnvironmentData) {
+export function createNarvaSchoolEnvironment(data: EnvironmentData | PreparedSchoolDisplay) {
+  if ('kind' in data) return createSchoolResourceEnvironment(data);
+  return createLegacySchoolEnvironment(data);
+}
+
+function createLegacySchoolEnvironment(data: EnvironmentData) {
   const root = new THREE.Group();
   root.name = "narva-school-fixed-display";
   root.userData = { sceneId: data.plan.id, cameraDistanceLod: false, collisionAuthority: false,
     anchorSourceMeters: data.terrain.anchorSourceMeters, placementCount: data.plan.placementCount,
     resourceBytes: data.plan.resourceBytes };
-  const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0,
-    flatShading: true, side: THREE.DoubleSide });
-  // Grade only scenery after lighting; vehicle materials and shared colors stay intact.
-  const inspectionTone = { value: 1 };
+  const {material, inspectionTone} = schoolSceneryMaterial();
   root.userData.inspectionTone = inspectionTone;
-  material.onBeforeCompile = (shader) => {
-    shader.uniforms.schoolInspectionTone = inspectionTone;
-    shader.fragmentShader = `uniform float schoolInspectionTone;\n${shader.fragmentShader}`
-      .replace("#include <opaque_fragment>", `
-        float schoolLuminance = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
-        vec3 schoolMuted = mix(vec3(schoolLuminance), outgoingLight, 0.45) * 0.30 + vec3(0.012);
-        outgoingLight = mix(outgoingLight, schoolMuted, schoolInspectionTone);
-        #include <opaque_fragment>
-      `);
-  };
-  material.customProgramCacheKey = () => "narva-school-inspection-tone-v1";
   const terrain = new THREE.Mesh(geometryFor(data.terrain, false), material);
   terrain.name = "narva-school-source-terrain";
   root.add(terrain);
