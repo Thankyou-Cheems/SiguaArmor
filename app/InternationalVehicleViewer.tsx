@@ -6,7 +6,7 @@ import {
   type RuntimeVehiclePreview,
 } from "./runtime-probe-preview-data";
 import { RuntimeVehicleViewer } from "./RuntimeVehicleViewer";
-import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
+import { previewSelectionKey, vehicleExteriorCapability, type ExteriorCapability } from "./vehicle-preview-policy";
 import type { ReferenceData } from "./catalog-types";
 import type { SiteEdition } from "./site-edition";
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
@@ -62,10 +62,16 @@ export default function InternationalVehicleViewer({
   onNavigationStateChange,
 }: InternationalVehicleViewerProps) {
   const requestedMode = initialMode(navigationState);
-  const previewIssue = officialVehiclePreviewIssue(rawName);
+  const selectionKey = previewSelectionKey({ edition: siteEdition, cardId, rawName, runtimeVehicleRef, visualArtifactRef });
+  const [resolved, setResolved] = useState<{ key: string; preview: RuntimeVehiclePreview | null; error: string | null } | null>(null);
+  const [exterior, setExterior] = useState<{ key: string; capability: ExteriorCapability } | null>(null);
+  const preview = resolved?.key === selectionKey ? resolved.preview : null;
+  const previewLoadError = resolved?.key === selectionKey ? resolved.error : null;
+  const capability = vehicleExteriorCapability(Boolean(runtimeVehicleRef && visualArtifactRef),
+    previewLoadError ? { state: "unavailable", message: previewLoadError }
+      : exterior?.key === selectionKey ? exterior.capability : { state: "pending" });
+  const previewIssue = capability.state === "unavailable" ? capability : null;
   const mode = previewIssue && requestedMode === "exterior" ? "armor" : requestedMode;
-  const [preview, setPreview] = useState<RuntimeVehiclePreview | null>(null);
-  const [previewLoadError, setPreviewLoadError] = useState<string | null>(null);
   const [textureStreaming, setTextureStreaming] = useState<TextureStreamingState | null>(null);
   const {
     cardId: attackSourceCardId,
@@ -99,8 +105,8 @@ export default function InternationalVehicleViewer({
 
   useEffect(() => {
     let cancelled = false;
-    setPreview(null);
-    setPreviewLoadError(null);
+    setResolved(null);
+    setTextureStreaming(null);
     void runtimePreviewForCatalogBinding(
       cardId,
       rawName,
@@ -110,23 +116,17 @@ export default function InternationalVehicleViewer({
     )
       .then((nextPreview) => {
         if (cancelled) return;
-        setPreview(nextPreview);
-        if (!nextPreview) {
-          setPreviewLoadError(
-            rawName
-              ? `尚未找到 ${rawName} 的可用运行时视觉包。`
-              : "当前卡片缺少变体身份。",
-          );
-        }
+        setResolved({ key: selectionKey, preview: nextPreview, error: nextPreview ? null
+          : rawName ? `尚未找到 ${rawName} 的可用运行时视觉包。` : "当前卡片缺少变体身份。" });
       })
       .catch((error: unknown) => {
         if (cancelled) return;
-        setPreviewLoadError(error instanceof Error ? error.message : "运行时视觉包加载失败。");
+        setResolved({ key: selectionKey, preview: null, error: error instanceof Error ? error.message : "运行时视觉包加载失败。" });
       });
     return () => {
       cancelled = true;
     };
-  }, [cardId, rawName, runtimeVehicleRef, siteEdition, visualArtifactRef]);
+  }, [cardId, rawName, runtimeVehicleRef, selectionKey, siteEdition, visualArtifactRef]);
 
   useEffect(() => {
     if (!previewIssue || requestedMode !== "exterior") return;
@@ -165,8 +165,8 @@ export default function InternationalVehicleViewer({
       data-runtime-vehicle-ref={runtimeVehicleRef ?? undefined}
       data-visual-artifact-ref={visualArtifactRef ?? undefined}
       data-hit-access={preview.hit?.status ?? preview.hitAvailability?.status ?? "absent"}
-      data-official-preview-issue={previewIssue?.code}
-      data-has-texture-variants={!previewIssue && textureVariants.length > 1 ? "true" : undefined}
+      data-exterior-capability={capability.state}
+      data-has-texture-variants={textureVariants.length > 1 ? "true" : undefined}
       data-texture-streaming={textureStreaming ? "true" : "false"}
     >
       <div className="international-vehicle-viewer__stage">
@@ -185,6 +185,7 @@ export default function InternationalVehicleViewer({
           </div>
         ) : null}
         <RuntimeVehicleViewer
+          key={selectionKey}
           preview={preview}
           showChrome={false}
           mode={mode}
@@ -197,8 +198,9 @@ export default function InternationalVehicleViewer({
           navigationState={navigationState}
           onNavigationStateChange={onNavigationStateChange}
           onExteriorStreamingChange={setTextureStreaming}
+          onExteriorCapabilityChange={(next) => setExterior({ key: selectionKey, capability: next })}
         />
-        {!previewIssue && mode === "exterior" && textureVariants.length > 1 && onTextureVariantChange ? (
+        {(mode === "exterior" || previewIssue) && textureVariants.length > 1 && onTextureVariantChange ? (
           <nav className="viewer-texture-variant-switcher" aria-label="选择外观">
             <span>选择外观</span>
             <div role="group" aria-label={`${displayName}外观选择`}>

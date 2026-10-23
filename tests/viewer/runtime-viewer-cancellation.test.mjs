@@ -5,7 +5,8 @@ import vm from "node:vm";
 import ts from "typescript";
 import * as THREE from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
-import { disposeRuntimeScene, retainCachedRuntimeSceneResources } from "../../lib/runtime-scene-resources.ts";
+import { disposeRuntimeScene } from "../../lib/runtime-scene-resources.ts";
+import { validateRuntimeExteriorModel } from "../../lib/runtime-exterior-model.ts";
 import { createRuntimeSkeletalPoseController } from "../../lib/runtime-skeletal-pose.ts";
 import { createViewerCleanup, VIEWER_CONTEXT_LOST } from "../fixtures/viewer-cleanup-source.mjs";
 
@@ -47,6 +48,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
   const disposed = [];
   const states = [];
   const fatalErrors = [];
+  const capabilities = [], fallbacks = [];
   const calls = { scores: 0, projection: 0, clones: 0 };
   const loadAsync = (url) => {
     const request = deferred();
@@ -68,7 +70,10 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
     modeRef: { current: "armor" }, renderer: { capabilities: { getMaxAnisotropy: () => 1 } },
     analysisLoader: { loadAsync }, sourceAlphaLoader: { loadAsync }, sourceAlphaAssetUrls: new Set(),
     exteriorSources: new Map(), sourceGeometryScores: new Map(), analysisLoaded: 0,
-    analysisVisualReady: false, exteriorReady: false, exteriorPromise: null, exteriorLoaded: 0,
+    analysisVisualReady: false, exteriorReady: false, exteriorPromise: null, exteriorLoaded: 0, exteriorFailure: null,
+    publishExteriorCapability(value) { capabilities.push(value); }, skeletalPoseBindings: new Set(),
+    updateSkeletalPoseDataset() {}, physicalPoseEnabledRef: { current: false }, validateRuntimeExteriorModel,
+    activateAssetModeRef: { current(mode) { fallbacks.push(mode); } },
     hitLoadSucceeded: false, hitSettled: true, fittedSource: null,
     runtimeTurretStationsRef: { current: [] }, preview: { generatedClass: null },
     analysisVisualDepthGroup: new THREE.Group(), analysisVisualGroup: new THREE.Group(), visualGroup: new THREE.Group(),
@@ -108,7 +113,7 @@ function fixture({ count = 12, concurrency = 3 } = {}) {
       await flush();
     }
   };
-  return { context, started, requests, sources, disposed, states, fatalErrors, calls, resolve, drain };
+  return { context, started, requests, sources, disposed, states, fatalErrors, capabilities, fallbacks, calls, resolve, drain };
 }
 
 for (const reason of ["close", "replacement", "context loss"]) {
@@ -243,192 +248,60 @@ test("a visual-only preview never starts an unconsumed radial query promise", as
 });
 
 
-test("an exterior failure remains visible when sibling GLTFs succeed or reject late", async () => {
-  const f = fixture();
-  f.context.modeRef.current = "exterior";
-  f.context.loadExteriorAssets();
-  const attempt = f.context.exteriorPromise;
-  f.requests.get(f.started[0]).reject(new Error("exterior GLTF unavailable"));
-  await attempt;
-  assert.equal(f.states.at(-1).kind, "error");
-  f.resolve(f.started[1]);
-  f.requests.get(f.started[2]).reject(new Error("late exterior failure"));
-  await flush();
-  assert.equal(f.started.length, 3);
-  assert.equal(f.states.at(-1).kind, "error", "late success must not replace error with loading");
-  assert.equal(f.context.visualGroup.children.length, 0);
-  assert.deepEqual(f.disposed, [f.started[1]]);
+
+test("exterior-only failure is terminal, preserves hit ownership and ignores late siblings", async () => {
+  const f = fixture(); f.context.modeRef.current = "exterior";
+  f.context.loadExteriorAssets(); const attempt = f.context.exteriorPromise;
+  f.requests.get(f.started[0]).reject(new Error("")); await attempt;
+  assert.equal(f.capabilities.at(-1).state, "unavailable");
+  assert.ok(f.capabilities.at(-1).message.length > 0);
+  assert.deepEqual(f.fallbacks, ["armor"]);
+  assert.equal(f.context.hitLoadController.signal.aborted, false);
+  assert.equal(f.context.cancelled, false); assert.equal(f.fatalErrors.length, 0);
+  f.resolve(f.started[1]); f.requests.get(f.started[2]).reject(new Error("late")); await flush();
+  const starts=f.started.length; f.context.loadExteriorAssets(); await flush();
+  assert.equal(f.started.length, starts); assert.equal(f.capabilities.length, 1);
+  assert.equal(f.context.exteriorOccurrences.size, 0);
 });
 
-test("retry after a partially completed exterior failure loads only missing sources without duplicate occurrences", async () => {
-  const f = fixture();
-  f.context.modeRef.current = "exterior";
-  f.context.loadExteriorAssets();
-  const firstAttempt = f.context.exteriorPromise;
-  const firstUrl = f.started[0];
-  f.resolve(firstUrl);
-  await flush();
-  assert.equal(f.context.visualGroup.children.length, 1);
-  const failedUrl = f.started[1];
-  f.requests.get(failedUrl).reject(new Error("first attempt failed"));
-  await firstAttempt;
-  for (const url of f.started.slice(2)) f.requests.get(url).reject(new Error("late failure"));
-  await flush();
-  assert.equal(f.states.at(-1).kind, "error");
-  assert.equal(f.context.exteriorPromise, null);
-  f.context.loadExteriorAssets();
-  const retry = f.context.exteriorPromise;
-  await f.drain();
-  await retry;
-  assert.equal(f.started.filter((url) => url === firstUrl).length, 1);
-  assert.equal(f.context.visualGroup.children.length, 12);
-  assert.equal(new Set(f.context.visualGroup.children.map((child) => child.userData.stableOccurrenceId)).size, 12);
-  assert.equal(f.context.exteriorLoaded, 12);
-  assert.equal(f.context.exteriorReady, true);
-  assert.equal(f.states.at(-1).kind, "ready");
+test("partial registration failure removes exterior pose bindings while preserving other bindings", async () => {
+  const f=fixture({count:1,concurrency:1}); f.context.modeRef.current="exterior";
+  f.context.renderPlacements.push({...f.context.renderPlacements[0],stableOccurrenceId:"second"});
+  const analysis={model:new THREE.Group()}; f.context.skeletalPoseBindings.add(analysis);
+  let calls=0; f.context.registerSkeletalPose=(model)=>{f.context.skeletalPoseBindings.add({model});if(++calls===2)throw Error("registration probe");};
+  f.context.loadExteriorAssets(); await f.drain(); await f.context.exteriorPromise;
+  assert.equal(f.capabilities.at(-1).state,"unavailable");
+  assert.deepEqual([...f.context.skeletalPoseBindings],[analysis]);
+  assert.equal(f.context.exteriorOccurrences.size,0); assert.equal(f.context.visualGroup.visible,false);
+  assert.equal(f.context.hitLoadController.signal.aborted,false);
+  assert.equal(f.fatalErrors.length,0); f.context.cleanup();
 });
 
-test("a superseded exterior attempt cannot attach late sources during its retry", async () => {
-  const f = fixture();
-  f.context.modeRef.current = "exterior";
-  f.context.loadExteriorAssets();
-  const attempt = f.context.exteriorPromise;
-  const oldRequests = [...f.requests.values()];
-  oldRequests[0].reject(new Error("retryable failure"));
-  await attempt;
-  f.context.loadExteriorAssets();
-  const retry = f.context.exteriorPromise;
-  const stale = new THREE.Group();
-  stale.name = "superseded source";
-  oldRequests[1].resolve({ scene: stale });
-  oldRequests[2].reject(new Error("late old failure"));
-  await flush();
-  assert.equal(f.context.exteriorSources.size, 0);
-  assert.equal(f.context.visualGroup.children.length, 0);
-  assert.deepEqual(f.disposed, [stale.name]);
-  await f.drain();
-  await retry;
-  assert.equal(f.context.visualGroup.children.length, 12);
-  assert.equal(f.context.exteriorLoaded, 12);
-  assert.equal(f.states.at(-1).kind, "ready");
+test("missing texture rejects exterior even when the main glTF resolves", async () => {
+  const f=fixture({count:1,concurrency:1}); f.context.modeRef.current="exterior";
+  f.context.GLTFLoader=class { constructor(manager){manager.onError("controlled-required-texture");} setMeshoptDecoder(){} loadAsync(url){return f.requests.get(url)?.promise??(()=>{const request=deferred();f.started.push(url);f.requests.set(url,request);return request.promise;})();} };
+  f.context.loadExteriorAssets(); await f.drain(); await f.context.exteriorPromise;
+  assert.equal(f.capabilities.at(-1).state,"unavailable");
+  assert.match(f.capabilities.at(-1).message,/controlled-required-texture/);
+  assert.equal(f.context.exteriorReady,false); assert.equal(f.fatalErrors.length,0);
 });
 
-
-function addSecondPlacement(fixture) {
-  fixture.context.renderPlacements.push({
-    ...fixture.context.renderPlacements[0], stableOccurrenceId: "second", name: "second",
-  });
-}
-
-test("partial synchronous exterior assembly fails locally instead of admitting a half-source on retry", async () => {
-  const f = fixture({ count: 1, concurrency: 1 });
-  f.context.modeRef.current = "exterior";
-  addSecondPlacement(f);
-  let registrations = 0;
-  f.context.registerSkeletalPose = () => { if (++registrations === 2) throw new Error("controlled skeletal registration failure"); };
-  f.context.loadExteriorAssets();
-  const first = f.context.exteriorPromise;
-  await f.drain();
-  await first;
-  assert.equal(f.fatalErrors.length, 1);
-  assert.match(f.fatalErrors[0].message, /controlled skeletal registration failure/u);
-  assert.equal(f.context.cancelled, true);
-  assert.equal(f.context.discardRenderer, true);
-  assert.equal(f.context.exteriorSources.size, 0, "only complete sources may be reused");
-  assert.equal(f.context.exteriorReady, false);
-  assert.ok(f.states.every((state) => state.kind !== "ready"));
-  f.context.loadExteriorAssets();
-  assert.equal(f.started.length, 1, "the failed viewer can only be rebuilt explicitly");
-
-  const rebuilt = fixture({ count: 1, concurrency: 1 });
-  rebuilt.context.modeRef.current = "exterior";
-  addSecondPlacement(rebuilt);
-  rebuilt.context.loadExteriorAssets();
-  await rebuilt.drain();
-  await rebuilt.context.exteriorPromise;
-  assert.equal(rebuilt.context.visualGroup.children.length, 2);
-  assert.equal(rebuilt.context.exteriorReady, true);
-  assert.equal(rebuilt.states.at(-1).kind, "ready");
+test("only complete exterior assets become available", async () => {
+  const f=fixture({count:2,concurrency:1});f.context.modeRef.current="exterior";
+  f.context.loadExteriorAssets(); assert.equal(f.capabilities.length,0);
+  f.resolve(f.started[0]);await flush();assert.equal(f.capabilities.length,0);
+  await f.drain();await f.context.exteriorPromise;
+  assert.equal(f.capabilities.at(-1).state,"available");assert.equal(f.context.exteriorOccurrences.size,2);
 });
 
-test("synchronous exterior failure cleans pending resources once, retains cached resources and ignores late callbacks", async () => {
-  const f = fixture({ count: 3, concurrency: 3 });
-  const other = fixture({ count: 1, concurrency: 1 });
-  f.context.modeRef.current = other.context.modeRef.current = "exterior";
-  const cached = new THREE.Group();
-  const cachedMesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
-  cached.add(cachedMesh);
-  retainCachedRuntimeSceneResources(cached);
-  other.context.visualGroup.add(cachedMesh.clone());
-  let cachedDisposals = 0, ownDisposals = 0, skeletonDisposals = 0;
-  cachedMesh.geometry.addEventListener("dispose", () => { cachedDisposals++; });
-  cachedMesh.material.addEventListener("dispose", () => { cachedDisposals++; });
-  f.context.registerSkeletalPose = () => { throw new Error("assembly probe"); };
-  f.context.loadExteriorAssets();
-  const attempt = f.context.exteriorPromise;
-  const oldRequests = [...f.requests.values()];
-  f.resolve(f.started[0]);
-  const source = f.sources.get(f.started[0]);
-  source.children[0].geometry.addEventListener("dispose", () => { ownDisposals++; });
-  source.children[0].material.addEventListener("dispose", () => { ownDisposals++; });
-  source.add(cachedMesh.clone());
-  const bone = new THREE.Bone();
-  const skinned = new THREE.SkinnedMesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial());
-  skinned.add(bone);
-  skinned.bind(new THREE.Skeleton([bone]));
-  source.add(skinned);
-  const originalClone = f.context.cloneSkeleton;
-  f.context.cloneSkeleton = (root) => {
-    const cloned = originalClone(root);
-    cloned.traverse((object) => {
-      if (object instanceof THREE.SkinnedMesh) object.skeleton.dispose = () => { skeletonDisposals++; };
-    });
-    return cloned;
-  };
-  await flush();
-  assert.equal(f.fatalErrors.length, 1);
-  assert.equal(ownDisposals, 2);
-  assert.equal(skeletonDisposals, 1, "a clone that fails before occurrence attachment is still cleaned");
-  assert.equal(cachedDisposals, 0);
-  f.context.cleanup();
-  assert.equal(ownDisposals, 2, "cleanup stays idempotent");
-  assert.equal(skeletonDisposals, 1);
-  assert.equal(other.context.cancelled, false);
-  assert.equal(other.fatalErrors.length, 0);
-  const stale = new THREE.Group();
-  stale.name = "late failed-viewer source";
-  oldRequests[1].resolve({ scene: stale });
-  oldRequests[2].reject(new Error("late failed-viewer rejection"));
-  await attempt;
-  await flush();
-  assert.deepEqual(f.disposed, [stale.name]);
-  assert.equal(f.fatalErrors.length, 1);
-  assert.ok(f.states.every((state) => state.kind !== "ready"));
-  assert.equal(other.context.visualGroup.children.length, 1);
+for(const final of [false,true]) test("actual renderer failure remains fatal (final="+final+")",async()=>{
+  const f=fixture({count:1,concurrency:1});f.context.modeRef.current="exterior";
+  let renders=0;f.context.render=()=>{if(++renders===(final?2:1))throw Error("GPU render probe");};
+  f.context.loadExteriorAssets();await f.drain();await f.context.exteriorPromise;
+  assert.equal(f.fatalErrors.length,1);assert.equal(f.context.discardRenderer,true);
+  assert.equal(f.context.hitLoadController.signal.aborted,true);
+  assert.ok(f.capabilities.every(c=>c.state!=="available"));
 });
-
-for (const stage of ["dedupe", "render", "final render", "final presentation"]) {
-  test(`synchronous exterior ${stage} failure uses the same local teardown`, async () => {
-    const f = fixture({ count: 1, concurrency: 1 });
-    f.context.modeRef.current = "exterior";
-    let calls = 0;
-    const target = stage === "dedupe" ? "dedupeRuntimeSceneTextures"
-      : stage === "final presentation" ? "syncAnalysisVisualPresentation" : "render";
-    f.context[target] = () => {
-      calls++;
-      if (!stage.startsWith("final ") || calls === 2) throw new Error(`${stage} probe`);
-    };
-    f.context.loadExteriorAssets();
-    const attempt = f.context.exteriorPromise;
-    await f.drain();
-    await attempt;
-    assert.equal(f.fatalErrors.length, 1);
-    assert.equal(f.context.cancelled, true);
-    assert.equal(f.context.exteriorReady, false);
-    assert.ok(f.states.every((state) => state.kind !== "ready"));
-  });
-}
-
 
 test("an identity pending parent preserves real skeletal registration matrices, bounds and hit poses", () => {
   const source = new THREE.Group();

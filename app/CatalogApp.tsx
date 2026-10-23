@@ -118,7 +118,7 @@ import { ViewerErrorBoundary } from "./ViewerErrorBoundary";
 import { VehicleDamageTypeIcon } from "./VehicleDamageTypeIcon";
 import { VehicleDuelEntryLink } from "./VehicleDuelEntryLink";
 import { VehicleRankerEntryLink } from "./VehicleRankerEntryLink";
-import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
+import { vehicleExteriorCapability } from "./vehicle-preview-policy";
 import type { ViewerNavigationState } from "./viewer-types";
 import { SiteFooterSupporters } from "./SiteFooterSupporters";
 import {
@@ -387,8 +387,12 @@ function catalogCardImpression(card: CatalogCardEntry) {
 }
 
 function catalogCardPreviewIssue(card: CatalogCardEntry) {
-  const rawName = card.data?.general.rawName ?? card.record.mapping.selectedRawName;
-  return officialVehiclePreviewIssue(rawName);
+  const capability = vehicleExteriorCapability(Boolean(
+    card.variant?.runtimeVehicleRef && card.variant?.visualArtifactRef,
+  ));
+  return capability.state === "unavailable"
+    ? { code: "missing-exact-binding", message: capability.message }
+    : null;
 }
 
 function liverySliceSkew(count: number) {

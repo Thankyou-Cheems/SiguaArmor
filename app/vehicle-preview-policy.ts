@@ -1,14 +1,27 @@
-export const CPV_OFFICIAL_RESOURCE_NOTICE =
-  "此载具的官方资源存在问题，暂时无法预览外观，装甲计算仍可用";
+export type ExteriorCapability =
+  | { state: "pending" }
+  | { state: "available" }
+  | { state: "unavailable"; message: string };
 
-export function isCpvVehicleRawName(rawName: string | null | undefined) {
-  return /(?:^|_)CPV(?:_|$)/i.test(rawName ?? "");
+// Exact identity is validated by the existing preview/Graph reader. Metadata
+// allows a load attempt; only the exterior loader can report success.
+export function vehicleExteriorCapability(
+  hasExactBinding: boolean,
+  load: ExteriorCapability = { state: "pending" },
+): ExteriorCapability {
+  return hasExactBinding ? load
+    : { state: "unavailable", message: "当前选择缺少精确外观绑定。" };
 }
 
-export function officialVehiclePreviewIssue(rawName: string | null | undefined) {
-  if (!isCpvVehicleRawName(rawName)) return null;
-  return {
-    code: "cpv-official-resource",
-    message: CPV_OFFICIAL_RESOURCE_NOTICE,
-  } as const;
+export function previewSelectionKey(binding: {
+  edition: string | null | undefined;
+  cardId: string;
+  rawName: string;
+  runtimeVehicleRef: string | null;
+  visualArtifactRef: string | null;
+}) {
+  return JSON.stringify([
+    binding.edition, binding.cardId, binding.rawName,
+    binding.runtimeVehicleRef, binding.visualArtifactRef,
+  ]);
 }

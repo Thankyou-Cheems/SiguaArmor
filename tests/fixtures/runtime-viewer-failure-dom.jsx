@@ -38,7 +38,13 @@ const preview = {
   cardId: "test-vehicle", variantRawName: "Test vehicle", status: "visual-ready",
   generatedClass: null, visualVehicleId: "test-vehicle", chassisPose: null,
   suspension: { records: [], coverage: null },
-  visual: { artifactRef: "test", placements: [], requiredOccurrences: 0, sourceAssets: 0 },
+  // Controlled pending geometry keeps renderer failure tests inside a valid
+  // visual selection; an empty selection intentionally acquires no renderer.
+  visual: { artifactRef: "test", placements: [{
+    actor: "controlled", name: "pending", stableOccurrenceId: "controlled-pending",
+    assetUrl: "/controlled-pending.gltf", sourceMeshPath: "/controlled/pending",
+    matrix: [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1],
+  }], requiredOccurrences: 1, sourceAssets: 1 },
   hit: null, radialQuery: null, visualAttachment: null, crewSeat: null,
   stationGraph: null, gunnerSight: null, driverView: null,
 };

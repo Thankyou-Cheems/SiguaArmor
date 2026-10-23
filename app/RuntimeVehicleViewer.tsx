@@ -339,7 +339,8 @@ import { runtimeRenderQualityProfile } from "../lib/runtime-render-quality";
 import type { ViewerAssetMode, ViewerNavigationState } from "./viewer-types";
 import { VehicleViewerLoading } from "./VehicleViewerLoading";
 import { WeaponRhythmTimeline } from "./WeaponRhythmTimeline";
-import { officialVehiclePreviewIssue } from "./vehicle-preview-policy";
+import { previewSelectionKey, vehicleExteriorCapability, type ExteriorCapability } from "./vehicle-preview-policy";
+import { validateRuntimeExteriorModel } from "../lib/runtime-exterior-model";
 import type { RuntimeCrewOccupantLayer } from "./runtime-crew-occupants";
 
 THREE.Mesh.prototype.raycast = acceleratedRaycast;
@@ -4274,7 +4275,7 @@ export function RuntimeVehicleViewer(props: Omit<Parameters<typeof RuntimeVehicl
   const getRetryFocusTarget = useCallback(() => sceneRootRef.current, []);
   return (
     <ViewerErrorBoundary
-      key={`${props.preview.cardId}:${props.preview.variantRawName}`}
+      key={previewSelectionKey({ edition: props.preview.visualAttachment?.edition, cardId: props.preview.cardId, rawName: props.preview.variantRawName, runtimeVehicleRef: props.preview.visualVehicleId, visualArtifactRef: props.preview.visual?.artifactRef ?? null })}
       vehicleName={props.displayName ?? props.preview.variantRawName}
       onClose={props.onClose}
       onOpenReference={props.onOpenReference}
@@ -4298,6 +4299,7 @@ function RuntimeVehicleViewerScene({
   navigationState,
   onNavigationStateChange,
   onExteriorStreamingChange,
+  onExteriorCapabilityChange,
   attackLibraryOverride,
   duelTarget = false,
   allowGlobalAttackSources = true,
@@ -4318,6 +4320,7 @@ function RuntimeVehicleViewerScene({
   onNavigationStateChange?: (state: ViewerNavigationState) => void;
   onOpenReference?: () => void;
   onExteriorStreamingChange?: (state: { loaded: number; total: number } | null) => void;
+  onExteriorCapabilityChange?: (state: ExteriorCapability) => void;
   attackLibraryOverride?: RuntimeAttackSourceLibrary | null;
   duelTarget?: boolean;
   allowGlobalAttackSources?: boolean;
@@ -4325,9 +4328,15 @@ function RuntimeVehicleViewerScene({
   displayOverrides?: RuntimeVehicleViewerDisplayOverrides;
   shotTraceLimit?: number;
 }) {
-  const previewIssue = officialVehiclePreviewIssue(preview.variantRawName);
-  const exteriorUnavailableMessage = previewIssue?.message;
-  const mode = previewIssue && requestedMode === "exterior" ? "armor" : requestedMode;
+  const [exteriorLoad, setExteriorLoad] = useState<{ preview: RuntimeVehiclePreview; capability: ExteriorCapability } | null>(null);
+  const exteriorLoadRef = useRef(exteriorLoad);
+  const exteriorCapability = useMemo(() => vehicleExteriorCapability(Boolean(preview.visual?.placements.length),
+    exteriorLoad?.preview === preview ? exteriorLoad.capability : { state: "pending" }), [preview, exteriorLoad]);
+  const exteriorUnavailableMessage = exteriorCapability.state === "unavailable" ? exteriorCapability.message || "本次外观加载失败。" : undefined;
+  const mode = exteriorCapability.state === "unavailable" && requestedMode === "exterior" ? "armor" : requestedMode;
+  const exteriorCapabilityCallback = useRef(onExteriorCapabilityChange);
+  useEffect(() => { exteriorCapabilityCallback.current = onExteriorCapabilityChange; }, [onExteriorCapabilityChange]);
+  useEffect(() => { exteriorCapabilityCallback.current?.(exteriorCapability); }, [exteriorCapability]);
   const maxShotTraces = Math.max(
     1,
     Math.min(MAX_SHOT_TRACES, Math.trunc(shotTraceLimit)),
@@ -7898,7 +7907,7 @@ function RuntimeVehicleViewerScene({
 
   useEffect(() => {
     const host = hostRef.current;
-    if (!host || !visual) return;
+    if (!host || !visual || (!visual.placements.length && !hit)) return;
     const worldImpactStatus = worldImpactStatusRef.current;
     const schoolWeaponCaches = schoolWeaponCachesRef.current;
     applyCameraViewPresetRef.current = null;
@@ -7956,6 +7965,16 @@ function RuntimeVehicleViewerScene({
     let hitSettled = !hit;
     let exteriorLoaded = 0;
     let exteriorReady = false;
+    const previousExteriorLoad = exteriorLoadRef.current;
+    let exteriorFailure = previousExteriorLoad?.preview === preview && previousExteriorLoad.capability.state === "unavailable"
+      ? previousExteriorLoad.capability.message : null;
+    const publishExteriorCapability = (capability: ExteriorCapability) => {
+      if (cancelled) return;
+      const next = { preview, capability };
+      exteriorLoadRef.current = next;
+      setExteriorLoad(next);
+    };
+    if (exteriorFailure === null) publishExteriorCapability({ state: "pending" });
     let exteriorPromise: Promise<void> | null = null;
     let startExteriorAssets: (() => void) | null = null;
     let groundReferenceY = 0;
@@ -11629,7 +11648,7 @@ function RuntimeVehicleViewerScene({
     };
 
     const loadExteriorAssets = () => {
-      if (cancelled) return;
+      if (cancelled || exteriorFailure !== null) return;
       if (exteriorReady) {
         if (modeRef.current === "exterior") {
           setViewerState({ kind: "ready", loaded: urls.length, total: urls.length });
@@ -11650,6 +11669,8 @@ function RuntimeVehicleViewerScene({
         setViewerState({ kind: "loading", loaded: exteriorLoaded, total: urls.length });
       }
       const exteriorLoadingManager = new THREE.LoadingManager();
+      const exteriorResourceErrors: string[] = [];
+      exteriorLoadingManager.onError = (url) => { exteriorResourceErrors.push(url); };
       exteriorLoadingManager.setURLModifier(runtimeWikiAssetUrl);
       const exteriorLoader = new GLTFLoader(exteriorLoadingManager);
       exteriorLoader.setMeshoptDecoder(MeshoptDecoder);
@@ -11680,11 +11701,34 @@ function RuntimeVehicleViewerScene({
       const pendingExteriorGroup = new THREE.Group();
       pendingExteriorGroup.visible = false;
       scene.add(pendingExteriorGroup);
+      const exteriorModels = new Set<THREE.Object3D>();
       const failExteriorScene = (error: unknown) => {
+        if (cancelled || exteriorFailure !== null) return;
+        exteriorFailure = (error instanceof Error ? error.message : String(error)).trim() || "本次外观加载失败。";
+        abandoned = true;
         exteriorReady = false;
-        discardRenderer = true;
-        cleanup();
-        setFatalRendererError(error instanceof Error ? error : new Error(String(error)));
+        // Roll back exterior registrations only; hit/analysis and shared
+        // geometry/textures retain their own existing resource ownership.
+        for (const binding of skeletalPoseBindings) {
+          if (exteriorModels.has(binding.model)) skeletalPoseBindings.delete(binding);
+        }
+        for (const occurrence of exteriorOccurrences.values()) occurrence.object.visible = false;
+        exteriorOccurrences.clear();
+        visualGroup.visible = false;
+        host.dataset.exteriorAssetState = "error";
+        publishExteriorCapability({ state: "unavailable", message: exteriorFailure });
+        updateSkeletalPoseDataset(physicalPoseEnabledRef.current);
+        modeRef.current = "armor";
+        activateAssetModeRef.current?.("armor");
+      };
+      const renderExterior = () => {
+        try { render(); }
+        catch (error) {
+          discardRenderer = true;
+          cleanup();
+          setFatalRendererError(error instanceof Error ? error : new Error(String(error)));
+          throw error;
+        }
       };
       const attachExteriorSource = (url: string, source: THREE.Object3D) => {
         for (const placement of exteriorPlacementsByUrl.get(url) ?? []) {
@@ -11700,7 +11744,9 @@ function RuntimeVehicleViewerScene({
           });
           const model = cloneSkeleton(source);
           pendingExteriorGroup.add(model);
+          exteriorModels.add(model);
           registerSkeletalPose(model, placement);
+          validateRuntimeExteriorModel(model);
           model.traverse((object) => {
             if (!(object instanceof THREE.Mesh)) return;
             object.frustumCulled = true;
@@ -11759,7 +11805,7 @@ function RuntimeVehicleViewerScene({
         host.dataset.exteriorLoadedOccurrenceCount = String(visualGroup.children.length);
         if (modeRef.current === "exterior") {
           visualGroup.visible = true;
-          render();
+          renderExterior();
           setViewerState({
             kind: "loading",
             loaded: exteriorLoaded,
@@ -11770,13 +11816,16 @@ function RuntimeVehicleViewerScene({
         exteriorSources.set(url, gltf.scene);
         } catch (error) {
           failExteriorScene(error);
+          throw error;
         }
         },
-        () => !cancelled,
+        () => !cancelled && !abandoned,
       )
         .then(() => {
-          if (cancelled) return;
+          if (cancelled || abandoned || exteriorFailure !== null) return;
           try {
+          if (exteriorResourceErrors.length) throw new Error(`外观资源加载失败：${exteriorResourceErrors.join(", ")}`);
+          if (exteriorLoaded !== urls.length || exteriorOccurrences.size !== renderPlacements.length) throw new Error("外观装配尚未完整");
           scene.remove(pendingExteriorGroup);
           exteriorReady = true;
           host.dataset.exteriorAssetState = "ready";
@@ -11790,23 +11839,17 @@ function RuntimeVehicleViewerScene({
           }
           syncReferencePlane();
           if (modeRef.current === "exterior") visualGroup.visible = true;
-          render();
+          renderExterior();
           if (modeRef.current === "exterior") {
             setViewerState({ kind: "ready", loaded: urls.length, total: urls.length });
           }
+          publishExteriorCapability({ state: "available" });
           } catch (error) {
             failExteriorScene(error);
           }
         })
         .catch((error: unknown) => {
-          abandoned = true;
-          if (cancelled) return;
-          scene.remove(pendingExteriorGroup);
-          host.dataset.exteriorAssetState = "error";
-          exteriorPromise = null;
-          if (modeRef.current !== "exterior") return;
-          const message = error instanceof Error ? error.message : String(error);
-          setViewerState({ kind: "error", message });
+          failExteriorScene(error);
         });
     };
     startExteriorAssets = loadExteriorAssets;
@@ -12195,6 +12238,7 @@ function RuntimeVehicleViewerScene({
     driverView,
     hit,
     maxShotTraces,
+    preview,
     preview.cardId,
     preview.generatedClass,
     preview.groundedPose,
@@ -12480,6 +12524,7 @@ function RuntimeVehicleViewerScene({
       }
       data-armor-thickness-scale={relativeArmorScaleActive ? "relative" : "absolute"}
       data-exterior-unavailable={exteriorUnavailableMessage ? "true" : undefined}
+      data-exterior-capability={exteriorCapability.state}
       data-exterior-streaming={exteriorStreaming ? "true" : "false"}
       data-realtime-crosshair={realtimePointer ? "visible" : "hidden"}
       data-turret-preview={
@@ -12820,11 +12865,11 @@ function RuntimeVehicleViewerScene({
         aria-live="off" title="最近一次实际命中的参考线；绿点：穿透，红点：停止，黄点：未确认。只保留一条，不代表弹体继续飞行；适用于当前学校范围，不包含建筑破坏与爆炸范围伤害。" />
 
       {exteriorUnavailableMessage ? (
-        <aside className="viewer-resource-warning" role="note" aria-label="官方资源问题提示">
+        <aside className="viewer-resource-warning" role="note" aria-label="外观加载状态">
           <div className="viewer-resource-warning__heading">
             <CircleAlert size={15} aria-hidden="true" />
             <strong>外观预览暂不可用</strong>
-            <span>OFFICIAL RESOURCE ISSUE</span>
+            <span>EXTERIOR UNAVAILABLE</span>
           </div>
           <p>{exteriorUnavailableMessage}</p>
         </aside>

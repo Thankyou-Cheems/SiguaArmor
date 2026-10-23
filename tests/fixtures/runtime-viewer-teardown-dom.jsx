@@ -79,7 +79,13 @@ const preview = {
   cardId: "test-vehicle", variantRawName: "Test vehicle", status: "visual-ready",
   generatedClass: null, visualVehicleId: "test-vehicle", chassisPose: null,
   suspension: { records: [], coverage: null },
-  visual: { artifactRef: "test", placements: [], requiredOccurrences: 0, sourceAssets: 0 },
+  // A real pending visual domain exercises renderer ownership. An empty domain
+  // now correctly reports unavailable before acquiring a renderer.
+  visual: { artifactRef: "test", placements: [{
+    actor: "controlled", name: "pending", stableOccurrenceId: "controlled-pending",
+    assetUrl: "/controlled-pending.gltf", sourceMeshPath: "/controlled/pending",
+    matrix: [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1],
+  }], requiredOccurrences: 1, sourceAssets: 1 },
   hit: null, radialQuery: null, visualAttachment: null, crewSeat: null,
   stationGraph: null, gunnerSight: null, driverView: null,
 };
@@ -141,12 +147,15 @@ const beforeReplacement = liveControls()[0];
 const replacementCanvas = canvas();
 const replacementRoot = document.querySelector(".runtime-vehicle-viewer");
 const beforeReplacementStops = probe.animationStops;
-await render(<Viewer model={{ ...preview, visual: { ...preview.visual, artifactRef: "replacement" } }} />);
+await render(<Viewer model={{ ...preview, visual: { ...preview.visual } }} />);
 assert.equal(canvas(), replacementCanvas, "dependency change retains the shared renderer");
 assert.equal(document.querySelector(".runtime-vehicle-viewer"), replacementRoot, "dependency change is not a keyed component remount");
 assert.equal(beforeReplacement.active, false);
 assert.equal(probe.animationStops, beforeReplacementStops + 1);
 assertListeners(1, "dependency replacement owns exactly one new controls instance");
+await close();
+await render(<Viewer model={{ ...preview, visual: { ...preview.visual, placements: [] } }} />);
+assertListeners(0, "empty exterior without hit never acquires a renderer");
 await close();
 // No visual means the heavy initialization effect does not acquire anything.
 await render(<Viewer model={{ ...preview, visual: null }} />);
