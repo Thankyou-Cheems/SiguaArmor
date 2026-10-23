@@ -1,3 +1,5 @@
+import { selectVehicleRootObservation, type VehicleRootSelection } from "./vehicle-root-observation.ts";
+
 export const SIGUA_WIKI_ORIGIN =
   process.env.NEXT_PUBLIC_SIGUA_WIKI_ORIGIN?.replace(/\/+$/u, "") ||
   "https://wiki.siguad.icu";
@@ -318,6 +320,38 @@ export async function loadWikiVehicleRuntimeSource(cardId: string) {
       return value;
     },
   );
+}
+
+export async function loadWikiVehicleRootObservation(selection: VehicleRootSelection) {
+  if (!selection.rawName || !selection.runtimeVehicleRef) throw new Error("当前根配置需要精确车型身份");
+  const runtime = await loadWikiVehicleRuntimeSource(selection.cardId) as {
+    variants: { rawName: string; runtimeVehicleRef: string; generatedClass: string; stationGraph?: { sourceVehicleRef?: string } }[];
+  };
+  const variants = runtime.variants.filter(row => row.rawName === selection.rawName && row.runtimeVehicleRef === selection.runtimeVehicleRef);
+  if (variants.length !== 1 || !/^vehicle-[a-f0-9]+$/u.test(variants[0].stationGraph?.sourceVehicleRef ?? "")
+    || typeof variants[0].generatedClass !== "string" || !variants[0].generatedClass.startsWith("/Game/")) {
+    throw new Error("当前根配置与车型身份不匹配");
+  }
+  const variant = variants[0];
+  const sourceVehicleRef = variant.stationGraph!.sourceVehicleRef!;
+  const entry = await fetchJson("/data/vehicles/seat-observations/v1/catalog.json", 60_000, undefined, value => {
+    const index = value as { schemaVersion?: string; entries?: {
+      sourceVehicleRef: string; generatedClass: string; sourceBuildId: string;
+      observation: { url: string; sha256: string; bytes: number };
+    }[] };
+    if (index?.schemaVersion !== "sigua-vehicle-seat-observation-index/v1" || !Array.isArray(index.entries)) throw new Error("当前根配置目录无效");
+    const matches = index.entries.filter(row => row?.sourceVehicleRef === sourceVehicleRef);
+    if (!matches.length) return null;
+    if (matches.length !== 1 || matches[0].generatedClass !== variant.generatedClass
+      || typeof matches[0].sourceBuildId !== "string" || !matches[0].sourceBuildId.startsWith("squad-sdk-")) throw new Error("当前根配置目录身份不匹配");
+    const found = matches[0], ref = found.observation;
+    if (!/^[a-f0-9]{64}$/u.test(ref?.sha256) || ref.url !== `/data/vehicles/seat-observations/v1/records/${ref.sha256}.json`
+      || !Number.isSafeInteger(ref.bytes) || ref.bytes <= 0 || ref.bytes > 2 * 1024 * 1024) throw new Error("当前根配置记录引用无效");
+    return found;
+  });
+  if (!entry) return null;
+  return fetchJson(entry.observation.url, Number.POSITIVE_INFINITY, entry.observation,
+    value => selectVehicleRootObservation(value, sourceVehicleRef, variant.generatedClass, entry.sourceBuildId));
 }
 
 export async function loadWikiVehicleRadialQuery(recordPath: string) {

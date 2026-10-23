@@ -45,7 +45,7 @@ test("catalog bootstrap does not statically load the full weapon catalog", () =>
 test("vehicle reference data mounts only after the encyclopedia is opened", () => {
   assert.match(
     catalogAppSource,
-    /encyclopediaOpen\s*\?\s*<ReferenceDataView\s+data=\{data\}\s*\/>\s*:\s*null/u,
+    /encyclopediaOpen\s*\?\s*<ReferenceDataView\s+data=\{data\}\s+rootSelection=\{[\s\S]*?\}\s*\/>\s*:\s*null/u,
   );
 });
 
