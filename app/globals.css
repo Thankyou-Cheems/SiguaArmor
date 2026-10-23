@@ -19101,3 +19101,13 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 .catalog-navigation-error button + button {
   margin-left: 12px;
 }
+/* Current selected root facts are a separate encyclopedia observation, never
+   an override for the existing viewer's calculation or StationGraph data. */
+.vehicle-root-facts { overflow-wrap: anywhere; }
+.vehicle-root-facts p, .vehicle-root-facts li { font-size: .85rem; line-height: 1.6; }
+.vehicle-root-facts details { margin-block: .6rem; }
+.vehicle-root-facts summary { cursor: pointer; }
+.vehicle-root-facts__summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .7rem; }
+.vehicle-root-facts__summary div { padding: .5rem; background: var(--surface-soft); border-radius: .35rem; }
+.vehicle-root-facts__summary dt { font-size: .8rem; opacity: .75; }
+.vehicle-root-facts__summary dd { margin: .2rem 0 0; font-weight: 600; }

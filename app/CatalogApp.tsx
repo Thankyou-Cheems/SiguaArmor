@@ -40,6 +40,8 @@ import {
 } from "react";
 import { useSiteTranslation, type SiteTranslate } from "./SiteLanguageProvider";
 import { SiteLanguageSwitcher } from "./SiteLanguageSwitcher";
+import { VehicleRootFacts } from "./VehicleRootFacts";
+import type { VehicleRootSelection } from "../lib/vehicle-root-observation";
 import { flushSync } from "react-dom";
 import {
   ICP_RECORD,
@@ -1284,7 +1286,14 @@ function VehicleCard({
   );
 }
 
-function ReferenceDataView({ data }: { data: ReferenceData | null }) {
+export function ReferenceDataView({ data, rootSelection }: { data: ReferenceData | null; rootSelection: VehicleRootSelection | null }) {
+  return <>
+    <VehicleRootFacts selection={rootSelection} />
+    <LegacyReferenceDataView data={data} />
+  </>;
+}
+
+function LegacyReferenceDataView({ data }: { data: ReferenceData | null }) {
   type EquipmentResolver = typeof import("./runtime-vehicle-equipment")["runtimeVehicleEquipmentBindingForId"];
   const [equipmentResolver, setEquipmentResolver] = useState<EquipmentResolver | null>(null);
   const [equipmentLoadError, setEquipmentLoadError] = useState<string | null>(null);
@@ -2563,7 +2572,9 @@ function DetailPanel({
               <X size={18} aria-hidden="true" />
             </button>
           </header>
-          {encyclopediaOpen ? <ReferenceDataView data={data} /> : null}
+          {encyclopediaOpen ? <ReferenceDataView data={data} rootSelection={card.variant?.runtimeVehicleRef && card.variant.sourceRawName ? {
+            cardId: record.promoEntryId, rawName: card.variant.sourceRawName, runtimeVehicleRef: card.variant.runtimeVehicleRef,
+          } : null} /> : null}
         </section>
       </section>
     </aside>
