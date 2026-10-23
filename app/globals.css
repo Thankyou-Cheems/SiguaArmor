@@ -19104,6 +19104,7 @@ html[data-detail-transition="true"]::view-transition-group(vehicle-card-morph) {
 /* Current selected root facts are a separate encyclopedia observation, never
    an override for the existing viewer's calculation or StationGraph data. */
 .vehicle-root-facts { overflow-wrap: anywhere; }
+.vehicle-root-facts .subsection-heading { grid-template-columns: minmax(0, 1fr); }
 .vehicle-root-facts p, .vehicle-root-facts li { font-size: .85rem; line-height: 1.6; }
 .vehicle-root-facts details { margin-block: .6rem; }
 .vehicle-root-facts summary { cursor: pointer; }
