@@ -65,7 +65,7 @@ import {
   resolveRuntimeTurretAssembly,
   resolveRuntimeTurretHitComponentAssembly,
   resolveRuntimeTurretMotionFrame,
-  runtimeTurretFallbackSpec,
+  runtimeTurretLegacyFallbackSpec,
   turretArticulationMatrices,
   type RuntimeTurretAssembly,
 } from "../lib/turret-articulation";
@@ -4622,9 +4622,13 @@ function RuntimeVehicleViewerScene({
       ...new Set(stationInputs.map(({ seat }) => seat.turretName!)),
     ];
     const fallbackSpecs = new Map(
-      allTurretNames.map((turretName) => [
-        turretName,
-        runtimeTurretFallbackSpec(preview.generatedClass, turretName),
+      stationInputs.map((input) => [
+        input,
+        runtimeTurretLegacyFallbackSpec(
+          preview.generatedClass,
+          input.seat.turretName!,
+          input.visualAttachment,
+        ),
       ]),
     );
     const stations = stationInputs.map((input) => {
@@ -4655,24 +4659,26 @@ function RuntimeVehicleViewerScene({
         absorbsSiblingStations:
           input === primaryInput && seat.role === "gunner",
         fallbackYawAnchorComponentName:
-          fallbackSpecs.get(seat.turretName!)?.yawAnchorComponentName,
+          fallbackSpecs.get(input)?.yawAnchorComponentName,
         fallbackYawAnchorActorName:
-          fallbackSpecs.get(seat.turretName!)?.yawAnchorActorName,
+          fallbackSpecs.get(input)?.yawAnchorActorName,
         fallbackPitchUsesYawAnchor:
-          fallbackSpecs.get(seat.turretName!)?.pitchUsesYawAnchor,
+          fallbackSpecs.get(input)?.pitchUsesYawAnchor,
         fallbackHitActorClassNames:
-          fallbackSpecs.get(seat.turretName!)?.hitActorClassNames,
+          fallbackSpecs.get(input)?.hitActorClassNames,
         carriedHitActorClassNames:
+          // Closed Graph children propagate hit identity through explicit carry.
+          // This early bridge now contains only legacy/unresolved fallback specs.
           input === primaryInput && seat.role === "gunner"
-          ? allTurretNames.flatMap((turretName) =>
-              fallbackSpecs.get(turretName)?.hitActorClassNames ?? []
+          ? stationInputs.flatMap((candidate) =>
+              fallbackSpecs.get(candidate)?.hitActorClassNames ?? []
             )
           : [],
         hitOwnerSeatIndex: crewSeat.additionalSeatConfigIndex,
-        siblingFallbackYawAnchorComponentNames: allTurretNames
-          .filter((turretName) => turretName !== seat.turretName)
-          .map((turretName) =>
-            fallbackSpecs.get(turretName)?.yawAnchorComponentName
+        siblingFallbackYawAnchorComponentNames: stationInputs
+          .filter((candidate) => candidate.seat.turretName !== seat.turretName)
+          .map((candidate) =>
+            fallbackSpecs.get(candidate)?.yawAnchorComponentName
           )
           .filter((name): name is string => Boolean(name)),
         visualAttachment,

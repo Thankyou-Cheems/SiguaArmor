@@ -6,6 +6,8 @@ import {
   resolveRuntimeTurretAssembly,
   resolveRuntimeTurretHitComponentAssembly,
   resolveRuntimeTurretMotionFrame,
+  runtimeTurretFallbackSpec,
+  runtimeTurretLegacyFallbackSpec,
   turretArticulationMatrices,
 } from "../../lib/turret-articulation.ts";
 import { projectCrewSeatBinding } from "../../lib/vehicle-crew-seat-runtime.ts";
@@ -140,6 +142,48 @@ function driverMotion({
     pitchDriver: driver("PitchDriver", pitchTranslationCm, pitchQuaternion),
   };
 }
+
+test("closed Graph motion and view-only stations do not select legacy vehicle specs", () => {
+  const generatedClass = "/Game/Vehicles/LAV6/BP_LAV6_Desert.BP_LAV6_Desert_C";
+  const turretName = "BP_LAV6_Commander_Turret_Desert_C";
+  assert.ok(runtimeTurretFallbackSpec(generatedClass, turretName));
+  const attachment = {
+    state: "closed",
+    closureMode: "visual-occurrence-membership",
+    movementState: "observed",
+    motion: driverMotion({ frameState: "derived-with-fallback" }),
+  };
+  assert.equal(runtimeTurretLegacyFallbackSpec(generatedClass, turretName, attachment), null);
+  assert.equal(runtimeTurretLegacyFallbackSpec(generatedClass, turretName, {
+    ...attachment,
+    closureMode: "view-component-rotation",
+    motion: null,
+  }), null);
+});
+
+test("legacy and incomplete Graph inputs retain their existing fallback selection and fail-closed assembly", () => {
+  const generatedClass = "/Game/Vehicles/LAV6/BP_LAV6_Desert.BP_LAV6_Desert_C";
+  const turretName = "BP_LAV6_Commander_Turret_Desert_C";
+  const legacy = runtimeTurretFallbackSpec(generatedClass, turretName);
+  for (const attachment of [
+    null,
+    undefined,
+    { state: "partial", closureMode: "visual-occurrence-membership" },
+    { state: "closed", closureMode: "visual-occurrence-membership", movementState: "unresolved" },
+    { state: "closed", closureMode: "visual-occurrence-membership", movementState: "observed", motion: driverMotion({ frameState: "unresolved" }) },
+  ]) {
+    assert.deepEqual(runtimeTurretLegacyFallbackSpec(generatedClass, turretName, attachment), legacy);
+    if (attachment) {
+      assert.equal(resolveRuntimeTurretAssembly({
+        placements: [TIGR_TURRET], vehicleGeneratedClass: generatedClass,
+        turretName, stationWeaponNames: [], primary: false,
+        fallbackYawAnchorComponentName: legacy.yawAnchorComponentName,
+        fallbackHitActorClassNames: legacy.hitActorClassNames,
+        visualAttachment: attachment,
+      }), null);
+    }
+  }
+});
 
 test("source-locked Tigr RWS attachment moves turret and weapon without an equipment resolver", () => {
   const assembly = resolveRuntimeTurretAssembly({

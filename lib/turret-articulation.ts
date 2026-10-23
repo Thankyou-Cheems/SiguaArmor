@@ -645,10 +645,9 @@ const RUNTIME_TURRET_FALLBACK_SPECS = new Map<
 ]);
 
 /**
- * Exact local bindings for a visual package where the exported vehicle
- * skeletal mesh contains the mount but Unreal did not emit the child turret
- * actor as a standalone placement. This is deliberately a closed spec: an
- * unknown class stays unavailable instead of falling back to fuzzy names.
+ * Exact legacy bindings where retained mount placements and logical child
+ * turret identities do not align. Mounts may be separate placements on the
+ * vehicle actor. Unknown classes stay unavailable rather than using fuzzy names.
  */
 export function runtimeTurretFallbackSpec(
   vehicleGeneratedClass: string | null,
@@ -657,6 +656,30 @@ export function runtimeTurretFallbackSpec(
   return RUNTIME_TURRET_FALLBACK_SPECS.get(
     `${blueprintStem(vehicleGeneratedClass)}|${blueprintStem(turretName)}`,
   ) ?? null;
+}
+
+/** Closed Graph attachments already supply members and driver frames. Keep the
+ * old lookup only for legacy or unresolved inputs; it is not Graph authority.
+ * Member/identity validation remains in resolveRuntimeTurretAssembly.
+ */
+export function runtimeTurretLegacyFallbackSpec(
+  vehicleGeneratedClass: string | null,
+  turretName: string,
+  visualAttachment: RuntimeTurretVisualAttachment | null | undefined,
+): RuntimeTurretFallbackSpec | null {
+  if (
+    visualAttachment?.state === "closed" &&
+    (
+      visualAttachment.closureMode === "view-component-rotation" ||
+      (
+        visualAttachment.closureMode === "visual-occurrence-membership" &&
+        resolveRuntimeTurretMotionFrame(visualAttachment) !== null
+      )
+    )
+  ) {
+    return null;
+  }
+  return runtimeTurretFallbackSpec(vehicleGeneratedClass, turretName);
 }
 
 function actorMatchesClass(actor: string, className: string | null | undefined) {
