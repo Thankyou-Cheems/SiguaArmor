@@ -84,15 +84,22 @@ export async function loadWikiVehicleTerrainPoses(generatedClass: string) {
     return flatCatalog;
   });
   const flatRows=flatCatalog.vehicles.filter(row=>row.generatedClass===generatedClass);
-  if(flatRows.length!==1||flatRows[0].record?.sha256!==set.flatReferenceSha256)throw new Error("平地基准已更新，地形姿态需刷新");
-  // Bind the exact existing flat reference and real scene bytes. A data update
-  // must regenerate this small derived record instead of silently reusing it.
-  await Promise.all([set.scene.query,set.scene.display,{url:`/data/vehicles/grounded-poses/v1/records/${set.flatReferenceSha256}.json`,sha256:set.flatReferenceSha256}].map(async entry=>{
+  if(flatRows.length!==1||!flatRows[0].record)throw new Error("平地基准已更新，地形姿态需刷新");
+  // Always bind the original flat reference and real scene bytes. Only an
+  // append-only model alias update may retain this terrain reduction.
+  const [, , originalFlatBytes]=await Promise.all([set.scene.query,set.scene.display,{url:`/data/vehicles/grounded-poses/v1/records/${set.flatReferenceSha256}.json`,sha256:set.flatReferenceSha256}].map(async entry=>{
     const response=await fetch(wikiUrl(entry.url));if(!response.ok)throw new Error("地形姿态依赖不可用");
     const data=await response.arrayBuffer();
     const digest=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",data))).map(v=>v.toString(16).padStart(2,"0")).join("");
     if(digest!==entry.sha256)throw new Error("场景或平地基准已更新，地形姿态需刷新");
+    return data;
   }));
+  if(flatRows[0].record.sha256!==set.flatReferenceSha256) {
+    const originalFlat=JSON.parse(new TextDecoder().decode(originalFlatBytes));
+    const currentFlat=await loadWikiVehicleGroundedPose(generatedClass);
+    const {assertAppendOnlyGroundedPoseAliases}=await import("./grounded-pose-model-aliases.ts");
+    assertAppendOnlyGroundedPoseAliases(originalFlat,currentFlat,generatedClass);
+  }
   return set;
 }
 
