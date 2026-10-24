@@ -14,6 +14,10 @@ type ViewSession = {
   view: {source: SchoolViewQueryIdentity; coverage: string; records: unknown[]; resources: unknown[]};
   resourceBytes(id: string): Promise<ArrayBuffer>;
 };
+type PreparedViewSession = {
+  view: ViewSession['view'];
+  resourceBytes(id: string): ArrayBuffer;
+};
 type ViewAlgorithm = {
   openMapResourceView(input: {
     entryUrl: string; objectBaseUrl: string; scope: typeof schoolResourceScope;
@@ -21,6 +25,7 @@ type ViewAlgorithm = {
     sha256(bytes: ArrayBuffer): Promise<string>;
   }): Promise<ViewSession>;
   assertMapViewQuery(view: ViewSession['view'], query: SchoolViewQueryIdentity): void;
+  prepareMapResourceView(session: ViewSession): Promise<PreparedViewSession>;
 };
 export async function loadSchoolResourceView(query: SchoolViewQueryIdentity, signal?: AbortSignal) {
   const moduleUrl = wikiMapUrl('/algorithms/maps/resource-view.js');
@@ -40,5 +45,5 @@ export async function loadSchoolResourceView(query: SchoolViewQueryIdentity, sig
     },
   });
   algorithm.assertMapViewQuery(session.view, query);
-  return session;
+  return algorithm.prepareMapResourceView(session);
 }
