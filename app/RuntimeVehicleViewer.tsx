@@ -4333,7 +4333,9 @@ function RuntimeVehicleViewerScene({
   const exteriorCapability = useMemo(() => vehicleExteriorCapability(Boolean(preview.visual?.placements.length),
     exteriorLoad?.preview === preview ? exteriorLoad.capability : { state: "pending" }), [preview, exteriorLoad]);
   const exteriorUnavailableMessage = exteriorCapability.state === "unavailable" ? exteriorCapability.message || "本次外观加载失败。" : undefined;
-  const mode = exteriorCapability.state === "unavailable" && requestedMode === "exterior" ? "armor" : requestedMode;
+  const exteriorOnly = preview.exteriorOnly === true;
+  const mode = exteriorOnly ? "exterior"
+    : exteriorCapability.state === "unavailable" && requestedMode === "exterior" ? "armor" : requestedMode;
   const exteriorCapabilityCallback = useRef(onExteriorCapabilityChange);
   useEffect(() => { exteriorCapabilityCallback.current = onExteriorCapabilityChange; }, [onExteriorCapabilityChange]);
   useEffect(() => { exteriorCapabilityCallback.current?.(exteriorCapability); }, [exteriorCapability]);
@@ -5372,6 +5374,7 @@ function RuntimeVehicleViewerScene({
     setAttackLibraryError(null);
     setEquipmentResolver(null);
     setGlobalAttackLibraryState("idle");
+    if (exteriorOnly) return () => { active = false; };
     if (attackLibraryOverride) {
       setAttackLibrary(attackLibraryOverride);
       setAttackLibraryError(null);
@@ -5432,6 +5435,7 @@ function RuntimeVehicleViewerScene({
     preview.targetKind,
     preview.variantRawName,
     requestGlobalAttackLibrary,
+    exteriorOnly,
   ]);
   useEffect(() => {
     const requestedAttacker = navigationState?.attacker ?? "";
@@ -10265,7 +10269,9 @@ function RuntimeVehicleViewerScene({
         );
       }
       const fitBounds = bounds.clone();
-      if (referenceSoldierBounds) fitBounds.union(referenceSoldierBounds);
+      // A full-size reference person must not shrink a portable exterior or
+      // move its orbit centre away from the object being inspected.
+      if (referenceSoldierBounds && !exteriorOnly) fitBounds.union(referenceSoldierBounds);
       const center = fitBounds.getCenter(new THREE.Vector3());
       const vehicleCameraTarget = bounds
         .getCenter(new THREE.Vector3())
@@ -12247,6 +12253,7 @@ function RuntimeVehicleViewerScene({
     preview.suspension.records,
     preview.variantRawName,
     preview.visualVehicleId,
+    exteriorOnly,
     referenceData?.general.isDamagedByRadial,
     referenceData?.radialDamageModel,
     saveExplosionOrigin,
@@ -12482,6 +12489,7 @@ function RuntimeVehicleViewerScene({
         hitState.kind === "ready" ? catalogCompletedWeaponCount : undefined
       }
       data-show-chrome={showChrome}
+      data-exterior-only={exteriorOnly ? "true" : undefined}
       data-duel-target={duelTarget ? "true" : undefined}
       data-protection-map={protectionActive ? "active" : "inactive"}
       data-physical-pose={chassisPose
@@ -12503,7 +12511,7 @@ function RuntimeVehicleViewerScene({
                 : "unavailable"
       }
       data-suspension-pose-authority={
-        !physicalPoseEnabled
+        exteriorOnly ? "not-applicable" : !physicalPoseEnabled
           ? "inverse-bind-reference"
           : vehiclePlanarSuspensionCoverage?.status === "not-applicable"
               ? "explicit-not-applicable"
@@ -12952,7 +12960,7 @@ function RuntimeVehicleViewerScene({
         </div>
       ) : null}
 
-      <div className="viewer-engagement-controls" aria-label="命中分析参数">
+      {!exteriorOnly ? <div className="viewer-engagement-controls" aria-label="命中分析参数">
         {attackLibrary ? (
           <>
             <RuntimeWeaponSelector
@@ -13119,9 +13127,27 @@ function RuntimeVehicleViewerScene({
             ) : null}
           </div>
         </div>
-      </div>
+      </div> : null}
 
-      <div className="viewer-toolbar" aria-label="3D 查看模式">
+      {exteriorOnly ? (
+        <div className="viewer-toolbar" aria-label="外观浏览">
+          <div className="viewer-toolbar__tertiary">
+            <div className="viewer-protection-controls viewer-control-deck">
+              <label className="viewer-background-control">
+                <span>背景</span>
+                <select aria-label="查看背景" value={background}
+                  onChange={(event) => setRuntimeViewerBackground(event.target.value === "grid" ? "grid" : "school")}>
+                  <option value="school">纳尔瓦学校</option>
+                  <option value="grid">经典网格</option>
+                </select>
+              </label>
+              <div className="viewer-interaction-hint" aria-label="3D 操作提示">
+                <span>左键旋转</span><span>右键拖动</span><span>滚轮缩放</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : <div className="viewer-toolbar" aria-label="3D 查看模式">
         <div className="viewer-toolbar__tertiary">
           <div
             className="viewer-protection-controls viewer-control-deck"
@@ -13488,9 +13514,9 @@ function RuntimeVehicleViewerScene({
             </div>
           </div>
         </div>
-      </div>
+      </div>}
 
-      {!controlPanelOpen ? (
+      {!exteriorOnly && !controlPanelOpen ? (
         <button
           className="viewer-weapon-panel-launcher"
           type="button"
@@ -13508,7 +13534,7 @@ function RuntimeVehicleViewerScene({
         </button>
       ) : null}
 
-      {controlPanelOpen ? (
+      {!exteriorOnly && controlPanelOpen ? (
         <aside
           className="viewer-weapon-panel"
           id="viewer-weapon-panel"
@@ -13743,7 +13769,7 @@ function RuntimeVehicleViewerScene({
           {viewerState.kind === "ready"
             ? `${viewerState.loaded} / ${viewerState.total} 源资产 · ${visual.requiredOccurrences} 组件`
             : "3D 包加载失败"}
-          {mode === "exterior"
+          {exteriorOnly ? " · 外观浏览" : mode === "exterior"
             ? " · SOURCE-NATIVE GLTF + SPLIT HIT RUNTIME"
             : " · SPLIT HIT RUNTIME"}
           {hitState.kind === "loading" ? " · 校验 record / geometry / BVH" : ""}

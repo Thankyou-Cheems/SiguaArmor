@@ -2463,7 +2463,7 @@ function DetailPanel({
   if (!card) return null;
   const { data, record } = card;
   const hasViewer = data !== null || Boolean(
-    card.variant?.runtimeVehicleRef && card.variant?.visualArtifactRef,
+    (card.variant?.runtimeVehicleRef || card.variant?.exteriorOnly) && card.variant?.visualArtifactRef,
   );
   const displayName = vehicleDisplayName(record, card.variant, card.alias);
   const viewerTextureVariants = textureVariants.flatMap((entry, index) => {
@@ -2529,6 +2529,7 @@ function DetailPanel({
                 rawName={card.variant?.sourceRawName ?? data?.general.rawName ?? record.mapping.selectedRawName ?? ""}
                 runtimeVehicleRef={card.variant?.runtimeVehicleRef ?? null}
                 visualArtifactRef={card.variant?.visualArtifactRef ?? null}
+                exteriorOnly={card.variant?.exteriorOnly}
                 displayName={displayName}
                 attackSourcePresentation={{
                   cardId: record.promoEntryId,

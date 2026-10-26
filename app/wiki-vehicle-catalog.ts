@@ -173,6 +173,8 @@ interface WikiVehicleCommunityAliases {
 }
 
 interface WikiSupportAirBinding {
+  type?: string;
+  hitRuntimeStatus?: string;
   runtimeVehicleRef?: string;
   bindingKey: string;
   cardId: string;
@@ -708,6 +710,10 @@ export function buildFactionCatalogFromWiki(
             vehicleRef: null,
             runtimeVehicleRef: supportAirBinding.runtimeVehicleRef ?? null,
             visualArtifactRef: variant.visualArtifactRef,
+            ...(supportAirBinding.type === "DRONE" &&
+              supportAirBinding.hitRuntimeStatus === "native-unknown" &&
+              !supportAirBinding.runtimeVehicleRef && visualArtifactRef
+              ? { exteriorOnly: true as const } : {}),
             alias: variant.alias,
             searchTerms: variant.searchTerms,
             searchAliases: variant.searchAliases,

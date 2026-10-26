@@ -6,6 +6,7 @@ import {
   type RuntimeVehiclePreview,
 } from "./runtime-probe-preview-data";
 import { RuntimeVehicleViewer } from "./RuntimeVehicleViewer";
+import { portableDronePreviewForCatalogBinding } from "./portable-drone-preview";
 import { previewSelectionKey, vehicleExteriorCapability, type ExteriorCapability } from "./vehicle-preview-policy";
 import type { ReferenceData } from "./catalog-types";
 import type { SiteEdition } from "./site-edition";
@@ -30,6 +31,7 @@ interface InternationalVehicleViewerProps {
   rawName: string;
   runtimeVehicleRef: string | null;
   visualArtifactRef: string | null;
+  exteriorOnly?: boolean;
   displayName: string;
   attackSourcePresentation: RuntimeAttackSourcePresentation;
   referenceData: ReferenceData | null;
@@ -51,6 +53,7 @@ export default function InternationalVehicleViewer({
   rawName,
   runtimeVehicleRef,
   visualArtifactRef,
+  exteriorOnly = false,
   displayName,
   attackSourcePresentation,
   referenceData,
@@ -61,17 +64,17 @@ export default function InternationalVehicleViewer({
   navigationState,
   onNavigationStateChange,
 }: InternationalVehicleViewerProps) {
-  const requestedMode = initialMode(navigationState);
-  const selectionKey = previewSelectionKey({ edition: siteEdition, cardId, rawName, runtimeVehicleRef, visualArtifactRef });
+  const requestedMode = exteriorOnly ? "exterior" : initialMode(navigationState);
+  const selectionKey = `${exteriorOnly ? "portable:" : ""}${previewSelectionKey({ edition: siteEdition, cardId, rawName, runtimeVehicleRef, visualArtifactRef })}`;
   const [resolved, setResolved] = useState<{ key: string; preview: RuntimeVehiclePreview | null; error: string | null } | null>(null);
   const [exterior, setExterior] = useState<{ key: string; capability: ExteriorCapability } | null>(null);
   const preview = resolved?.key === selectionKey ? resolved.preview : null;
   const previewLoadError = resolved?.key === selectionKey ? resolved.error : null;
-  const capability = vehicleExteriorCapability(Boolean(runtimeVehicleRef && visualArtifactRef),
+  const capability = vehicleExteriorCapability(Boolean((runtimeVehicleRef || exteriorOnly) && visualArtifactRef),
     previewLoadError ? { state: "unavailable", message: previewLoadError }
       : exterior?.key === selectionKey ? exterior.capability : { state: "pending" });
   const previewIssue = capability.state === "unavailable" ? capability : null;
-  const mode = previewIssue && requestedMode === "exterior" ? "armor" : requestedMode;
+  const mode = !exteriorOnly && previewIssue && requestedMode === "exterior" ? "armor" : requestedMode;
   const [textureStreaming, setTextureStreaming] = useState<TextureStreamingState | null>(null);
   const {
     cardId: attackSourceCardId,
@@ -107,13 +110,18 @@ export default function InternationalVehicleViewer({
     let cancelled = false;
     setResolved(null);
     setTextureStreaming(null);
-    void runtimePreviewForCatalogBinding(
+    const request = exteriorOnly
+      ? visualArtifactRef
+        ? portableDronePreviewForCatalogBinding({ cardId, rawName, visualArtifactRef, edition: siteEdition })
+        : Promise.reject(new Error("当前选择缺少精确外观绑定。"))
+      : runtimePreviewForCatalogBinding(
       cardId,
       rawName,
       runtimeVehicleRef,
       visualArtifactRef,
       siteEdition,
-    )
+    );
+    void request
       .then((nextPreview) => {
         if (cancelled) return;
         setResolved({ key: selectionKey, preview: nextPreview, error: nextPreview ? null
@@ -126,12 +134,12 @@ export default function InternationalVehicleViewer({
     return () => {
       cancelled = true;
     };
-  }, [cardId, rawName, runtimeVehicleRef, selectionKey, siteEdition, visualArtifactRef]);
+  }, [cardId, rawName, runtimeVehicleRef, selectionKey, siteEdition, visualArtifactRef, exteriorOnly]);
 
   useEffect(() => {
-    if (!previewIssue || requestedMode !== "exterior") return;
+    if (exteriorOnly || !previewIssue || requestedMode !== "exterior") return;
     onNavigationStateChange({ ...navigationState, view: "armor" });
-  }, [navigationState, onNavigationStateChange, previewIssue, requestedMode]);
+  }, [navigationState, onNavigationStateChange, previewIssue, requestedMode, exteriorOnly]);
 
   if (!preview || !preview.visual) {
     return (
@@ -192,6 +200,7 @@ export default function InternationalVehicleViewer({
           displayName={displayName}
           attackSourcePresentation={stableAttackSourcePresentation}
           referenceData={referenceData}
+          allowGlobalAttackSources={!exteriorOnly}
           onModeChange={selectMode}
           onClose={onClose}
           onOpenReference={onOpenReference}

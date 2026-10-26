@@ -170,6 +170,7 @@ export interface VehicleReferencePool {
 }
 
 export interface CatalogVariant {
+  exteriorOnly?: true;
   sourceRawName: string;
   catalogBindingRef: string | null;
   vehicleRef: string | null;
