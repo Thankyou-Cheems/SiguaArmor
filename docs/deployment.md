@@ -79,3 +79,37 @@ Use the existing `supporters:publish` and `updates:publish` commands for documen
 ## Outer ingress
 
 Ordinary Armor publication does not modify `/opt/Caddyfile` or restart outer Caddy. If an explicit ingress change replaces that single-file bind mount, recreate the outer container: renaming the host file does not replace the mounted inode. Verify both source and CDN behavior. Wiki missing data must remain `404` with `Cache-Control: no-store`; its `npm run verify:public-cache` checks this separately.
+
+## 2026-10-26: portable Drone exterior publication
+
+The actual page source changed from `915586e7e3e06dfb516487e42adcf307bb16f3b3`
+to `bbefc6f4205d1adae275f09f31b3ceac53dc46f5` at 06:07 UTC, tagged
+`armor-drone-exterior-2026-10-26`. This is the exact ten-file portable exterior
+feature on the installed base. It is retained by merged main `75b7e492`;
+main's nine other Narva changes were not part of this deployment.
+
+The normal `npm run deploy` passed 703 tests, typecheck, lint (two existing
+warnings) and the 1,440-route static export. Only `release/squad` changed;
+the public/admin containers, image IDs, PIDs and exact Wiki vehicle mount stayed
+unchanged and healthy. Origin matched 3,394 candidate files. All 12 precise
+Drone bindings and 42 existing public resources were checked; no Wiki data or
+model payload was published. The installed model refresh count remains
+1,937 variants / 4,928 contexts.
+
+Public AFU exterior rotation, zoom, grid/school switching and close/reopen passed;
+IMF and WPMC exteriors and ordinary ASLAV's three modes and settled physical
+controls also passed. Actual requested JavaScript matched the build. This is
+exterior-only: it adds no Drone hit, driver, flight or physics authority. It does
+not claim driver-school firing coverage. A generic AFU card binding hint still
+needs a separate UI correction despite successful exterior loading; the existing
+favicon request returns 404. Other functional requests and page/console checks
+passed.
+
+The ordinary page rollback retains the actual `915586e7` release (3,388 public
+files, three administrator files, configuration and metadata verified). An
+independent private pre-release archive also preserves its older predecessor;
+its SHA256 is `53514795f257442cbe1da27a288a525c1c53d0a59d04937c26f59e4795b2d6d6`.
+No live rollback was performed. Roll back Armor pages separately from the
+already installed Wiki model updates. Detailed runtime evidence is held in the
+private Research installation receipt; this documentation commit is not a new
+page deployment. No Armor Actions workflow is configured for this release.
