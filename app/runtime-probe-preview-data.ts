@@ -238,6 +238,7 @@ type RuntimeHitGeometrySource =
   | { geometryUrl?: never; geometry: RuntimeHitBufferRef };
 
 export interface RuntimeVehiclePreview {
+  exteriorOnly?: true;
   cardId: string;
   status: RuntimePreviewStatus;
   statusLabel: string;
@@ -262,7 +263,7 @@ export interface RuntimeVehiclePreview {
     requiredOccurrences: number;
     sourceAssets: number;
     totalBytes: number;
-    runtimeBonePoseStatus: "observed";
+    runtimeBonePoseStatus: "observed" | "not-applicable";
     runtimeBonePoseOccurrenceCount: number;
     runtimeBonePoseJointCount: number;
     runtimeBonePoseReferenceEquivalentOccurrenceCount: number;
@@ -282,7 +283,7 @@ export interface RuntimeVehiclePreview {
     reason: string;
   } & RuntimeHitGeometrySource) | null;
   hitAvailability: {
-    status: "runtime-no-hit-geometry";
+    status: "runtime-no-hit-geometry" | "native-unknown";
     reasonCode: string;
     reason: string;
   } | null;

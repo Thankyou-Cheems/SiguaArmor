@@ -28,10 +28,10 @@ test("standalone runtime preview loads vehicle mechanics before radial coverage"
   assert.match(runtimeOnlySource, /referenceData=\{state\.referenceData\}/u);
 });
 
-test("visual-only support aircraft remain reference cards without a broken 3D viewer", () => {
+test("only an explicit portable exterior capability admits support air without a vehicle runtime", () => {
   assert.match(
     catalogSource,
-    /const hasViewer = data !== null \|\| Boolean\([\s\S]*?runtimeVehicleRef && card\.variant\?\.visualArtifactRef/u,
+    /const hasViewer = data !== null \|\| Boolean\([\s\S]*?\(card\.variant\?\.runtimeVehicleRef \|\| card\.variant\?\.exteriorOnly\) && card\.variant\?\.visualArtifactRef/u,
   );
   assert.doesNotMatch(
     catalogSource,

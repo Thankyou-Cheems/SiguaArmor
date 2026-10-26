@@ -381,6 +381,17 @@ test("Armor keeps product cards for Wiki-owned support-air visuals", () => {
     result.records[0].variants[0].visualArtifactRef,
     "visual-mq9",
   );
+  assert.equal(result.records[0].variants[0].exteriorOnly, undefined);
+  // Controlled supportAir type fixture: capability follows shared semantics,
+  // not an entity-name allowlist. It does not assert this MQ9 is a real Drone.
+  wiki.extensions.supportAir.bindings[0].type = "DRONE";
+  wiki.extensions.supportAir.bindings[0].hitRuntimeStatus = "native-unknown";
+  const portable = buildFactionCatalogFromWiki(wiki,index,"test","international").records[0].variants[0];
+  assert.equal(portable.exteriorOnly, true);
+  assert.equal(portable.runtimeVehicleRef, null);
+  assert.equal(portable.data, null);
+  delete wiki.extensions.supportAir.bindings[0].type;
+  delete wiki.extensions.supportAir.bindings[0].hitRuntimeStatus;
   wiki.extensions.supportAir.bindings[0].runtimeVehicleRef = "aircraft-runtime";
   assert.throws(() => buildFactionCatalogFromWiki(wiki,index,"test","international"), /绑定不匹配/);
   index.records[0].variants[0].runtimeVehicleRef = "aircraft-runtime";
